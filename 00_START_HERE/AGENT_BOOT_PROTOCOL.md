@@ -23,7 +23,10 @@ Do not assume that the current code or architecture matches an older description
 
 Use the knowledge map to identify only the material relevant to the current task.
 
-Do not treat the whole Brain as mandatory context.
+When designing, implementing, refactoring, debugging, or reviewing software, consult the relevant portable engineering patterns in `05_KNOWLEDGE/engineering-patterns.md`.
+
+Do not treat the whole Brain as mandatory context; load patterns selectively based on the current task.
+
 
 ## 4. Separate facts from assumptions
 

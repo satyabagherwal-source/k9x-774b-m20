@@ -60,3 +60,9 @@ Information should move toward reusable Brain knowledge only when:
 - and it has been reviewed.
 
 If these conditions are not met, keep it as a source, observation, uncertainty, or project-specific learning instead of promoting it.
+
+## Knowledge Destinations
+
+- **Portable Engineering Patterns**: [05_KNOWLEDGE/engineering-patterns.md](file:///C:/AI-Builder-Brain/05_KNOWLEDGE/engineering-patterns.md) — Generalized, framework-agnostic rules for async execution, resource lifecycles, and software boundaries.
+- **Project Learning & Provenance**: [07_PROJECT_LEARNING/website-change-monitor-learnings.md](file:///C:/AI-Builder-Brain/07_PROJECT_LEARNING/website-change-monitor-learnings.md) — Empirical evidence, incident reports, and audit logs from project evaluations.
+
