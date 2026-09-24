@@ -105,3 +105,82 @@ Prevents duplicate primary keys, entity identity collisions, and unintended cros
 
 **WHEN TO APPLY**:
 Entity creation, primary key generation, temporary client-side IDs, job/queue task identifiers, uploaded file naming, and distributed resource identity.
+
+---
+
+## 9. Strict Canonical Uniformity & Edge Redirect Synchronization
+
+**RULE**:
+In static site generators (SSGs) and content platforms, routing configuration, edge hosting behavior, internal anchor tags (`<a href>`), XML sitemaps, and `<link rel="canonical">` / `hreflang` headers MUST share an identical trailing-slash policy. If the edge hosting environment (e.g. Cloudflare Pages) serves directories with trailing slashes, the framework router MUST be configured with `trailingSlash: 'always'`. Internal links and hreflang links MUST NEVER omit the trailing slash.
+
+**WHY**:
+Prevents 301 redirection chains, canonical loops, loss of crawl budget, and Google Search Console indexing drop-offs ("Page with redirect").
+
+**WHEN TO APPLY**:
+Astro.js, Next.js, Nuxt, SvelteKit, static site generators, and edge networks (Cloudflare Pages, Vercel, Netlify, AWS CloudFront).
+
+---
+
+## 10. Value-Semantic i18n Verification vs Key-Existence Parity
+
+**RULE**:
+Internationalization testing MUST NOT rely solely on dictionary key presence (`keys.has(k)`). Automated parity checks MUST evaluate semantic value divergence against the default locale. Any non-English locale string matching the base English string (excluding recognized technical acronyms, brands, and numerals) MUST be flagged as untranslated. Fallback synchronization scripts MUST NEVER copy raw base-language strings into foreign locale dictionaries.
+
+**WHY**:
+Prevents silent translation failures where localized routes display English text despite passing "100% parity" test suites.
+
+**WHEN TO APPLY**:
+All multi-language websites, client-side translation dictionaries, i18n tooling, and localization CI pipelines.
+
+---
+
+## 11. Cross-Boundary SSR-to-Client DOM Text Preservation via Data Attributes
+
+**RULE**:
+When server-side rendered (SSR) localized HTML is subsequently hydrated, manipulated, or updated by client-side JavaScript engines, dynamic code MUST NOT write hardcoded default-language template strings into existing DOM nodes. Static labels, units, and formatters MUST be preserved by attaching them as HTML `data-label` or `data-template` attributes during SSR, which client-side scripts read before rendering dynamic numbers.
+
+**WHY**:
+Prevents client-side hydration scripts from overwriting translated SSR DOM nodes with hardcoded English strings.
+
+**WHEN TO APPLY**:
+Hybrid SSR/static pages featuring client-side canvas, WebGL, real-time readouts, telemetry, or reactive DOM engines.
+
+---
+
+## 12. Cross-Platform Line-Ending Invariant Parsing in DevOps & Build Tooling
+
+**RULE**:
+Build scripts, parsers, and code-generation tools written in Node.js, Python, or shell MUST handle Windows CRLF (`\r\n`) and POSIX LF (`\n`) identically. Regular expressions matching line contents MUST NOT rely on `$` anchors without stripping carriage returns (`\r`), as `.` does not match `\r` in standard regex engines. File splitting MUST use `split(/\r?\n/)`.
+
+**WHY**:
+Prevents silent truncation, dropped dictionary keys, and build discrepancies across developer operating systems and CI/CD runners.
+
+**WHEN TO APPLY**:
+Custom CLI scripts, code generators, i18n sync tools, linters, and repository automation scripts.
+
+---
+
+## 13. Non-Destructive In-Place Preservation of Complex Mathematics & Visual UI Integrity
+
+**RULE**:
+When tasked with resolving SEO, internationalization, routing, or performance issues on high-precision applications, the engineer MUST strictly isolate domain mathematics (canvas transforms, trigonometry, homography matrices, calibration equations) and visual UI containers from configuration changes. Domain logic MUST NOT be modified or refactored as a side-effect of infrastructure tasks.
+
+**WHY**:
+Prevents accidental measurement regressions, UI breakage, and destruction of working production capabilities.
+
+**WHEN TO APPLY**:
+Engineering tools, measurement utilities, financial calculators, graphical canvas apps, and AdSense-monetized platforms.
+
+---
+
+## 14. Automated Self-Healing Translation Pipelines for Programmatic Locales
+
+**RULE**:
+For projects maintaining dozens of localized routes, newly added translation keys MUST be automatically translated through a rate-limited, cached translation service rather than requiring manual multi-language translation. The translation pipeline MUST maintain a persistent cache (`translation-cache.json`) to guarantee zero duplicate network calls, idempotent builds, and instantaneous subsequent executions.
+
+**WHY**:
+Ensures that any new feature or text added in the default locale is immediately and accurately translated across all languages without developer friction or untranslated gaps.
+
+**WHEN TO APPLY**:
+Websites supporting 10+ locales, programmatic SEO platforms, global tools, and international content applications.
+
