@@ -98,8 +98,9 @@ Every bug must follow:
 ### 6. Minimal Dependency Principle
 - ONLY install and configure dependencies that are strictly required for this project profile.
 
-### 7. Explicit Git State Management
-- Never commit broken builds. Verify working tree cleanliness with \`git status\` before completing tasks.
+### 7. User-Controlled Git Commits
+- Factory sets up the git repository (\`git init -b main\`, \`.gitignore\`).
+- Auto-commit is disabled. The user controls staging and commits when ready.
 `;
 
   // 3. PROJECT_KNOWLEDGE.md
@@ -176,7 +177,7 @@ ${Object.keys(profile.applicableMCPs || {}).length > 0 ? Object.entries(profile.
       { id: 'm3_project_brain', title: 'Project-Local Brain & OS Generation', status: 'COMPLETED', completedAt: now },
       { id: 'm4_env_scaffold', title: 'Development Environment & Architecture Starter Scaffolding', status: 'COMPLETED', completedAt: now },
       { id: 'm5_dependencies', title: 'Targeted Dependency Installation', status: 'COMPLETED', completedAt: now },
-      { id: 'm6_git_init', title: 'Independent Git Lifecycle & Initial Commit', status: 'COMPLETED', completedAt: now },
+      { id: 'm6_git_init', title: 'Independent Git Repository Setup (Commit Managed by User)', status: 'COMPLETED', completedAt: now },
       { id: 'm7_live_verification', title: 'Universal Multi-Pillar Live Verification', status: 'COMPLETED', completedAt: now },
       { id: 'm8_boundary_verification', title: 'Product Generation Boundary Audit (0 Product Code)', status: 'COMPLETED', completedAt: now },
       { id: 'm9_env_certification', title: 'ENVIRONMENT READY Certification', status: 'COMPLETED', completedAt: now }

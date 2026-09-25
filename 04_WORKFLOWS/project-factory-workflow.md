@@ -79,7 +79,7 @@ PROJECT FACTORY = ENVIRONMENT INITIALIZATION ONLY.
 4. **Scaffolding & OS Generation**: Instantiates golden environment starter and emits all 11 Project-Local Brain files.
 5. **Bridge Binding**: Generates `.project-brain/brain-bridge.json` connecting child project to Master Brain in read-only mode.
 6. **Targeted Dependency Installation**: Installs only packages required for the resolved profile.
-7. **Git & GitHub Initialization**: Initializes independent Git repository, validates identity, creates initial commit, and connects GitHub remote if authorized.
+7. **Git Repository Setup**: Initializes independent Git repository (`git init -b main`) and validates identity. Auto-commit is disabled; commits are managed directly by the user.
 8. **Live Multi-Layer Verification**:
    - Production bundle compilation (`npm run build`).
    - Live runtime server socket probe (HTTP 200 OK).

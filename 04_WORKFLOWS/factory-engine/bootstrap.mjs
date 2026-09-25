@@ -149,19 +149,18 @@ async function runBootstrap() {
     console.log(`\n[6/9] 📦 Skipping dependency installation (--skip-install).`);
   }
 
-  // Step 7: Independent Git Lifecycle & Initial Commit
+  // Step 7: Independent Git Repository Setup (Commit Managed by User)
   if (!skipGit) {
-    console.log(`\n[7/9] 🌿 Initializing Independent Git Repository & Initial Commit...`);
+    console.log(`\n[7/9] 🌿 Setting up Independent Git Repository (Commit Managed by User)...`);
     const gitResult = setupGitRepository(resolvedTarget, projectName, {
-      remoteUrl: gitRemote,
-      createGhRepo: createGhRepo
+      remoteUrl: gitRemote
     });
     console.log(`   Git Init : ${gitResult.initialized ? '✅ Initialized (main)' : 'ℹ️ Already initialized'}`);
     console.log(`   Identity : ${gitResult.identityConfigured ? '✅ Verified / Safe Default Configured' : 'ℹ️ Preserved'}`);
-    console.log(`   Commit   : ${gitResult.committed ? '✅ Initial commit created' : 'ℹ️ Clean / Skipped'}`);
-    console.log(`   GitHub   : ${gitResult.githubLinked ? '✅ Linked (' + gitResult.remoteUrl + ')' : (createGhRepo ? '⚠️ Creation deferred' : 'ℹ️ Local Git ready (Remote creation optional)')}`);
+    console.log(`   Commit   : ℹ️ Auto-commit disabled (Commit managed by user)`);
+    console.log(`   GitHub   : ${gitResult.githubLinked ? '✅ Linked (' + gitResult.remoteUrl + ')' : 'ℹ️ Local Git ready (Remote creation optional)'}`);
   } else {
-    console.log(`\n[7/9] 🌿 Skipping Git initialization (--skip-git).`);
+    console.log(`\n[7/9] 🌿 Skipping Git setup (--skip-git).`);
   }
 
   // Step 8: Live Multi-Layer Verification & Product Boundary Audit

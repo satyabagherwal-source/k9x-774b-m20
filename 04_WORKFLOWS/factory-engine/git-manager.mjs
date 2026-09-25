@@ -3,12 +3,16 @@ import fs from 'fs';
 import path from 'path';
 
 /**
- * Autonomous Git & GitHub Lifecycle Manager
+ * Autonomous Git & GitHub Setup Manager
  * 
  * Location: C:\AI-Builder-Brain\04_WORKFLOWS\factory-engine\git-manager.mjs
- * Purpose: Manages complete local Git initialization, identity validation,
- *          initial commit, remote configuration, GitHub repo creation when authorized,
- *          and clean working tree verification.
+ * Purpose: Initializes independent local Git repository, validates identity,
+ *          configures remotes when authorized.
+ * 
+ * CANONICAL POLICY:
+ * Project Factory only sets up Git (git init -b main, identity check, .gitignore).
+ * AUTO-COMMIT IS DISABLED.
+ * The user controls staging and commits ("commit me karunga bas setup karna h tumhe to").
  */
 
 export function setupGitRepository(targetDir, projectName, options = {}) {
@@ -16,11 +20,11 @@ export function setupGitRepository(targetDir, projectName, options = {}) {
   const result = {
     initialized: false,
     committed: false,
+    commitDeferredToUser: true,
     identityConfigured: false,
     githubLinked: false,
     remoteUrl: null,
     branch: 'main',
-    cleanWorkingTree: false,
     errors: [],
     warnings: []
   };
@@ -45,6 +49,7 @@ export function setupGitRepository(targetDir, projectName, options = {}) {
     } else {
       result.initialized = true;
     }
+    result.branch = 'main';
   } catch (err) {
     result.errors.push(`git init failed: ${err.message}`);
     return result;
@@ -76,21 +81,12 @@ export function setupGitRepository(targetDir, projectName, options = {}) {
     result.warnings.push(`Git identity check warning: ${err.message}`);
   }
 
-  // 3. Stage and Initial Commit
-  try {
-    runGit('git add .');
-    const status = runGit('git status --porcelain');
-    if (status.length > 0) {
-      runGit(`git commit -m "feat: initial project bootstrap by AI Project Factory (${projectName})"`);
-      result.committed = true;
-    } else {
-      result.committed = true; // Clean tree
-    }
-  } catch (err) {
-    result.errors.push(`git commit failed: ${err.message}`);
-  }
+  // 3. User-Managed Commits (Auto-commit disabled)
+  // Per canonical policy: "commit me karunga bas setup karna h tumhe to"
+  result.committed = false;
+  result.commitDeferredToUser = true;
 
-  // 4. Remote Configuration & Optional GitHub Repo Creation
+  // 4. Remote Configuration (if explicit remoteUrl provided)
   if (options.remoteUrl) {
     try {
       try {
@@ -103,24 +99,7 @@ export function setupGitRepository(targetDir, projectName, options = {}) {
     } catch (err) {
       result.errors.push(`Failed to set git remote: ${err.message}`);
     }
-  } else if (options.createGhRepo === true) {
-    try {
-      const sanitizedName = projectName.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
-      runGit(`gh repo create "${sanitizedName}" --private --source=. --remote=origin --push`);
-      const remote = runGit('git remote get-url origin');
-      result.githubLinked = true;
-      result.remoteUrl = remote;
-    } catch (err) {
-      result.warnings.push(`gh repo create skipped or failed: ${err.message}`);
-    }
   }
-
-  // 5. Clean working tree audit
-  try {
-    const finalStatus = runGit('git status --porcelain');
-    result.cleanWorkingTree = finalStatus.length === 0;
-    result.branch = runGit('git branch --show-current') || 'main';
-  } catch (e) {}
 
   return result;
 }
@@ -131,8 +110,16 @@ export function verifyGitStatus(targetDir) {
     const isGit = fs.existsSync(path.join(root, '.git'));
     if (!isGit) return { isRepo: false };
 
-    const branch = execSync('git branch --show-current', { cwd: root, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
-    const status = execSync('git status --porcelain', { cwd: root, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+    let branch = 'main';
+    try {
+      branch = execSync('git branch --show-current', { cwd: root, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim() || 'main';
+    } catch (e) {}
+
+    let status = '';
+    try {
+      status = execSync('git status --porcelain', { cwd: root, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
+    } catch (e) {}
+
     let remote = null;
     try {
       remote = execSync('git remote get-url origin', { cwd: root, encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
@@ -141,6 +128,8 @@ export function verifyGitStatus(targetDir) {
     return {
       isRepo: true,
       branch,
+      setupReady: true,
+      commitDeferredToUser: true,
       clean: status.length === 0,
       modifiedFiles: status ? status.split('\n').map(l => l.trim()) : [],
       remote

@@ -62,7 +62,7 @@ export function generateEnvironmentReadyCertificate(projectDir, verificationRepo
   }
 
   if (p.gitStatus) {
-    rows.push(`| **8. Git & Repository** | Independent Git repo & clean working tree | **${p.gitStatus?.status || 'N/A'}** | Branch: ${p.gitStatus?.details?.branch || 'main'}, Clean: ${p.gitStatus?.details?.clean ? 'YES' : 'NO'} |`);
+    rows.push(`| **8. Git Repository** | Independent Git repo setup (branch: main) | **${p.gitStatus?.status || 'N/A'}** | ${typeof p.gitStatus?.details === 'string' ? p.gitStatus?.details : 'Git initialized (main), commit managed by user'} |`);
   }
 
   if (p.mcpHealth) {

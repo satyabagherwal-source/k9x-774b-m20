@@ -92,19 +92,14 @@ Verify zero fatal installation errors. Only install what the project environment
 
 ---
 
-### STEP 4: Independent Git & GitHub Initialization
+### STEP 4: Independent Git Repository Setup (Commit Managed by User)
 1. Initialize local git repository:
    ```bash
    git init -b main
    ```
-2. Stage and commit initial scaffolding:
-   ```bash
-   git add .
-   git commit -m "feat: initial environment bootstrap from canonical AI-Builder-Brain"
-   ```
-3. If `gh auth status` indicates logged-in status and user authorizes remote repo creation:
-   - Run `gh repo create <project-name> --source=. --remote=origin --private --push`
-   - If not authenticated, record in `PROJECT_STATE.json` as `LOCAL_GIT_INITIALIZED` and proceed.
+2. Verify `.gitignore` is properly configured.
+3. **Auto-commit disabled**: Commits are managed directly by the user when ready. Factory only performs repository setup.
+
 
 ---
 
