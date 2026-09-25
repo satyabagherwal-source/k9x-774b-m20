@@ -672,6 +672,14 @@ export function resolveProjectProfile(inputs = {}) {
   // Resolve applicable MCPs from canonical MCP registry
   profile.applicableMCPs = resolveApplicableMCPs(profile.id);
 
+  // Canonical intent preservation for context documentation only (NEVER product build instructions)
+  profile.intent = inputs.intent || inputs.prompt || inputs.description || '';
+
+  // Ensure canonical Product Generation Boundary is always evaluated
+  if (!profile.verificationPillars.includes('productGenerationBoundary')) {
+    profile.verificationPillars.push('productGenerationBoundary');
+  }
+
   // Apply user-defined overrides if supplied
   if (inputs.overrides) {
     Object.assign(profile, inputs.overrides);

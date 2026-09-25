@@ -48,3 +48,11 @@ The Brain should remain portable. Antigravity IDE is the initial working tool, b
 ## Rule 10 — Completion means verified outcome
 
 When the requested work is complete, report the actual result and verification status. Do not leave the user with only instructions about what they could do.
+
+## Rule 11 — Project Factory = Environment Initialization Only
+
+When executing project bootstrapping or operating the Project Factory:
+The Factory is strictly restricted to initializing the project development environment, runtime, Brain OS, and verification infrastructure.
+The Factory must never implement product features, websites, SaaS dashboards, calculators, font tools, AdSense units, or business logic during bootstrap.
+Phase A completes at `ENVIRONMENT READY : CERTIFIED`. Actual product development begins strictly in Phase B upon receiving the user's explicit product directive.
+

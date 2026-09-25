@@ -78,7 +78,8 @@ export function scaffoldProject(targetDir, projectName, options = {}) {
   // 3. Generate all 11 Project-Local Brain & OS files
   const brainFiles = generateProjectBrainFiles(rootDir, projectName, profile, {
     masterBrainPath,
-    env: options.env
+    env: options.env,
+    intent: options.intent || profile.intent
   });
   const writtenBrainFiles = writeProjectBrainFiles(rootDir, brainFiles);
 

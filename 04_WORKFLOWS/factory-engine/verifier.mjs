@@ -12,7 +12,82 @@ import { verifyMCPHealth } from './mcp-registry.mjs';
  * Location: C:\AI-Builder-Brain\04_WORKFLOWS\factory-engine\verifier.mjs
  * Purpose: Dynamically composes and executes multi-pillar verification suites
  *          based on the active project profile.
+ * 
+ * CANONICAL BOUNDARY ENFORCEMENT:
+ * Evaluates Pillar 10 (productGenerationBoundary) to verify that the Factory
+ * initialized ONLY the development environment and strictly avoided creating
+ * actual product components, pages, features, or business logic.
  */
+
+export function verifyProductGenerationBoundary(projectDir, profile = null) {
+  const root = path.resolve(projectDir);
+  const violations = [];
+
+  // 1. Check for product-specific components in src/components
+  const componentsDir = path.join(root, 'src', 'components');
+  if (fs.existsSync(componentsDir)) {
+    const files = fs.readdirSync(componentsDir).filter(f => !f.startsWith('.') && f !== '.gitkeep');
+    if (files.length > 0) {
+      violations.push(`Unexpected product components found in src/components: ${files.join(', ')}`);
+    }
+  }
+
+  // 2. Check for extra product pages in src/pages
+  const pagesDir = path.join(root, 'src', 'pages');
+  if (fs.existsSync(pagesDir)) {
+    const pages = fs.readdirSync(pagesDir).filter(f => !f.startsWith('.') && f !== '.gitkeep');
+    // Only the single environment starter index.astro is permitted in Phase A
+    const extraPages = pages.filter(p => p !== 'index.astro');
+    if (extraPages.length > 0) {
+      violations.push(`Unexpected product pages found in src/pages: ${extraPages.join(', ')}`);
+    }
+  }
+
+  // 3. Check for product features directory
+  const featuresDir = path.join(root, 'src', 'features');
+  if (fs.existsSync(featuresDir)) {
+    const features = fs.readdirSync(featuresDir).filter(f => !f.startsWith('.') && f !== '.gitkeep');
+    if (features.length > 0) {
+      violations.push(`Unexpected product feature modules found in src/features: ${features.join(', ')}`);
+    }
+  }
+
+  // 4. Content / domain scan for known forbidden product items
+  const forbiddenPatterns = [
+    { regex: /class\s+FontExtractor|FontFinder|AdSenseBanner|Protractor|Calculator/i, label: 'Domain product component/logic' },
+    { regex: /adsbygoogle/i, label: 'AdSense product ad unit' },
+    { regex: /Model Execution Playground|Input Prompt Directive/i, label: 'Interactive AI product playground' }
+  ];
+
+  function scanDirectory(dir) {
+    if (!fs.existsSync(dir)) return;
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.name === 'node_modules' || entry.name === '.git' || entry.name === 'dist' || entry.name === '.astro') continue;
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) {
+        scanDirectory(full);
+      } else if (['.astro', '.tsx', '.jsx', '.ts', '.js', '.vue'].includes(path.extname(entry.name))) {
+        const content = fs.readFileSync(full, 'utf-8');
+        for (const pattern of forbiddenPatterns) {
+          if (pattern.regex.test(content)) {
+            violations.push(`Forbidden product code detected in ${path.relative(root, full)}: ${pattern.label}`);
+          }
+        }
+      }
+    }
+  }
+
+  scanDirectory(path.join(root, 'src'));
+
+  return {
+    status: violations.length === 0 ? 'PASS' : 'FAIL',
+    violations,
+    details: violations.length === 0 
+      ? '0 product components, 0 extra product pages, 0 business logic detected. Strict environment boundary verified.'
+      : violations.join('; ')
+  };
+}
 
 export async function runComprehensiveVerification(projectDir, options = {}) {
   const root = path.resolve(projectDir);
@@ -86,8 +161,7 @@ export async function runComprehensiveVerification(projectDir, options = {}) {
     'PROJECT_DECISIONS.md',
     'PROJECT_ARCHITECTURE.md',
     'PROJECT_REQUIREMENTS.md',
-    'PROJECT_ENVIRONMENT.md',
-    'PROJECT_READY_CERTIFICATE.md'
+    'PROJECT_ENVIRONMENT.md'
   ];
 
   const missingFiles = [];
@@ -96,6 +170,13 @@ export async function runComprehensiveVerification(projectDir, options = {}) {
     if (!fs.existsSync(fullPath) || fs.statSync(fullPath).size === 0) {
       missingFiles.push(file);
     }
+  }
+
+  // 11th file: check for ENVIRONMENT_READY_CERTIFICATE.md or PROJECT_READY_CERTIFICATE.md
+  const hasCert = (fs.existsSync(path.join(root, 'ENVIRONMENT_READY_CERTIFICATE.md')) && fs.statSync(path.join(root, 'ENVIRONMENT_READY_CERTIFICATE.md')).size > 0) ||
+                  (fs.existsSync(path.join(root, 'PROJECT_READY_CERTIFICATE.md')) && fs.statSync(path.join(root, 'PROJECT_READY_CERTIFICATE.md')).size > 0);
+  if (!hasCert) {
+    missingFiles.push('ENVIRONMENT_READY_CERTIFICATE.md');
   }
 
   const incidentsDirExists = fs.existsSync(path.join(root, '.project-brain', 'incidents'));
@@ -107,8 +188,8 @@ export async function runComprehensiveVerification(projectDir, options = {}) {
   report.pillars.contextAndGovernance = {
     status: governancePassed ? 'PASS' : 'FAIL',
     details: {
-      verifiedFilesCount: mandatoryFiles.length - missingFiles.length,
-      totalMandatory: mandatoryFiles.length,
+      verifiedFilesCount: 11 - missingFiles.length,
+      totalMandatory: 11,
       missingFiles,
       directoriesValid: dirsValid
     }
@@ -185,40 +266,36 @@ export async function runComprehensiveVerification(projectDir, options = {}) {
     report.failures.push(`Runtime server probe error: ${err.message}`);
   }
 
-  // Pillar 7: Quality & Profile-Specific Verification
+  // Pillar 7: Environment Readiness & Quality Contracts
   const distIndex = path.join(root, 'dist', 'index.html');
   if (isAstro) {
-    // SEO & Web Design Checks
     if (fs.existsSync(distIndex)) {
       const html = fs.readFileSync(distIndex, 'utf-8');
       const hasTitle = /<title>[^<]+<\/title>/i.test(html);
-      const hasMetaDesc = /<meta\s+name=["']description["']/i.test(html);
-      const hasCanonical = /<link\s+rel=["']canonical["']/i.test(html);
       const hasViewport = /<meta\s+name=["']viewport["']/i.test(html);
 
-      const seoValid = hasTitle && hasMetaDesc && hasCanonical && hasViewport;
-      report.pillars.seoAndQuality = {
-        status: seoValid ? 'PASS' : 'FAIL',
-        details: { hasTitle, hasMetaDesc, hasCanonical, hasViewport }
+      const envValid = hasTitle && hasViewport;
+      report.pillars.environmentQuality = {
+        status: envValid ? 'PASS' : 'FAIL',
+        details: { hasTitle, hasViewport }
       };
-      if (!seoValid) {
-        report.failures.push('SEO verification failed: missing title, description, canonical link, or viewport meta');
+      if (!envValid) {
+        report.failures.push('Environment HTML verification failed: missing title or viewport meta in dist/index.html');
       }
     } else {
-      report.pillars.seoAndQuality = { status: 'SKIPPED', details: 'dist/index.html not available' };
+      report.pillars.environmentQuality = { status: 'SKIPPED', details: 'dist/index.html not available' };
     }
   } else {
-    // Fullstack / AI SaaS Quality Checks
     const hasServer = fs.existsSync(path.join(root, 'server', 'server.mjs'));
     const hasClient = fs.existsSync(path.join(root, 'src', 'api', 'ai-client.ts'));
-    const aiQualityValid = hasServer && hasClient;
+    const envValid = hasServer && hasClient;
 
-    report.pillars.aiAndQuality = {
-      status: aiQualityValid ? 'PASS' : 'FAIL',
+    report.pillars.environmentQuality = {
+      status: envValid ? 'PASS' : 'FAIL',
       details: { hasServer, hasClient }
     };
-    if (!aiQualityValid) {
-      report.failures.push('AI SaaS Quality check failed: missing server/server.mjs or src/api/ai-client.ts');
+    if (!envValid) {
+      report.failures.push('Environment Quality check failed: missing server/server.mjs or src/api/ai-client.ts');
     }
   }
 
@@ -249,6 +326,17 @@ export async function runComprehensiveVerification(projectDir, options = {}) {
       status: allMcpsHealthy ? 'PASS' : 'PARTIAL',
       servers: mcpResults
     };
+  }
+
+  // Pillar 10: PRODUCT GENERATION BOUNDARY (Canonical Check)
+  const boundaryCheck = verifyProductGenerationBoundary(root, profile);
+  report.pillars.productGenerationBoundary = {
+    status: boundaryCheck.status,
+    details: boundaryCheck.details,
+    violations: boundaryCheck.violations
+  };
+  if (boundaryCheck.status !== 'PASS') {
+    report.failures.push(`FACTORY BOUNDARY VIOLATION: Factory generated actual product code during environment bootstrap: ${boundaryCheck.violations.join('; ')}`);
   }
 
   // Determine Overall Status

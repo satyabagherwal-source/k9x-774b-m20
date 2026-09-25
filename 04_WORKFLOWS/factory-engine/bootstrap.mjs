@@ -4,10 +4,18 @@
  * AI-Builder-Brain Universal Project Factory & Operating System Bootstrap Engine
  * 
  * Location: C:\AI-Builder-Brain\04_WORKFLOWS\factory-engine\bootstrap.mjs
- * Purpose: Single-command deterministic bootstrap engine for any project class.
- *          Resolves architecture, installs only required dependencies, establishes
- *          zero-copy Brain Bridge, generates all 11 project-local Brain OS files,
- *          manages Git/GitHub lifecycle, runs live verification, and certifies readiness.
+ * Purpose: Single-command deterministic bootstrap engine for development environments.
+ * 
+ * CANONICAL CORE RULE:
+ * PROJECT FACTORY = ENVIRONMENT INITIALIZATION ONLY.
+ * Project Factory never generates actual products, websites, SaaS dashboards,
+ * calculators, font finders, AdSense components, or business logic.
+ * 
+ * Factory lifecycle:
+ * EMPTY PROJECT FOLDER -> INTENT RESOLUTION -> ARCHITECTURE RESOLUTION ->
+ * DEV ENVIRONMENT -> PROJECT BRAIN -> BRAIN BRIDGE -> KNOWLEDGE -> RULES ->
+ * SKILLS -> WORKFLOWS -> AGENT BOOT -> FRAMEWORKS -> REFS -> MCPS -> GIT ->
+ * TESTING & VERIFICATION INFRASTRUCTURE -> ENVIRONMENT READY -> STOP.
  */
 
 import path from 'path';
@@ -19,7 +27,7 @@ import { resolveProjectProfile } from './profile-engine.mjs';
 import { scaffoldProject } from './scaffold.mjs';
 import { setupGitRepository } from './git-manager.mjs';
 import { runComprehensiveVerification } from './verifier.mjs';
-import { generateReadyCertificate, updateProjectState } from './state-manager.mjs';
+import { generateEnvironmentReadyCertificate, updateProjectState } from './state-manager.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -46,8 +54,10 @@ const gitRemote = getArg('--git-remote', null);
 
 async function runBootstrap() {
   console.log(`\n============================================================`);
-  console.log(`⚡ AI-BUILDER-BRAIN: UNIVERSAL PROJECT FACTORY BOOTSTRAP`);
+  console.log(`⚡ AI-BUILDER-BRAIN: UNIVERSAL PROJECT FACTORY (ENVIRONMENT SETUP)`);
   console.log(`============================================================`);
+  console.log(`CORE INVARIANT   : PROJECT FACTORY = ENVIRONMENT INITIALIZATION ONLY.`);
+  console.log(`                   Zero product code, zero business logic, zero user features.`);
   console.log(`Target Directory : ${resolvedTarget}`);
   console.log(`Project Name     : ${projectName}`);
   console.log(`Timestamp        : ${new Date().toISOString()}`);
@@ -67,7 +77,7 @@ async function runBootstrap() {
   console.log(`   ✅ Strict read-only boundary enforced for Master Brain.`);
 
   // Step 2: Project Intent & Capability Resolution
-  console.log(`\n[2/9] 🧭 Resolving Project Profile & Architecture...`);
+  console.log(`\n[2/9] 🧭 Resolving Project Profile & Environment Requirements...`);
   const profile = resolveProjectProfile({
     name: projectName,
     type: projectType,
@@ -81,6 +91,9 @@ async function runBootstrap() {
   console.log(`   Blueprint Source : ${profile.blueprint}`);
   console.log(`   Applicable MCPs  : ${Object.keys(profile.applicableMCPs || {}).join(', ') || 'None required'}`);
   console.log(`   Resolved Skills  : ${profile.requiredSkills?.length || 0} skills indexed`);
+  if (projectIntent) {
+    console.log(`   Target Intent    : "${projectIntent}" (Recorded as context for Phase B only; NOT built in Phase A)`);
+  }
 
   // Step 3: Environment Pre-flight
   console.log(`\n[3/9] 💻 Checking System Environment (Profile-Specific)...`);
@@ -95,19 +108,20 @@ async function runBootstrap() {
     process.exit(1);
   }
 
-  // Step 4: Scaffold Project from Golden Blueprint & Emit 11 Brain Files
+  // Step 4: Scaffold Environment Architecture & Emit 11 Brain Files
   console.log(`\n[4/9] 🏗️ Scaffolding Architecture & Generating 11-File Project Brain OS...`);
   const scaffoldResult = scaffoldProject(resolvedTarget, projectName, {
     masterBrainPath: brainPath,
     profile,
     skipInstall: true, // We control installation explicitly next
-    env
+    env,
+    intent: projectIntent
   });
-  console.log(`   ✅ Emitted ${scaffoldResult.filesCreated} files (Blueprint: ${profile.blueprint}).`);
+  console.log(`   ✅ Emitted ${scaffoldResult.filesCreated} environment files (Blueprint: ${profile.blueprint}).`);
   console.log(`   ✅ Generated all 11 canonical Project Brain OS files:`);
   console.log(`      - PROJECT_CONTEXT.md, PROJECT_RULES.md, PROJECT_KNOWLEDGE.md, PROJECT_SKILLS.md`);
   console.log(`      - PROJECT_STATE.json, PROJECT_LEARNING.md, PROJECT_DECISIONS.md, PROJECT_ARCHITECTURE.md`);
-  console.log(`      - PROJECT_REQUIREMENTS.md, PROJECT_ENVIRONMENT.md, PROJECT_READY_CERTIFICATE.md`);
+  console.log(`      - PROJECT_REQUIREMENTS.md, PROJECT_ENVIRONMENT.md, ENVIRONMENT_READY_CERTIFICATE.md`);
 
   // Step 5: Establish Zero-Copy Brain Bridge
   console.log(`\n[5/9] 🌉 Verifying Zero-Copy Brain Bridge...`);
@@ -140,7 +154,7 @@ async function runBootstrap() {
     console.log(`\n[7/9] 🌿 Initializing Independent Git Repository & Initial Commit...`);
     const gitResult = setupGitRepository(resolvedTarget, projectName, {
       remoteUrl: gitRemote,
-      createGhRepo: createGhRepo // Safe default: only auto-create if explicitly authorized
+      createGhRepo: createGhRepo
     });
     console.log(`   Git Init : ${gitResult.initialized ? '✅ Initialized (main)' : 'ℹ️ Already initialized'}`);
     console.log(`   Identity : ${gitResult.identityConfigured ? '✅ Verified / Safe Default Configured' : 'ℹ️ Preserved'}`);
@@ -150,32 +164,34 @@ async function runBootstrap() {
     console.log(`\n[7/9] 🌿 Skipping Git initialization (--skip-git).`);
   }
 
-  // Step 8: Live Multi-Layer Verification
+  // Step 8: Live Multi-Layer Verification & Product Boundary Audit
   console.log(`\n[8/9] 🧪 Executing Universal Live Multi-Pillar Verification Suite...`);
   const verification = await runComprehensiveVerification(resolvedTarget, { profile });
 
   console.log(`\n   --- Verification Results ---`);
   for (const [pillar, data] of Object.entries(verification.pillars)) {
     const icon = data.status === 'PASS' ? '✅' : (data.status === 'PARTIAL' ? '⚠️' : '❌');
-    console.log(`   ${icon} ${pillar.padEnd(22)}: ${data.status}`);
+    console.log(`   ${icon} ${pillar.padEnd(26)}: ${data.status}`);
   }
 
-  // Step 9: Ready Certification
-  console.log(`\n[9/9] 📜 Generating PROJECT_READY_CERTIFICATE.md...`);
-  const certPath = generateReadyCertificate(resolvedTarget, verification);
+  // Step 9: Environment Ready Certification
+  console.log(`\n[9/9] 📜 Finalizing ENVIRONMENT_READY_CERTIFICATE.md...`);
+  const certPath = generateEnvironmentReadyCertificate(resolvedTarget, verification);
   console.log(`   ✅ Certificate finalized: ${certPath}`);
 
   // Final Status Announcement
   console.log(`\n============================================================`);
   if (verification.overallStatus === 'READY') {
-    console.log(`🎉 PROJECT STATUS: READY : CERTIFIED`);
+    console.log(`🎉 ENVIRONMENT STATUS: ENVIRONMENT READY : CERTIFIED`);
     console.log(`   Profile: ${profile.name} (${profile.id})`);
-    console.log(`   Your project is completely configured, verified, and ready!`);
+    console.log(`   Development environment is completely configured, verified, and ready!`);
+    console.log(`   Boundary: 0 product components, 0 business logic, 0 user features.`);
+    console.log(`   Next Step: Phase B (Product Development) begins upon user product prompt.`);
   } else if (verification.overallStatus === 'PARTIAL') {
-    console.log(`⚠️ PROJECT STATUS: PARTIAL`);
-    console.log(`   Core features working; see certificate for minor non-fatal warnings.`);
+    console.log(`⚠️ ENVIRONMENT STATUS: PARTIAL`);
+    console.log(`   Core environment working; see certificate for minor non-fatal warnings.`);
   } else {
-    console.log(`❌ PROJECT STATUS: BLOCKED`);
+    console.log(`❌ ENVIRONMENT STATUS: BLOCKED`);
     console.log(`   Blockers found:`, verification.failures);
   }
   console.log(`============================================================\n`);

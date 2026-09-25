@@ -1,6 +1,20 @@
 # Universal Project Bootstrap Master Prompt (Canonical User Directive)
 
-> **Purpose**: This is the single, universal bootstrap prompt to copy and paste into any newly created empty folder opened in Antigravity IDE (or any AI coding environment). It instructs the AI agent to discover the canonical Master Brain (`C:\AI-Builder-Brain`), execute the Universal Project Factory engine, resolve the optimal architecture based on project intent, install only required dependencies, verify live execution, and certify the project as `PROJECT READY`.
+> **Purpose**: This is the single, universal bootstrap prompt to copy and paste into any newly created empty folder opened in Antigravity IDE (or any AI coding environment). It instructs the AI agent to discover the canonical Master Brain (`C:\AI-Builder-Brain`), execute the Universal Project Factory engine, resolve the development environment based on project intent, install only required dependencies, verify live execution, and certify the project as `ENVIRONMENT READY`.
+
+---
+
+## 🔒 Canonical Core Invariant
+
+```
+PROJECT FACTORY = ENVIRONMENT INITIALIZATION ONLY.
+```
+
+- **Project Factory never generates actual products, websites, SaaS dashboards, calculators, font tools, AdSense units, or business logic.**
+- `--intent` specifies **PROJECT CLASS / ENVIRONMENT REQUIREMENTS** (not product build instructions).
+- **Two Separate Lifecycle Phases**:
+  1. **PHASE A — PROJECT FACTORY**: Empty Folder -> Complete Development Environment -> `ENVIRONMENT READY : CERTIFIED` -> **STOP**.
+  2. **PHASE B — PRODUCT DEVELOPMENT**: Starts ONLY when the user gives a separate prompt: *"Now build my actual product: ______"*.
 
 ---
 
@@ -11,9 +25,18 @@ Copy the entire block below and paste it into the AI Agent chat in your new empt
 ```markdown
 ### SYSTEM DIRECTIVE: Universal Autonomous Project Bootstrap via AI-Builder-Brain
 
-You are an elite autonomous software engineering agent tasked with bootstrapping a brand new, production-ready project in this current directory using our central **AI-Builder-Brain** Universal Project Factory & Operating System.
+You are an elite autonomous software engineering agent tasked with bootstrapping a brand new development environment in this current directory using our central **AI-Builder-Brain** Universal Project Factory & Operating System.
 
 Follow this strict, non-negotiable execution sequence from start to finish:
+
+---
+
+### CRITICAL BOUNDARY RULE: ENVIRONMENT INITIALIZATION ONLY
+Your task in this bootstrap phase is STRICTLY to establish the DEVELOPMENT ENVIRONMENT, BRAIN OS, AND VERIFICATION INFRASTRUCTURE.
+- Do NOT build the actual product, website, SaaS, features, or business logic.
+- Do NOT create product pages, calculators, font finders, or AdSense components.
+- If `--intent` mentions a product (e.g., "font finder"), use it ONLY to determine the project class (e.g. SEO/AdSense micro website) and record it as context for Phase B.
+- Your goal is strictly: `ENVIRONMENT READY : CERTIFIED`.
 
 ---
 
@@ -31,11 +54,11 @@ You can either run the native factory bootstrap command:
 ```bash
 node C:\AI-Builder-Brain\04_WORKFLOWS\factory-engine\bootstrap.mjs --target .
 ```
-*(Optionally append `--type <type>` or `--intent "<description>"` if specific archetypes like `seo-adsense-micro-website`, `ai-saas`, `fullstack-web-app`, `api-backend-service`, etc. are desired).*
+*(Optionally append `--type <type>` or `--intent "<description>"` to specify environment archetype like `seo-adsense-micro-website`, `ai-saas`, `fullstack-web-app`, `api-backend-service`, etc.).*
 
 OR execute the canonical steps natively:
-1. **Detect Project Intent & Profile**:
-   - Analyze requirements: determine whether the project is an SEO Micro Website, Single-Page Tool, Full-stack Web App, AI SaaS, API Service, Automation System, or Custom/Adaptive.
+1. **Detect Project Intent & Environment Profile**:
+   - Analyze requirements: determine whether the project environment is an SEO Micro Website, Single-Page Tool, Full-stack Web App, AI SaaS, API Service, Automation System, or Custom/Adaptive.
    - Select architecture, styling, and runtimes accordingly.
 2. **Environment Pre-flight**:
    - Verify Node.js (>= 18.0.0), npm, and Git.
@@ -46,17 +69,17 @@ OR execute the canonical steps natively:
 4. **Scaffold Golden Blueprint & Generate All 11 Project Brain OS Files**:
    - Instantiate matching blueprint from Master Brain (`astro-tailwind-v4` or `fullstack-ai-saas`).
    - Generate all 11 canonical project-local Brain files:
-     * `PROJECT_CONTEXT.md` (Project mission, stack, boundaries)
-     * `PROJECT_RULES.md` (Non-destructive invariants, live verification rules)
+     * `PROJECT_CONTEXT.md` (Project mission, stack, boundaries, Phase A status)
+     * `PROJECT_RULES.md` (Factory Boundary Invariant, non-destructive rules)
      * `PROJECT_KNOWLEDGE.md` (Selectively resolved patterns from Master Brain)
      * `PROJECT_SKILLS.md` (Selectively resolved skills & MCPs)
-     * `PROJECT_STATE.json` (Machine-readable state, capabilities, milestones)
+     * `PROJECT_STATE.json` (Phase A schema, capabilities, milestones)
      * `PROJECT_LEARNING.md` (Forensic incident & learning register)
-     * `PROJECT_DECISIONS.md` (Architecture Decision Records ADR-001, ADR-002)
-     * `PROJECT_ARCHITECTURE.md` (Directory topology, component layout)
-     * `PROJECT_REQUIREMENTS.md` (Functional, quality, and acceptance criteria)
+     * `PROJECT_DECISIONS.md` (Architecture Decision Records ADR-001, ADR-002, ADR-003)
+     * `PROJECT_ARCHITECTURE.md` (Directory topology, environment layer)
+     * `PROJECT_REQUIREMENTS.md` (Environment criteria satisfied; product criteria pending Phase B)
      * `PROJECT_ENVIRONMENT.md` (Tool versions and environment boundary)
-     * `PROJECT_READY_CERTIFICATE.md` (Certified readiness proof)
+     * `ENVIRONMENT_READY_CERTIFICATE.md` (Certified environment readiness proof)
 
 ---
 
@@ -65,7 +88,7 @@ Run:
 ```bash
 npm install
 ```
-Verify zero fatal installation errors. Only install what the project actually needs!
+Verify zero fatal installation errors. Only install what the project environment actually needs!
 
 ---
 
@@ -77,7 +100,7 @@ Verify zero fatal installation errors. Only install what the project actually ne
 2. Stage and commit initial scaffolding:
    ```bash
    git add .
-   git commit -m "feat: initial bootstrap from canonical AI-Builder-Brain"
+   git commit -m "feat: initial environment bootstrap from canonical AI-Builder-Brain"
    ```
 3. If `gh auth status` indicates logged-in status and user authorizes remote repo creation:
    - Run `gh repo create <project-name> --source=. --remote=origin --private --push`
@@ -85,33 +108,51 @@ Verify zero fatal installation errors. Only install what the project actually ne
 
 ---
 
-### STEP 5: Multi-Layer Live Verification
+### STEP 5: Multi-Layer Live Verification & Boundary Audit
 Execute real verification commands:
 1. **Build Verification**:
    - Run `npm run build`
    - Verify exit code is 0 and production bundle (`dist/index.html`) exists.
 2. **Server Live Probe**:
    - Boot dev/API server on an isolated background port, probe with HTTP GET for status 200, and terminate cleanly.
-3. **Quality Verification**:
-   - For Web/SEO: Verify metadata, canonical link, and compiled CSS tokens.
-   - For AI/API: Verify `/api/health` returns HTTP 200 and JSON contract.
+3. **Product Generation Boundary Audit**:
+   - Verify that 0 product components exist in `src/components/`.
+   - Verify that 0 product feature pages exist in `src/pages/`.
+   - Verify that 0 business logic was implemented.
+   - If any product code is detected: FAIL with `FACTORY BOUNDARY VIOLATION`.
 
 ---
 
-### STEP 6: Generate Ready Certification & Report
-1. Write `PROJECT_READY_CERTIFICATE.md` documenting:
+### STEP 6: Generate Environment Ready Certification & Report
+1. Finalize `ENVIRONMENT_READY_CERTIFICATE.md` documenting:
    - Project Name, Profile, Timestamp, Environment versions
-   - Multi-Pillar verification status table
-   - Final status: `PROJECT STATUS: READY : CERTIFIED`
-2. Update `PROJECT_STATE.json` to `"status": "READY"`.
+   - 10-Pillar verification status table (including Product Boundary: PASS)
+   - Final status: `ENVIRONMENT STATUS: ENVIRONMENT READY : CERTIFIED`
+2. Update `PROJECT_STATE.json` to `"status": "ENVIRONMENT_READY"`, `"productStatus": "NOT_STARTED"`.
 3. Present a clear, concise summary table to the user with verified artifacts.
+4. **STOP EXECUTION.** Do NOT proceed to build the product. Wait for the user's Phase B prompt.
 ```
 
 ---
 
-## Autonomous Execution Rules for Agents
+## Canonical User Experience Flow
 
-- **No Premature Stack Assumptions**: Determine project class and requirements first.
-- **Minimal Required Footprint**: Only install packages strictly needed for the profile.
-- **Evidence Over Confidence**: Never declare success without running actual build and server verification.
-- **Zero Master Brain Mutation**: Never modify files in `C:\AI-Builder-Brain` during child project bootstrap.
+```
+NEW EMPTY FOLDER
+      ↓
+ANTIGRAVITY OPEN
+      ↓
+UNIVERSAL BOOTSTRAP PROMPT
+      ↓
+FACTORY ENGINE EXECUTES
+      ↓
+COMPLETE DEVELOPMENT ENVIRONMENT READY
+      ↓
+ENVIRONMENT READY : CERTIFIED
+      ↓
+STOP.
+      ↓
+(User enters subsequent prompt: "Now build my actual product: ______")
+      ↓
+PHASE B: PRODUCT DEVELOPMENT STARTS
+```

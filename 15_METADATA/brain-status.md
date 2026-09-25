@@ -35,7 +35,10 @@ Antigravity IDE is the primary working environment. The Brain itself remains too
 ## Evolution Status
 
 - Native Project Factory consolidated directly inside AI-Builder-Brain; no separate repository dependency.
-- Golden Blueprint for Astro 5 + Tailwind CSS v4 + Vercel active in `04_WORKFLOWS/blueprints/astro-tailwind-v4/`.
+- Golden Environment Starters for Astro 5 + Tailwind CSS v4 and Full-stack AI SaaS active in `04_WORKFLOWS/blueprints/`.
+- Canonical Factory Boundary Rule Enforced: Project Factory strictly initializes development environment only; zero product components, pages, or business logic.
+- Two-Phase Separation: Phase A (Environment Ready : Certified) vs Phase B (Product Ready : Certified).
+- Mandatory Pillar 10 (Product Generation Boundary Audit) active in live verification suite.
 - Zero-copy Brain Bridge protocol enforced for all child projects.
-- 7-pillar live verification suite active.
 - Master project bootstrap prompt active in `10_PROMPTS/project-bootstrap-master-prompt.md`.
+

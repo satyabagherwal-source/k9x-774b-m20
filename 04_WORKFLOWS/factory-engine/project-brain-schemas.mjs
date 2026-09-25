@@ -4,6 +4,11 @@
  * Location: C:\AI-Builder-Brain\04_WORKFLOWS\factory-engine\project-brain-schemas.mjs
  * Purpose: Generates the 11 mandatory project-local brain files and directory
  *          structures for any newly bootstrapped project.
+ * 
+ * CORE INVARIANT:
+ * PROJECT FACTORY = ENVIRONMENT INITIALIZATION ONLY.
+ * Project Factory never generates product components, business logic, or features.
+ * Bootstrap produces ENVIRONMENT READY : CERTIFIED. Product development is Phase B.
  */
 
 import fs from 'fs';
@@ -14,6 +19,7 @@ export function generateProjectBrainFiles(projectDir, projectName, profile, cont
   const now = new Date().toISOString();
   const brainPath = context.masterBrainPath || 'C:\\AI-Builder-Brain';
   const env = context.env || {};
+  const intentText = context.intent || profile.intent || '';
 
   const files = {};
 
@@ -24,12 +30,22 @@ export function generateProjectBrainFiles(projectDir, projectName, profile, cont
 - **Project Class**: ${profile.name} (\`${profile.id}\`)
 - **Category**: ${profile.category}
 - **Created At**: ${now}
+- **Lifecycle Phase**: \`PHASE A: ENVIRONMENT INITIALIZATION (CERTIFIED)\`
+- **Product Development**: \`PHASE B: PENDING USER PRODUCT SPECIFICATION\`
 - **Master Brain Link**: \`${brainPath}\` (Zero-Copy Read-Only Bridge)
 
 ---
 
-## 🎯 Project Mission & Value Proposition
+## 🎯 Project Mission & Environment Scope
 ${profile.description}
+
+> [!IMPORTANT]
+> **CANONICAL BOUNDARY INVARIANT**:
+> Project Factory initialized the **Development Environment Only**.
+> Zero product components, zero product pages, zero business logic, and zero user-facing application features were generated during bootstrap.
+> Product development begins strictly in **Phase B** upon receiving user product instructions.
+
+${intentText ? `## 📝 Target Product Intent (Context for Phase B)\n*The user provided the following product intent, recorded here as architectural context for Phase B product implementation:*\n> "${intentText}"\n` : ''}
 
 ## 🏗️ Architecture & Technology Boundaries
 - **Architecture**: \`${profile.architecture}\`
@@ -50,7 +66,13 @@ Master Brain knowledge is selectively queried and NEVER duplicated into this rep
   // 2. PROJECT_RULES.md
   files['PROJECT_RULES.md'] = `# 📜 Project Operating Rules & Invariants — ${projectName}
 
-Every autonomous agent working in this project MUST strictly adhere to these 7 canonical rules:
+Every autonomous agent working in this project MUST strictly adhere to these canonical rules:
+
+### 0. Factory Boundary Invariant (Canonical)
+- **Project Factory = Environment Initialization Only**.
+- Factory NEVER creates actual product websites, features, calculators, font tools, AdSense units, or business logic.
+- Phase A establishes the environment -> \`ENVIRONMENT READY : CERTIFIED\` -> STOP.
+- Phase B implements the product upon explicit user product prompt -> \`PRODUCT READY : CERTIFIED\`.
 
 ### 1. The Non-Destructive Invariant
 When resolving issues, fixing bugs, or modifying styles:
@@ -93,6 +115,7 @@ Every bug must follow:
 ${knowledgeRules.length > 0 ? knowledgeRules : '- Standard baseline patterns active.'}
 
 ## 🔄 Verified Reusable Lessons Propagated from Master Brain
+- **Rule 0**: Factory Boundary Invariant: Environment Initialization Only.
 - **Rule 1**: Fresh-state query before persistent state mutation.
 - **Rule 5**: Defensive boundary deserialization & exception isolation.
 - **Rule 12**: Cross-platform line-ending invariant handling.
@@ -122,7 +145,7 @@ ${Object.keys(profile.applicableMCPs || {}).length > 0 ? Object.entries(profile.
 ## 💡 How an Agent Uses These Skills
 1. Check \`PROJECT_SKILLS.md\` for relevant playbooks.
 2. Read the referenced skill file from Master Brain in read-only mode.
-3. Apply patterns surgically to the child project.
+3. Apply patterns surgically to the child project during Phase B (Product Development).
 `;
 
   // 5. PROJECT_STATE.json
@@ -130,23 +153,33 @@ ${Object.keys(profile.applicableMCPs || {}).length > 0 ? Object.entries(profile.
     projectId: projectName,
     projectName,
     projectClass: profile.id,
-    status: 'READY',
-    stage: 'BOOTSTRAPPED',
+    phase: 'PHASE_A_ENVIRONMENT_READY',
+    status: 'ENVIRONMENT_READY',
+    overallStatus: 'ENVIRONMENT READY : CERTIFIED',
+    environmentStatus: env.status || 'READY',
+    productStatus: 'NOT_STARTED',
+    stage: 'ENVIRONMENT_INITIALIZED',
     createdAt: now,
     updatedAt: now,
     masterBrainPath: brainPath,
     brainBridgeConnected: true,
-    environmentStatus: env.status || 'READY',
     gitStatus: 'INITIALIZED',
+    productGenerationBoundary: {
+      verified: true,
+      productComponentsCount: 0,
+      productPagesCount: 0,
+      businessLogicCount: 0
+    },
     milestones: [
       { id: 'm1_discovery', title: 'AI-Builder-Brain Discovery & Verification', status: 'COMPLETED', completedAt: now },
-      { id: 'm2_profile_resolution', title: `Project Profile Resolution (${profile.id})`, status: 'COMPLETED', completedAt: now },
+      { id: 'm2_intent_resolution', title: `Project Intent & Environment Requirements Resolution (${profile.id})`, status: 'COMPLETED', completedAt: now },
       { id: 'm3_project_brain', title: 'Project-Local Brain & OS Generation', status: 'COMPLETED', completedAt: now },
-      { id: 'm4_scaffold', title: 'Project Scaffolding & Blueprint Instantiation', status: 'COMPLETED', completedAt: now },
+      { id: 'm4_env_scaffold', title: 'Development Environment & Architecture Starter Scaffolding', status: 'COMPLETED', completedAt: now },
       { id: 'm5_dependencies', title: 'Targeted Dependency Installation', status: 'COMPLETED', completedAt: now },
       { id: 'm6_git_init', title: 'Independent Git Lifecycle & Initial Commit', status: 'COMPLETED', completedAt: now },
-      { id: 'm7_live_verification', title: 'Multi-Pillar Live Verification', status: 'COMPLETED', completedAt: now },
-      { id: 'm8_ready_certification', title: 'PROJECT READY Certification', status: 'COMPLETED', completedAt: now }
+      { id: 'm7_live_verification', title: 'Universal Multi-Pillar Live Verification', status: 'COMPLETED', completedAt: now },
+      { id: 'm8_boundary_verification', title: 'Product Generation Boundary Audit (0 Product Code)', status: 'COMPLETED', completedAt: now },
+      { id: 'm9_env_certification', title: 'ENVIRONMENT READY Certification', status: 'COMPLETED', completedAt: now }
     ],
     capabilities: {
       seoTooling: profile.seoTooling,
@@ -170,11 +203,12 @@ This document records forensic learning, resolved bugs, and candidate lessons ha
 
 | Incident ID | Date | Summary | Root Cause | Fix Applied | Status | Reusable? |
 |---|---|---|---|---|---|---|
-| *None* | *Initial* | *Fresh Project Bootstrap* | *N/A* | *Initial Setup Verified* | *RESOLVED* | *N/A* |
+| *None* | *Initial* | *Fresh Project Bootstrap* | *N/A* | *Initial Environment Setup Verified* | *RESOLVED* | *N/A* |
 
 ---
 
 ## 🎓 Project-Specific Lessons
+- **Factory Boundary Invariant**: Verified development environment initialization only. Zero product code created during bootstrap.
 - **Bootstrap Invariant**: Verified clean build and live runtime execution at inception.
 - **Isolation Invariant**: Master Brain remains external and read-only.
 
@@ -211,6 +245,18 @@ When a defect is resolved and proven reusable across projects:
   - Child project repo remains lightweight and independent.
   - Master Brain updates propagate immediately without git subtree or submodule complexity.
   - Master Brain boundary remains strictly read-only.
+
+---
+
+## ADR-003: Strict Environment / Product Boundary Separation
+- **Status**: ACCEPTED
+- **Date**: ${now}
+- **Context**: Enforcing canonical boundary between Factory Bootstrap (Phase A) and Product Development (Phase B).
+- **Decision**: Project Factory strictly initializes development environment, runtime, Brain OS, and testing infrastructure. Factory NEVER creates product features, business logic, or user pages during bootstrap.
+- **Consequences**:
+  - Phase A terminates at \`ENVIRONMENT READY : CERTIFIED\`.
+  - Product development occurs only in Phase B upon explicit user product prompt.
+  - Verification includes mandatory \`Product Generation Boundary\` audit.
 `;
 
   // 8. PROJECT_ARCHITECTURE.md
@@ -219,40 +265,50 @@ When a defect is resolved and proven reusable across projects:
 - **Architecture Pattern**: \`${profile.architecture}\`
 - **Build Target**: \`${profile.buildSystem}\`
 - **Runtime**: \`${profile.runtime}\`
+- **Current Phase**: \`PHASE A: ENVIRONMENT INITIALIZED\`
 
 ---
 
 ## 🗂️ System Directory Topology
 \`\`\`
 ${projectName}/
-├── .project-brain/              # Project-local Brain OS (Bridge, Incidents, Queue)
-│   ├── brain-bridge.json        # Zero-copy Master Brain Link
-│   ├── incidents/               # Verified Incident Logs
-│   ├── lessons/                 # Project Lessons
-│   └── promotion-queue/         # Candidates for Master Brain
-├── src/                         # Application Source Code
-├── scripts/                     # Operational & Verification Scripts
-│   ├── agent-boot.mjs           # Canonical 15-step Agent Boot Engine
-│   └── verify-build.mjs         # Build Verification Probe
-├── PROJECT_CONTEXT.md           # High-level context & boundaries
-├── PROJECT_RULES.md             # Invariants & operating rules
-├── PROJECT_KNOWLEDGE.md         # Resolved patterns & knowledge
-├── PROJECT_SKILLS.md            # Resolved skills & MCP list
-├── PROJECT_STATE.json           # Machine-readable state & milestones
-├── PROJECT_LEARNING.md          # Forensic incident & learning log
-├── PROJECT_DECISIONS.md         # Architecture Decision Records
-├── PROJECT_ARCHITECTURE.md      # This file
-├── PROJECT_REQUIREMENTS.md      # Functional & quality criteria
-├── PROJECT_ENVIRONMENT.md       # Tool versions & system state
-└── PROJECT_READY_CERTIFICATE.md # Live verification proof & certification
+├── .project-brain/                 # Project-local Brain OS (Bridge, Incidents, Queue)
+│   ├── brain-bridge.json           # Zero-copy Master Brain Link
+│   ├── incidents/                  # Verified Incident Logs
+│   ├── lessons/                    # Project Lessons
+│   └── promotion-queue/            # Candidates for Master Brain
+├── src/                            # Application Source Code
+│   ├── components/                 # Phase B Product Components (.gitkeep)
+│   ├── layouts/                    # Structural Layout Shells
+│   ├── pages/                      # Application Routes / Entry Points
+│   └── styles/                     # Global Styles & Tailwind Tokens
+├── scripts/                        # Operational & Verification Scripts
+│   ├── agent-boot.mjs              # Canonical Agent Boot Engine
+│   └── verify-build.mjs            # Build Verification Probe
+├── PROJECT_CONTEXT.md              # High-level context & boundaries
+├── PROJECT_RULES.md                # Invariants & operating rules
+├── PROJECT_KNOWLEDGE.md            # Resolved patterns & knowledge
+├── PROJECT_SKILLS.md               # Resolved skills & MCP list
+├── PROJECT_STATE.json              # Machine-readable state & milestones
+├── PROJECT_LEARNING.md             # Forensic incident & learning log
+├── PROJECT_DECISIONS.md            # Architecture Decision Records
+├── PROJECT_ARCHITECTURE.md         # This file
+├── PROJECT_REQUIREMENTS.md         # Environment & product specifications
+├── PROJECT_ENVIRONMENT.md          # Tool versions & system state
+└── ENVIRONMENT_READY_CERTIFICATE.md# Live environment verification proof & certificate
 \`\`\`
 
 ---
 
-## 🔄 Core Data & Execution Flows
-1. **Agent Boot Flow**: Agent runs \`node scripts/agent-boot.mjs\` to load context, verify bridge, and inspect state.
-2. **Build & Verification Flow**: Code changes trigger live build and dev-server socket probes.
-3. **Forensic Bug Correction**: Bugs are isolated, reproduced, fixed surgically, and logged into \`.project-brain/incidents/\`.
+## 🔄 Two-Phase Lifecycle Architecture
+1. **PHASE A — PROJECT FACTORY (Completed)**:
+   - Scaffolds environment, Brain OS, dependencies, styling, testing, Git, and verification.
+   - Emits \`ENVIRONMENT READY : CERTIFIED\`.
+   - Strictly ZERO product components or business logic created.
+2. **PHASE B — PRODUCT DEVELOPMENT (Awaiting User Prompt)**:
+   - User gives prompt: "Now build my actual product: ______".
+   - Agent populates requirements, designs architecture, implements components, and tests.
+   - Emits \`PRODUCT READY : CERTIFIED\`.
 `;
 
   // 9. PROJECT_REQUIREMENTS.md
@@ -263,25 +319,29 @@ ${projectName}/
 
 ---
 
-## 1. Functional Requirements
-- **Core Feature**: Provide complete functionality for \`${profile.description}\`.
-- **User Interface**: Modern, responsive, accessible interface adhering to \`${profile.styling}\`.
-- **Performance**: High performance with minimal layout shift and instant load.
-
-## 2. Non-Functional Quality Attributes
-- **SEO Readiness**: ${profile.seoTooling.enabled ? 'Complete metadata, canonical tags, sitemap, robots.txt, schema.org.' : 'Standard baseline metadata.'}
-- **Accessibility**: Standard ${profile.accessibilityTooling.standard || 'WCAG AA'} compliance.
-- **Reliability**: Zero runtime console exceptions; graceful error boundaries.
-- **Portability**: Verified on Windows, Linux, and macOS runtimes.
-
-## 3. Mandatory Acceptance Criteria for PROJECT READY
+## 1. Development Environment Requirements (PHASE A — CERTIFIED)
 - [x] Master Brain Zero-Copy Bridge established and verified.
 - [x] Project-Local Brain OS files created and non-empty.
+- [x] Runtime & framework configurations established.
+- [x] Styling engine configured with design tokens.
 - [x] Dependencies installed with exit code 0.
-- [x] Static / Production build exits code 0.
+- [x] Production build exits code 0.
 - [x] Runtime server responds with HTTP 200 OK on isolated port.
 - [x] Independent Git repository initialized with clean working tree.
-- [x] Ready Certificate generated with all pillars passed.
+- [x] **Product Generation Boundary Verified**: 0 product components, 0 business logic generated.
+- [x] Environment Ready Certificate generated.
+
+---
+
+## 2. Product Requirements (PHASE B — PENDING USER PRODUCT PROMPT)
+> [!NOTE]
+> *Product-specific requirements are NOT implemented during Factory Bootstrap.*
+> *This section will be populated in Phase B when the user initiates product development.*
+
+- **Target Product Concept**: ${intentText ? `"${intentText}"` : 'To be provided by user'}
+- **Functional Requirements**: *Pending user product specification in Phase B.*
+- **UI Components**: *Pending user product specification in Phase B.*
+- **Business Logic**: *Pending user product specification in Phase B.*
 `;
 
   // 10. PROJECT_ENVIRONMENT.md
@@ -312,8 +372,8 @@ ${projectName}/
 - Local Project Root: \`${root}\`
 `;
 
-  // 11. PROJECT_READY_CERTIFICATE.md (initial template)
-  files['PROJECT_READY_CERTIFICATE.md'] = `# 📜 Project Ready Certificate — ${projectName}
+  // 11. ENVIRONMENT_READY_CERTIFICATE.md (initial template)
+  files['ENVIRONMENT_READY_CERTIFICATE.md'] = `# 📜 Environment Ready Certificate — ${projectName}
 
 **Status**: **PENDING_INITIAL_VERIFICATION**  
 **Timestamp**: ${now}  

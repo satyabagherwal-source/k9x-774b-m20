@@ -28,7 +28,7 @@ export function updateMilestone(projectDir, milestoneId, status) {
   const state = loadProjectState(projectDir);
   if (!state) return false;
 
-  const ms = state.milestones.find(m => m.id === milestoneId);
+  const ms = state.milestones?.find(m => m.id === milestoneId);
   if (ms) {
     ms.status = status;
     if (status === 'COMPLETED') {
@@ -40,11 +40,12 @@ export function updateMilestone(projectDir, milestoneId, status) {
   return false;
 }
 
-export function generateReadyCertificate(projectDir, verificationReport) {
+export function generateEnvironmentReadyCertificate(projectDir, verificationReport) {
   const root = path.resolve(projectDir);
-  const certPath = path.join(root, 'PROJECT_READY_CERTIFICATE.md');
+  const certPath = path.join(root, 'ENVIRONMENT_READY_CERTIFICATE.md');
 
   const p = verificationReport.pillars;
+  const isCertified = verificationReport.overallStatus === 'READY';
   
   // Format dynamic pillars table
   const rows = [
@@ -56,10 +57,8 @@ export function generateReadyCertificate(projectDir, verificationReport) {
     `| **6. Runtime Server Probe** | HTTP 200 OK on isolated port | **${p.runtime?.status || 'N/A'}** | ${p.runtime?.details || p.runtime?.error || ''} |`
   ];
 
-  if (p.seoAndQuality) {
-    rows.push(`| **7. SEO & Web Design** | Title, meta, canonical, viewport | **${p.seoAndQuality?.status || 'N/A'}** | Meta tags & CSS tokens verified |`);
-  } else if (p.aiAndQuality) {
-    rows.push(`| **7. AI & API Architecture** | Server endpoints & AI client contract | **${p.aiAndQuality?.status || 'N/A'}** | AI inference contract verified |`);
+  if (p.environmentQuality) {
+    rows.push(`| **7. Environment Quality** | HTML5 shell, Tailwind tokens, API contracts | **${p.environmentQuality?.status || 'N/A'}** | Clean environment baseline verified |`);
   }
 
   if (p.gitStatus) {
@@ -70,11 +69,18 @@ export function generateReadyCertificate(projectDir, verificationReport) {
     rows.push(`| **9. MCP Architecture** | Canonical MCP servers health probe | **${p.mcpHealth?.status || 'N/A'}** | Configured MCPs verified |`);
   }
 
-  const content = `# 📜 Project Ready Certificate — ${verificationReport.projectName}
+  // Canonical Pillar 10: Product Generation Boundary
+  rows.push(`| **10. Product Boundary** | ZERO product components, pages, or business logic | **${p.productGenerationBoundary?.status || 'N/A'}** | ${p.productGenerationBoundary?.details || 'Strict environment boundary verified'} |`);
 
-**Certification Status**: **${verificationReport.overallStatus === 'READY' ? 'CERTIFIED READY' : verificationReport.overallStatus}**  
+  const certStatusText = isCertified ? 'ENVIRONMENT READY : CERTIFIED' : verificationReport.overallStatus;
+
+  const content = `# 📜 Environment Ready Certificate — ${verificationReport.projectName}
+
+**Certification Status**: **${certStatusText}**  
 **Project Profile**: \`${verificationReport.profileId}\`  
 **Generated At**: ${verificationReport.timestamp}  
+**Lifecycle Phase**: \`PHASE A (DEVELOPMENT ENVIRONMENT INITIALIZATION)\`  
+**Product Development Phase**: \`PHASE B (NOT STARTED — AWAITING USER PRODUCT PROMPT)\`  
 **Environment**: Node ${process.version} | Platform: ${process.platform} (${process.arch})  
 
 ---
@@ -95,24 +101,31 @@ ${verificationReport.warnings.length > 0 ? verificationReport.warnings.map(w => 
 
 ---
 
-## 🔒 Certification Invariants
-1. **Zero-Copy Master Brain Invariant**: Master Brain was accessed strictly in read-only mode with zero file duplication.
-2. **Deterministic Live Verification**: Production bundle was built and verified via live execution.
-3. **Runtime Responsiveness**: Server was launched and probed over HTTP for real runtime responsiveness.
-4. **Git Isolation**: Master Brain repository and child project repository are completely independent.
-5. **Continuous Quality Gate**: Any future defect must follow the Bug Correction Lifecycle and Regression Protocols.
+## 🔒 Canonical Certification Invariants
+1. **Factory Boundary Invariant**: Project Factory strictly initializes development environment only. Zero product components, zero user-facing pages, and zero business logic were created.
+2. **Two-Phase Separation Invariant**: Phase A produces \`ENVIRONMENT READY : CERTIFIED\`. Product development strictly requires a separate Phase B prompt from the user.
+3. **Zero-Copy Master Brain Invariant**: Master Brain was accessed strictly in read-only mode with zero file duplication.
+4. **Deterministic Live Verification**: Production bundle was built and verified via live execution.
+5. **Runtime Responsiveness**: Server was launched and probed over HTTP for real runtime responsiveness.
+6. **Git Isolation**: Master Brain repository and child project repository are completely independent.
 
-**FINAL STATUS**: \`PROJECT STATUS: ${verificationReport.overallStatus === 'READY' ? 'READY : CERTIFIED' : verificationReport.overallStatus}\`
+**FINAL STATUS**: \`ENVIRONMENT STATUS: ${certStatusText}\`
 `;
 
   fs.writeFileSync(certPath, content, 'utf-8');
 
   // Synchronize state file
   updateProjectState(projectDir, {
-    status: verificationReport.overallStatus,
-    certifiedAt: verificationReport.timestamp,
+    phase: 'PHASE_A_ENVIRONMENT_READY',
+    status: isCertified ? 'ENVIRONMENT_READY' : verificationReport.overallStatus,
+    overallStatus: certStatusText,
+    productStatus: 'NOT_STARTED',
+    environmentCertifiedAt: verificationReport.timestamp,
     verificationPillars: verificationReport.pillars
   });
 
   return certPath;
 }
+
+// Alias for backward compatibility
+export const generateReadyCertificate = generateEnvironmentReadyCertificate;

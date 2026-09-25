@@ -1,57 +1,48 @@
-# Universal Project Ready Multi-Pillar Certification Protocol
+# Universal Environment & Product Ready Multi-Pillar Certification Protocol
 
 > **Canonical reference**: `AI-Builder-Brain/08_VERIFICATION/project-ready-certification-protocol.md`  
-> **Purpose**: Mandatory verification gatekeeper that evaluates every newly bootstrapped child project across dynamic live pillars before certifying it as READY for product development.
+> **Purpose**: Mandatory verification gatekeeper that evaluates child projects across dynamic live pillars. Enforces strict boundary between Phase A (Environment Ready) and Phase B (Product Ready).
 
 ---
 
-## 1. Overview & Operational Mandate
+## 🔒 Two-Phase Certification Separation
 
-A project is never declared ready based merely on files existing or commands returning without visible crash text. It must be certified through active execution across the **Universal Multi-Pillar Verification Suite**:
+1. **PHASE A: ENVIRONMENT READY : CERTIFIED** (`ENVIRONMENT_READY_CERTIFICATE.md`)
+   - Issued by **Project Factory** upon initial bootstrap.
+   - Certifies that runtime, frameworks, styling, Brain OS, testing infrastructure, and Git are fully verified.
+   - **MANDATORY INVARIANT**: Zero product components, zero user-facing pages, zero business logic.
+   - Verified via **Pillar 10: Product Generation Boundary**.
 
-```
-[ Pillar 1: Brain Bridge Link & Zero-Copy Boundary ]
-                       ↓
-[ Pillar 2: Environment Toolchain Health ]
-                       ↓
-[ Pillar 3: Project-Local Brain OS (All 11 Files) ]
-                       ↓
-[ Pillar 4: Architecture & Configuration Integrity ]
-                       ↓
-[ Pillar 5: Production Build Compilation (Exit 0) ]
-                       ↓
-[ Pillar 6: Live Server Socket Probe (HTTP 200 OK) ]
-                       ↓
-[ Pillar 7: Quality Verification (SEO or AI/API Health) ]
-                       ↓
-[ Pillar 8: Git & Repository Clean Working Tree ]
-                       ↓
-[ PROJECT_READY_CERTIFICATE.md: READY : CERTIFIED ]
-```
+2. **PHASE B: PRODUCT READY : CERTIFIED** (`PRODUCT_READY_CERTIFICATE.md`)
+   - Issued only after user explicitly requests feature/product development.
+   - Certifies that requirements, components, business logic, UX, and domain features pass all functional tests and regression gates.
 
 ---
 
-## 2. Dynamic Pillars Audit Table
+## 1. Dynamic Pillars Audit Table (Phase A — Environment)
 
 | Pillar | Verification Gate | Pass Criteria |
 |---|---|---|
 | **1. Brain Bridge** | `.project-brain/brain-bridge.json` | Master Brain reachable, read-only enforced, selective indexing |
 | **2. System Environment** | Node.js, npm, Git, tools | Required tools present, zero fatal missing dependencies |
-| **3. Project Governance** | All 11 Project Brain OS files | All 11 files present and non-empty, plus .project-brain dirs |
+| **3. Project Governance** | All 11 Project Brain OS files | All 11 files present and non-empty, plus `.project-brain` subdirs |
 | **4. Architecture & Config** | Framework config + CSS-first styling | Valid config file (Astro/Vite) and Tailwind v4 @theme tokens |
 | **5. Build Integrity** | Static production bundle | `npm run build` exits 0, `dist/index.html` generated |
 | **6. Runtime Probe** | Dev / API server on isolated port | HTTP 200 OK within 15 seconds, clean shutdown |
-| **7. Quality & Contracts** | Profile-specific quality checks | Web/SEO: Meta & canonical tags; AI: Health API endpoint |
+| **7. Environment Quality** | Baseline environment contract | Web: Clean HTML5 shell & CSS; AI: Health API endpoint |
 | **8. Git Repository** | Local repository & initial commit | Repo initialized, clean tree, initial commit created |
 | **9. MCP Health** | Configured MCP servers | Verified connection or safe offline fallback active |
+| **10. Product Boundary** | ZERO product components / pages | 0 files in components (except .gitkeep), 0 extra pages, 0 business logic |
 
 ---
 
-## 3. Certification Status Levels
+## 2. Certification Status Levels
 
-- **PROJECT STATUS: READY : CERTIFIED**  
-  All critical gates pass cleanly. Ready for immediate feature development.
-- **PROJECT STATUS: PARTIAL**  
+- **ENVIRONMENT STATUS: ENVIRONMENT READY : CERTIFIED**  
+  All critical gates pass cleanly, including 0 product code. Development environment is ready for Phase B product development.
+- **ENVIRONMENT STATUS: PARTIAL**  
   Core build and runtime succeed; non-blocking auxiliary items (e.g. GitHub auth or offline Master Brain fallback) noted.
-- **PROJECT STATUS: BLOCKED**  
-  Fatal blocker detected (missing tool, failed build, server crash). Feature development must not proceed.
+- **ENVIRONMENT STATUS: BLOCKED**  
+  Fatal blocker detected:
+  - Toolchain missing or failed build / runtime server crash.
+  - **FACTORY BOUNDARY VIOLATION**: Product code or business logic detected during environment bootstrap.
