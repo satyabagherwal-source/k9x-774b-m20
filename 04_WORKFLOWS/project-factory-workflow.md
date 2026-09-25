@@ -1,58 +1,74 @@
-# Project Factory & Native Bootstrap Workflow
+# Universal Project Factory & Operating System Workflow
 
-> Canonical reference: `AI-Builder-Brain/04_WORKFLOWS/project-factory-workflow.md`  
-> Purpose: Defines the native, self-contained project bootstrap engine inside AI-Builder-Brain. Future projects require only an empty folder and the single bootstrap prompt; no separate factory repository is required.
+> **Canonical reference**: `AI-Builder-Brain/04_WORKFLOWS/project-factory-workflow.md`  
+> **Purpose**: Defines the Universal Project Factory & Operating System inside AI-Builder-Brain. Future projects across any tech stack require only an empty folder and the single bootstrap prompt; no separate factory repository is required.
 
 ---
 
 ## 1. System Topology & Operational Flow
 
 ```
-[ Master AI-Builder-Brain ] (Canonical Intelligence, Governance, Blueprints & Engine)
-(c:\AI-Builder-Brain)
+[ Master AI-Builder-Brain ] (C:\AI-Builder-Brain)
            │
            │ (Single Bootstrap Prompt in Antigravity IDE)
            ▼
-[ Target Project Directory ] (e.g. c:\my-new-project)
+[ Target Project Directory ] (e.g. C:\my-project)
            │
+           ├─► Project Intent / Profile Detection (Astro SEO, AI SaaS, Micro Tool, API, etc.)
            ├─► Project Brain Bridge (.project-brain/brain-bridge.json) [Zero-Copy Link]
-           ├─► Scaffolding: Astro 5 + Tailwind CSS v4 (@theme) + Vercel
-           ├─► Local Operating System (PROJECT_CONTEXT.md, PROJECT_RULES.md, PROJECT_STATE.json)
+           ├─► Scaffolding: Blueprint Instantiation (Astro / React+Vite / Fullstack)
+           ├─► Project-Local Brain OS (All 11 Mandatory Governance Files)
+           │   ├── PROJECT_CONTEXT.md
+           │   ├── PROJECT_RULES.md
+           │   ├── PROJECT_KNOWLEDGE.md
+           │   ├── PROJECT_SKILLS.md
+           │   ├── PROJECT_STATE.json
+           │   ├── PROJECT_LEARNING.md
+           │   ├── PROJECT_DECISIONS.md
+           │   ├── PROJECT_ARCHITECTURE.md
+           │   ├── PROJECT_REQUIREMENTS.md
+           │   ├── PROJECT_ENVIRONMENT.md
+           │   └── PROJECT_READY_CERTIFICATE.md
            ├─► Independent Git Repository (Local Init + GitHub Remote)
-           ├─► Multi-Layer Live Verification (Build + Socket Probe)
+           ├─► Multi-Layer Live Verification (Build + Socket Probe + Quality)
            └─► PROJECT_READY_CERTIFICATE.md (Status: CERTIFIED READY)
 ```
 
 ---
 
-## 2. Native Capabilities Inside AI-Builder-Brain
+## 2. Supported Project Classes
 
-Unlike previous iterations that contemplated a separate `project-factory-setup` repository, the **AI-Builder-Brain natively houses all Project Factory capabilities**:
+- **SEO & Google AdSense Micro Websites** (`seo-adsense-micro-website`)
+- **Single-page Tool Websites** (`single-page-tool-website`)
+- **Micro Tool Websites** (`micro-tool-website`)
+- **Full-stack AI SaaS Applications** (`ai-saas`)
+- **Full-stack Web Applications** (`fullstack-web-app`)
+- **Software-as-a-Service Platforms** (`saas`)
+- **Micro-SaaS Applications** (`micro-saas`)
+- **Interactive AI Applications** (`ai-application`)
+- **Autonomous AI Agents** (`ai-agent`)
+- **API & Backend Microservices** (`api-backend-service`)
+- **Heavy Web Applications** (`heavy-web-app`)
+- **Automation & Workflow Systems** (`automation-system`)
+- **Developer Tools & CLIs** (`developer-tool`)
+- **System / OS Utilities** (`system-os-project`)
+- **Custom / Unknown Projects** (`custom-unknown`)
 
-| Dimension | Native AI-Builder-Brain Implementation |
-|---|---|
-| **Canonical Location** | `C:\AI-Builder-Brain` (independent Git repository) |
-| **Blueprints** | `04_WORKFLOWS/blueprints/astro-tailwind-v4/` (Full golden templates) |
-| **Automation Engine** | `04_WORKFLOWS/factory-engine/bootstrap.mjs` (Zero-dependency Node engine) |
-| **Bridge Specification** | `13_GOVERNANCE/brain-bridge-protocol.md` |
-| **Verification Gate** | `08_VERIFICATION/project-ready-certification-protocol.md` |
-| **Master Prompt** | `10_PROMPTS/project-bootstrap-master-prompt.md` |
+Rule: For custom/unknown projects, the factory determines requirements and architecture first; it NEVER assumes a stack.
 
 ---
 
 ## 3. End-to-End Autonomous Bootstrap Lifecycle
 
-When an agent executes the bootstrap prompt in an empty folder:
-
-1. **Discovery**: Resolves `C:\AI-Builder-Brain` and validates core folders and documents.
-2. **Environment Pre-flight**: Verifies Node.js (>= 18), npm (>= 9), Git, and GitHub CLI.
-3. **Bridge Binding**: Generates `.project-brain/brain-bridge.json` connecting child project to Master Brain in read-only mode.
-4. **Scaffolding**: Emits Astro 5, Tailwind v4 `@theme`, Vercel config, `design.md`, components, and local state files.
-5. **Dependency Installation**: Runs `npm install`.
-6. **Git Initialization**: Initializes independent local Git repository and creates initial commit.
-7. **GitHub Remote Link**: If `gh auth status` passes and authorized, creates remote repository and pushes code.
+1. **Discovery**: Resolves `C:\AI-Builder-Brain` and inspects canonical directories in read-only mode.
+2. **Intent & Profile Resolution**: Dynamically resolves tech stack, styling, runtime, MCPs, skills, and verification pillars.
+3. **Environment Pre-flight**: Verifies Node.js, npm, Git, and profile-specific tools.
+4. **Scaffolding & OS Generation**: Instantiates golden blueprint and emits all 11 Project-Local Brain files.
+5. **Bridge Binding**: Generates `.project-brain/brain-bridge.json` connecting child project to Master Brain in read-only mode.
+6. **Targeted Dependency Installation**: Installs only packages required for the resolved profile.
+7. **Git & GitHub Initialization**: Initializes independent Git repository, validates identity, creates initial commit, and connects GitHub remote if authorized.
 8. **Live Multi-Layer Verification**:
-   - Compiles static production build (`npm run build`).
-   - Probes live dev-server on isolated socket (HTTP 200).
-   - Validates OKLCH CSS tokens in `dist/`.
-9. **Ready Certification**: Emits `PROJECT_READY_CERTIFICATE.md` with status `READY`.
+   - Production bundle compilation (`npm run build`).
+   - Live runtime server socket probe (HTTP 200 OK).
+   - Profile quality verification (SEO tags / AI API contracts).
+9. **Ready Certification**: Finalizes `PROJECT_READY_CERTIFICATE.md` with status `READY : CERTIFIED`.

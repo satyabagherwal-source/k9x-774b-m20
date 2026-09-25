@@ -1,68 +1,97 @@
-# Agent Boot Protocol
+# Canonical Universal Agent Boot Protocol
 
-When an AI agent starts work with AI-Builder-Brain, it should follow this order.
+> **Reference**: `AI-Builder-Brain/00_START_HERE/AGENT_BOOT_PROTOCOL.md`  
+> **Mandate**: Mandatory 15-step execution sequence for any AI agent booting inside any project operating under AI-Builder-Brain.
 
-## 1. Establish the task
+---
 
-Identify:
-- what the user wants,
-- what output is expected,
-- what is already known,
-- what constraints exist,
-- and what must be verified.
+## The 15-Step Universal Boot Sequence
 
-Do not invent missing requirements.
+When an AI agent starts work or boots up in any workspace, it MUST execute these 15 steps:
 
-## 2. Establish the project state
+```
+[ 1. Discover AI-Builder-Brain ]
+               ↓
+[ 2. Verify Brain Bridge ]
+               ↓
+[ 3. Load Project Context ]
+               ↓
+[ 4. Load Project Rules ]
+               ↓
+[ 5. Resolve Applicable Skills ]
+               ↓
+[ 6. Resolve Applicable Knowledge ]
+               ↓
+[ 7. Resolve Applicable Workflows ]
+               ↓
+[ 8. Check Environment ]
+               ↓
+[ 9. Check Project State ]
+               ↓
+[ 10. Determine Current Task ]
+               ↓
+[ 11. Execute Smallest Safe Action ]
+               ↓
+[ 12. Live Verification ]
+               ↓
+[ 13. Capture Incident If Needed ]
+               ↓
+[ 14. Update Project State ]
+               ↓
+[ 15. Continue ]
+```
 
-Inspect the relevant project context before changing the system.
+---
 
-Do not assume that the current code or architecture matches an older description.
+### Step 1: Discover AI-Builder-Brain
+- Locate Master Brain (`C:\AI-Builder-Brain`, `AI_BUILDER_BRAIN_PATH`, or sibling).
+- Verify canonical folders (`00_START_HERE`, `01_CORE`, `04_WORKFLOWS`).
+- Enforce strict read-only boundary on Master Brain.
 
-## 3. Load relevant Brain knowledge
+### Step 2: Verify Brain Bridge
+- Inspect `.project-brain/brain-bridge.json`.
+- Verify zero-copy connection status. Fall back to local `.project-brain/` cache if offline.
 
-Use the knowledge map to identify only the material relevant to the current task.
+### Step 3: Load Project Context
+- Read `PROJECT_CONTEXT.md` to understand mission, stack boundaries, and constraints.
+- Do not invent requirements outside defined boundaries.
 
-When designing, implementing, refactoring, debugging, or reviewing software, consult the relevant portable engineering patterns in `05_KNOWLEDGE/engineering-patterns.md`.
+### Step 4: Load Project Rules
+- Read `PROJECT_RULES.md` to establish non-destructive invariants and quality rules.
 
-Do not treat the whole Brain as mandatory context; load patterns selectively based on the current task.
+### Step 5: Resolve Applicable Skills
+- Inspect `PROJECT_SKILLS.md`. Load only skills relevant to the active project class.
+- Do not load unused framework playbooks into prompt context.
 
+### Step 6: Resolve Applicable Knowledge
+- Read `PROJECT_KNOWLEDGE.md`. Consult indexed engineering patterns (Rules 1-14+) from Master Brain `05_KNOWLEDGE/engineering-patterns.md`.
 
-## 4. Separate facts from assumptions
+### Step 7: Resolve Applicable Workflows
+- Read relevant workflows in `04_WORKFLOWS/` (e.g. bug correction, git lifecycle, dynamic verification).
 
-For important claims, distinguish:
-- observed fact,
-- source-backed claim,
-- inference,
-- hypothesis,
-- and unknown.
+### Step 8: Check Environment
+- Inspect `PROJECT_ENVIRONMENT.md` or execute runtime pre-flight (`node -v`, `git status`).
 
-If something matters to correctness and is unknown, verify it.
+### Step 9: Check Project State
+- Read `PROJECT_STATE.json` to verify current project stage, completed milestones, and active issues.
 
-## 5. Plan the smallest appropriate action
+### Step 10: Determine Current Task
+- Identify user objective, expected output, existing state, and acceptance criteria.
+- Separate facts from assumptions.
 
-State what will be changed, where it belongs, and how success will be checked.
+### Step 11: Execute Smallest Safe Action
+- Apply minimal, atomic, surgical edits. Freeze domain mathematics and layout geometry.
 
-Do not make unrelated changes.
+### Step 12: Live Verification
+- Execute actual build and runtime probes (`npm run build`, socket probe).
+- Never declare completion based on generated code alone.
 
-## 6. Execute
+### Step 13: Capture Incident If Needed
+- If an unexpected error occurs, log forensic record in `.project-brain/incidents/INC-XXX.md`.
+- Follow the bug correction lifecycle.
 
-Use the project's actual tools and architecture.
+### Step 14: Update Project State
+- Update `PROJECT_STATE.json` with new milestone progress or active issues.
 
-Do not claim completion from generated code alone.
-
-## 7. Verify
-
-Check the real outcome in the environment appropriate to the task.
-
-For agent behavior, evaluation should define inputs, success criteria, and grading/verification. Real outcomes matter more than claims made in an intermediate transcript.
-
-## 8. Capture learning
-
-When something important succeeds, fails, or behaves unexpectedly, record the observation.
-
-Do not automatically turn every observation into a universal rule.
-
-## 9. Promote only after review
-
-A project lesson becomes reusable Brain knowledge only after its scope, evidence, and generality are reviewed.
+### Step 15: Continue
+- Report verified evidence and proceed to next task cleanly.

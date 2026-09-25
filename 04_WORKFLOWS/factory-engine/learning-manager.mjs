@@ -9,6 +9,9 @@ export const VERIFICATION_GATES = [
   'NEEDS_MORE_EVIDENCE'
 ];
 
+/**
+ * Captures a real project incident under .project-brain/incidents/
+ */
 export function captureIncident(projectDir, incidentData) {
   const root = path.resolve(projectDir);
   const incidentsDir = path.join(root, '.project-brain', 'incidents');
@@ -56,9 +59,28 @@ ${incidentData.verificationOutcome || 'Verified via live build and runtime test.
 `;
 
   fs.writeFileSync(filePath, content, 'utf-8');
+
+  // Update PROJECT_LEARNING.md table
+  const learningMdPath = path.join(root, 'PROJECT_LEARNING.md');
+  if (fs.existsSync(learningMdPath)) {
+    try {
+      let learningContent = fs.readFileSync(learningMdPath, 'utf-8');
+      const newRow = `| INC-${num} | ${new Date().toISOString().slice(0, 10)} | ${incidentData.title || 'Bug Fix'} | ${incidentData.rootCause?.slice(0, 40) || 'N/A'} | ${incidentData.fix?.slice(0, 40) || 'Fixed'} | RESOLVED | ${incidentData.isReusable ? 'YES' : 'NO'} |`;
+      if (learningContent.includes('| *None* |')) {
+        learningContent = learningContent.replace(/\| \*None\* \|[^\n]+\n/, `${newRow}\n`);
+      } else {
+        learningContent += `\n${newRow}\n`;
+      }
+      fs.writeFileSync(learningMdPath, learningContent, 'utf-8');
+    } catch (e) {}
+  }
+
   return { filename, filePath, num };
 }
 
+/**
+ * Prepares a candidate learning promotion proposal in .project-brain/promotion-queue/
+ */
 export function preparePromotionProposal(projectDir, candidateData) {
   const root = path.resolve(projectDir);
   const queueDir = path.join(root, '.project-brain', 'promotion-queue');
@@ -70,7 +92,6 @@ export function preparePromotionProposal(projectDir, candidateData) {
   const filename = `PROPOSAL-${num}-${slug}.md`;
   const filePath = path.join(queueDir, filename);
 
-  // Formatted strictly according to AI-Builder-Brain/14_EVOLUTION/brain-evolution-protocol.md
   const content = `# Candidate Learning Promotion Proposal
 
 - **Proposal ID**: PROPOSAL-${num}
@@ -116,4 +137,89 @@ ${candidateData.limitations || 'Conditions where this rule does not apply or cou
 
   fs.writeFileSync(filePath, content, 'utf-8');
   return { filename, filePath, num };
+}
+
+/**
+ * Promotes a verified proposal into Master Brain engineering patterns.
+ * Strictly verifies empirical evidence and rejects hypothetical claims.
+ */
+export function promoteToMasterBrain(masterBrainPath, proposalFilePath, reviewDecision = {}) {
+  if (!fs.existsSync(proposalFilePath)) {
+    return { success: false, error: 'Proposal file not found' };
+  }
+  const content = fs.readFileSync(proposalFilePath, 'utf-8');
+
+  // Verify empirical evidence exists
+  if (!content.includes('## 5. Empirical Evidence & Provenance') || content.includes('Reproducible evidence pending')) {
+    return { success: false, error: 'Rejected: No verified empirical evidence in proposal.' };
+  }
+
+  const patternsPath = path.join(masterBrainPath, '05_KNOWLEDGE', 'engineering-patterns.md');
+  if (!fs.existsSync(patternsPath)) {
+    return { success: false, error: 'Master Brain engineering-patterns.md not found.' };
+  }
+
+  // Extract rule details
+  const titleMatch = content.match(/## 1\. Candidate Pattern \/ Rule Name\s*\n+\*\*([^\*]+)\*\*/i);
+  const ruleStatementMatch = content.match(/## 2\. Rule Statement\s*\n+([^#]+)/i);
+  const whyMatch = content.match(/## 3\. Why It Matters[^\n]*\s*\n+([^#]+)/i);
+  const whenMatch = content.match(/## 4\. When To Apply\s*\n+([^#]+)/i);
+
+  const ruleTitle = titleMatch ? titleMatch[1].trim() : 'Validated Engineering Pattern';
+  const ruleStatement = ruleStatementMatch ? ruleStatementMatch[1].trim() : '';
+  const why = whyMatch ? whyMatch[1].trim() : '';
+  const when = whenMatch ? whenMatch[1].trim() : '';
+
+  // Determine next rule number
+  const currentPatterns = fs.readFileSync(patternsPath, 'utf-8');
+  const ruleMatches = [...currentPatterns.matchAll(/##\s+(\d+)\.\s+/g)];
+  const nextNum = ruleMatches.length > 0 ? Math.max(...ruleMatches.map(m => parseInt(m[1], 10))) + 1 : 15;
+
+  const newEntry = `
+---
+
+## ${nextNum}. ${ruleTitle}
+
+**RULE**:
+${ruleStatement}
+
+**WHY**:
+${why}
+
+**WHEN TO APPLY**:
+${when}
+`;
+
+  fs.appendFileSync(patternsPath, newEntry, 'utf-8');
+
+  return {
+    success: true,
+    ruleNumber: nextNum,
+    ruleTitle,
+    targetFile: patternsPath
+  };
+}
+
+/**
+ * Resolves verified reusable learnings from Master Brain for newly bootstrapped child projects.
+ */
+export function resolveReusableLearnings(masterBrainPath, projectProfile) {
+  const patternsFile = path.join(masterBrainPath, '05_KNOWLEDGE', 'engineering-patterns.md');
+  if (!fs.existsSync(patternsFile)) return [];
+
+  const content = fs.readFileSync(patternsFile, 'utf-8');
+  const sections = content.split(/^##\s+/m);
+
+  const reusable = [];
+  for (const sec of sections) {
+    if (!sec.trim() || sec.startsWith('Engineering Patterns')) continue;
+    const lines = sec.trim().split('\n');
+    const header = lines[0].trim();
+    reusable.push({
+      header,
+      summary: lines.find(l => l.startsWith('**RULE**:') || l.startsWith('When') || l.startsWith('In')) || header
+    });
+  }
+
+  return reusable;
 }

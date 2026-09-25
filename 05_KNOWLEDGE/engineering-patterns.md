@@ -184,3 +184,16 @@ Ensures that any new feature or text added in the default locale is immediately 
 **WHEN TO APPLY**:
 Websites supporting 10+ locales, programmatic SEO platforms, global tools, and international content applications.
 
+
+---
+
+## 15. Strict Canonical Trailing-Slash Parity in SSG Edge Routing
+
+**RULE**:
+In static site generators, edge routers, canonical tags, and internal links MUST share an identical trailing-slash policy to prevent 301 redirection chains.
+
+**WHY**:
+Prevents SEO crawl budget waste and Google Search Console indexing drop-offs.
+
+**WHEN TO APPLY**:
+Any SSG deployment on Cloudflare, Vercel, or Netlify.

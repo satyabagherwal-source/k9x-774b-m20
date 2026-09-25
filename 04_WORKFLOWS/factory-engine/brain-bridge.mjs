@@ -113,30 +113,46 @@ export function queryMasterKnowledge(brainPath, patternNumberOrKeyword) {
   };
 }
 
-export function initializeProjectBrainBridge(projectRoot, masterBrainPath, projectName) {
+export function initializeProjectBrainBridge(projectRoot, masterBrainPath, projectName, profile = null) {
   const projectBrainDir = path.join(projectRoot, '.project-brain');
   fs.mkdirSync(path.join(projectBrainDir, 'incidents'), { recursive: true });
   fs.mkdirSync(path.join(projectBrainDir, 'lessons'), { recursive: true });
   fs.mkdirSync(path.join(projectBrainDir, 'promotion-queue'), { recursive: true });
 
-  const bridgeConfig = {
-    bridgeVersion: '1.0.0',
-    projectName,
-    createdAt: new Date().toISOString(),
-    masterBrainPath,
-    connected: Boolean(masterBrainPath && fs.existsSync(masterBrainPath)),
-    zeroCopyEnforced: true,
-    indexedKnowledge: [
+  let indexed = [
+    '00_START_HERE/AGENT_BOOT_PROTOCOL.md',
+    '01_CORE/operating-rules.md',
+    '05_KNOWLEDGE/engineering-patterns.md'
+  ];
+
+  if (profile && profile.requiredSkills) {
+    indexed = Array.from(new Set([...indexed, ...profile.requiredSkills, ...(profile.requiredWorkflows || [])]));
+  } else {
+    indexed = [
       '05_KNOWLEDGE/engineering-patterns.md',
       '03_SKILLS/astro-adsense-mastery.md',
       '03_SKILLS/multilingual-seo-54-locales.md',
       '03_SKILLS/agent-error-prevention-protocol.md',
       '01_CORE/operating-rules.md',
       '00_START_HERE/AGENT_BOOT_PROTOCOL.md'
-    ],
+    ];
+  }
+
+  const bridgeConfig = {
+    bridgeVersion: '2.0.0',
+    projectName,
+    projectClass: profile?.id || 'seo-adsense-micro-website',
+    createdAt: new Date().toISOString(),
+    masterBrainPath,
+    connected: Boolean(masterBrainPath && fs.existsSync(masterBrainPath)),
+    zeroCopyEnforced: true,
+    readOnlyEnforced: true,
+    indexedKnowledge: indexed,
+    applicableMCPs: Object.keys(profile?.applicableMCPs || {}),
     learningPromotionWorkflow: {
-      protocol: 'protocols/EVIDENCE_PROMOTION_PROTOCOL.md',
+      protocol: '14_EVOLUTION/brain-evolution-protocol.md',
       stagingDirectory: '.project-brain/promotion-queue',
+      targetMasterBrain: '11_INBOX',
       reviewRequired: true
     }
   };

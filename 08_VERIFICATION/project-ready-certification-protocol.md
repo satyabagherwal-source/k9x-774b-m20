@@ -1,63 +1,57 @@
-# Project Ready 7-Pillar Certification Protocol
+# Universal Project Ready Multi-Pillar Certification Protocol
 
-> Canonical reference: `AI-Builder-Brain/08_VERIFICATION/project-ready-certification-protocol.md`  
-> Purpose: Mandatory verification gatekeeper that evaluates every newly bootstrapped child project across 7 live pillars before certifying it as READY for product development.
+> **Canonical reference**: `AI-Builder-Brain/08_VERIFICATION/project-ready-certification-protocol.md`  
+> **Purpose**: Mandatory verification gatekeeper that evaluates every newly bootstrapped child project across dynamic live pillars before certifying it as READY for product development.
 
 ---
 
 ## 1. Overview & Operational Mandate
 
-A project is never declared ready based merely on files existing or commands returning without visible crash text. It must be certified through active execution across the **7 Mandatory Pillars**.
+A project is never declared ready based merely on files existing or commands returning without visible crash text. It must be certified through active execution across the **Universal Multi-Pillar Verification Suite**:
 
 ```
-[ Pillar 1: Brain Bridge ]
-        ↓
-[ Pillar 2: Environment Health ]
-        ↓
-[ Pillar 3: Project Context & Rules ]
-        ↓
-[ Pillar 4: Architecture & Tailwind v4 ]
-        ↓
-[ Pillar 5: Static Build Compilation ]
-        ↓
-[ Pillar 6: Dev Server Socket Probe (HTTP 200) ]
-        ↓
-[ Pillar 7: Design System & CSS Token Verification ]
-        ↓
-[ PROJECT_READY_CERTIFICATE.md: READY ]
+[ Pillar 1: Brain Bridge Link & Zero-Copy Boundary ]
+                       ↓
+[ Pillar 2: Environment Toolchain Health ]
+                       ↓
+[ Pillar 3: Project-Local Brain OS (All 11 Files) ]
+                       ↓
+[ Pillar 4: Architecture & Configuration Integrity ]
+                       ↓
+[ Pillar 5: Production Build Compilation (Exit 0) ]
+                       ↓
+[ Pillar 6: Live Server Socket Probe (HTTP 200 OK) ]
+                       ↓
+[ Pillar 7: Quality Verification (SEO or AI/API Health) ]
+                       ↓
+[ Pillar 8: Git & Repository Clean Working Tree ]
+                       ↓
+[ PROJECT_READY_CERTIFICATE.md: READY : CERTIFIED ]
 ```
 
 ---
 
-## 2. The 7 Certification Pillars
+## 2. Dynamic Pillars Audit Table
 
-| Pillar | Requirement | Verification Method | Pass Criteria |
-|---|---|---|---|
-| **1. Brain Bridge** | Master Brain reachable, read-only boundary enforced, valid metadata | Read & parse `.project-brain/brain-bridge.json` | Master Brain path exists; read-only flag true |
-| **2. Environment** | Node.js (>= 18), npm (>= 9), Git initialized | Run version commands and inspect output | Correct versions detected, zero fatal missing tools |
-| **3. Project Governance** | `PROJECT_CONTEXT.md`, `PROJECT_RULES.md`, `PROJECT_STATE.json`, `design.md` present | File existence & schema validation | All 4 core governance files exist and non-empty |
-| **4. Architecture & Config** | Astro 5 + Tailwind v4 CSS-first `@theme` | Inspect `astro.config.mjs` and `src/styles/global.css` | Vite plugin configured; `@theme` and `@import "tailwindcss"` present |
-| **5. Build Integrity** | Static production bundle compiles cleanly | Execute `npm run build` | Exit code 0, `dist/index.html` generated |
-| **6. Dev Server & Runtime** | Dev server boots and responds on local socket | Spawn `npm run dev` on isolated port, HTTP GET `/` | HTTP 200 OK within 15 seconds; clean shutdown |
-| **7. Design System** | OKLCH tokens, responsive layout, dark mode | Inspect compiled CSS in `dist/_astro/*.css` | Custom OKLCH color properties compiled |
+| Pillar | Verification Gate | Pass Criteria |
+|---|---|---|
+| **1. Brain Bridge** | `.project-brain/brain-bridge.json` | Master Brain reachable, read-only enforced, selective indexing |
+| **2. System Environment** | Node.js, npm, Git, tools | Required tools present, zero fatal missing dependencies |
+| **3. Project Governance** | All 11 Project Brain OS files | All 11 files present and non-empty, plus .project-brain dirs |
+| **4. Architecture & Config** | Framework config + CSS-first styling | Valid config file (Astro/Vite) and Tailwind v4 @theme tokens |
+| **5. Build Integrity** | Static production bundle | `npm run build` exits 0, `dist/index.html` generated |
+| **6. Runtime Probe** | Dev / API server on isolated port | HTTP 200 OK within 15 seconds, clean shutdown |
+| **7. Quality & Contracts** | Profile-specific quality checks | Web/SEO: Meta & canonical tags; AI: Health API endpoint |
+| **8. Git Repository** | Local repository & initial commit | Repo initialized, clean tree, initial commit created |
+| **9. MCP Health** | Configured MCP servers | Verified connection or safe offline fallback active |
 
 ---
 
 ## 3. Certification Status Levels
 
-- **PROJECT STATUS: READY**
-  All 7 pillars pass cleanly. Ready for immediate feature development.
-- **PROJECT STATUS: PARTIAL**
-  Core project files, build, and runtime succeed, but non-blocking auxiliary items (e.g. GitHub CLI auth pending or Master Brain offline fallback) are noted.
-- **PROJECT STATUS: BLOCKED**
-  Any fatal failure (Node/npm missing, build failure, server crash, broken styles). Feature development MUST NOT proceed until unblocked.
-
----
-
-## 4. Output Artifact: `PROJECT_READY_CERTIFICATE.md`
-
-Every run of the certification suite writes `PROJECT_READY_CERTIFICATE.md` in the project root containing:
-- Project Name and Timestamp (ISO 8601)
-- Pillar-by-pillar status table
-- Runtime environment details (Node version, OS, Git commit hash)
-- Final Certified Status
+- **PROJECT STATUS: READY : CERTIFIED**  
+  All critical gates pass cleanly. Ready for immediate feature development.
+- **PROJECT STATUS: PARTIAL**  
+  Core build and runtime succeed; non-blocking auxiliary items (e.g. GitHub auth or offline Master Brain fallback) noted.
+- **PROJECT STATUS: BLOCKED**  
+  Fatal blocker detected (missing tool, failed build, server crash). Feature development must not proceed.

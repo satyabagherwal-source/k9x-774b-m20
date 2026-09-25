@@ -1,0 +1,133 @@
+{
+  "astro-docs": {
+    "name": "Astro Documentation MCP",
+    "purpose": "Authoritative documentation search and schema verification for Astro.js v5+",
+    "supportedProjectTypes": [
+      "seo-adsense-micro-website",
+      "single-page-tool-website",
+      "micro-tool-website",
+      "astro-custom"
+    ],
+    "installationMethod": "lazy-mcp-or-npm",
+    "package": "@astrojs/mcp",
+    "version": "^1.0.0",
+    "configuration": {
+      "command": "npx",
+      "args": ["-y", "@astrojs/mcp@latest"]
+    },
+    "requiredCredentials": [],
+    "securityImplications": "Read-only access to official documentation cache; zero file system mutation",
+    "verificationMethod": "schema-and-health-probe",
+    "fallback": "Query Master Brain local documentation in 03_SKILLS/astro-architecture-and-seo.md"
+  },
+  "postgres": {
+    "name": "PostgreSQL MCP Inspector",
+    "purpose": "Database schema inspection, query validation, and migration verification",
+    "supportedProjectTypes": [
+      "saas",
+      "micro-saas",
+      "fullstack-web-app",
+      "ai-saas",
+      "api-backend-service"
+    ],
+    "installationMethod": "npx-stdio",
+    "package": "@modelcontextprotocol/server-postgres",
+    "version": "^0.6.0",
+    "configuration": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres"],
+      "env": {
+        "POSTGRES_URL": "${DATABASE_URL}"
+      }
+    },
+    "requiredCredentials": ["DATABASE_URL"],
+    "securityImplications": "Scoped read/write to database. Must use restricted role in non-dev environments.",
+    "verificationMethod": "ping-connection-probe",
+    "fallback": "Local SQLite fallback or in-memory repository mock"
+  },
+  "filesystem": {
+    "name": "Scoped Filesystem MCP",
+    "purpose": "Safe, scoped filesystem read/write operations within child project workspace boundary",
+    "supportedProjectTypes": [
+      "developer-tool",
+      "automation-system",
+      "system-os-project"
+    ],
+    "installationMethod": "npx-stdio",
+    "package": "@modelcontextprotocol/server-filesystem",
+    "version": "^0.6.0",
+    "configuration": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "${PROJECT_ROOT}"]
+    },
+    "requiredCredentials": [],
+    "securityImplications": "Strictly restricted to ${PROJECT_ROOT}. Master Brain boundary access disallowed.",
+    "verificationMethod": "root-directory-handshake",
+    "fallback": "Native Node.js fs module within project root"
+  },
+  "fetch": {
+    "name": "Web Content Fetch MCP",
+    "purpose": "HTTP web retrieval and documentation/data ingestion for AI agents",
+    "supportedProjectTypes": [
+      "ai-agent",
+      "ai-application",
+      "automation-system",
+      "seo-adsense-micro-website"
+    ],
+    "installationMethod": "npx-stdio",
+    "package": "@modelcontextprotocol/server-fetch",
+    "version": "^0.6.0",
+    "configuration": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"]
+    },
+    "requiredCredentials": [],
+    "securityImplications": "Outbound HTTP requests. Filtered against localhost/private subnet SSRF.",
+    "verificationMethod": "http-fetch-probe",
+    "fallback": "Native fetch / curl with timeout"
+  },
+  "github": {
+    "name": "GitHub Management MCP",
+    "purpose": "Repository metadata, pull request lifecycle, and issue tracking management",
+    "supportedProjectTypes": [
+      "developer-tool",
+      "automation-system",
+      "saas",
+      "ai-agent"
+    ],
+    "installationMethod": "npx-stdio",
+    "package": "@modelcontextprotocol/server-github",
+    "version": "^0.6.0",
+    "configuration": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "requiredCredentials": ["GITHUB_TOKEN"],
+    "securityImplications": "Access to GitHub API using user token. Must never leak or commit token.",
+    "verificationMethod": "gh-auth-status-probe",
+    "fallback": "Direct gh CLI CLI calls"
+  },
+  "memory": {
+    "name": "Graph Knowledge Memory MCP",
+    "purpose": "Entity-relation graph memory for persistent agent knowledge across interactions",
+    "supportedProjectTypes": [
+      "ai-agent",
+      "ai-application",
+      "ai-saas"
+    ],
+    "installationMethod": "npx-stdio",
+    "package": "@modelcontextprotocol/server-memory",
+    "version": "^0.6.0",
+    "configuration": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"]
+    },
+    "requiredCredentials": [],
+    "securityImplications": "Stores state in project-local .project-brain/memory-graph.json.",
+    "verificationMethod": "read-write-graph-probe",
+    "fallback": "Project-local JSON state in .project-brain/"
+  }
+}

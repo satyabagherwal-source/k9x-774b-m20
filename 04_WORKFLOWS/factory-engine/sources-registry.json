@@ -5,7 +5,7 @@
     "sourceType": "css-engine",
     "technology": "tailwindcss",
     "npmPackage": "tailwindcss",
-    "currentVersion": "^4.3.3",
+    "currentVersion": "^4.0.0",
     "lastChecked": "2026-09-25T16:09:27.983Z",
     "lastVerified": "2026-09-25T16:09:27.981Z",
     "revisionIdentifier": "v4.0.0",
@@ -13,7 +13,7 @@
     "changeSeverity": "MAJOR",
     "affectedComponents": [
       "templates/astro-tailwind-v4/src/styles/global.css",
-      "templates/astro-tailwind-v4/astro.config.mjs",
+      "templates/fullstack-ai-saas/src/styles/global.css",
       "docs/TAILWIND_V4_GUIDE.md"
     ],
     "verificationMethod": "build-and-runtime",
@@ -33,10 +33,46 @@
     "updateFrequency": "weekly",
     "changeSeverity": "MAJOR",
     "affectedComponents": [
-      "templates/astro-tailwind-v4/package.json",
-      "templates/astro-tailwind-v4/astro.config.mjs",
-      "templates/astro-tailwind-v4/src/pages/index.astro",
-      "docs/ASTRO_ARCHITECTURE_GUIDE.md"
+      "blueprints/astro-tailwind-v4/package.json",
+      "blueprints/astro-tailwind-v4/astro.config.mjs"
+    ],
+    "verificationMethod": "build-and-runtime",
+    "autoUpdatePolicy": "MINOR_PATCH_TESTED",
+    "reviewRequirement": "MAJOR_OR_BREAKING"
+  },
+  "react": {
+    "name": "React",
+    "officialUrl": "https://react.dev",
+    "sourceType": "ui-library",
+    "technology": "react",
+    "npmPackage": "react",
+    "currentVersion": "^19.0.0",
+    "lastChecked": "2026-09-25T16:00:00.000Z",
+    "lastVerified": "2026-09-25T16:00:00.000Z",
+    "revisionIdentifier": "v19.0.0",
+    "updateFrequency": "monthly",
+    "changeSeverity": "MAJOR",
+    "affectedComponents": [
+      "blueprints/fullstack-ai-saas/package.json"
+    ],
+    "verificationMethod": "build-and-runtime",
+    "autoUpdatePolicy": "MINOR_PATCH_TESTED",
+    "reviewRequirement": "MAJOR_OR_BREAKING"
+  },
+  "vite": {
+    "name": "Vite",
+    "officialUrl": "https://vite.dev",
+    "sourceType": "bundler",
+    "technology": "vite",
+    "npmPackage": "vite",
+    "currentVersion": "^6.2.0",
+    "lastChecked": "2026-09-25T16:00:00.000Z",
+    "lastVerified": "2026-09-25T16:00:00.000Z",
+    "revisionIdentifier": "v6.2.0",
+    "updateFrequency": "monthly",
+    "changeSeverity": "MAJOR",
+    "affectedComponents": [
+      "blueprints/fullstack-ai-saas/vite.config.ts"
     ],
     "verificationMethod": "build-and-runtime",
     "autoUpdatePolicy": "MINOR_PATCH_TESTED",
@@ -55,8 +91,7 @@
     "updateFrequency": "monthly",
     "changeSeverity": "MEDIUM",
     "affectedComponents": [
-      "templates/astro-tailwind-v4/vercel.json",
-      "docs/VERCEL_SETUP_GUIDE.md"
+      "blueprints/astro-tailwind-v4/vercel.json"
     ],
     "verificationMethod": "json-schema-and-build",
     "autoUpdatePolicy": "MINOR_PATCH_TESTED",
@@ -74,8 +109,7 @@
     "updateFrequency": "monthly",
     "changeSeverity": "MAJOR",
     "affectedComponents": [
-      "lib/env-checker.mjs",
-      "protocols/PROJECT_READY_CERTIFICATION.md"
+      "04_WORKFLOWS/factory-engine/env-checker.mjs"
     ],
     "verificationMethod": "cli-env-probe",
     "autoUpdatePolicy": "MANUAL",
@@ -94,10 +128,46 @@
     "updateFrequency": "monthly",
     "changeSeverity": "MEDIUM",
     "affectedComponents": [
-      "templates/astro-tailwind-v4/tsconfig.json",
-      "templates/astro-tailwind-v4/package.json"
+      "blueprints/astro-tailwind-v4/tsconfig.json",
+      "blueprints/fullstack-ai-saas/tsconfig.json"
     ],
     "verificationMethod": "typecheck-and-build",
+    "autoUpdatePolicy": "MINOR_PATCH_TESTED",
+    "reviewRequirement": "MAJOR_OR_BREAKING"
+  },
+  "python": {
+    "name": "Python Language & Runtime",
+    "officialUrl": "https://docs.python.org/3/",
+    "sourceType": "runtime",
+    "technology": "python",
+    "currentVersion": ">=3.10.0",
+    "lastChecked": "2026-09-25T16:00:00.000Z",
+    "lastVerified": "2026-09-25T16:00:00.000Z",
+    "revisionIdentifier": "Python-3.10+",
+    "updateFrequency": "quarterly",
+    "changeSeverity": "MAJOR",
+    "affectedComponents": [
+      "04_WORKFLOWS/factory-engine/env-checker.mjs"
+    ],
+    "verificationMethod": "cli-env-probe",
+    "autoUpdatePolicy": "MANUAL",
+    "reviewRequirement": "MAJOR_OR_BREAKING"
+  },
+  "ai-sdk": {
+    "name": "Model Context Protocol & AI SDKs",
+    "officialUrl": "https://modelcontextprotocol.io",
+    "sourceType": "ai-tooling",
+    "technology": "mcp",
+    "currentVersion": "^0.6.0",
+    "lastChecked": "2026-09-25T16:00:00.000Z",
+    "lastVerified": "2026-09-25T16:00:00.000Z",
+    "revisionIdentifier": "mcp-spec-2024-11",
+    "updateFrequency": "bi-weekly",
+    "changeSeverity": "MAJOR",
+    "affectedComponents": [
+      "04_WORKFLOWS/factory-engine/mcp-registry.json"
+    ],
+    "verificationMethod": "schema-and-health-probe",
     "autoUpdatePolicy": "MINOR_PATCH_TESTED",
     "reviewRequirement": "MAJOR_OR_BREAKING"
   }
