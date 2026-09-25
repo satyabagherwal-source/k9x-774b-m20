@@ -1,45 +1,58 @@
-# Project Factory & Bootstrap Workflow
+# Project Factory & Native Bootstrap Workflow
+
+> Canonical reference: `AI-Builder-Brain/04_WORKFLOWS/project-factory-workflow.md`  
+> Purpose: Defines the native, self-contained project bootstrap engine inside AI-Builder-Brain. Future projects require only an empty folder and the single bootstrap prompt; no separate factory repository is required.
+
+---
 
 ## 1. System Topology & Operational Flow
 
 ```
-[ Master AI-Builder-Brain ] (Canonical Intelligence & Governance)
+[ Master AI-Builder-Brain ] (Canonical Intelligence, Governance, Blueprints & Engine)
+(c:\AI-Builder-Brain)
            │
-           │ (Read-Only Canonical Rules, Protocols, Patterns)
+           │ (Single Bootstrap Prompt in Antigravity IDE)
            ▼
-  [ AI Project Factory ] (Executable Scaffolding & Verification Engine)
+[ Target Project Directory ] (e.g. c:\my-new-project)
            │
-           │ (Single-Command Bootstrap & Scaffolding)
-           ▼
-[ Target Project Directory ]
-           │
-           ├─► Project Brain Bridge (.project-brain/brain-bridge.json)
-           ├─► Independent Git Repository (Local + GitHub Remote)
-           ├─► Astro 5 + Tailwind v4 + Vercel Architecture
-           ├─► Local Context & Rules (PROJECT_CONTEXT.md, PROJECT_RULES.md)
-           └─► Multi-Layer Live Verification Suite
+           ├─► Project Brain Bridge (.project-brain/brain-bridge.json) [Zero-Copy Link]
+           ├─► Scaffolding: Astro 5 + Tailwind CSS v4 (@theme) + Vercel
+           ├─► Local Operating System (PROJECT_CONTEXT.md, PROJECT_RULES.md, PROJECT_STATE.json)
+           ├─► Independent Git Repository (Local Init + GitHub Remote)
+           ├─► Multi-Layer Live Verification (Build + Socket Probe)
+           └─► PROJECT_READY_CERTIFICATE.md (Status: CERTIFIED READY)
 ```
 
 ---
 
-## 2. Factory Responsibilities vs Master Brain Responsibilities
+## 2. Native Capabilities Inside AI-Builder-Brain
 
-| Dimension | Master AI-Builder-Brain | AI Project Factory |
-|---|---|---|
-| **Role** | Canonical Source of Truth | Executable Automation Engine |
-| **Contents** | Principles, Protocols, Engineering Patterns | CLI, Scripts, Scaffolder, Live Probes |
-| **Git Identity** | Dedicated Repo (`AI-Builder-Brain`) | Dedicated Repo (`project-factory-setup`) |
-| **Write Policy** | Protected; human-review required | Version-controlled releases |
-| **Project Interaction** | Referenced via Brain Bridge | Generates and verifies project environment |
+Unlike previous iterations that contemplated a separate `project-factory-setup` repository, the **AI-Builder-Brain natively houses all Project Factory capabilities**:
+
+| Dimension | Native AI-Builder-Brain Implementation |
+|---|---|
+| **Canonical Location** | `C:\AI-Builder-Brain` (independent Git repository) |
+| **Blueprints** | `04_WORKFLOWS/blueprints/astro-tailwind-v4/` (Full golden templates) |
+| **Automation Engine** | `04_WORKFLOWS/factory-engine/bootstrap.mjs` (Zero-dependency Node engine) |
+| **Bridge Specification** | `13_GOVERNANCE/brain-bridge-protocol.md` |
+| **Verification Gate** | `08_VERIFICATION/project-ready-certification-protocol.md` |
+| **Master Prompt** | `10_PROMPTS/project-bootstrap-master-prompt.md` |
 
 ---
 
-## 3. End-to-End Project Creation Cycle
+## 3. End-to-End Autonomous Bootstrap Lifecycle
 
-1. **Trigger**: Builder or agent invokes `node bin/project-factory.mjs bootstrap --target <path> --name <name>`.
-2. **Environment Pre-flight**: Probes Node, npm, Git, GitHub CLI auth, and Vercel.
-3. **Bridge Binding**: Resolves Master Brain location, validates 16 core folders, establishes read-only bridge.
-4. **Scaffolding**: Emits Astro 5, Tailwind v4 CSS-first `@theme`, Vercel config, `design.md`, and local state files.
-5. **Git Initialization**: Inits independent Git repository and creates initial commit.
-6. **Live Multi-Layer Verification**: Runs live production build and probes dev-server socket for HTTP 200.
-7. **Certification**: Generates `PROJECT_READY_CERTIFICATE.md` with status `READY`.
+When an agent executes the bootstrap prompt in an empty folder:
+
+1. **Discovery**: Resolves `C:\AI-Builder-Brain` and validates core folders and documents.
+2. **Environment Pre-flight**: Verifies Node.js (>= 18), npm (>= 9), Git, and GitHub CLI.
+3. **Bridge Binding**: Generates `.project-brain/brain-bridge.json` connecting child project to Master Brain in read-only mode.
+4. **Scaffolding**: Emits Astro 5, Tailwind v4 `@theme`, Vercel config, `design.md`, components, and local state files.
+5. **Dependency Installation**: Runs `npm install`.
+6. **Git Initialization**: Initializes independent local Git repository and creates initial commit.
+7. **GitHub Remote Link**: If `gh auth status` passes and authorized, creates remote repository and pushes code.
+8. **Live Multi-Layer Verification**:
+   - Compiles static production build (`npm run build`).
+   - Probes live dev-server on isolated socket (HTTP 200).
+   - Validates OKLCH CSS tokens in `dist/`.
+9. **Ready Certification**: Emits `PROJECT_READY_CERTIFICATE.md` with status `READY`.

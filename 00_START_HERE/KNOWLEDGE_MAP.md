@@ -63,6 +63,14 @@ If these conditions are not met, keep it as a source, observation, uncertainty, 
 
 ## Knowledge Destinations
 
-- **Portable Engineering Patterns**: [05_KNOWLEDGE/engineering-patterns.md](file:///C:/AI-Builder-Brain/05_KNOWLEDGE/engineering-patterns.md) — Generalized, framework-agnostic rules for async execution, resource lifecycles, and software boundaries.
-- **Project Learning & Provenance**: [07_PROJECT_LEARNING/website-change-monitor-learnings.md](file:///C:/AI-Builder-Brain/07_PROJECT_LEARNING/website-change-monitor-learnings.md) — Empirical evidence, incident reports, and audit logs from project evaluations.
+- **Project Bootstrap Master Prompt**: [10_PROMPTS/project-bootstrap-master-prompt.md](file:///C:/AI-Builder-Brain/10_PROMPTS/project-bootstrap-master-prompt.md) — The single canonical prompt to paste into any new empty project folder.
+- **Native Project Factory Engine**: [04_WORKFLOWS/project-factory-workflow.md](file:///C:/AI-Builder-Brain/04_WORKFLOWS/project-factory-workflow.md) and [04_WORKFLOWS/factory-engine/bootstrap.mjs](file:///C:/AI-Builder-Brain/04_WORKFLOWS/factory-engine/bootstrap.mjs) — Complete autonomous scaffolding and bootstrap engine.
+- **Golden Project Blueprints**: [04_WORKFLOWS/blueprints/astro-tailwind-v4/](file:///C:/AI-Builder-Brain/04_WORKFLOWS/blueprints/astro-tailwind-v4/) — Production templates for Astro 5, Tailwind v4, Vercel, and design systems.
+- **Agent Intelligence & Boot Sequence**: [02_AGENT_INTELLIGENCE/project-agent-boot-protocol.md](file:///C:/AI-Builder-Brain/02_AGENT_INTELLIGENCE/project-agent-boot-protocol.md) and [02_AGENT_INTELLIGENCE/agent-execution-governance.md](file:///C:/AI-Builder-Brain/02_AGENT_INTELLIGENCE/agent-execution-governance.md).
+- **Core Technology Skills**: [03_SKILLS/astro-architecture-and-seo.md](file:///C:/AI-Builder-Brain/03_SKILLS/astro-architecture-and-seo.md), [03_SKILLS/tailwind-v4-css-first-design.md](file:///C:/AI-Builder-Brain/03_SKILLS/tailwind-v4-css-first-design.md), [03_SKILLS/vercel-deployment-playbook.md](file:///C:/AI-Builder-Brain/03_SKILLS/vercel-deployment-playbook.md), [03_SKILLS/git-github-lifecycle-skill.md](file:///C:/AI-Builder-Brain/03_SKILLS/git-github-lifecycle-skill.md).
+- **Portable Engineering Patterns**: [05_KNOWLEDGE/engineering-patterns.md](file:///C:/AI-Builder-Brain/05_KNOWLEDGE/engineering-patterns.md) — 14+ validated engineering rules.
+- **Verification & Certification**: [08_VERIFICATION/project-ready-certification-protocol.md](file:///C:/AI-Builder-Brain/08_VERIFICATION/project-ready-certification-protocol.md) and [08_VERIFICATION/regression-verification-protocol.md](file:///C:/AI-Builder-Brain/08_VERIFICATION/regression-verification-protocol.md).
+- **Brain Bridge & Bug Correction Governance**: [13_GOVERNANCE/brain-bridge-protocol.md](file:///C:/AI-Builder-Brain/13_GOVERNANCE/brain-bridge-protocol.md) and [13_GOVERNANCE/bug-correction-lifecycle-protocol.md](file:///C:/AI-Builder-Brain/13_GOVERNANCE/bug-correction-lifecycle-protocol.md).
+- **Architectural Decisions**: [12_DECISIONS/ADR-001-native-project-factory-brain-integration.md](file:///C:/AI-Builder-Brain/12_DECISIONS/ADR-001-native-project-factory-brain-integration.md).
+- **Project Learning & Provenance**: [07_PROJECT_LEARNING/](file:///C:/AI-Builder-Brain/07_PROJECT_LEARNING/).
 

@@ -1,0 +1,25 @@
+---
+interface Props {
+  projectName?: string;
+}
+
+const { projectName = "AI Project" } = Astro.props;
+---
+
+<footer class="w-full border-t border-slate-800/80 glass-panel py-8 px-4 sm:px-6 lg:px-8 mt-24">
+  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+    <div class="flex items-center gap-2">
+      <span class="font-bold text-slate-300">{projectName}</span>
+      <span>•</span>
+      <span>Bootstrapped by AI Project Factory</span>
+    </div>
+    <div class="flex items-center gap-4">
+      <span class="inline-flex items-center gap-1">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        Brain Bridge Active
+      </span>
+      <span>•</span>
+      <span>Astro 5 + Tailwind v4</span>
+    </div>
+  </div>
+</footer>

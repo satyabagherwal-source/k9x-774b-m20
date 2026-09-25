@@ -2,7 +2,7 @@
 
 ## Version
 
-Foundation v0.2 (Project Factory Integration & Dynamic Knowledge Governance)
+Foundation v1.0 (Canonical Project Operating System & Native Project Factory)
 
 ## Architecture
 
@@ -12,28 +12,30 @@ Foundation v0.2 (Project Factory Integration & Dynamic Knowledge Governance)
 ## Current State
 
 - **00_START_HERE**: Populated (Agent Boot Protocol, Knowledge Map, Readme)
-- **01_CORE**: Populated (Principles, Operating Rules, Agent Rules, Decision Rules)
-- **02_AGENT_INTELLIGENCE**: Populated
-- **03_SKILLS**: Populated (AdSense Mastery, 54 Locales SEO, Error Prevention)
-- **04_WORKFLOWS**: Populated (`project-factory-workflow.md`)
+- **01_CORE**: Populated (Principles, Operating Rules, Agent Rules, Decision Rules, Quality Standards)
+- **02_AGENT_INTELLIGENCE**: Populated (`project-agent-boot-protocol.md`, `agent-execution-governance.md`)
+- **03_SKILLS**: Populated (Astro Architecture & SEO, Tailwind v4 CSS-First Design, Vercel Deployment, Git/GitHub Lifecycle, AdSense Mastery, 54 Locales SEO, Error Prevention)
+- **04_WORKFLOWS**: Populated (`project-factory-workflow.md`, `git-github-autonomous-lifecycle.md`, `blueprints/astro-tailwind-v4/`, `factory-engine/bootstrap.mjs`)
 - **05_KNOWLEDGE**: Populated (Engineering Patterns 1-14+)
 - **06_PROJECT_CONTEXT**: Populated (Online Free Protractor)
 - **07_PROJECT_LEARNING**: Populated (Project Learning Protocols & Incidents)
-- **08_VERIFICATION**: Populated (`verification-protocol.md`, `compatibility-verification-protocol.md`)
-- **09_SOURCES**: Populated (`authoritative-sources-registry.md`)
-- **10_PROMPTS**: Populated (`universal-agent-governance-prompt.md`)
+- **08_VERIFICATION**: Populated (`project-ready-certification-protocol.md`, `regression-verification-protocol.md`, `verification-protocol.md`, `compatibility-verification-protocol.md`)
+- **09_SOURCES**: Populated (`authoritative-sources-registry.md`, `sources-registry.json`, `source-record-template.md`)
+- **10_PROMPTS**: Populated (`project-bootstrap-master-prompt.md`, `universal-agent-governance-prompt.md`, `project-learning-harvester-prompt.md`)
 - **11_INBOX**: Reserved for staging promotion proposals
-- **12_DECISIONS**: Reserved for architectural records
-- **13_GOVERNANCE**: Populated (`dynamic-knowledge-governance.md`)
+- **12_DECISIONS**: Populated (`ADR-001-native-project-factory-brain-integration.md`)
+- **13_GOVERNANCE**: Populated (`brain-bridge-protocol.md`, `bug-correction-lifecycle-protocol.md`, `dynamic-knowledge-governance.md`)
 - **14_EVOLUTION**: Populated (`brain-evolution-protocol.md`, `ecosystem-adaptation-protocol.md`)
-- **15_METADATA**: Status record active
+- **15_METADATA**: Status record active (Foundation v1.0)
 
 ## Tooling Environment
 
-Antigravity IDE is the initial working environment. The Brain itself remains tool-independent.
+Antigravity IDE is the primary working environment. The Brain itself remains tool-independent.
 
 ## Evolution Status
 
-- Master Brain promotion mechanism is formally defined and active.
-- Ecosystem adaptation pipeline (13 stages) and Three-Layer Knowledge Separation enforced.
-- Tested and verified through AI Project Factory end-to-end bootstrap and live multi-layer verification.
+- Native Project Factory consolidated directly inside AI-Builder-Brain; no separate repository dependency.
+- Golden Blueprint for Astro 5 + Tailwind CSS v4 + Vercel active in `04_WORKFLOWS/blueprints/astro-tailwind-v4/`.
+- Zero-copy Brain Bridge protocol enforced for all child projects.
+- 7-pillar live verification suite active.
+- Master project bootstrap prompt active in `10_PROMPTS/project-bootstrap-master-prompt.md`.

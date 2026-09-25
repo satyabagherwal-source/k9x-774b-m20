@@ -17,7 +17,7 @@ Its purpose is to help an AI agent and the human builder:
 
 ## Current status
 
-This is the initial foundation version. It intentionally contains only the verified core operating model. Project-specific knowledge, skills, workflows, sources, and lessons are added only when they have a clear purpose and have been reviewed.
+Foundation v1.0 — AI-Builder-Brain serves as the canonical Project Operating System and native Project Factory. It contains the verified core operating model, reusable engineering patterns, technology skills, authoritative source registries, and the autonomous project bootstrap engine. New projects can be bootstrapped from an empty folder via [10_PROMPTS/project-bootstrap-master-prompt.md](file:///C:/AI-Builder-Brain/10_PROMPTS/project-bootstrap-master-prompt.md).
 
 ## Core lifecycle
 

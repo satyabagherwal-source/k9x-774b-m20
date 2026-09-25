@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import Footer from '../components/Footer.astro';
+
+const projectName = "{{PROJECT_NAME}}";
+---
+
+<BaseLayout title={`${projectName} | Ready for Development`}>
+  <Header slot="header" projectName={projectName} />
+  
+  <Hero projectName={projectName} />
+
+  <!-- Architecture & Certification Section -->
+  <section id="architecture" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="glass-card p-8 rounded-3xl border border-slate-800">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-800/80">
+        <div>
+          <span class="text-xs font-semibold text-indigo-400 tracking-wider uppercase">System Certification</span>
+          <h2 class="text-2xl sm:text-3xl font-heading font-bold text-white mt-1">Environment & Architecture Audit</h2>
+        </div>
+        <div id="status" class="px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-sm font-semibold flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          PROJECT STATUS: READY
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+        <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+          <div class="text-slate-400 text-xs">Framework</div>
+          <div class="font-semibold text-white mt-1">Astro 5.x</div>
+          <div class="text-emerald-400 text-xs mt-1">✓ Build verified</div>
+        </div>
+        <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+          <div class="text-slate-400 text-xs">Styling</div>
+          <div class="font-semibold text-white mt-1">Tailwind CSS v4</div>
+          <div class="text-emerald-400 text-xs mt-1">✓ CSS-first @theme</div>
+        </div>
+        <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+          <div class="text-slate-400 text-xs">Brain Bridge</div>
+          <div class="font-semibold text-white mt-1">AI-Builder-Brain</div>
+          <div class="text-emerald-400 text-xs mt-1">✓ Zero-copy active</div>
+        </div>
+        <div class="bg-slate-900/40 p-4 rounded-xl border border-slate-800">
+          <div class="text-slate-400 text-xs">Deployment</div>
+          <div class="font-semibold text-white mt-1">Vercel Ready</div>
+          <div class="text-emerald-400 text-xs mt-1">✓ vercel.json wired</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" projectName={projectName} />
+</BaseLayout>
