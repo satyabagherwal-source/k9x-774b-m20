@@ -11,6 +11,8 @@ This engine operates in two non-blocking autonomous modes:
 
 ### Mode A: Single-Command Full-Spectrum Harvest (On-Demand)
 * **Trigger Phrases (User Input)**:
+  * *"learning harvest kar lo"*
+  * *"learning harvest"*
   * *"is project ki totally har area se reusable learning nikal lo"*
   * *"is project se learning nikal lo"*
   * *"is repo ki totally har dimension se reusable learning extract karo"*
