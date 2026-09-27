@@ -62,4 +62,6 @@ The Master AI-Builder-Brain is an active, continuously learning intelligence. Kn
 
 1. **On-Demand Harvesting**: When the user requests learning extraction (e.g. *"is project ki totally har area se reusable learning nikal lo"* or *"harvest learnings from this repo"*), the agent MUST autonomously execute all 5 forensic steps across all 8 dimensions (Investigation → Evidence → Comparison → Distillation → Integration) in a single continuous working cycle without halting for intermediate permissions.
 2. **Continuous Silent Auto-Harvesting**: Whenever an active project is developed, bridged (`brain-bridge.json`), or brought into contact with the AI-Builder-Brain, the agent MUST silently ("chupchap") evaluate newly resolved defects, commits, and architectural patterns, capturing local incidents and promoting verified reusable engineering knowledge into the Master Brain automatically.
+3. **Automatic Dual Synchronization (Local + GitHub)**: Every time learning is harvested or integrated into `C:\AI-Builder-Brain` (whether via On-Demand or Silent Auto-Harvest), the agent MUST automatically commit and push all modifications to the remote GitHub repository (`git push origin main`) in the same turn without asking the user or waiting for separate commands. Learning MUST always reside simultaneously in both local storage and GitHub.
+
 

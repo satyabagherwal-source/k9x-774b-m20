@@ -127,6 +127,14 @@ When analyzing a codebase, the agent sweeps across these 8 dimensions using targ
      - Log the knowledge evolution event with provenance notes and timestamp.
   5. **Child Project Synchronization (if bridged)**:
      - Update `.project-brain/brain-bridge.json` status to reflect fresh ingestion.
+  6. **Autonomous Dual Local & GitHub Synchronization (MANDATORY)**:
+     - The agent MUST automatically stage, commit, and push all changes to GitHub:
+       ```bash
+       git -C "C:\AI-Builder-Brain" add .
+       git -C "C:\AI-Builder-Brain" commit -m "feat(brain): Full-Spectrum Multi-Dimensional Harvest for [project]"
+       git -C "C:\AI-Builder-Brain" push origin main
+       ```
+     - **NEVER** leave learning unpushed or wait for the user to ask. Every harvested learning must reside in both local storage and the remote GitHub repository automatically.
 
 ---
 

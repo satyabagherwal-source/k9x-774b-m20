@@ -155,6 +155,14 @@ When harvesting a project, the engine MUST investigate across these 8 distinct d
      - Record the promotion summary, source repository, and rationale in `14_EVOLUTION/` and `15_METADATA/brain-status.md`.
   5. **Child Project Bridge (if connected)**:
      - Update `.project-brain/brain-bridge.json` status and sync local knowledge cache.
+  6. **Autonomous Dual Local & GitHub Synchronization (MANDATORY)**:
+     - The agent MUST automatically commit and push all newly integrated knowledge to GitHub:
+       ```bash
+       git -C "C:\AI-Builder-Brain" add .
+       git -C "C:\AI-Builder-Brain" commit -m "feat(brain): Full-Spectrum Multi-Dimensional Harvest for [project]"
+       git -C "C:\AI-Builder-Brain" push origin main
+       ```
+     - **NEVER** leave learning unpushed or wait for the user to ask. Every harvested learning must reside in both local storage and the remote GitHub repository automatically.
 
 ---
 
