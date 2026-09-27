@@ -307,4 +307,79 @@ This skill codifies essential rules for high-performance computing, Python C-ext
   assert not loading_info["missing_keys"], f"Unbound weights detected: {loading_info['missing_keys']}"
   ```
 
+---
+
+## 21. Asynchronous Stream Memory Recycling Race Condition Defense
+
+* **The Problem**: Host code dropping device tensor references returns their physical device memory to the framework caching allocator while an asynchronous compute stream is still executing. The caching allocator immediately reuses that device memory for the next layer or onload, overwriting weights mid-kernel and generating NaNs.
+* **The Rule**:
+  Synchronize the active compute stream before dropping tensor references on the host unless the allocator supports stream recording:
+  ```python
+  if self.stream is not None and not self.record_stream:
+      self._torch_accelerator_module.current_stream().synchronize()
+  ```
+
+---
+
+## 22. Preempting Device-to-Host (DtoH) Synchronizations in Compiled Iterative Loops
+
+* **The Problem**: Calling `.item()` or extracting nonzero indices from device-resident tensors inside iterative generation loops (e.g. `(timesteps == t).nonzero().item()`) triggers synchronous DtoH memory copies. Under `torch.compile` / CUDA Graph capture, this crashes capture or creates catastrophic GPU pipeline stalls.
+* **The Rule**:
+  Pre-bind loop step counters on the host before entering the execution loop:
+  ```python
+  # Set index on host to completely avoid GPU-to-CPU synchronization barriers
+  self.scheduler.set_begin_index(0)
+  ```
+
+---
+
+## 23. Preventing In-Place Shared Model Downcasting in Mixed-Precision Training
+
+* **The Problem**: Validation pipelines instantiated using live training model instances downcast trainable FP32 parameters to FP16 when calling `pipeline.to(device, dtype=torch.float16)`. Resuming training produces FP16 gradients, crashing PyTorch AMP `GradScaler.unscale_`.
+* **The Rule**:
+  Move shared pipelines using device-only placement without specifying `dtype`, and run validation passes inside scoped autocast contexts:
+  ```python
+  # Move device only; preserve master FP32 weights for optimizer AMP GradScaler
+  pipeline = pipeline.to(accelerator.device)
+  with torch.autocast(device_type=accelerator.device.type, dtype=torch_dtype):
+      images = pipeline(prompt).images
+  ```
+
+---
+
+## 24. Pre-PEP 709 Python Comprehension Frame Isolation and `locals()` Safety
+
+* **The Problem**: In Python < 3.12, comprehensions execute in their own isolated function frame. Calling `locals()` inside a dict comprehension (e.g. `{k: locals()[k] for k in fields}`) inspects only the comprehension's scope, failing to see enclosing variables and raising `KeyError`.
+* **The Rule**:
+  Never query `locals()` inside comprehensions. Use an explicit, imperative `for` loop in the outer frame:
+  ```python
+  callback_kwargs = {}
+  for k in callback_on_step_end_tensor_inputs:
+      callback_kwargs[k] = locals()[k]
+  ```
+
+---
+
+## 25. Context-Parallel Ring Attention Backward Autograd State Reconciliation
+
+* **The Problem**: In distributed sequence parallelism (Ring CP), autograd functions run under `no_grad()` on intermediate inputs, causing forward ops to skip LSE computation (`compute_log_sumexp=False`). In the backward pass, executing every ring step against iteration-0 saved tensors produces silently corrupt gradients with zero runtime errors.
+* **The Rule**:
+  Force LSE computation whenever distributed context parallelism is enabled (`compute_log_sumexp = return_lse or grad_enabled or cp_enabled`), save tensors in model layout, and dynamically override Q, K, V, Out, and LSE per ring iteration:
+  ```python
+  out = out if out is not None else saved_out
+  lse = lse if lse is not None else saved_lse
+  ```
+
+---
+
+## 26. JIT Dynamic Shape Tracing & Symbolic Duck-Shaping De-conflation
+
+* **The Problem**: When compiling models with dynamic inputs, if two distinct dimensions happen to share the same integer value in an initial trace (e.g. $4 \times 4 = 16$ and $C=16$), compiler duck-shaping assigns them the same symbolic variable. Specializing one dimension subsequently locks the other, triggering `RecompileError` when new resolutions arrive.
+* **The Rule**:
+  Explicitly disable coincidental integer duck-shaping during dynamic compilation:
+  ```python
+  torch.fx.experimental._config.use_duck_shape = False
+  ```
+
+
 

@@ -133,5 +133,46 @@ This file records canonical promotion events, knowledge integration milestones, 
   * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 15–20 codified)
   * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.6)
 
+---
+
+## [2026-09-27] — Full-Spectrum Multi-Dimensional Harvest: Hugging Face Diffusers
+
+* **Corpus / Source**: `c:\Users\Admin\Desktop\Learning extracted done\diffusers\diffusers` (`huggingface/diffusers`)
+* **Trigger**: On-Demand Harvest ("resuable learning extract karo")
+* **Audited Incidents**: 14 Confirmed Production Incidents & Architectural Invariants across all 8 Dimensions (D1–D8):
+  * Asynchronous Stream Compute Race Condition before Device Memory Reallocation / Disk Offloading (`a3e0b8ec2`, PR #14657)
+  * Dynamic Index Tensor Inspection Forcing Device-to-Host (DtoH) Synchronization in Compiled Pipelines (`040c7cde6`, PR #14576, Issue #14573)
+  * Shared Live Model In-Place Downcasting Poisoning Dual-Role Mixed-Precision Training (`e377c0a4a`, PR #13895, Issue #13124)
+  * Pre-PEP 709 Python Comprehension Frame Isolation Clashing with `locals()` Introspection (`9602fc526`, PR #14621)
+  * Distributed Context Parallel Ring Backward Iteration KV Chunk Desynchronization & Silent Gradient Corruption (`192cf685e`, PR #14274, Issue #14265)
+  * Symbolic Dimension Duck-Shaping Conflation in JIT Dynamic Tracing (`52110fbbf`, PR #14297, PR #11327)
+  * Ephemeral Forward Offload Parameter Access Outside Forward Scope (`937bf6e04`, PR #14695)
+  * Composite Multi-Component Adapter Fusion State Tracking Asymmetry (`d6726f38a`, PR #14385, Issue #14214)
+  * Compiler Inductor Rewrite Annihilation under Dynamic Symbolic Shapes (`80c7ed262`, PR #14568)
+  * Top-Down Hierarchical Cache Invalidation on Dynamic Subtree Listener Mutation (`c5469b7ce`, PR #14093, Issue #14037)
+  * Unchecked FP64 Construction Crashing on Modern Half-Precision / FP64-Less Accelerators (`e0abab83b`, PR #14767)
+  * Recursive Cache Estimator Boundary Reset on Lifecycle Phase Dimension Discontinuities (`bdc2bea37`, PR #14831)
+  * `torch.device` String Equality Asymmetry Gotcha (`de5fcf6fe`, PR #13508)
+  * Batched Iterative Refinement Freezing Invariant (`d6bfaa71b`, PR #14386)
+* **Promoted Rules Added to `05_KNOWLEDGE/engineering-patterns.md`**:
+  * **Rule 43**: Asynchronous Stream Compute Synchronization Barrier before Device Memory Release / Offloading
+  * **Rule 44**: Static Index Pre-Binding to Preempt Device-to-Host Synchronization in Compiled Iterative Loops
+  * **Rule 45**: Shared Live Model Dtype Immutability across Dual-Role Training and Validation Phases
+  * **Rule 46**: Outer Frame Scope Isolation in Dynamic Introspection (Anti-Comprehension `locals()` Lookup)
+  * **Rule 47**: Distributed Ring Autograd State Re-Alignment & Context-Independent Gradient Preservation
+  * **Rule 48**: Symbolic Dynamic Tracing Independence (Anti-Duck-Shaping Dimension Conflation)
+  * **Rule 49**: Ephemeral Offload Parameter Boundary Defense in Auxiliary Methods
+  * **Refinement to Rule 2**: Top-Down Hierarchical Cache Invalidation on Dynamic Subtree Component Attachment
+  * **Refinement to Rule 5**: Hardware-Aware Dtype Negotiation on Half-Precision / FP64-Less Target Backends & Direct Arithmetic Broadcasts
+  * **Refinement to Rule 40**: Composite Multi-Component State Aggregation by Physical Interrogation
+* **Skills Updated**:
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 21–26 added)
+* **Files Updated**:
+  * `05_KNOWLEDGE/engineering-patterns.md` (Rules 43–49 added, Rules 2, 5, 40 refined)
+  * `07_PROJECT_LEARNING/diffusers-learnings.md` (Created with 14 forensic incidents)
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 21–26 codified)
+  * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.7)
+
+
 
 
