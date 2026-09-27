@@ -100,3 +100,108 @@ This skill codifies essential rules for high-performance computing, Python C-ext
 * **The Rule**:
   For imported, external, or immutable shared buffers, reserve address space strictly matching the producer's exact shared handle count:
   $$\text{ReserveBytes} = \text{shared\_handles} \times \text{segment\_size}$$
+
+---
+
+## 8. Workload-Segregated Thread Pool Isolation
+
+* **The Problem**: Sharing a single thread pool across dependent pipeline stages (e.g. compilation, dispatch, D2H/H2D I/O transfer) causes deadlocks and starvation when multi-device collective kernels fill all workers and block waiting for input transfers stuck in the same pool queue.
+* **The Rule**:
+  In high-performance runtimes and async executors (such as PJRT / XLA), separate workloads into bounded, dedicated thread pools:
+  ```cpp
+  compile_thread_pool_ = std::make_unique<ThreadPool>("XLACompile", num_threads);
+  execute_work_runner_ = std::make_unique<ThreadPoolAsyncWorkRunner>("XLAExecute", num_threads);
+  async_work_runner_   = std::make_unique<ThreadPoolAsyncWorkRunner>("XLATransfers", num_threads);
+  ```
+
+---
+
+## 9. Asynchronous Buffer Liveness Extension Across Start/Done Barriers
+
+* **The Problem**: In optimizing compilers and buffer assignment allocators, ending buffer live ranges at synchronous scheduling points rather than asynchronous completion barriers (`async-done`) allows allocators to recycle active scratch buffers for parallel tasks, causing silent data corruption.
+* **The Rule**:
+  Extend buffer liveness explicitly across the entire asynchronous execution window:
+  - `start_time = min(first_bound_callers)`
+  - `end_time = async_done_time`
+  Intermediate allocations must remain locked until the async completion barrier retires.
+
+---
+
+## 10. Stream Capture Synchronization Deferral Queueing
+
+* **The Problem**: Invoking operations that perform context synchronization (such as `cuMemUnmap`, `cuCtxSynchronize`) while a CUDA stream is actively being captured into a CUDA Graph triggers `CUDA_ERROR_STREAM_CAPTURE_UNSUPPORTED` and invalidates the capture.
+* **The Rule**:
+  Track active stream capture sessions (`active_stream_captures`). When active:
+  ```cpp
+  if (state->active_stream_captures > 0) {
+      state->pending_deallocations.push_back({ptr, size, handle});
+  } else {
+      DrainPendingVmmDeallocations(executor, state);
+  }
+  ```
+  Drain and free queued deallocations only after the capture session exits.
+
+---
+
+## 11. Python 3.13+ Free-Threading (No-GIL) Critical Section Guards
+
+* **The Problem**: Under Python 3.13+ Free-Threading (`Py_GIL_DISABLED`), reading or mutating Python object attributes from C extensions without the GIL causes concurrent data races.
+* **The Rule**:
+  In C/C++ Python extension bindings, protect object attribute accesses with `Py_BEGIN_CRITICAL_SECTION`:
+  ```cpp
+  #ifdef Py_GIL_DISABLED
+  Py_BEGIN_CRITICAL_SECTION(handle.ptr());
+  res = data->shape_val;
+  Py_END_CRITICAL_SECTION();
+  return res;
+  #else
+  return data->shape_val;
+  #endif
+  ```
+
+---
+
+## 12. Zero-Sized Input Early-Return Guards for GPU / cuDNN Kernels
+
+* **The Problem**: Vendor libraries (cuDNN, cuBLAS) and GPU kernel launch configurations crash with illegal memory accesses or hardware traps when invoked on zero-element inputs.
+* **The Rule**:
+  Place an early-return guard before kernel launching:
+  ```cpp
+  if (in.NumElements() == 0) {
+      return;
+  }
+  LaunchGPUKernel(in, output);
+  ```
+
+---
+
+## 13. Volatile TOCTOU Buffer Copy (`SubtleMustCopy`) in Multi-Threaded Kernels
+
+* **The Problem**: In multi-threaded execution where memory is shared, reading scalar parameters directly from shared tensor buffers allows Time-of-Check to Time-of-Use (TOCTOU) race conditions if another thread mutates the shared buffer after boundary validation.
+* **The Rule**:
+  Force a copy through a volatile pointer directly to a stack variable before validation and use:
+  ```cpp
+  const int64_t num_segments_val = static_cast<int64_t>(
+      internal::SubtleMustCopy(num_segments.scalar<int32_t>()()));
+  OP_REQUIRES(context, num_segments_val >= 0, ...);
+  ```
+  Ensure casts are positioned *outside* the volatile copy helper so it binds directly to the memory address rather than a compiler temporary.
+
+---
+
+## 14. 32-Bit Length Field Chunking for Legacy C Interfaces (e.g. zlib)
+
+* **The Problem**: C libraries (such as `zlib`) with 32-bit integer length fields (`uInt avail_in`) silently truncate input sizes modulo $2^{32}$ when passed payloads larger than 4 GiB, corrupting compressed data.
+* **The Rule**:
+  When interfacing with 32-bit C APIs from 64-bit systems, slice streaming payloads into chunks bounded by `std::numeric_limits<uInt>::max()`:
+  ```cpp
+  while (bytes_deflated < bytes_to_write) {
+      const uInt chunk = static_cast<uInt>(std::min<size_t>(
+          bytes_to_write - bytes_deflated, std::numeric_limits<uInt>::max()));
+      z_stream->next_in = data + bytes_deflated;
+      z_stream->avail_in = chunk;
+      Deflate();
+      bytes_deflated += chunk;
+  }
+  ```
+

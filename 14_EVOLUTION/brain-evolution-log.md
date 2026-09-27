@@ -60,3 +60,40 @@ This file records canonical promotion events, knowledge integration milestones, 
   * `07_PROJECT_LEARNING/pytorch-learnings.md` (Full 7-incident forensic record)
   * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.4)
 
+---
+
+## Evolution Event: 2026-09-27 — Full-Spectrum Harvest: `tensorflow`
+
+* **Source Repository**: `tensorflow` (`c:\Users\Admin\tensorflow\tensorflow`)
+* **Trigger**: Mode A Full-Spectrum Learning Harvester (`learning harvest kar lo` / `10_PROMPTS/autonomous-5-step-learning-engine.md`)
+* **Subsystems Audited**:
+  * PJRT CPU Client Thread Pool Allocation (`third_party/xla/xla/pjrt/cpu/cpu_client.cc`)
+  * Compiler HLO Live Range Analysis & Buffer Assignment (`third_party/xla/xla/hlo/utils/hlo_live_range.cc`)
+  * CUDA Device Allocator VMM Stream Capture Deferral (`third_party/xla/xla/stream_executor/cuda/cuda_device_allocator.cc`)
+  * GPU Execution Watchdog & Progress Tracker Closures (`third_party/xla/xla/service/gpu/execution_watchdog.cc`)
+  * GPU Normalization & Reduction Kernels Zero-Size Guards (`tensorflow/core/kernels/lrn_op.cc`, `sparse_segment_reduction_ops_impl.h`)
+  * Riegeli Chain Split-Proto Zero-Copy Deserialization (`third_party/xla/xla/util/split_proto/split_proto_reader.cc`)
+  * Concurrency Monadic Future Empty Join Construction (`third_party/xla/xla/tsl/concurrency/future.h`)
+  * Semaphore Scoped Reservation Move-Assignment Operators (`third_party/xla/xla/pjrt/semaphore.cc`)
+  * Distributed Sharding Param Deserialization Validation & Overflow Arithmetic (`third_party/xla/xla/python/ifrt/ir/sharding_param.cc`)
+  * Gradient Tape Backward Failure Intermediate Deallocations (`tensorflow/c/eager/tape.h`)
+  * Python 3.13+ Free-Threading C Critical Sections (`tensorflow/python/client/tf_session_wrapper.cc`)
+* **Promoted Rules Added to `05_KNOWLEDGE/engineering-patterns.md`**:
+  * **Rule 29**: Workload-Segregated Thread Pool Isolation for Asynchronous Pipelines
+  * **Rule 30**: Asynchronous Execution Resource Liveness Preservation (Anti-Premature Recycling)
+  * **Rule 31**: Capture-Safe Asynchronous Resource Deferral for Stream & Execution Traces
+  * **Rule 32**: Asynchronous Watchdog & Timeout Callback Lifetime Decoupling
+  * **Rule 33**: Zero-Sized Entity Early-Return Guards for Hardware Kernel Dispatches
+  * **Rule 34**: Zero-Copy Chunked Deserialization Over Block Chains
+  * **Rule 35**: Monadic Braced-Init-List Overload Disambiguation
+  * **Refinement to Rule 2**: Scoped RAII Move-Assignment Resource Release & Self-Move Defense
+  * **Refinement to Rule 5**: Checked Arithmetic Boundary Verification on Deserialized Multi-Dimensional Shapes
+* **Skills Updated**:
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 8–14 added)
+* **Files Updated**:
+  * `05_KNOWLEDGE/engineering-patterns.md` (Rules 29–35 added, Rules 2 and 5 refined)
+  * `07_PROJECT_LEARNING/tensorflow-learnings.md` (Full 10-incident forensic record)
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (High-performance execution invariants extended)
+  * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.5)
+
+

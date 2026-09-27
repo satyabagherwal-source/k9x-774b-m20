@@ -20,13 +20,13 @@ Any asynchronous task that reads domain state, crosses an async boundary (networ
 ## 2. Event-Driven Cascade Resource Cleanup
 
 **RULE**:
-When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources. In multi-threaded systems where thread-affine resource handles (such as database connections) are tracked in process-wide registries for lifecycle shutdown, the registry MUST track each handle's owning thread (`thread.is_alive()`) and proactively sweep/close handles owned by exited threads before allocating new handles, preventing descriptor exhaustion in worker thread pools. Furthermore, object destruction callbacks, garbage collection hooks, and finalizer routines MUST NEVER capture the owning entity (`self`) inside their closures; they must capture only the detached, mutable identifier collection or handle value. Capturing `self` inside an object-attached destroy hook introduces a cyclic reference that permanently prevents garbage collection.
+When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources. In multi-threaded systems where thread-affine resource handles (such as database connections) are tracked in process-wide registries for lifecycle shutdown, the registry MUST track each handle's owning thread (`thread.is_alive()`) and proactively sweep/close handles owned by exited threads before allocating new handles, preventing descriptor exhaustion in worker thread pools. Furthermore, object destruction callbacks, garbage collection hooks, and finalizer routines MUST NEVER capture the owning entity (`self`) inside their closures; they must capture only the detached, mutable identifier collection or handle value. Capturing `self` inside an object-attached destroy hook introduces a cyclic reference that permanently prevents garbage collection. Additionally, in scoped RAII resource management wrappers (such as semaphores, leases, mutex locks, and buffer reservations), move assignment operators (`operator=`) MUST explicitly release any currently held resource reservation before acquiring the incoming state, and MUST guard against self-move assignment (`this != &other`) using `std::exchange`. Overwriting active handle members without prior release permanently leaks resources, while unguarded self-move clears state without releasing the underlying lease.
 
 **WHY**:
-Prevents orphan timers, orphan storage records, file descriptor leaks, memory/resource exhaustion, uncollectable circular finalizer references, and stale background work.
+Prevents orphan timers, orphan storage records, file descriptor leaks, memory/resource exhaustion, uncollectable circular finalizer references, silent semaphore/capacity leaks, and stale background work.
 
 **WHEN TO APPLY**:
-Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems, or when managing multi-threaded connection pools, thread-local handle registries, or object finalization/destruction hooks.
+Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems, or when managing multi-threaded connection pools, thread-local handle registries, object finalization/destruction hooks, and RAII move-assignment operators managing bounded capacity or unique hardware/system leases.
 
 ---
 
@@ -59,13 +59,13 @@ React or other UI systems consuming local storage, custom stores, repositories, 
 ## 5. Defensive Boundary Deserialization + Exception Isolation
 
 **RULE**:
-Data crossing an application trust boundary (browser storage, API payloads, configuration files, user input) MUST be treated as untrusted and potentially malformed. Parsing, deserialization, and domain object construction operations that can throw exceptions MUST be isolated behind defensive validation and error boundaries. Invalid external input MUST NOT be allowed to crash unrelated application boot, rendering, or lifecycle execution. The boundary handler MUST provide deterministic safe fallbacks or controlled rejection behavior.
+Data crossing an application trust boundary (browser storage, API payloads, configuration files, user input) MUST be treated as untrusted and potentially malformed. Parsing, deserialization, and domain object construction operations that can throw exceptions MUST be isolated behind defensive validation and error boundaries. Invalid external input MUST NOT be allowed to crash unrelated application boot, rendering, or lifecycle execution. The boundary handler MUST provide deterministic safe fallbacks or controlled rejection behavior. For structured messages and tensor parameters containing multi-dimensional extents or partitioning axes, deserialization factories (e.g. `FromProto`, `fromJson`) MUST immediately invoke domain validation (`verify()`) prior to returning the instance. All cumulative extent products (such as mesh or shard sizes) MUST be computed using overflow-checked arithmetic (e.g. `__builtin_mul_overflow`), and non-positive dimension invariants must be strictly enforced at the deserialization threshold.
 
 **WHY**:
-Prevents malformed external payloads, corrupted cached strings, or invalid user inputs from escalating into unhandled runtime exceptions that break application availability.
+Prevents malformed external payloads, corrupted cached strings, invalid user inputs, or integer overflow in dimension calculations from escalating into unhandled runtime exceptions or out-of-bounds partitioning faults that break application availability.
 
 **WHEN TO APPLY**:
-Any boundary where external data is parsed, deserialized, or constructed into domain models (JSON deserialization, string parsing, storage hydration, API request handling, configuration loading).
+Any boundary where external data is parsed, deserialized, or constructed into domain models (JSON deserialization, string parsing, storage hydration, API request handling, configuration loading, protobuf message deserialization, distributed mesh sharding specs).
 
 ---
 
@@ -366,5 +366,97 @@ Allocators designed for dynamic growth typically reserve virtual address space s
 
 **WHEN TO APPLY**:
 Inter-process communication (IPC) memory allocators, virtual memory reservation engines, shared memory pools, and multi-process distributed training runtimes.
+
+---
+
+## 29. Workload-Segregated Thread Pool Isolation for Asynchronous Pipelines
+
+**RULE**:
+Asynchronous pipelines that coordinate heterogeneous processing phases with causal dependencies (such as ahead-of-time compilation, kernel dispatch/execution, and asynchronous device/host I/O transfers) MUST allocate independent, dedicated bounded worker thread pools for each distinct stage. High-priority dispatch and execution loops MUST NOT share a worker thread pool with upstream data loading or transfer tasks.
+
+**WHY**:
+When multi-device collective kernels or execution tasks fill all worker threads in a shared pool, they block waiting for input buffer transfers. If the antecedent transfer tasks are queued in the same worker pool behind the waiting execution tasks, circular wait deadlocks and complete pipeline starvation occur.
+
+**WHEN TO APPLY**:
+Asynchronous execution runtimes, distributed ML compilers (XLA/PJRT), background data ingestion pipelines, streaming media processors, and heterogeneous actor systems.
+
+---
+
+## 30. Asynchronous Execution Resource Liveness Preservation (Anti-Premature Recycling)
+
+**RULE**:
+The logical reservation, memory allocation, and live range of any buffer, scratch space, or transaction context utilized by an asynchronous task MUST span the entire temporal duration from initial invocation (`async-start`) through the asynchronous completion barrier (`async-done`). Memory managers and optimizing compilers MUST NOT treat intermediate buffers as reclaimable upon synchronous dispatch or scheduling exit before the completion barrier fires.
+
+**WHY**:
+Prematurely marking asynchronous buffers as dead allows allocators to recycle and re-assign the exact same physical memory address to concurrent parallel tasks executing during the async window, resulting in silent data corruption and nondeterministic race conditions.
+
+**WHEN TO APPLY**:
+Buffer allocators, memory pooling engines, optimizing compiler live-range analysis, asynchronous device DMA buffers, and zero-copy task scratchpads.
+
+---
+
+## 31. Capture-Safe Asynchronous Resource Deferral for Stream & Execution Traces
+
+**RULE**:
+During active tracing, recording, or command-buffer capture of execution streams into immutable execution plans or graphs, subsystems that trigger device-level or context-level synchronization (such as virtual memory unmapping or cache flushes) MUST NOT execute synchronization immediately. Deallocations and context sync calls MUST be enqueued into a thread-safe staging queue and drained only after the capture session exits.
+
+**WHY**:
+Runtime execution engines (such as CUDA Graphs, WebGPU command encoders) strictly forbid calls that perform context synchronization during active capture. Invoking unmapping or synchronization mid-capture fails with unrecoverable stream capture errors (`CUDA_ERROR_STREAM_CAPTURE_UNSUPPORTED`) and invalidates the entire recorded graph.
+
+**WHEN TO APPLY**:
+GPU command buffer recording, CUDA Graph capture, WebGPU render pass bundling, reactive effect tracing, and transactional query plan compilation.
+
+---
+
+## 32. Asynchronous Watchdog & Timeout Callback Lifetime Decoupling
+
+**RULE**:
+Callbacks registered with asynchronous watchdog timers, cancellation triggers, or abort handlers MUST NEVER capture raw pointers or references to local stack variables or caller-scoped configuration structures. Callbacks MUST capture self-contained by-value objects or reference-counted shared pointers (`std::shared_ptr`), fully decoupling the callback's lifecycle from the caller's stack frame.
+
+**WHY**:
+Watchdog timers fire asynchronously on background timer threads. If a timeout occurs after the caller has exited or re-used its stack frame, dereferencing stack-bound pointers causes fatal Use-After-Free crashes during panic logging or cancellation handling.
+
+**WHEN TO APPLY**:
+Watchdog timers, hang detectors, asynchronous HTTP cancellation tokens, background heartbeat monitors, and thread abort handlers.
+
+---
+
+## 33. Zero-Sized Entity Early-Return Guards for Hardware Kernel Dispatches
+
+**RULE**:
+Kernel dispatchers and hardware acceleration wrappers (e.g. CUDA, ROCm, Vulkan, cuDNN, cuBLAS) MUST evaluate input tensor sizes and execute an early return (`if (input.NumElements() == 0) return;`) immediately before configuring grid dimensions or calling vendor driver APIs.
+
+**WHY**:
+External vendor hardware libraries and device dispatchers assume strictly positive tensor dimensions; invoking them on 0-element buffers triggers division by zero, invalid grid configurations, or illegal memory access hardware crashes.
+
+**WHEN TO APPLY**:
+High-performance compute kernels, GPU operator bindings, numerical linear algebra libraries, and computer vision tensor transformations.
+
+---
+
+## 34. Zero-Copy Chunked Deserialization Over Block Chains
+
+**RULE**:
+When deserializing large structured records (e.g. Protobuf, FlatBuffers, Parquet) from chunked I/O readers or non-contiguous buffer chains, the deserialization parser MUST consume the non-contiguous chunk chain directly via chunk-aware streaming or merging parsers. Runtimes MUST NOT flatten chunked buffers into a contiguous memory string prior to parsing.
+
+**WHY**:
+Forcing contiguous buffer flattening for multi-hundred-megabyte payloads requires allocating duplicate contiguous memory buffers, doubling memory footprints and causing severe garbage collection and allocator thrashing.
+
+**WHEN TO APPLY**:
+High-throughput RPC servers, model checkpoint deserializers, distributed data loaders, and columnar database storage engines.
+
+---
+
+## 35. Monadic Braced-Init-List Overload Disambiguation
+
+**RULE**:
+In templated monadic or asynchronous wrapper types (such as `Future<T>`, `Result<T, E>`, `Optional<T>`) where value-initialization or default construction represents an invalid or uninitialized state, return statements MUST NOT use bare untyped braced-init-lists (`return Future<std::vector<T>>({});`). Returns MUST explicitly construct the inner payload type (`return Future<std::vector<T>>(std::vector<T>{});`).
+
+**WHY**:
+An untyped braced-init-list `{}` cannot deduce template type parameters in converting constructors. Overload resolution falls back to the move constructor with a value-initialized (invalid/null) wrapper. Awaiting or querying the resulting future dereferences a null internal pointer and crashes the application.
+
+**WHEN TO APPLY**:
+C++ templated concurrency libraries, monadic error handling frameworks, future/promise chains, and smart pointer factory wrappers.
+
 
 
