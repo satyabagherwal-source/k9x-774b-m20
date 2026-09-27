@@ -64,3 +64,27 @@ The agent MUST immediately:
 2. Discard all confirmation bias. Stop defending previous code edits.
 3. Go directly to the compiled runtime artifact (`dist/` or browser DOM) to see what the user actually sees.
 4. Apply the required fix surgically and prove it with empirical output before reporting completion.
+
+---
+
+## 5. Autonomous 5-Step Learning Harvester Directive
+
+### Non-Interactive Single-Command Execution (On-Demand Mode)
+When the user gives an extraction trigger such as:
+- *"is project ki totally har area se reusable learning nikal lo"*
+- *"is project se learning nikal lo"*
+- *"is repo ki learning extract karo"*
+- *"harvest all reusable learnings from this project"*
+
+The agent MUST NOT fragment the workflow into manual conversational steps or ask "Should I proceed to Step 2?". The agent MUST autonomously execute all 5 steps in one unified cycle:
+1. **Investigate**: Audits code, docs, tests, and git history across all 8 dimensions without modifying Brain files.
+2. **Evidence**: Gathers concrete file paths, line ranges, commit hashes, and test cases.
+3. **Brain Comparison**: Computes the differential against existing Brain rules (1-17+), skills, and protocols (Duplicates, Net-New, Refinements, Conflicts, Project-Specific).
+4. **Distillation**: Filters out repo-specific quirks and distills universal, reusable engineering patterns.
+5. **Final Integration**: Updates `07_PROJECT_LEARNING/`, appends/refines rules in `05_KNOWLEDGE/engineering-patterns.md`, updates `03_SKILLS/`, and logs version evolution in `14_EVOLUTION/`.
+
+### Silent Auto-Harvesting (Continuous Development & Bridged Projects)
+Whenever the user is building a project or whenever a project bridges with AI-Builder-Brain:
+- The agent MUST continuously and silently ("chupchap") extract reusable learnings.
+- As bugs are resolved, OS gotchas uncovered, or architectural boundaries established, the agent automatically evaluates reusability and synchronizes validated engineering knowledge directly into `C:\AI-Builder-Brain`.
+- The user does not need to ask or remind the agent.

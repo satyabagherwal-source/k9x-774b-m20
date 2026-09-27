@@ -20,13 +20,13 @@ Any asynchronous task that reads domain state, crosses an async boundary (networ
 ## 2. Event-Driven Cascade Resource Cleanup
 
 **RULE**:
-When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources.
+When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources. In multi-threaded systems where thread-affine resource handles (such as database connections) are tracked in process-wide registries for lifecycle shutdown, the registry MUST track each handle's owning thread (`thread.is_alive()`) and proactively sweep/close handles owned by exited threads before allocating new handles, preventing descriptor exhaustion in worker thread pools.
 
 **WHY**:
-Prevents orphan timers, orphan storage records, memory/resource leaks, and stale background work.
+Prevents orphan timers, orphan storage records, file descriptor leaks, memory/resource exhaustion, and stale background work.
 
 **WHEN TO APPLY**:
-Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems.
+Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems, or when managing multi-threaded connection pools and thread-local handle registries.
 
 ---
 
@@ -197,3 +197,29 @@ Prevents SEO crawl budget waste and Google Search Console indexing drop-offs.
 
 **WHEN TO APPLY**:
 Any SSG deployment on Cloudflare, Vercel, or Netlify.
+
+---
+
+## 16. Non-Destructive Mutation Draining Across Cancellation Boundaries
+
+**RULE**:
+When executing asynchronous database commits, transaction rollbacks, or filesystem writes, caller cancellation (`asyncio.CancelledError` or `AbortSignal`) MUST NOT abort in-flight mutations midway. Storage mutation and rollback routines MUST execute inside an explicit draining boundary that shields and repeatedly awaits the underlying worker task until settlement (`task.done()`). Premature cancellations must be suppressed while the mutation is in-flight, and the cancellation must be re-raised to the caller only after the storage state has cleanly committed or rolled back.
+
+**WHY**:
+Standard task shielding is vulnerable to double-cancellation; a second cancellation arriving while waiting on a shielded task aborts the awaiter immediately. This leaves unmanaged background worker threads with half-committed transactions, hanging SQLite/database locks, or orphaned unreleased connections.
+
+**WHEN TO APPLY**:
+Any asynchronous persistence backend, database transaction manager, session store, or filesystem adapter handling writes, rollbacks, and connection release across external timeout or cancellation boundaries.
+
+---
+
+## 17. Boundedness of Recovery & Rollback Operations
+
+**RULE**:
+Recovery mechanisms, rollback safety snapshots, and client-side filter scans MUST NOT be unbounded. An explicit maximum item/size budget (`max_rollback_items`, `max_scan_items`) MUST be enforced before acquiring safety snapshots or initiating scans across persistent history. If data exceeds the budget, the operation MUST fail-fast with a deterministic error and preserve existing state rather than attempting an unconstrained memory load.
+
+**WHY**:
+Prevents safety, undo, and recovery mechanisms from becoming the primary vector for out-of-memory (OOM) crashes, severe CPU latency spikes, and denial-of-service failures during normal turn execution.
+
+**WHEN TO APPLY**:
+Automated rollback snapshots, in-memory undo/redo buffers, client-side decryption/expiration scans, and background session compaction/pruning.

@@ -86,12 +86,15 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 - Execute actual build and runtime probes (`npm run build`, socket probe).
 - Never declare completion based on generated code alone.
 
-### Step 13: Capture Incident If Needed
+### Step 13: Capture Incident If Needed & Autonomous Evaluation
 - If an unexpected error occurs, log forensic record in `.project-brain/incidents/INC-XXX.md`.
 - Follow the bug correction lifecycle.
+- Autonomously evaluate the fix against the 5-step learning pipeline (`10_PROMPTS/autonomous-5-step-learning-engine.md`). If the fix reveals a reusable pattern, silently promote/stage into Master Brain.
 
 ### Step 14: Update Project State
 - Update `PROJECT_STATE.json` with new milestone progress or active issues.
 
-### Step 15: Continue
+### Step 15: Continue & Silent Learning Sync
 - Report verified evidence and proceed to next task cleanly.
+- Silently ("chupchap") synchronize any unharvested reusable project learnings to `C:\AI-Builder-Brain` in the background.
+

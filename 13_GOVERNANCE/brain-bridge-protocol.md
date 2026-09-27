@@ -34,8 +34,13 @@
    - `brain query rules <rule-type>`
 
 5. **Two-Way Learning Highway**:
-   - **Inbound**: Master Brain supplies validated engineering patterns (Rules 1-14+), error prevention protocols, and SEO/UI skills.
+   - **Inbound**: Master Brain supplies validated engineering patterns (Rules 1-17+), error prevention protocols, and SEO/UI skills.
    - **Outbound**: Real project incidents and verified fixes are recorded locally in `.project-brain/incidents/`, validated against evidence criteria, and prepared into promotion proposals in `.project-brain/promotion-queue/` for human review before updating Master Brain.
+
+6. **Autonomous Silent Auto-Harvest Engine**:
+   - Whenever any child project connects to `C:\AI-Builder-Brain` via the bridge or comes into contact with the Brain OS, the bridge activates continuous background harvesting.
+   - The agent quietly ("chupchap") audits newly resolved defects, commits, and architectural boundaries across the 8 dimensions using the 5-step pipeline, extracting reusable patterns and synchronizing them into the Master Brain automatically.
+   - The developer does not need to issue manual harvesting prompts during project development or bridging.
 
 ---
 
@@ -43,18 +48,25 @@
 
 ```json
 {
-  "bridgeVersion": "1.0.0",
+  "bridgeVersion": "1.1.0",
   "projectName": "my-project",
-  "createdAt": "2026-09-25T16:00:00.000Z",
+  "createdAt": "2026-09-27T10:00:00.000Z",
   "masterBrainPath": "C:\\AI-Builder-Brain",
   "connected": true,
   "zeroCopyEnforced": true,
   "readOnlyEnforced": true,
+  "autoHarvest": {
+    "enabled": true,
+    "silentSync": true,
+    "workflow": "04_WORKFLOWS/autonomous-knowledge-harvesting-workflow.md",
+    "promptEngine": "10_PROMPTS/autonomous-5-step-learning-engine.md"
+  },
   "indexedKnowledge": [
     "05_KNOWLEDGE/engineering-patterns.md",
     "03_SKILLS/astro-architecture-and-seo.md",
     "03_SKILLS/tailwind-v4-css-first-design.md",
     "03_SKILLS/vercel-deployment-playbook.md",
+    "03_SKILLS/autonomous-project-learning-harvester.md",
     "02_AGENT_INTELLIGENCE/agent-execution-governance.md",
     "01_CORE/operating-rules.md"
   ],
@@ -62,7 +74,8 @@
     "protocol": "14_EVOLUTION/brain-evolution-protocol.md",
     "stagingDirectory": ".project-brain/promotion-queue",
     "targetInbox": "11_INBOX",
-    "reviewRequired": true
+    "reviewRequired": false
   }
 }
 ```
+

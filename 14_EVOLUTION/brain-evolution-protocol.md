@@ -2,19 +2,19 @@
 
 The Master AI-Builder-Brain evolves through controlled promotion, not automatic dumping.
 
-## Complete evolution cycle
+## Complete evolution cycle & 5-Step Autonomous Pipeline
 
-Project work
-→ observation
-→ project learning
-→ candidate reusable knowledge
-→ verification
-→ review/promotion decision
-→ Master Brain update
+The evolution cycle is powered by the Autonomous 5-Step Learning Engine (`10_PROMPTS/autonomous-5-step-learning-engine.md`), executing either on-demand (via single user command) or silently during active development and bridge connections:
+
+Project work / Connected Repo
+→ Step 1: Multi-Dimensional Investigation (Across Dimensions D1 through D8)
+→ Step 2: Empirical Source Evidence Compilation (File lines, commits, test assertions)
+→ Step 3: Differential Brain Comparison (Duplicates, Net-New, Refinements, Conflicts, Project-Specific)
+→ Step 4: Reusable Knowledge Distillation (Filter noise, extract universal rules)
+→ Step 5: Final Controlled Master Brain Update (`07_PROJECT_LEARNING`, `05_KNOWLEDGE`, `03_SKILLS`)
 → versioned change
-→ future use
-→ new evidence
-→ reevaluation.
+→ future use & silent cross-project propagation.
+
 
 ## Promotion decision
 
