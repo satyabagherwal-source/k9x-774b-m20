@@ -205,3 +205,106 @@ This skill codifies essential rules for high-performance computing, Python C-ext
   }
   ```
 
+---
+
+## 15. PyTorch Dynamo / JIT Tracing Guard Decoupling
+
+* **The Problem**: Checking tensor values (e.g. `padding_mask.all()`) during compilation causes dynamic control-flow graph breaks under `torch.compile`. Conflating compiler tracing with strict export tracing forces JIT engines to materialize unnecessary multi-megabyte masks on every forward pass.
+* **The Rule**:
+  Decouple static reference presence checks from data-dependent tensor inspections:
+  ```python
+  # Under torch.compile we can skip mask creation if padding_mask is None
+  # Data-dependent value checks are only executed when NOT compiling/tracing
+  if is_torchdynamo_exporting() or (padding_mask is not None and is_tracing(padding_mask)):
+      return False
+  ```
+  Only materialize masks when data-dependent padding is statically indicated.
+
+---
+
+## 16. Checkpoint Deserialization on OS Memory-Commit Boundaries (Windows & MPS)
+
+* **The Problem**: Memory-mapping (`mmap`) multi-shard checkpoints (tens to hundreds of gigabytes) on Windows reserves copy-on-write pagefile commit charge for the full mapped extent, triggering immediate `WinError 1455` (out of virtual memory commit) even on machines with plenty of physical RAM. Additionally, Apple Silicon Metal (MPS) device buffers do not support shared `mmap` backing.
+* **The Rule**:
+  Inspect platform and accelerator targets and dynamically select sequential/positioned file reads (`pread`) on commit-charge sensitive or non-mmap platforms:
+  ```python
+  if is_mps:
+      backend, device = "pread", "mps"
+  elif sys.platform == "win32":
+      backend, device = "pread", "cpu"
+  else:
+      backend, device = "mmap", "cpu"
+  file_pointer = safe_open(file, framework="pt", device=device, backend=backend)
+  ```
+
+---
+
+## 17. Symlink-Preserving Lexical Containment for Distributed Storage Caches
+
+* **The Problem**: Validating path traversal (`..` escapes) using `os.path.realpath` or `Path.resolve` breaks repositories that utilize symlinks to external blob stores (such as Hugging Face Hub cache where `snapshots/<hash>/model.safetensors` symlinks into sibling `blobs/<sha256>`). Dereferencing realpaths resolves outside the snapshot directory.
+* **The Rule**:
+  Use purely lexical path normalization combined with common prefix containment:
+  ```python
+  absolute_base_dir = os.path.abspath(base_dir)
+  absolute_archive_file = os.path.abspath(archive_file)
+  contained = os.path.commonpath([absolute_base_dir, absolute_archive_file]) == absolute_base_dir
+  if not contained:
+      raise ValueError(f"Path traversal detected: {archive_file} escapes {base_dir}")
+  ```
+
+---
+
+## 18. Additive Logit Mask Degeneracy Clamping
+
+* **The Problem**: When enforcing constrained token generation via additive penalties (`scores + mask` where disallowed tokens are `-inf`), if upstream filters or model logits have already set all allowed tokens to `-inf`, `(-inf) + 0 = -inf`. The entire sequence distribution collapses to `-inf`, causing greedy search to pick illegal tokens, sampling to produce `NaN`s, and beam search to collapse.
+* **The Rule**:
+  Detect total domain annihilation across the distribution row and fall back directly to the constraint mask:
+  ```python
+  scores_processed = scores + mask
+  unsatisfiable = scores_processed.amax(dim=-1).isneginf().view(batch_size, -1).all(dim=-1, keepdim=True)
+  scores_processed = torch.where(unsatisfiable.repeat_interleave(num_beams, dim=0), mask, scores_processed)
+  ```
+
+---
+
+## 19. Test Session Heavy Allocation Sweeping (Pytest Memory Leaks)
+
+* **The Problem**: Test runners like Pytest retain test instance fixtures (`self`) across the entire test session. Attributes attached to `self` or `cls` (e.g. 10–17 GB model checkpoints, `@cached_property` caches) cannot be freed by `gc.collect()`, producing cascading OOM crashes across subsequent tests.
+* **The Rule**:
+  Snapshot class and instance namespaces during setup, sweep/`delattr()` all newly created attributes at teardown, run methods under `torch.no_grad()`, and enforce memory leak assertions:
+  ```python
+  class MemoryCleanupMixin:
+      def __init_subclass__(cls, **kwargs):
+          super().__init_subclass__(**kwargs)
+          cls._memory_cleanup_class_attrs = set(vars(cls))
+
+      def setUp(self):
+          super().setUp()
+          self._memory_cleanup_instance_attrs = set(vars(self))
+
+      def tearDown(self):
+          try:
+              super().tearDown()
+          finally:
+              known = getattr(self, "_memory_cleanup_instance_attrs", None)
+              if known is not None:
+                  for name in list(vars(self)):
+                      if name not in known:
+                          try: delattr(self, name)
+                          except AttributeError: pass
+              cleanup(torch_device, gc_collect=True)
+  ```
+
+---
+
+## 20. Model State-Dict Key Reconciliation and Prefix Namespace Invariants
+
+* **The Problem**: In neural network libraries where layers initialize with random weights and missing keys are non-fatal warnings, prefix mismatches (e.g. `model.` vs flat layer names) cause 100% of checkpoint weights to fail to bind. Silencing missing key errors in tests (`test_missing_keys = False`) causes models to evaluate pure Gaussian random noise without throwing any runtime errors.
+* **The Rule**:
+  Never silence missing-key assertions without explicit prefix transformations. Always assert exact key reconciliation:
+  ```python
+  base_model, loading_info = Model.from_pretrained(checkpoint, output_loading_info=True)
+  assert not loading_info["missing_keys"], f"Unbound weights detected: {loading_info['missing_keys']}"
+  ```
+
+

@@ -59,13 +59,13 @@ React or other UI systems consuming local storage, custom stores, repositories, 
 ## 5. Defensive Boundary Deserialization + Exception Isolation
 
 **RULE**:
-Data crossing an application trust boundary (browser storage, API payloads, configuration files, user input) MUST be treated as untrusted and potentially malformed. Parsing, deserialization, and domain object construction operations that can throw exceptions MUST be isolated behind defensive validation and error boundaries. Invalid external input MUST NOT be allowed to crash unrelated application boot, rendering, or lifecycle execution. The boundary handler MUST provide deterministic safe fallbacks or controlled rejection behavior. For structured messages and tensor parameters containing multi-dimensional extents or partitioning axes, deserialization factories (e.g. `FromProto`, `fromJson`) MUST immediately invoke domain validation (`verify()`) prior to returning the instance. All cumulative extent products (such as mesh or shard sizes) MUST be computed using overflow-checked arithmetic (e.g. `__builtin_mul_overflow`), and non-positive dimension invariants must be strictly enforced at the deserialization threshold.
+Data crossing an application trust boundary (browser storage, API payloads, configuration files, user input) MUST be treated as untrusted and potentially malformed. Parsing, deserialization, and domain object construction operations that can throw exceptions MUST be isolated behind defensive validation and error boundaries. Invalid external input MUST NOT be allowed to crash unrelated application boot, rendering, or lifecycle execution. The boundary handler MUST provide deterministic safe fallbacks or controlled rejection behavior. For structured messages and tensor parameters containing multi-dimensional extents or partitioning axes, deserialization factories (e.g. `FromProto`, `fromJson`) MUST immediately invoke domain validation (`verify()`) prior to returning the instance. All cumulative extent products (such as mesh or shard sizes) MUST be computed using overflow-checked arithmetic (e.g. `__builtin_mul_overflow`), and non-positive dimension invariants must be strictly enforced at the deserialization threshold. Additionally, configuration and parameter deserializers must validate parity and dimension invariants on parameters destined for pairwise mathematical operations (such as requiring even rotary dimensions for pairwise 2D RoPE rotation) at configuration post-init rather than deferring to forward tensor operations. In addition, nested configuration dictionaries and metadata maps MUST be cloned via deep copy (`copy.deepcopy`) prior to mutation; mutating shared in-memory dictionaries directly contaminates shared references across test cases and concurrent execution sessions.
 
 **WHY**:
-Prevents malformed external payloads, corrupted cached strings, invalid user inputs, or integer overflow in dimension calculations from escalating into unhandled runtime exceptions or out-of-bounds partitioning faults that break application availability.
+Prevents malformed external payloads, corrupted cached strings, invalid user inputs, integer overflow in dimension calculations, mid-forward tensor dimension slicing crashes, or cross-test state contamination from escalating into unhandled runtime exceptions or out-of-bounds partitioning faults that break application availability.
 
 **WHEN TO APPLY**:
-Any boundary where external data is parsed, deserialized, or constructed into domain models (JSON deserialization, string parsing, storage hydration, API request handling, configuration loading, protobuf message deserialization, distributed mesh sharding specs).
+Any boundary where external data is parsed, deserialized, or constructed into domain models (JSON deserialization, string parsing, storage hydration, API request handling, configuration loading, protobuf message deserialization, distributed mesh sharding specs, rotary embedding configuration validation, test suite configuration fixtures).
 
 ---
 
@@ -85,13 +85,13 @@ Services, repositories, adapters, UI components, APIs, wrappers, SDKs, module al
 ## 7. Service-Level Input Preconditions + Domain Constraint Guards
 
 **RULE**:
-State-changing service operations MUST independently enforce their required input preconditions and domain constraints before mutation. Do not rely solely on UI validation because service methods may be called by other callers, tests, background tasks, or future APIs.
+State-changing service operations MUST independently enforce their required input preconditions and domain constraints before mutation. Do not rely solely on UI validation because service methods may be called by other callers, tests, background tasks, or future APIs. Furthermore, in compiler and JIT-optimized execution pipelines (such as `torch.compile` or dynamic graph tracers), input precondition guards and optimization-skipping checks MUST strictly decouple static object existence checks (`arg is not None`) from data-dependent tensor value inspections (`arg.all()`). Inspecting tensor values during graph compilation triggers unwanted dynamic control-flow graph breaks, whereas verifying static object presence allows JIT compilers to optimize away redundant operations (such as attention mask materialization) without degrading compilation graphs.
 
 **WHY**:
-Prevents invalid data, duplicate records, malformed schema state, and domain-inconsistent persistence.
+Prevents invalid data, duplicate records, malformed schema state, and domain-inconsistent persistence, while avoiding severe compilation graph-breaks and unnecessary tensor allocations in JIT-compiled pipelines.
 
 **WHEN TO APPLY**:
-Any service, repository, or API operation that creates, updates, deletes, or otherwise mutates domain state.
+Any service, repository, or API operation that creates, updates, deletes, or otherwise mutates domain state, as well as tensor operator wrappers, JIT tracing guards, and attention mask skip logic under optimizing compilers.
 
 ---
 
@@ -457,6 +457,98 @@ An untyped braced-init-list `{}` cannot deduce template type parameters in conve
 
 **WHEN TO APPLY**:
 C++ templated concurrency libraries, monadic error handling frameworks, future/promise chains, and smart pointer factory wrappers.
+
+---
+
+## 36. Test Instance Attribute Sweeping & Session Leak Boundary Defense
+
+**RULE**:
+Test suites managing heavy hardware allocations (such as GPU tensors, compiled models, shared memory blocks, network pools) MUST NOT rely on default test-runner garbage collection. Because test runners (e.g. Pytest, JUnit) retain test instance fixtures (`self`) and test case class objects (`cls`) in memory across the entire test session, test cases MUST snapshot class and instance attribute namespaces (`vars(cls)`, `vars(self)`) during initialization/setup and explicitly delete (`delattr()`) all newly assigned attributes during teardown. In addition, test execution methods MUST run under explicit gradient-disabling contexts (`torch.no_grad()`) by default, and post-teardown assertions MUST enforce strict process resident set size (RSS) and device VRAM leak thresholds.
+
+**WHY**:
+Prevents test instance attribute accumulation from pinning gigabytes of GPU VRAM or host memory across test runs, which creates spurious Out-of-Memory (OOM) cascades that corrupt subsequent unrelated integration tests.
+
+**WHEN TO APPLY**:
+Machine learning test suites, integration test harnesses loading multi-gigabyte checkpoints, hardware driver integration tests, and long-running CI test sessions.
+
+---
+
+## 37. Lexical-Containment Path Traversal Defense for Symlink-Preserving Repositories
+
+**RULE**:
+When validating file containment within a repository, model folder, or cache sandbox, security checks MUST use purely lexical path normalization (`os.path.abspath`) combined with common prefix containment (`os.path.commonpath([abs_base, abs_target]) == abs_base`) rather than resolving filesystem realpaths (`os.path.realpath` or `Path.resolve`). Lexical containment strictly prevents path traversal escapes (`..`, absolute paths, drive escapes) while safely preserving legitimate external symlinks into sibling content-addressed blob stores.
+
+**WHY**:
+Resolving realpaths dereferences symlinks into their underlying physical locations. In snapshot caches where repository files are symlinks to external blob caches (e.g. Git LFS, Hugging Face Hub `snapshots` -> `blobs`), `realpath` erroneously reports that repository files reside outside the directory, breaking legitimate cached file access while failing to provide superior security.
+
+**WHEN TO APPLY**:
+Model weight loaders, plugin managers, content-addressed asset caches, archive extractors, and filesystem repository deserializers.
+
+---
+
+## 38. Additive Mask Degeneracy Clamping under Pre-Masked Constraint Spaces
+
+**RULE**:
+When applying additive penalty masks (`scores + mask`, where disallowed options are set to `-inf` and allowed options to `0`) over candidate probability or logit distributions, the processor MUST evaluate whether all allowed candidate options have collapsed to `-inf` across the distribution row (`unsatisfiable = scores_processed.amax().isneginf()`). When total domain annihilation occurs, the runtime MUST conditionally fall back to the constraint mask itself (`torch.where(unsatisfiable, mask, scores)`), forcing the required constraints with score `0` rather than allowing the entire distribution to collapse to negative infinity.
+
+**WHY**:
+When prior filtering stages or model outputs mask allowed tokens with `-inf`, additive masking yields `(-inf) + 0 = -inf` for all candidates. An all-`-inf` distribution causes greedy `argmax` to select illegal indices, sampling routines (`multinomial`) to crash with NaNs, and beam search heuristics to degenerate into corrupted output.
+
+**WHEN TO APPLY**:
+Constrained decoding engines, logits processors, candidate ranking systems, grammar-guided generation, and rule-based heuristic filters.
+
+---
+
+## 39. Pagefile Commit Charge Mitigation on Memory-Mapped Multi-Shard Checkpoints
+
+**RULE**:
+Large-scale binary tensor and checkpoint deserializers MUST inspect the host operating system and accelerator backend prior to selecting memory-mapping (`mmap`). On operating systems that assign copy-on-write pagefile commit charges to mapped sections (such as Windows `win32`), or accelerator hardware runtimes lacking shared unified memory mapping support (such as Apple Silicon `mps`), deserializers MUST fall back from `mmap` to sequential or positioned file reads (`pread`).
+
+**WHY**:
+On Windows, opening tens or hundreds of gigabytes of sharded weight files via `mmap` forces the OS kernel to reserve copy-on-write commit charge against the system paging file for the entire file extents. On systems with standard swap limits, this triggers instant `WinError 1455: The paging file is too small for this operation to complete`, crashing model loading even when physical RAM is abundant.
+
+**WHEN TO APPLY**:
+Large language model weight loaders, tensor checkpoint deserializers (`safetensors`, `torch.load`), database index mappers, and cross-platform high-throughput binary readers.
+
+---
+
+## 40. State-Dict Key Reconciliation Invariant (Anti-Silent Unbound Model State)
+
+**RULE**:
+Model deserializers and parameter hydration engines that permit partial or flexible state dictionary loading MUST verify and assert key reconciliation against known namespace prefixes (`base_model_prefix`). Deserializers and CI test harnesses MUST NEVER silence missing key notifications (e.g. `test_missing_keys = False`) without explicit prefix re-mapping; they must verify that all expected layer weights are successfully bound.
+
+**WHY**:
+In neural network libraries where model weights default to random Gaussian initialization and missing keys are treated as soft warnings, namespace prefix mismatches (e.g. `model.` vs flat layer names) cause 100% of checkpoint weights to fail to match. The model initializes cleanly with zero exceptions, but executes on pure random noise while users and evaluation suites assume pretrained parameters were loaded.
+
+**WHEN TO APPLY**:
+Neural network checkpoint loaders, model parameter serialization frameworks, transfer learning adapters, and modular model integration harnesses.
+
+---
+
+## 41. Immutable Revision Resolution Barrier for Multi-File Distributed Artifacts
+
+**RULE**:
+When an ingestion client fetches a multi-file composite artifact (e.g. model weights, tokenizer configs, generation schemas, index files) from a remote repository via a floating or symbolic pointer (e.g. branch name, tag, or `"main"`), the client MUST resolve the floating pointer to an immutable content digest or commit hash (`ResolvedRevision`) exactly once at the public entry barrier. All downstream file requests for that session MUST pass the immutable digest. In addition, cached missing-file error responses MUST preserve identical exception semantics as remote misses.
+
+**WHY**:
+Threading floating revision strings through sequential or asynchronous HTTP fetches allows race conditions if remote commits are pushed during the loading session. Fetching `config.json` from commit $A$ and `model.safetensors` from commit $B$ causes schema mismatch corruption and hard shape mismatches.
+
+**WHEN TO APPLY**:
+Distributed package managers, model hub clients, container layer downloaders, microservice configuration loaders, and multi-file remote artifact consumers.
+
+---
+
+## 42. Out-of-Band Channel Metadata Preservation in Mode-Dispatched Media Decoders
+
+**RULE**:
+Media decoders and image processing pipelines MUST NOT determine data opacity or channel completeness solely from primary color mode enumerations (e.g. `image.mode == "RGB"`). When media formats store transparency, alpha masks, or depth channels in auxiliary out-of-band metadata chunks (such as PNG `tRNS` transparency chunks), decoders MUST inspect both the primary mode and the auxiliary metadata container before short-circuiting or bypassing alpha compositing.
+
+**WHY**:
+A PNG image with a `tRNS` chunk reports its PIL mode as `"RGB"` while storing color-keyed transparency in `image.info["transparency"]`. Returning early on `mode == "RGB"` skips background compositing, rendering transparent pixels unblended and causing severe visual artifacts in downstream multimodal encoders.
+
+**WHEN TO APPLY**:
+Computer vision preprocessors, multimodal vision-language model input pipelines, image compositing engines, and web asset format converters.
+
 
 
 

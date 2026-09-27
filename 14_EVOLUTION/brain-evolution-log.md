@@ -96,4 +96,42 @@ This file records canonical promotion events, knowledge integration milestones, 
   * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (High-performance execution invariants extended)
   * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.5)
 
+---
+
+## [2026-09-27] — Full-Spectrum Multi-Dimensional Harvest: Hugging Face Transformers
+
+* **Corpus / Source**: `c:\Users\Admin\Desktop\Learning extracted done\transformers\transformers` (`huggingface/transformers`)
+* **Trigger**: On-Demand Harvest ("all learning harvest kar lo")
+* **Audited Incidents**: 12 Confirmed Production Incidents & Architectural Invariants across all 8 Dimensions (D1–D8):
+  * Test Runner Instance Attribute Pinning & OOM Cascades (`MemoryCleanupMixin` in PR #49042, PR #48720)
+  * Path Traversal in Checkpoint Pointers (`bce8fd08f6`, PR #46890)
+  * Additive Logit Mask Annihilation & Vocabulary Collapse (`66880ecc96`, PR #48927)
+  * Windows Copy-on-Write Pagefile Commit Exhaustion during Safetensors Mmap (`8631167e31`, PR #48341)
+  * Silent Unbound State Initialization from Namespace Prefix Mismatches (`56c5e8768a`, PR #48744)
+  * Floating Revision Skew in Multi-File Distributed Artifact Fetches (`d67c72935f`, PR #47611)
+  * Out-of-Band Channel Metadata Skipping in PNG tRNS Alpha Compositing (`6da3313a6f`, PR #49005)
+  * Odd Rotary Dimension Tensor Slicing Crashes (`e37e548ce7`, PR #48524)
+  * Dynamic Control Flow Graph-Break Conflation under `torch.compile` (`d85573b1b6`, PR #48975)
+  * Shared Mutable Nested Dict Contamination across Test Sessions (`9d4ad4b789`, PR #48895)
+  * Mixture-of-Experts Singleton Dimension Cumulative Sum Collapses (`13d21d5b63`, PR #48421)
+  * Headless CPU Accelerator Query Null-Dereference Crashes (`2dedac3bb5`, PR #48590)
+* **Promoted Rules Added to `05_KNOWLEDGE/engineering-patterns.md`**:
+  * **Rule 36**: Test Instance Attribute Sweeping & Session Leak Boundary Defense
+  * **Rule 37**: Lexical-Containment Path Traversal Defense for Symlink-Preserving Repositories
+  * **Rule 38**: Additive Mask Degeneracy Clamping under Pre-Masked Constraint Spaces
+  * **Rule 39**: Pagefile Commit Charge Mitigation on Memory-Mapped Multi-Shard Checkpoints
+  * **Rule 40**: State-Dict Key Reconciliation Invariant (Anti-Silent Unbound Model State)
+  * **Rule 41**: Immutable Revision Resolution Barrier for Multi-File Distributed Artifacts
+  * **Rule 42**: Out-of-Band Channel Metadata Preservation in Mode-Dispatched Media Decoders
+  * **Refinement to Rule 5**: Invariant Dimension Pre-Validation (RoPE Even Dimensions) & Immutable Nested Dict Copies
+  * **Refinement to Rule 7**: Static Object Existence Decoupled from Tensor Value Inspection under JIT/Compile
+* **Skills Updated**:
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 15–20 added)
+* **Files Updated**:
+  * `05_KNOWLEDGE/engineering-patterns.md` (Rules 36–42 added, Rules 5 and 7 refined)
+  * `07_PROJECT_LEARNING/transformers-learnings.md` (Created with 12 forensic incidents)
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 15–20 codified)
+  * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.6)
+
+
 
