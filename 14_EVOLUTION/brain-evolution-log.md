@@ -216,7 +216,56 @@ This file records canonical promotion events, knowledge integration milestones, 
   * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 27–32 codified)
   * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.8)
 
+---
 
+## [2026-09-27] — Full-Spectrum Multi-Dimensional Harvest: Ollama (Rules 59–68)
 
-
+* **Source**: `ollama/ollama` (`c:\Users\Admin\Desktop\Learning extracted done\ollama\ollama` — High-performance, production-grade local LLM runner and model serving architecture, coordinating out-of-process C++ inference backends (`llama-server`), native Apple Silicon MLX engines (`mlxrunner`), multi-GPU hardware discovery across CUDA/ROCm/Vulkan/Metal, continuous batching, speculative decoding, prefix caching trie state machines, structured output grammar generation, and OCI model distribution).
+* **Investigation Coverage**: All 8 Dimensions audited:
+  * D1: Subprocess isolation, reap barrier, and Metal cold-storage I/O decoupling.
+  * D2: Non-blocking TryLock structured logging, updater background drain, and render loop exit sync.
+  * D3: Upstream context cancellation on mid-stream parser failure, single-pass thinking grammar, and resumed prefill snapshot preservation.
+  * D4: Scope-based array lifetimes vs sweeping, rewind lazy snapshot overlap scan, and active-path turn checkpoint eviction.
+  * D5: Boundary-crossing epoch division vs exact modulo, and mmap weight double-counting trim.
+  * D6: Associative Vulkan device name matching on hybrid graphics, and hierarchical prefix canonicalization of composite model names.
+  * D7: Deterministic goroutine drainage under `-race`, and synthetic duplicate digest SSRF tests.
+  * D8: Monotonic security flag accumulation on duplicate manifest digests, and same-host registry redirect containment with sibling CDN allowlisting.
+* **Empirical Incidents Documented**: 16 Forensic Incident Records in `07_PROJECT_LEARNING/ollama-learnings.md`:
+  * Subprocess Teardown Racing Successor Model Load Permitting Resource Over-Allocation & OOM (`f09d55d0`)
+  * In-Place Buffer Rewind Refill Corrupting Deferred Lazy Snapshots (`14489385`)
+  * Structured Logging Deadlock & Data Race in Diagnostic Introspection (`b5d373f3`, PR #18319)
+  * Mid-Stream Streaming Parser Failure Wedging Runner and Goroutines (`e0c95a5f`, PR #17883)
+  * Speculative Decoding Skipping Buffer Sweeps via Exact-Modulo Polling (`ec3cc230`)
+  * Manifest Digest Collision Bypassing Verification and Permitting SSRF (`4138e853`, PR #15504)
+  * Inverted Vulkan iGPU/dGPU Classification on Hybrid Graphics Systems (`fc585444`, PR #16669)
+  * Unrestricted Registry Redirection Permitting SSRF against Intranet / Metadata Endpoints (`6383a0fa`, PR #18533, PR #18512)
+  * Randomized Map Traversal Corrupting Composite Model Identifiers (`6ae5088c`, PR #18438)
+  * Two-Pass Structured Output Wedging Thinking Models (`5a0ff311`, PR #18441, PR #17544)
+  * Unbounded Prefix Cache Leak from Global Pin-and-Sweep Memory Management (`13037ecb`)
+  * Memory-Mapped Tensor Double Counting on Partial Layer Offload (`04639403`, PR #16709)
+  * Metal GPU Watchdog Timeouts during Heavy Cold-Storage Model Loading (`77e3b0ac`)
+  * Unbounded Multi-Turn Conversation Memory Growth via Active-Path Checkpoint Retention (`6137793a`, PR #17783, `b859a945`)
+  * Client Cancellation Dropping Long-Prompt Prefill Progress (`c44575ef`, PR #17839, `81f9a394`)
+  * Background Goroutine Leaks Racing Test Cleanup & Package Globals (`b63eed94`, PR #17446, PR #17445)
+* **Promoted Rules Added to `05_KNOWLEDGE/engineering-patterns.md`**:
+  * **Rule 59**: Subprocess Teardown & Reap Barrier prior to Shared Resource Re-Allocation
+  * **Rule 60**: Overlap-Scan Across All Subsequent Writes Following Monotonic Buffer Rewind (Anti-Lazy Snapshot Corruption)
+  * **Rule 61**: Non-Blocking TryLock with Volatile Attribute Omission for Diagnostic Introspection / Structured Logging
+  * **Rule 62**: Upstream Context Cancellation and Pipeline Draining on Mid-Stream Callback Parsing Failure
+  * **Rule 63**: Boundary-Crossing Integer Division over Exact Modulo in Multi-Token / Variable-Stride Batch Pipelines
+  * **Rule 64**: Non-Colliding Monotonic Security Flag Accumulation across Shared Multi-Part Deserialization (Anti-SSRF Verification Bypass)
+  * **Rule 65**: Associative Name-Based Hardware Matching over Positional Index Mapping across Heterogeneous Driver Layers
+  * **Rule 66**: Same-Host Redirection Containment with Sibling CDN Allowlisting in Distributed Asset Fetchers
+  * **Rule 67**: Hierarchical Prefix Canonicalization over Disjoint Field Matching in Multi-Part Composite Identifiers
+  * **Rule 68**: Single-Pass Delayed-Grammar Activation on Thinking & Reasoning Model Generations
+  * **Refinement to Rule 2**: Subprocess Lifecycles & Termination Barriers (wait for process death before successor allocation).
+  * **Refinement to Rule 5**: Memory-Mapped Tensor File-Span Double-Counting Mitigation on Partial Offloads.
+  * **Refinement to Rule 7**: Scope-Based Array Lifetime Management over Global Pinning & Sweeping.
+* **Skills Updated**:
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 33–38 added)
+* **Files Updated**:
+  * `05_KNOWLEDGE/engineering-patterns.md` (Rules 59–68 added, Rules 2, 5, 7 refined)
+  * `07_PROJECT_LEARNING/ollama-learnings.md` (Created with 16 forensic incidents)
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 33–38 codified)
+  * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.9)
 

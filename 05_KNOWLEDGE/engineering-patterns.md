@@ -20,13 +20,13 @@ Any asynchronous task that reads domain state, crosses an async boundary (networ
 ## 2. Event-Driven Cascade Resource Cleanup
 
 **RULE**:
-When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources. In multi-threaded systems where thread-affine resource handles (such as database connections) are tracked in process-wide registries for lifecycle shutdown, the registry MUST track each handle's owning thread (`thread.is_alive()`) and proactively sweep/close handles owned by exited threads before allocating new handles, preventing descriptor exhaustion in worker thread pools. Furthermore, object destruction callbacks, garbage collection hooks, and finalizer routines MUST NEVER capture the owning entity (`self`) inside their closures; they must capture only the detached, mutable identifier collection or handle value. Capturing `self` inside an object-attached destroy hook introduces a cyclic reference that permanently prevents garbage collection. Additionally, in scoped RAII resource management wrappers (such as semaphores, leases, mutex locks, and buffer reservations), move assignment operators (`operator=`) MUST explicitly release any currently held resource reservation before acquiring the incoming state, and MUST guard against self-move assignment (`this != &other`) using `std::exchange`. Overwriting active handle members without prior release permanently leaks resources, while unguarded self-move clears state without releasing the underlying lease. Furthermore, in hierarchical coordinator systems where parent registries cache references to descendant sub-registries or listeners across a module tree, any dynamic attachment or detachment of listeners/hooks within a subtree MUST proactively invalidate descendant lookup caches (`invalidate_child_registries_cache()`) across the entire ancestor hierarchy, preventing silent event dropping and context routing failures. Additionally, in scratchpad or temporary device buffer managers backed by monotonic or LIFO memory pools, temporary buffers MUST be acquired via scoped RAII pool allocation objects whose destruction immediately returns capacity in strict reverse order of allocation; retaining pool allocations inside persistent dictionaries or long-lived hash maps breaks pool free order and induces memory leaks and allocator corruption.
+When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources. In multi-threaded systems where thread-affine resource handles (such as database connections) are tracked in process-wide registries for lifecycle shutdown, the registry MUST track each handle's owning thread (`thread.is_alive()`) and proactively sweep/close handles owned by exited threads before allocating new handles, preventing descriptor exhaustion in worker thread pools. Furthermore, object destruction callbacks, garbage collection hooks, and finalizer routines MUST NEVER capture the owning entity (`self`) inside their closures; they must capture only the detached, mutable identifier collection or handle value. Capturing `self` inside an object-attached destroy hook introduces a cyclic reference that permanently prevents garbage collection. Additionally, in scoped RAII resource management wrappers (such as semaphores, leases, mutex locks, and buffer reservations), move assignment operators (`operator=`) MUST explicitly release any currently held resource reservation before acquiring the incoming state, and MUST guard against self-move assignment (`this != &other`) using `std::exchange`. Overwriting active handle members without prior release permanently leaks resources, while unguarded self-move clears state without releasing the underlying lease. Furthermore, in hierarchical coordinator systems where parent registries cache references to descendant sub-registries or listeners across a module tree, any dynamic attachment or detachment of listeners/hooks within a subtree MUST proactively invalidate descendant lookup caches (`invalidate_child_registries_cache()`) across the entire ancestor hierarchy, preventing silent event dropping and context routing failures. Additionally, in scratchpad or temporary device buffer managers backed by monotonic or LIFO memory pools, temporary buffers MUST be acquired via scoped RAII pool allocation objects whose destruction immediately returns capacity in strict reverse order of allocation; retaining pool allocations inside persistent dictionaries or long-lived hash maps breaks pool free order and induces memory leaks and allocator corruption. Additionally, when managing external subprocess daemons or runner instances governing exclusive device or port resources, process termination (`Close()`) MUST NOT return or permit successor resource allocations until the dying subprocess has completely terminated and been synchronously reaped by the operating system (`<-c.done` / `waitpid`), preventing Out-Of-Memory cascades and resource contention.
 
 **WHY**:
-Prevents orphan timers, orphan storage records, file descriptor leaks, memory/resource exhaustion, uncollectable circular finalizer references, silent semaphore/capacity leaks, stale background work, stale listener caches that drop dynamically registered subtree hooks, and LIFO memory pool corruption.
+Prevents orphan timers, orphan storage records, file descriptor leaks, memory/resource exhaustion, uncollectable circular finalizer references, silent semaphore/capacity leaks, stale background work, stale listener caches that drop dynamically registered subtree hooks, LIFO memory pool corruption, and race conditions during successor process allocation.
 
 **WHEN TO APPLY**:
-Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems, or when managing multi-threaded connection pools, thread-local handle registries, object finalization/destruction hooks, RAII move-assignment operators managing bounded capacity or unique hardware/system leases, hierarchical hook or listener registries caching descendant routing paths across dynamic module subtrees, and monotonic or LIFO device memory scratchpads.
+Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems, or when managing multi-threaded connection pools, thread-local handle registries, object finalization/destruction hooks, RAII move-assignment operators managing bounded capacity or unique hardware/system leases, hierarchical hook or listener registries caching descendant routing paths across dynamic module subtrees, monotonic or LIFO device memory scratchpads, and daemon/subprocess termination barriers.
 
 ---
 
@@ -59,13 +59,13 @@ React or other UI systems consuming local storage, custom stores, repositories, 
 ## 5. Defensive Boundary Deserialization + Exception Isolation
 
 **RULE**:
-Data crossing an application trust boundary (browser storage, API payloads, configuration files, user input) MUST be treated as untrusted and potentially malformed. Parsing, deserialization, and domain object construction operations that can throw exceptions MUST be isolated behind defensive validation and error boundaries. Invalid external input MUST NOT be allowed to crash unrelated application boot, rendering, or lifecycle execution. The boundary handler MUST provide deterministic safe fallbacks or controlled rejection behavior. For structured messages and tensor parameters containing multi-dimensional extents or partitioning axes, deserialization factories (e.g. `FromProto`, `fromJson`) MUST immediately invoke domain validation (`verify()`) prior to returning the instance. All cumulative extent products (such as mesh or shard sizes) MUST be computed using overflow-checked arithmetic (e.g. `__builtin_mul_overflow`), and non-positive dimension invariants must be strictly enforced at the deserialization threshold. Additionally, configuration and parameter deserializers must validate parity and dimension invariants on parameters destined for pairwise mathematical operations (such as requiring even rotary dimensions for pairwise 2D RoPE rotation) at configuration post-init rather than deferring to forward tensor operations. In addition, nested configuration dictionaries and metadata maps MUST be cloned via deep copy (`copy.deepcopy`) prior to mutation; mutating shared in-memory dictionaries directly contaminates shared references across test cases and concurrent execution sessions. Furthermore, when transferring deserialized coordinate grids, positional tensors, or high-precision arrays to target execution backends, data loaders and layout preparation steps MUST negotiate target device capabilities (`maybe_adjust_dtype_for_device`); high-precision formats (such as `float64`) constructed on CPU must be safely downcast to supported hardware precisions (`float32`) on half-precision or FP64-less accelerators (e.g. Apple Silicon MPS, Ascend NPU, AWS Neuron) rather than executing blind device transfers. In addition, when preparing dynamic index or offset tensors under symbolic dynamic compilation, linear arithmetic broadcasting (`arange * stride`) must be preferred over cumulative reductions (`cumsum(full(...))`) to avoid compiler pattern-matcher rewrite failures. Furthermore, in tensor libraries and binary model readers, all tensor dimensions (`ne`) and byte strides (`nb`) MUST be represented using 64-bit integers (`int64_t` and `size_t`) rather than signed 32-bit `int` to prevent silent overflow and corrupted memory indexing when tensor sizes exceed 2GB ($2^{31}-1$ bytes). In addition, when deserializing multi-dimensional extents, the cumulative product of dimensions MUST be accumulated using arbitrary-precision integers or overflow-checked multiplication, and the total rank MUST be bounded against framework constants (`n_dims <= MAX_DIMS`) to prevent silent `uint64` wraparound from passing undersized buffer reads through.
+Data crossing an application trust boundary (browser storage, API payloads, configuration files, user input) MUST be treated as untrusted and potentially malformed. Parsing, deserialization, and domain object construction operations that can throw exceptions MUST be isolated behind defensive validation and error boundaries. Invalid external input MUST NOT be allowed to crash unrelated application boot, rendering, or lifecycle execution. The boundary handler MUST provide deterministic safe fallbacks or controlled rejection behavior. For structured messages and tensor parameters containing multi-dimensional extents or partitioning axes, deserialization factories (e.g. `FromProto`, `fromJson`) MUST immediately invoke domain validation (`verify()`) prior to returning the instance. All cumulative extent products (such as mesh or shard sizes) MUST be computed using overflow-checked arithmetic (e.g. `__builtin_mul_overflow`), and non-positive dimension invariants must be strictly enforced at the deserialization threshold. Additionally, configuration and parameter deserializers must validate parity and dimension invariants on parameters destined for pairwise mathematical operations (such as requiring even rotary dimensions for pairwise 2D RoPE rotation) at configuration post-init rather than deferring to forward tensor operations. In addition, nested configuration dictionaries and metadata maps MUST be cloned via deep copy (`copy.deepcopy`) prior to mutation; mutating shared in-memory dictionaries directly contaminates shared references across test cases and concurrent execution sessions. Furthermore, when transferring deserialized coordinate grids, positional tensors, or high-precision arrays to target execution backends, data loaders and layout preparation steps MUST negotiate target device capabilities (`maybe_adjust_dtype_for_device`); high-precision formats (such as `float64`) constructed on CPU must be safely downcast to supported hardware precisions (`float32`) on half-precision or FP64-less accelerators (e.g. Apple Silicon MPS, Ascend NPU, AWS Neuron) rather than executing blind device transfers. In addition, when preparing dynamic index or offset tensors under symbolic dynamic compilation, linear arithmetic broadcasting (`arange * stride`) must be preferred over cumulative reductions (`cumsum(full(...))`) to avoid compiler pattern-matcher rewrite failures. Furthermore, in tensor libraries and binary model readers, all tensor dimensions (`ne`) and byte strides (`nb`) MUST be represented using 64-bit integers (`int64_t` and `size_t`) rather than signed 32-bit `int` to prevent silent overflow and corrupted memory indexing when tensor sizes exceed 2GB ($2^{31}-1$ bytes). In addition, when deserializing multi-dimensional extents, the cumulative product of dimensions MUST be accumulated using arbitrary-precision integers or overflow-checked multiplication, and the total rank MUST be bounded against framework constants (`n_dims <= MAX_DIMS`) to prevent silent `uint64` wraparound from passing undersized buffer reads through. Furthermore, when accounting for process memory and device allocations across memory-mapped (`mmap`) model files partially offloaded to hardware accelerators, memory counters MUST subtract the overlapping file span of CPU-resident mapped tensors (`min(memCPUMappedModel, memModelFileBacked - modelSize)`) from reclaimable page-cache metrics, preventing phantom double-counting of offloaded weights.
 
 **WHY**:
-Prevents malformed external payloads, corrupted cached strings, invalid user inputs, integer overflow in dimension calculations, mid-forward tensor dimension slicing crashes, cross-test state contamination, device runtime crashes on unsupported precision hardware, JIT compiler inductor pattern crashes under symbolic dynamic shapes, 32-bit integer truncation in large tensor strides, and silent `uint64` multiplication wraparound passing undersized buffers into memory mapping routines.
+Prevents malformed external payloads, corrupted cached strings, invalid user inputs, integer overflow in dimension calculations, mid-forward tensor dimension slicing crashes, cross-test state contamination, device runtime crashes on unsupported precision hardware, JIT compiler inductor pattern crashes under symbolic dynamic shapes, 32-bit integer truncation in large tensor strides, silent `uint64` multiplication wraparound passing undersized buffers into memory mapping routines, and phantom memory double-counting on partially offloaded mmap models.
 
 **WHEN TO APPLY**:
-Any boundary where external data is parsed, deserialized, or constructed into domain models (JSON deserialization, string parsing, storage hydration, API request handling, configuration loading, protobuf message deserialization, distributed mesh sharding specs, rotary embedding configuration validation, test suite configuration fixtures, cross-device tensor placement, dynamic JIT tensor indexing, tensor view permutations, and binary model format parsers like GGUF).
+Any boundary where external data is parsed, deserialized, or constructed into domain models (JSON deserialization, string parsing, storage hydration, API request handling, configuration loading, protobuf message deserialization, distributed mesh sharding specs, rotary embedding configuration validation, test suite configuration fixtures, cross-device tensor placement, dynamic JIT tensor indexing, tensor view permutations, binary model format parsers like GGUF, and composite memory-mapped multi-device buffer accounting).
 
 ---
 
@@ -85,13 +85,13 @@ Services, repositories, adapters, UI components, APIs, wrappers, SDKs, module al
 ## 7. Service-Level Input Preconditions + Domain Constraint Guards
 
 **RULE**:
-State-changing service operations MUST independently enforce their required input preconditions and domain constraints before mutation. Do not rely solely on UI validation because service methods may be called by other callers, tests, background tasks, or future APIs. Furthermore, in compiler and JIT-optimized execution pipelines (such as `torch.compile` or dynamic graph tracers), input precondition guards and optimization-skipping checks MUST strictly decouple static object existence checks (`arg is not None`) from data-dependent tensor value inspections (`arg.all()`). Inspecting tensor values during graph compilation triggers unwanted dynamic control-flow graph breaks, whereas verifying static object presence allows JIT compilers to optimize away redundant operations (such as attention mask materialization) without degrading compilation graphs.
+State-changing service operations MUST independently enforce their required input preconditions and domain constraints before mutation. Do not rely solely on UI validation because service methods may be called by other callers, tests, background tasks, or future APIs. Furthermore, in compiler and JIT-optimized execution pipelines (such as `torch.compile` or dynamic graph tracers), input precondition guards and optimization-skipping checks MUST strictly decouple static object existence checks (`arg is not None`) from data-dependent tensor value inspections (`arg.all()`). Inspecting tensor values during graph compilation triggers unwanted dynamic control-flow graph breaks, whereas verifying static object presence allows JIT compilers to optimize away redundant operations (such as attention mask materialization) without degrading compilation graphs. Additionally, in high-throughput accelerator bindings and tensor execution engines, intermediate array and memory lifetime management MUST be structured around scoped execution blocks (`Scoped`, `ScopedEval`) rather than global pin-and-sweep tracking, ensuring that intermediate graph allocations are deterministically reclaimed upon block exit without risking unbounded memory accumulation across multi-turn sessions.
 
 **WHY**:
-Prevents invalid data, duplicate records, malformed schema state, and domain-inconsistent persistence, while avoiding severe compilation graph-breaks and unnecessary tensor allocations in JIT-compiled pipelines.
+Prevents invalid data, duplicate records, malformed schema state, and domain-inconsistent persistence, while avoiding severe compilation graph-breaks, unnecessary tensor allocations in JIT-compiled pipelines, and unbounded memory growth in multi-turn conversation caching.
 
 **WHEN TO APPLY**:
-Any service, repository, or API operation that creates, updates, deletes, or otherwise mutates domain state, as well as tensor operator wrappers, JIT tracing guards, and attention mask skip logic under optimizing compilers.
+Any service, repository, or API operation that creates, updates, deletes, or otherwise mutates domain state, as well as tensor operator wrappers, JIT tracing guards, attention mask skip logic under optimizing compilers, and high-throughput hardware accelerator memory management.
 
 ---
 
@@ -764,6 +764,136 @@ Pure busy-spinning pins 100% of a CPU core per network connection indefinitely, 
 
 **WHEN TO APPLY**:
 Distributed tensor RPC runtimes, RDMA / InfiniBand / RoCE networking transports, high-frequency inter-process communication rings, and clustered neural network pipeline parallel runtimes.
+
+---
+
+## 59. Subprocess Teardown & Reap Barrier prior to Shared Resource Re-Allocation
+
+**RULE**:
+When terminating an external daemon or subprocess that manages exclusive or shared physical hardware resources (such as GPU VRAM, ports, or accelerator contexts), the lifecycle controller MUST send termination signals (`Kill()` / `SIGKILL`), wait synchronously for the operating system process exit and reap notification (`<-c.done` / `waitpid`), and verify release before initiating the startup or allocation of subsequent workloads. The lifecycle controller MUST NOT return from `Close()` while the subprocess is still actively unwinding in the OS kernel. Furthermore, process spawning (`Start()`) and termination (`Close()`) MUST be serialized under a mutex and check a permanent closed state guard to prevent orphan processes from starting during server shutdown.
+
+**WHY**:
+Prevents Out-Of-Memory (OOM) cascades, port bind conflicts, and hardware lock contention caused by newly started workloads racing against lingering memory reservations of an un-reaped dying process.
+
+**WHEN TO APPLY**:
+Subprocess runners (`llama-server`, `mlxrunner`), external daemon managers, GPU process isolation engines, and hardware device allocators.
+
+---
+
+## 60. Overlap-Scan Across All Subsequent Writes Following Monotonic Buffer Rewind (Anti-Lazy Snapshot Corruption)
+
+**RULE**:
+In monotonic, append-only, or ring buffers that maintain zero-copy "lazy" snapshots (views referencing live memory slots rather than owning private copies), when a restore or rewind operation moves the write pointer backward to an earlier offset, subsequent write operations MUST actively scan and evict/copy-out (`copyOut()`) any still-lazy snapshot whose slot range overlaps the write span. The scanning check MUST NOT be restricted to only the immediate first write after the rewind; it must be continuously evaluated across all subsequent appends until the write pointer advances past all known snapshot ranges.
+
+**WHY**:
+An append that lands after the first write following a rewind can advance into the offset range of a still-lazy snapshot created on a previous branch. If the check is only performed on the first append, later writes silently overwrite the underlying buffer slots, corrupting the lazy snapshot and returning alien data when restored.
+
+**WHEN TO APPLY**:
+Monotonic KV caches, append-only ring buffers, speculative decoding rewind buffers, multi-branch conversation trie caches, and zero-copy circular memory allocators.
+
+---
+
+## 61. Non-Blocking TryLock with Volatile Attribute Omission for Diagnostic Introspection / Structured Logging
+
+**RULE**:
+Structured logging inspectors, telemetry formatters (`LogValue`), and runtime health monitors that inspect mutable internal state of active service instances MUST NOT acquire blocking synchronization locks (`mu.Lock()`) if logging can be invoked from call sites that already hold those locks or from arbitrary concurrent goroutines/threads. Introspection methods MUST attempt non-blocking lock acquisition (`mu.TryLock()`), defensively snapshot/clone mutable fields (`slices.Clone`), and cleanly omit or flag volatile fields when the lock is contended.
+
+**WHY**:
+Calling blocking locks inside logging methods introduces recursive self-deadlocks when called from a context already holding the lock, and creates lock inversion deadlocks with concurrent worker threads. Omitting locks entirely causes data races and memory corruption under concurrent writes.
+
+**WHEN TO APPLY**:
+Structured logging implementations (`slog.LogValuer`), telemetry serializers, runtime status dumpers, diagnostic endpoints, and live health monitors.
+
+---
+
+## 62. Upstream Context Cancellation and Pipeline Draining on Mid-Stream Callback Parsing Failure
+
+**RULE**:
+In streaming data pipelines and generator callbacks where consumer callbacks process intermediate chunks asynchronously and cannot directly return a fatal error to abort the producer, encountering an unrecoverable parsing or validation error MUST: (1) record the error state, (2) immediately cancel the upstream execution context (`cancel()`), and (3) drain/await the completion of the upstream generator before propagating the error to the client. The callback MUST NOT write the fatal error directly to an unbuffered or single-consumer channel and return while the producer continues pushing chunks.
+
+**WHY**:
+If the consumer writes an error to an unbuffered channel and returns, the upstream producer continues emitting subsequent chunks into the callback. The callback re-evaluates or attempts another write to the abandoned channel, deadlocking the producer goroutine, leaking the execution slot, and permanently stranding backend runner instances.
+
+**WHEN TO APPLY**:
+Streaming HTTP handlers, token streaming decoders, real-time event parsers, asynchronous generator consumers, and callback-driven RPC bridges.
+
+---
+
+## 63. Boundary-Crossing Integer Division over Exact Modulo in Multi-Token / Variable-Stride Batch Pipelines
+
+**RULE**:
+Periodic maintenance routines, garbage collection triggers, cache-clearing barriers, or watchdog reset checks embedded in batched or variable-stride execution loops (where progress advances by variable step sizes $\Delta \ge 1$) MUST NOT test exact modulo equality (`count % interval == 0`). Maintenance conditions MUST evaluate integer division epoch crossings: `(current / interval) != (previous / interval)` or `(previous + stride) / interval != (previous / interval)`.
+
+**WHY**:
+In speculative decoding, batched event streaming, or multi-step execution, iterations frequently advance by multiple units per turn (e.g. $+3$, $+5$). Variable strides easily skip over exact multiples of the interval, causing the maintenance trigger to be permanently bypassed. This results in unbounded buffer accumulation, allocator pool bloat, and catastrophic system memory exhaustion.
+
+**WHEN TO APPLY**:
+Speculative decoding loops, batched event stream decoders, asynchronous buffer flushes, periodic telemetry emissions, and background garbage collection triggers.
+
+---
+
+## 64. Non-Colliding Monotonic Security Flag Accumulation across Shared Multi-Part Deserialization (Anti-SSRF Verification Bypass)
+
+**RULE**:
+When deserializing or downloading composite multi-layer entities (such as OCI image manifests, package archives, or model files) where distinct component types (e.g. metadata configs vs payload blobs) may legitimately or maliciously share identical content digests, security verification tracking maps (`skipVerify[digest]`) MUST accumulate trust state monotonically using strict logical conjunction (`skipVerify[d] = existing && cacheHit`). A cache hit on one component MUST NEVER overwrite a previous `false` (verification required) record for the same digest.
+
+**WHY**:
+In rogue OCI registry or mirror attacks, an attacker crafts a manifest where a trusted metadata config shares a digest with a malicious payload layer and redirects blob downloads to an internal endpoint. If the config is downloaded first and marks the digest as a cache hit (`true`), it clobbers the layer's unverified flag (`false`). The system skips verification on the downloaded payload, allowing arbitrary SSRF responses to be persisted as verified model blobs.
+
+**WHEN TO APPLY**:
+OCI registry clients, package managers, container image pullers, content-addressable storage (CAS) engines, and multi-part asset deserializers.
+
+---
+
+## 65. Associative Name-Based Hardware Matching over Positional Index Mapping across Heterogeneous Driver Layers
+
+**RULE**:
+Multi-adapter hardware discovery engines that correlate device attributes across heterogeneous runtime layers (e.g. Vulkan ICDs, Direct3D12 mapping layers, CUDA, ROCm, and backend inference runners) MUST NOT assume identical enumeration orders or matching device counts between driver probing tools and backend execution engines. Correlation MUST match devices associatively using normalized, collision-checked hardware descriptions and device names, verifying uniqueness before applying attribute refinements (such as integrated vs discrete classification). If duplicate identical device descriptions exist, refinements MUST only apply if all matching candidates share identical capabilities.
+
+**WHY**:
+On hybrid-graphics laptops (e.g. Intel/AMD iGPU + NVIDIA dGPU), raw Vulkan enumerations frequently list devices in reverse order from execution backends (e.g. Vulkan0 = iGPU while llama-server Vulkan0 = dGPU). Index-positional mapping inverts device classification, misidentifying discrete GPUs as integrated and vice-versa, causing models to allocate VRAM on the wrong GPU and crash during inference.
+
+**WHEN TO APPLY**:
+Multi-GPU hardware discovery engines, driver attribute refinement layers, hybrid graphics balancers, and cross-runtime device capability mappers.
+
+---
+
+## 66. Same-Host Redirection Containment with Sibling CDN Allowlisting in Distributed Asset Fetchers
+
+**RULE**:
+Automated HTTP asset pullers, package downloaders, and model registry clients MUST enforce a default same-host redirection policy (`req.URL.Host == via[0].URL.Host`). Cross-host redirects MUST be blocked by default and permitted strictly between pre-approved, explicitly allowlisted sibling domains and Content Delivery Networks (CDNs) belonging to the same service provider (`isAllowedHost(hostname)`).
+
+**WHY**:
+Unrestricted HTTP redirect following turns remote asset download commands into an SSRF vector. A compromised or rogue registry can issue an HTTP 302 redirecting the client to fetch blobs from internal link-local IP addresses (`169.254.169.254`), container metadata APIs, or intranet database endpoints, exfiltrating internal data or poisoning local model caches.
+
+**WHEN TO APPLY**:
+HTTP clients in package managers, model pull handlers, content-addressable storage downloaders, and remote artifact fetchers.
+
+---
+
+## 67. Hierarchical Prefix Canonicalization over Disjoint Field Matching in Multi-Part Composite Identifiers
+
+**RULE**:
+When canonicalizing multi-part hierarchical identifiers (e.g. `[host]/[namespace]/[model]:[tag]`) against an on-disk or in-memory registry containing thousands of items, matching algorithms MUST search for the single entry with the longest contiguous hierarchical prefix match (Host $\to$ Namespace $\to$ Model) or full exact match. Canonicalization MUST NOT match and overwrite individual fields independently across arbitrary entries encountered during map iteration.
+
+**WHY**:
+Matching fields independently allows an unrelated manifest sharing only a tag (e.g. `OtherOrg/OtherModel:Q8`) to overwrite the casing of the requested model's tag (`MyOrg/MyModel:q4`). Because hash map iteration is randomized, the last matching entry wins, producing intermittent, nondeterministic "entity not found" failures on repeated lookups of identical identifiers.
+
+**WHEN TO APPLY**:
+Repository and image naming parsers, hierarchical entity registries, case-insensitive resource lookup engines, and composite URI canonicalizers.
+
+---
+
+## 68. Single-Pass Delayed-Grammar Activation on Thinking & Reasoning Model Generations
+
+**RULE**:
+When applying structured output schemas or grammars (e.g. JSON schema, structural tags) to models featuring free-form chain-of-thought / thinking traces, the execution engine MUST NOT split execution into two passes (an unconstrained pass canceled upon thought termination followed by a re-prompted, re-prefilled second pass). The engine MUST pass the thinking termination sentinel tokens/strings (`ThinkingClose`) to the backend runner, and activate the grammar constraint dynamically on the first token generated immediately following the thinking sentinel in a single, uninterrupted forward pass.
+
+**WHY**:
+Two-pass restarts require a duplicate prompt prefill, drop boundary tokens crossing the cancellation threshold, distort latency/token metrics, introduce prompt templating hacks, and can leak stray unconstrained tokens into the formatted output. Single-pass deferred grammar activation delivers exact token metrics, zero prefill duplication, and seamless streaming.
+
+**WHEN TO APPLY**:
+Structured output engines, reasoning and thinking model runners, grammar-constrained sampling dispatchers, and tool-calling agent runtimes.
 
 
 

@@ -466,6 +466,101 @@ This skill codifies essential rules for high-performance computing, Python C-ext
   }
   ```
 
+---
 
+## 33. Subprocess Teardown & Reap Barrier prior to Shared Resource Re-Allocation
 
+* **The Problem**: Subprocess lifecycle managers sending signals (`SIGINT` / `SIGKILL`) and returning before waiting for the process to exit and be reaped by the OS kernel leave dying processes holding hardware resources (VRAM, listening ports). When the scheduler immediately launches the next model, it collides on ports or fails with Out-Of-Memory (OOM).
+* **The Rule**:
+  Always kill and synchronously wait for process termination and reaping (`<-c.done` / `waitpid`) before returning from `Close()`, and serialize `Load()` under a mutex:
+  ```go
+  func (c *Client) Close() error {
+      c.mu.Lock()
+      defer c.mu.Unlock()
+      c.closed = true
+      if c.cmd != nil && c.cmd.Process != nil {
+          c.cmd.Process.Kill()
+          <-c.done // Synchronously await process exit and reap
+          c.cmd = nil
+      }
+      return nil
+  }
+  ```
 
+---
+
+## 34. Overlap-Scan of In-Place Rewinds Against Monotonic Lazy Buffer Snapshots
+
+* **The Problem**: Lazy zero-copy snapshots pointing into a live buffer must be copied out before appends overwrite them. Checking for overlapping snapshots only on the first append after a rewind leaves still-lazy snapshots situated further ahead vulnerable to subsequent appends, silently corrupting conversation history when restored.
+* **The Rule**:
+  Scan every write range against all active lazy snapshots until the write pointer advances past all known snapshot ranges:
+  ```go
+  for _, s := range slices.Clone(c.lazySnapshots) {
+      if s.fromOffset < prev+L && s.toOffset > prev {
+          s.copyOut()
+      }
+  }
+  ```
+
+---
+
+## 35. Non-Blocking TryLock with Volatile Field Omission for Diagnostic Introspection
+
+* **The Problem**: Structured logging hooks (`slog.LogValuer`) and health monitors called on active instances can be invoked while locks are held or from arbitrary concurrent threads. Acquiring blocking locks causes recursive self-deadlocks, while un-locked reads cause data races.
+* **The Rule**:
+  Use non-blocking `TryLock()`; clone mutable slices when acquired, and cleanly omit volatile fields when contended:
+  ```go
+  func (runner *runnerRef) LogValue() slog.Value {
+      attrs := []slog.Attr{}
+      if runner.refMu.TryLock() {
+          if len(runner.gpus) > 0 {
+              attrs = append(attrs, slog.Any("inference", slices.Clone(runner.gpus)))
+          }
+          runner.refMu.Unlock()
+      }
+      return slog.GroupValue(attrs...)
+  }
+  ```
+
+---
+
+## 36. Scope-Based Array Lifetime Management over Global Pinning and Sweeping
+
+* **The Problem**: Global pin-and-sweep tracking requires every caller to know what other callers hold. Code that never sweeps accumulates unpinned intermediate arrays, causing severe multi-gigabyte memory leaks across multi-turn cache merges.
+* **The Rule**:
+  Structure array lifetimes around lexical function scopes (`Scoped`, `ScopedEval`) or held scopes (`NewScope`), freeing intermediate graph nodes deterministically upon block exit:
+  ```go
+  func Scoped(fn func()) {
+      s := enterScope()
+      defer exitScope(s)
+      fn()
+  }
+  ```
+
+---
+
+## 37. Single-Pass Delayed-Grammar Activation on Thinking Models
+
+* **The Problem**: Splitting generation into two passes (an unconstrained pass cancelled when thinking ends followed by a re-prompted grammar pass) requires duplicate prompt prefills, drops boundary tokens, and corrupts performance metrics.
+* **The Rule**:
+  Pass thinking termination sentinels (`ThinkingClose`) directly to the backend runner, activating the grammar constraint dynamically on the first token generated after the thinking trace in a single forward pass:
+  ```go
+  r.Completion(ctx, llm.CompletionRequest{
+      Prompt:        prompt,
+      Format:        req.Format,
+      ThinkingClose: thinkingCloseForCompletion(builtinParser, thinkTagParser),
+  }, callback)
+  ```
+
+---
+
+## 38. Boundary-Crossing Integer Division over Exact Modulo in Variable-Stride Batch Pipelines
+
+* **The Problem**: Periodic buffer flushing or cache clearing using exact modulo checks (`generated % interval == 0`) fails in speculative decoding or batched streaming where step sizes $\Delta > 1$. Skipping over exact boundaries bypasses maintenance, ballooning memory from 30 GB to 90 GB.
+* **The Rule**:
+  Evaluate integer division epoch crossings:
+  ```go
+  if generated/clearCacheInterval != before/clearCacheInterval {
+      mlx.ClearCache()
+  }
+  ```
