@@ -20,13 +20,13 @@ Any asynchronous task that reads domain state, crosses an async boundary (networ
 ## 2. Event-Driven Cascade Resource Cleanup
 
 **RULE**:
-When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources. In multi-threaded systems where thread-affine resource handles (such as database connections) are tracked in process-wide registries for lifecycle shutdown, the registry MUST track each handle's owning thread (`thread.is_alive()`) and proactively sweep/close handles owned by exited threads before allocating new handles, preventing descriptor exhaustion in worker thread pools.
+When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources. In multi-threaded systems where thread-affine resource handles (such as database connections) are tracked in process-wide registries for lifecycle shutdown, the registry MUST track each handle's owning thread (`thread.is_alive()`) and proactively sweep/close handles owned by exited threads before allocating new handles, preventing descriptor exhaustion in worker thread pools. Furthermore, object destruction callbacks, garbage collection hooks, and finalizer routines MUST NEVER capture the owning entity (`self`) inside their closures; they must capture only the detached, mutable identifier collection or handle value. Capturing `self` inside an object-attached destroy hook introduces a cyclic reference that permanently prevents garbage collection.
 
 **WHY**:
-Prevents orphan timers, orphan storage records, file descriptor leaks, memory/resource exhaustion, and stale background work.
+Prevents orphan timers, orphan storage records, file descriptor leaks, memory/resource exhaustion, uncollectable circular finalizer references, and stale background work.
 
 **WHEN TO APPLY**:
-Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems, or when managing multi-threaded connection pools and thread-local handle registries.
+Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems, or when managing multi-threaded connection pools, thread-local handle registries, or object finalization/destruction hooks.
 
 ---
 
@@ -288,4 +288,83 @@ Prevents host filesystem traversal and unauthorized data exfiltration. If untrus
 
 **WHEN TO APPLY**:
 Sandboxed code execution environments, Docker runners, workflow manifest deserializers, and container virtualization plugins.
+
+---
+
+## 23. Telemetry & Diagnostic Retention Gating
+
+**RULE**:
+Diagnostic tracking structures, debug caches, leak-detection maps, and instrumentation registries MUST be strictly gated on active debug configuration flags. Modules MUST NOT populate global or process-level tracking dictionaries during normal execution paths under the assumption that only debug routines will consume them. In addition, diagnostic modules that interact with compiler or runtime internals must employ localized, lazy imports when referencing configuration modules to prevent cyclic initialization deadlocks.
+
+**WHY**:
+Populating un-gated diagnostic collections stores references to intermediate AST nodes, execution graphs, or proxy values. In modern frameworks, a single pinned node retains its parent graph, the owning module, and all underlying model weights or database rows, causing severe, silent multi-gigabyte memory leaks across repeated execution cycles.
+
+**WHEN TO APPLY**:
+Compiler tracers, profilers, memory leak detectors, telemetry listeners, and debug recording hooks across long-running processes or servers.
+
+---
+
+## 24. Device-Context Affined Synchronization for Polymorphic Null Handles
+
+**RULE**:
+When execution or memory cleanup routines invoke synchronization APIs on polymorphic null handles (such as GPU stream 0 / default streams, where a null handle represents the stream belonging to whichever device is currently active on the thread), the cleanup routine MUST explicitly switch execution context to the owning device guard (`cuda::CUDAGuard(device)`) before calling synchronization or unmapping physical memory.
+
+**WHY**:
+In multi-device architectures, an unmap or eviction triggered from Device 0 targeting an idle segment owned by Device 1 will synchronize Device 0's default stream if called without an explicit device context switch. This leaves Device 1 un-synchronized, unmapping physical memory while Device 1 compute kernels are actively executing on that buffer, causing data corruption and device crashes.
+
+**WHEN TO APPLY**:
+Multi-GPU/device allocators, cross-device memory pools, background memory compaction, asynchronous device deallocations, and device-to-device IPC transports.
+
+---
+
+## 25. Read-Only Const-Data Pointer Preservation for Copy-On-Write Invariants
+
+**RULE**:
+In systems implementing Copy-On-Write (COW), zero-copy buffer sharing, or immutable views, native kernel dispatchers and adapter layers MUST strictly query immutable/const pointer accessors (`const_data_ptr()`) when executing read-only operations. Dispatchers MUST NOT invoke default mutable pointer accessors (`data_ptr()`) unless in-place mutation is explicitly intended.
+
+**WHY**:
+Calling mutable data accessors on shared or lazy-materialized buffers forces the runtime engine to de-virtualize and deep-copy the underlying memory to preserve safety against accidental writes, needlessly doubling memory footprint and destroying zero-copy throughput.
+
+**WHEN TO APPLY**:
+Native C++/CUDA bindings, shared memory tensors, BLAS/LAPACK operator wrappers, multi-threaded view dispatchers, and IPC buffer views.
+
+---
+
+## 26. 64-Bit Promotion at First Multiply for Multi-Dimensional Stride Arithmetic
+
+**RULE**:
+When computing thread indices, flat array offsets, grid batch strides, or scratch buffer dimensions across multi-dimensional arrays, all index terms MUST be cast or promoted to 64-bit signed integers (`int64_t`) at the very first multiplication step. Arithmetic must never allow intermediate products of 32-bit dimensions to be computed before widening to 64 bits.
+
+**WHY**:
+In large-scale tensor operations, individual tensor dimensions (e.g. batch=32, rows=8192, cols=32) comfortably fit within 32-bit integer limits, but their product exceeds $2^{31}-1$. When computed in 32-bit signed math, the product silently overflows and wraps negative, bypassing boundary checks (`y >= count`), producing inverted offsets, and causing fatal out-of-bounds illegal memory accesses.
+
+**WHEN TO APPLY**:
+CUDA/C++ kernels, high-dimensional indexing algorithms, image/matrix convolution strides, flat offset calculations, and graphics/simulation vertex buffers.
+
+---
+
+## 27. Semantic Assertion Preservation over Optimization-Vulnerable Primitives
+
+**RULE**:
+Critical invariant checks, runtime preconditions, and security boundaries in production Python systems MUST NOT rely on bare `assert` statements if code can run under runtime optimization flags (`python -O`), which completely strip `assert` bytecode instructions. Invariants must be written as explicit conditional exceptions (`if not cond: raise AssertionError(...)`). Furthermore, when validating floating-point inequalities, conditionals must never be naively inverted using `<`/`>` to `>=`/`<=`, because all relational comparisons against IEEE-754 `NaN` evaluate to false; the non-inverted condition must be wrapped in `not (...)` to preserve NaN safety.
+
+**WHY**:
+Silencing linter warnings (e.g. `# noqa: S101`) masks the underlying vulnerability that production execution with `-O` turns safety assertions into no-ops. Naive floating-point inversion fails to catch NaN values, allowing corrupted calculation states to propagate undetected.
+
+**WHEN TO APPLY**:
+Production Python libraries, runtime type and range guards, mathematical calculation pipelines, compiler assertion checks, and security validation boundaries.
+
+---
+
+## 28. Exact-Extent Virtual Address Space Reservation for Immutable Imported Buffers
+
+**RULE**:
+When an allocation subsystem imports external memory buffers, IPC handles, or shared segments whose physical handle count is fixed by an external producer, the virtual memory allocator MUST reserve address space matching only the exact shared extent. The allocator MUST NOT allocate speculative device-scale growth headroom on buffers that cannot grow dynamically.
+
+**WHY**:
+Allocators designed for dynamic growth typically reserve virtual address space sized to $1\frac{1}{8}$ of physical device memory per segment. When applied to non-growable IPC segments, each import strands gigabytes of address space, rapidly exhausting the process's 128 TiB virtual address space and causing out-of-virtual-memory crashes after a few hundred imports despite plentiful physical memory.
+
+**WHEN TO APPLY**:
+Inter-process communication (IPC) memory allocators, virtual memory reservation engines, shared memory pools, and multi-process distributed training runtimes.
+
 
