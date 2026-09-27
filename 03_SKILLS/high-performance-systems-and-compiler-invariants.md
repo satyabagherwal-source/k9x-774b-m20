@@ -381,5 +381,91 @@ This skill codifies essential rules for high-performance computing, Python C-ext
   torch.fx.experimental._config.use_duck_shape = False
   ```
 
+---
+
+## 27. Cached Computation Graph Invalidation upon Underlying Buffer Release
+
+* **The Problem**: Runtimes caching compiled execution graphs (nodes holding raw pointers to physical device buffers) permit use-after-free and arbitrary remote code execution (RCE) if an underlying buffer is freed while the cached graph structure remains valid.
+* **The Rule**:
+  Always nullify and discard all cached computation graphs whenever any constituent memory buffer is deallocated:
+  ```cpp
+  for (auto & sg : stored_graphs) {
+      sg.graph = nullptr;
+  }
+  ggml_backend_buffer_free(buffer);
+  buffers.erase(buffer);
+  ```
+
+---
+
+## 28. Asynchronous Command Functor By-Value Capture (Preempting Host Stack Destruction)
+
+* **The Problem**: Passing a host stack address to an asynchronous device queue via DMA copy (`stream->memcpy(dst, &stack_var, size)`) results in use-after-return if preceding queue kernels run long enough for the host C++ frame to unwind before the DMA transfer executes, corrupting attention scales and generating garbage tokens.
+* **The Rule**:
+  Capture scalar values by value directly into device command closures rather than taking stack pointers:
+  ```cpp
+  const sycl::half scale_h = (sycl::half)(1.0f / kq_scale);
+  stream->single_task([=]() { *scale_dev = scale_h; });
+  ```
+
+---
+
+## 29. Double-Buffered Radix Sorting Non-Aliasing Key Buffer Guarantee
+
+* **The Problem**: In-place aliasing of input and output key buffers (`d_keys_in == d_keys_out`) in CUB or GPU radix sort algorithms violates double-buffering ping-pong invariants, partially overwriting unread inputs and emitting corrupted permutation indices that cause out-of-bounds gathers.
+* **The Rule**:
+  Always allocate and supply distinct input and output key buffers for radix sort algorithms:
+  ```cpp
+  ggml_cuda_pool_alloc<float> temp_keys_alloc(pool, ncols * nrows);
+  ggml_cuda_pool_alloc<float> temp_keys_out_alloc(pool, ncols * nrows);
+  CUDA_CHECK(DeviceRadixSort::SortPairs(d_temp, temp_bytes, temp_keys, temp_keys_out, temp_idx, dst, ...));
+  ```
+
+---
+
+## 30. Asymmetric Multi-Head Matrix Splitting & Granularity Lockstep ($d_k \neq d_v$)
+
+* **The Problem**: Partitioning fused multi-component projections (QKV) across multiple GPUs using a shared 2-segment granularity assumes $d_k = d_v$. For models with asymmetric head geometries ($d_k \neq d_v$, like MiMo where $d_k=192$ and $d_v=128$), this cuts across attention head boundaries and corrupts parallel matrix multiplications.
+* **The Rule**:
+  Split asymmetric projections into 3 distinct segments with independent modular head-aligned granularities:
+  ```cpp
+  const int64_t granularity_kv = granularity_q / n_gqa;
+  const int64_t granularity_v  = (granularity_kv / hparams.n_embd_head_k(il)) * hparams.n_embd_head_v(il);
+  return {granularity_q, granularity_kv, granularity_v};
+  ```
+
+---
+
+## 31. Include-Order Independent Constant Guarantees & PCH ABI Boundary Segregation
+
+* **The Problem**: Conditional macros depending on header feature-tests (e.g. `__cpp_lib_hardware_interference_size` via `<new>`) vary between C and C++ translation units under precompiled headers (PCH). C TUs allocate buffers using a 64-byte stride, while C++ TUs step by 256-byte cache lines, triggering fatal heap-buffer overflows.
+* **The Rule**:
+  Make cache-line and buffer sizing macros strictly deterministic and include-order independent:
+  ```cpp
+  #if defined(__POWER9_VECTOR__)
+  #define CACHE_LINE_SIZE 128
+  #elif defined(__VXE__) || defined(__VXE2__)
+  #define CACHE_LINE_SIZE 256
+  #else
+  #define CACHE_LINE_SIZE 64
+  #endif
+  ```
+
+---
+
+## 32. GPU Thread-Block Barrier Scope Non-Divergence (`__syncthreads()`)
+
+* **The Problem**: Placing `__syncthreads()` inside diverging conditional branches (e.g. `if` and `else` branches each holding separate barriers) violates CUDA thread-block synchronization invariants, causing threads to deadlock waiting for divergent counterparts.
+* **The Rule**:
+  Unify synchronization barrier scope across the entire block and scope reductions before and after the shared barrier:
+  ```cuda
+  if (np > 1) {
+      if (threadIdx.y % np == 0) { /* pre-barrier warp reduction */ }
+      __syncthreads(); // Unconditional shared block barrier
+      if (threadIdx.y % np == 0) { /* post-barrier writeback */ }
+  }
+  ```
+
+
 
 

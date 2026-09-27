@@ -173,6 +173,50 @@ This file records canonical promotion events, knowledge integration milestones, 
   * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 21–26 codified)
   * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.7)
 
+---
+
+## [2026-09-27] — Full-Spectrum Multi-Dimensional Harvest: llama.cpp (Rules 50–58)
+
+* **Source**: `ggml-org/llama.cpp` (`c:\Users\Admin\Desktop\Learning extracted done\ollma.cpp\llama.cpp` — Foundational C/C++ LLM Inference Framework and GGML Tensor Subsystem).
+* **Investigation Coverage**: All 8 Dimensions audited (D1: Asymmetric QKV head splits & empty graph captures; D2: LRU multi-model scheduler deadlock, RDMA hybrid polling, divergent barrier CUDA Flash Attention; D3: Atomic state restore discard & regex grammar rollback; D4: RPC cached graph UAF invalidation & stack use-after-return; D5: 64-bit stride promotion & GGUF uint64 overflow guards; D6: PCH CACHE_LINE_SIZE ABI heap overflow & iGPU lazy mmap fallback; D7: Large-KV F16 backend tests; D8: CUB radix sort in-place aliasing & Vulkan Bitonic sort races).
+* **Empirical Incidents Documented**: 16 Forensic Incident Records in `07_PROJECT_LEARNING/llamacpp-learnings.md`:
+  * Cached Computation Graph UAF & RCE Invalidation (`60199339b`, PR #24292)
+  * Host Stack Frame Use-After-Return in Async Queue (`d6b61ac0d`, PR #25880)
+  * CUB Radix Sort Permutation Corruption via In-Place Key Aliasing (`b23701f77`, PR #28389)
+  * Asymmetric Multi-Head Matrix Splitting ($d_k \neq d_v$) (`f805c57a2`, PR #29294)
+  * Precompiled Header Macro Divergence Undersizing Work Buffers (`2f539596c`, PR #28882)
+  * Thread Block Divergent Barrier in CUDA Flash Attention (`b74f590ea`, PR #27870)
+  * Concurrency Deadlock & Starvation in Multi-Model Router (`160bd031b`, PR #28539)
+  * KV & Recurrent State Restore Cleanup on Deserialization Failure (`08618ff8e`, PR #27530)
+  * 32-Bit Integer Truncation in Tensor Strides and Dimensions (`c21284cdf`, PR #29227)
+  * Scratchpad Cache Breaking LIFO Memory Pool Free Order (`661643e43`, PR #28704)
+  * Adaptive Hybrid Busy-Spin with Deferred Event Channel Sleeping (`d7fb90e8e`, PR #29440)
+  * GGUF Reader uint64 Multiplication Wraparound & n_dims Bounds (`5788b510a`, PR #25401)
+  * Intra-Workgroup Read/Write Data Race in Vulkan Bitonic Sort (`481c65f09`, PR #28705)
+  * Degenerate / Empty Graph Early Return in Metal Graph Capture (`84e76d8a2`, PR #29390)
+  * Schema Constraint Graceful Fallback with Grammar Rule Rollback (`dc64a1620`, PR #26939)
+  * Dynamic Device Capability Probing for Heterogeneous Memory (`f3f1a8f27`, PR #28326)
+* **Promoted Rules Added to `05_KNOWLEDGE/engineering-patterns.md`**:
+  * **Rule 50**: Cached Computation Graph Invalidation upon Underlying Buffer Release (Anti-Use-After-Free & RCE)
+  * **Rule 51**: By-Value Command Functor Capture to Preempt Host Stack Frame Use-After-Return in Asynchronous Queues
+  * **Rule 52**: Elimination of In-Place Buffer Aliasing in Multi-Pass / Double-Buffered Device Radix Sorting
+  * **Rule 53**: Multi-Segment Granularity-Lockstep Tensor Splitting for Asymmetric Multi-Head Geometries ($d_k \neq d_v$)
+  * **Rule 54**: Include-Order Independent Constant Guarantees and Cross-Language PCH ABI Boundary Segregation
+  * **Rule 55**: GPU Thread-Block Barrier Scope Non-Divergence (`__syncthreads()` Control Flow Unification)
+  * **Rule 56**: Centralized State Machine Advance over Peer Eviction Flags in High-Concurrency Resource Pools
+  * **Rule 57**: Universal Checkpointing via Pre-Terminal Token State Stashing & Logit Replay across Non-Deletable Recurrent State Runtimes
+  * **Rule 58**: Adaptive Hybrid Busy-Spin with Deferred Event Channel Sleeping for Low-Latency Distributed RPC
+  * **Refinement to Rule 2**: Scoped RAII Memory Pool Allocation over Persistent Hash-Map Retainers in Monotonic/LIFO Allocators
+  * **Refinement to Rule 5**: 64-Bit Stride/Dimension Promotion (`size_t nb`, `int64_t ne`) & Multiplicative Overflow Defense on Model Deserialization
+* **Skills Updated**:
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 27–32 added)
+* **Files Updated**:
+  * `05_KNOWLEDGE/engineering-patterns.md` (Rules 50–58 added, Rules 2 and 5 refined)
+  * `07_PROJECT_LEARNING/llamacpp-learnings.md` (Created with 16 forensic incidents)
+  * `03_SKILLS/high-performance-systems-and-compiler-invariants.md` (Sections 27–32 codified)
+  * `15_METADATA/brain-status.md` (Version upgraded to Foundation v1.8)
+
+
 
 
 

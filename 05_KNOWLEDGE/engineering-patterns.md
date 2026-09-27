@@ -20,13 +20,13 @@ Any asynchronous task that reads domain state, crosses an async boundary (networ
 ## 2. Event-Driven Cascade Resource Cleanup
 
 **RULE**:
-When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources. In multi-threaded systems where thread-affine resource handles (such as database connections) are tracked in process-wide registries for lifecycle shutdown, the registry MUST track each handle's owning thread (`thread.is_alive()`) and proactively sweep/close handles owned by exited threads before allocating new handles, preventing descriptor exhaustion in worker thread pools. Furthermore, object destruction callbacks, garbage collection hooks, and finalizer routines MUST NEVER capture the owning entity (`self`) inside their closures; they must capture only the detached, mutable identifier collection or handle value. Capturing `self` inside an object-attached destroy hook introduces a cyclic reference that permanently prevents garbage collection. Additionally, in scoped RAII resource management wrappers (such as semaphores, leases, mutex locks, and buffer reservations), move assignment operators (`operator=`) MUST explicitly release any currently held resource reservation before acquiring the incoming state, and MUST guard against self-move assignment (`this != &other`) using `std::exchange`. Overwriting active handle members without prior release permanently leaks resources, while unguarded self-move clears state without releasing the underlying lease. Furthermore, in hierarchical coordinator systems where parent registries cache references to descendant sub-registries or listeners across a module tree, any dynamic attachment or detachment of listeners/hooks within a subtree MUST proactively invalidate descendant lookup caches (`invalidate_child_registries_cache()`) across the entire ancestor hierarchy, preventing silent event dropping and context routing failures.
+When a parent domain entity is deleted or retired, dependent services that own related resources MUST receive an explicit lifecycle event and clean up their timers, queued work, child records, subscriptions, and other owned resources. In multi-threaded systems where thread-affine resource handles (such as database connections) are tracked in process-wide registries for lifecycle shutdown, the registry MUST track each handle's owning thread (`thread.is_alive()`) and proactively sweep/close handles owned by exited threads before allocating new handles, preventing descriptor exhaustion in worker thread pools. Furthermore, object destruction callbacks, garbage collection hooks, and finalizer routines MUST NEVER capture the owning entity (`self`) inside their closures; they must capture only the detached, mutable identifier collection or handle value. Capturing `self` inside an object-attached destroy hook introduces a cyclic reference that permanently prevents garbage collection. Additionally, in scoped RAII resource management wrappers (such as semaphores, leases, mutex locks, and buffer reservations), move assignment operators (`operator=`) MUST explicitly release any currently held resource reservation before acquiring the incoming state, and MUST guard against self-move assignment (`this != &other`) using `std::exchange`. Overwriting active handle members without prior release permanently leaks resources, while unguarded self-move clears state without releasing the underlying lease. Furthermore, in hierarchical coordinator systems where parent registries cache references to descendant sub-registries or listeners across a module tree, any dynamic attachment or detachment of listeners/hooks within a subtree MUST proactively invalidate descendant lookup caches (`invalidate_child_registries_cache()`) across the entire ancestor hierarchy, preventing silent event dropping and context routing failures. Additionally, in scratchpad or temporary device buffer managers backed by monotonic or LIFO memory pools, temporary buffers MUST be acquired via scoped RAII pool allocation objects whose destruction immediately returns capacity in strict reverse order of allocation; retaining pool allocations inside persistent dictionaries or long-lived hash maps breaks pool free order and induces memory leaks and allocator corruption.
 
 **WHY**:
-Prevents orphan timers, orphan storage records, file descriptor leaks, memory/resource exhaustion, uncollectable circular finalizer references, silent semaphore/capacity leaks, stale background work, and stale listener caches that drop dynamically registered subtree hooks.
+Prevents orphan timers, orphan storage records, file descriptor leaks, memory/resource exhaustion, uncollectable circular finalizer references, silent semaphore/capacity leaks, stale background work, stale listener caches that drop dynamically registered subtree hooks, and LIFO memory pool corruption.
 
 **WHEN TO APPLY**:
-Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems, or when managing multi-threaded connection pools, thread-local handle registries, object finalization/destruction hooks, RAII move-assignment operators managing bounded capacity or unique hardware/system leases, and hierarchical hook or listener registries caching descendant routing paths across dynamic module subtrees.
+Whenever domain resources (timers, background workers, notification logs, child records) are distributed across decoupled services or subsystems, or when managing multi-threaded connection pools, thread-local handle registries, object finalization/destruction hooks, RAII move-assignment operators managing bounded capacity or unique hardware/system leases, hierarchical hook or listener registries caching descendant routing paths across dynamic module subtrees, and monotonic or LIFO device memory scratchpads.
 
 ---
 
@@ -59,13 +59,13 @@ React or other UI systems consuming local storage, custom stores, repositories, 
 ## 5. Defensive Boundary Deserialization + Exception Isolation
 
 **RULE**:
-Data crossing an application trust boundary (browser storage, API payloads, configuration files, user input) MUST be treated as untrusted and potentially malformed. Parsing, deserialization, and domain object construction operations that can throw exceptions MUST be isolated behind defensive validation and error boundaries. Invalid external input MUST NOT be allowed to crash unrelated application boot, rendering, or lifecycle execution. The boundary handler MUST provide deterministic safe fallbacks or controlled rejection behavior. For structured messages and tensor parameters containing multi-dimensional extents or partitioning axes, deserialization factories (e.g. `FromProto`, `fromJson`) MUST immediately invoke domain validation (`verify()`) prior to returning the instance. All cumulative extent products (such as mesh or shard sizes) MUST be computed using overflow-checked arithmetic (e.g. `__builtin_mul_overflow`), and non-positive dimension invariants must be strictly enforced at the deserialization threshold. Additionally, configuration and parameter deserializers must validate parity and dimension invariants on parameters destined for pairwise mathematical operations (such as requiring even rotary dimensions for pairwise 2D RoPE rotation) at configuration post-init rather than deferring to forward tensor operations. In addition, nested configuration dictionaries and metadata maps MUST be cloned via deep copy (`copy.deepcopy`) prior to mutation; mutating shared in-memory dictionaries directly contaminates shared references across test cases and concurrent execution sessions. Furthermore, when transferring deserialized coordinate grids, positional tensors, or high-precision arrays to target execution backends, data loaders and layout preparation steps MUST negotiate target device capabilities (`maybe_adjust_dtype_for_device`); high-precision formats (such as `float64`) constructed on CPU must be safely downcast to supported hardware precisions (`float32`) on half-precision or FP64-less accelerators (e.g. Apple Silicon MPS, Ascend NPU, AWS Neuron) rather than executing blind device transfers. In addition, when preparing dynamic index or offset tensors under symbolic dynamic compilation, linear arithmetic broadcasting (`arange * stride`) must be preferred over cumulative reductions (`cumsum(full(...))`) to avoid compiler pattern-matcher rewrite failures.
+Data crossing an application trust boundary (browser storage, API payloads, configuration files, user input) MUST be treated as untrusted and potentially malformed. Parsing, deserialization, and domain object construction operations that can throw exceptions MUST be isolated behind defensive validation and error boundaries. Invalid external input MUST NOT be allowed to crash unrelated application boot, rendering, or lifecycle execution. The boundary handler MUST provide deterministic safe fallbacks or controlled rejection behavior. For structured messages and tensor parameters containing multi-dimensional extents or partitioning axes, deserialization factories (e.g. `FromProto`, `fromJson`) MUST immediately invoke domain validation (`verify()`) prior to returning the instance. All cumulative extent products (such as mesh or shard sizes) MUST be computed using overflow-checked arithmetic (e.g. `__builtin_mul_overflow`), and non-positive dimension invariants must be strictly enforced at the deserialization threshold. Additionally, configuration and parameter deserializers must validate parity and dimension invariants on parameters destined for pairwise mathematical operations (such as requiring even rotary dimensions for pairwise 2D RoPE rotation) at configuration post-init rather than deferring to forward tensor operations. In addition, nested configuration dictionaries and metadata maps MUST be cloned via deep copy (`copy.deepcopy`) prior to mutation; mutating shared in-memory dictionaries directly contaminates shared references across test cases and concurrent execution sessions. Furthermore, when transferring deserialized coordinate grids, positional tensors, or high-precision arrays to target execution backends, data loaders and layout preparation steps MUST negotiate target device capabilities (`maybe_adjust_dtype_for_device`); high-precision formats (such as `float64`) constructed on CPU must be safely downcast to supported hardware precisions (`float32`) on half-precision or FP64-less accelerators (e.g. Apple Silicon MPS, Ascend NPU, AWS Neuron) rather than executing blind device transfers. In addition, when preparing dynamic index or offset tensors under symbolic dynamic compilation, linear arithmetic broadcasting (`arange * stride`) must be preferred over cumulative reductions (`cumsum(full(...))`) to avoid compiler pattern-matcher rewrite failures. Furthermore, in tensor libraries and binary model readers, all tensor dimensions (`ne`) and byte strides (`nb`) MUST be represented using 64-bit integers (`int64_t` and `size_t`) rather than signed 32-bit `int` to prevent silent overflow and corrupted memory indexing when tensor sizes exceed 2GB ($2^{31}-1$ bytes). In addition, when deserializing multi-dimensional extents, the cumulative product of dimensions MUST be accumulated using arbitrary-precision integers or overflow-checked multiplication, and the total rank MUST be bounded against framework constants (`n_dims <= MAX_DIMS`) to prevent silent `uint64` wraparound from passing undersized buffer reads through.
 
 **WHY**:
-Prevents malformed external payloads, corrupted cached strings, invalid user inputs, integer overflow in dimension calculations, mid-forward tensor dimension slicing crashes, cross-test state contamination, device runtime crashes on unsupported precision hardware, or JIT compiler inductor pattern crashes under symbolic dynamic shapes.
+Prevents malformed external payloads, corrupted cached strings, invalid user inputs, integer overflow in dimension calculations, mid-forward tensor dimension slicing crashes, cross-test state contamination, device runtime crashes on unsupported precision hardware, JIT compiler inductor pattern crashes under symbolic dynamic shapes, 32-bit integer truncation in large tensor strides, and silent `uint64` multiplication wraparound passing undersized buffers into memory mapping routines.
 
 **WHEN TO APPLY**:
-Any boundary where external data is parsed, deserialized, or constructed into domain models (JSON deserialization, string parsing, storage hydration, API request handling, configuration loading, protobuf message deserialization, distributed mesh sharding specs, rotary embedding configuration validation, test suite configuration fixtures, cross-device tensor placement, and dynamic JIT tensor indexing).
+Any boundary where external data is parsed, deserialized, or constructed into domain models (JSON deserialization, string parsing, storage hydration, API request handling, configuration loading, protobuf message deserialization, distributed mesh sharding specs, rotary embedding configuration validation, test suite configuration fixtures, cross-device tensor placement, dynamic JIT tensor indexing, tensor view permutations, and binary model format parsers like GGUF).
 
 ---
 
@@ -641,6 +641,129 @@ Group and sequential offloading hooks onload parameters when `forward()` begins 
 
 **WHEN TO APPLY**:
 Modular diffusion models, offloaded inference pipelines, parameter post-processing methods, embedding projection utilities, and auxiliary model evaluation helpers.
+
+---
+
+## 50. Cached Computation Graph Invalidation upon Underlying Buffer Release (Anti-Use-After-Free & RCE)
+
+**RULE**:
+Execution runtimes and servers that cache compiled computation graphs, intermediate execution plans, or ASTs whose nodes contain direct physical pointers or virtual addresses to underlying backend buffers MUST proactively invalidate, nullify, or purge all cached graph structures whenever any constituent memory buffer is deallocated, freed, or reallocated (`free_buffer`). Re-execution requests (`recompute`) must verify graph validity and fall back to fresh graph reconstruction if cached structures have been cleared.
+
+**WHY**:
+Failing to purge cached computation graphs leaves dangling memory pointers pointing into freed memory blocks. An external or concurrent actor can allocate new buffers over that exact memory and trigger re-execution, reading or writing through the stale graph nodes. This introduces devastating Use-After-Free vulnerabilities, memory corruption, information disclosure (leaking heap/libc addresses), and arbitrary remote code execution (RCE) via vtable hijacking.
+
+**WHEN TO APPLY**:
+Distributed RPC servers, graph compilation runtimes (CUDA Graphs, Metal Graph Capture, OpenCL/SYCL command graphs), execution plan caches, query engines, and JIT graph interpreters caching device or host memory pointers.
+
+---
+
+## 51. By-Value Command Functor Capture to Preempt Host Stack Frame Use-After-Return in Asynchronous Queues
+
+**RULE**:
+When dispatching asynchronous device commands, host-to-device transfers, or GPU/accelerator queue operations that consume scalar constants, configuration options, or boundary values (such as attention scale multipliers, step indices, or threshold parameters), the subsystem MUST capture the values directly by value into the command queue functor or kernel execution closure. Asynchronous operations MUST NEVER take pointers or references to host stack-local variables (`&stack_var`).
+
+**WHY**:
+Asynchronous queues execute commands on the device engine decoupled from the host CPU thread. If preceding queued operations (such as tensor layout staging or memory copies) take even a fraction of a millisecond, the calling host C++ function unwinds and returns, recycling or destroying its stack frame before the device queue reaches the pointer copy. The device DMA copy engine reads recycled garbage bytes from the stack, silently corrupting numerical scaling and causing model inference to collapse into repeated tokens or NaNs.
+
+**WHEN TO APPLY**:
+Asynchronous accelerator queue dispatchers, SYCL/CUDA/OpenCL/Metal kernel launches, device DMA staging helpers, background threadpool command submissions, and asynchronous driver APIs.
+
+---
+
+## 52. Elimination of In-Place Buffer Aliasing in Multi-Pass / Double-Buffered Device Radix Sorting
+
+**RULE**:
+In parallel GPU or vectorized radix sort and argsort implementations that rely on multi-pass or double-buffering ping-pong algorithms (such as CUB `DeviceRadixSort::SortPairs` or segmented radix sorts), the caller MUST strictly allocate and supply distinct input and output key buffers (`d_keys_in != d_keys_out`). In-place aliasing of input and output key pointers is strictly prohibited.
+
+**WHY**:
+Radix sorting algorithms ping-pong intermediate key and value states between two buffers across successive digit passes. Aliasing the input and output key pointers causes the algorithm to overwrite its own unread input keys mid-pass, emitting completely corrupted permutation indices. In top-k vocabulary sampling, this produces invalid index permutations that subsequently crash downstream row gather kernels (`get_rows`) with catastrophic out-of-bounds memory accesses.
+
+**WHEN TO APPLY**:
+GPU argsort kernels, CUB radix sort wrappers, vocabulary top-k / top-p logit samplers, segmented sorting engines, and vectorized sorting routines.
+
+---
+
+## 53. Multi-Segment Granularity-Lockstep Tensor Splitting for Asymmetric Multi-Head Geometries
+
+**RULE**:
+When partitioning fused multi-component matrices (such as fused Query-Key-Value projection tensors) across parallel accelerator devices (tensor parallelism / model splitting), the splitting subsystem MUST evaluate individual head dimensions. If component sub-vectors possess asymmetric dimensions ($d_k \neq d_v$, such as $d_k=192$ and $d_v=128$), the fused tensor MUST be partitioned into independent segments (`{q, k, v}`) with individual, head-aligned modular granularities (`granularity_v = (granularity_kv / d_k) * d_v`). Each parallel device MUST receive integer multiples of complete heads for every component.
+
+**WHY**:
+Assuming symmetric head sizes across fused projections causes the splitter to apply a single combined granularity across both K and V matrices. For models with asymmetric head geometries (e.g. MiMo, DeepSeek MLA variants), this splits across attention head boundaries, placing fractional heads on different GPUs and causing severe numerical corruption and projection misalignment during parallel attention matrix multiplies.
+
+**WHEN TO APPLY**:
+Multi-GPU tensor parallelism, fused QKV weight partitioning, distributed multi-head attention projection layers, and asymmetric Grouped-Query / Multi-Query Attention implementations.
+
+---
+
+## 54. Include-Order Independent Constant Guarantees and Cross-Language PCH ABI Boundary Segregation
+
+**RULE**:
+Buffer sizing constants, cache-line alignment values, and memory layout definitions shared between C and C++ translation units or exposed to precompiled headers (PCH) MUST be compile-unit deterministic and MUST NEVER depend on header-conditional standard library feature macros (such as `__cpp_lib_hardware_interference_size`). Constants that dictate memory allocation sizes and array strides MUST be unconditionally defined or segregated behind explicit language boundaries.
+
+**WHY**:
+When a macro definition depends on standard C++ headers (e.g. `<new>`), precompiled headers that pull in C++ headers cause C++ translation units to evaluate the macro to one value (e.g. `CACHE_LINE_SIZE = 256`), while pure C translation units unable to include C++ headers fall back to a different value (e.g. `64`). Sizing a shared work buffer in C using the smaller stride while indexing it in C++ using the larger stride undersizes the buffer, causing fatal heap-buffer overflows and memory corruption.
+
+**WHEN TO APPLY**:
+Cross-language C/C++ core engines, precompiled header configurations, hardware alignment macros, thread work buffer allocators, and multi-platform compilation units.
+
+---
+
+## 55. GPU Thread-Block Barrier Scope Non-Divergence (`__syncthreads()` Control Flow Unification)
+
+**RULE**:
+Hardware thread-block synchronization barriers in GPU kernels (`__syncthreads()`, `barrier()`) MUST execute under uniform control flow across all threads within the thread block. Synchronization barriers MUST NEVER be placed inside diverging conditional branches (e.g. an `if` branch paired with an `else` branch each containing separate barriers). Thread-specific reductions and metadata write-backs MUST be scoped to conditional guards placed before and after an unbranched, shared block-level barrier.
+
+**WHY**:
+GPU architectures require that every active thread in a thread block encounters the exact same synchronization barrier instruction. Placing barriers in mutually exclusive conditional branches causes barrier divergence, where threads in one branch wait indefinitely for threads in the other branch, leading to undefined execution behavior, kernel deadlocks, and hardware watchdog timeouts.
+
+**WHEN TO APPLY**:
+CUDA, HIP, Metal, and Vulkan compute shaders, Flash Attention MMA kernels, warp-reduction pipelines, and cooperative workgroup algorithms.
+
+---
+
+## 56. Centralized State Machine Advance over Peer Eviction Flags in High-Concurrency Resource Pools
+
+**RULE**:
+Resource management subsystems managing constrained execution slots, model caches, or execution instances under concurrent multi-tenant load MUST coordinate slot allocation and eviction through a centralized state machine scheduler. Peer waiters MUST NOT coordinate eviction or reserve slots via ad-hoc distributed flags (such as `slot_pending` or decentralized victim picking). Every lifecycle status transition (model becoming idle, model load completion, request termination, timeout, or client exception) MUST invoke a centralized scheduler advance (`sched->tick()`).
+
+**WHY**:
+Decentralized peer eviction flags introduce race conditions when multiple concurrent requests arrive simultaneously for different unloaded resources. Two waiters racing for the same idle slot cause conflicting eviction commands, leaving subsequent waiters permanently stranded in waiting states and starving client requests indefinitely.
+
+**WHEN TO APPLY**:
+Multi-model inference servers, connection pools, multi-tenant execution slot routers, LRU memory evictors, and concurrent worker managers.
+
+---
+
+## 57. Universal Checkpointing via Pre-Terminal Token State Stashing & Logit Replay across Non-Deletable Recurrent State Runtimes
+
+**RULE**:
+In autoregressive inference systems supporting heterogeneous memory architectures (Transformer token-addressable KV caches vs non-deletable recurrent/SSM/Mamba state machines where tokens cannot be selectively removed from memory via `seq_rm`):
+1. State checkpointing MUST save memory state immediately *before* evaluating the terminal sequence token.
+2. Upon state restoration, the system MUST replay the terminal token through decode to regenerate fresh, valid sampling logits without requiring destructive state rewinds.
+3. State deserialization routines MUST guarantee atomic rollback semantics: any deserialization failure (corrupted bytes, EOF, abnormal cell counts) MUST explicitly zero/discard partially staged buffer allocations (`state_clear`) to prevent NaN values from poisoning shared multi-sequence pools.
+
+**WHY**:
+Recurrent and hybrid state models cannot roll back intermediate token steps without full state corruption. Saving state before the terminal token and replaying it upon restore guarantees uniform session saving and logit validity across all model architectures. Furthermore, failing to zero staged buffers on deserialization error leaks corrupt NaN values into unified KV memory, destroying inference accuracy on concurrent sequences.
+
+**WHEN TO APPLY**:
+Session saving/loading APIs, speculative decoding verification harnesses, recurrent neural network states (Mamba, RWKV, SSM), multi-sequence unified KV caches, and conversation persistence engines.
+
+---
+
+## 58. Adaptive Hybrid Busy-Spin with Deferred Event Channel Sleeping for Low-Latency Distributed RPC
+
+**RULE**:
+High-performance networking and IPC communication subsystems servicing low-latency distributed tensor processing (such as RDMA, RoCE, or shared-memory rings) MUST employ an adaptive hybrid polling architecture:
+1. Poll completion queues actively during in-flight traffic and burst windows.
+2. Track the timestamp of the last successful activity (`last_active`).
+3. If the connection remains idle past an activity threshold (`SPIN_TIME = 100ms`), arm completion queue notifications (`ibv_req_notify_cq`) and block on the completion event channel file descriptor via `poll()` or `epoll()`, while concurrently monitoring the control socket for peer disconnection (`POLLRDHUP`).
+
+**WHY**:
+Pure busy-spinning pins 100% of a CPU core per network connection indefinitely, causing massive energy waste and thread starvation. Conversely, pure blocking event-driven waiting adds intolerable latency and kernel context-switch overhead during rapid multi-packet tensor bursts. Adaptive hybrid spinning delivers sub-microsecond latency during active streaming while dropping CPU utilization to zero during idle intervals.
+
+**WHEN TO APPLY**:
+Distributed tensor RPC runtimes, RDMA / InfiniBand / RoCE networking transports, high-frequency inter-process communication rings, and clustered neural network pipeline parallel runtimes.
 
 
 
