@@ -223,3 +223,69 @@ Prevents safety, undo, and recovery mechanisms from becoming the primary vector 
 
 **WHEN TO APPLY**:
 Automated rollback snapshots, in-memory undo/redo buffers, client-side decryption/expiration scans, and background session compaction/pruning.
+
+---
+
+## 18. Bounded Backpressure Queuing with Event-Loop Yield Windows
+
+**RULE**:
+When an asynchronous streaming producer (such as token streams, model event emitters, or real-time event pipelines) pushes to a detached consumer callback or queue, the queue MUST enforce a strict backlog bound (`max_pending_events`). To prevent false-positive over-capacity failures or deadlocks when producer and consumer share an event loop, the queuing logic MUST check backlog depth, yield to the event loop (`await asyncio.sleep(0)` or `setImmediate()`) if the limit is reached to give the consumer an immediate execution turn, and only abort if the queue remains saturated. Upon overflow or consumer failure, the engine MUST cancel the upstream producer task immediately and explicitly close/dispose the async generator (`await stream.aclose()`), ensuring disposal exceptions never mask or replace the primary overflow error.
+
+**WHY**:
+Unbounded queues cause memory exhaustion and OOM crashes when consumers are slow. Conversely, hard synchronous caps without event-loop yield windows trigger premature task cancellations or deadlocks when consumers are momentarily waiting on loop dispatch.
+
+**WHEN TO APPLY**:
+Asynchronous streaming engines, LLM token streaming consumers, real-time message brokers, agent event pipelines, and producer-consumer decouplers across cooperative event loops.
+
+---
+
+## 19. Decoupled Consumer Termination on Transport Teardown
+
+**RULE**:
+In long-lived streaming connections (WebSockets, Server-Sent Events, Realtime duplex channels, gRPC streams), when a session initiates teardown (`close()`), the runtime MUST immediately mark the session as `closing`, wake and terminate all active consumer iterators, and cascade-republish exit sentinels across all waiting consumer queues. Downstream consumers MUST NOT be blocked waiting for physical transport disconnects, network handshakes, or socket draining to finish. Transport cleanup proceeds independently, and a transport-level error or timeout must not prevent consumers from terminating cleanly or stranding subsequent readers.
+
+**WHY**:
+When transport teardown encounters network delays, peer unresponsiveness, or socket errors, tying consumer iterator lifecycle directly to transport completion hangs caller tasks and event loops indefinitely.
+
+**WHEN TO APPLY**:
+Duplex streaming sessions, WebSockets, Realtime audio/event protocols, and pub/sub message subscriber iterators.
+
+---
+
+## 20. Resumed Capability Recipient Binding Across Human-in-the-Loop Boundaries
+
+**RULE**:
+When an asynchronous agent or workflow run is paused or interrupted for external approval (such as human authorization of an external tool call, MCP action, or financial transaction) and persisted to durable storage, the serialized approval record MUST bind to the immutable identity of the recipient capability (tool origin, server URI, tool lookup key, and signature). Upon resumption, the runtime MUST re-verify that the active tool or server binding matches the original approved recipient before executing. If the recipient has been replaced, remapped to another server, or changed to a local action, the execution MUST fail-fast with a deterministic error.
+
+**WHY**:
+Prevents capability confusion and execution hijacking. If tool configurations or MCP server connections change between pause and resume, an unverified resume path could dispatch an approval granted for a trusted recipient to an untrusted, altered, or attacker-controlled endpoint.
+
+**WHEN TO APPLY**:
+Human-in-the-loop (HITL) pause/resume systems, stateful workflow engines, durable execution frameworks, and Model Context Protocol (MCP) integrations.
+
+---
+
+## 21. Default Generic Error Masking at Model and Telemetry Boundaries
+
+**RULE**:
+When tools, database adapters, plugins, or background routines fail, default error responses returned across external trust boundaries (such as to LLMs, external clients, or default telemetry exports) MUST return static, generic messages (e.g. *"An error occurred while running the tool. Please try again."*). Raw exception strings (`str(error)`), chained tracebacks, and internal stack frames MUST NEVER be reflected back into model prompts or public traces by default. Detailed diagnostic logs must be restricted to privileged, internal logging channels, and exposed only when an explicit, secure debug configuration (`trace_include_sensitive_data=True`) is affirmatively enabled.
+
+**WHY**:
+Prevents secret leaks, credential exfiltration, and prompt injection attacks. Exception strings from database drivers and network libraries frequently leak database passwords, private API tokens, internal IP addresses, file paths, and SQL schemas directly to language models and downstream telemetry sinks.
+
+**WHEN TO APPLY**:
+Agent tool execution, RPC endpoints, LLM tool responses, public API error handlers, and telemetry trace exporters.
+
+---
+
+## 22. Host-Path Containment and Trusted Construction in Declarative Manifests
+
+**RULE**:
+Declarative configurations, execution manifests, and environment specifications (such as sandbox descriptors, Docker volume specs, or plugin manifests) deserialized from untrusted inputs (JSON wire payloads, dictionary configs, or model outputs) MUST NOT allow host-filesystem path bindings (`LocalDir`, `LocalFile` with arbitrary host `src`). Host mounts and local filesystem bridges MUST only be constructible via trusted, strongly-typed code constructors at the call site. Furthermore, any workspace path resolution within sandboxes MUST be validated against normalized, canonical root paths to prevent directory traversal escapes.
+
+**WHY**:
+Prevents host filesystem traversal and unauthorized data exfiltration. If untrusted manifests can mount host directories, an attacker or compromised model can map sensitive host directories (e.g. `~/.ssh`, `/etc/`, credentials) into sandbox containers.
+
+**WHEN TO APPLY**:
+Sandboxed code execution environments, Docker runners, workflow manifest deserializers, and container virtualization plugins.
+

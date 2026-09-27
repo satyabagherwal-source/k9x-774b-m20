@@ -2,7 +2,7 @@
 
 ## Version
 
-Foundation v1.2 (Canonical Project OS, Native Factory & Autonomous 5-Step Learning Harvester)
+Foundation v1.3 (Full-Spectrum Harvest, Engineering Patterns 1–22 & Native Factory OS)
 
 ## Architecture
 
@@ -16,17 +16,17 @@ Foundation v1.2 (Canonical Project OS, Native Factory & Autonomous 5-Step Learni
 - **02_AGENT_INTELLIGENCE**: Populated (`project-agent-boot-protocol.md`, `agent-execution-governance.md` with Section 5 Harvester Directive)
 - **03_SKILLS**: Populated (`autonomous-project-learning-harvester.md`, Astro Architecture & SEO, Tailwind v4 CSS-First Design, Vercel Deployment, Git/GitHub Lifecycle, AdSense Mastery, 54 Locales SEO, Error Prevention)
 - **04_WORKFLOWS**: Populated (`autonomous-knowledge-harvesting-workflow.md`, `project-factory-workflow.md`, `git-github-autonomous-lifecycle.md`, blueprints, factory-engine)
-- **05_KNOWLEDGE**: Populated (Engineering Patterns 1-17+)
+- **05_KNOWLEDGE**: Populated (Engineering Patterns 1–22: Asynchronous State, Lifecycles, Rollback Budgets, Cancellation Draining, Backpressure Queues, Decoupled Termination, Resumed Capability Bindings, Error Redaction, Sandbox Containment)
 - **06_PROJECT_CONTEXT**: Populated (Online Free Protractor)
-- **07_PROJECT_LEARNING**: Populated (Project Learning Protocols & Incidents: openai-agents-python, online-free-protractor, website-change-monitor)
+- **07_PROJECT_LEARNING**: Populated (Comprehensive Learning Records: openai-agents-python [10 incidents], online-free-protractor, website-change-monitor)
 - **08_VERIFICATION**: Populated (`project-ready-certification-protocol.md`, `regression-verification-protocol.md`, `verification-protocol.md`, `compatibility-verification-protocol.md`)
 - **09_SOURCES**: Populated (`authoritative-sources-registry.md`, `sources-registry.json`, `source-record-template.md`)
 - **10_PROMPTS**: Populated (`autonomous-5-step-learning-engine.md`, `project-bootstrap-master-prompt.md`, `universal-agent-governance-prompt.md`, `project-learning-harvester-prompt.md`)
 - **11_INBOX**: Reserved for staging promotion proposals
 - **12_DECISIONS**: Populated (`ADR-001-native-project-factory-brain-integration.md`)
 - **13_GOVERNANCE**: Populated (`brain-bridge-protocol.md` with Silent Auto-Harvest, `bug-correction-lifecycle-protocol.md`, `dynamic-knowledge-governance.md`)
-- **14_EVOLUTION**: Populated (`brain-evolution-protocol.md` with 5-Step Pipeline, `ecosystem-adaptation-protocol.md`)
-- **15_METADATA**: Status record active (Foundation v1.2)
+- **14_EVOLUTION**: Populated (`brain-evolution-protocol.md`, `brain-evolution-log.md` with 2026-09-27 full-spectrum harvest, `ecosystem-adaptation-protocol.md`)
+- **15_METADATA**: Status record active (Foundation v1.3)
 
 ## Tooling Environment
 
@@ -36,8 +36,7 @@ Antigravity IDE is the primary working environment with global skill `ai-builder
 
 - Native Project Factory consolidated directly inside AI-Builder-Brain; no separate repository dependency.
 - Autonomous 5-Step Learning Harvester codified across Prompts, Workflows, Core Operating Rules, Skills, and Bridge Governance.
-- On-Demand Harvest Mode: Triggers on single command (*"is project ki totally har area se reusable learning nikal lo"*) and runs all 5 steps autonomously across 8 dimensions.
-- Silent Continuous Auto-Harvest Mode: Activates when projects connect to the Brain Bridge or are actively developed; silently extracts verified reusable engineering intelligence without requiring manual prompts.
-- Zero-copy Brain Bridge protocol (v1.1.0) with automated background sync enforced for all child projects.
-
-
+- Full-Spectrum Multi-Dimensional Harvest executed across all 8 dimensions of `openai-agents-python`:
+  - 10 verified production incidents analyzed and documented in `07_PROJECT_LEARNING/openai-agents-python-learnings.md`.
+  - Promoted Engineering Patterns 16 through 22 codified in `05_KNOWLEDGE/engineering-patterns.md`.
+  - Zero-copy Brain Bridge (`.project-brain/brain-bridge.json`) active in `openai-agents-python`.
