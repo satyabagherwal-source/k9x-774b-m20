@@ -20,6 +20,7 @@
 
 import path from 'path';
 import fs from 'fs';
+import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { resolveMasterBrainPath, inspectMasterBrain } from './brain-bridge.mjs';
 import { checkEnvironment } from './env-checker.mjs';
@@ -75,6 +76,18 @@ async function runBootstrap() {
   console.log(`   ✅ Master Brain connected: ${brainPath}`);
   console.log(`   ✅ Verified ${brainAudit.presentFolders}/${brainAudit.totalFolders} canonical directories.`);
   console.log(`   ✅ Strict read-only boundary enforced for Master Brain.`);
+
+  // Auto-sync Master Brain with GitHub remote if online
+  try {
+    const syncOutput = execSync(`git -C "${brainPath}" pull --ff-only origin main`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
+    if (syncOutput && !syncOutput.includes('Already up to date')) {
+      console.log(`   🔄 Auto-synced freshest engineering knowledge from GitHub origin/main.`);
+    } else {
+      console.log(`   ✅ Master Brain knowledge base is synchronized with GitHub origin/main.`);
+    }
+  } catch (syncErr) {
+    console.log(`   ℹ️ Offline or using local cached Master Brain.`);
+  }
 
   // Step 2: Project Intent & Capability Resolution
   console.log(`\n[2/9] 🧭 Resolving Project Profile & Environment Requirements...`);
