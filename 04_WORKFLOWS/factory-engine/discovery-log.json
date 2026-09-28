@@ -1,0 +1,30 @@
+[
+  {
+    "name": "ECC",
+    "fullName": "affaan-m/ECC",
+    "url": "https://github.com/affaan-m/ECC",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The agent harness performance optimization system. Skills, instincts, memory, security, and research-first development for Claude Code, Codex, Opencode, Cursor and beyond.",
+    "stars": 268504,
+    "forks": 40115,
+    "openIssues": 229,
+    "language": "JavaScript",
+    "qualityScore": 173237,
+    "discoveredAt": "2026-09-28T04:50:11.494Z"
+  },
+  {
+    "name": "hermes-agent",
+    "fullName": "NousResearch/hermes-agent",
+    "url": "https://github.com/NousResearch/hermes-agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The agent that grows with you",
+    "stars": 249550,
+    "forks": 53081,
+    "openIssues": 44620,
+    "language": "Python",
+    "qualityScore": 165754,
+    "discoveredAt": "2026-09-28T04:50:11.494Z"
+  }
+]

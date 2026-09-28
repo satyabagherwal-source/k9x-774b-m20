@@ -211,5 +211,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "affaan-m-ecc": {
+    "name": "affaan-m/ECC",
+    "officialUrl": "https://github.com/affaan-m/ECC",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-28T04:51:27.521Z",
+    "lastVerified": "2026-09-28T04:51:27.521Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 21,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

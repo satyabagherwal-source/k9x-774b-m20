@@ -25,5 +25,19 @@
   },
   "harvestQueueFile": "repos.txt",
   "cloudSchedule": "Every 2 hours via GitHub Actions (Runs 24/7 even when laptop is closed/offline)",
-  "localSyncStrategy": "Auto-pull on agent boot or IDE start (git pull --rebase origin main)"
+  "localSyncStrategy": "Auto-pull on agent boot or IDE start (git pull --rebase origin main)",
+  "autoDiscovery": {
+    "enabled": true,
+    "scoutSchedule": "Automatic on queue drain or every 6 hours",
+    "domains": [
+      "ai-agents",
+      "fullstack-ui",
+      "high-perf-systems",
+      "huggingface-ai-models"
+    ],
+    "multiAgentDomainPartitioning": true,
+    "minStars": 1500,
+    "maxReposPerScoutRun": 3,
+    "lastScoutedAt": "2026-09-28T04:50:11.496Z"
+  }
 }

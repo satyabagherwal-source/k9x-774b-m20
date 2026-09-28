@@ -21,3 +21,9 @@ https://github.com/tailwindlabs/tailwindcss
 https://github.com/vllm-project/vllm
 https://huggingface.co/meta-llama/Llama-3.2-1B
 
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T04:50:11.496Z] ---
+# [AI-AGENTS] affaan-m/ECC (173237 score) - The agent harness performance optimization system. Skills, instincts, memory, se
+https://github.com/affaan-m/ECC
+# [AI-AGENTS] NousResearch/hermes-agent (165754 score) - The agent that grows with you
+https://github.com/NousResearch/hermes-agent

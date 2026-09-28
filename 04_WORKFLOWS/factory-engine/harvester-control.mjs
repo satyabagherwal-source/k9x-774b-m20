@@ -55,6 +55,8 @@ export function syncLocalWithCloud() {
   }
 }
 
+import { runAutoDiscoveryScout } from './auto-discovery-scout.mjs';
+
 export function getHarvesterStatus() {
   if (!fs.existsSync(CONTROL_PATH)) {
     return { status: 'UNKNOWN' };
@@ -65,6 +67,7 @@ export function getHarvesterStatus() {
 // CLI entry point
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
   const action = (process.argv[2] || 'status').toLowerCase();
+  const domainParam = process.argv[3] || null;
 
   if (action === 'start' || action === 'chalu' || action === 'resume') {
     setHarvesterStatus('ACTIVE');
@@ -72,6 +75,16 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename
     setHarvesterStatus('PAUSED');
   } else if (action === 'sync' || action === 'pull') {
     syncLocalWithCloud();
+  } else if (action === 'discover' || action === 'scout' || action === 'khoj') {
+    console.log(`[AUTONOMOUS DISCOVERY] Initiating scout across domains...`);
+    runAutoDiscoveryScout({ domain: domainParam }).then((res) => {
+      if (res.discovered > 0) {
+        run('git add repos.txt harvest-control.json 04_WORKFLOWS/factory-engine/discovery-log.json');
+        run(`git commit -m "feat(scout): autonomously discovered ${res.discovered} top repositories [skip ci]"`);
+        run('git push origin main');
+        console.log(`[GIT PUSH] Pushed newly scouted repositories to GitHub.`);
+      }
+    });
   } else {
     console.log(JSON.stringify(getHarvesterStatus(), null, 2));
   }

@@ -4,6 +4,7 @@ import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { shouldHarvestSource } from './upgrade-checker.mjs';
 import { acquireTargetLock, releaseTargetLock, pushWithRebaseRetry } from './concurrency-coordinator.mjs';
+import { runAutoDiscoveryScout } from './auto-discovery-scout.mjs';
 
 
 
@@ -500,6 +501,26 @@ export async function runZeroCloneHarvester(customUrls = null) {
   console.log(`Successful    : ${results.filter((r) => r.status === 'SUCCESS').length}`);
   console.log(`Failed        : ${results.filter((r) => r.status === 'FAILED').length}`);
   console.log(`======================================================================\n`);
+
+  // Auto-Discovery: If all existing targets are up to date, scout fresh top repositories
+  const successCount = results.filter((r) => r.status === 'SUCCESS').length;
+  const isCustomRun = Boolean(targetUrls && targetUrls.length > 0);
+  const skipScout = process.argv.includes('--no-scout');
+
+  if (successCount === 0 && !isCustomRun && !skipScout) {
+    console.log(`\n🔭 [AUTONOMOUS SCOUT TRIGGER] All targets are up-to-date. Triggering Auto-Discovery Scout for fresh top repositories...`);
+    const scoutRes = await runAutoDiscoveryScout({ maxPerDomain: 1 });
+    if (scoutRes.discovered > 0) {
+      console.log(`🚀 [HARVESTING NEWLY DISCOVERED TARGETS] Immediately processing ${scoutRes.discovered} freshly scouted repos...`);
+      const newUrls = scoutRes.items.map((i) => i.url);
+      const secondPass = await runZeroCloneHarvester(newUrls);
+      return {
+        success: true,
+        count: queue.length + secondPass.count,
+        results: [...results, ...secondPass.results]
+      };
+    }
+  }
 
   return { success: true, count: queue.length, results };
 }
