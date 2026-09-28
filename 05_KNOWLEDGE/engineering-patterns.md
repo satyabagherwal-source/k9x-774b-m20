@@ -1626,3 +1626,11 @@ Traditional PHP (FPM) relies on process termination to reclaim resources. In lon
 
 **WHEN TO APPLY**:
 Any subsystem utili
+
+
+---
+
+## 120. The "Path-to-Identity" Normalization Rule (Harvested from VectifyAI/PageIndex)
+
+**RULE**:
+Never accept raw file paths as unique identifiers in a distributed system. Always enforce a canonicali

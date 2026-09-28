@@ -796,5 +796,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vectifyai-pageindex": {
+    "name": "VectifyAI/PageIndex",
+    "officialUrl": "https://github.com/VectifyAI/PageIndex",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-28T20:20:11.216Z",
+    "lastVerified": "2026-09-28T20:20:11.216Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
