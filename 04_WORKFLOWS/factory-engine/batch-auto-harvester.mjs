@@ -177,8 +177,6 @@ export function inspectCodebase(cloneDir, repoMeta) {
     console.warn(`[WARN] Git log audit failed: ${e.message}`);
   }
 
-  }
-
   // 2. Package Manifests & Language Discovery (D1, D7)
   const pkgJsonPath = path.join(cloneDir, 'package.json');
   if (fs.existsSync(pkgJsonPath)) {
