@@ -1544,3 +1544,11 @@ Insecure links are a primary vector for man-in-the-middle attacks and reflect po
 
 **WHEN TO APPLY**:
 All documentation, configuration files, and API manifests.
+
+
+---
+
+## 113. The Supervisor-Worker Lifecycle Invariant (Harvested from storybookjs/storybook)
+
+**RULE**:
+Any child process spawned by a core system must be wrapped in a supervisor pattern that explicitly handles `SIGTERM`, `SIGINT`, and `exit` events to trigger immediate re-initiali
