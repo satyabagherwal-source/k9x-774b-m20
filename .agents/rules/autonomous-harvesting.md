@@ -88,3 +88,23 @@ When the user desires zero-disk-clone harvesting or wants continuous 24/7 cloud 
      Execute `node 04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs`.
    - Never download large repos to disk. 100% free API tier compliance.
 
+---
+
+## 5. Upgrade-Only & Delta-Detection Invariant (Zero Token & Time Waste Shield)
+To guarantee that neither tokens nor execution time are ever wasted on duplicate re-harvesting:
+1. **Never Re-Harvest Unchanged Repositories**:
+   - Once a repository, external library, Hugging Face model, or local project has been harvested once into Master Brain, the agent MUST NOT re-harvest it unless it has actually been upgraded (new commits, new release tag, or modified codebase).
+2. **Pre-flight Upgrade Verification (`upgrade-checker.mjs`)**:
+   - Before executing clone or multi-turn extraction, the agent/script checks the current HEAD commit hash against `sources-registry.json` (or `.project-brain/brain-bridge.json`):
+     - Remote GitHub: Checked via `git ls-remote <url> HEAD` (takes 0.3s, 0 tokens, 0 bytes downloaded).
+     - Remote Hugging Face: Checked via model metadata API `sha`.
+     - Local Project: Checked via `git -C <path> rev-parse HEAD`.
+   - If the recorded commit matches the current commit:
+     The agent MUST immediately skip harvesting and announce:
+     `⏩ [SKIP: NO UPGRADE DETECTED] [repo] is already up to date. (0 tokens burned | 0 bytes cloned)`.
+3. **Triggering Incremental Harvest on Upgrades**:
+   - ONLY when a new commit, release tag, or code modification is detected (`currentRevision !== recordedRevision`), the harvester executes an incremental sweep focusing on newly introduced fixes, patterns, and architectural changes.
+4. **Force Override**:
+   - Re-harvesting an unchanged repository is strictly prohibited UNLESS the user explicitly commands a forced refresh (e.g. *"force reharvest"*, *"zabardasti dobara harvest karo"*, or `--force` flag).
+
+

@@ -100,6 +100,8 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 - Report verified evidence and proceed to next task cleanly.
 - Silently ("chupchap") synchronize any unharvested reusable project learnings to `C:\AI-Builder-Brain` in the background.
 - When requested to batch-harvest (e.g. via `repos.txt` or URL list), execute the autonomous full-clone loop (`04_WORKFLOWS/batch-auto-harvester.md`) or Zero-Clone 24/7 Cloud Harvester (`04_WORKFLOWS/zero-clone-cloud-harvester.md`), auto-push to GitHub, and maintain clean storage without requiring manual human steps.
+- **Enforce Upgrade-Only Invariant**: Never re-harvest any repository, Hugging Face model, or local project if its commit revision matches `sources-registry.json` or `.project-brain/brain-bridge.json`. Skip immediately to preserve LLM tokens and execution time.
+
 
 
 
