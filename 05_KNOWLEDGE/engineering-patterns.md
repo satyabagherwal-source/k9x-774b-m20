@@ -1122,3 +1122,14 @@ Imperative mounts bypass the standard Vue component tree lifecycle, meaning stan
 Any library implementing imperative UI patterns (Modals, Toasts, Dialogs, Tooltips).
 
 ---
+
+
+---
+
+## 87. The "Re-exec" Determinism Rule (Harvested from Graphify-Labs/graphify)
+
+**RULE**:
+Never use `os.exec*` to modify environment variables (like `PYTHONHASHSEED`) at runtime. Instead, use a "Bootstrap-Wrapper" pattern where the entry point validates the environment and re-spawns the process *before* any application logic executes.
+
+**WHY**:
+`os.exec` replaces the current process image, which is inherently non-atomic on Windows and causes resource leaks (file handles, locks) on POSIX. It creates a "

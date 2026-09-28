@@ -523,5 +523,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "graphify-labs-graphify": {
+    "name": "Graphify-Labs/graphify",
+    "officialUrl": "https://github.com/Graphify-Labs/graphify",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-28T18:54:41.047Z",
+    "lastVerified": "2026-09-28T18:54:41.047Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
