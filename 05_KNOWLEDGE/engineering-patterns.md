@@ -1095,3 +1095,14 @@ Query execution engines traversing nested documents or record structures MUST us
 
 **WHY**:
 In database engines and high-throughput query planners, evaluating `WHERE`, `ORDER BY`, and field projections over millions of records causes catastrophic heap allocation churn and cache thrashing if intermediate values are cloned. Using borrowed `Cow` values enables
+
+
+---
+
+## 85. The JNI-Boundary Parity Rule (Harvested from react/react-native)
+
+**RULE**:
+Every JNI method signature must be defined in a single source-of-truth header file, and the C++ implementation must use a static assertion or a generated registration table to verify the signature against the Java class definition at compile time.
+
+**WHY**:
+Manual string-based JNI mapping (e.g., `env->GetMethodID(cla

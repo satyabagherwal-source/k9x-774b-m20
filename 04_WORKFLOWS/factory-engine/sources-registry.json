@@ -497,5 +497,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-react-native": {
+    "name": "react/react-native",
+    "officialUrl": "https://github.com/react/react-native",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-28T18:54:21.919Z",
+    "lastVerified": "2026-09-28T18:54:21.919Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
