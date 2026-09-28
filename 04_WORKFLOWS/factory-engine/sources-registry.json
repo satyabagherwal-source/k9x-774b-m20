@@ -718,5 +718,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "enaqx-awesome-react": {
+    "name": "enaqx/awesome-react",
+    "officialUrl": "https://github.com/enaqx/awesome-react",
+    "sourceType": "github",
+    "technology": "Multi-language",
+    "lastChecked": "2026-09-28T19:15:06.456Z",
+    "lastVerified": "2026-09-28T19:15:06.456Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

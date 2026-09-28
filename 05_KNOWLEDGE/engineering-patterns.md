@@ -1516,3 +1516,31 @@ Reduces "Action Drift" where CLI commands and TUI shortcuts diverge in behavior,
 Any CLI tool that provides both a command-line interface and an interactive TUI.
 
 ---
+
+
+---
+
+## 111. The "Single Source of Truth" (SSoT) Inversion Rule (Harvested from enaqx/awesome-react)
+
+**RULE**:
+Documentation that contains machine-verifiable data (URLs, versions, names) must be generated from a structured data source (JSON/YAML), never written directly into the presentation layer (Markdown/HTML).
+
+**WHY**:
+Manual updates to documentation are prone to "Entropy Drift." By decoupling data from presentation, you enable automated validation (link checking, schema enforcement) that is impossible in unstructured text.
+
+**WHEN TO APPLY**:
+Any repository acting as a registry, list, or documentation hub.
+
+
+---
+
+## 112. The "Protocol-First" Link Invariant (Harvested from enaqx/awesome-react)
+
+**RULE**:
+All external references must be stored as protocol-relative or HTTPS-enforced strings. Any reference to an insecure protocol (HTTP) must trigger a build-time failure.
+
+**WHY**:
+Insecure links are a primary vector for man-in-the-middle attacks and reflect poor maintenance, signaling to users that the project is unvetted or abandoned.
+
+**WHEN TO APPLY**:
+All documentation, configuration files, and API manifests.
