@@ -28,6 +28,11 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Configure Git Identity
+        run: |
+          git config --global user.name "AI-Builder-Brain-Cloud-Agent"
+          git config --global user.email "cloud-agent@ai-builder-brain.local"
+
       - name: Verify Server-to-Server Gemini AI Connection
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
