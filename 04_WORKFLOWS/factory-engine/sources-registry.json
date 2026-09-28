@@ -471,5 +471,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "surrealdb-surrealdb": {
+    "name": "surrealdb/surrealdb",
+    "officialUrl": "https://github.com/surrealdb/surrealdb",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T18:54:21.923Z",
+    "lastVerified": "2026-09-28T18:54:21.923Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -1062,3 +1062,36 @@ High-concurrency systems using `tokio::sync::Semaphore` or similar synchroni
 
 **RULE**:
 Never initiali
+
+
+---
+
+## 82. Distributed Index Build Deadlocks from Node Crashes (Harvested from surrealdb/surrealdb)
+
+- **Failure Mode / Pitfall**: When a database node responsible for building a large secondary index (e.g., DiskANN or Full-Text) crashed midway, the index remained in `Building` state indefinitely, permanently blocking schema changes and queries.
+- **Root Cause**: Index build states lacked owner heartbeats and expiration leases in the global schema catalog metadata.
+- **Exact Prevention / Fix**: Attach a lease-backed owner identifier and timestamp to the distributed index task. Introduce an orphan recovery supervisor that detects expired leases on system startup or topology change and transitions orphaned builds back to `Pending` for reassignment.
+
+---
+
+
+---
+
+## 83. Enforce Socket-Level IP Verification for Outbound Network Capabilities (Harvested from surrealdb/surrealdb)
+
+**RULE**:
+Network capability and SSRF security policies for external resource fetching (e.g., JWKS, webhooks, remote model weights) MUST validate the resolved socket `IpAddr` rather than the unparsed or unverified URI hostname, and the connection MUST be established directly to that validated IP address.
+
+**WHY**:
+Validating only the domain name or hostname leaves the system vulnerable to DNS rebinding attacks and Time-of-Check to Time-of-Use (TOCTOU) races. A hostile DNS server can return an authori
+
+
+---
+
+## 84. Zero-Allocation Traversal via Borrowed Copy-on-Write (CoW) Projections (Harvested from surrealdb/surrealdb)
+
+**RULE**:
+Query execution engines traversing nested documents or record structures MUST use borrow-based Copy-on-Write (`Cow<'_, Value>`) abstractions rather than deep-cloning values during AST filtering, projection, and sorting.
+
+**WHY**:
+In database engines and high-throughput query planners, evaluating `WHERE`, `ORDER BY`, and field projections over millions of records causes catastrophic heap allocation churn and cache thrashing if intermediate values are cloned. Using borrowed `Cow` values enables
