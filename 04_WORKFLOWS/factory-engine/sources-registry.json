@@ -926,5 +926,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agentscope-ai-agentscope": {
+    "name": "agentscope-ai/agentscope",
+    "officialUrl": "https://github.com/agentscope-ai/agentscope",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-28T20:21:26.709Z",
+    "lastVerified": "2026-09-28T20:21:26.709Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 22,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

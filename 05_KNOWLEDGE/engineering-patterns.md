@@ -1769,3 +1769,31 @@ Failure to distinguish between `None` and `""` leads to silent authentication by
 
 **WHEN TO APPLY**:
 Authentication headers, credential parsing, and CLI flag processing where empty strings are valid inputs.
+
+
+---
+
+## 134. The "Fail-Closed" Secret Invariant (Harvested from agentscope-ai/agentscope)
+
+**RULE**:
+If a security-critical configuration (e.g., JWT secret, API key) is missing, the system must raise a fatal exception and terminate immediately.
+
+**WHY**:
+Falling back to a "default" or "public" secret creates a silent, exploitable vulnerability where the system appears functional but is effectively compromised by design.
+
+**WHEN TO APPLY**:
+Authentication providers, encryption modules, and environment-based configuration loaders.
+
+
+---
+
+## 135. The "Parser Fidelity" Rule (Harvested from agentscope-ai/agentscope)
+
+**RULE**:
+Data ingestion parsers must treat all input as `String` by default unless an explicit schema is provided.
+
+**WHY**:
+Automatic type inference (e.g., Excel "NA" to `None`) is a primary source of data corruption in RAG pipelines, leading to hallucinations or missing context in LLM prompts.
+
+**WHEN TO APPLY**:
+Any document parsing, CSV/Excel ingestion, or unstructured data extraction subsystem.
