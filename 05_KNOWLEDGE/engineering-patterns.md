@@ -1658,3 +1658,21 @@ In capability-based and privileged brokering systems, the audit record for an au
 
 **RULE**:
 All external inputs representing network identifiers (CIDRs, IPs, Hostnames) or resource identifiers (ARNs, Names) must be passed through a canonicali
+
+
+---
+
+## 124. The "Status-Drift" Guard (Harvested from open-policy-agent/gatekeeper)
+
+**RULE**: Never issue a `Status().Update()` call unless the `DeepEqual` check between the current cached status and the desired state returns `false`.
+
+**WHY**: In Kubernetes controllers, status updates are expensive. They trigger watch events, audit logs, and etcd writes. Unconditional updates create infinite reconciliation loops and API server exhaustion.
+
+**WHEN TO APPLY**: Any controller managing CRD status fields or pod-level status tracking.
+
+
+---
+
+## 125. The "Lazy-Dependency" Pattern (Harvested from open-policy-agent/gatekeeper)
+
+**RULE**: External service clients (Exporters, Metrics, External APIs) must be initiali
