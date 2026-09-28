@@ -3,15 +3,17 @@
   "mode": "zero-clone-cloud",
   "concurrencyMode": "PARALLEL_MULTI_AGENT",
   "concurrencyConfig": {
+    "activeMode": "PARALLEL_MULTI_AGENT",
     "supportedModes": [
       "PARALLEL_MULTI_AGENT",
       "SINGLE_AGENT_MUTEX"
     ],
-    "description": "PARALLEL_MULTI_AGENT allows multiple agents to harvest different repositories concurrently with target-level locking and atomic rebase-retry git pushes. SINGLE_AGENT_MUTEX restricts harvesting to exactly one agent at a time.",
+    "description": "PARALLEL_MULTI_AGENT allows multiple agents to harvest different repositories concurrently with target-level locking and atomic rebase-retry git pushes.",
     "lockTtlMinutes": 30,
-    "gitPushRetryLimit": 5
+    "gitPushRetryLimit": 5,
+    "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-09-28T10:00:00.000Z",
+  "lastUpdated": "2026-09-28T10:07:45.000Z",
   "updatedBy": "agent-antigravity",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
