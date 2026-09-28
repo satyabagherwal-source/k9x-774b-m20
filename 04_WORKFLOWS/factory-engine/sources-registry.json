@@ -913,5 +913,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ducaale-xh": {
+    "name": "ducaale/xh",
+    "officialUrl": "https://github.com/ducaale/xh",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T20:21:31.707Z",
+    "lastVerified": "2026-09-28T20:21:31.707Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

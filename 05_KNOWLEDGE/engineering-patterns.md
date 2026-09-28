@@ -1755,3 +1755,17 @@ Asynchronous configuration distribution guarantees eventual consistency, not imm
 
 **RULE**:
 Before copying, deseriali
+
+
+---
+
+## 133. The "Empty-Value" Semantic Invariant (Harvested from ducaale/xh)
+
+**RULE**:
+Never conflate "missing configuration" with "empty configuration" in CLI or API input models. Use `Option<String>` for optional fields and `String` for required fields, even if the required field can be empty.
+
+**WHY**:
+Failure to distinguish between `None` and `""` leads to silent authentication bypasses and configuration shadowing, where the system defaults to an insecure state because it assumes the user "forgot" to provide a value.
+
+**WHEN TO APPLY**:
+Authentication headers, credential parsing, and CLI flag processing where empty strings are valid inputs.
