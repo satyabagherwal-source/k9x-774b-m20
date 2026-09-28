@@ -1246,3 +1246,31 @@ Never block a local resource cleanup (e.g., Pod deletion) on the success of an e
 
 **WHY**:
 External APIs are subject to network partitions and latency spikes. Coupling them creates a "
+
+
+---
+
+## 97. The "Constructor-Override" Prohibition (Harvested from run-llama/llama_index)
+
+**RULE**:
+Constructors must never silently overwrite user-provided configuration parameters with hardcoded defaults.
+
+**WHY**:
+Silent overrides create "ghost bugs" where the system behaves differently than the user's explicit configuration, making debugging impossible without deep-diving into the library's source code.
+
+**WHEN TO APPLY**:
+Any library providing an abstraction layer over external APIs (LLMs, Databases, Cloud Services).
+
+
+---
+
+## 98. The "Schema-as-Code" Invariant (Harvested from run-llama/llama_index)
+
+**RULE**:
+Tool schemas must be generated from the same source of truth as the execution logic, using a single unified definition object.
+
+**WHY**:
+Decoupling the schema (what the LLM sees) from the execution (what the code does) leads to "Docstring Drift," where the LLM is instructed to use parameters that the code ignores or fails to parse.
+
+**WHEN TO APPLY**:
+Agentic frameworks, RPC layers, and API-driven tool interfaces.

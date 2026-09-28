@@ -640,5 +640,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "run-llama-llama_index": {
+    "name": "run-llama/llama_index",
+    "officialUrl": "https://github.com/run-llama/llama_index",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-28T19:14:06.059Z",
+    "lastVerified": "2026-09-28T19:14:06.059Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
