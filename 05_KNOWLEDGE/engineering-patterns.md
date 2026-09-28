@@ -1106,3 +1106,19 @@ Every JNI method signature must be defined in a single source-of-truth header fi
 
 **WHY**:
 Manual string-based JNI mapping (e.g., `env->GetMethodID(cla
+
+
+---
+
+## 86. The "Functional Preset" Lifecycle Invariant (Harvested from tusen-ai/naive-ui)
+
+**RULE**:
+Any component mounted via a functional API (imperative mount) MUST implement a `cleanup` function that explicitly nullifies all DOM references and removes global event listeners (window/document) upon component destruction.
+
+**WHY**:
+Imperative mounts bypass the standard Vue component tree lifecycle, meaning standard garbage collection may fail to reclaim listeners attached to the `document` or `body` during `Modal` or `Dialog` operations.
+
+**WHEN TO APPLY**:
+Any library implementing imperative UI patterns (Modals, Toasts, Dialogs, Tooltips).
+
+---

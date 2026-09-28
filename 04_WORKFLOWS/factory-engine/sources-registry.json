@@ -510,5 +510,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tusen-ai-naive-ui": {
+    "name": "tusen-ai/naive-ui",
+    "officialUrl": "https://github.com/tusen-ai/naive-ui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T18:54:54.463Z",
+    "lastVerified": "2026-09-28T18:54:54.463Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
