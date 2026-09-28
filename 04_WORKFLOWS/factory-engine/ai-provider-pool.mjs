@@ -33,7 +33,9 @@ export function loadAllAiKeys() {
   const geminiKeys = new Set();
 
   // From environment
-  if (process.env.GEMINI_API_KEY) geminiKeys.add(process.env.GEMINI_API_KEY.trim());
+  if (process.env.GEMINI_API_KEY) {
+    process.env.GEMINI_API_KEY.split(',').forEach((k) => k.trim() && geminiKeys.add(k.trim()));
+  }
   for (let i = 1; i <= 10; i++) {
     const k = process.env[`GEMINI_KEY_${i}`];
     if (k) geminiKeys.add(k.trim());
