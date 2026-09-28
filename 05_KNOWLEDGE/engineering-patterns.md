@@ -939,3 +939,63 @@ Bundler file watchers (Vite, Webpack, Turbopack, Tailwind CSS scanners), languag
 
 
 
+
+
+---
+
+## 72. Executive Forensic Architecture & System Mechanics (Harvested from Mintplex-Labs/anything-llm)
+
+AnythingLLM operates as a **Local-First RAG (Retrieval-Augmented Generation) Orchestrator**. Its architecture is bifurcated into a Node.js/Express backend (managing vector database orchestration, document ingestion pipelines, and LLM provider abstraction) and a React/Electron frontend. 
+
+**Critical Subsystems:**
+*   **The Collector Pipeline:** A multi-format ingestion engine (XLSX, HTML, MBOX, Text) that abstracts file-system I/O into vector embeddings.
+*   **Agentic WebSocket Harness:** A stateful, bi-directional communication layer (`/agent-invocation/:uuid`) for real-time agentic reasoning.
+*   **Provider Abstraction Layer:** A polymorphic interface mapping diverse LLM/Embedding API schemas (OpenAI, Bedrock, Gemini, Weaviate, Astra) into a unified internal contract.
+
+---
+
+
+---
+
+## 73. Deep Micro-Learnings & Runtime Gotchas (Harvested from Mintplex-Labs/anything-llm)
+
+1.  **WebSocket Frame Poisoning:**
+    *   **Failure:** Malformed frames crash the server process.
+    *   **Root Cause:** Lack of schema validation/try-catch blocks on incoming WebSocket message buffers.
+    *   **Fix:** Implement a strict `JSON.parse` wrapper with a schema validator (e.g.,
+
+
+---
+
+## 74. 8-Dimensional Multi-Axis Forensic Analysis (Harvested from Mintplex-Labs/anything-llm)
+
+*   **D1: Structural Boundaries:** The system suffers from "Provider Creep." Logic for specific LLM providers is leaking into the core orchestration layer.
+*   **D2: Asynchronous State:** WebSocket agent loops are prone to "Socket Timeout" when the LLM latency exceeds the heartbeat interval.
+*   **D3: Error Boundaries:** The server lacks a global "Panic" recovery; a single malformed frame brings down the entire node process.
+*   **D4: Resource Lifecycle:** High CPU usage on long conversations suggests inefficient DOM reconciliation or memory-heavy state objects in the frontend.
+*   **D5: Deseriali
+
+
+---
+
+## 75. Net-New Universal Engineering Rules (Harvested from Mintplex-Labs/anything-llm)
+
+### Rule 72: The "Boundary-First" Schema Inversion
+
+**RULE**:
+All external data (WebSockets, File Uploads, API Responses) must be validated against a strict schema *before* entering the application state machine.
+
+**WHY**:
+Failure to validate at the boundary allows "poisoned" data to propagate into deep logic, causing non-deterministic crashes that are impossible to debug via stack traces alone.
+
+**WHEN TO APPLY**:
+Any system handling user-generated content, LLM provider responses, or real-time socket communication.
+
+---
+
+
+---
+
+## 76. Actionable Agent Skill & Implementation Checklist (Harvested from Mintplex-Labs/anything-llm)
+
+- [ ] **Schema Validation**: Wrap all `JSON.parse()` calls in a `try-catch` block with a

@@ -406,5 +406,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mintplex-labs-anything-llm": {
+    "name": "Mintplex-Labs/anything-llm",
+    "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-28T18:54:22.177Z",
+    "lastVerified": "2026-09-28T18:54:22.177Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
