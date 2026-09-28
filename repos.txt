@@ -1,24 +1,23 @@
 # ==============================================================================
-# AI-Builder-Brain Batch Auto-Harvester Queue
+# AI-Builder-Brain Universal Harvesting Queue
 # ==============================================================================
-# Paste your target GitHub repository URLs here (one URL per line).
+# Paste your target GitHub or Hugging Face repository/model URLs here (one per line).
 # Lines beginning with '#' and blank lines are ignored.
 #
-# Triggering Batch Harvesting:
-# 1. In Chat with AI Agent: Paste URLs or say "In sabhi repos se harvest kar lo"
-# 2. CLI Execution: node 04_WORKFLOWS/factory-engine/batch-auto-harvester.mjs
+# Supported Harvesting Modes:
+# 1. Method 1 (Full-Clone Batch Harvester):
+#    - CLI: node 04_WORKFLOWS/factory-engine/batch-auto-harvester.mjs
+#    - Chat: "In sabhi repos se harvest kar lo"
 #
-# The Autonomous Loop Will Automatically:
-# 1. Sync Master Brain with GitHub (git pull --rebase)
-# 2. Full clone each repo to a temporary folder (git clone <url>) for 100% complete history
-# 3. Perform 8-dimensional forensic learning extraction (D1 to D8)
-
-# 4. Integrate verified patterns into Brain (Rules, Skills, Project Learnings)
-# 5. Automatically git commit & push to GitHub (git push origin main)
-# 6. Delete/cleanup temporary clone folder completely (0 bytes disk wasted)
-# 7. Move to the next repo in the queue until finished.
+# 2. Method 2 (Zero-Clone 24/7 Cloud Harvester):
+#    - Runs continuously in GitHub cloud (24/7 even when laptop is closed/offline)
+#    - CLI: node 04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs
+#    - Control: node 04_WORKFLOWS/factory-engine/harvester-control.mjs [start|stop|status|sync]
+#    - Chat: "Cloud harvester chalu karo" / "Cloud harvester stop karo"
 # ==============================================================================
 
 https://github.com/shadcn-ui/ui
 https://github.com/tailwindlabs/tailwindcss
 https://github.com/vllm-project/vllm
+https://huggingface.co/meta-llama/Llama-3.2-1B
+

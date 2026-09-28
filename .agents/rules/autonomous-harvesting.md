@@ -70,3 +70,21 @@ For any project created, modified, or connected to `AI-Builder-Brain` via the br
 - Stage or integrate verified reusable patterns directly into `C:\AI-Builder-Brain`.
 - Push to GitHub remote automatically.
 - Do not require manual harvesting requests from the user.
+
+---
+
+## 4. Zero-Clone 24/7 Cloud Harvester & Start/Stop Controls
+When the user desires zero-disk-clone harvesting or wants continuous 24/7 cloud harvesting without keeping their laptop open:
+
+1. **24/7 Cloud Operation**: Powered by `.github/workflows/24-7-cloud-harvester.yml`. It runs automatically in GitHub's cloud every 2 hours, reads `repos.txt`, extracts learnings via GitHub & Hugging Face REST APIs without downloading git objects, and commits/pushes directly to GitHub (`origin main`). It runs even when the user's laptop is turned off or offline.
+2. **Auto-Pull on Boot**: Whenever any agent starts work or boots up, it runs `git pull --rebase origin main` so all learnings harvested by GitHub Actions in the cloud are immediately synchronized to the local `C:\AI-Builder-Brain`.
+3. **Start / Stop Controls**:
+   - When the user says *"Cloud harvester chalu karo"* / *"start harvester"*:
+     Set `"status": "ACTIVE"` in `harvest-control.json`, git commit, and push to GitHub.
+   - When the user says *"Cloud harvester stop karo"* / *"stop harvester"*:
+     Set `"status": "PAUSED"` in `harvest-control.json`, git commit, and push to GitHub.
+4. **Zero-Clone Execution on Demand**:
+   - When user asks for zero-clone harvest:
+     Execute `node 04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs`.
+   - Never download large repos to disk. 100% free API tier compliance.
+

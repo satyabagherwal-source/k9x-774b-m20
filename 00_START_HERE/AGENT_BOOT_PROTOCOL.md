@@ -43,10 +43,12 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 
 ---
 
-### Step 1: Discover AI-Builder-Brain
+### Step 1: Discover & Sync AI-Builder-Brain
 - Locate Master Brain (`C:\AI-Builder-Brain`, `AI_BUILDER_BRAIN_PATH`, or sibling).
 - Verify canonical folders (`00_START_HERE`, `01_CORE`, `04_WORKFLOWS`).
-- Enforce strict read-only boundary on Master Brain.
+- Auto-pull latest 24/7 cloud-harvested learnings from GitHub remote (`git -C "C:\AI-Builder-Brain" pull --rebase origin main`). This guarantees that all intelligence harvested in the cloud while the laptop was closed or offline is instantly available locally.
+- Enforce strict read-only boundary on Master Brain during child project development.
+
 
 ### Step 2: Verify Brain Bridge
 - Inspect `.project-brain/brain-bridge.json`.
@@ -94,9 +96,10 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 ### Step 14: Update Project State
 - Update `PROJECT_STATE.json` with new milestone progress or active issues.
 
-### Step 15: Continue & Silent / Batch Learning Sync
+### Step 15: Continue & Silent / Batch / Cloud Learning Sync
 - Report verified evidence and proceed to next task cleanly.
 - Silently ("chupchap") synchronize any unharvested reusable project learnings to `C:\AI-Builder-Brain` in the background.
-- When requested to batch-harvest (e.g. via `repos.txt` or URL list), execute the autonomous shallow-clone loop (`04_WORKFLOWS/batch-auto-harvester.md`), auto-push to GitHub, and wipe temp folders without requiring manual human steps.
+- When requested to batch-harvest (e.g. via `repos.txt` or URL list), execute the autonomous full-clone loop (`04_WORKFLOWS/batch-auto-harvester.md`) or Zero-Clone 24/7 Cloud Harvester (`04_WORKFLOWS/zero-clone-cloud-harvester.md`), auto-push to GitHub, and maintain clean storage without requiring manual human steps.
+
 
 

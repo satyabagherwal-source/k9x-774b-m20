@@ -1,0 +1,17 @@
+{
+  "status": "ACTIVE",
+  "mode": "zero-clone-cloud",
+  "lastUpdated": "2026-09-28T09:42:00.000Z",
+  "updatedBy": "agent-antigravity",
+  "compliance": {
+    "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
+    "githubApiAuth": "AUTOMATIC_OR_ANONYMOUS",
+    "huggingFaceApi": "PUBLIC_REST_ENDPOINTS",
+    "freeTierGuaranteed": true,
+    "paidApiBlocked": true,
+    "maxRequestsPerHour": 50
+  },
+  "harvestQueueFile": "repos.txt",
+  "cloudSchedule": "Every 2 hours via GitHub Actions (Runs 24/7 even when laptop is closed/offline)",
+  "localSyncStrategy": "Auto-pull on agent boot or IDE start (git pull --rebase origin main)"
+}
