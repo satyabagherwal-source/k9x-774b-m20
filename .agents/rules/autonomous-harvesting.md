@@ -107,4 +107,24 @@ To guarantee that neither tokens nor execution time are ever wasted on duplicate
 4. **Force Override**:
    - Re-harvesting an unchanged repository is strictly prohibited UNLESS the user explicitly commands a forced refresh (e.g. *"force reharvest"*, *"zabardasti dobara harvest karo"*, or `--force` flag).
 
+---
+
+## 6. Autonomous Repository Discovery & Multi-Agent Scouting Engine
+To ensure AI-Builder-Brain continuously evolves without waiting for manual human inputs:
+1. **Perpetual Discovery Scout (`auto-discovery-scout.mjs`)**:
+   - The agent and cloud runners actively scout GitHub and Hugging Face for the world's highest-quality repositories across 4 curated domains:
+     - `ai-agents`: Autonomous agents, tool-use runtimes, MCP servers (`topic:ai-agents`, `topic:llm-agent`).
+     - `fullstack-ui`: Modern component systems, design architectures (`topic:ui-components`, `topic:nextjs`).
+     - `high-perf-systems`: Ultra-fast developer tooling in Rust/Zig/Go (`topic:developer-tools`, `language:rust`).
+     - `huggingface-ai-models`: Trending foundation models, reasoning weights.
+2. **Quality Scoring & Selection Filter**:
+   - Every candidate must have $\ge 1,500$ stars, active commits within the last 120 days, and permissive open-source licenses.
+   - Spam, forks, mirrors, and archived projects are strictly rejected.
+   - Deduplication: Cross-checks `sources-registry.json` and `repos.txt` to guarantee no duplicate processing.
+3. **Multi-Agent Domain Partitioning**:
+   - In `PARALLEL_MULTI_AGENT` mode, multiple agents scout concurrently using distributed domain locks (`.harvest-locks/scout-domain-<domain>.lock`), preventing duplicate searches and maximizing discovery throughput.
+4. **Self-Feeding Ingestion**:
+   - When existing targets in `repos.txt` are up-to-date, the Zero-Clone Harvester automatically calls the scout engine, selects the next top repositories, registers them, and immediately harvests them.
+
+
 

@@ -102,6 +102,11 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 - When requested to batch-harvest (e.g. via `repos.txt` or URL list), execute the autonomous full-clone loop (`04_WORKFLOWS/batch-auto-harvester.md`) or Zero-Clone 24/7 Cloud Harvester (`04_WORKFLOWS/zero-clone-cloud-harvester.md`), auto-push to GitHub, and maintain clean storage without requiring manual human steps.
 - **Enforce Upgrade-Only Invariant**: Never re-harvest any repository, Hugging Face model, or local project if its commit revision matches `sources-registry.json` or `.project-brain/brain-bridge.json`. Skip immediately to preserve LLM tokens and execution time.
 
+### Step 16: Autonomous Discovery Scout (Perpetual Self-Feeding Engine)
+- If the harvest queue (`repos.txt`) is drained or all targets are up-to-date, invoke the Autonomous Discovery Scout (`04_WORKFLOWS/auto-discovery-engine.md`).
+- Multi-agent scout partitions searches across 4 domains (`ai-agents`, `fullstack-ui`, `high-perf-systems`, `huggingface-ai-models`) using domain locks (`.harvest-locks/scout-domain-<domain>.lock`).
+- Evaluates repository quality score (stars, active push vitality, license, forks) and auto-queues top projects into `repos.txt` for 24/7 harvesting.
+
 
 
 
