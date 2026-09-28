@@ -289,5 +289,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "herdrdev-herdr": {
+    "name": "herdrdev/herdr",
+    "officialUrl": "https://github.com/herdrdev/herdr",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T16:34:27.062Z",
+    "lastVerified": "2026-09-28T16:34:27.062Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
