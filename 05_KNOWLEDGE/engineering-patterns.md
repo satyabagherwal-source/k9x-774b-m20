@@ -1024,3 +1024,33 @@ External dependencies are outside the control of the local system. Without autom
 
 **WHEN TO APPLY**:
 Documentation repositories, API registries, service discovery manifests, and any system relying on external URLs or third-party endpoints.
+
+
+---
+
+## 79. The "Opaque Mutation" Rule (Harvested from meilisearch/meilisearch)
+
+**RULE**:
+When performing partial updates on persistent records, validate only the delta, not the existing state.
+
+**WHY**:
+Validating the entire record during a mutation creates a "poisoned record" scenario where a legacy bug (or schema change) prevents any future modification of that record, effectively bricking the data.
+
+**WHEN TO APPLY**:
+Database engines, document stores, and state-machine-based systems where data evolves over time.
+
+---
+
+
+---
+
+## 80. The "RAII Permit" Invariant (Harvested from meilisearch/meilisearch)
+
+**RULE**:
+Never manually signal a semaphore release if an RAII guard is responsible for the permit's lifecycle.
+
+**WHY**:
+Manual signaling creates a race condition where the permit is returned to the pool while the guard still holds a reference, leading to double-counting and eventual system-wide resource exhaustion or panics.
+
+**WHEN TO APPLY**:
+High-concurrency systems using `tokio::sync::Semaphore` or similar synchroni
