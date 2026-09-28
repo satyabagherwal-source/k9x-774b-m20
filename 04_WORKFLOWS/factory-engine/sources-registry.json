@@ -666,5 +666,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-agent-governance-toolkit": {
+    "name": "microsoft/agent-governance-toolkit",
+    "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-28T19:14:28.697Z",
+    "lastVerified": "2026-09-28T19:14:28.697Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -1288,3 +1288,33 @@ Direct assignment causes "Event Shadowing," where the library's internal state m
 
 **WHEN TO APPLY**:
 Any UI library, event-driven system, or component-based architecture where props (like `onPress`, `onScroll`, `onFocus`) are exposed to the consumer.
+
+
+---
+
+## 100. [The Atomic Audit Invariant] (Harvested from microsoft/agent-governance-toolkit)
+
+**RULE**:
+Any state-mutating operation that updates both a data store and a cryptographic proof (Merkle root/Hash chain) must be encapsulated in a single, non-reentrant atomic transaction.
+
+**WHY**:
+If the data store updates but the proof fails (or vice versa), the system enters an "inconsistent state" where the audit trail is cryptographically invalid, rendering the entire governance history untrustworthy.
+
+**WHEN TO APPLY**:
+Distributed ledgers, audit logging systems, and any system where data integrity is verified via cryptographic hashes.
+
+---
+
+
+---
+
+## 101. [The Fail-Closed Readiness Pattern] (Harvested from microsoft/agent-governance-toolkit)
+
+**RULE**:
+A security-critical service must expose a `Ready` state that is `False` if and only if the security policy configuration is empty or invalid.
+
+**WHY**:
+Defaulting to "empty policy = allow all" is a catastrophic security failure. Systems must explicitly verify the presence of loaded policies before transitioning to a `Ready` state.
+
+**WHEN TO APPLY**:
+Policy engines, sidecars, and authori
