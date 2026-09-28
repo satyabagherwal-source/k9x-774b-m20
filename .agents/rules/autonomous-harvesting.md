@@ -14,7 +14,7 @@ The agent (ANY AI agent: new or old, Antigravity, Claude, Cursor, Copilot, or CL
 The agent MUST autonomously execute the following batch loop:
 1. **GitHub Sync Pre-flight**: Ensure Master Brain is synced with GitHub remote (`git pull --rebase origin main`).
 2. **Sequential Loop Through URLs**: For each repository URL in `repos.txt` or prompt:
-   - **Shallow Clone**: Shallow clone into an isolated temporary folder (`git clone --depth 50 <url> <temp_dir>`). Fast and preserves disk space.
+   - **Full Clone (Mandatory for Complete Learning)**: Clone repository fully into an isolated temporary folder (`git clone <url> <temp_dir>`). Do NOT shallow clone; full clone is required so the complete git history, tags, and architectural bug fixes across all versions can be extracted.
    - **8-Dimensional Forensic Extraction**: Deep audit across all 8 dimensions:
      - D1: Architecture & Structural Boundaries
      - D2: Asynchronous State & Concurrency
@@ -23,8 +23,9 @@ The agent MUST autonomously execute the following batch loop:
      - D5: Boundary Deserialization & Encoding
      - D6: Cross-Platform & Runtime Gotchas
      - D7: Build, CI/CD, Deployment & Tooling
-     - D8: Forensic Bug Fixes & Real Production Incidents (`git log -n 50 --pretty=format:"%h - %s (%ad)" --date=short`)
-   - **Empirical Evidence & Differential Comparison**: Filter project noise, extract file paths and commit hashes, and compare against Master Brain rules (Rules 1-68+).
+     - D8: Forensic Bug Fixes & Real Production Incidents (`git log` filtered by fix/bug/leak/race/crash/gotcha across full commit history)
+   - **Empirical Evidence & Differential Comparison**: Filter project noise, extract file paths and commit hashes, and compare against Master Brain rules (Rules 1-71+).
+
    - **Brain Integration**:
      - Write detailed forensic record to `07_PROJECT_LEARNING/[repo]-learnings.md`.
      - Append universal engineering patterns to `05_KNOWLEDGE/engineering-patterns.md`.

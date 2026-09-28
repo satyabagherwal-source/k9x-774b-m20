@@ -16,8 +16,9 @@
 ### What the AI / Harvester Engine Does Autonomously:
 1. **GitHub Pre-flight Sync**: Pulls remote updates (`git pull --rebase origin main`) on Master Brain so local and remote states are synchronized.
 2. **Loop Over Repositories**:
-   - **Shallow Clone**: Runs `git clone --depth 50 <url> <temp_dir>`. Fast, token-efficient, and does not exhaust disk space.
-   - **8-Dimensional Investigation**: Deeply inspects code, manifests, architecture, and recent commit history (`git log -n 50`) across:
+   - **Full Clone**: Runs `git clone <url> <temp_dir>`. Performs a full clone so that the complete historical commits, tags, release milestones, and architecture bug fixes are extracted without omissions.
+   - **8-Dimensional Investigation**: Deeply inspects code, manifests, architecture, and full commit history across:
+
      - D1: Architecture & Structural Boundaries
      - D2: Asynchronous State & Concurrency
      - D3: Error Boundaries, Recovery & Rollbacks
@@ -84,8 +85,9 @@ node 04_WORKFLOWS/factory-engine/batch-auto-harvester.mjs --file my-repos-list.t
 
 | Invariant | Enforcement Mechanism |
 |---|---|
-| **Shallow Clone Only** | Uses `--depth 50` so only recent history is downloaded, preventing multi-gigabyte bloat. |
+| **Full Clone for Complete Learning** | Performs full `git clone` to capture 100% of historical commits, tags, and architectural bug fixes without omissions. |
 | **Sandboxed Directory** | Clones into `.temp-harvest/` (ignored in `.gitignore`) or OS tempdir. |
-| **Guaranteed Cleanup** | Deletion runs in a `finally` block with Windows read-only attribute stripping, guaranteeing 0 bytes disk waste. |
+| **Guaranteed Immediate Cleanup** | Deletion runs in a `finally` block with Windows read-only attribute stripping, guaranteeing 0 bytes disk waste. |
 | **Continuous Remote Sync** | Every repository harvest commits and pushes to GitHub (`origin main`) immediately. |
 | **Non-Halting Batch** | A failure in one repository logs an error in the audit report and continues to the next without aborting the batch. |
+

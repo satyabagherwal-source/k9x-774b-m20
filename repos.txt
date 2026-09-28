@@ -10,8 +10,9 @@
 #
 # The Autonomous Loop Will Automatically:
 # 1. Sync Master Brain with GitHub (git pull --rebase)
-# 2. Shallow clone each repo to a temporary folder (git clone --depth 50)
+# 2. Full clone each repo to a temporary folder (git clone <url>) for 100% complete history
 # 3. Perform 8-dimensional forensic learning extraction (D1 to D8)
+
 # 4. Integrate verified patterns into Brain (Rules, Skills, Project Learnings)
 # 5. Automatically git commit & push to GitHub (git push origin main)
 # 6. Delete/cleanup temporary clone folder completely (0 bytes disk wasted)

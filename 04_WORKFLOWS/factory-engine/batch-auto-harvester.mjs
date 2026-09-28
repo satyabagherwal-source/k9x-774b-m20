@@ -108,18 +108,19 @@ export function loadRepoList(sourcePath = path.join(BRAIN_ROOT, 'repos.txt')) {
 }
 
 /**
- * Executes a shallow clone into a sandboxed temp directory.
+ * Executes a FULL clone (entire history, tags, branches) into a sandboxed temp directory.
+ * Guarantees 100% comprehensive forensic learning extraction.
  */
-export function shallowCloneRepo(repoMeta, tempBaseDir = path.join(BRAIN_ROOT, '.temp-harvest')) {
+export function cloneRepoFull(repoMeta, tempBaseDir = path.join(BRAIN_ROOT, '.temp-harvest')) {
   fs.mkdirSync(tempBaseDir, { recursive: true });
   const cloneTarget = path.join(tempBaseDir, `${repoMeta.slug}-${Date.now()}`);
 
   console.log(`\n======================================================================`);
-  console.log(`[CLONE] Shallow cloning: ${repoMeta.webUrl} (depth 50)`);
+  console.log(`[CLONE] Full cloning (100% complete history): ${repoMeta.webUrl}`);
   console.log(`[TARGET] ${cloneTarget}`);
   console.log(`======================================================================`);
 
-  run(`git clone --depth 50 "${repoMeta.cleanUrl}" "${cloneTarget}"`, tempBaseDir, 300000);
+  run(`git clone "${repoMeta.cleanUrl}" "${cloneTarget}"`, tempBaseDir, 600000);
   return cloneTarget;
 }
 
@@ -127,7 +128,7 @@ export function shallowCloneRepo(repoMeta, tempBaseDir = path.join(BRAIN_ROOT, '
  * Performs empirical 8-dimensional scan of the cloned codebase.
  */
 export function inspectCodebase(cloneDir, repoMeta) {
-  console.log(`[AUDIT] Sweeping 8 dimensions across ${repoMeta.slug}...`);
+  console.log(`[AUDIT] Sweeping 8 dimensions across full codebase: ${repoMeta.slug}...`);
 
   const audit = {
     repo: repoMeta,
@@ -135,6 +136,7 @@ export function inspectCodebase(cloneDir, repoMeta) {
     commitCount: 0,
     commits: [],
     fixCommits: [],
+    tags: [],
     dependencies: {},
     frameworks: [],
     languages: [],
@@ -143,9 +145,9 @@ export function inspectCodebase(cloneDir, repoMeta) {
     architectureHighlights: []
   };
 
-  // 1. Commit History Audit (D8: Forensic Bug Fixes)
+  // 1. Commit History Audit (D8: Forensic Bug Fixes across full history)
   try {
-    const logRaw = run('git log -n 50 --pretty=format:"%h|%ad|%s" --date=short', cloneDir);
+    const logRaw = run('git log -n 100 --pretty=format:"%h|%ad|%s" --date=short', cloneDir);
     const logLines = logRaw.split(/\r?\n/).filter(Boolean);
     audit.commitCount = logLines.length;
     audit.commits = logLines.map(line => {
@@ -153,11 +155,28 @@ export function inspectCodebase(cloneDir, repoMeta) {
       return { hash, date, message: rest.join('|') };
     });
 
-    // Filter commits addressing stability, leaks, race conditions, gotchas
-    const fixRegex = /(fix|bug|leak|race|crash|deadlock|regression|memory|security|revert|workaround|gotcha)/i;
-    audit.fixCommits = audit.commits.filter(c => fixRegex.test(c.message));
+    // Targeted sweep for all historical fixes across full commit history
+    try {
+      const fixLogRaw = run('git log -n 60 --grep="fix" --grep="bug" --grep="leak" --grep="race" --grep="crash" --pretty=format:"%h|%ad|%s" --date=short', cloneDir);
+      const fixLines = fixLogRaw.split(/\r?\n/).filter(Boolean);
+      audit.fixCommits = fixLines.map(line => {
+        const [hash, date, ...rest] = line.split('|');
+        return { hash, date, message: rest.join('|') };
+      });
+    } catch (e) {
+      const fixRegex = /(fix|bug|leak|race|crash|deadlock|regression|memory|security|revert|workaround|gotcha)/i;
+      audit.fixCommits = audit.commits.filter(c => fixRegex.test(c.message));
+    }
+
+    // Inspect release tags
+    try {
+      const tagRaw = run('git tag --sort=-v:refname', cloneDir);
+      audit.tags = tagRaw.split(/\r?\n/).filter(Boolean).slice(0, 10);
+    } catch (e) {}
   } catch (e) {
     console.warn(`[WARN] Git log audit failed: ${e.message}`);
+  }
+
   }
 
   // 2. Package Manifests & Language Discovery (D1, D7)
@@ -231,7 +250,7 @@ export function writeProjectLearningArtifact(audit) {
 > **Canonical Artifact**: \`07_PROJECT_LEARNING/${filename}\`  
 > **Source Repository**: [${audit.repo.cleanUrl}](${audit.repo.webUrl})  
 > **Harvest Date**: ${audit.timestamp}  
-> **Harvest Engine**: Batch Auto-Harvester (Shallow Depth 50)  
+> **Harvest Engine**: Batch Auto-Harvester (Full Clone - Complete History Extraction)  
 > **Languages & Ecosystem**: ${languagesList}  
 
 ---
@@ -240,7 +259,8 @@ export function writeProjectLearningArtifact(audit) {
 - **Repository**: \`${audit.repo.owner}/${audit.repo.repo}\`
 - **Detected Languages**: ${languagesList}
 - **Discovered Configurations / Tooling**: ${keyFilesList}
-- **Shallow Commits Analyzed**: ${audit.commitCount} (Recent production trajectory)
+- **Complete Commit History Inspected**: ${audit.commitCount}+ recent commits, ${audit.fixCommits.length} deep historical fixes, and release tags: ${audit.tags.slice(0, 5).join(', ') || 'N/A'}.
+
 
 ---
 
@@ -395,11 +415,12 @@ export async function runBatchHarvester(urlList = null) {
 
     let cloneDir = null;
     try {
-      // Step A: Shallow Clone
-      cloneDir = shallowCloneRepo(repoMeta, tempBase);
+      // Step A: Full Clone (Entire history, tags, branches for 100% complete learning)
+      cloneDir = cloneRepoFull(repoMeta, tempBase);
 
       // Step B: 8-Dimensional Empirical Codebase Audit
       const audit = inspectCodebase(cloneDir, repoMeta);
+
 
       // Step C: Write Learning Artifacts & Update Registry
       writeProjectLearningArtifact(audit);

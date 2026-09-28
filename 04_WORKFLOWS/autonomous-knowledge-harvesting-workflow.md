@@ -25,12 +25,13 @@ The system provides two autonomous operating pathways:
    - The user provides a list of GitHub repository URLs (in chat, in `repos.txt`, or commands like *"In sabhi repos se harvest kar lo"*).
    - Any AI agent (new or old) or automated CLI engine loops through each repository sequentially:
      * Pre-syncs Master Brain with GitHub remote (`git pull --rebase origin main`).
-     * Shallow clones the repo into a temporary sandbox (`git clone --depth 50 <url> <temp_dir>`).
+     * Full clones the repo into a temporary sandbox (`git clone <url> <temp_dir>`) for 100% complete history and release analysis.
      * Forensically extracts all 8 dimensions and updates Brain files.
      * Auto-commits and pushes updates to remote GitHub (`git push origin main`).
      * Immediately deletes the temporary clone folder (0 bytes disk waste).
      * Moves to the next repo until the entire queue is processed.
    - The user NEVER manually clones or opens folders.
+
 
 
 ---
@@ -175,13 +176,13 @@ When the user gives a list of repositories (in `repos.txt`, in chat, or via CLI)
               ↓
 [ Git Pull Rebase Master Brain ]
               ↓
-   ┌──► [ Shallow Clone Repo (depth 50) ]
+   ┌──► [ Full Clone Repo (100% complete history) ]
    │          ↓
    │    [ 8-Dimensional Forensic Scan ]
    │          ↓
    │    [ Extract Evidence & Commit Log ]
    │          ↓
-   │    [ Differential Brain Comparison (Rules 1-68+) ]
+   │    [ Differential Brain Comparison (Rules 1-71+) ]
    │          ↓
    │    [ Update Brain: 07_PROJECT_LEARNING, 05_KNOWLEDGE, 03_SKILLS ]
    │          ↓
@@ -195,8 +196,9 @@ When the user gives a list of repositories (in `repos.txt`, in chat, or via CLI)
 ```
 
 ### Automation Invariants:
-1. **Never Prompt for Manual Clone**: The AI or CLI MUST execute the shallow clone autonomously.
-2. **Never Prompt to Open Folders**: The AI processes the codebase directly from the temporary shallow clone directory.
+1. **Never Prompt for Manual Clone**: The AI or CLI MUST execute the full clone autonomously.
+2. **Never Prompt to Open Folders**: The AI processes the codebase directly from the temporary full clone directory.
 3. **Always Push to Remote**: Every completed repo harvest is immediately committed and pushed to `origin main`.
 4. **Always Clean Up Sandbox**: The temporary directory is wiped clean immediately after each repository is processed.
+
 

@@ -22,10 +22,10 @@ You MUST NOT ask the user to manually clone any repository or manually open any 
 2. **Process Each Repository in the Queue (Loop)**:
    For every GitHub URL in the list:
    
-   a. **Shallow Clone**:
-      - Clone into an isolated temporary folder using depth 50:
-        `git clone --depth 50 <URL> <TEMP_FOLDER>`
-      - Shallow cloning keeps execution fast and minimizes network/disk usage.
+   a. **Full Clone (Mandatory for Complete Learning)**:
+      - Clone into an isolated temporary folder using full git clone:
+        `git clone <URL> <TEMP_FOLDER>`
+      - Full cloning ensures 100% of historical commits, tags, release notes, and deep architectural bug fixes are accessible.
 
    b. **8-Dimensional Forensic Learning Sweep**:
       Deeply inspect the codebase across all 8 dimensions:
@@ -36,10 +36,11 @@ You MUST NOT ask the user to manually clone any repository or manually open any 
       - **D5: Boundary Deserialization & Encoding**: Untrusted input parsing, JSON/schema validation, encoding safeguards.
       - **D6: Cross-Platform & Runtime Gotchas**: Windows vs POSIX paths, CRLF vs LF, edge runtime differences, hydration mismatches.
       - **D7: Build, CI/CD, Deployment & Tooling**: Bundler configurations, compiler strictness, CI test matrices.
-      - **D8: Forensic Bug Fixes & Real Incidents**: Recent fix commits (`git log -n 50 --pretty=format:"%h - %s (%ad)" --date=short` filtered by fix/bug/leak/race/crash/gotcha).
+      - **D8: Forensic Bug Fixes & Real Incidents**: Recent & historical fix commits (`git log` filtered by fix/bug/leak/race/crash/gotcha).
 
    c. **Empirical Evidence & Differential Brain Comparison**:
-      - Compare findings against existing Master Brain knowledge (`05_KNOWLEDGE/engineering-patterns.md`, Rules 1-68+).
+      - Compare findings against existing Master Brain knowledge (`05_KNOWLEDGE/engineering-patterns.md`, Rules 1-71+).
+
       - Filter out project-specific quirks and formulate universal, reusable engineering patterns.
 
    d. **Master Brain Integration**:
