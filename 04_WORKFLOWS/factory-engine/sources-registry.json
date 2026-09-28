@@ -170,5 +170,17 @@
     "verificationMethod": "schema-and-health-probe",
     "autoUpdatePolicy": "MINOR_PATCH_TESTED",
     "reviewRequirement": "MAJOR_OR_BREAKING"
+  },
+  "ui": {
+    "name": "ui",
+    "officialUrl": "https://github.com/shadcn-ui/ui",
+    "sourceType": "JavaScript/TypeScript",
+    "technology": "ui",
+    "lastChecked": "2026-09-28T03:51:23.590Z",
+    "lastVerified": "2026-09-28T03:51:23.590Z",
+    "revisionIdentifier": "98a1fe6",
+    "recentFixesCount": 8,
+    "verificationMethod": "shallow-clone-audit",
+    "autoUpdatePolicy": "AUTO_HARVEST_BATCH"
   }
 }
