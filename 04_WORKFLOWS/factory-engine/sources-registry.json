@@ -705,5 +705,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "max-sixty-worktrunk": {
+    "name": "max-sixty/worktrunk",
+    "officialUrl": "https://github.com/max-sixty/worktrunk",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T19:14:59.321Z",
+    "lastVerified": "2026-09-28T19:14:59.321Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

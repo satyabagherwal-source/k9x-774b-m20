@@ -1500,3 +1500,19 @@ In distributed systems, retries are inevitable. Non-idempotent operations lead t
 
 **WHEN TO APPLY**:
 Reverse proxies, P2P connection managers, and distributed resource allocators.
+
+
+---
+
+## 110. The "Unified Execution Path" Rule (Harvested from max-sixty/worktrunk)
+
+**RULE**:
+All state-mutating operations must be routed through a single, non-UI-aware service function. The UI (TUI/CLI) must never contain business logic or hook-triggering code.
+
+**WHY**:
+Reduces "Action Drift" where CLI commands and TUI shortcuts diverge in behavior, leading to inconsistent system states and skipped lifecycle hooks.
+
+**WHEN TO APPLY**:
+Any CLI tool that provides both a command-line interface and an interactive TUI.
+
+---
