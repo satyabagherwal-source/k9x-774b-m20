@@ -224,5 +224,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nousresearch-hermes-agent": {
+    "name": "NousResearch/hermes-agent",
+    "officialUrl": "https://github.com/NousResearch/hermes-agent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-28T04:52:25.883Z",
+    "lastVerified": "2026-09-28T04:52:25.883Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

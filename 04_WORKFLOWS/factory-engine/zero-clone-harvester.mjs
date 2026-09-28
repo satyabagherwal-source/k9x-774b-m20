@@ -504,7 +504,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
 
   // Auto-Discovery: If all existing targets are up to date, scout fresh top repositories
   const successCount = results.filter((r) => r.status === 'SUCCESS').length;
-  const isCustomRun = Boolean(targetUrls && targetUrls.length > 0);
+  const isCustomRun = Boolean(customUrls && customUrls.length > 0);
   const skipScout = process.argv.includes('--no-scout');
 
   if (successCount === 0 && !isCustomRun && !skipScout) {
