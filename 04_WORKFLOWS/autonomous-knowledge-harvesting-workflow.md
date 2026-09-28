@@ -21,6 +21,18 @@ The system provides two autonomous operating pathways:
    - An active project under development resolves a defect, refactors a critical boundary, or reaches a milestone.
    The agent autonomously audits the delta, extracts reusable patterns silently, and updates the Brain without requiring manual user commands.
 
+3. **Batch Auto-Harvesting Queue (`repos.txt` or Multi-URL List)**: Activated whenever:
+   - The user provides a list of GitHub repository URLs (in chat, in `repos.txt`, or commands like *"In sabhi repos se harvest kar lo"*).
+   - Any AI agent (new or old) or automated CLI engine loops through each repository sequentially:
+     * Pre-syncs Master Brain with GitHub remote (`git pull --rebase origin main`).
+     * Shallow clones the repo into a temporary sandbox (`git clone --depth 50 <url> <temp_dir>`).
+     * Forensically extracts all 8 dimensions and updates Brain files.
+     * Auto-commits and pushes updates to remote GitHub (`git push origin main`).
+     * Immediately deletes the temporary clone folder (0 bytes disk waste).
+     * Moves to the next repo until the entire queue is processed.
+   - The user NEVER manually clones or opens folders.
+
+
 ---
 
 ## 2. The 8 Multi-Dimensional Inspection Axes
@@ -151,3 +163,40 @@ To ensure the Brain learns silently and continuously without constant user promp
    - During live coding, whenever the agent resolves a bug that required multiple attempts or uncovered an OS/framework gotcha:
    - The agent silently captures the incident in `.project-brain/incidents/INC-XXX.md`.
    - If the lesson has universal reusability, it stages or auto-integrates it into Master Brain knowledge during the same turn.
+
+---
+
+## 5. Batch Auto-Harvesting Loop Protocol (Multi-Repository Queue)
+
+When the user gives a list of repositories (in `repos.txt`, in chat, or via CLI), the autonomous engine executes the following sequential loop:
+
+```
+[ Read repos.txt or prompt URLs ]
+              ↓
+[ Git Pull Rebase Master Brain ]
+              ↓
+   ┌──► [ Shallow Clone Repo (depth 50) ]
+   │          ↓
+   │    [ 8-Dimensional Forensic Scan ]
+   │          ↓
+   │    [ Extract Evidence & Commit Log ]
+   │          ↓
+   │    [ Differential Brain Comparison (Rules 1-68+) ]
+   │          ↓
+   │    [ Update Brain: 07_PROJECT_LEARNING, 05_KNOWLEDGE, 03_SKILLS ]
+   │          ↓
+   │    [ Git Add, Commit & Push to GitHub Remote ]
+   │          ↓
+   │    [ Delete & Clean Temp Clone Sandbox (0 bytes wasted) ]
+   │          ↓
+   └─── (More repos in queue? Repeat : Done)
+              ↓
+[ Report Executive Summary to User ]
+```
+
+### Automation Invariants:
+1. **Never Prompt for Manual Clone**: The AI or CLI MUST execute the shallow clone autonomously.
+2. **Never Prompt to Open Folders**: The AI processes the codebase directly from the temporary shallow clone directory.
+3. **Always Push to Remote**: Every completed repo harvest is immediately committed and pushed to `origin main`.
+4. **Always Clean Up Sandbox**: The temporary directory is wiped clean immediately after each repository is processed.
+

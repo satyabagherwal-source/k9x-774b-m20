@@ -1,4 +1,4 @@
-﻿# AI-Builder-Brain Git Ignore Rules
+# AI-Builder-Brain Git Ignore Rules
 
 # Operating system files
 .DS_Store
@@ -32,3 +32,8 @@ Desktop.ini
 
 # Local logs
 *.log
+
+# Batch Harvester Temporary Clone Sandbox
+.temp-harvest/
+*.shallow-clone/
+

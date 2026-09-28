@@ -64,10 +64,10 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 - Do not load unused framework playbooks into prompt context.
 
 ### Step 6: Resolve Applicable Knowledge
-- Read `PROJECT_KNOWLEDGE.md`. Consult indexed engineering patterns (Rules 1-14+) from Master Brain `05_KNOWLEDGE/engineering-patterns.md`.
+- Read `PROJECT_KNOWLEDGE.md`. Consult indexed engineering patterns (Rules 1-68+) from Master Brain `05_KNOWLEDGE/engineering-patterns.md`.
 
 ### Step 7: Resolve Applicable Workflows
-- Read relevant workflows in `04_WORKFLOWS/` (e.g. bug correction, git lifecycle, dynamic verification).
+- Read relevant workflows in `04_WORKFLOWS/` (e.g. bug correction, git lifecycle, dynamic verification, batch-auto-harvester).
 
 ### Step 8: Check Environment
 - Inspect `PROJECT_ENVIRONMENT.md` or execute runtime pre-flight (`node -v`, `git status`).
@@ -94,7 +94,9 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 ### Step 14: Update Project State
 - Update `PROJECT_STATE.json` with new milestone progress or active issues.
 
-### Step 15: Continue & Silent Learning Sync
+### Step 15: Continue & Silent / Batch Learning Sync
 - Report verified evidence and proceed to next task cleanly.
 - Silently ("chupchap") synchronize any unharvested reusable project learnings to `C:\AI-Builder-Brain` in the background.
+- When requested to batch-harvest (e.g. via `repos.txt` or URL list), execute the autonomous shallow-clone loop (`04_WORKFLOWS/batch-auto-harvester.md`), auto-push to GitHub, and wipe temp folders without requiring manual human steps.
+
 

@@ -1,0 +1,23 @@
+# ==============================================================================
+# AI-Builder-Brain Batch Auto-Harvester Queue
+# ==============================================================================
+# Paste your target GitHub repository URLs here (one URL per line).
+# Lines beginning with '#' and blank lines are ignored.
+#
+# Triggering Batch Harvesting:
+# 1. In Chat with AI Agent: Paste URLs or say "In sabhi repos se harvest kar lo"
+# 2. CLI Execution: node 04_WORKFLOWS/factory-engine/batch-auto-harvester.mjs
+#
+# The Autonomous Loop Will Automatically:
+# 1. Sync Master Brain with GitHub (git pull --rebase)
+# 2. Shallow clone each repo to a temporary folder (git clone --depth 50)
+# 3. Perform 8-dimensional forensic learning extraction (D1 to D8)
+# 4. Integrate verified patterns into Brain (Rules, Skills, Project Learnings)
+# 5. Automatically git commit & push to GitHub (git push origin main)
+# 6. Delete/cleanup temporary clone folder completely (0 bytes disk wasted)
+# 7. Move to the next repo in the queue until finished.
+# ==============================================================================
+
+https://github.com/shadcn-ui/ui
+https://github.com/tailwindlabs/tailwindcss
+https://github.com/vllm-project/vllm
