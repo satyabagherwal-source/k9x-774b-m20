@@ -692,5 +692,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openziti-zrok": {
+    "name": "openziti/zrok",
+    "officialUrl": "https://github.com/openziti/zrok",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-28T19:14:54.630Z",
+    "lastVerified": "2026-09-28T19:14:54.630Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

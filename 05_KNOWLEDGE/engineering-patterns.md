@@ -1472,3 +1472,31 @@ export async function withIsolatedStdin<T>(
 ```
 
 ---
+
+
+---
+
+## 108. The Bounded-Consumer Invariant (Harvested from openziti/zrok)
+
+**RULE**:
+Any asynchronous consumer of external telemetry or state-change events must implement a strictly bounded prefetch buffer and a time-based flush interval.
+
+**WHY**:
+Unbounded consumers act as memory sinks during network partitions or downstream latency spikes. Without time-bounded flushing, data becomes stale, and without prefetch limits, the system risks OOM crashes.
+
+**WHEN TO APPLY**:
+Message queues, metrics collectors, and event-driven logging subsystems.
+
+
+---
+
+## 109. The Idempotent State-Transition Guard (Harvested from openziti/zrok)
+
+**RULE**:
+All network-initiating operations (dials, binds, shares) must be idempotent and guarded by a pre-execution state check.
+
+**WHY**:
+In distributed systems, retries are inevitable. Non-idempotent operations lead to "ghost" connections, resource leaks, and race conditions where multiple handlers attempt to manage the same resource.
+
+**WHEN TO APPLY**:
+Reverse proxies, P2P connection managers, and distributed resource allocators.
