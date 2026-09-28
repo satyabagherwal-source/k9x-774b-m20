@@ -2,7 +2,7 @@
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shadcn-ui-ui-learnings.md`  
 > **Source Repository**: [https://github.com/shadcn-ui/ui.git](https://github.com/shadcn-ui/ui)  
-> **Harvest Date**: 2026-09-28T03:51:23.590Z  
+> **Harvest Date**: 2026-09-28T03:52:15.673Z  
 > **Harvest Engine**: Batch Auto-Harvester (Shallow Depth 50)  
 > **Languages & Ecosystem**: JavaScript/TypeScript  
 
