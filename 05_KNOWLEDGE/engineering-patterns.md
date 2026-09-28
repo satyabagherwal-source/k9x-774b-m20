@@ -1207,3 +1207,31 @@ All external inputs (LLM tool outputs, user strings, browser attributes) must be
 
 **RULE**:
 Any state that is both locally editable and remotely synchroni
+
+
+---
+
+## 94. The Reactive Schema Invariant (Harvested from pathwaycom/llm-app)
+
+**RULE**:
+Every data ingestion pipeline must implement a "Schema Contract" at the entry point, where incoming data is validated against a static schema definition before entering the transformation graph.
+
+**WHY**:
+In reactive dataflow systems, a schema mismatch at the source propagates as a silent failure or an `AttributeError` deep within the transformation logic, making debugging non-deterministic.
+
+**WHEN TO APPLY**:
+Any RAG or ETL pipeline using streaming data sources (e.g., Pathway, Kafka, Flink).
+
+
+---
+
+## 95. Provider-Adapter Decoupling (Harvested from pathwaycom/llm-app)
+
+**RULE**:
+Never hardcode provider-specific API parameters into the core pipeline logic. Use a "Provider Factory" that maps generic RAG requirements to provider-specific configuration objects.
+
+**WHY**:
+The rapid churn in LLM providers (MiniMax, TwelveLabs, etc.) leads to "config bloat" and frequent breaking changes in the core pipeline code.
+
+**WHEN TO APPLY**:
+Multi-model LLM applications and RAG orchestration layers.

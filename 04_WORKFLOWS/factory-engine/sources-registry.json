@@ -614,5 +614,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pathwaycom-llm-app": {
+    "name": "pathwaycom/llm-app",
+    "officialUrl": "https://github.com/pathwaycom/llm-app",
+    "sourceType": "github",
+    "technology": "Jupyter Notebook",
+    "lastChecked": "2026-09-28T19:14:05.457Z",
+    "lastVerified": "2026-09-28T19:14:05.457Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
