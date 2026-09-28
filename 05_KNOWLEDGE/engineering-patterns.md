@@ -1726,3 +1726,11 @@ UI libraries often fail in production because consumer build configurations (lik
 
 **WHEN TO APPLY**:
 Svelte/React/Vue component libraries distributed via NPM.
+
+
+---
+
+## 130. The "Atomic Watermark" Invariant (Harvested from thedotmack/claude-mem)
+
+**RULE**:
+Never use a monotonic high-water mark (e.g., `last_synced_id`) as the sole source of truth for synchroni

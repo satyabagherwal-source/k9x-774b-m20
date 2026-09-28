@@ -887,5 +887,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "thedotmack-claude-mem": {
+    "name": "thedotmack/claude-mem",
+    "officialUrl": "https://github.com/thedotmack/claude-mem",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T20:21:05.210Z",
+    "lastVerified": "2026-09-28T20:21:05.210Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
