@@ -861,5 +861,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cosscom-coss": {
+    "name": "cosscom/coss",
+    "officialUrl": "https://github.com/cosscom/coss",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T20:20:36.975Z",
+    "lastVerified": "2026-09-28T20:20:36.975Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

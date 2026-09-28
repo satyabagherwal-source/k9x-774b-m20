@@ -1676,3 +1676,25 @@ All external inputs representing network identifiers (CIDRs, IPs, Hostnames) or 
 ## 125. The "Lazy-Dependency" Pattern (Harvested from open-policy-agent/gatekeeper)
 
 **RULE**: External service clients (Exporters, Metrics, External APIs) must be initiali
+
+
+---
+
+## 126. The Portal Stacking Invariant (Harvested from cosscom/coss)
+
+**RULE**:
+Any component utili
+
+
+---
+
+## 127. The Unit-Safety Constraint (Harvested from cosscom/coss)
+
+**RULE**:
+All CSS variables representing physical dimensions (inset, margin, padding) must be validated for unit presence (`px`, `rem`, `em`) at the component boundary before injection into the `style` attribute.
+
+**WHY**:
+Modern browsers treat unitless values as invalid for specific layout properties (like `inset`), causing silent layout failures that are notoriously difficult to debug in production.
+
+**WHEN TO APPLY**:
+Dynamic style-binding systems and component libraries using CSS-in-JS or Tailwind-variable injection.
