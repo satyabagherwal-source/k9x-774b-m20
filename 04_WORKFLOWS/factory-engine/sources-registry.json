@@ -380,5 +380,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lapce-lapce": {
+    "name": "lapce/lapce",
+    "officialUrl": "https://github.com/lapce/lapce",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T17:35:05.026Z",
+    "lastVerified": "2026-09-28T17:35:05.026Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
