@@ -173,5 +173,17 @@
     "recentFixesCount": 8,
     "verificationMethod": "shallow-clone-audit",
     "autoUpdatePolicy": "AUTO_HARVEST_BATCH"
+  },
+  "vllm": {
+    "name": "vllm",
+    "officialUrl": "https://github.com/vllm-project/vllm",
+    "sourceType": "Python",
+    "technology": "vllm",
+    "lastChecked": "2026-09-28T03:53:07.708Z",
+    "lastVerified": "2026-09-28T03:53:07.708Z",
+    "revisionIdentifier": "4a190dc",
+    "recentFixesCount": 22,
+    "verificationMethod": "shallow-clone-audit",
+    "autoUpdatePolicy": "AUTO_HARVEST_BATCH"
   }
 }
