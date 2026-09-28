@@ -575,5 +575,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-security-101": {
+    "name": "microsoft/Security-101",
+    "officialUrl": "https://github.com/microsoft/Security-101",
+    "sourceType": "github",
+    "technology": "HTML",
+    "lastChecked": "2026-09-28T18:55:24.405Z",
+    "lastVerified": "2026-09-28T18:55:24.405Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 3,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

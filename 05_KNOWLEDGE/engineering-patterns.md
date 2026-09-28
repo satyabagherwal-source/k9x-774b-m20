@@ -1177,3 +1177,17 @@ All external network-facing clients (SMTP, LDAP, OIDC) must default to `Insecure
 
 **WHEN TO APPLY**:
 Any client-side library interacting with external infrastructure services.
+
+
+---
+
+## 91. The Immutable Dependency Invariant (Harvested from microsoft/Security-101)
+
+**RULE**:
+All external CI/CD actions and build-time dependencies must be pinned to a full-length (40-character) SHA-1 hash.
+
+**WHY**:
+Using tags or short SHAs allows for "shadow updates" where a dependency maintainer can push malicious code to an existing tag, bypassing the security posture of the repository. Full-length SHAs guarantee that the code executed today is bit-for-bit identical to the code executed tomorrow.
+
+**WHEN TO APPLY**:
+Any repository utili
