@@ -562,5 +562,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gravitl-netmaker": {
+    "name": "gravitl/netmaker",
+    "officialUrl": "https://github.com/gravitl/netmaker",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-28T18:55:00.789Z",
+    "lastVerified": "2026-09-28T18:55:00.789Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

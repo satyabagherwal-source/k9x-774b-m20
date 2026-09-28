@@ -1149,3 +1149,31 @@ All event handlers in UI components must resolve the event target via `event.com
 Any library or component system that interacts with DOM nodes, specifically those involving drag-and-drop, focus management, or coordinate-based interactions.
 
 ---
+
+
+---
+
+## 89. The "Secret-State" Mutex Invariant (Harvested from gravitl/netmaker)
+
+**RULE**:
+Any configuration variable that is mutable at runtime (e.g., JWT secrets, API keys, TLS certificates) must be protected by a `sync.RWMutex` and accessed via a thread-safe getter function.
+
+**WHY**:
+In distributed systems, configuration reloads often occur asynchronously (e.g., K8s ConfigMap updates). Without a mutex, concurrent read/write operations lead to intermittent signing failures or memory corruption.
+
+**WHEN TO APPLY**:
+Any Go-based service that reloads configuration without a full process restart.
+
+
+---
+
+## 90. The "Fail-Closed" Security Default (Harvested from gravitl/netmaker)
+
+**RULE**:
+All external network-facing clients (SMTP, LDAP, OIDC) must default to `InsecureSkipVerify: false`.
+
+**WHY**:
+"Insecure" flags are often added for local testing and accidentally committed to production. Hardcoding `false` forces developers to explicitly acknowledge the risk via environment variables.
+
+**WHEN TO APPLY**:
+Any client-side library interacting with external infrastructure services.
