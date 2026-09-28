@@ -47,3 +47,21 @@ https://github.com/herdrdev/herdr
 https://github.com/vuetifyjs/vuetify
 # [FULLSTACK-UI] chakra-ui/chakra-ui (25497 score) - Chakra UI is a component system for building SaaS products with speed ⚡️
 https://github.com/chakra-ui/chakra-ui
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T17:34:53.689Z] ---
+# [FULLSTACK-UI] lucide-icons/lucide (15440 score) - Beautiful & consistent icon toolkit made by the community. Open-source project a
+https://github.com/lucide-icons/lucide
+# [FULLSTACK-UI] radix-ui/primitives (11979 score) - Radix Primitives is an open-source UI component library for building high-qualit
+https://github.com/radix-ui/primitives
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T17:34:53.743Z] ---
+# [AI-AGENTS] firecrawl/firecrawl (114512 score) - The web data API to search, scrape, and interact at scale. 🔥
+https://github.com/firecrawl/firecrawl
+# [AI-AGENTS] DietrichGebert/ponytail (90921 score) - Makes your AI agent think like the laziest senior dev in the room. The best code
+https://github.com/DietrichGebert/ponytail
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T17:34:53.751Z] ---
+# [HIGH-PERF-SYSTEMS] lapce/lapce (23721 score) - Lightning-fast and Powerful Code Editor written in Rust
+https://github.com/lapce/lapce
+# [HIGH-PERF-SYSTEMS] TabbyML/tabby (20871 score) - Self-hosted AI coding assistant
+https://github.com/TabbyML/tabby
