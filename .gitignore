@@ -37,3 +37,7 @@ Desktop.ini
 .temp-harvest/
 *.shallow-clone/
 
+# Multi-Agent Concurrency Locks
+.harvest-locks/
+
+

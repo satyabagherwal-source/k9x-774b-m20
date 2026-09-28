@@ -4,6 +4,8 @@ import os from 'os';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { shouldHarvestSource } from './upgrade-checker.mjs';
+import { acquireTargetLock, releaseTargetLock, pushWithRebaseRetry } from './concurrency-coordinator.mjs';
+
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -351,28 +353,13 @@ export function updateSourcesRegistry(audit) {
 /**
  * Commits and pushes changes in C:\AI-Builder-Brain to remote GitHub repo.
  */
-export function autoCommitAndPushBrain(repoMeta) {
-  console.log(`\n[GIT AUTO-PUSH] Synchronizing Master Brain with GitHub remote...`);
-  try {
-    run('git add .', BRAIN_ROOT);
-    const status = run('git status --porcelain', BRAIN_ROOT);
-    if (!status) {
-      console.log(`[GIT] Working tree clean. No changes to commit.`);
-      return true;
-    }
-
-    const commitMsg = `feat(brain): Batch Auto-Harvest learning from ${repoMeta.owner}/${repoMeta.repo}`;
-    run(`git commit -m "${commitMsg}"`, BRAIN_ROOT);
-    console.log(`[GIT COMMIT] Committed: ${commitMsg}`);
-
-    run('git push origin main', BRAIN_ROOT);
-    console.log(`[GIT PUSH SUCCESS] Master Brain pushed to remote GitHub (origin/main).`);
-    return true;
-  } catch (err) {
-    console.error(`[GIT PUSH ERROR] Failed to push to GitHub: ${err.message}`);
-    return false;
-  }
+export async function autoCommitAndPushBrain(repoMeta) {
+  console.log(`\n[GIT AUTO-PUSH] Synchronizing Master Brain with GitHub remote (atomic rebase retry)...`);
+  const commitMsg = `feat(brain): Batch Auto-Harvest learning from ${repoMeta.owner}/${repoMeta.repo}`;
+  const res = await pushWithRebaseRetry(commitMsg, 5, BRAIN_ROOT);
+  return res.success;
 }
+
 
 /**
  * The Master Autonomous Batch Harvester Loop.
@@ -426,22 +413,33 @@ export async function runBatchHarvester(urlList = null) {
     }
     console.log(`🔥 [PROCEEDING] Upgrade detected or first run for ${repoMeta.owner}/${repoMeta.repo} (${upgradeCheck.reason})`);
 
+    // Concurrency Lock: Check if another agent is already harvesting this repository
+    const lockResult = acquireTargetLock(repoMeta.slug);
+    if (!lockResult.acquired) {
+      console.log(`🔒 [CONCURRENCY GUARD: LOCKED BY ANOTHER AGENT] ${repoMeta.owner}/${repoMeta.repo} is currently being processed by ${lockResult.holder}.`);
+      console.log(`   Advancing to next repository to allow parallel multi-agent harvesting.`);
+      results.push({
+        repo: repoMeta.slug,
+        status: 'SKIPPED_LOCKED_BY_ANOTHER_AGENT',
+        holder: lockResult.holder
+      });
+      continue;
+    }
+
     let cloneDir = null;
     try {
       // Step A: Full Clone (Entire history, tags, branches for 100% complete learning)
       cloneDir = cloneRepoFull(repoMeta, tempBase);
 
-
       // Step B: 8-Dimensional Empirical Codebase Audit
       const audit = inspectCodebase(cloneDir, repoMeta);
-
 
       // Step C: Write Learning Artifacts & Update Registry
       writeProjectLearningArtifact(audit);
       updateSourcesRegistry(audit);
 
-      // Step D: Git Add, Commit & Push to GitHub Remote
-      autoCommitAndPushBrain(repoMeta);
+      // Step D: Git Add, Commit & Push to GitHub Remote (Atomic Rebase Retry)
+      await autoCommitAndPushBrain(repoMeta);
 
       results.push({
         repo: repoMeta.slug,
@@ -458,13 +456,17 @@ export async function runBatchHarvester(urlList = null) {
         error: err.message
       });
     } finally {
-      // Step E: Guaranteed Immediate Cleanup of Shallow Clone (Zero Disk Waste)
+      // Release target lock for other agents
+      releaseTargetLock(repoMeta.slug);
+
+      // Step E: Guaranteed Immediate Cleanup of Clone (Zero Disk Waste)
       if (cloneDir && fs.existsSync(cloneDir)) {
         console.log(`[CLEANUP] Deleting temporary clone directory: ${cloneDir}`);
         safeRemoveDir(cloneDir);
         console.log(`[CLEANUP COMPLETE] Disk space freed. (0 bytes retained)`);
       }
     }
+
   }
 
   // Cleanup base temp folder if empty

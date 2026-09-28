@@ -3,6 +3,8 @@ import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { shouldHarvestSource } from './upgrade-checker.mjs';
+import { acquireTargetLock, releaseTargetLock, pushWithRebaseRetry } from './concurrency-coordinator.mjs';
+
 
 
 const __filename = fileURLToPath(import.meta.url);
@@ -382,27 +384,13 @@ export function updateSourcesRegistryZeroClone(audit) {
 /**
  * Git Auto Commit & Push
  */
-export function autoCommitAndPushZeroClone(audit) {
-  try {
-    run('git add .', BRAIN_ROOT);
-    const status = run('git status --porcelain', BRAIN_ROOT);
-    if (!status) {
-      console.log(`[GIT] No local changes to commit.`);
-      return true;
-    }
-
-    const commitMsg = `feat(harvest): Zero-Clone 24/7 harvest from ${audit.name} [skip ci]`;
-    run(`git commit -m "${commitMsg}"`, BRAIN_ROOT);
-    console.log(`[GIT COMMIT] ${commitMsg}`);
-
-    run('git push origin main', BRAIN_ROOT);
-    console.log(`[GIT PUSH] Pushed to GitHub remote origin/main.`);
-    return true;
-  } catch (err) {
-    console.warn(`[GIT PUSH NOTICE] ${err.message}`);
-    return false;
-  }
+export async function autoCommitAndPushZeroClone(audit) {
+  console.log(`\n[GIT AUTO-PUSH] Synchronizing Master Brain (atomic rebase retry)...`);
+  const commitMsg = `feat(harvest): Zero-Clone 24/7 harvest from ${audit.name} [skip ci]`;
+  const res = await pushWithRebaseRetry(commitMsg, 5, BRAIN_ROOT);
+  return res.success;
 }
+
 
 /**
  * Master Zero-Clone Harvester Runner
@@ -464,6 +452,14 @@ export async function runZeroCloneHarvester(customUrls = null) {
     }
     console.log(`🔥 [PROCEEDING] Upgrade detected or first run for ${target.owner}/${target.repo} (${upgradeCheck.reason})`);
 
+    // Concurrency Lock: Check if another agent is already harvesting this repository
+    const lockResult = acquireTargetLock(target.slug);
+    if (!lockResult.acquired) {
+      console.log(`🔒 [CONCURRENCY GUARD: LOCKED BY ANOTHER AGENT] ${target.owner}/${target.repo} is being processed by ${lockResult.holder}. Advancing.`);
+      results.push({ target: target.slug, status: 'SKIPPED_LOCKED_BY_ANOTHER_AGENT', holder: lockResult.holder });
+      continue;
+    }
+
     try {
       let audit = null;
 
@@ -476,7 +472,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
       if (audit) {
         writeZeroCloneArtifact(audit);
         updateSourcesRegistryZeroClone(audit);
-        autoCommitAndPushZeroClone(audit);
+        await autoCommitAndPushZeroClone(audit);
 
         results.push({
           target: target.slug,
@@ -492,7 +488,10 @@ export async function runZeroCloneHarvester(customUrls = null) {
     } catch (err) {
       console.error(`[ERROR] Zero-clone processing failed for ${target.slug}: ${err.message}`);
       results.push({ target: target.slug, status: 'FAILED', error: err.message });
+    } finally {
+      releaseTargetLock(target.slug);
     }
+
   }
 
   console.log(`\n======================================================================`);
