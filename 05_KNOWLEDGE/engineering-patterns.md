@@ -1698,3 +1698,31 @@ Modern browsers treat unitless values as invalid for specific layout properties 
 
 **WHEN TO APPLY**:
 Dynamic style-binding systems and component libraries using CSS-in-JS or Tailwind-variable injection.
+
+
+---
+
+## 128. The "CSS Specificity Inversion" Rule (Harvested from skeletonlabs/skeleton)
+
+**RULE**:
+Never hardcode layout-defining properties (`height`, `width`, `position`) in base component classes. Use "Layout-Neutral" defaults and expose them via CSS variables or explicit prop-based overrides.
+
+**WHY**:
+Hardcoded layout properties create "Specificity Traps" where consumers cannot override styles without using `!important`, leading to brittle, unmaintainable UI codebases.
+
+**WHEN TO APPLY**:
+Any component library or design system where Tailwind CSS or CSS-in-JS is used to provide base styles.
+
+
+---
+
+## 129. The "Compiler-Agnostic Component" Rule (Harvested from skeletonlabs/skeleton)
+
+**RULE**:
+Library components must be tested against the most restrictive `svelte.config.js` settings (e.g., `preserveWhitespace: true`) to ensure internal DOM structure is not dependent on compiler-specific output.
+
+**WHY**:
+UI libraries often fail in production because consumer build configurations (like `preserveComments`) alter the DOM tree, breaking query selectors or hydration logic.
+
+**WHEN TO APPLY**:
+Svelte/React/Vue component libraries distributed via NPM.
