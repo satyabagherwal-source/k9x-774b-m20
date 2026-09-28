@@ -627,5 +627,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "actions-actions-runner-controller": {
+    "name": "actions/actions-runner-controller",
+    "officialUrl": "https://github.com/actions/actions-runner-controller",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-28T19:14:05.966Z",
+    "lastVerified": "2026-09-28T19:14:05.966Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

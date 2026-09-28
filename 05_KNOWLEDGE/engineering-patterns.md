@@ -1235,3 +1235,14 @@ The rapid churn in LLM providers (MiniMax, TwelveLabs, etc.) leads to "config bl
 
 **WHEN TO APPLY**:
 Multi-model LLM applications and RAG orchestration layers.
+
+
+---
+
+## 96. The "External-Internal State Decoupling" Rule (Harvested from actions/actions-runner-controller)
+
+**RULE**:
+Never block a local resource cleanup (e.g., Pod deletion) on the success of an external API call (e.g., GitHub deregistration).
+
+**WHY**:
+External APIs are subject to network partitions and latency spikes. Coupling them creates a "
