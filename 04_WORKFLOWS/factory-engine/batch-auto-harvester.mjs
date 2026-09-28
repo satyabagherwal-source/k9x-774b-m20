@@ -3,6 +3,8 @@ import path from 'path';
 import os from 'os';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { shouldHarvestSource } from './upgrade-checker.mjs';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -409,12 +411,26 @@ export async function runBatchHarvester(urlList = null) {
     const repoMeta = targets[idx];
     console.log(`\n----------------------------------------------------------------------`);
     console.log(`[BATCH ${idx + 1}/${targets.length}] Processing: ${repoMeta.owner}/${repoMeta.repo}`);
-    console.log(`----------------------------------------------------------------------`);
+    // Pre-flight Upgrade & Duplicate Check (Zero Token & Time Waste Invariant)
+    const upgradeCheck = await shouldHarvestSource(repoMeta, { force: process.argv.includes('--force') });
+    if (!upgradeCheck.shouldHarvest) {
+      console.log(`⏩ [SKIP: NO UPGRADE DETECTED] ${repoMeta.owner}/${repoMeta.repo} has not changed since last harvest.`);
+      console.log(`   Recorded Revision: ${upgradeCheck.recordedRevision?.slice(0, 10)} | Status: UP_TO_DATE`);
+      console.log(`   Reason: ${upgradeCheck.reason} | 0 tokens burned | 0 bytes downloaded.`);
+      results.push({
+        repo: repoMeta.slug,
+        status: 'SKIPPED_UP_TO_DATE',
+        revision: upgradeCheck.recordedRevision
+      });
+      continue;
+    }
+    console.log(`🔥 [PROCEEDING] Upgrade detected or first run for ${repoMeta.owner}/${repoMeta.repo} (${upgradeCheck.reason})`);
 
     let cloneDir = null;
     try {
       // Step A: Full Clone (Entire history, tags, branches for 100% complete learning)
       cloneDir = cloneRepoFull(repoMeta, tempBase);
+
 
       // Step B: 8-Dimensional Empirical Codebase Audit
       const audit = inspectCodebase(cloneDir, repoMeta);

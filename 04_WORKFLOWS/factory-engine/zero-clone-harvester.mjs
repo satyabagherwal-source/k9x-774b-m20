@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import { shouldHarvestSource } from './upgrade-checker.mjs';
+
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -448,8 +450,23 @@ export async function runZeroCloneHarvester(customUrls = null) {
     console.log(`[ZERO-CLONE ${idx + 1}/${queue.length}] ${target.type.toUpperCase()}: ${target.webUrl}`);
     console.log(`----------------------------------------------------------------------`);
 
+    // Pre-flight Upgrade & Duplicate Check (Token & Time Saver)
+    const upgradeCheck = await shouldHarvestSource(target, { force: process.argv.includes('--force') });
+    if (!upgradeCheck.shouldHarvest) {
+      console.log(`⏩ [SKIP: NO UPGRADE DETECTED] ${target.owner}/${target.repo} has not changed since last harvest.`);
+      console.log(`   Recorded Revision: ${upgradeCheck.recordedRevision?.slice(0, 10)} | Status: UP_TO_DATE | 0 tokens burned.`);
+      results.push({
+        target: target.slug,
+        status: 'SKIPPED_UP_TO_DATE',
+        revision: upgradeCheck.recordedRevision
+      });
+      continue;
+    }
+    console.log(`🔥 [PROCEEDING] Upgrade detected or first run for ${target.owner}/${target.repo} (${upgradeCheck.reason})`);
+
     try {
       let audit = null;
+
       if (target.type === 'github') {
         audit = await harvestGitHubZeroClone(target);
       } else if (target.type === 'huggingface') {

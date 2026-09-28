@@ -2,8 +2,8 @@
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vllm-project-vllm-learnings.md`  
 > **Source Repository**: [https://github.com/vllm-project/vllm.git](https://github.com/vllm-project/vllm)  
-> **Harvest Date**: 2026-09-28T03:53:07.708Z  
-> **Harvest Engine**: Batch Auto-Harvester (Shallow Depth 50)  
+> **Harvest Date**: 2026-09-28T04:22:47.390Z  
+> **Harvest Engine**: Batch Auto-Harvester (Full Clone - Complete History Extraction)  
 > **Languages & Ecosystem**: Python, C/C++  
 
 ---
@@ -12,7 +12,8 @@
 - **Repository**: `vllm-project/vllm`
 - **Detected Languages**: Python, C/C++
 - **Discovered Configurations / Tooling**: `README.md`
-- **Shallow Commits Analyzed**: 50 (Recent production trajectory)
+- **Complete Commit History Inspected**: 100+ recent commits, 60 deep historical fixes, and release tags: v0.30.1rc0, v0.30.0rc2, v0.30.0rc1, v0.30.0, v0.29.1rc0.
+
 
 ---
 
@@ -42,21 +43,21 @@
 
 ### D8: Forensic Bug Fixes & Real Production Incidents
 Observed empirical bug fixes from recent commits:
-- **`53d2e16`** (2026-09-28): [Bugfix][EPD] Skip sampling for encoder-only async steps (#58490)
-- **`027b6f3`** (2026-09-27): [Bugfix][Frontend] Use a fresh parser per choice in non-streaming chat completions (#58939)
-- **`4d07e90`** (2026-09-27): [Bugfix][Frontend] Sample batched chat completions from the adjusted requests (#58929)
-- **`b9e2903`** (2026-09-27): [Mypy] Fix mypy typing for Ultravox and Unlimited-OCR models (#58239)
-- **`3184226`** (2026-09-27): [Bugfix][Frontend] Count Responses reasoning tokens per tool round (#58927)
-- **`386ac25`** (2026-09-28): [Bugfix][KV Connector] Retry Mooncake bootstrap registration on timeout (reopens #55763) (#58919)
-- **`187c81b`** (2026-09-27): [ROCm][Bugfix] Fall back to default GEMM for CPU tensors on ROCm builds (#58923)
-- **`2b9b55c`** (2026-09-27): [Bugfix] Support repsonse_format + tool_choice=auto (#56086)
-- **`fba4739`** (2026-09-26): [Bugfix] V1: clear stale allowed_token_ids mask in InputBatch.condense (#43931)
-- **`fff0326`** (2026-09-27): [Bugfix][NIXL] Release a dead peer's NIXL state without waiting for TTL (#50047)
-- **`0c87a19`** (2026-09-27): [Bugfix] Disable sequence parallelism / async TP under batch invariance and add a TP regression test (#56377)
-- **`7a877ae`** (2026-09-27): [Qwen3.8-Flash-Next] Avoid memory fragmentation in QSA indexer logits workspace (#57105)
-- **`379e9a1`** (2026-09-27): [Security] Harden message sanitization (#58832)
-- **`7d8c5fe`** (2026-09-26): [Bugfix][DSV4.1] Avoid host sync in ViT CUDA graph replay metadata (#58499)
-- **`3576691`** (2026-09-26): [GLM5.3 Bug] Fix sparse indexer attn topk backend selection (#58594)
+- **`6f65fde419`** (2026-09-28): [Bugfix][Frontend] Apply Harmony adjust_request in batched chat completions (#58958)
+- **`53d2e16a97`** (2026-09-28): [Bugfix][EPD] Skip sampling for encoder-only async steps (#58490)
+- **`027b6f3a22`** (2026-09-27): [Bugfix][Frontend] Use a fresh parser per choice in non-streaming chat completions (#58939)
+- **`4d07e90653`** (2026-09-27): [Bugfix][Frontend] Sample batched chat completions from the adjusted requests (#58929)
+- **`3184226984`** (2026-09-27): [Bugfix][Frontend] Count Responses reasoning tokens per tool round (#58927)
+- **`386ac2573e`** (2026-09-28): [Bugfix][KV Connector] Retry Mooncake bootstrap registration on timeout (reopens #55763) (#58919)
+- **`187c81b32d`** (2026-09-27): [ROCm][Bugfix] Fall back to default GEMM for CPU tensors on ROCm builds (#58923)
+- **`2b9b55c7f1`** (2026-09-27): [Bugfix] Support repsonse_format + tool_choice=auto (#56086)
+- **`fba47397f3`** (2026-09-26): [Bugfix] V1: clear stale allowed_token_ids mask in InputBatch.condense (#43931)
+- **`fff03267da`** (2026-09-27): [Bugfix][NIXL] Release a dead peer's NIXL state without waiting for TTL (#50047)
+- **`0c87a197b8`** (2026-09-27): [Bugfix] Disable sequence parallelism / async TP under batch invariance and add a TP regression test (#56377)
+- **`7d8c5fe9a9`** (2026-09-26): [Bugfix][DSV4.1] Avoid host sync in ViT CUDA graph replay metadata (#58499)
+- **`dfab504333`** (2026-09-26): [Bugfix][Frontend] Detect Anthropic inline-system merge against the resolved chat template (#58754)
+- **`d64f277c54`** (2026-09-26): [Bugfix] Fix Anthropic Thinking Disabled with P/D (#58786)
+- **`ddd6fbca14`** (2026-09-26): [Bugfix][Frontend][Rust Frontend] Update DeepSeek V4.1 Flash reasoning effort mappings (#58316)
 
 ---
 
