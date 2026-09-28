@@ -1574,3 +1574,25 @@ Any boolean flag used to modify the behavior of a batch-processing loop must be 
 
 **WHEN TO APPLY**: 
 Reconciliation loops, event-driven controllers, and batch-processing pipelines.
+
+
+---
+
+## 116. The Linter Precedence Invariant (Harvested from Automattic/harper)
+
+**RULE**:
+In any multi-pass analysis system, speciali
+
+
+---
+
+## 117. The Clipboard Sanitization Rule (Harvested from Automattic/harper)
+
+**RULE**:
+All external input (Clipboard, API payloads) must be treated as untrusted and stripped of all metadata (styles, formatting) before entering the internal state representation.
+
+**WHY**:
+Pasting rich text into a plain-text editor often carries hidden CSS/DOM nodes that break the UI/UX and introduce security vectors (XSS).
+
+**WHEN TO APPLY**:
+Any web-based editor or text-processing application.

@@ -757,5 +757,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "automattic-harper": {
+    "name": "Automattic/harper",
+    "officialUrl": "https://github.com/Automattic/harper",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T19:14:56.774Z",
+    "lastVerified": "2026-09-28T19:14:56.774Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
