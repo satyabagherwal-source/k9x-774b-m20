@@ -263,5 +263,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "deepseek-ai-deepseek-harness": {
+    "name": "deepseek-ai/deepseek-harness",
+    "officialUrl": "https://github.com/deepseek-ai/deepseek-harness",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T16:34:02.675Z",
+    "lastVerified": "2026-09-28T16:34:02.675Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -33,3 +33,11 @@ https://github.com/NousResearch/hermes-agent
 https://github.com/rtk-ai/rtk
 # [HIGH-PERF-SYSTEMS] sxyazi/yazi (25787 score) - 💥 Blazing fast terminal file manager written in Rust, based on async I/O.
 https://github.com/sxyazi/yazi
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T16:34:01.477Z] ---
+# [AI-AGENTS] deepseek-ai/deepseek-harness (151773 score) - DeepSeek Harness: Everything is a Plugin.
+https://github.com/deepseek-ai/deepseek-harness
+# [FULLSTACK-UI] ionic-team/ionic-framework (35702 score) - A powerful cross-platform UI toolkit for building native-quality iOS, Android, a
+https://github.com/ionic-team/ionic-framework
+# [HIGH-PERF-SYSTEMS] herdrdev/herdr (25673 score) - the runtime your coding agents live on
+https://github.com/herdrdev/herdr

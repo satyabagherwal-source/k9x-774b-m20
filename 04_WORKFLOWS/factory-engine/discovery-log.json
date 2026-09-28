@@ -54,5 +54,47 @@
     "language": "Rust",
     "qualityScore": 25787,
     "discoveredAt": "2026-09-28T04:57:25.008Z"
+  },
+  {
+    "name": "deepseek-harness",
+    "fullName": "deepseek-ai/deepseek-harness",
+    "url": "https://github.com/deepseek-ai/deepseek-harness",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "DeepSeek Harness: Everything is a Plugin.",
+    "stars": 238623,
+    "forks": 28664,
+    "openIssues": 0,
+    "language": "TypeScript",
+    "qualityScore": 151773,
+    "discoveredAt": "2026-09-28T16:33:54.948Z"
+  },
+  {
+    "name": "ionic-framework",
+    "fullName": "ionic-team/ionic-framework",
+    "url": "https://github.com/ionic-team/ionic-framework",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "A powerful cross-platform UI toolkit for building native-quality iOS, Android, and Progressive Web Apps with HTML, CSS, and JavaScript.",
+    "stars": 52685,
+    "forks": 13303,
+    "openIssues": 584,
+    "language": "TypeScript",
+    "qualityScore": 35702,
+    "discoveredAt": "2026-09-28T16:33:57.519Z"
+  },
+  {
+    "name": "herdr",
+    "fullName": "herdrdev/herdr",
+    "url": "https://github.com/herdrdev/herdr",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "the runtime your coding agents live on",
+    "stars": 41205,
+    "forks": 3166,
+    "openIssues": 368,
+    "language": "Rust",
+    "qualityScore": 25673,
+    "discoveredAt": "2026-09-28T16:33:59.953Z"
   }
 ]
