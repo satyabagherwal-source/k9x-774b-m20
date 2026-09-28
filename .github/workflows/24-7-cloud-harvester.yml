@@ -17,25 +17,11 @@ permissions:
 jobs:
   cloud-multi-agent-fleet:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      max-parallel: 4
-      matrix:
-        agent:
-          - id: 'Agent-Alpha'
-            domain: 'ai-agents'
-          - id: 'Agent-Beta'
-            domain: 'fullstack-ui'
-          - id: 'Agent-Gamma'
-            domain: 'high-perf-systems'
-          - id: 'Agent-Delta'
-            domain: 'huggingface-ai-models'
-    name: "Fleet Worker: ${{ matrix.agent.id }} (${{ matrix.agent.domain }})"
     steps:
       - name: Checkout AI-Builder-Brain
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Setup Node.js Runtime
         uses: actions/setup-node@v4
@@ -54,33 +40,23 @@ jobs:
           if [ -z "$GEMINI_API_KEY" ]; then
             echo "::warning title=GEMINI_API_KEY Missing::To enable deep 24/7 AI reasoning, add your FREE Google AI Studio API key as a secret named 'GEMINI_API_KEY' in: https://github.com/${{ github.repository }}/settings/secrets/actions"
           else
-            echo "✅ GEMINI_API_KEY detected. Agent ${{ matrix.agent.id }} connected to Server-to-Server Gemini AI."
+            echo "✅ GEMINI_API_KEY detected. Multi-Agent Fleet connected to Server-to-Server Gemini AI."
           fi
 
-      - name: Autonomous Scout & Intelligence Harvest
+      - name: Execute 4-Agent Parallel Learning Fleet (Alpha, Beta, Gamma, Delta)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          AGENT_NAME: ${{ matrix.agent.id }}
-          TARGET_DOMAIN: ${{ matrix.agent.domain }}
         run: |
-          echo "🚀 [AGENT LAUNCH] ${{ matrix.agent.id }} scouting domain: ${{ matrix.agent.domain }}..."
-          node 04_WORKFLOWS/factory-engine/auto-discovery-scout.mjs ${{ matrix.agent.domain }}
-          node 04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs
+          node 04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs
 
-      - name: Atomic Rebase & Push Intelligence to GitHub
+      - name: Commit & Push Harvested Multi-Agent Intelligence to GitHub
         run: |
           git pull --rebase origin main
           git add .
           if git diff --staged --quiet; then
-            echo "No new intelligence to commit for ${{ matrix.agent.id }}."
+            echo "No new intelligence to commit from Multi-Agent Fleet."
           else
-            git commit -m "feat(fleet): ${{ matrix.agent.id }} harvested learnings for ${{ matrix.agent.domain }} [skip ci]"
-            for i in {1..5}; do
-              git push origin main && break || {
-                echo "Concurrent push detected. Rebasing and retrying ($i/5)..."
-                sleep $((1 + RANDOM % 3))
-                git pull --rebase origin main
-              }
-            done
+            git commit -m "feat(fleet): 4-agent parallel fleet harvested multi-domain learnings [skip ci]"
+            git push origin main
           fi
