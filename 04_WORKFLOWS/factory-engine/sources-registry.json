@@ -679,5 +679,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "google-gemini-gemini-cli": {
+    "name": "google-gemini/gemini-cli",
+    "officialUrl": "https://github.com/google-gemini/gemini-cli",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T19:14:24.977Z",
+    "lastVerified": "2026-09-28T19:14:24.977Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

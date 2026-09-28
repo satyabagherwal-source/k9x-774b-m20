@@ -1318,3 +1318,157 @@ Defaulting to "empty policy = allow all" is a catastrophic security failure. Sys
 
 **WHEN TO APPLY**:
 Policy engines, sidecars, and authori
+
+
+---
+
+## 102. Stdin Stream Freezing During Terminal Capability Probing (Harvested from google-gemini/gemini-cli)
+
+* **Failure Mode / Pitfall**: The CLI hung indefinitely on an Enter keypress during interactive sessions, preventing any input after startup (`a3d69c14`, PR `#29475`).
+* **Root Cause**: To detect terminal capabilities (color depth, ANSI escape codes, bracketed paste), the CLI injected query sequences (e.g., `\x1b[6n`) into stdout and listened on `process.stdin`. During initiali
+
+
+---
+
+## 103. ConPTY Output Finalization Race on Windows (Harvested from google-gemini/gemini-cli)
+
+* **Failure Mode / Pitfall**: Child process execution terminated prematurely, dropping the tail end of command stdout/stderr (e.g., test runners cutting off final summaries or errors) (`4577750d`, `9450ade7`).
+* **Root Cause**: On Windows, the ConPTY engine decouples the process exit event from pipe drainage. When the child process exits, Node’s `child_process.on('exit')` fires immediately. If the CLI closes file descriptors or resolves the execution promise upon receiving `'exit'`, buffered bytes still in transit across the ConPTY pipe are discarded.
+* **Exact Prevention / Fix**: Gate execution resolution behind both the process `'exit'` event AND the stream `'close'`/`'end'` event using deterministic event barriers:
+```typescript
+import { IPty } from "node-pty";
+
+export function waitForPtyExit(ptyProcess: IPty): Promise<{ exitCode: number }> {
+  return new Promise((resolve) => {
+    let exitCode: number | null = null;
+    let streamClosed = false;
+
+    function checkResolution() {
+      if (exitCode !== null && streamClosed) {
+        resolve({ exitCode });
+      }
+    }
+
+    ptyProcess.onExit((e) => {
+      exitCode = e.exitCode;
+      checkResolution();
+    });
+
+    // PTY data stream must signal EOF/close before finali
+
+
+---
+
+## 104. Non-Atomic Parallel Tool Execution & Lost-Update Races (Harvested from google-gemini/gemini-cli)
+
+* **Failure Mode / Pitfall**: When the agent emitted parallel tool calls targeting overlapping files or state paths, concurrent writes corrupted target files or resulted in silent rollbacks (`PR #29498`, PR `#29494`).
+* **Root Cause**: Tool callers executed asynchronous operations without a keyed lock. Two simultaneous `write_file` or `patch_file` calls read state $S_0$, executed parallel diffs, and wrote back $S_1$ and $S_2$ sequentially, obliterating one mutation. Furthermore, writes directly targeting the live file exposed partial writes to file-system watchers.
+* **Exact Prevention / Fix**: Implement a keyed async mutex seriali
+
+
+---
+
+## 105. Memory Exhaustion via Long-Running Tool Outputs (Harvested from google-gemini/gemini-cli)
+
+* **Failure Mode / Pitfall**: Long agent sessions running high-volume CLI commands (e.g., `git log`, `npm install`, compilation logs) crashed the process with V8 `ERR_STRING_TOO_LONG` or process Out-Of-Memory (OOM) errors (`bedef96e`, `196c772a`).
+* **Root Cause**: Large tool outputs were concatenated in-memory into unbounded strings and held within the active conversational context array.
+* **Exact Prevention / Fix**: Enforce bounded sliding-window ring buffers at the tool capture layer, truncating mid-stream with metadata annotating total bytes dropped:
+```typescript
+export class BoundedOutputCollector {
+  private chunks: Buffer[] = [];
+  private totalBytes = 0;
+
+  constructor(private readonly maxBytes: number = 512 * 1024) {} // 512KB cap
+
+  push(data: Buffer | string): void {
+    const buf = Buffer.isBuffer(data) ? data : Buffer.from(data, "utf-8");
+    this.totalBytes += buf.length;
+
+    if (this.totalBytes <= this.maxBytes) {
+      this.chunks.push(buf);
+    } else {
+      // Calculate remaining budget
+      const currentRetained = this.chunks.reduce((acc, c) => acc + c.length, 0);
+      const budgetRemaining = this.maxBytes - currentRetained;
+      if (budgetRemaining > 0) {
+        this.chunks.push(buf.subarray(0, budgetRemaining));
+      }
+    }
+  }
+
+  getFinalPayload(): string {
+    const retained = Buffer.concat(this.chunks).toString("utf-8");
+    if (this.totalBytes > this.maxBytes) {
+      const omitted = this.totalBytes - this.maxBytes;
+      return `${retained}\n\n[WARNING: Tool output truncated. ${omitted} bytes omitted to protect memory context.]`;
+    }
+    return retained;
+  }
+}
+```
+
+---
+
+
+---
+
+## 106. Safe OAuth2 Token Refresh Persistence (Harvested from google-gemini/gemini-cli)
+
+**RULE**:
+When persisting updated credentials returned from an OAuth2 token refresh operation, the client MUST perform a property-preserving merge that retains existing secrets (specifically `refresh_token`) if the identity provider omits them in the refresh response. Credential deletion functions MUST be idempotent, returning success when deleting non-existent entries.
+
+**WHY**:
+RFC 6749 allows authori
+
+
+---
+
+## 107. Stdin Capability Probe Isolation Invariant (Harvested from google-gemini/gemini-cli)
+
+**RULE**:
+Any capability detection, ANSI interrogation, or terminal feature probe that mutates standard input (`process.stdin`) stream state (e.g., setting raw mode, adding listeners, or pausing the stream) MUST restore the stream to its exact pre-probe flowing and mode state within an absolute deterministic timeout.
+
+**WHY**:
+Interrogating terminal features requires putting `stdin` into raw mode and pausing normal line parsing to capture escape sequence replies. If the capability probe fails, times out, or completes without explicitly restoring `stdin.resume()`, the standard Node.js event loop leaves libuv stream handles paused. Downstream interactive CLI runtimes hang indefinitely on user input.
+
+**WHEN TO APPLY**:
+Any terminal/CLI tool probing cursor positions (`\x1b[6n`), device attributes (`\x1b[0c`), or bracketed paste support during application boot.
+
+**NEGATIVE CONSTRAINTS**:
+- NEVER invoke `stdin.pause()` without a corresponding guaranteed `stdin.resume()` in a `finally` block or lifecycle teardown hook.
+- NEVER perform an asynchronous terminal query without an aggressive fallback timeout (maximum 200ms).
+
+**VERIFIED IMPLEMENTATION PATTERNS**:
+```typescript
+export async function withIsolatedStdin<T>(
+  stdin: NodeJS.ReadStream,
+  action: () => Promise<T>,
+  timeoutMs = 200
+): Promise<T> {
+  const previousRaw = Boolean(stdin.isRaw);
+  const wasPaused = stdin.isPaused();
+
+  let timeoutId: NodeJS.Timeout;
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`Terminal probe timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+
+  try {
+    return await Promise.race([action(), timeoutPromise]);
+  } finally {
+    clearTimeout(timeoutId!);
+    if (stdin.setRawMode) {
+      stdin.setRawMode(previousRaw);
+    }
+    if (wasPaused) {
+      stdin.pause();
+    } else {
+      stdin.resume(); // Ensure flowing state is actively re-established
+    }
+  }
+}
+```
+
+---
