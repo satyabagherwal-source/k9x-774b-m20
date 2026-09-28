@@ -1634,3 +1634,19 @@ Any subsystem utili
 
 **RULE**:
 Never accept raw file paths as unique identifiers in a distributed system. Always enforce a canonicali
+
+
+---
+
+## 121. Environment-Agnostic IPC Broker Derivation (Harvested from nolabs-ai/nono)
+
+**RULE**:
+Security shims and sandbox subprocesses MUST NOT rely on ambient process environment variables (`env::var`) to locate control sockets, security brokers, or IPC coordinators. IPC rende
+
+
+---
+
+## 122. Audit-First Authorization Invariant (Harvested from nolabs-ai/nono)
+
+**RULE**:
+In capability-based and privileged brokering systems, the audit record for an authori

@@ -809,5 +809,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nolabs-ai-nono": {
+    "name": "nolabs-ai/nono",
+    "officialUrl": "https://github.com/nolabs-ai/nono",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T20:20:13.627Z",
+    "lastVerified": "2026-09-28T20:20:13.627Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
