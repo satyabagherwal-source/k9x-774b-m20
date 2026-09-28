@@ -770,5 +770,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "smallstep-cli": {
+    "name": "smallstep/cli",
+    "officialUrl": "https://github.com/smallstep/cli",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-28T20:20:13.305Z",
+    "lastVerified": "2026-09-28T20:20:13.305Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

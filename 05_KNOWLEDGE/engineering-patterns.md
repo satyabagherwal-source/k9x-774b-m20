@@ -1596,3 +1596,19 @@ Pasting rich text into a plain-text editor often carries hidden CSS/DOM nodes th
 
 **WHEN TO APPLY**:
 Any web-based editor or text-processing application.
+
+
+---
+
+## 118. The "Explicit Architecture" Build Rule (Harvested from smallstep/cli)
+
+**RULE**:
+All build commands in a Makefile or CI script must explicitly define `GOOS` and `GOARCH` as variables, never relying on the host environment's default values.
+
+**WHY**:
+Implicit defaults cause "works on my machine" syndrome and silent architecture mismatches (e.g., building `amd64` on `arm64` macOS), which are difficult to debug in production.
+
+**WHEN TO APPLY**:
+Any Go project producing binary artifacts for multiple platforms.
+
+---
