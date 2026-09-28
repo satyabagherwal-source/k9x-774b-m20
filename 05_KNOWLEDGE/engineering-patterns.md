@@ -895,6 +895,46 @@ Two-pass restarts require a duplicate prompt prefill, drop boundary tokens cross
 **WHEN TO APPLY**:
 Structured output engines, reasoning and thinking model runners, grammar-constrained sampling dispatchers, and tool-calling agent runtimes.
 
+---
+
+## 69. Fresh Parser Instance Per Batch Choice Branch in Concurrent Completion Handlers
+
+**RULE**:
+When an inference engine, API handler, or tool-dispatch pipeline processes multi-candidate completions (e.g. `n > 1` choices or parallel tool evaluations) for a single incoming prompt, the streaming receiver and response builder MUST instantiate a completely isolated, fresh parser instance for each candidate choice branch. Handlers MUST NOT reuse or share stateful token accumulators, message decoders, or schema-validating parsers across sibling choices.
+
+**WHY**:
+Sharing or reusing a stateful parser instance across concurrent completion streams contaminates token accumulation state, leaks reasoning traces between candidate answers, corrupts incremental JSON structure verification, and produces malformed, truncated, or interleaved responses.
+
+**WHEN TO APPLY**:
+Multi-choice LLM completion handlers (`n > 1`), parallel tool call dispatchers, multi-agent voting pipelines, and structured response streaming bridges.
+
+---
+
+## 70. Proactive Disconnect Eviction over Passive TTL Expiration in Distributed Cache Peers
+
+**RULE**:
+In distributed state networks, worker clusters, or KV-cache connectors, when a connection handshake drops, a socket terminates, or a peer heartbeat fails, the cluster coordinator and memory manager MUST immediately evict and release the dead peer's buffer allocations and memory leases. Systems MUST NOT wait for passive background time-to-live (TTL) expiration to clean up disconnected peer state.
+
+**WHY**:
+Relying solely on passive TTL expiration retains gigabytes of dead memory allocations long after a client or worker node has disconnected or crashed. In high-throughput clusters, this induces artificial memory exhaustion, blocks successor nodes from acquiring memory blocks, and triggers cluster-wide allocation deadlocks.
+
+**WHEN TO APPLY**:
+Distributed KV caches (e.g., vLLM KV transfer, Redis clusters, Mooncake connectors), GPU memory pool managers, peer-to-peer buffer rings, and distributed model worker pools.
+
+---
+
+## 71. Directory-Boundary Pruning in File-Watcher Rebuild and Scan Pipelines
+
+**RULE**:
+File-system watcher pipelines, bundler hot-module-replacement (HMR) scanners, and source-tree indexers MUST prune ignored directories (such as `node_modules`, `.git`, `.cache`, and project-ignored directories) at the top-level directory traversal boundary. The traversal algorithm MUST skip descending into ignored directories rather than recursively enumerating thousands of nested descendant files only to filter them out downstream.
+
+**WHY**:
+Recursively scanning huge, ignored directory trees generates tens of thousands of unnecessary file-system `stat` system calls, saturating disk I/O, spiking CPU utilization, and adding multi-second latency to file rebuilds and developer reload cycles.
+
+**WHEN TO APPLY**:
+Bundler file watchers (Vite, Webpack, Turbopack, Tailwind CSS scanners), language server indexers, CI change-detection scripts, and repository audit scanners.
+
+
 
 
 
