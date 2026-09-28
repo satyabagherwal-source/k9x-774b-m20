@@ -835,5 +835,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kubernetes-sigs-aws-load-balancer-controller": {
+    "name": "kubernetes-sigs/aws-load-balancer-controller",
+    "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-28T20:20:13.837Z",
+    "lastVerified": "2026-09-28T20:20:13.837Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

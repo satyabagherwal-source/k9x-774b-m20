@@ -1650,3 +1650,11 @@ Security shims and sandbox subprocesses MUST NOT rely on ambient process environ
 
 **RULE**:
 In capability-based and privileged brokering systems, the audit record for an authori
+
+
+---
+
+## 123. The Canonicalization Invariant (Harvested from kubernetes-sigs/aws-load-balancer-controller)
+
+**RULE**:
+All external inputs representing network identifiers (CIDRs, IPs, Hostnames) or resource identifiers (ARNs, Names) must be passed through a canonicali
