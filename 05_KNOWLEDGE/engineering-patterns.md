@@ -1552,3 +1552,25 @@ All documentation, configuration files, and API manifests.
 
 **RULE**:
 Any child process spawned by a core system must be wrapped in a supervisor pattern that explicitly handles `SIGTERM`, `SIGINT`, and `exit` events to trigger immediate re-initiali
+
+
+---
+
+## 114. The Deterministic Serialization Rule (Harvested from nginx/kubernetes-ingress)
+
+**RULE**: 
+Any system that generates configuration files or state-files from internal maps must perform a deterministic sort of keys before seriali
+
+
+---
+
+## 115. The State-Flag Reset Invariant (Harvested from nginx/kubernetes-ingress)
+
+**RULE**: 
+Any boolean flag used to modify the behavior of a batch-processing loop must be reset in a `defer` block immediately after the loop scope is defined.
+
+**WHY**: 
+"Sticky" flags are a primary source of silent, persistent performance degradation. If a flag is set to `true` to handle a specific event, it must be guaranteed to return to `false` regardless of the control flow path.
+
+**WHEN TO APPLY**: 
+Reconciliation loops, event-driven controllers, and batch-processing pipelines.

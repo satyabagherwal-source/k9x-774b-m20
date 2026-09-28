@@ -744,5 +744,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nginx-kubernetes-ingress": {
+    "name": "nginx/kubernetes-ingress",
+    "officialUrl": "https://github.com/nginx/kubernetes-ingress",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-28T19:14:06.202Z",
+    "lastVerified": "2026-09-28T19:14:06.202Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 3,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
