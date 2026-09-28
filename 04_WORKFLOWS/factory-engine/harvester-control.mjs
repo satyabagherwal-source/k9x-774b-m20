@@ -87,6 +87,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename
     });
   } else if (action === 'fleet' || action === 'swarm' || action === 'multi') {
     import('./multi-agent-fleet.mjs').then((m) => m.runMultiAgentFleet());
+  } else if (action === 'monitor' || action === 'live' || action === 'check' || action === 'dekh') {
+    import('./monitor.mjs').then((m) => m.displayLiveMonitor());
   } else {
     console.log(JSON.stringify(getHarvesterStatus(), null, 2));
   }
