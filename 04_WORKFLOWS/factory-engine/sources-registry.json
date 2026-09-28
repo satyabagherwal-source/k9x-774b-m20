@@ -367,5 +367,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dietrichgebert-ponytail": {
+    "name": "DietrichGebert/ponytail",
+    "officialUrl": "https://github.com/DietrichGebert/ponytail",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-28T17:35:00.322Z",
+    "lastVerified": "2026-09-28T17:35:00.322Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
