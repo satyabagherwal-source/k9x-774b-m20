@@ -653,5 +653,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tamagui-tamagui": {
+    "name": "tamagui/tamagui",
+    "officialUrl": "https://github.com/tamagui/tamagui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T19:14:06.152Z",
+    "lastVerified": "2026-09-28T19:14:06.152Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

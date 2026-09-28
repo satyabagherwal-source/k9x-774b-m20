@@ -1274,3 +1274,17 @@ Decoupling the schema (what the LLM sees) from the execution (what the code does
 
 **WHEN TO APPLY**:
 Agentic frameworks, RPC layers, and API-driven tool interfaces.
+
+
+---
+
+## 99. The Proxy-Composition Invariant (Harvested from tamagui/tamagui)
+
+**RULE**:
+Never assign a prop directly to a component if that component also requires internal logic for that same prop. Always use a composition utility to chain the external prop and the internal implementation.
+
+**WHY**:
+Direct assignment causes "Event Shadowing," where the library's internal state management (e.g., focus tracking) is silently overwritten by the user's prop, leading to broken accessibility and interaction bugs.
+
+**WHEN TO APPLY**:
+Any UI library, event-driven system, or component-based architecture where props (like `onPress`, `onScroll`, `onFocus`) are exposed to the consumer.
