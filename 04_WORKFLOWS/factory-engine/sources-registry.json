@@ -237,5 +237,31 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rtk-ai-rtk": {
+    "name": "rtk-ai/rtk",
+    "officialUrl": "https://github.com/rtk-ai/rtk",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T12:33:01.097Z",
+    "lastVerified": "2026-09-28T12:33:01.097Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sxyazi-yazi": {
+    "name": "sxyazi/yazi",
+    "officialUrl": "https://github.com/sxyazi/yazi",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T12:33:05.603Z",
+    "lastVerified": "2026-09-28T12:33:05.603Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
