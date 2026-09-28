@@ -536,5 +536,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "langchain-ai-langchain": {
+    "name": "langchain-ai/langchain",
+    "officialUrl": "https://github.com/langchain-ai/langchain",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-28T18:54:21.959Z",
+    "lastVerified": "2026-09-28T18:54:21.959Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
