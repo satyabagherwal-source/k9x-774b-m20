@@ -354,5 +354,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "firecrawl-firecrawl": {
+    "name": "firecrawl/firecrawl",
+    "officialUrl": "https://github.com/firecrawl/firecrawl",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T17:34:56.302Z",
+    "lastVerified": "2026-09-28T17:34:56.302Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
