@@ -783,5 +783,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "appwrite-appwrite": {
+    "name": "appwrite/appwrite",
+    "officialUrl": "https://github.com/appwrite/appwrite",
+    "sourceType": "github",
+    "technology": "PHP",
+    "lastChecked": "2026-09-28T20:20:11.319Z",
+    "lastVerified": "2026-09-28T20:20:11.319Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

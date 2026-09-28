@@ -1612,3 +1612,17 @@ Implicit defaults cause "works on my machine" syndrome and silent architecture m
 Any Go project producing binary artifacts for multiple platforms.
 
 ---
+
+
+---
+
+## 119. The "Long-Running Process" Resource Invariant (Harvested from appwrite/appwrite)
+
+**RULE**:
+In any long-running execution environment (Swoole, Node.js, Go), every resource (socket, file handle, remote object) must be wrapped in a `try-finally` block or a `defer` statement that guarantees closure, regardless of the execution path.
+
+**WHY**:
+Traditional PHP (FPM) relies on process termination to reclaim resources. In long-running processes, leaked handles accumulate linearly, eventually exhausting the file descriptor limit and crashing the runtime.
+
+**WHEN TO APPLY**:
+Any subsystem utili
