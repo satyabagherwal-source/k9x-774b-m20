@@ -41,3 +41,9 @@ https://github.com/deepseek-ai/deepseek-harness
 https://github.com/ionic-team/ionic-framework
 # [HIGH-PERF-SYSTEMS] herdrdev/herdr (25673 score) - the runtime your coding agents live on
 https://github.com/herdrdev/herdr
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T17:27:15.405Z] ---
+# [FULLSTACK-UI] vuetifyjs/vuetify (26761 score) - 🐉 Vue Component Framework
+https://github.com/vuetifyjs/vuetify
+# [FULLSTACK-UI] chakra-ui/chakra-ui (25497 score) - Chakra UI is a component system for building SaaS products with speed ⚡️
+https://github.com/chakra-ui/chakra-ui

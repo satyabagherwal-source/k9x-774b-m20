@@ -302,5 +302,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vuetifyjs-vuetify": {
+    "name": "vuetifyjs/vuetify",
+    "officialUrl": "https://github.com/vuetifyjs/vuetify",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T17:27:18.294Z",
+    "lastVerified": "2026-09-28T17:27:18.294Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

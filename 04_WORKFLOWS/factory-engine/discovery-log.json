@@ -96,5 +96,33 @@
     "language": "Rust",
     "qualityScore": 25673,
     "discoveredAt": "2026-09-28T16:33:59.953Z"
+  },
+  {
+    "name": "vuetify",
+    "fullName": "vuetifyjs/vuetify",
+    "url": "https://github.com/vuetifyjs/vuetify",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "🐉 Vue Component Framework",
+    "stars": 41042,
+    "forks": 7119,
+    "openIssues": 397,
+    "language": "TypeScript",
+    "qualityScore": 26761,
+    "discoveredAt": "2026-09-28T17:27:15.403Z"
+  },
+  {
+    "name": "chakra-ui",
+    "fullName": "chakra-ui/chakra-ui",
+    "url": "https://github.com/chakra-ui/chakra-ui",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Chakra UI is a component system for building SaaS products with speed ⚡️",
+    "stars": 40672,
+    "forks": 3646,
+    "openIssues": 15,
+    "language": "TypeScript",
+    "qualityScore": 25497,
+    "discoveredAt": "2026-09-28T17:27:15.404Z"
   }
 ]
