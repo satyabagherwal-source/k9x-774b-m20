@@ -341,5 +341,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lucide-icons-lucide": {
+    "name": "lucide-icons/lucide",
+    "officialUrl": "https://github.com/lucide-icons/lucide",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T17:34:56.149Z",
+    "lastVerified": "2026-09-28T17:34:56.149Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
