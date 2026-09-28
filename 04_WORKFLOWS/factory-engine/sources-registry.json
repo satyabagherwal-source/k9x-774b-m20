@@ -900,5 +900,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "milvus-io-milvus": {
+    "name": "milvus-io/milvus",
+    "officialUrl": "https://github.com/milvus-io/milvus",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-28T20:20:11.523Z",
+    "lastVerified": "2026-09-28T20:20:11.523Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

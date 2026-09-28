@@ -1734,3 +1734,24 @@ Svelte/React/Vue component libraries distributed via NPM.
 
 **RULE**:
 Never use a monotonic high-water mark (e.g., `last_synced_id`) as the sole source of truth for synchroni
+
+
+---
+
+## 131. Dynamic Control-Plane Barrier Invariant (Harvested from milvus-io/milvus)
+
+**RULE**:
+When an administrative API initiates dynamic reconfiguration of an infrastructure-critical component (such as WAL engines, object storage backends, or consensus peers), the system **MUST NOT** instantiate new runtime components using cached, ambient, or local configuration state. The executing routine **MUST** either:
+1. Synchronously persist the change to the distributed consensus store (e.g., etcd, Raft) and explicitly block until the local watch channel yields the updated revision; or
+2. Pass the explicitly validated new configuration instance directly into the component factory, bypassing intermediate configuration caches.
+
+**WHY**:
+Asynchronous configuration distribution guarantees eventual consistency, not immediate local availability. If an API handler writes changes to consensus and immediately proceeds to initiali
+
+
+---
+
+## 132. Structured Sparse Memory-Layout Pre-Validation (Harvested from milvus-io/milvus)
+
+**RULE**:
+Before copying, deseriali
