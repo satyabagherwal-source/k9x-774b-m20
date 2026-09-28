@@ -999,3 +999,14 @@ Any system handling user-generated content, LLM provider responses, or real-time
 ## 76. Actionable Agent Skill & Implementation Checklist (Harvested from Mintplex-Labs/anything-llm)
 
 - [ ] **Schema Validation**: Wrap all `JSON.parse()` calls in a `try-catch` block with a
+
+
+---
+
+## 77. The "Orchestrator-Lifecycle" Invariant (Harvested from iii-hq/iii)
+
+**RULE**:
+Any managed child process (container, worker, or sidecar) must have its lifecycle strictly bound to the parent orchestrator's signal handler. If the parent dies, the child must receive an immediate SIGTERM, followed by a forced SIGKILL after a deterministic timeout (e.g., 5s).
+
+**WHY**:
+Prevents "

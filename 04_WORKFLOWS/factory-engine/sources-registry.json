@@ -419,5 +419,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "iii-hq-iii": {
+    "name": "iii-hq/iii",
+    "officialUrl": "https://github.com/iii-hq/iii",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T18:54:22.474Z",
+    "lastVerified": "2026-09-28T18:54:22.474Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
