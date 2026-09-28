@@ -1,24 +1,15 @@
 {
   "tailwindcss": {
-    "name": "Tailwind CSS",
-    "officialUrl": "https://tailwindcss.com/docs",
-    "sourceType": "css-engine",
+    "name": "tailwindcss",
+    "officialUrl": "https://github.com/tailwindlabs/tailwindcss",
+    "sourceType": "JavaScript/TypeScript",
     "technology": "tailwindcss",
-    "npmPackage": "tailwindcss",
-    "currentVersion": "^4.0.0",
-    "lastChecked": "2026-09-25T16:09:27.983Z",
-    "lastVerified": "2026-09-25T16:09:27.981Z",
-    "revisionIdentifier": "v4.0.0",
-    "updateFrequency": "bi-weekly",
-    "changeSeverity": "MAJOR",
-    "affectedComponents": [
-      "templates/astro-tailwind-v4/src/styles/global.css",
-      "templates/fullstack-ai-saas/src/styles/global.css",
-      "docs/TAILWIND_V4_GUIDE.md"
-    ],
-    "verificationMethod": "build-and-runtime",
-    "autoUpdatePolicy": "MINOR_PATCH_TESTED",
-    "reviewRequirement": "MAJOR_OR_BREAKING"
+    "lastChecked": "2026-09-28T03:52:28.129Z",
+    "lastVerified": "2026-09-28T03:52:28.129Z",
+    "revisionIdentifier": "fa81d69",
+    "recentFixesCount": 12,
+    "verificationMethod": "shallow-clone-audit",
+    "autoUpdatePolicy": "AUTO_HARVEST_BATCH"
   },
   "astro": {
     "name": "Astro",
