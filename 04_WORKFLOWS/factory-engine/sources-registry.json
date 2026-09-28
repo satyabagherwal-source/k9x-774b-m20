@@ -822,5 +822,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "laurent22-joplin": {
+    "name": "laurent22/joplin",
+    "officialUrl": "https://github.com/laurent22/joplin",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T20:20:11.132Z",
+    "lastVerified": "2026-09-28T20:20:11.132Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
