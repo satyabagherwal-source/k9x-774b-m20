@@ -26,27 +26,43 @@ jobs:
       - name: Setup Node.js Runtime
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Configure Git Identity
         run: |
           git config --global user.name "AI-Builder-Brain-Cloud-Agent"
           git config --global user.email "cloud-agent@ai-builder-brain.local"
 
-      - name: Verify Server-to-Server Gemini AI Connection
+      - name: Verify Server-to-Server Gemini AI Swarm Pool
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
+          GEMINI_KEY_2: ${{ secrets.GEMINI_KEY_2 }}
+          GEMINI_KEY_3: ${{ secrets.GEMINI_KEY_3 }}
+          GEMINI_KEY_4: ${{ secrets.GEMINI_KEY_4 }}
+          GEMINI_KEY_5: ${{ secrets.GEMINI_KEY_5 }}
         run: |
-          if [ -z "$GEMINI_API_KEY" ]; then
-            echo "::warning title=GEMINI_API_KEY Missing::To enable deep 24/7 AI reasoning, add your FREE Google AI Studio API key as a secret named 'GEMINI_API_KEY' in: https://github.com/${{ github.repository }}/settings/secrets/actions"
+          ACTIVE_KEYS=0
+          [ -n "$GEMINI_API_KEY" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
+          [ -n "$GEMINI_KEY_1" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
+          [ -n "$GEMINI_KEY_2" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
+          [ -n "$GEMINI_KEY_3" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
+          [ -n "$GEMINI_KEY_4" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
+          [ -n "$GEMINI_KEY_5" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
+
+          if [ $ACTIVE_KEYS -eq 0 ]; then
+            echo "::warning title=Gemini API Keys Missing::To enable deep 24/7 AI reasoning, add your Gemini subscription key as GEMINI_KEY_1..5 in repository secrets: https://github.com/${{ github.repository }}/settings/secrets/actions"
           else
-            echo "✅ GEMINI_API_KEY detected. Multi-Agent Fleet connected to Server-to-Server Gemini AI."
+            echo "======================================================================"
+            echo "✅ VERIFIED: Found $ACTIVE_KEYS active Gemini Subscription Key(s) in Pool!"
+            echo "🚀 Server-to-Server AI reasoning is LIVE with Zero-Cost Rotation."
+            echo "======================================================================"
           fi
 
-      - name: Execute 4-Agent Parallel Learning Fleet (Alpha, Beta, Gamma, Delta)
+      - name: Execute Parallel Multi-Agent Learning Swarm (8 Domains)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GEMINI_KEY_1 }}
           GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
           GEMINI_KEY_2: ${{ secrets.GEMINI_KEY_2 }}
           GEMINI_KEY_3: ${{ secrets.GEMINI_KEY_3 }}

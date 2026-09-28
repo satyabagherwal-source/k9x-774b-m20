@@ -61,8 +61,13 @@ export function loadAllAiKeys() {
   if (process.env.HF_TOKEN) hfTokens.push(process.env.HF_TOKEN.trim());
   if (fileSecrets.HF_TOKEN) hfTokens.push(fileSecrets.HF_TOKEN.trim());
 
+  const geminiArr = Array.from(geminiKeys).filter(Boolean);
+  if (geminiArr.length > 0 && !process.env.GEMINI_API_KEY) {
+    process.env.GEMINI_API_KEY = geminiArr[0];
+  }
+
   return {
-    gemini: Array.from(geminiKeys).filter(Boolean),
+    gemini: geminiArr,
     groq: Array.from(new Set(groqKeys)).filter(Boolean),
     huggingface: Array.from(new Set(hfTokens)).filter(Boolean),
     githubToken: process.env.GITHUB_TOKEN || fileSecrets.GITHUB_TOKEN || null
