@@ -198,5 +198,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "astral-sh-uv": {
+    "name": "astral-sh/uv",
+    "officialUrl": "https://github.com/astral-sh/uv",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T04:41:37.261Z",
+    "lastVerified": "2026-09-28T04:41:37.261Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
