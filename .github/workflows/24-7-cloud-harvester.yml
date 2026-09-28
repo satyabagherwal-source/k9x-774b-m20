@@ -1,4 +1,4 @@
-name: 24-7 Zero-Clone Autonomous Harvester with Google Gemini AI
+name: 24-7 Multi-Agent Parallel Autonomous Harvester with Google Gemini AI
 
 on:
   schedule:
@@ -15,13 +15,27 @@ permissions:
   contents: write
 
 jobs:
-  cloud-harvest:
+  cloud-multi-agent-fleet:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        agent:
+          - id: 'Agent-Alpha'
+            domain: 'ai-agents'
+          - id: 'Agent-Beta'
+            domain: 'fullstack-ui'
+          - id: 'Agent-Gamma'
+            domain: 'high-perf-systems'
+          - id: 'Agent-Delta'
+            domain: 'huggingface-ai-models'
+    name: "Fleet Worker: ${{ matrix.agent.id }} (${{ matrix.agent.domain }})"
     steps:
       - name: Checkout AI-Builder-Brain
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Setup Node.js Runtime
         uses: actions/setup-node@v4
@@ -40,24 +54,33 @@ jobs:
           if [ -z "$GEMINI_API_KEY" ]; then
             echo "::warning title=GEMINI_API_KEY Missing::To enable deep 24/7 AI reasoning, add your FREE Google AI Studio API key as a secret named 'GEMINI_API_KEY' in: https://github.com/${{ github.repository }}/settings/secrets/actions"
           else
-            echo "✅ GEMINI_API_KEY detected. Autonomous Server-to-Server Gemini AI engine is ready."
+            echo "✅ GEMINI_API_KEY detected. Agent ${{ matrix.agent.id }} connected to Server-to-Server Gemini AI."
           fi
 
-      - name: Execute Zero-Clone Harvester with Server-to-Server Google Gemini AI
+      - name: Autonomous Scout & Intelligence Harvest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          AGENT_NAME: ${{ matrix.agent.id }}
+          TARGET_DOMAIN: ${{ matrix.agent.domain }}
         run: |
+          echo "🚀 [AGENT LAUNCH] ${{ matrix.agent.id }} scouting domain: ${{ matrix.agent.domain }}..."
+          node 04_WORKFLOWS/factory-engine/auto-discovery-scout.mjs ${{ matrix.agent.domain }}
           node 04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs
 
-      - name: Commit & Push Harvested Intelligence to GitHub
+      - name: Atomic Rebase & Push Intelligence to GitHub
         run: |
-          git config user.name "AI-Builder-Brain-Cloud-Agent"
-          git config user.email "cloud-agent@ai-builder-brain.local"
+          git pull --rebase origin main
           git add .
           if git diff --staged --quiet; then
-            echo "No new intelligence to commit."
+            echo "No new intelligence to commit for ${{ matrix.agent.id }}."
           else
-            git commit -m "feat(brain): 24/7 Gemini server-to-server AI learning harvest [skip ci]"
-            git push origin main
+            git commit -m "feat(fleet): ${{ matrix.agent.id }} harvested learnings for ${{ matrix.agent.domain }} [skip ci]"
+            for i in {1..5}; do
+              git push origin main && break || {
+                echo "Concurrent push detected. Rebasing and retrying ($i/5)..."
+                sleep $((1 + RANDOM % 3))
+                git pull --rebase origin main
+              }
+            done
           fi

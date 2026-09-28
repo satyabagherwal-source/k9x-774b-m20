@@ -39,5 +39,16 @@
     "minStars": 1500,
     "maxReposPerScoutRun": 3,
     "lastScoutedAt": "2026-09-28T04:50:11.496Z"
+  },
+  "multiAgentFleet": {
+    "enabled": true,
+    "fleetSize": 4,
+    "workers": [
+      { "id": "Agent-Alpha", "domain": "ai-agents" },
+      { "id": "Agent-Beta", "domain": "fullstack-ui" },
+      { "id": "Agent-Gamma", "domain": "high-perf-systems" },
+      { "id": "Agent-Delta", "domain": "huggingface-ai-models" }
+    ],
+    "orchestratorScript": "04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs"
   }
 }

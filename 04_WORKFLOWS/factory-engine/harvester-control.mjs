@@ -85,6 +85,8 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename
         console.log(`[GIT PUSH] Pushed newly scouted repositories to GitHub.`);
       }
     });
+  } else if (action === 'fleet' || action === 'swarm' || action === 'multi') {
+    import('./multi-agent-fleet.mjs').then((m) => m.runMultiAgentFleet());
   } else {
     console.log(JSON.stringify(getHarvesterStatus(), null, 2));
   }
