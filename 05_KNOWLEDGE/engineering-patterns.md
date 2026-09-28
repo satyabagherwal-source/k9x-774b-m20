@@ -1191,3 +1191,11 @@ Using tags or short SHAs allows for "shadow updates" where a dependency maintain
 
 **WHEN TO APPLY**:
 Any repository utili
+
+
+---
+
+## 92. The "Normalization-First" Invariant (Harvested from browser-use/browser-use)
+
+**RULE**:
+All external inputs (LLM tool outputs, user strings, browser attributes) must be normali

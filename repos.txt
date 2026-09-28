@@ -117,3 +117,55 @@ https://github.com/stakater/Reloader
 https://github.com/gravitl/netmaker
 # [DATABASE-STORAGE-ENGINES] Mintplex-Labs/anything-llm (42156 score) - Stop renting your intelligence. Own it with AnythingLLM. Everything you need for
 https://github.com/Mintplex-Labs/anything-llm
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.186Z] ---
+# [DATABASE-STORAGE-ENGINES] pathwaycom/llm-app (35773 score) - Ready-to-run cloud templates for RAG, AI pipelines, and enterprise search with l
+https://github.com/pathwaycom/llm-app
+# [DATABASE-STORAGE-ENGINES] run-llama/llama_index (33873 score) - LlamaIndex is the document processing platform for AI
+https://github.com/run-llama/llama_index
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.402Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] actions/actions-runner-controller (4365 score) - Kubernetes controller for GitHub Actions self-hosted runners
+https://github.com/actions/actions-runner-controller
+# [DEVOPS-CLOUD-INFRASTRUCTURE] nginx/kubernetes-ingress (3663 score) - NGINX and  NGINX Plus Ingress Controllers for Kubernetes
+https://github.com/nginx/kubernetes-ingress
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.433Z] ---
+# [FULLSTACK-UI] tamagui/tamagui (8709 score) - Style React fast with 100% parity on React Native, an optional UI kit, and optim
+https://github.com/tamagui/tamagui
+# [FULLSTACK-UI] assistant-ui/assistant-ui (7766 score) - Typescript/React Library for AI Chat 💬🚀
+https://github.com/assistant-ui/assistant-ui
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.436Z] ---
+# [AI-AGENTS] browser-use/browser-use (73826 score) - Agents that use the browser.
+https://github.com/browser-use/browser-use
+# [AI-AGENTS] google-gemini/gemini-cli (68696 score) - An open-source AI agent that brings the power of Gemini directly into your termi
+https://github.com/google-gemini/gemini-cli
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.437Z] ---
+# [CYBERSECURITY-DEFENSES] microsoft/agent-governance-toolkit (4153 score) - AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution
+https://github.com/microsoft/agent-governance-toolkit
+# [CYBERSECURITY-DEFENSES] openziti/zrok (3001 score) - Secure internet sharing made simple.
+https://github.com/openziti/zrok
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.474Z] ---
+# [HIGH-PERF-SYSTEMS] Automattic/harper (9909 score) - Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
+https://github.com/Automattic/harper
+# [HIGH-PERF-SYSTEMS] max-sixty/worktrunk (5158 score) - Worktrunk is a CLI for Git worktree management, designed for parallel AI agent w
+https://github.com/max-sixty/worktrunk
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.496Z] ---
+# [MOBILE-CROSS-PLATFORM] storybookjs/storybook (57842 score) - Storybook is the industry standard workshop for building, documenting, and testi
+https://github.com/storybookjs/storybook
+# [MOBILE-CROSS-PLATFORM] enaqx/awesome-react (47150 score) - A collection of awesome things regarding React ecosystem
+https://github.com/enaqx/awesome-react
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:14.334Z] ---
+# [MOBILE-CROSS-PLATFORM] storybookjs/storybook (57842 score) - Storybook is the industry standard workshop for building, documenting, and testi
+https://github.com/storybookjs/storybook
+# [DEVOPS-CLOUD-INFRASTRUCTURE] actions/actions-runner-controller (4365 score) - Kubernetes controller for GitHub Actions self-hosted runners
+https://github.com/actions/actions-runner-controller
+# [CYBERSECURITY-DEFENSES] microsoft/agent-governance-toolkit (4153 score) - AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution
+https://github.com/microsoft/agent-governance-toolkit
+# [DATABASE-STORAGE-ENGINES] pathwaycom/llm-app (35773 score) - Ready-to-run cloud templates for RAG, AI pipelines, and enterprise search with l
+https://github.com/pathwaycom/llm-app

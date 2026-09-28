@@ -588,5 +588,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "browser-use-browser-use": {
+    "name": "browser-use/browser-use",
+    "officialUrl": "https://github.com/browser-use/browser-use",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-28T19:14:06.174Z",
+    "lastVerified": "2026-09-28T19:14:06.174Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
