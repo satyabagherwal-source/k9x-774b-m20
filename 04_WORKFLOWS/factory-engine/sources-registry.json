@@ -549,5 +549,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "adobe-react-spectrum": {
+    "name": "adobe/react-spectrum",
+    "officialUrl": "https://github.com/adobe/react-spectrum",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T18:54:56.939Z",
+    "lastVerified": "2026-09-28T18:54:56.939Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -1133,3 +1133,19 @@ Never use `os.exec*` to modify environment variables (like `PYTHONHASHSEED`) at 
 
 **WHY**:
 `os.exec` replaces the current process image, which is inherently non-atomic on Windows and causes resource leaks (file handles, locks) on POSIX. It creates a "
+
+
+---
+
+## 88. The "Shadow-Aware Event" Rule (Harvested from adobe/react-spectrum)
+
+**RULE**:
+All event handlers in UI components must resolve the event target via `event.composedPath()` rather than `event.target` if the component is intended to support Shadow DOM encapsulation.
+
+**WHY**:
+`event.target` is retargeted to the shadow host, causing logic that relies on DOM hierarchy (like `contains()` or coordinate mapping) to fail silently or behave unpredictably.
+
+**WHEN TO APPLY**:
+Any library or component system that interacts with DOM nodes, specifically those involving drag-and-drop, focus management, or coordinate-based interactions.
+
+---
