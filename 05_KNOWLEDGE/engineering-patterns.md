@@ -1199,3 +1199,11 @@ Any repository utili
 
 **RULE**:
 All external inputs (LLM tool outputs, user strings, browser attributes) must be normali
+
+
+---
+
+## 93. The "Optimistic-Sync" Invariant (Harvested from assistant-ui/assistant-ui)
+
+**RULE**:
+Any state that is both locally editable and remotely synchroni

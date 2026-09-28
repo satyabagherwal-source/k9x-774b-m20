@@ -601,5 +601,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "assistant-ui-assistant-ui": {
+    "name": "assistant-ui/assistant-ui",
+    "officialUrl": "https://github.com/assistant-ui/assistant-ui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-28T19:14:06.040Z",
+    "lastVerified": "2026-09-28T19:14:06.040Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
