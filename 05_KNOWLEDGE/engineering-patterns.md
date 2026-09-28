@@ -1054,3 +1054,11 @@ Manual signaling creates a race condition where the permit is returned to the po
 
 **WHEN TO APPLY**:
 High-concurrency systems using `tokio::sync::Semaphore` or similar synchroni
+
+
+---
+
+## 81. The "Concurrent Map Initialization" Invariant (Harvested from bitnami/sealed-secrets)
+
+**RULE**:
+Never initiali

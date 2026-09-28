@@ -458,5 +458,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bitnami-sealed-secrets": {
+    "name": "bitnami/sealed-secrets",
+    "officialUrl": "https://github.com/bitnami/sealed-secrets",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-28T18:54:43.162Z",
+    "lastVerified": "2026-09-28T18:54:43.162Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
