@@ -40,4 +40,7 @@ Desktop.ini
 # Multi-Agent Concurrency Locks
 .harvest-locks/
 
+# Local Brain Secrets
+.brain-secrets.json
+
 

@@ -11,11 +11,14 @@ const PATTERNS_PATH = path.join(BRAIN_ROOT, '05_KNOWLEDGE', 'engineering-pattern
 const SKILLS_DIR = path.join(BRAIN_ROOT, '03_SKILLS');
 const LEARNING_DIR = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING');
 
-// Supported Gemini Models (prioritizing 2.0 Flash for speed & reasoning depth)
+// Supported Gemini Models (prioritizing active responsive models)
 const GEMINI_MODELS = [
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
-  'gemini-1.5-pro'
+  'gemini-3.6-flash',
+  'gemini-3.5-flash',
+  'gemini-3.1-flash-lite-preview',
+  'gemini-3.7-flash',
+  'gemini-3.8-flash',
+  'gemini-flash-latest'
 ];
 
 /**
