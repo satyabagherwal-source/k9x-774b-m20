@@ -2,8 +2,8 @@
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shadcn-ui-ui-learnings.md`  
 > **Source Repository**: [https://github.com/shadcn-ui/ui.git](https://github.com/shadcn-ui/ui)  
-> **Harvest Date**: 2026-09-28T03:52:15.673Z  
-> **Harvest Engine**: Batch Auto-Harvester (Shallow Depth 50)  
+> **Harvest Date**: 2026-09-28T04:03:26.501Z  
+> **Harvest Engine**: Batch Auto-Harvester (Full Clone - Complete History Extraction)  
 > **Languages & Ecosystem**: JavaScript/TypeScript  
 
 ---
@@ -12,7 +12,8 @@
 - **Repository**: `shadcn-ui/ui`
 - **Detected Languages**: JavaScript/TypeScript
 - **Discovered Configurations / Tooling**: `README.md`, `CONTRIBUTING.md`, `tsconfig.json`, `vitest.config.ts`
-- **Shallow Commits Analyzed**: 50 (Recent production trajectory)
+- **Complete Commit History Inspected**: 100+ recent commits, 60 deep historical fixes, and release tags: shadcn@4.21.0, shadcn@4.20.1, shadcn@4.20.0, shadcn@4.19.1, shadcn@4.19.0.
+
 
 ---
 
@@ -42,14 +43,21 @@
 
 ### D8: Forensic Bug Fixes & Real Production Incidents
 Observed empirical bug fixes from recent commits:
-- **`3ba91b1`** (2026-09-08): fix: serve OIDC home RSC payloads via forwarded headers
-- **`5c7072d`** (2026-09-06): fix(registry): correct logo quoting in directory JSON (#11807)
-- **`c2a25d4`** (2026-09-06): fix: update sona ui registry domain (#11764)
-- **`04bb134`** (2026-09-02): fix(cli): preserve comments during cn migration (#11742)
-- **`b2a1ec8`** (2026-09-02): fix(registry): repair health dry runs (#11739)
-- **`503a3a5`** (2026-08-31): fix(react): hide MessageScroller until the opening position applies (#11720)
-- **`da43f5a`** (2026-08-30): fix(docs): restore sidebar block preview on mobile (#11715)
-- **`a2256ad`** (2026-08-30): fix(registry): resolve {style} placeholder in health checks (#11712)
+- **`3ba91b1cc`** (2026-09-08): fix: serve OIDC home RSC payloads via forwarded headers
+- **`5c7072da6`** (2026-09-06): fix(registry): correct logo quoting in directory JSON (#11807)
+- **`c2a25d45e`** (2026-09-06): fix: update sona ui registry domain (#11764)
+- **`c257f688c`** (2026-09-04): feat(registry): migrate registry, templates and CLI to cn (#11758)
+- **`04bb134c5`** (2026-09-02): fix(cli): preserve comments during cn migration (#11742)
+- **`b2a1ec864`** (2026-09-02): fix(registry): repair health dry runs (#11739)
+- **`503a3a57a`** (2026-08-31): fix(react): hide MessageScroller until the opening position applies (#11720)
+- **`da43f5a12`** (2026-08-30): fix(docs): restore sidebar block preview on mobile (#11715)
+- **`a2256ad1a`** (2026-08-30): fix(registry): resolve {style} placeholder in health checks (#11712)
+- **`83ae5cda6`** (2026-08-30): fix(ci): skip registry health monitor on forks (#11711)
+- **`ee628d75d`** (2026-08-25): fix(registry): pass blob store id for oidc (#11622)
+- **`352f2094b`** (2026-08-25): feat(registry): add health monitoring (#11616)
+- **`b9938d946`** (2026-08-24): fix(ci): bump @changesets/cli for npm 12 publish detection (#11613)
+- **`e68a185ab`** (2026-08-23): fix(shadcn): unregister finished spinners and clarify notice dedupe naming (#11604)
+- **`19b67204f`** (2026-08-21): fix(docs): exclude accordion from typeset styles (#11579)
 
 ---
 
