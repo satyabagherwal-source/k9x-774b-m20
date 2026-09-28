@@ -432,5 +432,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "justjavac-free-programming-books-zh_cn": {
+    "name": "justjavac/free-programming-books-zh_CN",
+    "officialUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
+    "sourceType": "github",
+    "technology": "Multi-language",
+    "lastChecked": "2026-09-28T18:54:21.706Z",
+    "lastVerified": "2026-09-28T18:54:21.706Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

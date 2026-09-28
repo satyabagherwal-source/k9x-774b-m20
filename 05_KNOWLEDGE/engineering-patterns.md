@@ -1010,3 +1010,17 @@ Any managed child process (container, worker, or sidecar) must have its lifecycl
 
 **WHY**:
 Prevents "
+
+
+---
+
+## 78. The External Dependency Invariant (Link Rot Defense) (Harvested from justjavac/free-programming-books-zh_CN)
+
+**RULE**:
+Any system referencing external resources must treat those resources as "untrusted, volatile state" and implement an automated verification layer that executes at least once per release cycle.
+
+**WHY**:
+External dependencies are outside the control of the local system. Without automated verification, the system's internal state (the list of links) will inevitably diverge from reality, leading to "Silent Failure" where the user experience degrades without the maintainer's knowledge.
+
+**WHEN TO APPLY**:
+Documentation repositories, API registries, service discovery manifests, and any system relying on external URLs or third-party endpoints.
