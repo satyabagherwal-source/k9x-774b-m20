@@ -5,6 +5,11 @@ import { fileURLToPath } from 'url';
 import { shouldHarvestSource } from './upgrade-checker.mjs';
 import { acquireTargetLock, releaseTargetLock, pushWithRebaseRetry } from './concurrency-coordinator.mjs';
 import { runAutoDiscoveryScout } from './auto-discovery-scout.mjs';
+import {
+  synthesizeIntelligenceWithGemini,
+  saveGeminiLearningRecord,
+  promoteGeminiRulesToMasterBrain
+} from './gemini-brain-agent.mjs';
 
 
 
@@ -471,7 +476,19 @@ export async function runZeroCloneHarvester(customUrls = null) {
       }
 
       if (audit) {
-        writeZeroCloneArtifact(audit);
+        console.log(`🧠 [AI SYNTHESIS] Calling Server-to-Server Google Gemini for deep intelligence extraction...`);
+        const geminiResult = await synthesizeIntelligenceWithGemini(audit);
+        if (geminiResult && geminiResult.text) {
+          saveGeminiLearningRecord(target.slug, geminiResult.text, audit);
+          const newRules = promoteGeminiRulesToMasterBrain(geminiResult.text, audit.name);
+          if (newRules.length > 0) {
+            console.log(`🎯 [UNIVERSAL RULES PROMOTED] ${newRules.length} new rules added to Master Brain: ${newRules.map((r) => `Rule ${r.number}`).join(', ')}`);
+          }
+        } else {
+          // Fallback to structural artifact if GEMINI_API_KEY is not yet provided
+          writeZeroCloneArtifact(audit);
+        }
+
         updateSourcesRegistryZeroClone(audit);
         await autoCommitAndPushZeroClone(audit);
 

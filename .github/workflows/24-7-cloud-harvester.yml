@@ -1,4 +1,4 @@
-name: 24-7 Zero-Clone Autonomous Harvester
+name: 24-7 Zero-Clone Autonomous Harvester with Google Gemini AI
 
 on:
   schedule:
@@ -28,9 +28,20 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Execute Zero-Clone API Harvester
+      - name: Verify Server-to-Server Gemini AI Connection
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ -z "$GEMINI_API_KEY" ]; then
+            echo "::warning title=GEMINI_API_KEY Missing::To enable deep 24/7 AI reasoning, add your FREE Google AI Studio API key as a secret named 'GEMINI_API_KEY' in: https://github.com/${{ github.repository }}/settings/secrets/actions"
+          else
+            echo "✅ GEMINI_API_KEY detected. Autonomous Server-to-Server Gemini AI engine is ready."
+          fi
+
+      - name: Execute Zero-Clone Harvester with Server-to-Server Google Gemini AI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           node 04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs
 
@@ -42,6 +53,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new intelligence to commit."
           else
-            git commit -m "feat(brain): 24/7 cloud zero-clone harvest [skip ci]"
+            git commit -m "feat(brain): 24/7 Gemini server-to-server AI learning harvest [skip ci]"
             git push origin main
           fi

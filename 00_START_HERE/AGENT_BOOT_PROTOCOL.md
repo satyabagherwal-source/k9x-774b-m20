@@ -107,6 +107,11 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 - Multi-agent scout partitions searches across 4 domains (`ai-agents`, `fullstack-ui`, `high-perf-systems`, `huggingface-ai-models`) using domain locks (`.harvest-locks/scout-domain-<domain>.lock`).
 - Evaluates repository quality score (stars, active push vitality, license, forks) and auto-queues top projects into `repos.txt` for 24/7 harvesting.
 
+### Step 17: Server-to-Server Google Gemini AI Engine
+- 24/7 Cloud Harvester on GitHub Actions executes server-to-server with Google Gemini API (`04_WORKFLOWS/gemini-cloud-server-to-server.md`).
+- Gemini independently performs D1-D8 deep analysis, micro-learning extraction, and universal rule formulation without requiring a laptop or Antigravity IDE to be open.
+- When opening Antigravity IDE locally, Step 1 (`git pull --rebase origin main`) automatically ingests all Gemini-synthesized learnings.
+
 
 
 

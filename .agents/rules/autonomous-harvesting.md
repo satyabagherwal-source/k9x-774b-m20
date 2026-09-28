@@ -126,5 +126,23 @@ To ensure AI-Builder-Brain continuously evolves without waiting for manual human
 4. **Self-Feeding Ingestion**:
    - When existing targets in `repos.txt` are up-to-date, the Zero-Clone Harvester automatically calls the scout engine, selects the next top repositories, registers them, and immediately harvests them.
 
+---
+
+## 7. Server-to-Server Google Gemini AI Engine (Cloud Autonomous Reasoning)
+To ensure AI-Builder-Brain does not depend on a laptop or local IDE being open:
+1. **Server-to-Server Bridge (`gemini-brain-agent.mjs`)**:
+   - GitHub Actions executes in the cloud 24/7 and calls the Google Gemini REST API (`gemini-2.0-flash`, `gemini-1.5-flash`) directly server-to-server via `GEMINI_API_KEY`.
+2. **Deep Intelligence Extraction**:
+   - Gemini receives code manifests, commit diffs, closed bug issues, and PR discussions.
+   - Extracts micro-learnings (subtle runtime traps, race conditions, memory leaks, failure modes) and macro-architectural rules.
+3. **Autonomous Brain Integration**:
+   - Gemini synthesizes net-new Universal Engineering Rules, which are automatically numbered and appended to `05_KNOWLEDGE/engineering-patterns.md`.
+   - Comprehensive multi-axis forensic documents are saved to `07_PROJECT_LEARNING/`.
+   - Reusable skills are staged into `03_SKILLS/`.
+4. **Auto-Push to GitHub & Local Sync**:
+   - GitHub Actions auto-commits and pushes all AI-synthesized learnings to `main`.
+   - When the user opens their laptop or starts Antigravity IDE, `git pull --rebase origin main` automatically pulls down all new knowledge. Zero manual prompting needed.
+
+
 
 
