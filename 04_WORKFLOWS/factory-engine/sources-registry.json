@@ -939,5 +939,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "burntsushi-ripgrep": {
+    "name": "BurntSushi/ripgrep",
+    "officialUrl": "https://github.com/BurntSushi/ripgrep",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-28T20:21:51.735Z",
+    "lastVerified": "2026-09-28T20:21:51.735Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

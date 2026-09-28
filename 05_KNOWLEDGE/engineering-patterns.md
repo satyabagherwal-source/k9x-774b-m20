@@ -1797,3 +1797,11 @@ Automatic type inference (e.g., Excel "NA" to `None`) is a primary source of dat
 
 **WHEN TO APPLY**:
 Any document parsing, CSV/Excel ingestion, or unstructured data extraction subsystem.
+
+
+---
+
+## 136. The Panic-Safe Synchronization Rule (Harvested from BurntSushi/ripgrep)
+
+**RULE**:
+Any synchroni
