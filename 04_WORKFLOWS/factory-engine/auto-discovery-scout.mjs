@@ -55,6 +55,38 @@ export const DISCOVERY_DOMAINS = {
       'https://huggingface.co/api/models?sort=trending&limit=10',
       'https://huggingface.co/api/models?sort=downloads&direction=-1&limit=10'
     ]
+  },
+  'mobile-cross-platform': {
+    name: 'Mobile & Cross-Platform Native Architecture',
+    type: 'github',
+    queries: [
+      'topic:react-native stars:>3000 sort:stars',
+      'topic:flutter "architecture" stars:>2500 sort:stars'
+    ]
+  },
+  'devops-cloud-infrastructure': {
+    name: 'Cloud-Native & Distributed Infrastructure',
+    type: 'github',
+    queries: [
+      'topic:kubernetes "controller" stars:>2000 sort:stars',
+      'topic:docker "developer-tool" stars:>2000 sort:stars'
+    ]
+  },
+  'cybersecurity-defenses': {
+    name: 'Application Security & Cryptography Defenses',
+    type: 'github',
+    queries: [
+      'topic:security "zero-trust" stars:>1500 sort:stars',
+      'topic:cryptography language:rust stars:>2000 sort:stars'
+    ]
+  },
+  'database-storage-engines': {
+    name: 'High-Throughput Databases & Vector Storage',
+    type: 'github',
+    queries: [
+      'topic:vector-database stars:>2000 sort:stars',
+      'topic:database language:rust stars:>3000 sort:stars'
+    ]
   }
 };
 

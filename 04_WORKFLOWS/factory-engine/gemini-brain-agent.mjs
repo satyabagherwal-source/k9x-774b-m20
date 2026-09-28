@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { resolveNextRuleNumber } from './concurrency-coordinator.mjs';
+import { dispatchZeroCostAiSynthesis, loadAllAiKeys } from './ai-provider-pool.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -11,106 +12,19 @@ const PATTERNS_PATH = path.join(BRAIN_ROOT, '05_KNOWLEDGE', 'engineering-pattern
 const SKILLS_DIR = path.join(BRAIN_ROOT, '03_SKILLS');
 const LEARNING_DIR = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING');
 
-// Supported Gemini Models (prioritizing active responsive models)
-const GEMINI_MODELS = [
-  'gemini-3.6-flash',
-  'gemini-3.5-flash',
-  'gemini-3.1-flash-lite-preview',
-  'gemini-3.7-flash',
-  'gemini-3.8-flash',
-  'gemini-flash-latest'
-];
-
 /**
  * Resolves Gemini API Key from environment or local brain config
  */
 export function getGeminiApiKey() {
-  if (process.env.GEMINI_API_KEY) {
-    return process.env.GEMINI_API_KEY.trim();
-  }
-
-  // Check local .env or brain-secrets.json if exists
-  const secretsPath = path.join(BRAIN_ROOT, '.brain-secrets.json');
-  if (fs.existsSync(secretsPath)) {
-    try {
-      const data = JSON.parse(fs.readFileSync(secretsPath, 'utf-8'));
-      if (data.GEMINI_API_KEY) return data.GEMINI_API_KEY.trim();
-    } catch (e) {}
-  }
-
-  return null;
+  const pool = loadAllAiKeys().gemini;
+  return pool.length > 0 ? pool[0] : null;
 }
 
 /**
- * Call Google Gemini REST API directly server-to-server with automatic model fallback
+ * Call Google Gemini REST API directly server-to-server with multi-key rotation and zero-cost fallback
  */
 export async function callGeminiApi(prompt, systemInstruction = '') {
-  const apiKey = getGeminiApiKey();
-  if (!apiKey) {
-    throw new Error('GEMINI_API_KEY_MISSING: No Gemini API Key found in environment or secrets.');
-  }
-
-  let lastError = null;
-
-  for (const model of GEMINI_MODELS) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-
-    const requestBody = {
-      contents: [
-        {
-          role: 'user',
-          parts: [{ text: prompt }]
-        }
-      ],
-      generationConfig: {
-        temperature: 0.2,
-        topP: 0.95,
-        maxOutputTokens: 8192
-      }
-    };
-
-    if (systemInstruction) {
-      requestBody.systemInstruction = {
-        parts: [{ text: systemInstruction }]
-      };
-    }
-
-    try {
-      console.log(`🤖 [GEMINI SERVER-TO-SERVER] Sending request to Google Gemini model: ${model}...`);
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      });
-
-      if (response.status === 429) {
-        console.warn(`[GEMINI 429] Rate limited on ${model}, attempting next model or retry...`);
-        lastError = new Error(`Rate limit 429 on ${model}`);
-        continue;
-      }
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        lastError = new Error(`Gemini API Error (${response.status}): ${errorText}`);
-        continue;
-      }
-
-      const data = await response.json();
-      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (generatedText) {
-        console.log(`✨ [GEMINI SUCCESS] Received response from ${model} (${generatedText.length} characters).`);
-        return { text: generatedText, model };
-      } else {
-        lastError = new Error(`No text candidates returned by Gemini ${model}`);
-      }
-    } catch (err) {
-      lastError = err;
-      console.warn(`[GEMINI ATTEMPT FAILED] ${model}: ${err.message}`);
-    }
-  }
-
-  throw lastError || new Error('Failed to obtain response from any Google Gemini model.');
+  return await dispatchZeroCostAiSynthesis(prompt, systemInstruction);
 }
 
 /**

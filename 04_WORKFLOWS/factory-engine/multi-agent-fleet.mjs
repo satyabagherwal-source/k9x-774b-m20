@@ -15,7 +15,11 @@ const FLEET_ROSTER = [
   { id: 'Agent-Alpha', name: 'Alpha', domain: 'ai-agents', color: '\x1b[36m' }, // Cyan
   { id: 'Agent-Beta', name: 'Beta', domain: 'fullstack-ui', color: '\x1b[32m' }, // Green
   { id: 'Agent-Gamma', name: 'Gamma', domain: 'high-perf-systems', color: '\x1b[33m' }, // Yellow
-  { id: 'Agent-Delta', name: 'Delta', domain: 'huggingface-ai-models', color: '\x1b[35m' } // Magenta
+  { id: 'Agent-Delta', name: 'Delta', domain: 'huggingface-ai-models', color: '\x1b[35m' }, // Magenta
+  { id: 'Agent-Epsilon', name: 'Epsilon', domain: 'mobile-cross-platform', color: '\x1b[34m' }, // Blue
+  { id: 'Agent-Zeta', name: 'Zeta', domain: 'devops-cloud-infrastructure', color: '\x1b[96m' }, // Bright Cyan
+  { id: 'Agent-Eta', name: 'Eta', domain: 'cybersecurity-defenses', color: '\x1b[91m' }, // Bright Red
+  { id: 'Agent-Theta', name: 'Theta', domain: 'database-storage-engines', color: '\x1b[92m' } // Bright Green
 ];
 
 const RESET = '\x1b[0m';
