@@ -1264,5 +1264,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tencent-omi": {
+    "name": "Tencent/omi",
+    "officialUrl": "https://github.com/Tencent/omi",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-29T07:45:28.792Z",
+    "lastVerified": "2026-09-29T07:45:28.792Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

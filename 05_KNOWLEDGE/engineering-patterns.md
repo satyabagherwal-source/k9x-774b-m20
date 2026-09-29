@@ -2603,3 +2603,35 @@ Defaulting missing fields to `False` or `0` causes "silent configuration drift,"
 
 **WHEN TO APPLY**:
 RESTful API controllers, database ORM models, and configuration management modules.
+
+
+---
+
+## 186. Isolated JSX Namespaces in Multi-Framework Libraries (Harvested from Tencent/omi)
+
+**RULE**:
+Libraries designed to run in multi-framework or micro-frontend environments must never declare global `JSX` namespaces. They must declare isolated, dedicated namespaces (e.g., `OmiJSX`) and rely on local JSX runtime configuration (`jsxImportSource`).
+
+**WHY**:
+Declaring global `JSX` namespaces causes type collisions and compilation failures when the library is co-located with other JSX-based frameworks (such as React, Vue, or Solid) in the same project or monorepo.
+
+**WHEN TO APPLY**:
+Apply this rule to any library or framework that exports JSX/TSX components and is intended for consumption in diverse host environments.
+
+---
+
+
+---
+
+## 187. Non-Reactive Boundary Guard for Complex Objects (Harvested from Tencent/omi)
+
+**RULE**:
+When wrapping third-party objects, DOM nodes, or class instances in reactive proxies (such as Signals, Vue Reactive, or RxJS Observables), you must explicitly exclude non-plain objects from deep proxying.
+
+**WHY**:
+Deeply proxying complex objects with internal state, circular references, or native bindings (like DOM nodes or WebGL contexts) causes infinite recursion, call-stack overflows, and severe memory leaks.
+
+**WHEN TO APPLY**:
+Apply this rule at the boundary of any state management system or framework bridge layer that automatically converts incoming properties into reactive proxies.
+
+---
