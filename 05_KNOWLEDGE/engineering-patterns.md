@@ -2810,3 +2810,22 @@ All time-dependent logic (timeouts, clocks, scheduling) must consume a `TimeSour
 
 **WHY**:
 Direct system calls make distributed systems non-deterministic, impossible to unit test for race conditions, and prone to failure during system clock synchroni
+
+
+---
+
+## 201. The Interop-State Synchronization Invariant (Harvested from Megabit/Blazorise)
+
+**RULE**:
+Any C# component that wraps a JS-based UI library must implement a "Pending-Update-Queue" and a "Ready-State-Flag" to buffer state changes during the asynchronous JS initiali
+
+
+---
+
+## 202. The DOM-Visibility-Before-Action Constraint (Harvested from Megabit/Blazorise)
+
+**RULE**:
+Never execute DOM-manipulation commands (Scroll, Focus, Measure) immediately upon component render; always wrap in `requestAnimationFrame` or a `MutationObserver` callback.
+
+**WHY**:
+Bla

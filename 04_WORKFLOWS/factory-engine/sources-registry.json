@@ -1472,5 +1472,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "megabit-blazorise": {
+    "name": "Megabit/Blazorise",
+    "officialUrl": "https://github.com/Megabit/Blazorise",
+    "sourceType": "github",
+    "technology": "C#",
+    "lastChecked": "2026-09-29T16:23:14.287Z",
+    "lastVerified": "2026-09-29T16:23:14.287Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
