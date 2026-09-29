@@ -1108,5 +1108,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "davidhdev-react-bits": {
+    "name": "DavidHDev/react-bits",
+    "officialUrl": "https://github.com/DavidHDev/react-bits",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-29T01:24:59.762Z",
+    "lastVerified": "2026-09-29T01:24:59.762Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

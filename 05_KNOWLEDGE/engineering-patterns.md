@@ -2386,3 +2386,31 @@ Apply in runtime environment detection, host adapter bindings, and platform plug
 
 **RULE**:
 Every browser context must be bound to a `contextlib.AsyncExitStack` and initiali
+
+
+---
+
+## 170. The "Animation Cleanup Invariant" (Harvested from DavidHDev/react-bits)
+
+**RULE**:
+Every `requestAnimationFrame` or `setInterval` initiated within a component lifecycle MUST be stored in a `useRef` and explicitly cleared in the `useEffect` cleanup function.
+
+**WHY**:
+Failure to clear animation loops causes "ghost" executions that consume CPU/GPU cycles, trigger state updates on unmounted components (React memory leaks), and cause visual stuttering.
+
+**WHEN TO APPLY**:
+Any component utili
+
+
+---
+
+## 171. The "External Link Sanitization Protocol" (Harvested from DavidHDev/react-bits)
+
+**RULE**:
+All user-submitted URLs in documentation or showcase sections must be validated against a strict allow-list or passed through a secure redirect proxy.
+
+**WHY**:
+Open-source documentation is a high-value target for "typosquatting" and malicious redirects. Trusting user-provided links without validation compromises the security of the end-user.
+
+**WHEN TO APPLY**:
+Showcase pages, community-contributed examples, and documentation metadata.
