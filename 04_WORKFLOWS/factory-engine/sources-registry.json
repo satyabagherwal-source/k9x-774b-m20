@@ -1277,5 +1277,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bee-san-ciphey": {
+    "name": "bee-san/Ciphey",
+    "officialUrl": "https://github.com/bee-san/Ciphey",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T07:44:28.765Z",
+    "lastVerified": "2026-09-29T07:44:28.765Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

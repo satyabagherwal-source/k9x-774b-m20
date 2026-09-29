@@ -2635,3 +2635,17 @@ Deeply proxying complex objects with internal state, circular references, or nat
 Apply this rule at the boundary of any state management system or framework bridge layer that automatically converts incoming properties into reactive proxies.
 
 ---
+
+
+---
+
+## 188. The "Infinite Loop" Guard Clause (Harvested from bee-san/Ciphey)
+
+**RULE**:
+Any interpreter, parser, or recursive solver must implement a hard-coded, non-configurable instruction or depth limit that triggers a hard exit.
+
+**WHY**:
+External inputs (especially in security tools) are adversarial. Without a hard limit, an input designed to trigger a `while(true)` or deep recursion will exhaust CPU/Stack resources, effectively turning your tool into a DoS vector.
+
+**WHEN TO APPLY**:
+Any module that executes user-provided code, parses complex nested structures, or performs heuristic search.
