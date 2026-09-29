@@ -2463,3 +2463,31 @@ Any documentation describing an API must be accompanied by a verified, executabl
 
 **WHY**:
 Documentation drift is a silent system failure. When APIs (like React Router or React Core) evolve, documentation becomes a "lie" that leads to production bugs. Executable documentation ensures the "truth" is always synchroni
+
+
+---
+
+## 175. The "Shell-Binary Boundary" Invariant (Harvested from ajeetdsouza/zoxide)
+
+**RULE**:
+Never assume the shell environment is clean. When a binary interacts with a shell, it must treat the shell as an untrusted, state-polluted environment.
+
+**WHY**:
+Shells are highly mutable (aliases, functions, environment variables). Relying on `ls` or `cd` without explicit pathing or `command` prefixes leads to non-deterministic failures in user environments.
+
+**WHEN TO APPLY**:
+Any CLI tool that provides shell integration (e.g., `
+
+
+---
+
+## 176. The "Privilege-Aware Persistence" Rule (Harvested from ajeetdsouza/zoxide)
+
+**RULE**:
+Any application that writes to a user-owned configuration or data directory must verify that the effective UID matches the owner of the target directory before performing write operations.
+
+**WHY**:
+Prevents "Root-Lockout" where elevated processes (sudo) corrupt user-space configuration files, rendering them inaccessible to the standard user.
+
+**WHEN TO APPLY**:
+Any CLI tool that manages local state files (`~/.config`, `~/.local/share`).
