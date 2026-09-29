@@ -2771,3 +2771,17 @@ Prevents "dangling task" syndrome, memory leaks, and non-deterministic CI failur
 
 **WHEN TO APPLY**:
 Any Rust system utili
+
+
+---
+
+## 198. The FFI State-Guard Invariant (Harvested from tursodatabase/turso)
+
+**RULE**:
+Every FFI-exposed object must maintain an internal `AtomicState` (Open/Closed/Closing). Any method crossing the FFI boundary must perform an atomic check of this state *before* accessing the underlying native pointer.
+
+**WHY**:
+Native pointers are "dumb" memory addresses. If the host language (Java/JS) GC triggers a cleanup while a background thread is accessing the pointer, a UAF occurs. The state guard acts as a software-level lock to prevent access to deallocated memory.
+
+**WHEN TO APPLY**:
+Any Rust project exposing a C-ABI or using `bindgen` to create language bindings (JNI, N-API, Wasm).

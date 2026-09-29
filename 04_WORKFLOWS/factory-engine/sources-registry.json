@@ -1446,5 +1446,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tursodatabase-turso": {
+    "name": "tursodatabase/turso",
+    "officialUrl": "https://github.com/tursodatabase/turso",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T16:23:11.356Z",
+    "lastVerified": "2026-09-29T16:23:11.356Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
