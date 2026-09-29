@@ -2565,3 +2565,19 @@ Prevents "Configuration Flapping," where infrastructure events (container restar
 Any system that reconciles ephemeral infrastructure state with persistent user-defined configuration.
 
 ---
+
+
+---
+
+## 183. The "Boundary-Sanity" Invariant (Harvested from HKUDS/DeepCode)
+
+**RULE**:
+All LLM-generated outputs must pass through a "Sanity Gate" that validates the MIME-type/Schema before the data reaches the application logic.
+
+**WHY**:
+LLMs are prone to "context-bleeding," where they return error pages, conversational filler, or HTML instead of the requested JSON/Code. Allowing this into the pipeline causes cascading failures in downstream parsers.
+
+**WHEN TO APPLY**:
+Any system where an LLM acts as a data provider for a programmatic pipeline.
+
+---

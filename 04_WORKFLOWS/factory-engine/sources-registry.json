@@ -1238,5 +1238,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hkuds-deepcode": {
+    "name": "HKUDS/DeepCode",
+    "officialUrl": "https://github.com/HKUDS/DeepCode",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T07:44:44.899Z",
+    "lastVerified": "2026-09-29T07:44:44.899Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
