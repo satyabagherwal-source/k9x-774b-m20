@@ -23,6 +23,39 @@
     "paidApiBlocked": true,
     "maxRequestsPerHour": 50
   },
+  "aiProviderPool": {
+    "supportedProviders": [
+      "Google Gemini (Multi-Account Keys 1..10)",
+      "Anthropic Claude (Claude 3.5 Sonnet / Haiku)",
+      "OpenAI ChatGPT / Codex (GPT-4o / GPT-4o-mini / o3-mini)",
+      "xAI Grok (Grok-2 / Grok-Beta)",
+      "MiniMax AI (MiniMax-Text-01 / abab6.5s)",
+      "Groq Free Tier (Llama 3.3 70B Versatile)",
+      "Local Ollama (Self-Hosted, Unlimited Tokens, 0 Quota)",
+      "Hugging Face (Serverless Public REST Endpoints)"
+    ],
+    "quotaIsolationPolicy": {
+      "strategy": "INDEPENDENT_PER_KEY_CIRCUIT_BREAKER",
+      "globalKillSwitch": false,
+      "quotaCooldowns": {
+        "geminiRpm": 65000,
+        "geminiDailyQuota": 3600000,
+        "openAiRpm": 65000,
+        "openAiInsufficientQuota": 7200000,
+        "claudeRpm": 65000,
+        "claudeCreditLimit": 3600000,
+        "claudeOverloaded529": 30000,
+        "grokRpm": 65000,
+        "grokCreditLimit": 3600000,
+        "minimaxRpm": 65000,
+        "minimaxDailyQuota": 3600000,
+        "groqRpm": 65000,
+        "groqDailyLimit": 3600000,
+        "ollamaOffline": 30000
+      },
+      "circuitRegistryFile": ".harvest-locks/ai-key-circuit.json"
+    }
+  },
   "harvestQueueFile": "repos.txt",
   "cloudSchedule": "Hourly at minute 23 via GitHub Actions (Runs 24/7 even when laptop is closed/offline)",
   "localSyncStrategy": "Auto-pull on agent boot or IDE start (git pull --rebase origin main)",

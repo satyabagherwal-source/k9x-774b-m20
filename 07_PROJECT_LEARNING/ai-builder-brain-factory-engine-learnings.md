@@ -120,6 +120,24 @@ During operational stress testing and active pair-programming refinement, four c
 * **Lesson**: *Independent Circuit Breakers & Non-Blocking Quota Isolation for Distributed Multi-Agent Swarms*. Never apply a global blanket ON/OFF switch. Isolate individual cooldowns with auto-recovery timers.
 * **Promotion Decision**: Promoted as **Rule 215** in `05_KNOWLEDGE/engineering-patterns.md`.
 
+### Incident 6: Heterogeneous AI Quota Expiry & Multi-Subscription Isolation (BUG-SWARM-06)
+* **Context**: `04_WORKFLOWS/factory-engine/ai-provider-pool.mjs`, `harvest-control.json`
+* **What Was Expected**: Support for heterogeneous multi-provider AI pools (Google Gemini multi-subscriptions 1..10, OpenAI ChatGPT/Codex, Anthropic Claude, xAI Grok, MiniMax, Groq Free, and Local Ollama). Each provider has completely different quotas, burst limits, and reset times (RPM rolling windows, daily midnight PST/UTC resets, monthly billing caps, or unlimited local tokens).
+* **What Actually Happened**: Initially, only Gemini and Groq were in the active cascade pool. If all Gemini keys rested simultaneously, the engine lacked direct automated bridges to Claude, ChatGPT/Codex, Grok, MiniMax, and local Ollama.
+* **Root Cause**: Monolithic provider assumption without heterogeneous asymmetric quota signatures.
+* **Remediation Code Diff**:
+  ```diff
+  - async function dispatchZeroCostAiSynthesis() {
+  -   return await executeWithGeminiPool() || await executeWithGroqFree();
+  - }
+  + async function dispatchZeroCostAiSynthesis() {
+  +   // Tiered cascade across 7 heterogeneous providers with independent circuit breakers:
+  +   // Gemini Pool (1..10) -> Claude Pool -> OpenAI Pool -> Grok Pool -> MiniMax Pool -> Groq Free -> Local Ollama
+  + }
+  ```
+* **Lesson**: *Heterogeneous Multi-Provider AI Cascade & Asymmetric Quota Isolation Invariant*. Each provider's specific error code and quota signature triggers an isolated cooldown timer (`cooldownUntil`). System rotates within the provider pool and cascades across providers down to local Ollama (0 external quota) with zero global halts.
+* **Promotion Decision**: Promoted as **Rule 216** in `05_KNOWLEDGE/engineering-patterns.md`.
+
 ---
 
 ## 3. 8-Dimensional Multi-Axis Forensic Deep Sweep
@@ -151,6 +169,9 @@ During operational stress testing and active pair-programming refinement, four c
 ### Rule 215: Independent Circuit Breakers & Non-Blocking Quota Isolation for Distributed Multi-Agent Swarms
 **RULE**: In distributed multi-agent systems with multiple autonomous workers and external AI provider pools operating across servers with disparate quotas, reset windows, and rate-limits, NEVER apply a global blanket ON/OFF kill switch upon encountering a rate-limit or quota exhaustion event. Every worker agent and API provider key MUST be encapsulated in an independent, persisted circuit breaker state with an isolated cooldown timestamp (`cooldownUntil`).
 
+### Rule 216: Heterogeneous Multi-Provider AI Cascade & Asymmetric Quota Isolation Invariant
+**RULE**: Autonomous engineering swarms relying on multi-vendor LLM APIs (Google Gemini multi-subscription accounts, OpenAI ChatGPT/Codex, Anthropic Claude, xAI Grok, MiniMax, Groq Free Tier, and local Ollama) MUST decouple provider execution into an asymmetric, tiered priority cascade governed by provider-specific quota signatures and isolated circuit breakers.
+
 ---
 
 ## 5. Actionable Implementation Checklist
@@ -159,5 +180,6 @@ During operational stress testing and active pair-programming refinement, four c
 - [x] Enforce real commit diff patch extraction in harvesting scripts.
 - [x] Integrate proactive 400ms sleep in `compliantFetch` to avoid secondary rate limits.
 - [x] Implement independent per-key circuit breakers and per-worker isolated lifecycles.
+- [x] Integrate heterogeneous multi-provider AI cascade (Gemini, Claude, OpenAI/Codex, Grok, MiniMax, Groq, Ollama).
 - [x] Ensure auto-recovery timers restore cooled keys/agents to ACTIVE without manual intervention.
 - [x] Verify that all self-improvements are documented and promoted into Master Brain knowledge.

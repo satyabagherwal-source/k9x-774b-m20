@@ -3153,4 +3153,71 @@ catch (err) {
 }
 ```
 
+---
+
+## 216. Heterogeneous Multi-Provider AI Cascade & Asymmetric Quota Isolation Invariant (Harvested from AI-Builder-Brain Multi-LLM Swarm Architecture)
+
+**RULE**:
+Autonomous engineering swarms relying on multi-vendor LLM APIs (Google Gemini multi-subscription accounts, OpenAI ChatGPT/Codex, Anthropic Claude, xAI Grok, MiniMax, Groq Free Tier, and local Ollama) MUST decouple provider execution into an asymmetric, tiered priority cascade governed by provider-specific quota signatures and isolated circuit breakers. Each provider's idiosyncratic quota exhaustion mechanics (Gemini 15 RPM / midnight PST RPD, OpenAI 65s burst / 2h `insufficient_quota`, Claude `rate_limit_error` / `overloaded_error` 529, Grok rate limits, MiniMax limits, and Ollama connection health) MUST trigger independent, persisted cooldown timers (`cooldownUntil`). When Key $X$ of Provider $P$ exhausts its quota or encounters a rate-limit, the system MUST rotate immediately to Key $X+1$ of Provider $P$, and if all keys of Provider $P$ are resting, cascade seamlessly to Provider $P+1$ (down to local Ollama with infinite quota) WITHOUT halting worker agents or pausing the swarm.
+
+**WHY**:
+Different AI providers enforce radically distinct rate-limit structures, token buckets, and replenishment schedules (rolling minute burst vs monthly billing caps vs midnight PST/UTC resets). Treating multi-vendor APIs homogeneously or applying global pauses upon a single vendor's quota exhaustion results in catastrophic cascade deadlocks and swarm starvation. An asymmetric, multi-tiered cascade with auto-recovery timers guarantees 100% resilient 24/7 autonomous learning extraction.
+
+**WHEN TO APPLY**:
+Multi-vendor LLM production gateways, autonomous 24/7 learning harvesters, continuous code synthesis pipelines, and distributed AI agent swarms.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Good: Tiered cascade with provider-specific quota signatures and isolated cooldowns
+export async function dispatchZeroCostAiSynthesis(prompt, systemInstruction) {
+  // Tier 1: Multi-Subscription Gemini Pool
+  try {
+    const res = await executeWithGeminiPool(prompt, systemInstruction);
+    if (res?.text) return res;
+  } catch (e) {}
+
+  // Tier 2: Anthropic Claude Pool (Haiku / Sonnet)
+  try {
+    const res = await executeWithClaudePool(prompt, systemInstruction);
+    if (res?.text) return res;
+  } catch (e) {}
+
+  // Tier 3: OpenAI ChatGPT / Codex Pool (GPT-4o / GPT-4o-mini)
+  try {
+    const res = await executeWithOpenAiPool(prompt, systemInstruction);
+    if (res?.text) return res;
+  } catch (e) {}
+
+  // Tier 4: xAI Grok Pool
+  try {
+    const res = await executeWithGrokPool(prompt, systemInstruction);
+    if (res?.text) return res;
+  } catch (e) {}
+
+  // Tier 5: MiniMax AI Pool
+  try {
+    const res = await executeWithMiniMaxPool(prompt, systemInstruction);
+    if (res?.text) return res;
+  } catch (e) {}
+
+  // Tier 6: Groq Free Tier (Llama 3.3 70B)
+  try {
+    const res = await executeWithGroqFree(prompt, systemInstruction);
+    if (res?.text) return res;
+  } catch (e) {}
+
+  // Tier 7: Local Ollama (Zero External Quota Fallback)
+  return await executeWithLocalOllama(prompt, systemInstruction);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern: Hard-failing or halting the entire swarm when one provider's quota runs out
+if (openAiError.status === 429) {
+  throw new Error("AI Quota exhausted: Halting all background workers");
+}
+```
+
+
 
