@@ -1290,5 +1290,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "weaviate-weaviate": {
+    "name": "weaviate/weaviate",
+    "officialUrl": "https://github.com/weaviate/weaviate",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-29T07:44:05.094Z",
+    "lastVerified": "2026-09-29T07:44:05.094Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
