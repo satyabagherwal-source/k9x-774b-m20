@@ -1004,5 +1004,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "topoteretes-cognee": {
+    "name": "topoteretes/cognee",
+    "officialUrl": "https://github.com/topoteretes/cognee",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T01:23:33.820Z",
+    "lastVerified": "2026-09-29T01:23:33.820Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

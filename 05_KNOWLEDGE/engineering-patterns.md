@@ -2080,3 +2080,104 @@ Applications that extract, compile, or execute binary binaries, dynamic plugins,
 
 **RULE**:
 All SQL database migration scripts and ORM initiali
+
+
+---
+
+## 149. False-Positive Warmup Status via Operational Metadata Logs (Issue #4879) (Harvested from topoteretes/cognee)
+
+- **Failure Mode**: A non-existent or unindexed knowledge graph was falsely reported as "warm" by `graph_warmup()`, skipping required indexing steps and failing queries downstream.
+- **Root Cause**: `graph_warmup()` checked for the presence of records in the `pipeline_runs` metadata table. However, lightweight operational calls like `remember()` wrote tracking rows to `pipeline_runs` without actually building or indexing graph nodes.
+- **Exact Prevention**: Separate operational task logging from structural indexing state. The warmup check must verify completed dataset construction flags or explicit structural schema versions rather than raw pipeline run execution records.
+  ```python
+  # BAD
+  def is_graph_warm(dataset_id: str) -> bool:
+      return db.query(PipelineRun).filter_by(dataset_id=dataset_id).count() > 0
+
+  # GOOD
+  def is_graph_warm(dataset_id: str) -> bool:
+      return db.query(DatasetState).filter_by(
+          dataset_id=dataset_id, 
+          status=DatasetStatus.INDEXED
+      ).first() is not None
+  ```
+
+### 3. Missing Default Query Contract Leaks (Issue #4641)
+- **Failure Mode**: Clients invoking `/v1/recall` or `/v1/search` without a `query` parameter received arbitrary placeholder answers instead of an HTTP 422 validation error.
+- **Root Cause**: Pydantic models used placeholder default values (`query: str = "default_query"`) instead of leaving the field explicitly required (`query: str = Field(...)`).
+- **Exact Prevention**: Never assign sentinel or arbitrary strings as defaults to mandatory domain fields in API schemas.
+  ```python
+  # BAD
+  class SearchRequest(BaseModel):
+      query: str = "what is cognee?"
+
+  # GOOD
+  class SearchRequest(BaseModel):
+      query: str = Field(..., min_length=1, description="Semantic search query target")
+  ```
+
+### 4. Unquoted Path Space Breakage in Hook Executions (Issue #5154)
+- **Failure Mode**: On macOS, Claude Plugin hooks aborted during pre-compaction routines because `CLAUDE_PLUGIN_ROOT` resolved to `/Users/user/Library/Application Support/...`, breaking shell tokeni
+
+
+---
+
+## 150. Multi-Tenant Provenance Graph Data Leakage (Commit `b6c5a576`, COG-6624) (Harvested from topoteretes/cognee)
+
+- **Failure Mode**: Requesting schema provenance visuali
+
+
+---
+
+## 151. File Encoding Error Escalation to Server 500 (Commit `7c1d5a36`, SDK-776) (Harvested from topoteretes/cognee)
+
+- **Failure Mode**: Uploading a corrupted file or binary data with invalid character encoding crashed the document loader, returning an HTTP 500 Internal Server Error.
+- **Root Cause**: `UnicodeDecodeError` was uncaught at the parser boundary and propagated to the global exception handler.
+- **Exact Prevention**: Catch decoding errors at file ingress boundaries and translate them into domain-appropriate HTTP 415 (Unsupported Media Type) or HTTP 422 exceptions.
+
+---
+
+
+---
+
+## 152. Net-New Universal Engineering Rules (Candidates for Master Brain) (Harvested from topoteretes/cognee)
+
+
+
+
+---
+
+## 153. Advisory Lock Safety Invariant (Harvested from topoteretes/cognee)
+
+**RULE**:
+No database lock (advisory lock, table lock, or file lock) may be acquired using direct imperative method calls (`lock()`) without an enclosing RAII context manager or `try...finally` block that guarantees release across all execution failure modes.
+
+```python
+# PROHIBITED (Violates Rule 72)
+async def process_embeddings(dataset_id: str):
+    await lock_service.acquire_lock(dataset_id)
+    # If build_graph_index raises an exception, the lock is never released
+    await build_graph_index(dataset_id)
+    await lock_service.release_lock(dataset_id)
+
+# MANDATORY (Rule 72 Compliant)
+async def process_embeddings(dataset_id: str):
+    async with lock_service.acquire_scoped_lock(dataset_id):
+        await build_graph_index(dataset_id)
+```
+
+**WHY**:
+Uncaught exceptions thrown during remote model API calls or embedding creation leave dangling locks held in persistent or connection-bound state. This leads to system-wide worker deadlocks that survive individual HTTP request lifecycles and require manual service restarts.
+
+**WHEN TO APPLY**:
+Apply to all database, embedded store, and cross-process resource lock acquisitions across all languages and frameworks.
+
+---
+
+
+---
+
+## 154. Contextual Data Ingress Error Mapping (Harvested from topoteretes/cognee)
+
+**RULE**:
+Data parser and ingestion boundaries must catch string decoding, schema seriali
