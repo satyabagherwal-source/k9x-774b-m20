@@ -2197,3 +2197,27 @@ Completion scripts rely on parsing raw output. If the tool injects ANSI colors o
 Any CLI tool written in Rust (using `clap` or similar) that reads environment variables for default styling.
 
 ---
+
+
+---
+
+## 156. The RFC-4512 Case-Insensitivity Invariant (Harvested from DefGuard/defguard)
+
+**RULE**:
+All directory service (LDAP, Active Directory) attribute lookups and comparisons MUST be treated as case-insensitive. You MUST normali
+
+
+---
+
+## 157. The Non-Collapsible IPAM Prefix Rule (Harvested from DefGuard/defguard)
+
+**RULE**:
+Automated IP address aggregation algorithms MUST NOT collapse adjacent IP addresses into `/31` (IPv4) or `/127` (IPv6) subnets unless the target interface is explicitly configured as a point-to-point link.
+
+**WHY**:
+While mathematically valid, `/31` and `/127` subnets lack distinct network and broadcast addresses. Many operating system routing tables, firewall engines (such as older `iptables` versions), and IPAM allocators reject these prefixes or handle them incorrectly, leading to dropped packets or failed configuration updates.
+
+**WHEN TO APPLY**:
+Any IP Address Management (IPAM) system, firewall rule generator, or VPN configuration engine (e.g., WireGuard `AllowedIPs` generator) that aggregates individual host IPs into CIDR blocks.
+
+---

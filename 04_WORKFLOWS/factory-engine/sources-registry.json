@@ -1030,5 +1030,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "defguard-defguard": {
+    "name": "DefGuard/defguard",
+    "officialUrl": "https://github.com/DefGuard/defguard",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T01:22:50.925Z",
+    "lastVerified": "2026-09-29T01:22:50.925Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
