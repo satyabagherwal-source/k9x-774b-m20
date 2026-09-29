@@ -2221,3 +2221,35 @@ While mathematically valid, `/31` and `/127` subnets lack distinct network and b
 Any IP Address Management (IPAM) system, firewall rule generator, or VPN configuration engine (e.g., WireGuard `AllowedIPs` generator) that aggregates individual host IPs into CIDR blocks.
 
 ---
+
+
+---
+
+## 158. The Fallback-Over-Failure Rule for Control Planes (Harvested from projectcontour/contour)
+
+**RULE**:
+A control plane translating dynamic user configurations to a data plane must never propagate a configuration payload that could cause a schema or validation rejection (NACK) by the data plane. If a sub-resource is invalid, the control plane must isolate the failure, prune the invalid node, substitute it with a safe fallback (e.g., a static 503 responder), and emit the rest of the configuration.
+
+**WHY**:
+In large-scale systems, a single invalid configuration (e.g., a typo in a route or an expired certificate) must not block updates for unrelated services. If the control plane pushes a globally invalid configuration, the data plane will reject it and keep its stale configuration. This prevents any new, valid configurations from being applied across the entire cluster, leading to cascading operational failures.
+
+**WHEN TO APPLY**:
+Apply this to any system implementing the Control Plane / Data Plane separation, such as API Gateways, Service Meshes, xDS servers, or dynamic routing engines.
+
+---
+
+
+---
+
+## 159. Cyclic Delegation Depth Guard (Harvested from projectcontour/contour)
+
+**RULE**:
+Any system that supports resource delegation, reference chaining, or hierarchical parent-child relationships must enforce a strict, non-configurable maximum recursion depth and maintain a visited-node registry during compilation to prevent stack exhaustion.
+
+**WHY**:
+Users will inevitably create cyclic references (e.g., Resource A references Resource B, which references Resource A) either by accident or as a malicious denial-of-service vector. Without explicit cycle detection and depth limits, recursive traversal algorithms will cause a stack overflow, crashing the control plane process and disrupting system availability.
+
+**WHEN TO APPLY**:
+Apply this during the compilation, parsing, or validation phase of any hierarchical configuration engine, DAG builder, or dependency resolution system.
+
+---

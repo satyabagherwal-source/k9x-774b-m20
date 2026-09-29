@@ -1043,5 +1043,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "projectcontour-contour": {
+    "name": "projectcontour/contour",
+    "officialUrl": "https://github.com/projectcontour/contour",
+    "sourceType": "github",
+    "technology": "HTML",
+    "lastChecked": "2026-09-29T01:22:53.367Z",
+    "lastVerified": "2026-09-29T01:22:53.367Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
