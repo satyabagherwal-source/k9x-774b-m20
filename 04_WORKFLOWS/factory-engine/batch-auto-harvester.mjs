@@ -5,6 +5,11 @@ import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { shouldHarvestSource } from './upgrade-checker.mjs';
 import { acquireTargetLock, releaseTargetLock, pushWithRebaseRetry } from './concurrency-coordinator.mjs';
+import {
+  synthesizeIntelligenceWithGemini,
+  saveGeminiLearningRecord,
+  promoteGeminiRulesToMasterBrain
+} from './gemini-brain-agent.mjs';
 
 
 
@@ -227,6 +232,37 @@ export function inspectCodebase(cloneDir, repoMeta) {
     audit.testSuites = testDirs;
   } catch (e) {}
 
+  // 5. Deep Git Patches for Bug Fixes
+  const deepFixPatches = [];
+  const targetFixes = (audit.fixCommits || []).slice(0, 5);
+  for (const fix of targetFixes) {
+    try {
+      const patchRaw = run(`git show ${fix.hash} --stat --patch`, cloneDir, 30000);
+      deepFixPatches.push({
+        sha: fix.hash,
+        date: fix.date,
+        message: fix.message,
+        patchSnippet: patchRaw.slice(0, 2000)
+      });
+    } catch (e) {}
+  }
+  audit.deepFixPatches = deepFixPatches;
+
+  // 6. Deep Key Source File Sampling
+  const discoveredSourceSnippets = {};
+  for (const cand of audit.keyFiles.slice(0, 3)) {
+    try {
+      const full = path.join(cloneDir, cand);
+      if (fs.existsSync(full)) {
+        discoveredSourceSnippets[cand] = fs.readFileSync(full, 'utf-8').slice(0, 2500);
+      }
+    } catch (e) {}
+  }
+  audit.discoveredSourceSnippets = discoveredSourceSnippets;
+  audit.name = `${repoMeta.owner}/${repoMeta.repo}`;
+  audit.platform = 'GitHub';
+  audit.target = repoMeta;
+
   return audit;
 }
 
@@ -240,9 +276,16 @@ export function writeProjectLearningArtifact(audit) {
   const filename = `${audit.repo.slug}-learnings.md`;
   const targetPath = path.join(destDir, filename);
 
-  const topFixesMarkdown = audit.fixCommits.slice(0, 15).map(c => 
-    `- **\`${c.hash}\`** (${c.date}): ${c.message}`
-  ).join('\n') || '- *No direct fix commits observed in shallow window.*';
+  let topFixesMarkdown = '';
+  if (Array.isArray(audit.deepFixPatches) && audit.deepFixPatches.length > 0) {
+    topFixesMarkdown = audit.deepFixPatches.map((p, idx) => {
+      return `### Incident Patch ${idx + 1}: \`${p.sha}\` (${p.date})\n**Commit Message**: ${p.message}\n\`\`\`diff\n${p.patchSnippet}\n\`\`\``;
+    }).join('\n\n---\n\n');
+  } else {
+    topFixesMarkdown = audit.fixCommits.slice(0, 15).map(c => 
+      `- **\`${c.hash}\`** (${c.date}): ${c.message}`
+    ).join('\n') || '- *No direct fix commits observed in shallow window.*';
+  }
 
   const languagesList = audit.languages.join(', ') || 'Multi-language';
   const keyFilesList = audit.keyFiles.map(k => `\`${k}\``).join(', ') || 'Standard structure';
@@ -434,8 +477,18 @@ export async function runBatchHarvester(urlList = null) {
       // Step B: 8-Dimensional Empirical Codebase Audit
       const audit = inspectCodebase(cloneDir, repoMeta);
 
-      // Step C: Write Learning Artifacts & Update Registry
-      writeProjectLearningArtifact(audit);
+      // Step C: Deep Intelligence Synthesis with Gemini
+      console.log(`🧠 [AI SYNTHESIS] Calling Deep Forensic Extraction for ${repoMeta.owner}/${repoMeta.repo}...`);
+      const geminiResult = await synthesizeIntelligenceWithGemini(audit);
+      if (geminiResult && geminiResult.text) {
+        saveGeminiLearningRecord(repoMeta.slug, geminiResult.text, audit);
+        const newRules = promoteGeminiRulesToMasterBrain(geminiResult.text, `${repoMeta.owner}/${repoMeta.repo}`);
+        if (newRules.length > 0) {
+          console.log(`🎯 [UNIVERSAL RULES PROMOTED] ${newRules.length} new rules added to Master Brain: ${newRules.map((r) => `Rule ${r.number}`).join(', ')}`);
+        }
+      } else {
+        writeProjectLearningArtifact(audit);
+      }
       updateSourcesRegistry(audit);
 
       // Step D: Git Add, Commit & Push to GitHub Remote (Atomic Rebase Retry)

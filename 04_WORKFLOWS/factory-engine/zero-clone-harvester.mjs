@@ -154,10 +154,10 @@ export function loadSourcesQueue(sourcePath = path.join(BRAIN_ROOT, 'repos.txt')
 }
 
 /**
- * Zero-Clone GitHub Harvest: Reads commits, PRs, issues, and raw code files via API
+ * Zero-Clone GitHub Harvest: Deep forensic extraction of real commit patches, diffs, issue post-mortems, and core source code
  */
 async function harvestGitHubZeroClone(target) {
-  console.log(`\n[ZERO-CLONE GITHUB] Harvesting: ${target.owner}/${target.repo}`);
+  console.log(`\n[DEEP FORENSIC GITHUB HARVEST] Harvesting: ${target.owner}/${target.repo}`);
 
   // 1. Repo Metadata
   const repoMeta = await compliantFetch(target.apiUrl);
@@ -168,45 +168,121 @@ async function harvestGitHubZeroClone(target) {
 
   const defaultBranch = repoMeta.default_branch || 'main';
 
-  // 2. Recent Commits (Top 30)
+  // 2. Recent Commits & Deep Patch Extraction
   const commitsRaw = await compliantFetch(`${target.apiUrl}/commits?per_page=30`) || [];
-  const commits = commitsRaw.map((c) => ({
+  const commits = (Array.isArray(commitsRaw) ? commitsRaw : []).map((c) => ({
     sha: c.sha?.slice(0, 8),
+    fullSha: c.sha,
     date: c.commit?.author?.date?.slice(0, 10),
-    message: c.commit?.message?.split('\n')[0] || ''
+    message: c.commit?.message?.split('\n')[0] || '',
+    fullMessage: c.commit?.message || ''
   }));
 
-  const fixCommits = commits.filter((c) =>
-    /(fix|bug|leak|race|crash|deadlock|regression|memory|security|revert|gotcha)/i.test(c.message)
+  const candidateFixCommits = commits.filter((c) =>
+    /(fix|bug|leak|race|crash|deadlock|regression|memory|security|revert|gotcha|workaround)/i.test(c.message)
   );
 
-  // 3. Closed Bug Issues & PR Discussions
-  const closedIssuesRaw = await compliantFetch(`${target.apiUrl}/issues?state=closed&labels=bug&per_page=15`) || [];
-  const closedIssues = closedIssuesRaw.map((issue) => ({
-    number: issue.number,
-    title: issue.title,
-    closedAt: issue.closed_at?.slice(0, 10),
-    bodySnippet: issue.body ? issue.body.slice(0, 200).replace(/\r?\n/g, ' ') : ''
-  }));
+  const targetFixCommits = candidateFixCommits.length > 0
+    ? candidateFixCommits.slice(0, 5)
+    : commits.slice(0, 3);
+
+  // FORENSIC DIFF EXTRACTION: Fetch the exact changed files and code patches
+  console.log(`[FORENSIC EXTRACTION] Fetching code patches for ${targetFixCommits.length} critical fix commits...`);
+  const deepFixPatches = [];
+  for (const fix of targetFixCommits) {
+    if (!fix.fullSha) continue;
+    const commitDetail = await compliantFetch(`${target.apiUrl}/commits/${fix.fullSha}`);
+    if (commitDetail && Array.isArray(commitDetail.files)) {
+      const filesWithPatches = commitDetail.files
+        .filter((f) => f.patch)
+        .slice(0, 3)
+        .map((f) => ({
+          filename: f.filename,
+          status: f.status,
+          additions: f.additions,
+          deletions: f.deletions,
+          patchSnippet: f.patch.slice(0, 1500) // Empirical code diff
+        }));
+
+      deepFixPatches.push({
+        sha: fix.sha,
+        date: fix.date,
+        message: fix.fullMessage.slice(0, 600),
+        files: filesWithPatches
+      });
+    }
+  }
+
+  // 3. Closed Bug Issues & Deep Post-Mortems
+  const closedIssuesRaw = await compliantFetch(`${target.apiUrl}/issues?state=closed&labels=bug&per_page=10`) || [];
+  const candidateIssues = (Array.isArray(closedIssuesRaw) && closedIssuesRaw.length > 0)
+    ? closedIssuesRaw
+    : (await compliantFetch(`${target.apiUrl}/issues?state=closed&per_page=8`) || []);
+
+  const deepIssues = [];
+  for (const issue of (Array.isArray(candidateIssues) ? candidateIssues.slice(0, 3) : [])) {
+    // Fetch comments to see the root cause analysis and resolution discussion
+    const commentsRaw = await compliantFetch(`${target.apiUrl}/issues/${issue.number}/comments?per_page=2`) || [];
+    const comments = Array.isArray(commentsRaw)
+      ? commentsRaw.map((c) => (c.body ? c.body.slice(0, 400).replace(/\r?\n/g, ' ') : '')).filter(Boolean)
+      : [];
+
+    deepIssues.push({
+      number: issue.number,
+      title: issue.title,
+      closedAt: issue.closed_at?.slice(0, 10),
+      bodySnippet: issue.body ? issue.body.slice(0, 600).replace(/\r?\n/g, ' ') : '',
+      resolutionComments: comments
+    });
+  }
 
   // 4. Closed Pull Requests
-  const closedPRsRaw = await compliantFetch(`${target.apiUrl}/pulls?state=closed&per_page=15`) || [];
-  const closedPRs = closedPRsRaw.map((pr) => ({
+  const closedPRsRaw = await compliantFetch(`${target.apiUrl}/pulls?state=closed&per_page=10`) || [];
+  const closedPRs = (Array.isArray(closedPRsRaw) ? closedPRsRaw : []).slice(0, 5).map((pr) => ({
     number: pr.number,
     title: pr.title,
     mergedAt: pr.merged_at?.slice(0, 10),
-    author: pr.user?.login
+    author: pr.user?.login,
+    bodySnippet: pr.body ? pr.body.slice(0, 300).replace(/\r?\n/g, ' ') : ''
   }));
 
-  // 5. Raw Manifest / Architecture Probing (Zero-Clone via raw.githubusercontent.com)
-  const manifestCandidates = ['package.json', 'pyproject.toml', 'Cargo.toml', 'go.mod', 'README.md'];
+  // 5. Codebase Directory Tree Analysis
+  let treeSample = [];
+  let coreSourceCandidates = [];
+  try {
+    const treeMeta = await compliantFetch(`${target.apiUrl}/git/trees/${defaultBranch}?recursive=1`);
+    if (treeMeta && Array.isArray(treeMeta.tree)) {
+      const allBlobs = treeMeta.tree.filter((t) => t.type === 'blob').map((t) => t.path);
+      treeSample = allBlobs.slice(0, 35);
+      coreSourceCandidates = allBlobs
+        .filter((p) => {
+          if (/test|spec|dist|build|\.min\.|vendor|node_modules|\.git|docs/i.test(p)) return false;
+          return /\.(ts|js|mjs|py|rs|go|cpp|c|h|tsx|jsx)$/i.test(p);
+        })
+        .slice(0, 3);
+    }
+  } catch (e) {}
+
+  // 6. Deep Key Source File Sampling (Real internal implementation code)
+  console.log(`[CORE SOURCE INSPECTION] Sampling ${coreSourceCandidates.length} foundational source modules...`);
+  const discoveredSourceSnippets = {};
+  for (const filePath of coreSourceCandidates) {
+    const rawUrl = `https://raw.githubusercontent.com/${target.owner}/${target.repo}/${defaultBranch}/${filePath}`;
+    const rawCode = await compliantFetch(rawUrl);
+    if (rawCode && typeof rawCode === 'string') {
+      discoveredSourceSnippets[filePath] = rawCode.slice(0, 2500);
+    }
+  }
+
+  // 7. Raw Manifest / Architecture Probing
+  const manifestCandidates = ['package.json', 'pyproject.toml', 'Cargo.toml', 'go.mod', 'README.md', 'Dockerfile'];
   const discoveredManifests = {};
 
   for (const m of manifestCandidates) {
     const rawUrl = `https://raw.githubusercontent.com/${target.owner}/${target.repo}/${defaultBranch}/${m}`;
     const rawContent = await compliantFetch(rawUrl);
     if (rawContent && typeof rawContent === 'string') {
-      discoveredManifests[m] = rawContent.slice(0, 1000); // Sample first 1000 chars for boundary inspection
+      discoveredManifests[m] = rawContent.slice(0, 2000);
     }
   }
 
@@ -220,19 +296,23 @@ async function harvestGitHubZeroClone(target) {
     defaultBranch,
     topics: repoMeta.topics || [],
     commits,
-    fixCommits,
-    closedIssues,
+    fixCommits: candidateFixCommits,
+    deepFixPatches,
+    closedIssues: deepIssues,
     closedPRs,
+    treeSample,
+    discoveredSourceSnippets,
+    discoveredManifests,
     manifests: Object.keys(discoveredManifests),
     timestamp: new Date().toISOString()
   };
 }
 
 /**
- * Zero-Clone Hugging Face Harvest: Reads model config, architecture, and tags via API
+ * Zero-Clone Hugging Face Harvest: Deep inspection of architecture, generation configs, tokenizer & model cards
  */
 async function harvestHuggingFaceZeroClone(target) {
-  console.log(`\n[ZERO-CLONE HUGGINGFACE] Harvesting: ${target.owner}/${target.repo}`);
+  console.log(`\n[DEEP FORENSIC HUGGINGFACE] Harvesting: ${target.owner}/${target.repo}`);
 
   const modelMeta = await compliantFetch(target.apiUrl);
   if (!modelMeta) {
@@ -240,26 +320,47 @@ async function harvestHuggingFaceZeroClone(target) {
     return null;
   }
 
-  // Raw config fetch
+  // 1. Fetch Model Card (README.md)
+  const readmeUrl = `https://huggingface.co/${target.owner}/${target.repo}/raw/main/README.md`;
+  const rawReadme = await compliantFetch(readmeUrl);
+
+  // 2. Fetch Architecture & Hyperparameters config.json
   const configUrl = `https://huggingface.co/${target.owner}/${target.repo}/raw/main/config.json`;
   const rawConfig = await compliantFetch(configUrl);
+
+  // 3. Fetch Generation Configuration
+  const genConfigUrl = `https://huggingface.co/${target.owner}/${target.repo}/raw/main/generation_config.json`;
+  const rawGenConfig = await compliantFetch(genConfigUrl);
+
+  // 4. Fetch Tokenizer Configuration
+  const tokConfigUrl = `https://huggingface.co/${target.owner}/${target.repo}/raw/main/tokenizer_config.json`;
+  const rawTokConfig = await compliantFetch(tokConfigUrl);
+
+  const discoveredManifests = {
+    'config.json': rawConfig ? JSON.stringify(rawConfig, null, 2).slice(0, 3000) : 'N/A',
+    'generation_config.json': rawGenConfig ? JSON.stringify(rawGenConfig, null, 2).slice(0, 1500) : 'N/A',
+    'tokenizer_config.json': rawTokConfig ? JSON.stringify(rawTokConfig, null, 2).slice(0, 1500) : 'N/A',
+    'README.md': typeof rawReadme === 'string' ? rawReadme.slice(0, 3500) : 'N/A'
+  };
 
   return {
     platform: 'Hugging Face',
     target,
     name: modelMeta.id,
-    description: modelMeta.pipeline_tag || 'ML Model',
+    description: modelMeta.pipeline_tag || 'ML Foundation Model',
     downloads: modelMeta.downloads || 0,
     likes: modelMeta.likes || 0,
     tags: modelMeta.tags || [],
     author: modelMeta.author || target.owner,
     architecture: rawConfig ? (rawConfig.architectures || [rawConfig.model_type || 'Custom']) : ['Model'],
-    configSnippet: rawConfig ? JSON.stringify(rawConfig).slice(0, 800) : 'N/A',
+    configSnippet: rawConfig ? JSON.stringify(rawConfig).slice(0, 1500) : 'N/A',
     commits: [],
     fixCommits: [],
+    deepFixPatches: [],
     closedIssues: [],
     closedPRs: [],
-    manifests: rawConfig ? ['config.json'] : [],
+    discoveredManifests,
+    manifests: Object.keys(discoveredManifests),
     timestamp: new Date().toISOString()
   };
 }
@@ -274,23 +375,47 @@ export function writeZeroCloneArtifact(audit) {
   const filename = `${audit.target.slug}-learnings.md`;
   const targetPath = path.join(destDir, filename);
 
-  const fixesMarkdown = audit.fixCommits.length > 0
-    ? audit.fixCommits.map((c) => `- **\`${c.sha}\`** (${c.date}): ${c.message}`).join('\n')
-    : '- *No direct fix commits observed in recent API window.*';
+  // Format Deep Code Patches
+  let patchesMarkdown = '';
+  if (Array.isArray(audit.deepFixPatches) && audit.deepFixPatches.length > 0) {
+    patchesMarkdown = audit.deepFixPatches.map((p, idx) => {
+      const filesDiff = p.files.map((f) => `**File**: \`${f.filename}\` (${f.status}, +${f.additions}/-${f.deletions})\n\`\`\`diff\n${f.patchSnippet}\n\`\`\``).join('\n\n');
+      return `### Incident Patch ${idx + 1}: \`${p.sha}\` (${p.date})\n**Commit Message**: ${p.message}\n\n${filesDiff}`;
+    }).join('\n\n---\n\n');
+  } else {
+    patchesMarkdown = (audit.fixCommits || []).map((c) => `- **\`${c.sha}\`** (${c.date}): ${c.message}`).join('\n') || '- *No direct fix commits observed in recent API window.*';
+  }
 
-  const issuesMarkdown = audit.closedIssues.length > 0
-    ? audit.closedIssues.map((i) => `- **#${i.number}** (${i.closedAt}): ${i.title}`).join('\n')
-    : '- *No recent closed bug issues fetched.*';
+  // Format Closed Issues with Root-Cause Comments
+  let issuesMarkdown = '';
+  if (Array.isArray(audit.closedIssues) && audit.closedIssues.length > 0) {
+    issuesMarkdown = audit.closedIssues.map((i) => {
+      const comments = i.resolutionComments && i.resolutionComments.length > 0
+        ? `\n  **Post-Mortem & Fix Analysis**:\n${i.resolutionComments.map((c) => `  > ${c}`).join('\n')}`
+        : '';
+      return `- **Issue #${i.number}** (${i.closedAt}): **${i.title}**\n  *Symptoms*: ${i.bodySnippet}${comments}`;
+    }).join('\n\n');
+  } else {
+    issuesMarkdown = '- *No recent closed bug issues fetched.*';
+  }
 
-  const prsMarkdown = audit.closedPRs.length > 0
+  // Format Core Source Code Snippets
+  let sourcesMarkdown = '';
+  if (audit.discoveredSourceSnippets && Object.keys(audit.discoveredSourceSnippets).length > 0) {
+    sourcesMarkdown = Object.entries(audit.discoveredSourceSnippets).map(([filePath, code]) => {
+      return `### Core Architecture Module: \`${filePath}\`\n\`\`\`\n${code}\n\`\`\``;
+    }).join('\n\n');
+  }
+
+  const prsMarkdown = (audit.closedPRs || []).length > 0
     ? audit.closedPRs.map((p) => `- **PR #${p.number}** (${p.mergedAt || 'closed'}): ${p.title} (@${p.author})`).join('\n')
     : '- *No recent PR discussions fetched.*';
 
-  const content = `# Forensic Learning Record (Zero-Clone): ${audit.name}
+  const content = `# Forensic Learning Record (Deep Inspection): ${audit.name}
 
 > **Canonical Artifact**: \`07_PROJECT_LEARNING/${filename}\`  
 > **Source Platform**: ${audit.platform} ([${audit.target.webUrl}](${audit.target.webUrl}))  
-> **Harvest Method**: 100% Zero-Clone API & Raw Web Stream (0 bytes downloaded to disk)  
+> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
 > **Harvest Timestamp**: ${audit.timestamp}  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
@@ -305,17 +430,18 @@ export function writeZeroCloneArtifact(audit) {
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation (Zero-Clone Stream)
+## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: ${audit.manifests.join(', ') || 'Remote API meta'}.
 - Evaluated system abstractions and modular contracts.
+${sourcesMarkdown ? `\n${sourcesMarkdown}\n` : ''}
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns extracted from closed production bug issues:
+- Exception handling patterns and defect resolutions extracted from closed production bug issues:
 ${issuesMarkdown}
 
 ### D4: Resource Lifecycle & Leak Defenses
@@ -330,9 +456,10 @@ ${issuesMarkdown}
 ### D7: Build, CI/CD, Deployment & Tooling
 - Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
 
-### D8: Forensic Bug Fixes & PR Resolutions
-Observed empirical fixes and PR updates:
-${fixesMarkdown}
+### D8: Forensic Bug Fixes & Real Production Code Patches
+Observed empirical fixes and code patches:
+
+${patchesMarkdown}
 
 #### Recent Merged Pull Requests:
 ${prsMarkdown}
@@ -341,13 +468,13 @@ ${prsMarkdown}
 
 ## 3. Empirical Evidence & Compliance Certification
 - **Evidence Provenance**: Fetched directly from verified official ${audit.platform} REST API.
-- **Zero Disk Footprint**: 0 bytes of git repository files were stored locally.
+- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
 - **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
 
 ---
 
 ## 4. Promotion & Integration Status
-- **Status**: HARVESTED_ZERO_CLONE
+- **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
 `;
 

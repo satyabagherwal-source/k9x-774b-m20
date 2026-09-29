@@ -42,16 +42,49 @@ export async function synthesizeIntelligenceWithGemini(auditData) {
     return null;
   }
 
-  const systemInstruction = `You are the Lead Autonomous AI Systems Architect for AI-Builder-Brain (Canonical Root: C:\\AI-Builder-Brain).
-Your mission is to extract DEEP, RIGOROUS, ACTIONABLE engineering intelligence from software repositories.
-You NEVER write fluff, generic summaries, or promotional text.
-You extract:
-1. MICRO-LEARNINGS: Exact edge-case traps, runtime gotchas, hidden concurrency races, memory leak vectors, serialization bugs, and framework pitfalls.
-2. MACRO-ARCHITECTURAL PATTERNS: Structural boundaries, modular isolation, dependency inversion, and contract design.
-3. UNIVERSAL ENGINEERING RULES: Highly opinionated, empirical rules (suitable for Rules 72+) with strict Negative Constraints and Verified Implementation Patterns.
-4. REUSABLE CODE RECIPES: Concrete code snippets illustrating how to prevent the bug or implement the pattern.`;
+  const systemInstruction = `You are the Lead Autonomous Systems Forensic Architect for AI-Builder-Brain (Canonical Root: C:\\AI-Builder-Brain).
+Your mission is to perform an EXHAUSTIVE, FULL-SPECTRUM, DEEP FORENSIC LEARNING EXTRACTION ("totally puri learning nichod lena") from software repositories.
+You NEVER write high-level summaries, promotional fluff, or generic bullet points.
 
-  const prompt = `Perform an exhaustive, multi-dimensional forensic extraction on the following repository:
+CRITICAL MANDATES:
+1. FORENSIC REAL INCIDENTS (Incidents 1 to 5+):
+Based directly on the provided git commit patches, issue post-mortems, and code diffs, extract at least 4 to 8 REAL, CONCRETE PRODUCTION INCIDENTS.
+For EACH incident, you MUST provide:
+- Incident Title & ID: e.g. Incident 1: [Specific Technical Description] (BUG-[REPO]-01)
+- Context & Subsystem: Exact file path, component, or subsystem
+- What Was Expected: Required architectural and runtime invariant
+- What Actually Happened: Concrete forensic failure mode (race condition, memory leak, use-after-free, stale cache, type coercion, deadlock, etc.)
+- Evidence in Repo: Commit SHA, PR #, File path and line numbers
+- Root Cause: Concrete technical breakdown of the flawed assumption
+- Remediation Code Diff: Markdown code block showing before (-) and after (+) or fixed pattern
+- Lesson & Invariant: Universal lesson learned
+- Promotion Decision: Rule candidate for Master Brain or Brain refinement
+
+2. 8-DIMENSIONAL DEEP SWEEP (D1 to D8):
+Analyze all 8 dimensions with concrete technical depth based on the code files, manifests, and patches.
+
+3. NET-NEW UNIVERSAL ENGINEERING RULES:
+Formulate 1 to 3 battle-tested Universal Engineering Rules in the exact standard format:
+## X. [Rule Title]
+**RULE**:
+[Clear statement of invariant]
+**WHY**:
+[Forensic technical explanation of failure modes avoided]
+**WHEN TO APPLY**:
+[Target subsystems, languages, or architectural boundaries]
+**VERIFIED IMPLEMENTATION PATTERN**:
+\`\`\`language
+// Complete, working, production-grade pattern
+\`\`\`
+**NEGATIVE CONSTRAINT**:
+\`\`\`language
+// Anti-pattern to NEVER write
+\`\`\`
+
+4. ACTIONABLE AGENT SKILL & CHECKLIST:
+Provide a step-by-step verification checklist for any AI coding agent building similar systems.`;
+
+  const prompt = `Perform an exhaustive, multi-dimensional forensic extraction ("totally puri learning nichod lena") on the following repository:
 
 Target Repository: ${auditData.name} (${auditData.platform})
 URL: ${auditData.target?.webUrl || auditData.name}
@@ -59,34 +92,57 @@ Language/Ecosystem: ${auditData.language}
 Stars: ${auditData.stars || 0}
 Topics: ${(auditData.topics || []).join(', ')}
 
-OBSERVED COMMITS & FIXES:
-${JSON.stringify(auditData.fixCommits || auditData.commits?.slice(0, 15), null, 2)}
+======================================================================
+1. OBSERVED PRODUCTION COMMIT PATCHES & CODE DIFFS:
+======================================================================
+${JSON.stringify(auditData.deepFixPatches || auditData.fixCommits || [], null, 2)}
 
-OBSERVED CLOSED BUG ISSUES:
-${JSON.stringify(auditData.closedIssues?.slice(0, 10), null, 2)}
+======================================================================
+2. OBSERVED CLOSED BUG ISSUES & DEVELOPER POST-MORTEMS:
+======================================================================
+${JSON.stringify(auditData.closedIssues || [], null, 2)}
 
-OBSERVED CLOSED PULL REQUESTS:
-${JSON.stringify(auditData.closedPRs?.slice(0, 10), null, 2)}
+======================================================================
+3. CORE ARCHITECTURAL SOURCE CODE SNIPPETS:
+======================================================================
+${JSON.stringify(auditData.discoveredSourceSnippets || {}, null, 2)}
 
-DISCOVERED CONFIGS/MANIFESTS:
-${JSON.stringify(auditData.manifests || [], null, 2)}
+======================================================================
+4. MANIFESTS, CONFIGS & CI/CD INVARIANTS:
+======================================================================
+${JSON.stringify(auditData.discoveredManifests || auditData.manifests || [], null, 2)}
+
+======================================================================
+5. REPOSITORY DIRECTORY TREE STRUCTURE:
+======================================================================
+${JSON.stringify(auditData.treeSample || [], null, 2)}
 
 TASK INSTRUCTIONS:
-Structure your response in markdown with the following EXACT sections:
+Structure your response in markdown with the following EXACT canonical sections:
 
-# Forensic Learning Record: ${auditData.name}
+# Project Learning Record (Full-Spectrum Forensic Harvest): ${auditData.name}
 
 ## 1. Executive Forensic Architecture & System Mechanics
 Explain the exact technical problem this repo solves, its architectural boundaries, and critical subsystem abstractions.
 
-## 2. Deep Micro-Learnings & Runtime Gotchas (Chhoti se Chhoti Aur Badi se Badi Learnings)
-Detail at least 4-6 specific micro-level failure modes, edge cases, or bugs uncovered from the issues and commits:
-- Failure Mode / Pitfall: What went wrong?
-- Root Cause: Why did it happen?
-- Exact Prevention / Fix: Code pattern or guard to prevent it.
+## 2. Forensic Incident & Learning Records (Incident 1 to 5+)
+For each real bug fix/incident discovered from the commits, patches, and issues, document:
+### Incident X: [Specific Technical Title] (BUG-[SLUG]-0X)
+- **Context**: Subsystem and file path
+- **What Was Expected**: The required functional and invariant behavior
+- **What Actually Happened**: The precise failure mode
+- **Evidence in Repo**: Commit SHA, PR link, exact file path, and tests
+- **Root Cause**: Deep forensic root-cause analysis
+- **Remediation & Code Diff**:
+\`\`\`language
+// - Buggy code / What failed
+// + Fixed pattern / Safe invariant
+\`\`\`
+- **Lesson**: Generalized engineering invariant
+- **Promotion Decision**: Promoted as Universal Rule candidate or Brain refinement
 
-## 3. 8-Dimensional Multi-Axis Forensic Analysis
-- **D1: Structural Boundaries & Modularity**:
+## 3. 8-Dimensional Multi-Axis Forensic Deep Sweep
+- **D1: Architecture & Structural Boundaries**:
 - **D2: Asynchronous State & Concurrency Defense**:
 - **D3: Error Boundaries, Recovery & Rollback Protocols**:
 - **D4: Resource Lifecycle & Leak Defenses (Memory, Sockets, Descriptors)**:
@@ -96,17 +152,19 @@ Detail at least 4-6 specific micro-level failure modes, edge cases, or bugs unco
 - **D8: Concrete Bug Fixes & Forensic Patches**:
 
 ## 4. Net-New Universal Engineering Rules (Candidates for Master Brain)
-Provide 1 or 2 net-new Universal Engineering Rules in the exact standard format:
+Provide 1 to 3 net-new Universal Engineering Rules in the exact standard format:
 ## X. [Rule Title]
-
 **RULE**:
-[Clear statement of invariant]
-
 **WHY**:
-[Forensic technical explanation of failure modes avoided]
-
 **WHEN TO APPLY**:
-[Target subsystems, languages, or architectural boundaries]
+**VERIFIED IMPLEMENTATION PATTERN**:
+\`\`\`language
+// Complete, working pattern
+\`\`\`
+**NEGATIVE CONSTRAINT**:
+\`\`\`language
+// Anti-pattern to NEVER write
+\`\`\`
 
 ## 5. Actionable Agent Skill & Implementation Checklist
 Provide a step-by-step verification checklist for any AI coding agent building similar systems.`;
@@ -126,13 +184,16 @@ Provide a step-by-step verification checklist for any AI coding agent building s
 export function promoteGeminiRulesToMasterBrain(geminiText, sourceRepoName) {
   if (!geminiText || !fs.existsSync(PATTERNS_PATH)) return [];
 
-  const ruleRegex = /##\s+(?:X|\d+)\.\s*(.+?)\n([\s\S]*?)(?=\n##\s+(?:X|\d+)\.|\n##\s+5\.|\Z)/gi;
+  const ruleRegex = /(?:##|###)\s+(?:Rule\s+)?(?:X|\d+)[:.]?\s*(.+?)\n([\s\S]*?)(?=(?:\n(?:##|###)\s+(?:Rule\s+)?(?:X|\d+)[:.]?|\n##\s+5\.|\n###\s+5\.|\Z))/gi;
   let match;
   const promotedRules = [];
 
   while ((match = ruleRegex.exec(geminiText)) !== null) {
     const ruleTitle = match[1].trim();
     const ruleBody = match[2].trim();
+
+    // Skip section headers or invalid titles
+    if (/^(net-new|universal|forensic|executive|actionable|project|empirical)/i.test(ruleTitle)) continue;
 
     // Check if rule already exists to avoid duplicates
     const currentPatterns = fs.readFileSync(PATTERNS_PATH, 'utf-8');
