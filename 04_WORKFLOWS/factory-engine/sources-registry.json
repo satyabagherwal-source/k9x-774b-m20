@@ -1614,5 +1614,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "seaql-sea-orm": {
+    "name": "SeaQL/sea-orm",
+    "officialUrl": "https://github.com/SeaQL/sea-orm",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T21:27:45.072Z",
+    "lastVerified": "2026-09-29T21:27:45.072Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
