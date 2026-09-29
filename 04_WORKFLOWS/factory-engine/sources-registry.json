@@ -1601,5 +1601,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ascending-llc-jarvis-registry": {
+    "name": "ascending-llc/jarvis-registry",
+    "officialUrl": "https://github.com/ascending-llc/jarvis-registry",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T21:27:35.272Z",
+    "lastVerified": "2026-09-29T21:27:35.272Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
