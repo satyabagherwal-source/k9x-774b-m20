@@ -2499,3 +2499,25 @@ Any CLI tool that manages local state files (`~/.config`, `~/.local/share`).
 
 **RULE**:
 Never pass raw user input directly into a retrieval pipeline. Every retrieval operation must be preceded by a "Query Canonicali
+
+
+---
+
+## 178. Strict Schema Validation for CLI & Configuration Boundaries (Harvested from Hmbown/Codewhale)
+
+**RULE**:
+All configuration inputs, whether loaded from files, environment variables, or CLI arguments, must be validated against a strictly-typed schema at the application boundary. Permissive parsing maps (e.g., untyped JSON/YAML maps) must not be used to store configuration state. Any unknown keys or invalid value types must trigger an immediate execution failure (non-
+
+
+---
+
+## 179. Explicit Terminal State Restoration in TUI Applications (Harvested from Hmbown/Codewhale)
+
+**RULE**:
+Any terminal user interface (TUI) application that modifies terminal states (such as enabling raw mode, hiding the cursor, capturing the mouse, or switching to an alternate screen) must wrap its execution in a panic-safe boundary (e.g., Rust's `catch_unwind` or a robust `Drop` implementation) that guarantees the restoration of the original terminal state upon exit, crash, or focus loss.
+
+**WHY**:
+If a TUI application crashes or exits abnormally without restoring the terminal state, the user's shell is left in a broken state (e.g., hidden cursor, disabled echo, or trapped mouse input). This ruins the user experience and requires manual terminal resets.
+
+**WHEN TO APPLY**:
+Apply this rule to all interactive terminal applications utili
