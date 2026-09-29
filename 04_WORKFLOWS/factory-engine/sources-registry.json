@@ -1251,5 +1251,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "letta-ai-letta": {
+    "name": "letta-ai/letta",
+    "officialUrl": "https://github.com/letta-ai/letta",
+    "sourceType": "github",
+    "technology": "Multi-language",
+    "lastChecked": "2026-09-29T07:44:38.526Z",
+    "lastVerified": "2026-09-29T07:44:38.526Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

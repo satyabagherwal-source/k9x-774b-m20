@@ -2581,3 +2581,25 @@ LLMs are prone to "context-bleeding," where they return error pages, conversatio
 Any system where an LLM acts as a data provider for a programmatic pipeline.
 
 ---
+
+
+---
+
+## 184. The "No-Pickle" IPC Invariant (Harvested from letta-ai/letta)
+
+**RULE**:
+Never use `pickle` or language-specific binary seriali
+
+
+---
+
+## 185. The "Partial Update" Null-Safety Rule (Harvested from letta-ai/letta)
+
+**RULE**:
+For all PATCH/Update operations, distinguish between `None` (explicitly set to null) and `Unset` (field not provided).
+
+**WHY**:
+Defaulting missing fields to `False` or `0` causes "silent configuration drift," where an API call intended to update one field inadvertently resets others to default values.
+
+**WHEN TO APPLY**:
+RESTful API controllers, database ORM models, and configuration management modules.
