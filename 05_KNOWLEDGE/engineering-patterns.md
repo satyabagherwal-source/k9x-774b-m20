@@ -3219,47 +3219,5 @@ if (openAiError.status === 429) {
 }
 ```
 
----
-
-## 217. Zero-Leak Data Boundary & Air-Gapped Local Inference Invariant for Autonomous Brain Engines (Harvested from AI-Builder-Brain Data Sovereignty Defense)
-
-**RULE**:
-Autonomous intelligence extraction systems and multi-agent knowledge harvesters MUST enforce a multi-layered data sovereignty boundary:
-1. **Pre-Dispatch Sanitization Filter**: Every prompt or code block destined for external commercial cloud APIs (Google Gemini, OpenAI ChatGPT/Codex, Anthropic Claude, xAI Grok, MiniMax) MUST be automatically pre-processed by a zero-leak sanitizer that redacts credentials, bearer tokens (`ghp_*`, `sk-*`, `AQ.*`), local workstation usernames and filesystem paths (`C:\Users\<USER>\...`), private IPs, and proprietary identifiers.
-2. **Air-Gapped Sovereign Local Fallback**: For confidential internal codebases, private enterprise repositories, or high-security projects, external cloud APIs MUST be bypassable via an `AIR_GAP_MODE` flag. All reasoning and synthesis MUST execute exclusively on a local, self-hosted LLM instance (e.g., Local Ollama running DeepSeek-R1 or Qwen2.5-Coder) where exactly 0 bytes transmit across the internet.
-3. **Stateless Asymmetric Extraction**: When public repositories are harvested using commercial APIs, the external LLM is provided ONLY with public, isolated commit patches. The synthesized Master Brain, universal engineering rules, and project learning archives MUST remain strictly within the user's private repository and local storage.
-
-**WHY**:
-Commercial AI providers operate under varying data retention policies, and public consumer web chats reserve rights to train on user conversations. Sending unscrubbed developer traces, internal credentials, or proprietary intellectual property to remote endpoints risks corporate exposure, token theft, and model absorption. Automated pre-dispatch sanitization paired with local air-gapped inference guarantees 100% intellectual property protection and regulatory compliance.
-
-**WHEN TO APPLY**:
-All autonomous AI coding agents, background knowledge harvesters, proprietary software synthesis engines, and enterprise AI workflows.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```javascript
-// Good: Automated pre-dispatch sanitization & Air-Gap routing
-export async function dispatchSecureAiSynthesis(rawPrompt, rawSystem, options = {}) {
-  // 1. Air-Gap Mode: 100% local, zero bytes leave machine
-  if (options.airGap || process.env.AIR_GAP_MODE === 'true') {
-    return await executeWithLocalOllama(rawPrompt, rawSystem);
-  }
-
-  // 2. Pre-dispatch Sanitization: Scrub secrets, tokens, and local user paths
-  const safePrompt = sanitizePayloadForExternalAi(rawPrompt);
-  const safeSystem = sanitizePayloadForExternalAi(rawSystem);
-
-  // 3. Dispatch to commercial API with non-training developer endpoint
-  return await executeWithCloudProviderPool(safePrompt, safeSystem);
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```javascript
-// Anti-pattern: Sending raw workstation code, internal paths, and secrets directly to external cloud API
-const rawCodeWithTokens = fs.readFileSync(".brain-secrets.json");
-await fetch("https://external-api.com/v1/chat", { body: rawCodeWithTokens }); // CATASTROPHIC DATA LEAK
-```
-
-
 
 
