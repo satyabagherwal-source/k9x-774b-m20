@@ -2253,3 +2253,19 @@ Users will inevitably create cyclic references (e.g., Resource A references Reso
 Apply this during the compilation, parsing, or validation phase of any hierarchical configuration engine, DAG builder, or dependency resolution system.
 
 ---
+
+
+---
+
+## 160. NEVER Apply Transport-Level Compression to Infinite or Chunked Streams (Harvested from kube-rs/kube)
+
+**RULE**:
+Any HTTP client or middleware layer handling infinite, long-polling, Server-Sent Events (SSE), or chunked streaming APIs must explicitly disable transport-level compression (e.g., G
+
+
+---
+
+## 161. ALWAYS Percent-Decode URI-Derived Credentials Before Transport Authentication Encoding (Harvested from kube-rs/kube)
+
+**RULE**:
+When extracting authentication credentials (usernames, passwords) from a URI (e.g., database connection strings, proxy URLs) to construct downstream authentication headers (such as `Authori

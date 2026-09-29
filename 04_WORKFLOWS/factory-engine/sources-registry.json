@@ -1056,5 +1056,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kube-rs-kube": {
+    "name": "kube-rs/kube",
+    "officialUrl": "https://github.com/kube-rs/kube",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T01:22:53.611Z",
+    "lastVerified": "2026-09-29T01:22:53.611Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
