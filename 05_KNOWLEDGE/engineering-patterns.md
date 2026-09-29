@@ -2929,3 +2929,11 @@ async def main():
 
 **RULE**:
 Never allow an active agentic state machine or background processing loop to write directly to a network socket (WebSocket, gRPC stream, SSE). All telemetry, logging, and state updates **MUST** be written to an intermediate, bounded, in-memory queue. A dedicated, isolated consumer task **MUST** handle the network seriali
+
+
+---
+
+## 208. The "Initialization-Before-Recovery" Invariant (Harvested from Fosowl/agenticSeek)
+
+**RULE**:
+Any system utili

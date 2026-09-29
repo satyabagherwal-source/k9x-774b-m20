@@ -1524,5 +1524,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fosowl-agenticseek": {
+    "name": "Fosowl/agenticSeek",
+    "officialUrl": "https://github.com/Fosowl/agenticSeek",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T16:24:42.144Z",
+    "lastVerified": "2026-09-29T16:24:42.144Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
