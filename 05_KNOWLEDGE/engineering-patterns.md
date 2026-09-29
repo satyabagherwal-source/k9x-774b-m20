@@ -1922,3 +1922,92 @@ export function useSystemNavigationBar(targetColor: string) {
 ```
 
 ---
+
+
+---
+
+## 139. Integer Overflow in HNSW Derived Layer Boundaries (#10546) (Harvested from qdrant/qdrant)
+
+- **Failure Mode**: Specifying large positive values for `m` (e.g., `m = 9223372036854775808`) in JSON collection creation requests caused 64-bit release builds to accept the payload, but subsequent graph traversal queries failed or returned incorrect self-matches.
+- **Root Cause**: `HnswGraphConfig::new` derived the maximum number of edges for ground level $0$ via `m0 = m * 2`. In Rust release mode, integer arithmetic wrapping (`wrapping_mul`) occurs without panicking. $2^{63} \times 2 \pmod{2^{64}} = 0$, leading to `m0 = 0`. Graph construction allocated
+
+
+---
+
+## 140. Windows Storage Directory Path Traversal via Relative Segments (#10418) (Harvested from qdrant/qdrant)
+
+- **Failure Mode**: On Windows, creating a collection named `.` was accepted by generic validator functions, causing Qdrant to point the collection's data directory directly to the parent `storage/collections/` directory itself, corrupting the root storage tree on drop/purge operations.
+- **Root Cause**: Windows path normali
+
+
+---
+
+## 141. Premature Pagination Truncation Hazard in Ranking Pipelines (#10500) (Harvested from qdrant/qdrant)
+
+- **Failure Mode**: Maximal Marginal Relevance (MMR) search returned far fewer points than requested when pagination `offset` was configured.
+- **Root Cause**: The ranking pipeline truncated the intermediate candidate set using `.take(limit)` *before* applying the pagination `.skip(offset)` stage. Slicing candidates prior to offsetting starved downstream stages of valid items.
+- **Exact Prevention / Fix**: Fetch `limit + offset` candidates through search and re-ranking filters, performing slicing (`.skip(offset).take(limit)`) as the final step before returning client payloads.
+
+```rust
+// BAD: Applying limit before offset in vector post-processing
+let candidates = mmr_rerank(candidates, limit); // Keeps only N items
+let page = candidates.into_iter().skip(offset).collect(); // Returns N - offset items!
+
+// GOOD: Fetch total required coverage window prior to slicing
+let required_candidates = limit.saturating_add(offset);
+let reranked = mmr_rerank(candidates, required_candidates);
+let page: Vec<_> = reranked.into_iter().skip(offset).take(limit).collect();
+```
+
+### 5. Read-Lock Contention via Synchronous File System Probes (#10457, #10455)
+- **Failure Mode**: Asynchronous worker threads stalled under heavy query loads when monitoring memory page residency.
+- **Root Cause**: Executing blocking system calls (`mincore`/`cachestat`) to probe page residency inside locked read guards (`RwLock::read`) held segment locks across slow OS kernel page-table walks, causing writer threads and other async workers to back up waiting for lock release.
+- **Exact Prevention / Fix**: Isolate hardware/OS probing routines outside critical read-lock sections by acquiring atomic pointer snapshots or releasing read locks before triggering kernel residency probes.
+
+---
+
+
+---
+
+## 142. Invariant Precision Vector Normalization (Harvested from qdrant/qdrant)
+
+**RULE**:
+Storage engines and mathematical processors MUST NEVER apply mutating transformation routines (such as float normali
+
+
+---
+
+## 143. Lock-Free OS Primitive Probing Invariant (Harvested from qdrant/qdrant)
+
+**RULE**:
+High-throughput concurrent systems MUST NOT trigger synchronous Operating System system calls (such as file metadata queries, memory residency probes like `mincore`/`cachestat`, or synchronous disk `fstat`) while holding critical read or write lock guards (`RwLock`/`Mutex`).
+
+**WHY**:
+OS kernel context switches and page table walks introduce dynamic latency spikes. Holding shared read locks (`RwLock::read`) during system calls blocks writer threads from acquiring exclusive write locks. Under heavy concurrent query volume, this degrades thread-pool capacity and causes cascading request timeouts.
+
+**WHEN TO APPLY**:
+All systems performing async I/O, resource monitoring, metric emission, or page-cache inspection under high concurrency.
+
+```rust
+// BAD Pattern: OS probe inside lock guard
+pub fn get_residency_bad(segment: &Arc<RwLock<Segment>>) -> Result<f32, Error> {
+    let guard = segment.read(); // Read lock held!
+    let stats = unsafe { mincore_probe(guard.mmap_ptr(), guard.len()) }?; // Syscall under lock
+    Ok(stats)
+}
+
+// Verified Implementation Pattern: Detached Handle Extraction
+pub fn get_residency_good(segment: &Arc<RwLock<Segment>>) -> Result<f32, Error> {
+    // 1. Extract raw atomic pointer/len handle rapidly under lock
+    let (ptr, len) = {
+        let guard = segment.read();
+        (guard.mmap_ptr(), guard.len())
+    }; // Lock released immediately!
+
+    // 2. Execute blocking or OS-level kernel probes outside lock boundary
+    let stats = unsafe { cachestat_probe(ptr, len) }?;
+    Ok(stats)
+}
+```
+
+---
