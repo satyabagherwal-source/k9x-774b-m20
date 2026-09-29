@@ -1199,5 +1199,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "devspace-sh-devspace": {
+    "name": "devspace-sh/devspace",
+    "officialUrl": "https://github.com/devspace-sh/devspace",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-29T07:44:27.060Z",
+    "lastVerified": "2026-09-29T07:44:27.060Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

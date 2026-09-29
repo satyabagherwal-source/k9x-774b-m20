@@ -2521,3 +2521,17 @@ If a TUI application crashes or exits abnormally without restoring the terminal 
 
 **WHEN TO APPLY**:
 Apply this rule to all interactive terminal applications utili
+
+
+---
+
+## 180. The "Graceful Drain" Invariant (Harvested from devspace-sh/devspace)
+
+**RULE**:
+Any system that manages the lifecycle of a remote process (container/service) MUST implement a two-phase shutdown: (1) Send `SIGTERM` and wait for a defined `GracePeriod`, (2) Send `SIGKILL` only after the period expires or the process exits.
+
+**WHY**:
+Immediate termination causes data corruption in sync engines and prevents cleanup of temporary state (e.g., file locks, socket descriptors).
+
+**WHEN TO APPLY**:
+Any CLI tool managing remote container lifecycles, background workers, or distributed sync agents.
