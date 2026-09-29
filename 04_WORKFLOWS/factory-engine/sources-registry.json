@@ -1121,5 +1121,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "saadeghi-daisyui": {
+    "name": "saadeghi/daisyui",
+    "officialUrl": "https://github.com/saadeghi/daisyui",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-29T01:27:10.185Z",
+    "lastVerified": "2026-09-29T01:27:10.185Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

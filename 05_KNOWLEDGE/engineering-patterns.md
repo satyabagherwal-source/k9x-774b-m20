@@ -2414,3 +2414,41 @@ Open-source documentation is a high-value target for "typosquatting" and malicio
 
 **WHEN TO APPLY**:
 Showcase pages, community-contributed examples, and documentation metadata.
+
+
+---
+
+## 172. The Specificity Eraser Rule (Zero-Specificity Component Selectors) (Harvested from saadeghi/daisyui)
+
+**RULE**:
+All base component selectors in a utility-first CSS framework must wrap their layout-affecting properties in `:where()` to reduce their specificity to
+
+
+---
+
+## 173. Logical Property Invariant for Bi-directional (RTL/LTR) Layouts (Harvested from saadeghi/daisyui)
+
+**RULE**:
+Never use physical directional properties (`left`, `right`, `margin-left`, `padding-right`, `border-top-left-radius`) for layout positioning. Use logical equivalents (`inset-inline-start`, `margin-inline-start`, `border-start-start-radius`) or explicit RTL overrides.
+
+**WHY**:
+Prevents layout breakage, misaligned indicators (e.g., avatar online dots), and broken drawers when switching document direction (`dir="rtl"`).
+
+**WHEN TO APPLY**:
+All UI components, design systems, and CSS frameworks targeting global audiences.
+
+```css
+/* Bad: Hardcoded physical directions */
+.avatar-dot {
+  position: absolute;
+  right: 0;
+}
+
+/* Good: Logical properties */
+.avatar-dot {
+  position: absolute;
+  inset-inline-end: 0;
+}
+```
+
+---
