@@ -1368,5 +1368,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "chroma-core-chroma": {
+    "name": "chroma-core/chroma",
+    "officialUrl": "https://github.com/chroma-core/chroma",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T14:30:03.680Z",
+    "lastVerified": "2026-09-29T14:30:03.680Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
