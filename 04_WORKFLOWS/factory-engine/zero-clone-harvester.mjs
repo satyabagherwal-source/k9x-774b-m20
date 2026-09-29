@@ -58,6 +58,9 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * Polite HTTP Fetch with Rate-Limit & ToS Compliance
  */
 async function compliantFetch(url, customHeaders = {}) {
+  // Proactive inter-request pacing sleep to prevent temporary secondary rate-limit blocks
+  await sleep(400);
+
   const headers = {
     'User-Agent': USER_AGENT,
     Accept: 'application/json',
@@ -72,17 +75,26 @@ async function compliantFetch(url, customHeaders = {}) {
   try {
     const res = await fetch(url, { headers });
 
+    // Handle Retry-After header if server requests a temporary pause
+    const retryAfter = res.headers.get('retry-after');
+    if (retryAfter) {
+      const waitSec = parseInt(retryAfter, 10) || 5;
+      console.warn(`[RETRY-AFTER DETECTED] Server requested backoff for ${waitSec} seconds. Sleeping...`);
+      await sleep((waitSec + 1) * 1000);
+    }
+
     // Inspect GitHub rate limit headers
     const remaining = res.headers.get('x-ratelimit-remaining');
     const resetTime = res.headers.get('x-ratelimit-reset');
 
     if (remaining !== null && parseInt(remaining, 10) < 5) {
       console.warn(`[RATE LIMIT WARNING] GitHub rate-limit remaining: ${remaining}. Reset at ${new Date(resetTime * 1000).toISOString()}`);
-      await sleep(2000);
+      await sleep(3000);
     }
 
-    if (res.status === 403 && remaining === '0') {
-      console.warn(`[RATE LIMIT EXCEEDED] Rate limit reached on ${url}. Respectfully skipping.`);
+    if (res.status === 429 || (res.status === 403 && remaining === '0')) {
+      console.warn(`[RATE LIMIT EXCEEDED] Rate limit reached on ${url}. Sleeping 5000ms before backoff.`);
+      await sleep(5000);
       return null;
     }
 
@@ -628,8 +640,8 @@ export async function runZeroCloneHarvester(customUrls = null) {
         });
       }
 
-      // Respectful delay between targets to ensure 100% free-tier compliance
-      await sleep(1500);
+        // Respectful delay between targets to ensure 100% free-tier compliance and avoid API blocks
+        await sleep(2500);
     } catch (err) {
       console.error(`[ERROR] Zero-clone processing failed for ${target.slug}: ${err.message}`);
       results.push({ target: target.slug, status: 'FAILED', error: err.message });

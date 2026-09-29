@@ -2928,16 +2928,26 @@ async def main():
 ## 207. The Decoupled WebSocket Pub-Sub Boundary Rule (Harvested from assafelovic/gpt-researcher)
 
 **RULE**:
-Never allow an active agentic state machine or background processing loop to write directly to a network socket (WebSocket, gRPC stream, SSE). All telemetry, logging, and state updates **MUST** be written to an intermediate, bounded, in-memory queue. A dedicated, isolated consumer task **MUST** handle the network seriali
+Never allow an active agentic state machine or background processing loop to write directly to a network socket (WebSocket, gRPC stream, SSE). All telemetry, logging, and state updates **MUST** be written to an intermediate, bounded, in-memory queue. A dedicated, isolated consumer task **MUST** handle network serialization and transmission.
 
+**WHY**:
+Network latency, socket backpressure, or connection drops will freeze or crash the agent's reasoning loop if writes are executed synchronously inline.
+
+**WHEN TO APPLY**:
+Real-time streaming agentic systems, WebSockets, gRPC servers, and continuous event monitors.
 
 ---
 
 ## 208. The "Initialization-Before-Recovery" Invariant (Harvested from Fosowl/agenticSeek)
 
 **RULE**:
-Any system utili
+Any system utilizing checkpoint recovery or session restoration MUST fully initialize its runtime environment, resource pools, and security boundaries BEFORE loading or replaying persistent state.
 
+**WHY**:
+Replaying state into an uninitialized or partially configured subsystem can trigger null pointer exceptions, unhandled race conditions, or unauthorized execution.
+
+**WHEN TO APPLY**:
+Persistent agent state machines, workflow resumption engines, and stateful session recoverers.
 
 ---
 
@@ -2950,12 +2960,146 @@ Never hold a mutex or read-write lock across an asynchronous I/O boundary (await
 Holding locks across I/O creates "Convoy Effects" where unrelated threads are blocked by a single slow disk operation, leading to cascading latency and potential deadlocks if the I/O operation requires a resource held by another waiting thread.
 
 **WHEN TO APPLY**: 
-Any system utili
-
+High-throughput concurrent storage engines, database transaction managers, and asynchronous worker pools.
 
 ---
 
 ## 210. The "Header-First" Validation Protocol (Harvested from neondatabase/neon)
 
 **RULE**: 
-When deseriali
+When deserializing structured binary frames, network packets, or storage WAL records, always parse and validate fixed-size frame headers (magic bytes, version, payload length, checksum) before allocating memory for the payload buffer. Reject invalid headers with zero memory allocation.
+
+**WHY**: 
+Allocating memory based on unverified payload lengths from corrupt or hostile streams enables Out-Of-Memory (OOM) denial-of-service and buffer boundary vulnerabilities.
+
+**WHEN TO APPLY**: 
+Binary network protocols, distributed storage WAL engines, and streaming deserializers.
+
+---
+
+## 211. Cloud Cron Jitter & Off-Peak Dispatch Invariant (Harvested from AI-Builder-Brain Factory Engine Optimization)
+
+**RULE**:
+Never schedule automated cloud workflows, background maintenance runners, or cron jobs at the top of the hour (`:00`) or standard even half-hour marks (`:30`). Always assign scheduled intervals to off-peak, non-zero odd minutes (e.g., `23 * * * *`, `17 */2 * * *`, `41 * * * *`).
+
+**WHY**:
+In multi-tenant cloud schedulers (such as GitHub Actions, AWS EventBridge, Kubernetes CronJobs), minute `:00` is the single most congested dispatch instant globally. Shared queue saturation causes jobs scheduled at `:00` to suffer multi-hour queue delays or be silently dropped. Off-peak minutes avoid dispatcher bottlenecks, ensuring prompt, deterministic execution.
+
+**WHEN TO APPLY**:
+GitHub Actions scheduled workflows (`.github/workflows/*.yml`), cloud function triggers, database cron maintenance tasks, and automated crawler/harvester loops.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```yaml
+# Good: Off-peak minute ensures fast runner dispatch without multi-hour queue delays
+on:
+  schedule:
+    - cron: '23 * * * *'
+```
+
+**NEGATIVE CONSTRAINT**:
+```yaml
+# Anti-pattern: Minute 0 causes severe global queue congestion and 5-6 hour delays
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+```
+
+---
+
+## 212. Asynchronous Distributed Repository Convergence Invariant (Harvested from AI-Builder-Brain Factory Engine Optimization)
+
+**RULE**:
+In distributed multi-agent systems where background cloud runners autonomously commit and push state to a shared remote Git repository, local development environments MUST execute an automatic fast-forward / rebase sync (`git pull --rebase origin main`) upon session boot and before local mutations. The system must maintain visible synchronization telemetry to prevent developer state divergence.
+
+**WHY**:
+When 24/7 cloud agents autonomously commit discoveries upstream, local workspaces that do not continuously pull become stale mirrors. Developers inspecting local directories observe stale snapshots, creating the false illusion of system dormancy or missing intelligence.
+
+**WHEN TO APPLY**:
+Autonomous multi-agent swarms, cloud-to-local hybrid development systems, and automated repository intelligence sinks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Good: Automated rebase sync on session initialization
+export function syncLocalWithCloud() {
+  const status = execSync('git fetch origin && git rev-list --count main..origin/main', { encoding: 'utf-8' }).trim();
+  const behindCount = parseInt(status, 10) || 0;
+  if (behindCount > 0) {
+    console.log(`[SYNC] Local repository is ${behindCount} commits behind. Ingesting cloud intelligence...`);
+    execSync('git pull --rebase origin main', { stdio: 'inherit' });
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern: Blindly operating on local disk without checking or pulling remote commits
+function processBrain() {
+  // Operates on stale local files while cloud has dozens of unintegrated commits
+  return fs.readFileSync('data.json');
+}
+```
+
+---
+
+## 213. Empirical Code Diff Grounding Invariant for AI Forensic Extractors (Harvested from AI-Builder-Brain Factory Engine Optimization)
+
+**RULE**:
+Autonomous code inspection agents and learning harvesters MUST ground their reasoning in actual code patches (`git diff`, `patch`, line-level modifications) and developer post-mortems, NEVER solely in commit message titles or issue headlines. Summarization without code diffs is strictly prohibited for forensic engineering intelligence.
+
+**WHY**:
+Commit titles and issue headers are superficial abstractions that omit the exact failure mechanism (e.g. race conditions, off-by-one errors, memory leaks, unhandled edge cases). AI models forced to synthesize intelligence from titles alone generate generic, non-actionable fluff. Real code diffs (`+` and `-` lines) ground the model in empirical truth, enabling concrete before/after code blocks, exact line references, and battle-tested invariant extraction.
+
+**WHEN TO APPLY**:
+Autonomous learning extractors, automated code reviewers, post-mortem synthesizers, and security audit agents.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Good: Extract actual file diffs and patches before feeding to AI reasoning engine
+const commitDetail = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits/${sha}`);
+const patches = commitDetail.files.map(f => ({
+  file: f.filename,
+  diff: f.patch // Actual before/after code diff
+}));
+await ai.synthesize({ patches, rawCode, manifests });
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern: Feeding only single-line commit titles to LLM
+const titlesOnly = commits.map(c => c.message.split('\n')[0]);
+await ai.synthesize({ titlesOnly }); // Produces generic 5KB fluff without real code
+```
+
+---
+
+## 214. Proactive Inter-Request Pacing & Secondary Rate-Limit Invariant (Harvested from AI-Builder-Brain Factory Engine Optimization)
+
+**RULE**:
+Automated API extraction loops, crawlers, and repository harvesters MUST enforce proactive inter-request pacing delays (`sleep(300..500ms)`) between consecutive HTTP requests, inspect and obey platform `Retry-After` headers, and apply exponential backoff. Rapid sub-second burst requests MUST NEVER be fired in tight loops, regardless of remaining overall hourly quota.
+
+**WHY**:
+Platforms like GitHub enforce secondary rate limits (anti-abuse burst detection) that trigger temporary IP/token blocks (HTTP 403/429) when high request concurrency is detected within a 1-second window, even if the primary hourly quota has thousands of remaining requests. Proactive pacing guarantees uninterrupted, polite 24/7 continuous operation without account or IP blacklisting.
+
+**WHEN TO APPLY**:
+All automated web scrapers, GitHub API clients, Hugging Face API crawlers, and cloud multi-agent swarms.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Good: Proactive inter-request pacing and Retry-After handling
+async function compliantFetch(url, headers) {
+  await sleep(400); // Proactive pacing prevents burst rate-limiting
+  const res = await fetch(url, { headers });
+  const retryAfter = res.headers.get('retry-after');
+  if (retryAfter) {
+    await sleep((parseInt(retryAfter, 10) + 1) * 1000);
+  }
+  return res;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern: Bursting dozens of API calls concurrently without pacing
+await Promise.all(urls.map(url => fetch(url))); // Triggers secondary abuse rate-limiting
+```
+

@@ -17,6 +17,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
 
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 /**
  * Executes a shell command synchronously and returns stdout.
  */
@@ -518,6 +520,9 @@ export async function runBatchHarvester(urlList = null) {
         safeRemoveDir(cloneDir);
         console.log(`[CLEANUP COMPLETE] Disk space freed. (0 bytes retained)`);
       }
+
+      // Respectful delay between targets to ensure API compliance and avoid rate limits
+      await sleep(2500);
     }
 
   }
