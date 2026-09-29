@@ -2735,3 +2735,11 @@ Updating state *after* an `await` point in an asynchronous environment allows fo
 
 **WHEN TO APPLY**:
 Any system implementing asynchronous retry logic or distributed task queues.
+
+
+---
+
+## 195. The "Idempotent Initialization" Rule (Harvested from themesberg/flowbite)
+
+**RULE**:
+Every component constructor must be idempotent. If an instance is initiali
