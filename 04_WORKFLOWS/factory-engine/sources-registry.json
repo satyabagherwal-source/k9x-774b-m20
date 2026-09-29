@@ -1160,5 +1160,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nirdiamant-rag_techniques": {
+    "name": "NirDiamant/RAG_Techniques",
+    "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
+    "sourceType": "github",
+    "technology": "Jupyter Notebook",
+    "lastChecked": "2026-09-29T07:44:05.601Z",
+    "lastVerified": "2026-09-29T07:44:05.601Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

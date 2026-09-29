@@ -2491,3 +2491,11 @@ Prevents "Root-Lockout" where elevated processes (sudo) corrupt user-space confi
 
 **WHEN TO APPLY**:
 Any CLI tool that manages local state files (`~/.config`, `~/.local/share`).
+
+
+---
+
+## 177. The RAG-Orchestration Invariant (Harvested from NirDiamant/RAG_Techniques)
+
+**RULE**:
+Never pass raw user input directly into a retrieval pipeline. Every retrieval operation must be preceded by a "Query Canonicali
