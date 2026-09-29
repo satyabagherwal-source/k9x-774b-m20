@@ -1459,5 +1459,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "freenet-freenet-core": {
+    "name": "freenet/freenet-core",
+    "officialUrl": "https://github.com/freenet/freenet-core",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T16:23:11.424Z",
+    "lastVerified": "2026-09-29T16:23:11.424Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

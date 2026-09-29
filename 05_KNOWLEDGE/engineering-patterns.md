@@ -2785,3 +2785,28 @@ Native pointers are "dumb" memory addresses. If the host language (Java/JS) GC t
 
 **WHEN TO APPLY**:
 Any Rust project exposing a C-ABI or using `bindgen` to create language bindings (JNI, N-API, Wasm).
+
+
+---
+
+## 199. The "Verify-Before-Persist" Invariant (Harvested from freenet/freenet-core)
+
+**RULE**:
+Never write to persistent storage (disk, database, or registry) until the input data has passed all cryptographic, schema, and structural validation checks.
+
+**WHY**:
+Writing unverified data creates "poisoned state" that can crash the system on restart, bypass security checks, or lead to disk-space exhaustion attacks.
+
+**WHEN TO APPLY**:
+Any system handling external input, P2P messages, or user-defined contract parameters.
+
+
+---
+
+## 200. The "Time-Injection" Pattern (Harvested from freenet/freenet-core)
+
+**RULE**:
+All time-dependent logic (timeouts, clocks, scheduling) must consume a `TimeSource` trait rather than calling system-level time APIs directly.
+
+**WHY**:
+Direct system calls make distributed systems non-deterministic, impossible to unit test for race conditions, and prone to failure during system clock synchroni
