@@ -1575,5 +1575,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "valeriansaliou-sonic": {
+    "name": "valeriansaliou/sonic",
+    "officialUrl": "https://github.com/valeriansaliou/sonic",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T21:27:30.177Z",
+    "lastVerified": "2026-09-29T21:27:30.177Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
