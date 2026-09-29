@@ -2707,3 +2707,31 @@ Early placement of catch-all arms shadows specific logic branches, creating "unr
 
 **WHEN TO APPLY**:
 CLI argument parsing, configuration loading, and state machine transitions.
+
+
+---
+
+## 193. The Cyclic Flow Termination Invariant (Harvested from The-Pocket/PocketFlow)
+
+**RULE**:
+Every directed graph orchestrator must implement a mandatory `execution_depth` counter and a `visited_node_set` for every execution trace.
+
+**WHY**:
+Without a hard limit on recursion depth or a cycle-detection mechanism, LLM-driven agentic loops will inevitably hit stack limits or infinite cost loops when the LLM enters a "hallucination loop" (repeatedly attempting the same failed action).
+
+**WHEN TO APPLY**:
+Any framework utili
+
+
+---
+
+## 194. The Atomic Retry State Principle (Harvested from The-Pocket/PocketFlow)
+
+**RULE**:
+Retry counters must be incremented *before* the asynchronous call is awaited and must be stored in an immutable state object or an atomic counter.
+
+**WHY**:
+Updating state *after* an `await` point in an asynchronous environment allows for race conditions where multiple concurrent retry attempts read the same stale counter value, bypassing retry limits.
+
+**WHEN TO APPLY**:
+Any system implementing asynchronous retry logic or distributed task queues.

@@ -1381,5 +1381,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "the-pocket-pocketflow": {
+    "name": "The-Pocket/PocketFlow",
+    "officialUrl": "https://github.com/The-Pocket/PocketFlow",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T14:30:03.535Z",
+    "lastVerified": "2026-09-29T14:30:03.535Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
