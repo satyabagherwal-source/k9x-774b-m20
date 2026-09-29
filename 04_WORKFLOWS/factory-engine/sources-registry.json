@@ -1433,5 +1433,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "provablehq-snarkos": {
+    "name": "ProvableHQ/snarkOS",
+    "officialUrl": "https://github.com/ProvableHQ/snarkOS",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T16:23:11.605Z",
+    "lastVerified": "2026-09-29T16:23:11.605Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

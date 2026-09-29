@@ -2757,3 +2757,17 @@ Failure to validate inputs in "initial" states (like the renegotiation bug) allo
 
 **WHEN TO APPLY**:
 Any system implementing network protocols, stateful parsers, or multi-step authentication flows.
+
+
+---
+
+## 197. The "Structured Shutdown" Invariant (Harvested from ProvableHQ/snarkOS)
+
+**RULE**:
+All asynchronous tasks must be registered to a `TaskTracker` or `JoinSet` at the moment of spawning. Global shutdown signals must be propagated via `CancellationToken`, and the system must await the completion of all tracked tasks before exiting.
+
+**WHY**:
+Prevents "dangling task" syndrome, memory leaks, and non-deterministic CI failures caused by background processes outliving the main process lifecycle.
+
+**WHEN TO APPLY**:
+Any Rust system utili
