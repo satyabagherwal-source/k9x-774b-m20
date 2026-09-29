@@ -1537,5 +1537,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "neondatabase-neon": {
+    "name": "neondatabase/neon",
+    "officialUrl": "https://github.com/neondatabase/neon",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T16:24:38.260Z",
+    "lastVerified": "2026-09-29T16:24:38.260Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

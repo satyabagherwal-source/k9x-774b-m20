@@ -2937,3 +2937,25 @@ Never allow an active agentic state machine or background processing loop to wri
 
 **RULE**:
 Any system utili
+
+
+---
+
+## 209. The "Lock-I/O-Lock" Exclusion Principle (Harvested from neondatabase/neon)
+
+**RULE**: 
+Never hold a mutex or read-write lock across an asynchronous I/O boundary (await point) or a blocking disk I/O operation.
+
+**WHY**: 
+Holding locks across I/O creates "Convoy Effects" where unrelated threads are blocked by a single slow disk operation, leading to cascading latency and potential deadlocks if the I/O operation requires a resource held by another waiting thread.
+
+**WHEN TO APPLY**: 
+Any system utili
+
+
+---
+
+## 210. The "Header-First" Validation Protocol (Harvested from neondatabase/neon)
+
+**RULE**: 
+When deseriali
