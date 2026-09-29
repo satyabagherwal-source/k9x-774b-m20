@@ -1225,5 +1225,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "chrispybacon-dev-dockflare": {
+    "name": "ChrispyBacon-dev/DockFlare",
+    "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T07:44:16.352Z",
+    "lastVerified": "2026-09-29T07:44:16.352Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

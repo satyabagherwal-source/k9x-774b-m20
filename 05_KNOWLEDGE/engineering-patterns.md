@@ -2549,3 +2549,19 @@ Consumers rely on shallow equality (`prev === next`) to trigger re-renders. If a
 
 **WHEN TO APPLY**:
 Any system using a centrali
+
+
+---
+
+## 182. The "Source-of-Truth" Precedence Rule (Harvested from ChrispyBacon-dev/DockFlare)
+
+**RULE**:
+When merging state from two sources (e.g., UI vs. Infrastructure Labels), implement a **Precedence Matrix** with an explicit `override_lock` bit. If `override_lock` is set, the secondary source (Labels) must be ignored for that specific field.
+
+**WHY**:
+Prevents "Configuration Flapping," where infrastructure events (container restarts) inadvertently overwrite user-defined security policies.
+
+**WHEN TO APPLY**:
+Any system that reconciles ephemeral infrastructure state with persistent user-defined configuration.
+
+---
