@@ -1342,5 +1342,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lsdefine-genericagent": {
+    "name": "lsdefine/GenericAgent",
+    "officialUrl": "https://github.com/lsdefine/GenericAgent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T14:30:04.358Z",
+    "lastVerified": "2026-09-29T14:30:04.358Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

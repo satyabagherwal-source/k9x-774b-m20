@@ -2663,3 +2663,19 @@ Live DOMs are mutated by browser extensions, security injectors (Cloudflare), an
 
 **WHEN TO APPLY**:
 Any system providing "Copy to Clipboard" for code snippets, templates, or configuration files.
+
+
+---
+
+## 190. The "Input-Multiplexing" Invariant (Harvested from lsdefine/GenericAgent)
+
+**RULE**:
+Never allow background polling loops (e.g., file watchers, socket listeners) to share a global input buffer with the primary user-interaction stream.
+
+**WHY**:
+Background tasks often consume "stale" or "unexpected" input, leading to race conditions where user commands are swallowed by background processes.
+
+**WHEN TO APPLY**:
+Any agentic system that monitors external state (WeChat, Slack, Browser) while simultaneously accepting user chat input.
+
+---
