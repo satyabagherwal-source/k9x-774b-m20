@@ -2181,3 +2181,19 @@ Apply to all database, embedded store, and cross-process resource lock acquisiti
 
 **RULE**:
 Data parser and ingestion boundaries must catch string decoding, schema seriali
+
+
+---
+
+## 155. The "Completion-Isolation" Principle (Harvested from sharkdp/bat)
+
+**RULE**:
+Any CLI tool that supports environment-based configuration (e.g., `BAT_OPTS`) MUST provide a mechanism to bypass these configurations during shell completion generation.
+
+**WHY**:
+Completion scripts rely on parsing raw output. If the tool injects ANSI colors or pager-specific formatting into the completion stream, the shell's completion engine will fail to parse the suggestions, leading to broken UI.
+
+**WHEN TO APPLY**:
+Any CLI tool written in Rust (using `clap` or similar) that reads environment variables for default styling.
+
+---
