@@ -1134,5 +1134,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sudheerj-reactjs-interview-questions": {
+    "name": "sudheerj/reactjs-interview-questions",
+    "officialUrl": "https://github.com/sudheerj/reactjs-interview-questions",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-29T07:44:07.255Z",
+    "lastVerified": "2026-09-29T07:44:07.255Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

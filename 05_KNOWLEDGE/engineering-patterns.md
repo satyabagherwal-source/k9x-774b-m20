@@ -2452,3 +2452,14 @@ All UI components, design systems, and CSS frameworks targeting global audiences
 ```
 
 ---
+
+
+---
+
+## 174. The Documentation-Code Parity Invariant (Harvested from sudheerj/reactjs-interview-questions)
+
+**RULE**:
+Any documentation describing an API must be accompanied by a verified, executable test case that fails if the API behavior changes.
+
+**WHY**:
+Documentation drift is a silent system failure. When APIs (like React Router or React Core) evolve, documentation becomes a "lie" that leads to production bugs. Executable documentation ensures the "truth" is always synchroni
