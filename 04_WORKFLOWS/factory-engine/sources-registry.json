@@ -1082,5 +1082,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "titanwings-distilly": {
+    "name": "titanwings/distilly",
+    "officialUrl": "https://github.com/titanwings/distilly",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T01:24:36.508Z",
+    "lastVerified": "2026-09-29T01:24:36.508Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

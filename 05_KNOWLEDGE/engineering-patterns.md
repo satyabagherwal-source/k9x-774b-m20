@@ -2277,3 +2277,104 @@ When extracting authentication credentials (usernames, passwords) from a URI (e.
 
 **RULE**:
 Never pass raw filesystem metadata or user-provided input directly to a terminal output stream. All diagnostic messages must pass through a `Saniti
+
+
+---
+
+## 163. Deep Micro-Learnings & Runtime Gotchas (Chhoti se Chhoti Aur Badi se Badi Learnings) (Harvested from titanwings/distilly)
+
+### 1. Non-Line-Safe Multiline Regex Removals in Skill Handoff Stripping
+- **Failure Mode**: When distilling "work-only" skills (skills stripped of persona dependencies), running multiline regex patterns to delete persona-handoff logic (`Persona.handoff(...)` or `[Handoff: Persona]`) corrupted adjacent functional code lines or left orphan trailing commas and broken function parameters.
+- **Root Cause**: Multiline regex matching with `re.DOTALL` or greedy `.*` spanned across structural block limits, matching from an early persona reference to a late block closing bracket and deleting valid execution lines.
+- **Exact Prevention / Fix**: Replaced multiline string replacements with line-safe stateful line scanning. Lines are checked independently or via AST nodes. Line removals only occur when a discrete line matches single-line handoff patterns, preserving surrounding block indentation and logic:
+
+```python
+def strip_persona_handoffs_line_safe(code_lines: list[str]) -> list[str]:
+    """Line-safe stripping of persona handoffs without greedy multiline corruption."""
+    cleaned = []
+    for line in code_lines:
+        stripped = line.strip()
+        # Direct line-level handoff statements or inline persona triggers
+        if stripped.startswith("Persona.handoff(") or stripped.startswith("[Handoff:"):
+            continue
+        if "refer_to_persona(" in stripped and ")" in stripped:
+            continue
+        cleaned.append(line)
+    return cleaned
+```
+
+---
+
+### 2. Unrecogni
+
+
+---
+
+## 164. Structural Corruption in Oversized Transcript Splitting (Harvested from titanwings/distilly)
+
+- **Failure Mode**: Splitting oversi
+
+
+---
+
+## 165. Unrepaired LLM Output Ingestion Failure (Harvested from titanwings/distilly)
+
+- **Failure Mode**: Ingestion of LLM skill distillation outputs crashed with `json.decoder.JSONDecodeError` due to extra markdown headers, trailing commas in objects, or unescaped control characters in extracted code strings.
+- **Root Cause**: Relying directly on `json.loads()` for raw LLM returns without pre-parsing or structural extraction.
+- **Exact Prevention / Fix**: Implemented a multi-stage parser repair path (`extract_json_block -> repair_syntax -> json.loads`).
+
+```python
+import re
+import json
+
+def repair_and_parse_json(raw_llm_output: str) -> dict:
+    # Stage 1: Extract block inside markdown ```json ... ``` or top-level braces
+    match = re.search(r"```json\s*(.*?)\s*```", raw_llm_output, re.DOTALL)
+    candidate = match.group(1) if match else raw_llm_output.strip()
+
+    if not (candidate.startswith("{") or candidate.startswith("[")):
+        start = candidate.find("{")
+        end = candidate.rfind("}")
+        if start != -1 and end != -1:
+            candidate = candidate[start:end+1]
+
+    # Stage 2: Saniti
+
+
+---
+
+## 166. Stale CI Type Checking & Host Cache Clashes (Harvested from titanwings/distilly)
+
+- **Failure Mode**: CI workflows failed during `mypy`/`pyright` type checks on fresh checkouts due to hardcoded pip cache paths (`~/.cache/pip`) across heterogeneous runner OS instances and dynamic generation of unchecked build artifacts.
+- **Root Cause**: CI configuration specified OS-bound pip cache directories and failed to exclude generated skill/persona output folders (`.distilly_build/`) from type-checking sweeps.
+- **Exact Prevention / Fix**: Standardi
+
+
+---
+
+## 167. Line-Safe Context Purging Invariant (Harvested from titanwings/distilly)
+
+**RULE**:
+When stripping identity, credentials, or framework-specific callbacks from executable code or prompts, systems **MUST NOT** use multiline greedy string replacement or multiline `re.DOTALL` regexes. Context purging **MUST** be performed line-by-line using explicit indentation/block state machines or language AST transformations.
+
+**WHY**:
+Multiline regular expressions frequently breach intended block boundaries when encountering non-standard line breaks, unexpected whitespace, or nested code blocks. This results in silent deletion of functional logic or syntactically invalid output files.
+
+**WHEN TO APPLY**:
+Apply in any agent pipeline, context saniti
+
+
+---
+
+## 168. Labelled Conservative Floor Fallback Pattern (Harvested from titanwings/distilly)
+
+**RULE**:
+When validating host environment runtimes, dynamic agent hosts, or API schemas, an exact version mismatch **MUST NOT** crash the system if the detected version is higher than the known baseline. The framework **MUST** issue a structured warning receipt and fall back to a defined **Conservative Floor** runtime capability tuple.
+
+**WHY**:
+Agent runtime environments evolve faster than static client libraries. Hard-failing on unknown patch or minor releases causes cascade outages on newly deployed agent hosts that remain backward-compatible with older baseline contracts.
+
+**WHEN TO APPLY**:
+Apply in runtime environment detection, host adapter bindings, and platform plugin integrations across multi-agent deployment ecosystems (e.g., Claude Code, DSH, Hermes Agent, OpenClaw).
+
+---
