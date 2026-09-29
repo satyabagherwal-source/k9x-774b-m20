@@ -1329,5 +1329,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mimblewimble-grin": {
+    "name": "mimblewimble/grin",
+    "officialUrl": "https://github.com/mimblewimble/grin",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T14:30:05.341Z",
+    "lastVerified": "2026-09-29T14:30:05.341Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
