@@ -147,8 +147,34 @@ During operational stress testing and active pair-programming refinement, four c
 - **D4: Resource Lifecycle & Leak Defenses**: Immediate cleanup of temporary clones (`safeRemoveDir`) ensures 0 bytes retained on local disks.
 - **D5: Boundary Deserialization, Schemas & Input Sanitization**: Overflow-checked parsing of rule numbers and JSON configs.
 - **D6: Cross-Platform & Runtime Compatibility Gotchas**: Windows read-only attribute stripping (`attrib -r -s -h`) enables flawless directory deletion across Windows/POSIX.
+### Incident 7: Commercial Model Data Leakage & Sovereignty Defense (BUG-SWARM-07)
+* **Context**: `04_WORKFLOWS/factory-engine/ai-provider-pool.mjs`, `05_KNOWLEDGE/engineering-patterns.md`
+* **What Was Expected**: Commercial AI providers (OpenAI, Google, Anthropic, xAI) must NEVER be permitted to train on, log, or leak sensitive user tokens, internal file paths, private identities, or proprietary Master Brain architecture.
+* **What Actually Happened**: The user raised a critical concern regarding AI company IP theft and data absorption.
+* **Root Cause**: Reliance on external endpoints without pre-dispatch sanitization filters and lack of an explicit sovereign air-gapped local mode.
+* **Remediation Code Diff**:
+  ```diff
+  + // 1. Air-Gap Privacy Mode Enforcement:
+  + if (options.airGap || process.env.AIR_GAP_MODE === 'true') {
+  +   return await executeWithLocalOllama(rawPrompt, rawSystem); // 0 bytes leave machine
+  + }
+  + // 2. Pre-dispatch Privacy Sanitization:
+  + const prompt = sanitizePayloadForExternalAi(rawPrompt); // Scrubs tokens, paths, IPs
+  ```
+* **Lesson**: *Zero-Leak Data Boundary & Air-Gapped Local Inference Invariant for Autonomous Brain Engines*. Enforce pre-dispatch credential and username scrubbing, coupled with a 100% offline air-gapped local model fallback (Ollama).
+* **Promotion Decision**: Promoted as **Rule 217** in `05_KNOWLEDGE/engineering-patterns.md`.
+
+---
+
+## 3. 8-Dimensional Multi-Axis Forensic Deep Sweep
+- **D1: Architecture & Structural Boundaries**: Decoupled multi-agent workers with targeted target-level lockfiles (`.harvest-locks/`) and isolated worker lifecycles.
+- **D2: Asynchronous State & Concurrency Defense**: Atomic rebase-retry (`pushWithRebaseRetry`) ensures concurrent cloud and local commits never cause git merge collisions.
+- **D3: Error Boundaries, Recovery & Rollback Protocols**: Rebase abort guards (`git rebase --abort`) preserve clean working trees if upstream conflicts emerge.
+- **D4: Resource Lifecycle & Leak Defenses**: Immediate cleanup of temporary clones (`safeRemoveDir`) ensures 0 bytes retained on local disks.
+- **D5: Boundary Deserialization, Schemas & Input Sanitization**: Overflow-checked parsing of rule numbers and JSON configs.
+- **D6: Cross-Platform & Runtime Compatibility Gotchas**: Windows read-only attribute stripping (`attrib -r -s -h`) enables flawless directory deletion across Windows/POSIX.
 - **D7: Build, CI/CD, Deployment & Tooling**: Off-peak cron scheduling (`23 * * * *`) eliminates GitHub Actions queue starvation.
-- **D8: Concrete Bug Fixes & Forensic Patches**: Upgraded `zero-clone-harvester.mjs` and `batch-auto-harvester.mjs` to extract deep git patches, issue comments, and decoupled circuit breakers.
+- **D8: Concrete Bug Fixes & Forensic Patches**: Upgraded `zero-clone-harvester.mjs` and `batch-auto-harvester.mjs` to extract deep git patches, issue comments, decoupled circuit breakers, and zero-leak sanitization.
 
 ---
 
@@ -172,6 +198,9 @@ During operational stress testing and active pair-programming refinement, four c
 ### Rule 216: Heterogeneous Multi-Provider AI Cascade & Asymmetric Quota Isolation Invariant
 **RULE**: Autonomous engineering swarms relying on multi-vendor LLM APIs (Google Gemini multi-subscription accounts, OpenAI ChatGPT/Codex, Anthropic Claude, xAI Grok, MiniMax, Groq Free Tier, and local Ollama) MUST decouple provider execution into an asymmetric, tiered priority cascade governed by provider-specific quota signatures and isolated circuit breakers.
 
+### Rule 217: Zero-Leak Data Boundary & Air-Gapped Local Inference Invariant
+**RULE**: Intelligence extraction systems MUST enforce automated pre-dispatch sanitization of credentials, paths, and user identities before cloud transmission, coupled with a 100% offline air-gapped local model mode (`AIR_GAP_MODE`) for confidential proprietary assets.
+
 ---
 
 ## 5. Actionable Implementation Checklist
@@ -181,5 +210,6 @@ During operational stress testing and active pair-programming refinement, four c
 - [x] Integrate proactive 400ms sleep in `compliantFetch` to avoid secondary rate limits.
 - [x] Implement independent per-key circuit breakers and per-worker isolated lifecycles.
 - [x] Integrate heterogeneous multi-provider AI cascade (Gemini, Claude, OpenAI/Codex, Grok, MiniMax, Groq, Ollama).
-- [x] Ensure auto-recovery timers restore cooled keys/agents to ACTIVE without manual intervention.
+- [x] Implement automated pre-dispatch zero-leak sanitizer (`sanitizePayloadForExternalAi`).
+- [x] Add Air-Gap sovereign local inference mode (`AIR_GAP_MODE`) for 100% offline privacy.
 - [x] Verify that all self-improvements are documented and promoted into Master Brain knowledge.

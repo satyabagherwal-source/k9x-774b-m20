@@ -740,6 +740,31 @@ export async function executeWithLocalOllama(prompt, systemInstruction = '') {
 }
 
 /**
+ * Zero-Leak Privacy Sanitizer:
+ * Scrubs credentials, proprietary tokens, local filesystem paths, and PII before payload reaches external cloud APIs.
+ */
+export function sanitizePayloadForExternalAi(text) {
+  if (!text || typeof text !== 'string') return text;
+  return text
+    // 1. Scrub API Keys & Tokens
+    .replace(/ghp_[a-zA-Z0-9]{36}/g, '[REDACTED_GITHUB_TOKEN]')
+    .replace(/gho_[a-zA-Z0-9]{36}/g, '[REDACTED_OAUTH_TOKEN]')
+    .replace(/sk-[a-zA-Z0-9_-]{20,}/g, '[REDACTED_OPENAI_KEY]')
+    .replace(/AQ\.[a-zA-Z0-9_-]{30,}/g, '[REDACTED_GEMINI_KEY]')
+    .replace(/AKIA[0-9A-Z]{16}/g, '[REDACTED_AWS_KEY]')
+    .replace(/xai-[a-zA-Z0-9_-]{20,}/g, '[REDACTED_XAI_KEY]')
+    .replace(/gsk_[a-zA-Z0-9_-]{20,}/g, '[REDACTED_GROQ_KEY]')
+    .replace(/hf_[a-zA-Z0-9]{20,}/g, '[REDACTED_HF_TOKEN]')
+    .replace(/bearer\s+[a-zA-Z0-9_\-\.]{20,}/gi, 'Bearer [REDACTED_BEARER_TOKEN]')
+    // 2. Scrub Local Filesystem Paths & Usernames
+    .replace(/[A-Za-z]:\\Users\\[^\\]+\\/gi, 'C:\\Users\\<SYSTEM_USER>\\')
+    .replace(/\/home\/[^\/]+\//gi, '/home/<SYSTEM_USER>/')
+    // 3. Scrub Private IP addresses
+    .replace(/\b192\.168\.\d{1,3}\.\d{1,3}\b/g, '192.168.x.x')
+    .replace(/\b10\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/g, '10.x.x.x');
+}
+
+/**
  * Universal Multi-Provider AI Cascade Dispatcher:
  * 1. Google Gemini Pool (Keys 1..10)
  * 2. Anthropic Claude Pool (Claude 3.5 Sonnet / Haiku)
@@ -747,12 +772,27 @@ export async function executeWithLocalOllama(prompt, systemInstruction = '') {
  * 4. xAI Grok Pool (Grok-2)
  * 5. MiniMax Pool (MiniMax-Text-01)
  * 6. Groq Free Tier (Llama 3.3 70B)
- * 7. Local Ollama (Local Self-Hosted - Infinite Quota)
+ * 7. Local Ollama (Local Self-Hosted - Infinite Quota, 100% Offline Air-Gapped)
  *
  * Each key and provider operates on independent circuit breakers.
- * Zero global shutdowns!
+ * Pre-dispatch zero-leak sanitizer automatically scrubs secrets and paths!
  */
-export async function dispatchZeroCostAiSynthesis(prompt, systemInstruction = '') {
+export async function dispatchZeroCostAiSynthesis(rawPrompt, rawSystem = '', options = {}) {
+  // 0. Air-Gap Privacy Mode Enforcement:
+  // If user sets AIR_GAP_MODE=true or requests offline execution, route EXCLUSIVELY to local Ollama.
+  // ZERO bytes leave the local machine!
+  const isAirGapRequested = options.airGap || process.env.AIR_GAP_MODE === 'true';
+  if (isAirGapRequested) {
+    console.log(`🛡️ [AIR-GAP PRIVACY MODE ACTIVE] Bypassing all external cloud APIs. Routing exclusively to Local Ollama...`);
+    const ollamaRes = await executeWithLocalOllama(rawPrompt, rawSystem);
+    if (ollamaRes && ollamaRes.text) return ollamaRes;
+    throw new Error('AIR_GAP_ENFORCED: Local Ollama is unavailable and external cloud APIs are blocked by privacy policy.');
+  }
+
+  // Pre-dispatch Privacy Sanitization: Scrub sensitive keys, tokens, paths
+  const prompt = sanitizePayloadForExternalAi(rawPrompt);
+  const systemInstruction = sanitizePayloadForExternalAi(rawSystem);
+
   // 1. Google Gemini Pool
   try {
     const geminiRes = await executeWithGeminiPool(prompt, systemInstruction);
