@@ -3269,3 +3269,80 @@ fs.appendFileSync("05_KNOWLEDGE/engineering-patterns.md", rawAiResponse); // CAT
 
 
 
+
+
+---
+
+## 219. Deterministic Thread Lifecycle Invariant (Harvested from cryfs/cryfs)
+
+**RULE**:
+Every background thread, thread pool, or periodic task spawned by an object MUST be bound to a deterministic lifecycle control handle owned by that object. The object's destructor MUST signal shutdown and block (join) until the thread has terminated before releasing any other resources.
+
+**WHY**:
+Prevent intermittent segmentation faults (`SIGSEGV`) and undefined behavior caused by background threads accessing member variables of an object that is currently undergoing destruction or has already been deallocated.
+
+**WHEN TO APPLY**:
+Any system (C++, Rust, Go, Java) where objects manage their own background worker threads or asynchronous polling loops.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::thread::{self, JoinHandle};
+
+pub struct WorkerPool {
+    shutdown: Arc<AtomicBool>,
+    thread_handle: Option<JoinHandle<()>>,
+}
+
+impl WorkerPool {
+    pub fn new() -> Self {
+        let shutdown = Arc::new(AtomicBool::new(false));
+        let shutdown_clone = shutdown.clone();
+        
+        let thread_handle = thread::spawn(move || {
+            while !shutdown_clone.load(Ordering::Relaxed) {
+                // Perform periodic work safely
+                thread::sleep(std::time::Duration::from_millis(100));
+            }
+        });
+
+        Self {
+            shutdown,
+            thread_handle: Some(thread_handle),
+        }
+    }
+}
+
+impl Drop for WorkerPool {
+    fn drop(&mut self) {
+        // 1. Signal shutdown first
+        self.shutdown.store(true, Ordering::Relaxed);
+        
+        // 2. Block and join the thread to guarantee it has exited
+        if let Some(handle) = self.thread_handle.take() {
+            let _ = handle.join();
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER spawn a thread without storing its JoinHandle and a shutdown signal
+pub struct LeakyWorker {}
+
+impl LeakyWorker {
+    pub fn start_work(&self) {
+        std::thread::spawn(move || {
+            loop {
+                // This loop runs forever, even after LeakyWorker is dropped!
+                std::thread::sleep(std::time::Duration::from_secs(1));
+            }
+        });
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Execute the test suite with ThreadSaniti

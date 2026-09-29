@@ -1640,5 +1640,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cryfs-cryfs": {
+    "name": "cryfs/cryfs",
+    "officialUrl": "https://github.com/cryfs/cryfs",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T21:27:30.080Z",
+    "lastVerified": "2026-09-29T21:27:30.080Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
