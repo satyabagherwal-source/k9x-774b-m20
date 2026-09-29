@@ -1303,5 +1303,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "markmead-hyperui": {
+    "name": "markmead/hyperui",
+    "officialUrl": "https://github.com/markmead/hyperui",
+    "sourceType": "github",
+    "technology": "Astro",
+    "lastChecked": "2026-09-29T07:46:10.450Z",
+    "lastVerified": "2026-09-29T07:46:10.450Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

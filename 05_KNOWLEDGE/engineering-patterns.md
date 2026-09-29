@@ -2649,3 +2649,17 @@ External inputs (especially in security tools) are adversarial. Without a hard l
 
 **WHEN TO APPLY**:
 Any module that executes user-provided code, parses complex nested structures, or performs heuristic search.
+
+
+---
+
+## 189. The "Source-of-Truth" Serialization Invariant (Harvested from markmead/hyperui)
+
+**RULE**:
+Never derive user-facing source code from a live, rendered DOM element. Always derive it from the immutable source string used to populate that DOM.
+
+**WHY**:
+Live DOMs are mutated by browser extensions, security injectors (Cloudflare), and framework hydration. Capturing `innerHTML` from a live node is a non-deterministic operation that leaks runtime environment artifacts into the user's clipboard.
+
+**WHEN TO APPLY**:
+Any system providing "Copy to Clipboard" for code snippets, templates, or configuration files.
