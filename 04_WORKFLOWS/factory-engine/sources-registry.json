@@ -1588,5 +1588,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rustcrypto-hashes": {
+    "name": "RustCrypto/hashes",
+    "officialUrl": "https://github.com/RustCrypto/hashes",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T21:27:32.161Z",
+    "lastVerified": "2026-09-29T21:27:32.161Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

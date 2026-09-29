@@ -399,3 +399,7 @@ https://github.com/RustCrypto/hashes
 https://github.com/ascending-llc/jarvis-registry
 # [AI-AGENTS] n8n-io/n8n (142061 score) - Fair-code workflow automation platform with native AI capabilities. Combine visu
 https://github.com/n8n-io/n8n
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T21:27:30.624Z] ---
+# [DATABASE-STORAGE-ENGINES] SeaQL/sea-orm (6164 score) - 🐚 A powerful relational ORM for Rust
+https://github.com/SeaQL/sea-orm

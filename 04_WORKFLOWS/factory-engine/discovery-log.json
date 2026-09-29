@@ -278,5 +278,19 @@
     "language": "TypeScript",
     "qualityScore": 142061,
     "discoveredAt": "2026-09-29T21:27:20.920Z"
+  },
+  {
+    "name": "sea-orm",
+    "fullName": "SeaQL/sea-orm",
+    "url": "https://github.com/SeaQL/sea-orm",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "🐚 A powerful relational ORM for Rust",
+    "stars": 9906,
+    "forks": 735,
+    "openIssues": 235,
+    "language": "Rust",
+    "qualityScore": 6164,
+    "discoveredAt": "2026-09-29T21:27:30.623Z"
   }
 ]
