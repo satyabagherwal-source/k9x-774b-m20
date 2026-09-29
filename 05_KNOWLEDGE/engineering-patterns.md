@@ -2269,3 +2269,11 @@ Any HTTP client or middleware layer handling infinite, long-polling, Server-Sent
 
 **RULE**:
 When extracting authentication credentials (usernames, passwords) from a URI (e.g., database connection strings, proxy URLs) to construct downstream authentication headers (such as `Authori
+
+
+---
+
+## 162. The "Terminal-Safe Diagnostic" Rule (Harvested from sharkdp/fd)
+
+**RULE**:
+Never pass raw filesystem metadata or user-provided input directly to a terminal output stream. All diagnostic messages must pass through a `Saniti

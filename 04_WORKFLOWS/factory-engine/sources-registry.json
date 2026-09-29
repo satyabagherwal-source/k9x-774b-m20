@@ -1069,5 +1069,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sharkdp-fd": {
+    "name": "sharkdp/fd",
+    "officialUrl": "https://github.com/sharkdp/fd",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T01:24:07.667Z",
+    "lastVerified": "2026-09-29T01:24:07.667Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
