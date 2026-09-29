@@ -1212,5 +1212,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-hook-form-react-hook-form": {
+    "name": "react-hook-form/react-hook-form",
+    "officialUrl": "https://github.com/react-hook-form/react-hook-form",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-29T07:44:07.148Z",
+    "lastVerified": "2026-09-29T07:44:07.148Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

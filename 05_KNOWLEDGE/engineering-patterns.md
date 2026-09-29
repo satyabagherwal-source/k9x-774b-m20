@@ -2535,3 +2535,17 @@ Immediate termination causes data corruption in sync engines and prevents cleanu
 
 **WHEN TO APPLY**:
 Any CLI tool managing remote container lifecycles, background workers, or distributed sync agents.
+
+
+---
+
+## 181. The Referential Integrity Invariant (Harvested from react-hook-form/react-hook-form)
+
+**RULE**:
+Any state-management library that exposes state objects to consumers must guarantee that every mutation produces a new object reference, even if the underlying data is identical.
+
+**WHY**:
+Consumers rely on shallow equality (`prev === next`) to trigger re-renders. If a mutation updates internal properties but returns the same reference, subscribers will remain stale, leading to "ghost" UI states where the data is updated but the view is not.
+
+**WHEN TO APPLY**:
+Any system using a centrali
