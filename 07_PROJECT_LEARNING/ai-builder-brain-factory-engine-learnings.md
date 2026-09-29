@@ -172,6 +172,9 @@ During operational stress testing and active pair-programming refinement, four c
 ### Rule 216: Heterogeneous Multi-Provider AI Cascade & Asymmetric Quota Isolation Invariant
 **RULE**: Autonomous engineering swarms relying on multi-vendor LLM APIs (Google Gemini multi-subscription accounts, OpenAI ChatGPT/Codex, Anthropic Claude, xAI Grok, MiniMax, Groq Free Tier, and local Ollama) MUST decouple provider execution into an asymmetric, tiered priority cascade governed by provider-specific quota signatures and isolated circuit breakers.
 
+### Rule 218: Dual-Worker Architectural Sovereignty & Gated Master Brain Invariant
+**RULE**: In an autonomous development ecosystem where dual execution agents—**Local Worker** (Antigravity IDE) and **Cloud Worker** (Antigravity CLI / GitHub Actions)—feed and draw from the **Same Canonical Master Brain**, the system MUST enforce architecture preservation, hard $0.00 cost guardrails, default execution quarantine of untrusted code, and strict schema validation gates across the **9 Deep Learning Dimensions** and **8 Extraction Artifacts** before any rule is promoted to Master Brain.
+
 ---
 
 ## 5. Actionable Implementation Checklist
@@ -181,5 +184,10 @@ During operational stress testing and active pair-programming refinement, four c
 - [x] Integrate proactive 400ms sleep in `compliantFetch` to avoid secondary rate limits.
 - [x] Implement independent per-key circuit breakers and per-worker isolated lifecycles.
 - [x] Integrate heterogeneous multi-provider AI cascade (Gemini, Claude, OpenAI/Codex, Grok, MiniMax, Groq, Ollama).
+- [x] Enforce Dual-Worker Unified Model (Antigravity IDE + Antigravity CLI -> Same Master Brain).
+- [x] Establish hard $0.00 / ₹0 cost guardrail with blocked paid APIs.
+- [x] Block untrusted repository code execution by default in all workers.
+- [x] Implement schema-gated Master Brain write protection against self-corruption.
+- [x] Mandate all 9 Deep Learning Dimensions and 8 Extraction Artifacts in reasoning synthesis.
 - [x] Ensure auto-recovery timers restore cooled keys/agents to ACTIVE without manual intervention.
 - [x] Verify that all self-improvements are documented and promoted into Master Brain knowledge.

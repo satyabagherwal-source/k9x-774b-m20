@@ -23,6 +23,59 @@
     "paidApiBlocked": true,
     "maxRequestsPerHour": 50
   },
+  "dualWorkerArchitecture": {
+    "model": "SAME_MASTER_BRAIN_TWO_WORKERS",
+    "canonicalBrainRoot": "c:\\AI-Builder-Brain",
+    "localWorker": {
+      "type": "PHYSICAL_ANTIGRAVITY",
+      "interface": "Antigravity IDE",
+      "mode": "MANUAL_INTERACTIVE",
+      "role": "Pair programming, architectural design, verification"
+    },
+    "cloudWorker": {
+      "type": "CLOUD_ANTIGRAVITY",
+      "interface": "Antigravity CLI / GitHub Actions",
+      "mode": "24X7_AUTONOMOUS_BACKGROUND",
+      "role": "Continuous forensic learning harvesting, micro-bug extraction"
+    },
+    "architecturePreservationInvariant": "NEVER_REPLACE_EXISTING_BRAIN"
+  },
+  "costGuardrail": {
+    "currencyLimit": "₹0 / $0.00",
+    "hardLimitUsd": 0.00,
+    "paidApisBlocked": true,
+    "freeTierOnly": true,
+    "allowPaidOverages": false,
+    "billingSafeguard": "HARD_ENFORCED_ZERO_DOLLAR"
+  },
+  "brainIntegrityGuard": {
+    "untrustedCodeExecution": "BLOCKED_BY_DEFAULT",
+    "executionPolicy": "STATIC_REST_INSPECTION_ONLY",
+    "masterBrainWriteAccess": "GATED_VALIDATION_ONLY",
+    "stagingDirectory": "07_PROJECT_LEARNING",
+    "masterBrainPatternsFile": "05_KNOWLEDGE/engineering-patterns.md"
+  },
+  "deepLearningDimensions": [
+    "architecture",
+    "core abstractions",
+    "error handling",
+    "testing",
+    "security",
+    "performance",
+    "deployment",
+    "agent patterns",
+    "data flow"
+  ],
+  "learningExtractionArtifacts": [
+    "Pattern",
+    "Rule",
+    "Architecture Principle",
+    "Failure Mode",
+    "Reusable Skill",
+    "Decision",
+    "Anti-pattern",
+    "Verification Method"
+  ],
   "aiProviderPool": {
     "supportedProviders": [
       "Google Gemini (Multi-Account Keys 1..10)",

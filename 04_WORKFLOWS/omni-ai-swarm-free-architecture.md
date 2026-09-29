@@ -1,10 +1,59 @@
-# Omni-AI Swarm & Free Multi-Provider Architecture (AI-Builder-Brain)
+# Omni-AI Swarm & Dual-Worker Architecture (AI-Builder-Brain)
 
-This architecture unleashes an autonomous **Multi-AI Swarm** combining **5 Google Gemini Subscriptions** alongside 100% free external AI providers (Groq, Hugging Face, GitHub Models) to scour the entire internet 24/7 without spending a single rupee or dollar ($0.00 Cost Guarantee).
+## 0. Canonical Dual-Worker Unification Model
+
+Physical Antigravity and Cloud Antigravity operate as two parallel workers feeding and drawing from the **Same Master Brain**:
+
+```
+                    AI BUILDER BRAIN
+                           │
+              ┌────────────┴────────────┐
+              │                         │
+         LOCAL WORKER              CLOUD WORKER
+              │                         │
+        Antigravity IDE          Antigravity CLI
+              │                         │
+        Manual/interactive          24×7 autonomous
+              │                         │
+              └────────────┬────────────┘
+                           ↓
+                   SAME MASTER BRAIN
+```
+
+### Core Architecture Invariants:
+1. **Architecture Preservation**: The dual-worker system MUST NOT replace or discard the existing Brain architecture. It preserves, reinforces, and enriches the canonical structure at `C:\AI-Builder-Brain`.
+2. **₹0 / $0.00 Hard Cost Guardrail**: Strict zero-cost architecture with hard billing safeguards and quotas ($0.00 hard limit). Paid APIs and accidental cloud overages are blocked at the network/config layer.
+3. **Quarantine of Untrusted Code**: Execution of untrusted repository code (`npm install`, `pip install`, arbitrary binaries, scripts) is **BLOCKED BY DEFAULT**. Harvesters perform pure static and REST API patch inspections.
+4. **Brain Anti-Corruption Gate**: Agents are **DENIED unrestricted direct write access** to the Master Brain (`05_KNOWLEDGE/engineering-patterns.md`). All incoming knowledge must pass through strict schema validation gates (Title, Rule, Why, When, Implementation Pattern, Negative Constraint, Verification Method) before promotion.
 
 ---
 
-## 1. High-Level Swarm Topology
+## 0.1 The 9 Deep Learning Dimensions
+Every harvested repository is evaluated across all 9 rigorous engineering pillars:
+1. **Architecture**: Subsystem boundaries, decoupling, modular layout, state ownership.
+2. **Core Abstractions**: Interfaces, domain models, key types, primitives, invariant contracts.
+3. **Error Handling**: Exception boundaries, fallback paths, fault tolerance, graceful degradation.
+4. **Testing**: Mocking, integration invariants, property testing, regression shields.
+5. **Security**: Threat models, sanitization, auth boundaries, vulnerability mitigation.
+6. **Performance**: Bottlenecks, caching, memory layout, asymptotic complexity, latency guards.
+7. **Deployment**: CI/CD invariants, docker/container constraints, environment configuration.
+8. **Agent Patterns**: Tool integration, agent loops, planning mechanics, context budget management.
+9. **Data Flow**: Pipelines, stream handling, state mutations, synchronization, serialization.
+
+---
+
+## 0.2 The 8 Learning Extraction Artifacts
+Every extracted forensic insight must produce all 8 distinct artifacts:
+1. **Pattern**: Production-grade verified implementation pattern with code.
+2. **Rule**: Universal invariant (MUST / MUST NOT) to enforce in Master Brain.
+3. **Architecture Principle**: High-level structural law and engineering trade-off.
+4. **Failure Mode**: Concrete technical breakdown of the bug, crash, or vulnerability observed.
+5. **Reusable Skill**: Step-by-step actionable procedure / checklist for agent execution.
+6. **Decision**: Architectural trade-off analysis and why chosen over alternatives.
+7. **Anti-pattern**: Negative constraint with concrete code block of what NEVER to write.
+8. **Verification Method**: Concrete test, assertion, lint rule, or command to verify compliance.
+
+---
 
 ```
 +---------------------------------------------------------------------------------------------------+

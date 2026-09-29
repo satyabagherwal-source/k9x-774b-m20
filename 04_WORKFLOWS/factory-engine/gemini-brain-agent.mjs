@@ -21,24 +21,61 @@ export function getGeminiApiKey() {
 }
 
 /**
- * Call Google Gemini REST API directly server-to-server with multi-key rotation and zero-cost fallback
+ * Call multi-provider AI pool with multi-key rotation and zero-cost fallback
  */
 export async function callGeminiApi(prompt, systemInstruction = '') {
   return await dispatchZeroCostAiSynthesis(prompt, systemInstruction);
 }
 
 /**
- * Deep Intelligence Synthesis: Prompts Gemini to perform 8-dimensional extraction,
- * micro-learning discovery, and universal engineering rule formulation.
+ * Validates a rule candidate against strict schema and anti-corruption requirements.
+ * Prevents agents from polluting or corrupting Master Brain knowledge base.
+ */
+export function validateRuleCandidate(ruleTitle, ruleBody) {
+  if (!ruleTitle || typeof ruleTitle !== 'string' || ruleTitle.length < 5) {
+    return { valid: false, reason: 'Invalid or missing rule title' };
+  }
+
+  // Reject generic headers or document structural titles
+  if (/^(net-new|universal|forensic|executive|actionable|project|empirical|rule|checklist)/i.test(ruleTitle.trim())) {
+    return { valid: false, reason: 'Generic header title rejected' };
+  }
+
+  if (!ruleBody || typeof ruleBody !== 'string' || ruleBody.trim().length < 200) {
+    return { valid: false, reason: 'Rule body fails substance threshold (minimum 200 characters required)' };
+  }
+
+  // Mandatory fields check
+  const hasRule = /\*\*RULE\*\*:?/i.test(ruleBody);
+  const hasWhy = /\*\*WHY\*\*:?/i.test(ruleBody);
+  const hasWhen = /\*\*WHEN TO APPLY\*\*:?/i.test(ruleBody);
+  const hasPattern = /\*\*VERIFIED IMPLEMENTATION PATTERN\*\*:?/i.test(ruleBody);
+  const hasNegative = /\*\*NEGATIVE CONSTRAINT\*\*:?/i.test(ruleBody);
+
+  if (!hasRule) return { valid: false, reason: 'Missing mandatory **RULE** invariant' };
+  if (!hasWhy) return { valid: false, reason: 'Missing mandatory **WHY** technical rationale' };
+  if (!hasWhen) return { valid: false, reason: 'Missing mandatory **WHEN TO APPLY** context' };
+  if (!hasPattern) return { valid: false, reason: 'Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**' };
+  if (!hasNegative) return { valid: false, reason: 'Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern' };
+
+  // Must contain verified code blocks
+  const codeBlockCount = (ruleBody.match(/```/g) || []).length;
+  if (codeBlockCount < 2) {
+    return { valid: false, reason: 'Rule must contain at least one implementation code block and one negative constraint block' };
+  }
+
+  return { valid: true };
+}
+
+/**
+ * Deep Intelligence Synthesis:
+ * Implements the 9 Deep Learning Dimensions and extracts all 8 Learning Artifacts.
  */
 export async function synthesizeIntelligenceWithGemini(auditData) {
   const apiKey = getGeminiApiKey();
 
   if (!apiKey) {
     console.warn(`⚠️ [GEMINI SERVER-TO-SERVER NOTICE] GEMINI_API_KEY is not configured.`);
-    console.warn(`   To enable 100% autonomous server-to-server Gemini AI reasoning on GitHub Actions:`);
-    console.warn(`   Add your free Google AI Studio API key as a secret named 'GEMINI_API_KEY' in GitHub Repository Secrets:`);
-    console.warn(`   https://github.com/satyabagherwal-source/AI-Builder-Brain/settings/secrets/actions`);
     return null;
   }
 
@@ -46,43 +83,29 @@ export async function synthesizeIntelligenceWithGemini(auditData) {
 Your mission is to perform an EXHAUSTIVE, FULL-SPECTRUM, DEEP FORENSIC LEARNING EXTRACTION ("totally puri learning nichod lena") from software repositories.
 You NEVER write high-level summaries, promotional fluff, or generic bullet points.
 
-CRITICAL MANDATES:
-1. FORENSIC REAL INCIDENTS (Incidents 1 to 5+):
-Based directly on the provided git commit patches, issue post-mortems, and code diffs, extract at least 4 to 8 REAL, CONCRETE PRODUCTION INCIDENTS.
-For EACH incident, you MUST provide:
-- Incident Title & ID: e.g. Incident 1: [Specific Technical Description] (BUG-[REPO]-01)
-- Context & Subsystem: Exact file path, component, or subsystem
-- What Was Expected: Required architectural and runtime invariant
-- What Actually Happened: Concrete forensic failure mode (race condition, memory leak, use-after-free, stale cache, type coercion, deadlock, etc.)
-- Evidence in Repo: Commit SHA, PR #, File path and line numbers
-- Root Cause: Concrete technical breakdown of the flawed assumption
-- Remediation Code Diff: Markdown code block showing before (-) and after (+) or fixed pattern
-- Lesson & Invariant: Universal lesson learned
-- Promotion Decision: Rule candidate for Master Brain or Brain refinement
+CRITICAL ARCHITECTURAL MANDATES:
+1. THE 9 DEEP LEARNING DIMENSIONS:
+Analyze the target codebase across all 9 rigorous technical dimensions:
+- 1. Architecture: Subsystem boundaries, decoupling, modular layout, state ownership.
+- 2. Core Abstractions: Key types, traits, interfaces, domain primitives, invariant contracts.
+- 3. Error Handling: Fault boundaries, error trees, retries, rollbacks, graceful degradation.
+- 4. Testing: Property testing, mock invariants, integration harnesses, regression shields.
+- 5. Security: Threat model, credential boundaries, sanitization, memory safety, least privilege.
+- 6. Performance: Latency profiles, asymptotic complexity, caching, zero-copy, concurrency bottlenecks.
+- 7. Deployment: CI/CD invariants, container constraints, reproducible builds, runtime flags.
+- 8. Agent Patterns: Tooling interfaces, prompt chains, loop guards, context budget optimization.
+- 9. Data Flow: Mutation lifecycles, streams, serializers, network protocol barriers.
 
-2. 8-DIMENSIONAL DEEP SWEEP (D1 to D8):
-Analyze all 8 dimensions with concrete technical depth based on the code files, manifests, and patches.
-
-3. NET-NEW UNIVERSAL ENGINEERING RULES:
-Formulate 1 to 3 battle-tested Universal Engineering Rules in the exact standard format:
-## X. [Rule Title]
-**RULE**:
-[Clear statement of invariant]
-**WHY**:
-[Forensic technical explanation of failure modes avoided]
-**WHEN TO APPLY**:
-[Target subsystems, languages, or architectural boundaries]
-**VERIFIED IMPLEMENTATION PATTERN**:
-\`\`\`language
-// Complete, working, production-grade pattern
-\`\`\`
-**NEGATIVE CONSTRAINT**:
-\`\`\`language
-// Anti-pattern to NEVER write
-\`\`\`
-
-4. ACTIONABLE AGENT SKILL & CHECKLIST:
-Provide a step-by-step verification checklist for any AI coding agent building similar systems.`;
+2. THE 8 LEARNING EXTRACTION ARTIFACTS:
+For every key insight, extract all 8 distinct learning artifacts:
+- 1. Pattern: Verified, production-grade implementation pattern with concrete code.
+- 2. Rule: Universal invariant (MUST / MUST NOT) to enforce across software systems.
+- 3. Architecture Principle: High-level architectural law and structural trade-off.
+- 4. Failure Mode: Precise technical breakdown of the bug/crash/exploit observed.
+- 5. Reusable Skill: Step-by-step procedural workflow/checklist for an AI coding agent.
+- 6. Decision: Engineering design trade-off and forensic rationale why alternatives were rejected.
+- 7. Anti-pattern: Negative constraint with concrete "bad code" to NEVER write.
+- 8. Verification Method: Concrete automated test, assert, lint, or check to prove compliance.`;
 
   const prompt = `Perform an exhaustive, multi-dimensional forensic extraction ("totally puri learning nichod lena") on the following repository:
 
@@ -125,7 +148,7 @@ Structure your response in markdown with the following EXACT canonical sections:
 ## 1. Executive Forensic Architecture & System Mechanics
 Explain the exact technical problem this repo solves, its architectural boundaries, and critical subsystem abstractions.
 
-## 2. Forensic Incident & Learning Records (Incident 1 to 5+)
+## 2. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 For each real bug fix/incident discovered from the commits, patches, and issues, document:
 ### Incident X: [Specific Technical Title] (BUG-[SLUG]-0X)
 - **Context**: Subsystem and file path
@@ -133,30 +156,45 @@ For each real bug fix/incident discovered from the commits, patches, and issues,
 - **What Actually Happened**: The precise failure mode
 - **Evidence in Repo**: Commit SHA, PR link, exact file path, and tests
 - **Root Cause**: Deep forensic root-cause analysis
-- **Remediation & Code Diff**:
+- **Remediation Code Diff**:
 \`\`\`language
 // - Buggy code / What failed
 // + Fixed pattern / Safe invariant
 \`\`\`
 - **Lesson**: Generalized engineering invariant
-- **Promotion Decision**: Promoted as Universal Rule candidate or Brain refinement
 
-## 3. 8-Dimensional Multi-Axis Forensic Deep Sweep
-- **D1: Architecture & Structural Boundaries**:
-- **D2: Asynchronous State & Concurrency Defense**:
-- **D3: Error Boundaries, Recovery & Rollback Protocols**:
-- **D4: Resource Lifecycle & Leak Defenses (Memory, Sockets, Descriptors)**:
-- **D5: Boundary Deserialization, Schemas & Input Sanitization**:
-- **D6: Cross-Platform & Runtime Compatibility Gotchas (Windows/Linux/Node/Browser)**:
-- **D7: Build, CI/CD, Deployment & Dependency Invariants**:
-- **D8: Concrete Bug Fixes & Forensic Patches**:
+## 3. The 9 Deep Learning Dimensions
+Provide deep technical analysis across all 9 core dimensions:
+1. **Architecture**: Subsystem layout, modular boundaries, decoupling strategy.
+2. **Core Abstractions**: Foundational types, domain interfaces, invariant contracts.
+3. **Error Handling**: Exception hierarchies, recovery barriers, rollback strategies.
+4. **Testing**: Unit invariants, mock philosophies, automated regression shields.
+5. **Security**: Threat mitigation, input sanitization, capability containment.
+6. **Performance**: Allocation bottlenecks, memory caching, algorithmic optimizations.
+7. **Deployment**: Container definitions, CI/CD pipeline invariants, runtime configs.
+8. **Agent Patterns**: Autonomous tool integrations, execution loop bounds, memory caching.
+9. **Data Flow**: Mutation lifecycle, serialization protocols, asynchronous pipelines.
 
-## 4. Net-New Universal Engineering Rules (Candidates for Master Brain)
+## 4. The 8 Learning Extraction Artifacts
+Synthesize the extracted intelligence into the 8 canonical artifacts:
+1. **Pattern**: Production-grade verified pattern with complete code.
+2. **Rule**: Strict universal invariant (MUST / MUST NOT).
+3. **Architecture Principle**: Enduring architectural law.
+4. **Failure Mode**: Concrete breakdown of observed failure mode.
+5. **Reusable Skill**: Actionable step-by-step procedure for AI coding agents.
+6. **Decision**: Architectural trade-off analysis and why chosen over alternatives.
+7. **Anti-pattern**: Negative constraint with concrete code block of what NEVER to write.
+8. **Verification Method**: Concrete test or assertion to prove invariant compliance.
+
+## 5. Net-New Universal Engineering Rules (Candidates for Master Brain)
 Provide 1 to 3 net-new Universal Engineering Rules in the exact standard format:
 ## X. [Rule Title]
 **RULE**:
+[Clear statement of invariant]
 **WHY**:
+[Forensic technical explanation of failure modes avoided]
 **WHEN TO APPLY**:
+[Target subsystems, languages, or architectural boundaries]
 **VERIFIED IMPLEMENTATION PATTERN**:
 \`\`\`language
 // Complete, working pattern
@@ -165,8 +203,10 @@ Provide 1 to 3 net-new Universal Engineering Rules in the exact standard format:
 \`\`\`language
 // Anti-pattern to NEVER write
 \`\`\`
+**VERIFICATION METHOD**:
+[Automated test, assertion, or linter rule to verify compliance]
 
-## 5. Actionable Agent Skill & Implementation Checklist
+## 6. Actionable Agent Skill & Implementation Checklist
 Provide a step-by-step verification checklist for any AI coding agent building similar systems.`;
 
   try {
@@ -179,12 +219,14 @@ Provide a step-by-step verification checklist for any AI coding agent building s
 }
 
 /**
- * Parses Gemini output to extract net-new rules and promotes them to 05_KNOWLEDGE/engineering-patterns.md
+ * Gated Master Brain Rule Promotion:
+ * Prevents agents from corrupting the Master Brain by enforcing strict validation
+ * before any rule can be appended to 05_KNOWLEDGE/engineering-patterns.md.
  */
 export function promoteGeminiRulesToMasterBrain(geminiText, sourceRepoName) {
   if (!geminiText || !fs.existsSync(PATTERNS_PATH)) return [];
 
-  const ruleRegex = /(?:##|###)\s+(?:Rule\s+)?(?:X|\d+)[:.]?\s*(.+?)\n([\s\S]*?)(?=(?:\n(?:##|###)\s+(?:Rule\s+)?(?:X|\d+)[:.]?|\n##\s+5\.|\n###\s+5\.|\Z))/gi;
+  const ruleRegex = /(?:##|###)\s+(?:Rule\s+)?(?:X|\d+)[:.]?\s*(.+?)\n([\s\S]*?)(?=(?:\n(?:##|###)\s+(?:Rule\s+)?(?:X|\d+)[:.]?|\n##\s+6\.|\n###\s+6\.|\Z))/gi;
   let match;
   const promotedRules = [];
 
@@ -192,21 +234,26 @@ export function promoteGeminiRulesToMasterBrain(geminiText, sourceRepoName) {
     const ruleTitle = match[1].trim();
     const ruleBody = match[2].trim();
 
-    // Skip section headers or invalid titles
-    if (/^(net-new|universal|forensic|executive|actionable|project|empirical)/i.test(ruleTitle)) continue;
+    // 1. Anti-Corruption Validation Gate
+    const validation = validateRuleCandidate(ruleTitle, ruleBody);
+    if (!validation.valid) {
+      console.warn(`🛡️ [CORRUPTION GUARD] Rejected rule candidate "${ruleTitle}" from Master Brain: ${validation.reason}. Preserved in Project Learning record.`);
+      continue;
+    }
 
-    // Check if rule already exists to avoid duplicates
+    // 2. Duplicate Detection
     const currentPatterns = fs.readFileSync(PATTERNS_PATH, 'utf-8');
     if (currentPatterns.toLowerCase().includes(ruleTitle.toLowerCase())) {
       console.log(`[RULE ALREADY EXISTS] Skipping duplicate rule: "${ruleTitle}"`);
       continue;
     }
 
+    // 3. Gated Master Brain Mutation
     const nextRuleNum = resolveNextRuleNumber();
     const formattedRule = `\n\n---\n\n## ${nextRuleNum}. ${ruleTitle} (Harvested from ${sourceRepoName})\n\n${ruleBody}\n`;
 
     fs.appendFileSync(PATTERNS_PATH, formattedRule, 'utf-8');
-    console.log(`🌟 [PROMOTED UNIVERSAL RULE] Appended Rule ${nextRuleNum}: "${ruleTitle}" to engineering-patterns.md`);
+    console.log(`🌟 [GATED PROMOTION VERIFIED] Rule ${nextRuleNum}: "${ruleTitle}" validated and safely promoted to Master Brain.`);
     promotedRules.push({ number: nextRuleNum, title: ruleTitle });
   }
 
@@ -223,7 +270,7 @@ export function saveGeminiLearningRecord(slug, geminiText, auditData) {
 
   const header = `> **Canonical Learning Artifact**: \`07_PROJECT_LEARNING/${filename}\`  
 > **Source**: ${auditData.platform} ([${auditData.target?.webUrl || auditData.name}](${auditData.target?.webUrl || auditData.name}))  
-> **Synthesized By**: Google Gemini Server-to-Server Autonomous AI Agent  
+> **Synthesized By**: Universal Multi-Provider Autonomous AI Agent  
 > **Timestamp**: ${new Date().toISOString()}  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 
@@ -232,6 +279,6 @@ export function saveGeminiLearningRecord(slug, geminiText, auditData) {
 `;
 
   fs.writeFileSync(filePath, header + geminiText, 'utf-8');
-  console.log(`📄 [GEMINI LEARNING RECORD SAVED] ${filePath}`);
+  console.log(`📄 [LEARNING RECORD SAVED] ${filePath}`);
   return filePath;
 }

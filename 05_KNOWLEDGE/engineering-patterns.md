@@ -3219,5 +3219,53 @@ if (openAiError.status === 429) {
 }
 ```
 
+---
+
+## 218. Dual-Worker Architectural Sovereignty & Gated Master Brain Invariant (Harvested from AI-Builder-Brain Unified Core Architecture)
+
+**RULE**:
+In an autonomous development ecosystem where dual execution agents—**Local Worker** (Antigravity IDE: manual/interactive pair programming) and **Cloud Worker** (Antigravity CLI / GitHub Actions: 24×7 autonomous background harvesting)—feed and draw from the **Same Canonical Master Brain**, the system MUST enforce four sovereign invariants:
+1. **Non-Destructive Architecture Preservation**: Dual workers MUST NEVER replace, reset, or discard the established Brain structure (`C:\AI-Builder-Brain`); they must strictly append, refine, and enrich existing patterns.
+2. **Hard Cost & Billing Quarantine ($0.00 / ₹0)**: The system MUST operate under a hard $0.00 cost guardrail. Paid APIs, metered endpoints, and unbudgeted cloud resources MUST be blocked by default at configuration and network layers.
+3. **Execution Quarantine of Untrusted Code**: Automatic execution of untrusted third-party repository code (`npm install`, `pip install`, `make`, arbitrary binaries) in background learning workers is **BLOCKED BY DEFAULT**. Harvesters MUST operate strictly via static REST API diff inspections and zero-clone analysis.
+4. **Gated Anti-Corruption Write Barrier**: Autonomous agents are **DENIED unrestricted direct write access** to core Master Brain knowledge (`05_KNOWLEDGE/engineering-patterns.md`). All incoming knowledge MUST first stage in Project Learning archives (`07_PROJECT_LEARNING/`) and pass a schema validation gate across the **9 Deep Learning Dimensions** (Architecture, Core Abstractions, Error Handling, Testing, Security, Performance, Deployment, Agent Patterns, Data Flow) and produce the **8 Learning Extraction Artifacts** (Pattern, Rule, Architecture Principle, Failure Mode, Reusable Skill, Decision, Anti-pattern, Verification Method).
+
+**WHY**:
+Allowing autonomous background workers unrestricted write access to a core knowledge base inevitably leads to model hallucination pollution, duplicate rules, and catastrophic brain corruption. Similarly, running unvetted build scripts from third-party repositories risks remote code execution (RCE) and supply chain attacks. Enforcing a gated promotion barrier with execution quarantine ensures the Master Brain grows exponentially in intelligence while remaining 100% pure, secure, and zero-cost.
+
+**WHEN TO APPLY**:
+All dual-worker agent architectures, autonomous background learning harvesters, multi-environment knowledge bases, and continuous code generation pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Good: Gated validation before Master Brain promotion
+export function promoteRuleToMasterBrain(candidate, brainPath) {
+  // 1. Validate all mandatory schema fields
+  const isValid = candidate.rule && candidate.why && candidate.when &&
+                  candidate.pattern && candidate.negative && candidate.verification;
+  if (!isValid || candidate.body.length < 250) {
+    console.warn(`[CORRUPTION GUARD] Rejected rule candidate: Failed schema validation.`);
+    return false; // Retained in staging (07_PROJECT_LEARNING/) only!
+  }
+
+  // 2. Deduplication check against Master Brain
+  const brainContent = fs.readFileSync(brainPath, 'utf-8');
+  if (brainContent.includes(candidate.title)) {
+    return false; // Skip duplicate
+  }
+
+  // 3. Atomically append verified rule
+  fs.appendFileSync(brainPath, candidate.formattedMarkdown);
+  return true;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern: Giving autonomous agents direct, unvalidated write access to Master Brain
+fs.appendFileSync("05_KNOWLEDGE/engineering-patterns.md", rawAiResponse); // CATASTROPHIC BRAIN CORRUPTION
+```
+
+
 
 

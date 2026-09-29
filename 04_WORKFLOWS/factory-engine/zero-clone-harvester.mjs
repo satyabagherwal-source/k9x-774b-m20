@@ -19,6 +19,11 @@ const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
 
 const USER_AGENT = 'AI-Builder-Brain-ZeroCloneHarvester/1.0';
 
+// Security Invariant: Execution of untrusted third-party repository code is strictly prohibited by default
+export const UNTRUSTED_CODE_EXECUTION = 'BLOCKED_BY_DEFAULT';
+// Cost Guardrail: Strict $0.00 architecture with hard cost limit (no accidental billing)
+export const HARD_COST_LIMIT_USD = 0.00;
+
 /**
  * Execute command safely
  */
