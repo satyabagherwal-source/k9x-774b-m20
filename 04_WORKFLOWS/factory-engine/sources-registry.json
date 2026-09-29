@@ -991,5 +991,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hashicorp-boundary": {
+    "name": "hashicorp/boundary",
+    "officialUrl": "https://github.com/hashicorp/boundary",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-29T01:22:51.184Z",
+    "lastVerified": "2026-09-29T01:22:51.184Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 3,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

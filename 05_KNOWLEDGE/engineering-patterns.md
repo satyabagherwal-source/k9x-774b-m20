@@ -2048,3 +2048,35 @@ Unbounded link checkers cause CI/CD pipelines to hang indefinitely, trigger rate
 Apply to all CI/CD pipelines, link-checking bots, web scrapers, and metadata enrichment workers.
 
 ---
+
+
+---
+
+## 146. Storage Polling Error Spam on Unconfigured Controllers (#5258) (Harvested from hashicorp/boundary)
+
+* **Failure Mode**: Controller logs overflow at hundreds of log lines per minute with storage connection failures when session storage recording features are explicitly disabled in configuration.
+* **Root Cause**: A background ticker routine responsible for storage worker heartbeat/maintenance ran unconditionally regardless of the underlying storage subsystem enable status (`Storage.Config.Enabled == false`).
+* **Exact Prevention / Fix**: Place explicit fast-path guard checks inside background worker event loops to short-circuit ticker registration if the dependent subsystem state is disabled or unconfigured.
+
+### 5. Silent Proxy Tunnel Connection Drops without Diagnostic Telemetry (#5693)
+* **Failure Mode**: Worker proxy refuses client forwarding connections, leaving clients hanging with opaque connection reset errors and no diagnostic logs generated on either client or worker.
+* **Root Cause**: Yamux session errors during TCP handshake negotiation (e.g., SNI routing failures or expired session tickets) were caught and returned as raw `io.EOF` or generic connection reset errors without entering the audit logging middleware.
+* **Exact Prevention / Fix**: Wrap raw transport listeners with an explicit telemetry/error log boundary prior to dropping multiplexed sub-channels.
+
+---
+
+
+---
+
+## 147. Executable Temporal Path Isolation Rule (Harvested from hashicorp/boundary)
+
+**RULE**:
+Applications that extract, compile, or execute binary binaries, dynamic plugins, or native scripts at runtime MUST NOT default exclusively to standard system temporary directories (`/tmp` or `os.TempDir()`). Systems MUST support a runtime-configurable temp directory override and MUST perform a permission check for execution (`EACCES` test via dynamic file execution attempt) during initiali
+
+
+---
+
+## 148. Idempotent Schema Extension Initialization Rule (Harvested from hashicorp/boundary)
+
+**RULE**:
+All SQL database migration scripts and ORM initiali
