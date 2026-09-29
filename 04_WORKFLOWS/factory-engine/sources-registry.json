@@ -1095,5 +1095,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "feder-cr-invisible_playwright_mcp": {
+    "name": "feder-cr/invisible_playwright_mcp",
+    "officialUrl": "https://github.com/feder-cr/invisible_playwright_mcp",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T01:24:16.209Z",
+    "lastVerified": "2026-09-29T01:24:16.209Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

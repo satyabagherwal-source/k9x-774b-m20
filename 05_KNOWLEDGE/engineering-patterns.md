@@ -2378,3 +2378,11 @@ Agent runtime environments evolve faster than static client libraries. Hard-fail
 Apply in runtime environment detection, host adapter bindings, and platform plugin integrations across multi-agent deployment ecosystems (e.g., Claude Code, DSH, Hermes Agent, OpenClaw).
 
 ---
+
+
+---
+
+## 169. The "Browser-as-a-Service" Lifecycle Invariant (Harvested from feder-cr/invisible_playwright_mcp)
+
+**RULE**:
+Every browser context must be bound to a `contextlib.AsyncExitStack` and initiali
