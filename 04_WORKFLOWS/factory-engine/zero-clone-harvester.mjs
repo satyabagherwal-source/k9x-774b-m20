@@ -36,14 +36,33 @@ function run(cmd, cwd = BRAIN_ROOT) {
 }
 
 /**
- * Check harvest-control.json status
+ * Check harvest-control.json status (supports both global engine and isolated worker check)
  */
-export function isHarvesterActive() {
+export function isHarvesterActive(agentName = process.env.AGENT_NAME) {
   const controlPath = path.join(BRAIN_ROOT, 'harvest-control.json');
   if (!fs.existsSync(controlPath)) return true;
   try {
     const data = JSON.parse(fs.readFileSync(controlPath, 'utf-8'));
-    return data.status === 'ACTIVE';
+
+    // 1. If global engine is explicitly PAUSED, all workers pause
+    if (data.status === 'PAUSED') return false;
+
+    // 2. If checking for a specific worker, inspect worker's isolated status
+    if (agentName && data.multiAgentFleet && Array.isArray(data.multiAgentFleet.workers)) {
+      const worker = data.multiAgentFleet.workers.find((w) => w.id === agentName || w.domain === agentName);
+      if (worker) {
+        if (worker.status === 'PAUSED') return false;
+        if (worker.status === 'COOLING_DOWN' && worker.cooldownUntil) {
+          // If cooldown expired, worker is active again
+          if (Date.now() >= new Date(worker.cooldownUntil).getTime()) {
+            return true;
+          }
+          return false; // Still in isolated cooldown
+        }
+      }
+    }
+
+    return true;
   } catch (e) {
     return true;
   }
@@ -548,9 +567,10 @@ export async function runZeroCloneHarvester(customUrls = null) {
   console.log(`======================================================================`);
 
   // 1. Control Guard
-  if (!isHarvesterActive()) {
-    console.log(`[HARVESTER PAUSED] harvest-control.json status is set to PAUSED.`);
-    console.log(`To resume, set status to ACTIVE or say: "Cloud harvester chalu karo"`);
+  const activeAgent = process.env.AGENT_NAME || null;
+  if (!isHarvesterActive(activeAgent)) {
+    console.log(`[HARVESTER PAUSED] ${activeAgent ? `Agent ${activeAgent}` : 'Harvest engine'} is currently PAUSED or in ISOLATED COOLDOWN.`);
+    console.log(`Other agents continue running. To resume, check harvest-control.json or run: node harvester-control.mjs resume ${activeAgent || ''}`);
     return { success: true, status: 'PAUSED', processed: 0 };
   }
 

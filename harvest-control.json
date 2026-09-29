@@ -48,14 +48,14 @@
     "enabled": true,
     "fleetSize": 8,
     "workers": [
-      { "id": "Agent-Alpha", "domain": "ai-agents" },
-      { "id": "Agent-Beta", "domain": "fullstack-ui" },
-      { "id": "Agent-Gamma", "domain": "high-perf-systems" },
-      { "id": "Agent-Delta", "domain": "huggingface-ai-models" },
-      { "id": "Agent-Epsilon", "domain": "mobile-cross-platform" },
-      { "id": "Agent-Zeta", "domain": "devops-cloud-infrastructure" },
-      { "id": "Agent-Eta", "domain": "cybersecurity-defenses" },
-      { "id": "Agent-Theta", "domain": "database-storage-engines" }
+      { "id": "Agent-Alpha", "domain": "ai-agents", "status": "ACTIVE", "cooldownUntil": null, "lastActiveAt": null, "lastHarvestedAt": null, "totalHarvested": 0, "lastError": null },
+      { "id": "Agent-Beta", "domain": "fullstack-ui", "status": "ACTIVE", "cooldownUntil": null, "lastActiveAt": null, "lastHarvestedAt": null, "totalHarvested": 0, "lastError": null },
+      { "id": "Agent-Gamma", "domain": "high-perf-systems", "status": "ACTIVE", "cooldownUntil": null, "lastActiveAt": null, "lastHarvestedAt": null, "totalHarvested": 0, "lastError": null },
+      { "id": "Agent-Delta", "domain": "huggingface-ai-models", "status": "ACTIVE", "cooldownUntil": null, "lastActiveAt": null, "lastHarvestedAt": null, "totalHarvested": 0, "lastError": null },
+      { "id": "Agent-Epsilon", "domain": "mobile-cross-platform", "status": "ACTIVE", "cooldownUntil": null, "lastActiveAt": null, "lastHarvestedAt": null, "totalHarvested": 0, "lastError": null },
+      { "id": "Agent-Zeta", "domain": "devops-cloud-infrastructure", "status": "ACTIVE", "cooldownUntil": null, "lastActiveAt": null, "lastHarvestedAt": null, "totalHarvested": 0, "lastError": null },
+      { "id": "Agent-Eta", "domain": "cybersecurity-defenses", "status": "ACTIVE", "cooldownUntil": null, "lastActiveAt": null, "lastHarvestedAt": null, "totalHarvested": 0, "lastError": null },
+      { "id": "Agent-Theta", "domain": "database-storage-engines", "status": "ACTIVE", "cooldownUntil": null, "lastActiveAt": null, "lastHarvestedAt": null, "totalHarvested": 0, "lastError": null }
     ],
     "orchestratorScript": "04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs"
   }

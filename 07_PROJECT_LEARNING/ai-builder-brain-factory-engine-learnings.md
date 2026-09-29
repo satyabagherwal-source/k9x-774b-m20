@@ -102,17 +102,35 @@ During operational stress testing and active pair-programming refinement, four c
 * **Lesson**: *Proactive Inter-Request Pacing & Secondary Rate-Limit Invariant*. Always enforce mandatory inter-request delays (`sleep(300..500ms)`), honor `Retry-After` headers, and apply exponential backoff.
 * **Promotion Decision**: Promoted as **Rule 214** in `05_KNOWLEDGE/engineering-patterns.md`.
 
+### Incident 5: Monolithic Swarm Pause vs. Isolated Per-Worker Circuit Breakers (BUG-SWARM-05)
+* **Context**: `04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs`, `harvest-control.json`, `ai-provider-pool.mjs`
+* **What Was Expected**: 8 parallel domain agents and multi-account API keys operating concurrently 24/7 across servers. When one agent or key encounters a rate-limit or quota exhaustion, ONLY that agent or key should enter an isolated cooldown until its individual reset window, while all other agents and keys continue extracting learning without interruption.
+* **What Actually Happened**: Initially, rate-limit handling applied a global kill switch or stopped the entire harvester run, causing artificial starvation across all 8 workers when only a single key or domain was rate-limited.
+* **Root Cause**: Lack of granular per-worker and per-key circuit breaker state isolation. No individual timer tracking or auto-recovery mechanism.
+* **Remediation Code Diff**:
+  ```diff
+  - if (res.status === 429) {
+  -   setGlobalHarvesterStatus('PAUSED'); // Blanket stop
+  - }
+  + if (res.status === 429) {
+  +   tripKeyCircuitBreaker(apiKey, cooldownDuration, reason); // Only key enters cooldown
+  +   continue; // Remaining keys continue serving!
+  + }
+  ```
+* **Lesson**: *Independent Circuit Breakers & Non-Blocking Quota Isolation for Distributed Multi-Agent Swarms*. Never apply a global blanket ON/OFF switch. Isolate individual cooldowns with auto-recovery timers.
+* **Promotion Decision**: Promoted as **Rule 215** in `05_KNOWLEDGE/engineering-patterns.md`.
+
 ---
 
 ## 3. 8-Dimensional Multi-Axis Forensic Deep Sweep
-- **D1: Architecture & Structural Boundaries**: Decoupled multi-agent workers with targeted target-level lockfiles (`.harvest-locks/`).
+- **D1: Architecture & Structural Boundaries**: Decoupled multi-agent workers with targeted target-level lockfiles (`.harvest-locks/`) and isolated worker lifecycles.
 - **D2: Asynchronous State & Concurrency Defense**: Atomic rebase-retry (`pushWithRebaseRetry`) ensures concurrent cloud and local commits never cause git merge collisions.
 - **D3: Error Boundaries, Recovery & Rollback Protocols**: Rebase abort guards (`git rebase --abort`) preserve clean working trees if upstream conflicts emerge.
 - **D4: Resource Lifecycle & Leak Defenses**: Immediate cleanup of temporary clones (`safeRemoveDir`) ensures 0 bytes retained on local disks.
 - **D5: Boundary Deserialization, Schemas & Input Sanitization**: Overflow-checked parsing of rule numbers and JSON configs.
 - **D6: Cross-Platform & Runtime Compatibility Gotchas**: Windows read-only attribute stripping (`attrib -r -s -h`) enables flawless directory deletion across Windows/POSIX.
 - **D7: Build, CI/CD, Deployment & Tooling**: Off-peak cron scheduling (`23 * * * *`) eliminates GitHub Actions queue starvation.
-- **D8: Concrete Bug Fixes & Forensic Patches**: Upgraded `zero-clone-harvester.mjs` and `batch-auto-harvester.mjs` to extract deep git patches and issue comments.
+- **D8: Concrete Bug Fixes & Forensic Patches**: Upgraded `zero-clone-harvester.mjs` and `batch-auto-harvester.mjs` to extract deep git patches, issue comments, and decoupled circuit breakers.
 
 ---
 
@@ -130,6 +148,9 @@ During operational stress testing and active pair-programming refinement, four c
 ### Rule 214: Proactive Inter-Request Pacing & Secondary Rate-Limit Invariant
 **RULE**: Automated API extraction loops, crawlers, and repository harvesters MUST enforce proactive inter-request pacing delays (`sleep(300..500ms)`) between consecutive HTTP requests, inspect and obey platform `Retry-After` headers, and apply exponential backoff.
 
+### Rule 215: Independent Circuit Breakers & Non-Blocking Quota Isolation for Distributed Multi-Agent Swarms
+**RULE**: In distributed multi-agent systems with multiple autonomous workers and external AI provider pools operating across servers with disparate quotas, reset windows, and rate-limits, NEVER apply a global blanket ON/OFF kill switch upon encountering a rate-limit or quota exhaustion event. Every worker agent and API provider key MUST be encapsulated in an independent, persisted circuit breaker state with an isolated cooldown timestamp (`cooldownUntil`).
+
 ---
 
 ## 5. Actionable Implementation Checklist
@@ -137,4 +158,6 @@ During operational stress testing and active pair-programming refinement, four c
 - [x] Verify local git sync before diagnosing cloud runner activity.
 - [x] Enforce real commit diff patch extraction in harvesting scripts.
 - [x] Integrate proactive 400ms sleep in `compliantFetch` to avoid secondary rate limits.
+- [x] Implement independent per-key circuit breakers and per-worker isolated lifecycles.
+- [x] Ensure auto-recovery timers restore cooled keys/agents to ACTIVE without manual intervention.
 - [x] Verify that all self-improvements are documented and promoted into Master Brain knowledge.

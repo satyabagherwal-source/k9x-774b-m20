@@ -77,6 +77,123 @@ export function loadAllAiKeys() {
 let geminiKeyIndex = 0;
 
 /**
+const CIRCUIT_FILE = path.join(BRAIN_ROOT, '.harvest-locks', 'ai-key-circuit.json');
+
+/**
+ * Loads shared circuit breaker registry across processes
+ */
+function loadCircuitRegistry() {
+  try {
+    if (fs.existsSync(CIRCUIT_FILE)) {
+      return JSON.parse(fs.readFileSync(CIRCUIT_FILE, 'utf-8'));
+    }
+  } catch (e) {}
+  return {};
+}
+
+/**
+ * Saves shared circuit breaker registry
+ */
+function saveCircuitRegistry(registry) {
+  try {
+    const dir = path.dirname(CIRCUIT_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(CIRCUIT_FILE, JSON.stringify(registry, null, 2), 'utf-8');
+  } catch (e) {}
+}
+
+/**
+ * Returns isolated health state of a specific key
+ */
+export function getKeyCircuitState(apiKey) {
+  const keyId = apiKey ? (apiKey.slice(0, 4) + '...' + apiKey.slice(-4)) : 'unknown';
+  const registry = loadCircuitRegistry();
+  const entry = registry[keyId] || {
+    id: keyId,
+    status: 'HEALTHY',
+    cooldownUntil: 0,
+    resetReason: null,
+    consecutiveFailures: 0,
+    totalSuccesses: 0,
+    lastActiveAt: null
+  };
+
+  // Auto-recovery: If cooldown timestamp has expired, restore key to HEALTHY automatically
+  if (entry.status !== 'HEALTHY' && Date.now() >= entry.cooldownUntil) {
+    entry.status = 'HEALTHY';
+    entry.resetReason = null;
+    entry.consecutiveFailures = 0;
+    registry[keyId] = entry;
+    saveCircuitRegistry(registry);
+  }
+  return entry;
+}
+
+/**
+ * Marks ONLY this specific key as cooling down with its own independent timer
+ */
+export function tripKeyCircuitBreaker(apiKey, durationMs, reason) {
+  const keyId = apiKey ? (apiKey.slice(0, 4) + '...' + apiKey.slice(-4)) : 'unknown';
+  const registry = loadCircuitRegistry();
+  const entry = registry[keyId] || { id: keyId, consecutiveFailures: 0, totalSuccesses: 0 };
+
+  entry.status = durationMs > 300_000 ? 'QUOTA_EXHAUSTED' : 'RATE_LIMITED';
+  entry.cooldownUntil = Date.now() + durationMs;
+  entry.resetReason = reason;
+  entry.consecutiveFailures = (entry.consecutiveFailures || 0) + 1;
+  entry.lastActiveAt = new Date().toISOString();
+
+  registry[keyId] = entry;
+  saveCircuitRegistry(registry);
+
+  const resetTimeStr = new Date(entry.cooldownUntil).toISOString().replace('T', ' ').slice(0, 19);
+  console.warn(`⏸️ [ISOLATED KEY COOLDOWN] ${keyId} entered ${entry.status} mode (${reason}).`);
+  console.warn(`   Independent Reset At: ${resetTimeStr} (${Math.round(durationMs / 1000)}s). Other pool keys remain 100% ACTIVE!`);
+}
+
+/**
+ * Marks a key as healthy upon successful response
+ */
+export function reportKeySuccess(apiKey) {
+  const keyId = apiKey ? (apiKey.slice(0, 4) + '...' + apiKey.slice(-4)) : 'unknown';
+  const registry = loadCircuitRegistry();
+  const entry = registry[keyId] || { id: keyId, consecutiveFailures: 0, totalSuccesses: 0 };
+
+  entry.status = 'HEALTHY';
+  entry.cooldownUntil = 0;
+  entry.resetReason = null;
+  entry.consecutiveFailures = 0;
+  entry.totalSuccesses = (entry.totalSuccesses || 0) + 1;
+  entry.lastActiveAt = new Date().toISOString();
+
+  registry[keyId] = entry;
+  saveCircuitRegistry(registry);
+}
+
+/**
+ * Returns complete report of all keys and their individual health states across providers
+ */
+export function getAllKeysCircuitReport() {
+  const allKeys = loadAllAiKeys();
+  const report = [];
+  allKeys.gemini.forEach((k, idx) => {
+    report.push({
+      provider: 'Google Gemini',
+      label: `Gemini Key #${idx + 1}`,
+      ...getKeyCircuitState(k)
+    });
+  });
+  allKeys.groq.forEach((k, idx) => {
+    report.push({
+      provider: 'Groq Free',
+      label: `Groq Key #${idx + 1}`,
+      ...getKeyCircuitState(k)
+    });
+  });
+  return report;
+}
+
+/**
  * Get next rotating Gemini key with automatic round-robin load balancing
  */
 export function getNextGeminiKey() {
@@ -88,8 +205,9 @@ export function getNextGeminiKey() {
 }
 
 /**
- * Robust Multi-Key Server-to-Server Gemini Call with Auto-Key Rotation
- * If Key 1 hits 429 or 503, immediately rotates to Key 2, Key 3, etc.
+ * Robust Multi-Key Server-to-Server Gemini Call with Independent Per-Key Circuit Breakers
+ * If Key 1 hits its quota limit, ONLY Key 1 cools down until its reset time.
+ * All other keys in the pool CONTINUE SERVING without stopping or global pause!
  */
 export async function executeWithGeminiPool(prompt, systemInstruction = '') {
   const pool = loadAllAiKeys().gemini;
@@ -98,11 +216,22 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
   }
 
   let lastError = null;
+  let activeKeysTried = 0;
 
-  // Try each key in the pool
+  // Try each key in the pool independently
   for (let kIdx = 0; kIdx < pool.length; kIdx++) {
     const apiKey = pool[(geminiKeyIndex + kIdx) % pool.length];
     const keyLabel = `Key ${(kIdx + 1)}/${pool.length} (${apiKey.slice(0, 4)}...${apiKey.slice(-4)})`;
+    const circuit = getKeyCircuitState(apiKey);
+
+    // If this specific key is currently in isolated cooldown, skip it without network call
+    if (circuit.status !== 'HEALTHY' && Date.now() < circuit.cooldownUntil) {
+      const waitSec = Math.max(1, Math.round((circuit.cooldownUntil - Date.now()) / 1000));
+      console.log(`⏩ [ISOLATED COOLDOWN] ${keyLabel} is resting until ${new Date(circuit.cooldownUntil).toISOString().slice(11, 19)} (${waitSec}s left - ${circuit.resetReason}). Passing to next key...`);
+      continue;
+    }
+
+    activeKeysTried++;
 
     // Try each model with this key
     for (const model of GEMINI_MODELS) {
@@ -130,9 +259,15 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
         });
 
         if (response.status === 429) {
-          console.warn(`[GEMINI 429: RATE LIMIT] ${keyLabel} rate-limited. Rotating to next subscription key in pool...`);
-          lastError = new Error(`Rate limit 429 on ${keyLabel}`);
-          break; // Break inner model loop to rotate key immediately
+          const errText = await response.text();
+          const isDailyQuota = /quota|RESOURCE_EXHAUSTED|free_tier_requests_per_day/i.test(errText);
+          const cooldownDuration = isDailyQuota ? 3600_000 : 65_000; // 1 hour for daily quota, 65s for RPM limit
+          const reason = isDailyQuota ? 'Daily/Hourly Quota Exhausted' : 'Rate Limit 15 RPM Burst';
+
+          // Trip ONLY this key's circuit breaker
+          tripKeyCircuitBreaker(apiKey, cooldownDuration, reason);
+          lastError = new Error(`Rate limit 429 on ${keyLabel} (${reason})`);
+          break; // Break model loop to rotate to next key immediately
         }
 
         if (response.status === 503) {
@@ -151,6 +286,7 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
         const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (text) {
+          reportKeySuccess(apiKey);
           console.log(`✨ [GEMINI POOL SUCCESS] Received intelligence via ${keyLabel} from ${model} (${text.length} chars).`);
           return { text, model, keyUsed: keyLabel };
         }
@@ -161,49 +297,81 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
     }
   }
 
-  throw lastError || new Error('All Gemini keys and models in pool exhausted.');
+  if (activeKeysTried === 0) {
+    const report = getAllKeysCircuitReport().filter((r) => r.provider === 'Google Gemini');
+    const minWaitSec = Math.min(...report.map((r) => Math.max(1, Math.round((r.cooldownUntil - Date.now()) / 1000))));
+    throw new Error(`All ${pool.length} Gemini keys are in isolated cooldown (earliest resets in ${minWaitSec}s).`);
+  }
+
+  throw lastError || new Error('All active Gemini keys and models in pool exhausted.');
 }
 
 /**
  * Free Tier Secondary AI: Groq Free Inference (Llama 3.3 70B Versatile)
+ * Also protected with independent per-key circuit breakers!
  */
 export async function executeWithGroqFree(prompt, systemInstruction = '') {
   const keys = loadAllAiKeys().groq;
   if (keys.length === 0) return null;
 
-  const apiKey = keys[0];
-  const url = 'https://api.groq.com/openai/v1/chat/completions';
+  for (let idx = 0; idx < keys.length; idx++) {
+    const apiKey = keys[idx];
+    const keyLabel = `Groq Key ${idx + 1}/${keys.length} (${apiKey.slice(0, 4)}...${apiKey.slice(-4)})`;
+    const circuit = getKeyCircuitState(apiKey);
 
-  const messages = [];
-  if (systemInstruction) messages.push({ role: 'system', content: systemInstruction });
-  messages.push({ role: 'user', content: prompt });
+    if (circuit.status !== 'HEALTHY' && Date.now() < circuit.cooldownUntil) {
+      const waitSec = Math.max(1, Math.round((circuit.cooldownUntil - Date.now()) / 1000));
+      console.log(`⏩ [ISOLATED COOLDOWN] ${keyLabel} resting until ${new Date(circuit.cooldownUntil).toISOString().slice(11, 19)} (${waitSec}s left). Trying next Groq key...`);
+      continue;
+    }
 
-  try {
-    console.log(`⚡ [GROQ FREE AI] Sending request to Llama-3.3-70b-versatile...`);
-    const res = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages,
-        temperature: 0.2,
-        max_tokens: 8192
-      })
-    });
+    const url = 'https://api.groq.com/openai/v1/chat/completions';
+    const messages = [];
+    if (systemInstruction) messages.push({ role: 'system', content: systemInstruction });
+    messages.push({ role: 'user', content: prompt });
 
-    if (!res.ok) return null;
-    const data = await res.json();
-    return {
-      text: data.choices?.[0]?.message?.content || '',
-      model: 'llama-3.3-70b-versatile (Groq Free)'
-    };
-  } catch (e) {
-    console.warn(`[GROQ FREE AI ERROR] ${e.message}`);
-    return null;
+    try {
+      console.log(`⚡ [GROQ FREE AI] Sending request via ${keyLabel} to Llama-3.3-70b-versatile...`);
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages,
+          temperature: 0.2,
+          max_tokens: 8192
+        })
+      });
+
+      if (res.status === 429) {
+        tripKeyCircuitBreaker(apiKey, 65_000, 'Groq Rate Limit Exceeded');
+        continue;
+      }
+
+      if (!res.ok) {
+        console.warn(`[GROQ HTTP ERROR] Status: ${res.status}`);
+        continue;
+      }
+
+      const data = await res.json();
+      const text = data.choices?.[0]?.message?.content || '';
+      if (text) {
+        reportKeySuccess(apiKey);
+        return {
+          text,
+          model: 'llama-3.3-70b-versatile (Groq Free)',
+          keyUsed: keyLabel
+        };
+      }
+    } catch (e) {
+      console.warn(`[GROQ FREE AI ERROR] ${keyLabel}: ${e.message}`);
+    }
   }
+
+  return null;
 }
 
 /**

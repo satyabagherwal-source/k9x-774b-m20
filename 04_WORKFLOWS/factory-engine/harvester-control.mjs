@@ -2,6 +2,16 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
+import {
+  getFleetWorkers,
+  getWorkerLifecycle,
+  pauseWorker,
+  resumeWorker,
+  pauseAllWorkers,
+  resumeAllWorkers
+} from './multi-agent-fleet.mjs';
+import { getAllKeysCircuitReport } from './ai-provider-pool.mjs';
+import { runAutoDiscoveryScout } from './auto-discovery-scout.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,12 +38,12 @@ export function setHarvesterStatus(newStatus) {
   data.lastUpdated = new Date().toISOString();
   fs.writeFileSync(CONTROL_PATH, JSON.stringify(data, null, 2), 'utf-8');
 
-  console.log(`[HARVESTER CONTROL] Status updated to: ${data.status}`);
+  console.log(`[HARVESTER CONTROL] Global Status updated to: ${data.status}`);
 
   // Auto-sync status change to GitHub so Cloud Harvester receives it immediately
   try {
     run('git add harvest-control.json');
-    run(`git commit -m "chore(harvester): set status to ${data.status}"`);
+    run(`git commit -m "chore(harvester): set global status to ${data.status}"`);
     run('git push origin main');
     console.log(`[GIT PUSH] Harvester ${data.status} status pushed to GitHub remote.`);
   } catch (err) {
@@ -55,8 +65,6 @@ export function syncLocalWithCloud() {
   }
 }
 
-import { runAutoDiscoveryScout } from './auto-discovery-scout.mjs';
-
 export function getHarvesterStatus() {
   if (!fs.existsSync(CONTROL_PATH)) {
     return { status: 'UNKNOWN' };
@@ -64,20 +72,140 @@ export function getHarvesterStatus() {
   return JSON.parse(fs.readFileSync(CONTROL_PATH, 'utf-8'));
 }
 
+/**
+ * Renders complete, human-readable terminal dashboard of all agents & API keys
+ */
+export function displayDashboard() {
+  const control = getHarvesterStatus();
+  const workers = getFleetWorkers();
+  const keysReport = getAllKeysCircuitReport();
+
+  console.log(`\n========================================================================================`);
+  console.log(`🧠 AI-BUILDER-BRAIN: 24/7 AUTONOMOUS MULTI-AGENT & API POOL DASHBOARD`);
+  console.log(`   Global Status    : ${control.status === 'ACTIVE' ? '\x1b[32mACTIVE\x1b[0m' : '\x1b[31mPAUSED\x1b[0m'}`);
+  console.log(`   Concurrency Mode : ${control.concurrencyMode || 'PARALLEL_MULTI_AGENT'}`);
+  console.log(`   Cloud Schedule   : Hourly at min 23 via GitHub Actions (24/7 Autonomous)`);
+  console.log(`   Master Brain     : ${BRAIN_ROOT}`);
+  console.log(`   Isolation Policy : Zero blanket ON/OFF. Each agent and key operates independently.`);
+  console.log(`========================================================================================\n`);
+
+  // 1. Swarm Multi-Agent Fleet Status
+  console.log(`🤖 [SWARM MULTI-AGENT FLEET: 8 DOMAIN WORKERS]`);
+  console.log(`----------------------------------------------------------------------------------------`);
+  console.log(
+    `#`.padEnd(4) +
+    `Agent ID`.padEnd(16) +
+    `Assigned Domain`.padEnd(30) +
+    `Status`.padEnd(20) +
+    `Reset / Cooldown`.padEnd(22) +
+    `Harvested`
+  );
+  console.log(`----------------------------------------------------------------------------------------`);
+
+  workers.forEach((w, i) => {
+    const lifecycle = getWorkerLifecycle(w.id);
+    let statusStr = '\x1b[32mACTIVE\x1b[0m';
+    let resetStr = 'Ready / Active';
+
+    if (lifecycle.status === 'PAUSED') {
+      statusStr = '\x1b[90mPAUSED\x1b[0m';
+      resetStr = 'Manual Resume Req.';
+    } else if (lifecycle.status === 'COOLING_DOWN') {
+      const waitSec = Math.max(1, Math.round((new Date(lifecycle.cooldownUntil).getTime() - Date.now()) / 1000));
+      statusStr = '\x1b[33mCOOLING_DOWN\x1b[0m';
+      resetStr = `Auto in ${waitSec}s (${new Date(lifecycle.cooldownUntil).toISOString().slice(11, 19)})`;
+    }
+
+    console.log(
+      `${i + 1}`.padEnd(4) +
+      `${w.id}`.padEnd(16) +
+      `${w.domain}`.padEnd(30) +
+      statusStr.padEnd(29) + // ANSI codes take hidden bytes
+      resetStr.padEnd(22) +
+      `${lifecycle.totalHarvested || 0} repos`
+    );
+  });
+  console.log(`----------------------------------------------------------------------------------------\n`);
+
+  // 2. AI Provider Key Pool Status
+  console.log(`🔑 [AI PROVIDER KEY POOL: MULTI-KEY ROTATION & CIRCUIT BREAKERS]`);
+  console.log(`----------------------------------------------------------------------------------------`);
+  console.log(
+    `#`.padEnd(4) +
+    `Provider`.padEnd(18) +
+    `Key Identifier`.padEnd(26) +
+    `Circuit State`.padEnd(22) +
+    `Cooldown Reset`.padEnd(20) +
+    `Success/Fail`
+  );
+  console.log(`----------------------------------------------------------------------------------------`);
+
+  if (keysReport.length === 0) {
+    console.log(`   (No external keys registered in .brain-secrets.json or env. Structural fallback active)`);
+  } else {
+    keysReport.forEach((k, i) => {
+      let stateStr = '\x1b[32mHEALTHY\x1b[0m';
+      let resetStr = 'None (Serving)';
+
+      if (k.status === 'RATE_LIMITED') {
+        const waitSec = Math.max(1, Math.round((k.cooldownUntil - Date.now()) / 1000));
+        stateStr = '\x1b[33mRATE_LIMITED\x1b[0m';
+        resetStr = `In ${waitSec}s`;
+      } else if (k.status === 'QUOTA_EXHAUSTED') {
+        const waitSec = Math.max(1, Math.round((k.cooldownUntil - Date.now()) / 1000));
+        stateStr = '\x1b[31mQUOTA_EXHAUSTED\x1b[0m';
+        resetStr = `In ${Math.round(waitSec / 60)}m (${new Date(k.cooldownUntil).toISOString().slice(11, 19)})`;
+      }
+
+      console.log(
+        `${i + 1}`.padEnd(4) +
+        `${k.provider}`.padEnd(18) +
+        `${k.label || k.id}`.padEnd(26) +
+        stateStr.padEnd(31) +
+        resetStr.padEnd(20) +
+        `${k.totalSuccesses || 0} ok / ${k.consecutiveFailures || 0} err`
+      );
+    });
+  }
+  console.log(`----------------------------------------------------------------------------------------`);
+  console.log(`💡 Note: When one key or agent hits its limit, ONLY that item rests. Other agents continue uninterrupted!`);
+  console.log(`========================================================================================\n`);
+}
+
 // CLI entry point
 if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
   const action = (process.argv[2] || 'status').toLowerCase();
-  const domainParam = process.argv[3] || null;
+  const targetParam = process.argv[3] || null;
 
   if (action === 'start' || action === 'chalu' || action === 'resume') {
-    setHarvesterStatus('ACTIVE');
+    if (targetParam && targetParam !== 'all') {
+      resumeWorker(targetParam);
+      console.log(`▶️ [ISOLATED RESUME] Worker '${targetParam}' has been resumed to ACTIVE! All other agents unaffected.`);
+      run('git add harvest-control.json');
+      run(`git commit -m "chore(harvester): resume worker ${targetParam}"`);
+      run('git push origin main');
+    } else {
+      setHarvesterStatus('ACTIVE');
+      resumeAllWorkers();
+      console.log(`▶️ [GLOBAL RESUME] All workers and engine resumed to ACTIVE!`);
+    }
   } else if (action === 'stop' || action === 'pause' || action === 'ruk') {
-    setHarvesterStatus('PAUSED');
+    if (targetParam && targetParam !== 'all') {
+      pauseWorker(targetParam);
+      console.log(`⏸️ [ISOLATED PAUSE] Worker '${targetParam}' has been PAUSED. All other agents remain ACTIVE!`);
+      run('git add harvest-control.json');
+      run(`git commit -m "chore(harvester): pause worker ${targetParam}"`);
+      run('git push origin main');
+    } else {
+      setHarvesterStatus('PAUSED');
+      pauseAllWorkers();
+      console.log(`⏸️ [GLOBAL PAUSE] All workers and engine PAUSED.`);
+    }
   } else if (action === 'sync' || action === 'pull') {
     syncLocalWithCloud();
   } else if (action === 'discover' || action === 'scout' || action === 'khoj') {
     console.log(`[AUTONOMOUS DISCOVERY] Initiating scout across domains...`);
-    runAutoDiscoveryScout({ domain: domainParam }).then((res) => {
+    runAutoDiscoveryScout({ domain: targetParam }).then((res) => {
       if (res.discovered > 0) {
         run('git add repos.txt harvest-control.json 04_WORKFLOWS/factory-engine/discovery-log.json');
         run(`git commit -m "feat(scout): autonomously discovered ${res.discovered} top repositories [skip ci]"`);
@@ -90,6 +218,6 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename
   } else if (action === 'monitor' || action === 'live' || action === 'check' || action === 'dekh') {
     import('./monitor.mjs').then((m) => m.displayLiveMonitor());
   } else {
-    console.log(JSON.stringify(getHarvesterStatus(), null, 2));
+    displayDashboard();
   }
 }

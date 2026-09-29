@@ -3103,3 +3103,54 @@ async function compliantFetch(url, headers) {
 await Promise.all(urls.map(url => fetch(url))); // Triggers secondary abuse rate-limiting
 ```
 
+---
+
+## 215. Independent Circuit Breakers & Non-Blocking Quota Isolation for Distributed Multi-Agent Swarms (Harvested from AI-Builder-Brain Swarm Architecture)
+
+**RULE**:
+In distributed multi-agent systems where multiple autonomous workers and external AI provider pools operate across heterogeneous servers with disparate quotas, reset windows, and rate-limits, NEVER apply a global blanket ON/OFF kill switch upon encountering a rate-limit or quota exhaustion event. Every worker agent and API provider key MUST be encapsulated in an independent, persisted circuit breaker state with an isolated cooldown timestamp (`cooldownUntil`). When an individual key or worker encounters an HTTP 429 or quota limit, ONLY that specific entity enters an isolated cooldown; all other keys and workers MUST continue processing their standardized invariant pipeline uninterrupted. Cooled entities MUST automatically self-recover to `ACTIVE` / `HEALTHY` the instant their isolated cooldown timestamp expires, requiring zero manual operator intervention or swarm-wide restarts.
+
+**WHY**:
+Global switches and monolithic circuit breakers cause catastrophic artificial starvation: a burst limit on one domain worker or key halts the entire fleet, destroying 24/7 throughput and creating false bottlenecks. Decoupled per-worker and per-key circuit breakers ensure maximum swarm concurrency, seamless fallback across providers (e.g., Gemini Key 1 -> Gemini Key 2 -> Groq Free -> Hugging Face), and 100% resilient autonomous execution.
+
+**WHEN TO APPLY**:
+Distributed multi-agent swarms, multi-account LLM provider pools, background harvester fleets, and server-to-server 24/7 autonomous engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Good: Independent key circuit breaker with isolated cooldown and automatic self-recovery
+export function executeWithKeyPool(keys, requestFn) {
+  for (const key of keys) {
+    const circuit = getKeyCircuitState(key);
+    // Auto-recover if individual cooldown expired
+    if (circuit.status !== 'HEALTHY' && Date.now() >= circuit.cooldownUntil) {
+      circuit.status = 'HEALTHY';
+    }
+    // Skip only this key if currently in isolated cooldown; continue to next key immediately
+    if (circuit.status !== 'HEALTHY') continue;
+
+    try {
+      const res = await requestFn(key);
+      reportKeySuccess(key);
+      return res;
+    } catch (err) {
+      if (err.status === 429) {
+        tripKeyCircuitBreaker(key, 65_000, 'Burst Rate Limit');
+        continue; // Rotate to next key without global swarm pause!
+      }
+    }
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern: Blanket global pause upon a single rate-limit error
+catch (err) {
+  if (err.status === 429) {
+    setGlobalHarvesterStatus('PAUSED'); // STOPS ALL AGENTS & DESTROYS 24/7 THROUGHPUT
+  }
+}
+```
+
+
