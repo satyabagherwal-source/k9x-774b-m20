@@ -1805,3 +1805,120 @@ Any document parsing, CSV/Excel ingestion, or unstructured data extraction subsy
 
 **RULE**:
 Any synchroni
+
+
+---
+
+## 137. Native Context Lifecycle Integrity Rule (Harvested from expo/expo)
+
+**RULE**:
+Never dispatch asynchronous callbacks, emit events, or execute view modifications across cross-language native boundaries (e.g., JSI, C++, Swift, Kotlin) without explicitly verifying that the host Context, Activity, or View instance is attached, visible, and alive.
+
+**WHY**:
+Asynchronous execution threads (e.g., background I/O, network requests, media loading) operate independently of the UI component lifecycle. Emitting events or updating native UI objects after host context destruction causes fatal system crashes (`IllegalArgumentException`, `NullPointerException`, or Memory Access Errors).
+
+**WHEN TO APPLY**:
+Apply to all native bridge modules, cross-platform wrappers, asynchronous native extensions, and C++ HostObject bindings.
+
+```kotlin
+// VERIFIED IMPLEMENTATION PATTERN (Android / Kotlin)
+class SafeNativeModuleEmitter(private val activityRef: WeakReference<Activity>) {
+    
+    fun emitEventIfAlive(eventName: String, payload: Bundle) {
+        val activity = activityRef.get()
+        
+        // Guard against detached/destroyed lifecycle state
+        if (activity == null || activity.isFinishing || activity.isDestroyed) {
+            return
+        }
+        
+        // Force execution onto the main UI thread safely
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            dispatch(activity, eventName, payload)
+        } else {
+            Handler(Looper.getMainLooper()).post {
+                val currentActivity = activityRef.get()
+                if (currentActivity != null && !currentActivity.isFinishing && !currentActivity.isDestroyed) {
+                    dispatch(currentActivity, eventName, payload)
+                }
+            }
+        }
+    }
+    
+    private fun dispatch(activity: Activity, eventName: String, payload: Bundle) {
+        // Safe dispatch logic
+    }
+}
+```
+
+```swift
+// NEGATIVE CONSTRAINT PATTERN (Swift)
+// DO NOT DO THIS: Direct callback execution without weak context checking
+func onDownloadComplete(data: Data) {
+    // CRASH RISK: self or bridge may be deallocated
+    self.bridge.enqueueJSCall("EventEmitter", method: "emit", args: [data])
+}
+
+// VERIFIED IMPLEMENTATION PATTERN (Swift)
+func onDownloadComplete(data: Data) {
+    DispatchQueue.main.async { [weak self] in
+        guard let self = self, let appContext = self.appContext else {
+            return // Dropped safely if context was torn down
+        }
+        self.sendEvent("onDownloadComplete", ["data": data])
+    }
+}
+```
+
+---
+
+
+---
+
+## 138. Cross-Boundary Navigation/System State Restoration Stack Rule (Harvested from expo/expo)
+
+**RULE**:
+Any native UI module or bridge component that alters shared environment or system-level configuration flags (e.g., system navigation bars, status bars, window insets, orientation) MUST capture the baseline state upon mount and push changes to a LIFO stack. Upon unmount or context loss, the component MUST pop its state and restore the preceding baseline.
+
+**WHY**:
+Global UI state in single-activity or multi-screen applications lacks inherent scope isolation. When a component alters global properties (such as hiding system navigation bars) and unmounts without explicitly resetting the host window flags, the remaining screens inherit corrupted UI state.
+
+**WHEN TO APPLY**:
+Apply when building components that interact with dynamic system UI overlays, screen orientation, audio focus modes, hardware device locks, or global window flags.
+
+```typescript
+// VERIFIED IMPLEMENTATION PATTERN (TypeScript / Native Hook)
+import { useEffect, useRef } from 'react';
+import { NativeModules } from 'react-native';
+
+const { SystemUiModule } = NativeModules;
+
+export function useSystemNavigationBar(targetColor: string) {
+  const previousColorRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function applyState() {
+      // Capture baseline prior to mutation
+      const baseline = await SystemUiModule.getNavigationBarColorAsync();
+      if (isMounted) {
+        previousColorRef.current = baseline;
+        await SystemUiModule.setNavigationBarColorAsync(targetColor);
+      }
+    }
+
+    applyState();
+
+    return () => {
+      isMounted = false;
+      // Revert back to precise baseline on unmount
+      if (previousColorRef.current !== null) {
+        SystemUiModule.setNavigationBarColorAsync(previousColorRef.current);
+      }
+    };
+  }, [targetColor]);
+}
+```
+
+---
