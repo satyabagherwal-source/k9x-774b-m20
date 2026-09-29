@@ -1407,5 +1407,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hunvreus-basecoat": {
+    "name": "hunvreus/basecoat",
+    "officialUrl": "https://github.com/hunvreus/basecoat",
+    "sourceType": "github",
+    "technology": "MDX",
+    "lastChecked": "2026-09-29T14:30:31.705Z",
+    "lastVerified": "2026-09-29T14:30:31.705Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
