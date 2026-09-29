@@ -2,8 +2,8 @@ name: 24-7 Multi-Agent Parallel Autonomous Harvester with Google Gemini AI
 
 on:
   schedule:
-    # Runs every 2 hours continuously in GitHub cloud (24/7/365 - Even when laptop is turned OFF)
-    - cron: '0 */2 * * *'
+    # Runs at minute 23 of every hour (Off-peak minute avoids GitHub :00 congestion, ensuring reliable 1-2 hour execution)
+    - cron: '23 * * * *'
   workflow_dispatch:
     # Allows manual trigger anytime from GitHub Web UI
   push:
@@ -80,6 +80,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No new intelligence to commit from Multi-Agent Fleet."
           else
-            git commit -m "feat(fleet): 4-agent parallel fleet harvested multi-domain learnings [skip ci]"
+            git commit -m "feat(fleet): 8-agent parallel fleet harvested multi-domain learnings [skip ci]"
             git push origin main
           fi

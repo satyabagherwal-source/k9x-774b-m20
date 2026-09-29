@@ -24,7 +24,7 @@
     "maxRequestsPerHour": 50
   },
   "harvestQueueFile": "repos.txt",
-  "cloudSchedule": "Every 2 hours via GitHub Actions (Runs 24/7 even when laptop is closed/offline)",
+  "cloudSchedule": "Hourly at minute 23 via GitHub Actions (Runs 24/7 even when laptop is closed/offline)",
   "localSyncStrategy": "Auto-pull on agent boot or IDE start (git pull --rebase origin main)",
   "autoDiscovery": {
     "enabled": true,
@@ -33,7 +33,11 @@
       "ai-agents",
       "fullstack-ui",
       "high-perf-systems",
-      "huggingface-ai-models"
+      "huggingface-ai-models",
+      "mobile-cross-platform",
+      "devops-cloud-infrastructure",
+      "cybersecurity-defenses",
+      "database-storage-engines"
     ],
     "multiAgentDomainPartitioning": true,
     "minStars": 1500,
@@ -42,12 +46,16 @@
   },
   "multiAgentFleet": {
     "enabled": true,
-    "fleetSize": 4,
+    "fleetSize": 8,
     "workers": [
       { "id": "Agent-Alpha", "domain": "ai-agents" },
       { "id": "Agent-Beta", "domain": "fullstack-ui" },
       { "id": "Agent-Gamma", "domain": "high-perf-systems" },
-      { "id": "Agent-Delta", "domain": "huggingface-ai-models" }
+      { "id": "Agent-Delta", "domain": "huggingface-ai-models" },
+      { "id": "Agent-Epsilon", "domain": "mobile-cross-platform" },
+      { "id": "Agent-Zeta", "domain": "devops-cloud-infrastructure" },
+      { "id": "Agent-Eta", "domain": "cybersecurity-defenses" },
+      { "id": "Agent-Theta", "domain": "database-storage-engines" }
     ],
     "orchestratorScript": "04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs"
   }
