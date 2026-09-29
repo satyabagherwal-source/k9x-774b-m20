@@ -1485,5 +1485,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "clockworklabs-spacetimedb": {
+    "name": "clockworklabs/SpacetimeDB",
+    "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T16:23:11.377Z",
+    "lastVerified": "2026-09-29T16:23:11.377Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

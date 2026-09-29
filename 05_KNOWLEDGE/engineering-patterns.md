@@ -2829,3 +2829,25 @@ Never execute DOM-manipulation commands (Scroll, Focus, Measure) immediately upo
 
 **WHY**:
 Bla
+
+
+---
+
+## 203. The "Poison-Proof" Memoization Rule (Harvested from clockworklabs/SpacetimeDB)
+
+**RULE**:
+Never use `std::sync::Mutex` for global memoi
+
+
+---
+
+## 204. The "WASM-Bridge" Feature Detection Rule (Harvested from clockworklabs/SpacetimeDB)
+
+**RULE**:
+When bridging host-to-WASM calls, never hardcode the invocation method (e.g., `dynCall`). Implement a runtime probe that checks for the existence of the bridge function and falls back to modern alternatives.
+
+**WHY**:
+WASM runtimes (Emscripten, Wasmtime) evolve rapidly. Hardcoded bridge calls are "brittle points" that break during minor host-environment upgrades.
+
+**WHEN TO APPLY**:
+Any SDK or system that executes user-defined WASM code.
