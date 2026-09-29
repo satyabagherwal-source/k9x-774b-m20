@@ -2851,3 +2851,19 @@ WASM runtimes (Emscripten, Wasmtime) evolve rapidly. Hardcoded bridge calls are 
 
 **WHEN TO APPLY**:
 Any SDK or system that executes user-defined WASM code.
+
+
+---
+
+## 205. The "Ghost Pipe" Invariant (Harvested from gptme/gptme)
+
+**RULE**:
+Any process spawned by an agent that interacts with system streams (stdout/stderr) MUST explicitly close all inherited file descriptors in the child process and implement a hard-timeout on the reader.
+
+**WHY**:
+Background processes often inherit file descriptors. If the child doesn't close the write-end, the parent's `read()` call will block forever, creating a "Ghost Pipe" that hangs the agent loop.
+
+**WHEN TO APPLY**:
+Any system-level tool execution (Python `subprocess`, Node `child_process`) in an agentic framework.
+
+---

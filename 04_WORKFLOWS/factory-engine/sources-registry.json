@@ -1498,5 +1498,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gptme-gptme": {
+    "name": "gptme/gptme",
+    "officialUrl": "https://github.com/gptme/gptme",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-29T16:24:16.811Z",
+    "lastVerified": "2026-09-29T16:24:16.811Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 15,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

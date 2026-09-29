@@ -375,3 +375,9 @@ https://github.com/Megabit/Blazorise
 https://github.com/assafelovic/gpt-researcher
 # [AI-AGENTS] Fosowl/agenticSeek (17449 score) - Fully Local Manus AI. No APIs, No $200 monthly bills. Enjoy an autonomous agent 
 https://github.com/Fosowl/agenticSeek
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T16:24:14.883Z] ---
+# [AI-AGENTS] gptme/gptme (2896 score) - Your agent in your terminal, equipped with local tools: writes code, uses the te
+https://github.com/gptme/gptme
+# [DATABASE-STORAGE-ENGINES] neondatabase/neon (14223 score) - Neon: Serverless Postgres. We separated storage and compute to offer autoscaling
+https://github.com/neondatabase/neon
