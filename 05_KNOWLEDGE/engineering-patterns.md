@@ -2011,3 +2011,40 @@ pub fn get_residency_good(segment: &Arc<RwLock<Segment>>) -> Result<f32, Error> 
 ```
 
 ---
+
+
+---
+
+## 144. The Data-Presentation Separation Rule (Harvested from dkhamsing/open-source-ios-apps)
+
+**RULE**:
+Never use a presentation-layer file (such as `README.md` or `index.html`) as the primary database or source of truth for curated registries, catalogs, or configuration lists. All data must be stored in structured, machine-readable formats (JSON, YAML, or TOML) and validated against a strict schema. The presentation layer must be a compiled artifact generated programmatically from the structured data.
+
+**WHY**:
+Mixing data and presentation leads to fragile regex-based parsing, frequent merge conflicts in collaborative environments, silent validation bypasses, and high friction for downstream API consumers who must scrape raw text.
+
+**WHEN TO APPLY**:
+Apply to any repository, system, or service that maintains curated lists, awesome-style registries, static configuration tables, or metadata catalogs.
+
+---
+
+
+---
+
+## 145. The Defensive External Link Validation Rule (Harvested from dkhamsing/open-source-ios-apps)
+
+**RULE**:
+Any automated system that validates external URLs must implement:
+1. A strict connection and read timeout (maximum 5000ms).
+2. A maximum redirect limit (maximum 3 hops) to prevent infinite loops.
+3. Explicit handling of HTTP `429` (Too Many Requests) with parsing of the `Retry-After` header.
+4. Storefront/Region-aware fallbacks for platform-specific APIs (e.g., App Store, Google Play).
+5. A persistent cache to prevent redundant requests and avoid IP rate-limiting.
+
+**WHY**:
+Unbounded link checkers cause CI/CD pipelines to hang indefinitely, trigger rate-limiting blocks from major platforms (GitHub, Apple, Google), and produce false-positive build failures due to transient network issues.
+
+**WHEN TO APPLY**:
+Apply to all CI/CD pipelines, link-checking bots, web scrapers, and metadata enrichment workers.
+
+---

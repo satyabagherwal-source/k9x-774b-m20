@@ -978,5 +978,18 @@
     "closedIssuesCount": 15,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dkhamsing-open-source-ios-apps": {
+    "name": "dkhamsing/open-source-ios-apps",
+    "officialUrl": "https://github.com/dkhamsing/open-source-ios-apps",
+    "sourceType": "github",
+    "technology": "Multi-language",
+    "lastChecked": "2026-09-29T01:22:51.632Z",
+    "lastVerified": "2026-09-29T01:22:51.632Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
