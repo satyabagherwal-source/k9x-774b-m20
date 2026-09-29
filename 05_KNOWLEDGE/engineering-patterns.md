@@ -2867,3 +2867,65 @@ Background processes often inherit file descriptors. If the child doesn't close 
 Any system-level tool execution (Python `subprocess`, Node `child_process`) in an agentic framework.
 
 ---
+
+
+---
+
+## 206. The Resilient Agentic Cancellation Token Rule (Harvested from assafelovic/gpt-researcher)
+
+**RULE**:
+Every long-running, multi-step agentic loop (especially those involving external API calls, web scraping, or LLM generation) **MUST** accept and propagate an explicit, thread-safe/coroutine-safe cancellation token (e.g., `asyncio.Event` or a context-managed cancellation flag). The agent **MUST** check this token before initiating any network request, heavy computation, or state mutation.
+
+**WHY**:
+Agentic workflows are highly non-deterministic and can run for minutes, consuming expensive LLM and search API credits. If a user cancels a request or disconnects, and the backend does not propagate the cancellation, the agent will continue to execute background tasks, leading to massive credit drain, thread/socket exhaustion, and memory leaks.
+
+**WHEN TO APPLY**:
+Apply this to any system orchestrating multi-agent workflows, deep research loops, or recursive LLM chains.
+
+```python
+# VERIFIED IMPLEMENTATION PATTERN
+import asyncio
+import aiohttp
+
+class CancelableAgent:
+    def __init__(self, cancel_event: asyncio.Event):
+        self.cancel_event = cancel_event
+
+    async def execute_step(self, step_name: str, coro):
+        if self.cancel_event.is_set():
+            raise asyncio.CancelledError(f"Agent execution halted before step: {step_name}")
+        
+        # Run the step coroutine wrapped in a cancellation check
+        task = asyncio.create_task(coro)
+        while not task.done():
+            if self.cancel_event.is_set():
+                task.cancel()
+                raise asyncio.CancelledError(f"Agent execution canceled during step: {step_name}")
+            await asyncio.sleep(0.1)
+        return await task
+
+# Usage
+async def main():
+    cancel_event = asyncio.Event()
+    agent = CancelableAgent(cancel_event)
+    
+    async def mock_scrape():
+        await asyncio.sleep(10) # Simulate long network call
+        return "data"
+
+    # Trigger cancellation externally after 2 seconds
+    asyncio.get_event_loop().call_later(2, cancel_event.set)
+    
+    try:
+        await agent.execute_step("Scraping Web", mock_scrape())
+    except asyncio.CancelledError:
+        print("Agent stopped cleanly, saving credits!")
+```
+
+
+---
+
+## 207. The Decoupled WebSocket Pub-Sub Boundary Rule (Harvested from assafelovic/gpt-researcher)
+
+**RULE**:
+Never allow an active agentic state machine or background processing loop to write directly to a network socket (WebSocket, gRPC stream, SSE). All telemetry, logging, and state updates **MUST** be written to an intermediate, bounded, in-memory queue. A dedicated, isolated consumer task **MUST** handle the network seriali
