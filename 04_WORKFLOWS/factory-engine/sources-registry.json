@@ -1355,5 +1355,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "influxdata-influxdb": {
+    "name": "influxdata/influxdb",
+    "officialUrl": "https://github.com/influxdata/influxdb",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-29T14:30:03.670Z",
+    "lastVerified": "2026-09-29T14:30:03.670Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

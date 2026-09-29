@@ -2679,3 +2679,31 @@ Background tasks often consume "stale" or "unexpected" input, leading to race co
 Any agentic system that monitors external state (WeChat, Slack, Browser) while simultaneously accepting user chat input.
 
 ---
+
+
+---
+
+## 191. The "Context-Detachment" Invariant (Harvested from influxdata/influxdb)
+
+**RULE**:
+Never pass a request-scoped `Context` (or `CancellationToken`) into a background task responsible for persistent storage or WAL operations.
+
+**WHY**:
+Request-scoped contexts are designed to terminate when a client disconnects. If a background storage operation (like a WAL flush) is bound to this context, the storage engine will enter an inconsistent state (partial write) when the client times out, leading to data corruption.
+
+**WHEN TO APPLY**:
+Any system involving asynchronous I/O, database drivers, or background persistence workers.
+
+
+---
+
+## 192. The "Terminal Default" Pattern (Harvested from influxdata/influxdb)
+
+**RULE**:
+In any `match` or `switch` statement involving configuration or startup logic, the default/catch-all arm must be the final branch.
+
+**WHY**:
+Early placement of catch-all arms shadows specific logic branches, creating "unreachable code" bugs that are invisible to the compiler but catastrophic for feature availability.
+
+**WHEN TO APPLY**:
+CLI argument parsing, configuration loading, and state machine transitions.
