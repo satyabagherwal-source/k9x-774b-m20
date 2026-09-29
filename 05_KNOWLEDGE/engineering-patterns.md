@@ -2743,3 +2743,17 @@ Any system implementing asynchronous retry logic or distributed task queues.
 
 **RULE**:
 Every component constructor must be idempotent. If an instance is initiali
+
+
+---
+
+## 196. The State-Machine Invariant Rule (Harvested from rustls/rustls)
+
+**RULE**:
+Every transition in a state machine must explicitly validate the "Pre-condition" of the current state and the "Validity" of the incoming event, regardless of the previous state's perceived safety.
+
+**WHY**:
+Failure to validate inputs in "initial" states (like the renegotiation bug) allows attackers to inject protocol-level logic that should only be reachable after a successful handshake.
+
+**WHEN TO APPLY**:
+Any system implementing network protocols, stateful parsers, or multi-step authentication flows.
