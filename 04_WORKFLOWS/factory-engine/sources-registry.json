@@ -12352,5 +12352,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "joreilly-peopleinspace": {
+    "name": "joreilly/PeopleInSpace",
+    "officialUrl": "https://github.com/joreilly/PeopleInSpace",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:29:29.498Z",
+    "lastVerified": "2026-09-30T21:29:29.498Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
