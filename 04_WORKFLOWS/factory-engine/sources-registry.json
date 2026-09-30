@@ -7503,5 +7503,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "diggerhq-digger": {
+    "name": "diggerhq/digger",
+    "officialUrl": "https://github.com/diggerhq/digger",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:31:32.182Z",
+    "lastVerified": "2026-09-30T18:31:32.182Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
