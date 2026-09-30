@@ -1974,3 +1974,11 @@ https://github.com/EverMind-AI/EverOS
 https://github.com/dataelement/bisheng
 # [AI-AGENTS] datawhalechina/all-in-rag (7667 score) - 🔍大模型应用开发实战一：RAG 技术全栈指南，在线阅读地址：https://datawhalechina.github.io/all-in-rag/
 https://github.com/datawhalechina/all-in-rag
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:48:36.980Z] ---
+# [AI-AGENTS] StarTrail-org/PixelRAG (5604 score) - https://arxiv.org/abs/2606.28344. The end of web parsing. The beginning of scala
+https://github.com/StarTrail-org/PixelRAG
+# [AI-AGENTS] Future-House/paper-qa (5368 score) - High accuracy RAG for answering questions from scientific documents with citatio
+https://github.com/Future-House/paper-qa
+# [AI-AGENTS] zilliztech/deep-searcher (4751 score) - Open Source Deep Research Alternative to Reason and Search on Private Data. Writ
+https://github.com/zilliztech/deep-searcher

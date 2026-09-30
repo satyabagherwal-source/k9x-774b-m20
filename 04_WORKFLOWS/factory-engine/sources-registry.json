@@ -8400,5 +8400,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "startrail-org-pixelrag": {
+    "name": "StarTrail-org/PixelRAG",
+    "officialUrl": "https://github.com/StarTrail-org/PixelRAG",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:49:01.150Z",
+    "lastVerified": "2026-09-30T18:49:01.150Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 43,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

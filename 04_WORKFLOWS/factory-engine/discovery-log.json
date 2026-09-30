@@ -7954,5 +7954,50 @@
     "qualityScore": 7667,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:47:20.241Z"
+  },
+  {
+    "name": "PixelRAG",
+    "fullName": "StarTrail-org/PixelRAG",
+    "url": "https://github.com/StarTrail-org/PixelRAG",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "https://arxiv.org/abs/2606.28344. The end of web parsing. The beginning of scalable pixel-native search. link: https://pixelrag.ai/",
+    "stars": 10119,
+    "forks": 867,
+    "openIssues": 17,
+    "language": "Python",
+    "qualityScore": 5604,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:48:36.979Z"
+  },
+  {
+    "name": "paper-qa",
+    "fullName": "Future-House/paper-qa",
+    "url": "https://github.com/Future-House/paper-qa",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "High accuracy RAG for answering questions from scientific documents with citations",
+    "stars": 9281,
+    "forks": 926,
+    "openIssues": 153,
+    "language": "Python",
+    "qualityScore": 5368,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:48:36.980Z"
+  },
+  {
+    "name": "deep-searcher",
+    "fullName": "zilliztech/deep-searcher",
+    "url": "https://github.com/zilliztech/deep-searcher",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open Source Deep Research Alternative to Reason and Search on Private Data. Written in Python.",
+    "stars": 8291,
+    "forks": 804,
+    "openIssues": 57,
+    "language": "Python",
+    "qualityScore": 4751,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:48:36.980Z"
   }
 ]
