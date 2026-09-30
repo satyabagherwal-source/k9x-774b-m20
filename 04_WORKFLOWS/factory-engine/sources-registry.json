@@ -4747,5 +4747,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oblador-react-native-animatable": {
+    "name": "oblador/react-native-animatable",
+    "officialUrl": "https://github.com/oblador/react-native-animatable",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:38:01.202Z",
+    "lastVerified": "2026-09-30T17:38:01.202Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
