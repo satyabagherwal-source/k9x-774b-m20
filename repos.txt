@@ -1776,3 +1776,7 @@ https://github.com/Jeffallan/claude-skills
 https://github.com/MemTensor/MemOS
 # [AI-AGENTS] cocoindex-io/cocoindex (6526 score) - Incremental engine for long horizon agents 🌟 Star if you like it!
 https://github.com/cocoindex-io/cocoindex
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:29:07.623Z] ---
+# [HIGH-PERF-SYSTEMS] kubearmor/KubeArmor (1921 score) - Runtime Security Enforcement System. Workload hardening/sandboxing and implement
+https://github.com/kubearmor/KubeArmor

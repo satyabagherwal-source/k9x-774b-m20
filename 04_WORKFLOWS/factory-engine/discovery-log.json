@@ -6859,5 +6859,20 @@
     "qualityScore": 6526,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:28:29.279Z"
+  },
+  {
+    "name": "KubeArmor",
+    "fullName": "kubearmor/KubeArmor",
+    "url": "https://github.com/kubearmor/KubeArmor",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Runtime Security Enforcement System. Workload hardening/sandboxing and implementing least-permissive policies made easy leveraging LSMs (LSM-BPF, AppArmor).",
+    "stars": 2623,
+    "forks": 530,
+    "openIssues": 416,
+    "language": "Go",
+    "qualityScore": 1921,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:28:23.318Z"
   }
 ]
