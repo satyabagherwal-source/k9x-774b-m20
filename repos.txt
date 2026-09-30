@@ -2384,3 +2384,27 @@ https://github.com/superduper-io/superduper
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T20:14:32.847Z] ---
 # [AI-AGENTS] didilili/ai-agents-from-zero (3073 score) -  🚀 2026 最系统的 AI Agent 速成指南｜智能体实战教程 · 完整学习路径  + 实战项目 + 面试题库 · 对标大模型应用开发工程师岗位 · 覆
 https://github.com/didilili/ai-agents-from-zero
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:15:35.575Z] ---
+# [AI-AGENTS] microsoft/autogen (34854 score [VERIFIED ORG]) - A programming framework for agentic AI
+https://github.com/microsoft/autogen
+# [AI-AGENTS] 2noise/ChatTTS (21597 score) - A generative speech model for daily dialogue.
+https://github.com/2noise/ChatTTS
+# [AI-AGENTS] The-Pocket/PocketFlow-Tutorial-Codebase-Knowledge (7181 score) - Pocket Flow: Codebase to Tutorial
+https://github.com/The-Pocket/PocketFlow-Tutorial-Codebase-Knowledge
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:15:35.845Z] ---
+# [MOBILE-CROSS-PLATFORM] gkd-kit/gkd (21973 score) - 基于无障碍，高级选择器，订阅规则的自定义屏幕点击安卓应用 | An Android APP with custom screen tapping based o
+https://github.com/gkd-kit/gkd
+# [MOBILE-CROSS-PLATFORM] open-ani/animeko (10809 score) - 集找番、追番、看番的一站式弹幕追番平台，云收藏同步 (Bangumi)，离线缓存，BitTorrent，弹幕云过滤。100% Kotlin/Compose Mu
+https://github.com/open-ani/animeko
+# [MOBILE-CROSS-PLATFORM] komi-store/komi-store (10106 score) - 🩵 A free, open-source app store for developers' releases on GitHub, Codeberg & 
+https://github.com/komi-store/komi-store
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:15:38.444Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] argoproj/argo-workflows (10060 score) - Workflow Engine for Kubernetes
+https://github.com/argoproj/argo-workflows
+# [DEVOPS-CLOUD-INFRASTRUCTURE] juicedata/juicefs (8083 score) - JuiceFS is a distributed POSIX file system built on top of Redis and S3.
+https://github.com/juicedata/juicefs
+# [DEVOPS-CLOUD-INFRASTRUCTURE] rook/rook (8045 score) - Storage Orchestration for Kubernetes
+https://github.com/rook/rook

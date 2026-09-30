@@ -10376,5 +10376,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "2noise-chattts": {
+    "name": "2noise/ChatTTS",
+    "officialUrl": "https://github.com/2noise/ChatTTS",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:15:58.045Z",
+    "lastVerified": "2026-09-30T20:15:58.045Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
