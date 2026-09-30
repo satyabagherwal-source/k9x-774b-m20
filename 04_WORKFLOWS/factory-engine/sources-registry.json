@@ -4344,5 +4344,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xiaolin-react-image-gallery": {
+    "name": "xiaolin/react-image-gallery",
+    "officialUrl": "https://github.com/xiaolin/react-image-gallery",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:34:05.874Z",
+    "lastVerified": "2026-09-30T17:34:05.874Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
