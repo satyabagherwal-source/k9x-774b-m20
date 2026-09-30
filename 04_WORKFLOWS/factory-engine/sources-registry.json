@@ -5826,5 +5826,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "triggerdotdev-trigger.dev": {
+    "name": "triggerdotdev/trigger.dev",
+    "officialUrl": "https://github.com/triggerdotdev/trigger.dev",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:14:12.347Z",
+    "lastVerified": "2026-09-30T18:14:12.347Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 52,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
