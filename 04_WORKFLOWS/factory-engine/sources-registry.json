@@ -1666,5 +1666,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "d4vinci-scrapling": {
+    "name": "D4Vinci/Scrapling",
+    "officialUrl": "https://github.com/D4Vinci/Scrapling",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T01:22:22.457Z",
+    "lastVerified": "2026-09-30T01:22:22.457Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
