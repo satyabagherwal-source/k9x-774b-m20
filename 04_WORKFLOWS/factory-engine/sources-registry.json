@@ -7685,5 +7685,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "voltagent-voltagent": {
+    "name": "VoltAgent/voltagent",
+    "officialUrl": "https://github.com/VoltAgent/voltagent",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:34:09.137Z",
+    "lastVerified": "2026-09-30T18:34:09.137Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

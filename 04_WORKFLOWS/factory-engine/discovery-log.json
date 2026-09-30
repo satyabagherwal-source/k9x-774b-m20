@@ -7129,5 +7129,50 @@
     "qualityScore": 6132,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:32:46.950Z"
+  },
+  {
+    "name": "voltagent",
+    "fullName": "VoltAgent/voltagent",
+    "url": "https://github.com/VoltAgent/voltagent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI Agent Engineering Platform built on an Open Source TypeScript AI Agent Framework",
+    "stars": 10706,
+    "forks": 1150,
+    "openIssues": 100,
+    "language": "TypeScript",
+    "qualityScore": 6048,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:32:55.121Z"
+  },
+  {
+    "name": "omnigent",
+    "fullName": "omnigent-ai/omnigent",
+    "url": "https://github.com/omnigent-ai/omnigent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Omnigent is an open-source AI agent framework and meta-harness: orchestrate Claude Code, Codex, Cursor, Pi, and custom agents — swap harnesses without rewriting, enforce policies and sandboxing, and collaborate in real time from any device.",
+    "stars": 10373,
+    "forks": 1657,
+    "openIssues": 1554,
+    "language": "Python",
+    "qualityScore": 6134,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:32:55.122Z"
+  },
+  {
+    "name": "SuperAGI",
+    "fullName": "TransformerOptimus/SuperAGI",
+    "url": "https://github.com/TransformerOptimus/SuperAGI",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "<⚡️> SuperAGI - A dev-first open source autonomous AI agent framework. Enabling developers to build, manage & run useful autonomous agents quickly and reliably.",
+    "stars": 17703,
+    "forks": 2225,
+    "openIssues": 264,
+    "language": "Python",
+    "qualityScore": 9969,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:33:43.582Z"
   }
 ]

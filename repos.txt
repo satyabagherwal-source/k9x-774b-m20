@@ -1826,3 +1826,11 @@ https://github.com/StarRocks/starrocks
 https://github.com/pingcap/talent-plan
 # [DATABASE-STORAGE-ENGINES] yugabyte/yugabyte-db (6132 score) - YugabyteDB - the cloud native distributed SQL database for mission-critical appl
 https://github.com/yugabyte/yugabyte-db
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:33:43.583Z] ---
+# [AI-AGENTS] VoltAgent/voltagent (6048 score) - AI Agent Engineering Platform built on an Open Source TypeScript AI Agent Framew
+https://github.com/VoltAgent/voltagent
+# [AI-AGENTS] omnigent-ai/omnigent (6134 score) - Omnigent is an open-source AI agent framework and meta-harness: orchestrate Clau
+https://github.com/omnigent-ai/omnigent
+# [AI-AGENTS] TransformerOptimus/SuperAGI (9969 score) - <⚡️> SuperAGI - A dev-first open source autonomous AI agent framework. Enabling 
+https://github.com/TransformerOptimus/SuperAGI
