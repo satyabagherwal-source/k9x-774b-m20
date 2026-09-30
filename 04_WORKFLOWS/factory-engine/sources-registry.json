@@ -7425,5 +7425,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "memtensor-memos": {
+    "name": "MemTensor/MemOS",
+    "officialUrl": "https://github.com/MemTensor/MemOS",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:29:42.237Z",
+    "lastVerified": "2026-09-30T18:29:42.237Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 60,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
