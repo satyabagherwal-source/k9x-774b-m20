@@ -9091,5 +9091,50 @@
     "qualityScore": 8334,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:32:19.846Z"
+  },
+  {
+    "name": "typescript-sdk",
+    "fullName": "modelcontextprotocol/typescript-sdk",
+    "url": "https://github.com/modelcontextprotocol/typescript-sdk",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The official TypeScript SDK for Model Context Protocol servers and clients",
+    "stars": 13492,
+    "forks": 2239,
+    "openIssues": 600,
+    "language": "TypeScript",
+    "qualityScore": 7868,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:33:45.182Z"
+  },
+  {
+    "name": "XHS-Downloader",
+    "fullName": "JoeanAmier/XHS-Downloader",
+    "url": "https://github.com/JoeanAmier/XHS-Downloader",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "小红书（XiaoHongShu、RedNote）链接提取/作品采集工具",
+    "stars": 12877,
+    "forks": 1898,
+    "openIssues": 24,
+    "language": "JavaScript",
+    "qualityScore": 7206,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:33:45.183Z"
+  },
+  {
+    "name": "ida-pro-mcp",
+    "fullName": "mrexodia/ida-pro-mcp",
+    "url": "https://github.com/mrexodia/ida-pro-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI-powered reverse engineering assistant that bridges IDA Pro with language models through MCP.",
+    "stars": 12427,
+    "forks": 1470,
+    "openIssues": 51,
+    "language": "Python",
+    "qualityScore": 6907,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:33:45.183Z"
   }
 ]

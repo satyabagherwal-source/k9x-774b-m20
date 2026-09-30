@@ -2178,3 +2178,11 @@ https://github.com/budtmo/docker-android
 https://github.com/open-metadata/OpenMetadata
 # [AI-AGENTS] yusufkaraaslan/Skill_Seekers (8334 score) - Convert documentation websites, GitHub repositories, and PDFs into Claude AI ski
 https://github.com/yusufkaraaslan/Skill_Seekers
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:33:45.183Z] ---
+# [AI-AGENTS] modelcontextprotocol/typescript-sdk (7868 score) - The official TypeScript SDK for Model Context Protocol servers and clients
+https://github.com/modelcontextprotocol/typescript-sdk
+# [AI-AGENTS] JoeanAmier/XHS-Downloader (7206 score) - 小红书（XiaoHongShu、RedNote）链接提取/作品采集工具
+https://github.com/JoeanAmier/XHS-Downloader
+# [AI-AGENTS] mrexodia/ida-pro-mcp (6907 score) - AI-powered reverse engineering assistant that bridges IDA Pro with language mode
+https://github.com/mrexodia/ida-pro-mcp
