@@ -6164,5 +6164,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "img2threejs-img2threejs": {
+    "name": "img2threejs/img2threejs",
+    "officialUrl": "https://github.com/img2threejs/img2threejs",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:17:35.419Z",
+    "lastVerified": "2026-09-30T18:17:35.419Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
