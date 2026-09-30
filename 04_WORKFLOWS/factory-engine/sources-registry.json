@@ -1731,5 +1731,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "chromedevtools-chrome-devtools-mcp": {
+    "name": "ChromeDevTools/chrome-devtools-mcp",
+    "officialUrl": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T03:08:46.540Z",
+    "lastVerified": "2026-09-30T03:08:46.540Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
