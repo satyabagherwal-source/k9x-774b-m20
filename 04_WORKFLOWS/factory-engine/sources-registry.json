@@ -8725,5 +8725,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "datamllab-rlcard": {
+    "name": "datamllab/rlcard",
+    "officialUrl": "https://github.com/datamllab/rlcard",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:13:50.455Z",
+    "lastVerified": "2026-09-30T19:13:50.455Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
