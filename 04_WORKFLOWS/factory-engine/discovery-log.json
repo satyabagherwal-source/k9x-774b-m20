@@ -8956,5 +8956,50 @@
     "qualityScore": 12998,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:28:10.329Z"
+  },
+  {
+    "name": "FunASR",
+    "fullName": "modelscope/FunASR",
+    "url": "https://github.com/modelscope/FunASR",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source speech recognition toolkit for training, inference, streaming ASR, VAD, punctuation, speaker diarization pipelines, and OpenAI-compatible/MCP serving.",
+    "stars": 20559,
+    "forks": 2053,
+    "openIssues": 36,
+    "language": "Python",
+    "qualityScore": 11217,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:29:33.547Z"
+  },
+  {
+    "name": "Douyin_TikTok_Download_API",
+    "fullName": "Evil0ctal/Douyin_TikTok_Download_API",
+    "url": "https://github.com/Evil0ctal/Douyin_TikTok_Download_API",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🚀 抖音、TikTok 数据采集与无水印视频下载 API，自托管，支持 MCP 调用与 Docker 一键部署。| Self-hosted TikTok & Douyin scraper and no-watermark video downloader — async REST API, MCP server, CLI and web console for posts, profiles, comments and playlists. Self-healing identity pool, PostgreSQL archive, one docker compose up. ",
+    "stars": 20415,
+    "forks": 2834,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 11310,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:29:33.547Z"
+  },
+  {
+    "name": "nuclear",
+    "fullName": "nukeop/nuclear",
+    "url": "https://github.com/nukeop/nuclear",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Streaming music player that finds free music for you",
+    "stars": 18560,
+    "forks": 1335,
+    "openIssues": 6,
+    "language": "TypeScript",
+    "qualityScore": 9943,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:29:33.547Z"
   }
 ]

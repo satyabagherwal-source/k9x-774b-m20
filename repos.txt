@@ -2154,3 +2154,11 @@ https://github.com/modelcontextprotocol/python-sdk
 https://github.com/mksglu/context-mode
 # [AI-AGENTS] czlonkowski/n8n-mcp (12998 score) - A MCP for Claude Desktop / Claude Code / Windsurf / Cursor to build n8n workflow
 https://github.com/czlonkowski/n8n-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:29:33.552Z] ---
+# [AI-AGENTS] modelscope/FunASR (11217 score) - Open-source speech recognition toolkit for training, inference, streaming ASR, V
+https://github.com/modelscope/FunASR
+# [AI-AGENTS] Evil0ctal/Douyin_TikTok_Download_API (11310 score) - 🚀 抖音、TikTok 数据采集与无水印视频下载 API，自托管，支持 MCP 调用与 Docker 一键部署。| Self-hosted TikTok & 
+https://github.com/Evil0ctal/Douyin_TikTok_Download_API
+# [AI-AGENTS] nukeop/nuclear (9943 score) - Streaming music player that finds free music for you
+https://github.com/nukeop/nuclear

@@ -9271,5 +9271,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "modelscope-funasr": {
+    "name": "modelscope/FunASR",
+    "officialUrl": "https://github.com/modelscope/FunASR",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:29:57.806Z",
+    "lastVerified": "2026-09-30T19:29:57.806Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
