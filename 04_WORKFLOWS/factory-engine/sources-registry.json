@@ -5462,5 +5462,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "go-dev-frame-sponge": {
+    "name": "go-dev-frame/sponge",
+    "officialUrl": "https://github.com/go-dev-frame/sponge",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:45:56.325Z",
+    "lastVerified": "2026-09-30T17:45:56.325Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
