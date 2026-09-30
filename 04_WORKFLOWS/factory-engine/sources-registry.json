@@ -7932,5 +7932,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lindb-lindb": {
+    "name": "lindb/lindb",
+    "officialUrl": "https://github.com/lindb/lindb",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:38:11.529Z",
+    "lastVerified": "2026-09-30T18:38:11.529Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
