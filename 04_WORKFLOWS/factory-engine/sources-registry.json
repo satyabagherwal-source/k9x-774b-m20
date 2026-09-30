@@ -5501,5 +5501,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mtkennerly-ludusavi": {
+    "name": "mtkennerly/ludusavi",
+    "officialUrl": "https://github.com/mtkennerly/ludusavi",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:46:01.615Z",
+    "lastVerified": "2026-09-30T17:46:01.615Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
