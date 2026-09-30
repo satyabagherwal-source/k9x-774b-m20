@@ -3512,5 +3512,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-fluentui": {
+    "name": "microsoft/fluentui",
+    "officialUrl": "https://github.com/microsoft/fluentui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:25:24.110Z",
+    "lastVerified": "2026-09-30T17:25:24.110Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 51,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
