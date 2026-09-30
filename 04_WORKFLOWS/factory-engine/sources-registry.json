@@ -4123,5 +4123,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "neuron-core-neuron-ai": {
+    "name": "neuron-core/neuron-ai",
+    "officialUrl": "https://github.com/neuron-core/neuron-ai",
+    "sourceType": "github",
+    "technology": "PHP",
+    "lastChecked": "2026-09-30T17:32:05.579Z",
+    "lastVerified": "2026-09-30T17:32:05.579Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 58,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
