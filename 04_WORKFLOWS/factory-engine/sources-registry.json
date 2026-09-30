@@ -11455,5 +11455,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crbnos-carbon": {
+    "name": "crbnos/carbon",
+    "officialUrl": "https://github.com/crbnos/carbon",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:45:06.600Z",
+    "lastVerified": "2026-09-30T20:45:06.600Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

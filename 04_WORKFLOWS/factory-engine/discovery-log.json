@@ -11476,5 +11476,50 @@
     "qualityScore": 1669,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:43:15.909Z"
+  },
+  {
+    "name": "carbon",
+    "fullName": "crbnos/carbon",
+    "url": "https://github.com/crbnos/carbon",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source manufacturing ERP, MES and QMS. Quoting, MRP, inventory, shop floor, quality and lot/serial traceability on one Postgres schema, with a REST API and MCP server. Self-host or use Carbon Cloud.",
+    "stars": 2655,
+    "forks": 364,
+    "openIssues": 146,
+    "language": "TypeScript",
+    "qualityScore": 1787,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:44:42.190Z"
+  },
+  {
+    "name": "korean-law-mcp",
+    "fullName": "chrisryugj/korean-law-mcp",
+    "url": "https://github.com/chrisryugj/korean-law-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "법제처 국가법령정보를 LLM에서 바로 조회하는 MCP 서버. 법령·판례·조례 검색과 인용 검증 | MCP server for Korean law — search statutes, precedents, and ordinances, and verify citations",
+    "stars": 2617,
+    "forks": 531,
+    "openIssues": 0,
+    "language": "TypeScript",
+    "qualityScore": 1618,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:44:42.191Z"
+  },
+  {
+    "name": "nunu",
+    "fullName": "go-nunu/nunu",
+    "url": "https://github.com/go-nunu/nunu",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A CLI tool for building Go applications.",
+    "stars": 2607,
+    "forks": 209,
+    "openIssues": 3,
+    "language": "Go",
+    "qualityScore": 1622,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:44:42.191Z"
   }
 ]
