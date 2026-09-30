@@ -4968,5 +4968,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pixeltable-pixeltable": {
+    "name": "pixeltable/pixeltable",
+    "officialUrl": "https://github.com/pixeltable/pixeltable",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:40:07.465Z",
+    "lastVerified": "2026-09-30T17:40:07.465Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
