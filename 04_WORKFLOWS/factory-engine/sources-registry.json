@@ -5657,5 +5657,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "krakend-krakend-ce": {
+    "name": "krakend/krakend-ce",
+    "officialUrl": "https://github.com/krakend/krakend-ce",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:48:18.157Z",
+    "lastVerified": "2026-09-30T17:48:18.157Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
