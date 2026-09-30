@@ -7867,5 +7867,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dicklesworthstone-destructive_command_guard": {
+    "name": "Dicklesworthstone/destructive_command_guard",
+    "officialUrl": "https://github.com/Dicklesworthstone/destructive_command_guard",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:37:36.947Z",
+    "lastVerified": "2026-09-30T18:37:36.947Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 64,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
