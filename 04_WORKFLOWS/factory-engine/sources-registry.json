@@ -7113,5 +7113,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "etcd-io-etcd": {
+    "name": "etcd-io/etcd",
+    "officialUrl": "https://github.com/etcd-io/etcd",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:25:50.744Z",
+    "lastVerified": "2026-09-30T18:25:50.744Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
