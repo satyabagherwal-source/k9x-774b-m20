@@ -3850,5 +3850,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vasu-devs-justhireme": {
+    "name": "vasu-devs/JustHireMe",
+    "officialUrl": "https://github.com/vasu-devs/JustHireMe",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:29:15.121Z",
+    "lastVerified": "2026-09-30T17:29:15.121Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 53,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
