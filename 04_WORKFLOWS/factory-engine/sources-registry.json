@@ -2147,5 +2147,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "langchain4j-langchain4j": {
+    "name": "langchain4j/langchain4j",
+    "officialUrl": "https://github.com/langchain4j/langchain4j",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T14:01:00.315Z",
+    "lastVerified": "2026-09-30T14:01:00.315Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 56,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
