@@ -12807,5 +12807,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "darrylmorley-whatcable": {
+    "name": "darrylmorley/whatcable",
+    "officialUrl": "https://github.com/darrylmorley/whatcable",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:03:02.166Z",
+    "lastVerified": "2026-09-30T22:03:02.166Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

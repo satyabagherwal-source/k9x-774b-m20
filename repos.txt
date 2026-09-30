@@ -2888,3 +2888,19 @@ https://github.com/HolmesGPT/holmesgpt
 https://github.com/yilewang/llm-for-zotero
 # [AI-AGENTS] genieincodebottle/generative-ai (1764 score) - Comprehensive resources on Generative AI, including a detailed roadmap, projects
 https://github.com/genieincodebottle/generative-ai
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T22:02:42.872Z] ---
+# [MOBILE-CROSS-PLATFORM] darrylmorley/whatcable (4849 score) - macOS menu bar app that tells you, in plain English, what each USB-C cable plugg
+https://github.com/darrylmorley/whatcable
+# [MOBILE-CROSS-PLATFORM] XcodesOrg/XcodesApp (4858 score) - The easiest way to install and switch between multiple versions of Xcode - with 
+https://github.com/XcodesOrg/XcodesApp
+# [MOBILE-CROSS-PLATFORM] sindresorhus/Gifski (4548 score) - 🌈 Convert videos to high-quality GIFs on your Mac
+https://github.com/sindresorhus/Gifski
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T22:02:46.951Z] ---
+# [AI-AGENTS] AGI-Edgerunners/LLM-Agents-Papers (1256 score) - A repo lists papers related to LLM based agent
+https://github.com/AGI-Edgerunners/LLM-Agents-Papers
+# [AI-AGENTS] Weizhena/Deep-Research-skills (1443 score) - Structured deep research skill for Claude Code/Open Code/Codex with human-in-the
+https://github.com/Weizhena/Deep-Research-skills
+# [AI-AGENTS] SqueezeAILab/LLMCompiler (1150 score) - [ICML 2024] LLMCompiler: An LLM Compiler for Parallel Function Calling
+https://github.com/SqueezeAILab/LLMCompiler
