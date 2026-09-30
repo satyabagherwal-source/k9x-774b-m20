@@ -2872,3 +2872,11 @@ https://github.com/SimonSchubert/LinuxCommandLibrary
 https://github.com/MohamedRejeb/compose-rich-editor
 # [MOBILE-CROSS-PLATFORM] meshtastic/Meshtastic-Android (1391 score) - Android application for Meshtastic
 https://github.com/meshtastic/Meshtastic-Android
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:59:35.635Z] ---
+# [MOBILE-CROSS-PLATFORM] thaw-app/Thaw (6245 score) - The open source menu bar manager
+https://github.com/thaw-app/Thaw
+# [MOBILE-CROSS-PLATFORM] gao-sun/eul (5494 score) - 🖥️ macOS status monitoring app written in SwiftUI.
+https://github.com/gao-sun/eul
+# [MOBILE-CROSS-PLATFORM] ronitsingh10/FineTune (5208 score) - FineTune, a macOS menu bar app for per-app volume control, multi-device output, 
+https://github.com/ronitsingh10/FineTune

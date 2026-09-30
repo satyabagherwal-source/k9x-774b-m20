@@ -12946,5 +12946,50 @@
     "qualityScore": 1391,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:55:28.157Z"
+  },
+  {
+    "name": "Thaw",
+    "fullName": "thaw-app/Thaw",
+    "url": "https://github.com/thaw-app/Thaw",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "The open source menu bar manager",
+    "stars": 11666,
+    "forks": 285,
+    "openIssues": 38,
+    "language": "Swift",
+    "qualityScore": 6245,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:59:35.633Z"
+  },
+  {
+    "name": "eul",
+    "fullName": "gao-sun/eul",
+    "url": "https://github.com/gao-sun/eul",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "🖥️ macOS status monitoring app written in SwiftUI.",
+    "stars": 9951,
+    "forks": 380,
+    "openIssues": 77,
+    "language": "Swift",
+    "qualityScore": 5494,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:59:35.634Z"
+  },
+  {
+    "name": "FineTune",
+    "fullName": "ronitsingh10/FineTune",
+    "url": "https://github.com/ronitsingh10/FineTune",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "FineTune, a macOS menu bar app for per-app volume control, multi-device output, audio routing, and 10-band EQ. Free and open-source alternative to SoundSource.",
+    "stars": 9501,
+    "forks": 359,
+    "openIssues": 214,
+    "language": "Swift",
+    "qualityScore": 5208,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:59:35.634Z"
   }
 ]

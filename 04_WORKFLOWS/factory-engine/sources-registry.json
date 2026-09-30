@@ -12729,5 +12729,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "thaw-app-thaw": {
+    "name": "thaw-app/Thaw",
+    "officialUrl": "https://github.com/thaw-app/Thaw",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T21:59:55.450Z",
+    "lastVerified": "2026-09-30T21:59:55.450Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
