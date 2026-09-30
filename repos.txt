@@ -2848,3 +2848,11 @@ https://github.com/CrossPaste/crosspaste-desktop
 https://github.com/LouisCAD/Splitties
 # [MOBILE-CROSS-PLATFORM] touchlab/KaMPKit (1543 score) - KaMP Kit by Touchlab. A collection of code & tools designed to get your mobile t
 https://github.com/touchlab/KaMPKit
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:47:02.366Z] ---
+# [MOBILE-CROSS-PLATFORM] msasikanth/twine (1548 score) - Twine: A multiplatform RSS reader built using Kotlin and Compose
+https://github.com/msasikanth/twine
+# [MOBILE-CROSS-PLATFORM] Kotlin/kmp-production-sample (1388 score) - This is an open-source, mobile, cross-platform application built with Kotlin Mul
+https://github.com/Kotlin/kmp-production-sample
+# [MOBILE-CROSS-PLATFORM] russhwolf/multiplatform-settings (1480 score) - A Kotlin Multiplatform library for saving simple key-value data
+https://github.com/russhwolf/multiplatform-settings

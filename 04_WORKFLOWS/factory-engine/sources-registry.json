@@ -12612,5 +12612,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "msasikanth-twine": {
+    "name": "msasikanth/twine",
+    "officialUrl": "https://github.com/msasikanth/twine",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:47:18.944Z",
+    "lastVerified": "2026-09-30T21:47:18.944Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

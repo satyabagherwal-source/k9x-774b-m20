@@ -12811,5 +12811,50 @@
     "qualityScore": 1543,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:46:01.545Z"
+  },
+  {
+    "name": "twine",
+    "fullName": "msasikanth/twine",
+    "url": "https://github.com/msasikanth/twine",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Twine: A multiplatform RSS reader built using Kotlin and Compose",
+    "stars": 2417,
+    "forks": 139,
+    "openIssues": 24,
+    "language": "Kotlin",
+    "qualityScore": 1548,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:47:02.365Z"
+  },
+  {
+    "name": "kmp-production-sample",
+    "fullName": "Kotlin/kmp-production-sample",
+    "url": "https://github.com/Kotlin/kmp-production-sample",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "This is an open-source, mobile, cross-platform application built with Kotlin Multiplatform Mobile. It's a simple RSS reader, and you can download it from the App Store and Google Play. It's been designed to demonstrate how KMM can be used in real production projects.",
+    "stars": 2284,
+    "forks": 261,
+    "openIssues": 9,
+    "language": "Kotlin",
+    "qualityScore": 1388,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:47:02.365Z"
+  },
+  {
+    "name": "multiplatform-settings",
+    "fullName": "russhwolf/multiplatform-settings",
+    "url": "https://github.com/russhwolf/multiplatform-settings",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A Kotlin Multiplatform library for saving simple key-value data",
+    "stars": 2255,
+    "forks": 81,
+    "openIssues": 39,
+    "language": "Kotlin",
+    "qualityScore": 1480,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:47:02.365Z"
   }
 ]
