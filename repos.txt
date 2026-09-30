@@ -2692,3 +2692,11 @@ https://github.com/morphik-org/morphik-core
 https://github.com/Dataherald/dataherald
 # [AI-AGENTS] SamurAIGPT/llm-wiki-agent (2191 score) - A personal knowledge base that builds and maintains itself. Drop in sources — Cl
 https://github.com/SamurAIGPT/llm-wiki-agent
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:05:38.068Z] ---
+# [AI-AGENTS] agentscope-ai/ReMe (2197 score) - ReMe: Memory Management Kit for Agents - Remember Me, Refine Me.
+https://github.com/agentscope-ai/ReMe
+# [AI-AGENTS] modelscope/evalscope (2214 score) - A streamlined and customizable framework for efficient large model (LLM, VLM, AI
+https://github.com/modelscope/evalscope
+# [AI-AGENTS] NVIDIA/skills (2054 score) - Agent Skills for NVIDIA products — install into Claude Code, Codex, and other co
+https://github.com/NVIDIA/skills

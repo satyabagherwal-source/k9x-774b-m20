@@ -11858,5 +11858,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agentscope-ai-reme": {
+    "name": "agentscope-ai/ReMe",
+    "officialUrl": "https://github.com/agentscope-ai/ReMe",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:06:01.465Z",
+    "lastVerified": "2026-09-30T21:06:01.465Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

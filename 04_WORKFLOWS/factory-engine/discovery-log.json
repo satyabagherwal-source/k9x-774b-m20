@@ -11941,5 +11941,50 @@
     "qualityScore": 2191,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:04:06.559Z"
+  },
+  {
+    "name": "ReMe",
+    "fullName": "agentscope-ai/ReMe",
+    "url": "https://github.com/agentscope-ai/ReMe",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "ReMe: Memory Management Kit for Agents - Remember Me, Refine Me.",
+    "stars": 3540,
+    "forks": 304,
+    "openIssues": 43,
+    "language": "Python",
+    "qualityScore": 2197,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:05:38.066Z"
+  },
+  {
+    "name": "evalscope",
+    "fullName": "modelscope/evalscope",
+    "url": "https://github.com/modelscope/evalscope",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A streamlined and customizable framework for efficient large model (LLM, VLM, AIGC) evaluation and performance benchmarking.",
+    "stars": 3495,
+    "forks": 502,
+    "openIssues": 33,
+    "language": "Python",
+    "qualityScore": 2214,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:05:38.067Z"
+  },
+  {
+    "name": "skills",
+    "fullName": "NVIDIA/skills",
+    "url": "https://github.com/NVIDIA/skills",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Agent Skills for NVIDIA products — install into Claude Code, Codex, and other coding agents to run Physical AI, robotics, simulation, CUDA, and RAG workflows end to end.",
+    "stars": 3490,
+    "forks": 424,
+    "openIssues": 16,
+    "language": "Python",
+    "qualityScore": 2054,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:05:38.067Z"
   }
 ]
