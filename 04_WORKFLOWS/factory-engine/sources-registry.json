@@ -8166,5 +8166,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "graphprotocol-graph-node": {
+    "name": "graphprotocol/graph-node",
+    "officialUrl": "https://github.com/graphprotocol/graph-node",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:42:02.090Z",
+    "lastVerified": "2026-09-30T18:42:02.090Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

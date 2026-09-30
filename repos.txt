@@ -1926,3 +1926,19 @@ https://github.com/StarTrail-org/LEANN
 https://github.com/someengineering/fixinventory
 # [DEVOPS-CLOUD-INFRASTRUCTURE] camptocamp/terraboard (1359 score) - :earth_africa: :clipboard:  A web dashboard to inspect Terraform States 
 https://github.com/camptocamp/terraboard
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:41:41.252Z] ---
+# [HIGH-PERF-SYSTEMS] SilasMarvin/lsp-ai (1980 score) - LSP-AI is an open-source language server that serves as a backend for AI-powered
+https://github.com/SilasMarvin/lsp-ai
+# [HIGH-PERF-SYSTEMS] graphprotocol/graph-node (2346 score) - Graph Node indexes data from blockchains such as Ethereum and serves it over Gra
+https://github.com/graphprotocol/graph-node
+# [HIGH-PERF-SYSTEMS] vercel-labs/opensrc (1853 score) - Fetch source code for npm packages to give AI coding agents deeper context
+https://github.com/vercel-labs/opensrc
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:41:42.842Z] ---
+# [AI-AGENTS] khoj-ai/khoj (19973 score) - Your AI second brain. Self-hostable. Get answers from the web or your docs. Buil
+https://github.com/khoj-ai/khoj
+# [AI-AGENTS] microsoft/graphrag (20578 score [VERIFIED ORG]) - A modular graph-based Retrieval-Augmented Generation (RAG) system
+https://github.com/microsoft/graphrag
+# [AI-AGENTS] onyx-dot-app/onyx (17955 score) - Open Source AI Platform - AI Chat with advanced features that works with every L
+https://github.com/onyx-dot-app/onyx
