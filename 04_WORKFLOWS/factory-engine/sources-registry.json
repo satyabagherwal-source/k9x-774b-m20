@@ -5748,5 +5748,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tokio-rs-console": {
+    "name": "tokio-rs/console",
+    "officialUrl": "https://github.com/tokio-rs/console",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:13:21.365Z",
+    "lastVerified": "2026-09-30T18:13:21.365Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
