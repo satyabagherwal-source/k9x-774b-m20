@@ -9,7 +9,7 @@
       "page": 1
     },
     "high-perf-systems": {
-      "queryIndex": 3,
+      "queryIndex": 0,
       "page": 1
     },
     "huggingface-ai-models": {
@@ -29,14 +29,14 @@
       "page": 1
     },
     "database-storage-engines": {
-      "queryIndex": 5,
-      "page": 3
+      "queryIndex": 4,
+      "page": 1
     }
   },
   "huggingFace": {
     "sortIndex": 0,
     "page": 1
   },
-  "totalAutoDiscovered": 64,
-  "lastReplenishedAt": "2026-09-30T18:35:33.828Z"
+  "totalAutoDiscovered": 61,
+  "lastReplenishedAt": "2026-09-30T18:36:21.870Z"
 }

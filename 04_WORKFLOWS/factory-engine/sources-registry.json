@@ -7763,5 +7763,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "open-webui-open-webui": {
+    "name": "open-webui/open-webui",
+    "officialUrl": "https://github.com/open-webui/open-webui",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:36:22.910Z",
+    "lastVerified": "2026-09-30T18:36:22.910Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 62,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
