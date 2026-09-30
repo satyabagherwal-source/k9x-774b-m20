@@ -1898,3 +1898,19 @@ https://github.com/callstack/agent-device
 https://github.com/xinthink/react-native-material-kit
 # [MOBILE-CROSS-PLATFORM] gitpoint/git-point (3066 score) - GitHub in your pocket :iphone:
 https://github.com/gitpoint/git-point
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:39:40.073Z] ---
+# [HIGH-PERF-SYSTEMS] graykode/abtop (2251 score) - Like htop, but for AI coding agents. Monitor Claude    Code & Codex CLI sessions
+https://github.com/graykode/abtop
+# [HIGH-PERF-SYSTEMS] Ataraxy-Labs/sem (1970 score) - Semantic version control => entity-level diffs, blame, and impact analysis on to
+https://github.com/Ataraxy-Labs/sem
+# [HIGH-PERF-SYSTEMS] sentrux/sentrux (2059 score) - Real-time architectural sensor that helps AI agents close the feedback loop, ena
+https://github.com/sentrux/sentrux
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:39:41.654Z] ---
+# [AI-AGENTS] HKUDS/LightRAG (22013 score) - [EMNLP2025] LightRAG: Simple and Fast Retrieval-Augmented Generation
+https://github.com/HKUDS/LightRAG
+# [AI-AGENTS] The-Vibe-Company/quivr (21125 score) - Opiniated RAG for integrating GenAI in your apps 🧠   Focus on your product rath
+https://github.com/The-Vibe-Company/quivr
+# [AI-AGENTS] chatchat-space/Langchain-Chatchat (21525 score) - Langchain-Chatchat（原Langchain-ChatGLM）基于 Langchain 与 ChatGLM, Qwen 与 Llama 等语言模型
+https://github.com/chatchat-space/Langchain-Chatchat

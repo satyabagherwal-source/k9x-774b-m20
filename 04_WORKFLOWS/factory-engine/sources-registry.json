@@ -8036,5 +8036,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "graykode-abtop": {
+    "name": "graykode/abtop",
+    "officialUrl": "https://github.com/graykode/abtop",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:40:04.243Z",
+    "lastVerified": "2026-09-30T18:40:04.243Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 58,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
