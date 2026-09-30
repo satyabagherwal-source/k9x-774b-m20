@@ -2956,3 +2956,11 @@ https://github.com/AppPear/ChartView
 https://github.com/lottie-react-native/lottie-react-native
 # [MOBILE-CROSS-PLATFORM] react-native-maps/react-native-maps (9814 score) - React Native Mapview component for iOS + Android
 https://github.com/react-native-maps/react-native-maps
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T23:00:15.777Z] ---
+# [MOBILE-CROSS-PLATFORM] vanniktech/gradle-maven-publish-plugin (1292 score) - A Gradle plugin that publishes your Android and Kotlin libraries, including sour
+https://github.com/vanniktech/gradle-maven-publish-plugin
+# [MOBILE-CROSS-PLATFORM] GitLiveApp/firebase-kotlin-sdk (1377 score) - A Kotlin-first SDK for Firebase
+https://github.com/GitLiveApp/firebase-kotlin-sdk
+# [MOBILE-CROSS-PLATFORM] MohamedRejeb/Calf (1173 score) - Calf is a library that allows you to easily create adaptive UIs and access platf
+https://github.com/MohamedRejeb/Calf

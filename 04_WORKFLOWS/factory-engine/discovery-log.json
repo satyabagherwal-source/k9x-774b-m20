@@ -13411,5 +13411,50 @@
     "qualityScore": 9814,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T22:48:57.648Z"
+  },
+  {
+    "name": "gradle-maven-publish-plugin",
+    "fullName": "vanniktech/gradle-maven-publish-plugin",
+    "url": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A Gradle plugin that publishes your Android and Kotlin libraries, including sources and javadoc,  to Maven Central or any other Nexus instance.",
+    "stars": 1745,
+    "forks": 139,
+    "openIssues": 64,
+    "language": "Kotlin",
+    "qualityScore": 1292,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:00:15.776Z"
+  },
+  {
+    "name": "firebase-kotlin-sdk",
+    "fullName": "GitLiveApp/firebase-kotlin-sdk",
+    "url": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A Kotlin-first SDK for Firebase",
+    "stars": 1733,
+    "forks": 200,
+    "openIssues": 100,
+    "language": "Kotlin",
+    "qualityScore": 1377,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:00:15.776Z"
+  },
+  {
+    "name": "Calf",
+    "fullName": "MohamedRejeb/Calf",
+    "url": "https://github.com/MohamedRejeb/Calf",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Calf is a library that allows you to easily create adaptive UIs and access platform specific APIs with Compose Multiplatform (Adaptive UI, File Picker, WebView, Permissions...).",
+    "stars": 1725,
+    "forks": 94,
+    "openIssues": 16,
+    "language": "Kotlin",
+    "qualityScore": 1173,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:00:15.776Z"
   }
 ]

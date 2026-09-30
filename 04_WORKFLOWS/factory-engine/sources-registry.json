@@ -13132,5 +13132,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vanniktech-gradle-maven-publish-plugin": {
+    "name": "vanniktech/gradle-maven-publish-plugin",
+    "officialUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T23:00:32.028Z",
+    "lastVerified": "2026-09-30T23:00:32.028Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
