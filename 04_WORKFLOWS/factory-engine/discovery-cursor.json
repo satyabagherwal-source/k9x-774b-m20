@@ -5,7 +5,7 @@
       "page": 5
     },
     "fullstack-ui": {
-      "queryIndex": 4,
+      "queryIndex": 1,
       "page": 1
     },
     "high-perf-systems": {
@@ -25,7 +25,7 @@
       "page": 1
     },
     "cybersecurity-defenses": {
-      "queryIndex": 3,
+      "queryIndex": 0,
       "page": 1
     },
     "database-storage-engines": {
@@ -38,5 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 72,
-  "lastReplenishedAt": "2026-09-30T20:46:34.976Z"
+  "lastReplenishedAt": "2026-09-30T20:46:53.605Z"
 }

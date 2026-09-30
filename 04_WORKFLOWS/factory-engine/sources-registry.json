@@ -11507,5 +11507,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nitrocloudofficial-nitrostack": {
+    "name": "nitrocloudofficial/nitrostack",
+    "officialUrl": "https://github.com/nitrocloudofficial/nitrostack",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:46:58.999Z",
+    "lastVerified": "2026-09-30T20:46:58.999Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
