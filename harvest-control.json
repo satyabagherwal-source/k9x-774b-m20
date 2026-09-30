@@ -152,7 +152,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T03:07:47.873Z",
+        "lastActiveAt": "2026-09-30T03:08:50.101Z",
         "lastHarvestedAt": "2026-09-30T02:56:10.793Z",
         "totalHarvested": 1,
         "lastError": null
@@ -162,7 +162,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T03:07:47.879Z",
+        "lastActiveAt": "2026-09-30T03:09:11.186Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -172,7 +172,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T03:07:47.882Z",
+        "lastActiveAt": "2026-09-30T03:08:51.206Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
