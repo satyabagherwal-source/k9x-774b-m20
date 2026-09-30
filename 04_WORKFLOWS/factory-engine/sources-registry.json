@@ -3265,5 +3265,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-viggle-qwen-image-2.1-viggle-turbo": {
+    "name": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "officialUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:23:22.500Z",
+    "lastVerified": "2026-09-30T17:23:22.500Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
