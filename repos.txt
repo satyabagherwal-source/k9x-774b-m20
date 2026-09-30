@@ -2266,3 +2266,11 @@ https://github.com/exa-labs/exa-mcp-server
 https://github.com/clidey/whodb
 # [AI-AGENTS] atilaahmettaner/tradingview-mcp (3019 score) - TradingView MCP server — real-time market data, technical analysis, screeners & 
 https://github.com/atilaahmettaner/tradingview-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:48:54.360Z] ---
+# [AI-AGENTS] u14app/deep-research (2893 score) - Use any LLMs (Large Language Models) for Deep Research. Support SSE API and MCP 
+https://github.com/u14app/deep-research
+# [AI-AGENTS] modelcontextprotocol/csharp-sdk (2973 score) - The official C# SDK for Model Context Protocol servers and clients. Maintained i
+https://github.com/modelcontextprotocol/csharp-sdk
+# [AI-AGENTS] open-webui/mcpo (2705 score) - A simple, secure MCP-to-OpenAPI proxy server
+https://github.com/open-webui/mcpo

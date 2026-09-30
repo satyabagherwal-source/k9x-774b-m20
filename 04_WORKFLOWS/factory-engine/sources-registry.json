@@ -9817,5 +9817,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "u14app-deep-research": {
+    "name": "u14app/deep-research",
+    "officialUrl": "https://github.com/u14app/deep-research",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T19:49:18.662Z",
+    "lastVerified": "2026-09-30T19:49:18.662Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

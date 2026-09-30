@@ -9586,5 +9586,50 @@
     "qualityScore": 3019,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:47:27.317Z"
+  },
+  {
+    "name": "deep-research",
+    "fullName": "u14app/deep-research",
+    "url": "https://github.com/u14app/deep-research",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Use any LLMs (Large Language Models) for Deep Research. Support SSE API and MCP server.",
+    "stars": 4691,
+    "forks": 1059,
+    "openIssues": 40,
+    "language": "JavaScript",
+    "qualityScore": 2893,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:48:54.359Z"
+  },
+  {
+    "name": "csharp-sdk",
+    "fullName": "modelcontextprotocol/csharp-sdk",
+    "url": "https://github.com/modelcontextprotocol/csharp-sdk",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The official C# SDK for Model Context Protocol servers and clients. Maintained in collaboration with Microsoft.",
+    "stars": 4555,
+    "forks": 817,
+    "openIssues": 195,
+    "language": "C#",
+    "qualityScore": 2973,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:48:54.359Z"
+  },
+  {
+    "name": "mcpo",
+    "fullName": "open-webui/mcpo",
+    "url": "https://github.com/open-webui/mcpo",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A simple, secure MCP-to-OpenAPI proxy server",
+    "stars": 4388,
+    "forks": 498,
+    "openIssues": 56,
+    "language": "Python",
+    "qualityScore": 2705,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:48:54.359Z"
   }
 ]
