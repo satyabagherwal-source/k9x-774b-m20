@@ -12170,5 +12170,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "futurice-pepperoni-app-kit": {
+    "name": "futurice/pepperoni-app-kit",
+    "officialUrl": "https://github.com/futurice/pepperoni-app-kit",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T21:16:50.745Z",
+    "lastVerified": "2026-09-30T21:16:50.745Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
