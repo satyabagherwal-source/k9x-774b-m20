@@ -9596,5 +9596,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "firecrawl-firecrawl-mcp-server": {
+    "name": "firecrawl/firecrawl-mcp-server",
+    "officialUrl": "https://github.com/firecrawl/firecrawl-mcp-server",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T19:41:19.525Z",
+    "lastVerified": "2026-09-30T19:41:19.525Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
