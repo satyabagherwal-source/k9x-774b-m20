@@ -8491,5 +8491,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "foundationagents-metagpt": {
+    "name": "FoundationAgents/MetaGPT",
+    "officialUrl": "https://github.com/FoundationAgents/MetaGPT",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:52:53.422Z",
+    "lastVerified": "2026-09-30T18:52:53.422Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

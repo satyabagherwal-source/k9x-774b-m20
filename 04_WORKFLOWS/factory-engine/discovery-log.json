@@ -8056,5 +8056,50 @@
     "downloads": 137,
     "qualityScore": 2327,
     "discoveredAt": "2026-09-30T18:51:23.028Z"
+  },
+  {
+    "name": "MetaGPT",
+    "fullName": "FoundationAgents/MetaGPT",
+    "url": "https://github.com/FoundationAgents/MetaGPT",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🌟 The Multi-Agent Framework: First AI Software Company, Towards Natural Language Programming",
+    "stars": 70705,
+    "forks": 8988,
+    "openIssues": 145,
+    "language": "Python",
+    "qualityScore": 38499,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:52:26.100Z"
+  },
+  {
+    "name": "nanobot",
+    "fullName": "HKUDS/nanobot",
+    "url": "https://github.com/HKUDS/nanobot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Ultra-lightweight, open-source, self-hosted personal AI agent framework in Python with WebUI, tools, memory, MCP, multi-agent workflows, automation, and chat apps",
+    "stars": 48700,
+    "forks": 8597,
+    "openIssues": 810,
+    "language": "Python",
+    "qualityScore": 27279,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:52:26.100Z"
+  },
+  {
+    "name": "agents",
+    "fullName": "wshobson/agents",
+    "url": "https://github.com/wshobson/agents",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Multi-harness agentic plugin marketplace for Claude Code, Codex, Cursor, OpenCode, GitHub Copilot, Google Antigravity, and Pi",
+    "stars": 40112,
+    "forks": 4281,
+    "openIssues": 2,
+    "language": "Python",
+    "qualityScore": 21594,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:52:26.100Z"
   }
 ]

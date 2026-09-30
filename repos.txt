@@ -1994,3 +1994,11 @@ https://github.com/xerrors/Yuxi
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T18:51:23.030Z] ---
 # [HUGGINGFACE-AI-MODELS] PSRben/VisionHOPE (2327 score) - Verified Hugging Face Model: PSRben/VisionHOPE (219 likes, 137 downloads)
 https://huggingface.co/PSRben/VisionHOPE
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:52:26.101Z] ---
+# [AI-AGENTS] FoundationAgents/MetaGPT (38499 score) - 🌟 The Multi-Agent Framework: First AI Software Company, Towards Natural Languag
+https://github.com/FoundationAgents/MetaGPT
+# [AI-AGENTS] HKUDS/nanobot (27279 score) - Ultra-lightweight, open-source, self-hosted personal AI agent framework in Pytho
+https://github.com/HKUDS/nanobot
+# [AI-AGENTS] wshobson/agents (21594 score) - Multi-harness agentic plugin marketplace for Claude Code, Codex, Cursor, OpenCod
+https://github.com/wshobson/agents
