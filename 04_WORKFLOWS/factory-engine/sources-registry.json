@@ -4266,5 +4266,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "activepieces-activepieces": {
+    "name": "activepieces/activepieces",
+    "officialUrl": "https://github.com/activepieces/activepieces",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:33:01.943Z",
+    "lastVerified": "2026-09-30T17:33:01.943Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
