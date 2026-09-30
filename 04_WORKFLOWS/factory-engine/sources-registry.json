@@ -11416,5 +11416,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jgravelle-jcodemunch-mcp": {
+    "name": "jgravelle/jcodemunch-mcp",
+    "officialUrl": "https://github.com/jgravelle/jcodemunch-mcp",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:43:40.132Z",
+    "lastVerified": "2026-09-30T20:43:40.132Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 88,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

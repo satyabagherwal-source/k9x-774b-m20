@@ -11431,5 +11431,50 @@
     "qualityScore": 1759,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:41:44.275Z"
+  },
+  {
+    "name": "jcodemunch-mcp",
+    "fullName": "jgravelle/jcodemunch-mcp",
+    "url": "https://github.com/jgravelle/jcodemunch-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Cut AI token costs 95%+ on code exploration. The leading MCP server for precise, symbol-level GitHub code retrieval via tree-sitter AST. Works with Claude Code, Cursor & any MCP client. 313B+ tokens saved.",
+    "stars": 2719,
+    "forks": 365,
+    "openIssues": 3,
+    "language": "Python",
+    "qualityScore": 1725,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:43:15.908Z"
+  },
+  {
+    "name": "metamcp",
+    "fullName": "metatool-ai/metamcp",
+    "url": "https://github.com/metatool-ai/metamcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "MCP Aggregator, Orchestrator, Middleware, Gateway in one docker",
+    "stars": 2695,
+    "forks": 436,
+    "openIssues": 114,
+    "language": "TypeScript",
+    "qualityScore": 1928,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:43:15.908Z"
+  },
+  {
+    "name": "brightdata-mcp",
+    "fullName": "brightdata/brightdata-mcp",
+    "url": "https://github.com/brightdata/brightdata-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A powerful Model Context Protocol (MCP) server that provides an all-in-one solution for public web access.",
+    "stars": 2662,
+    "forks": 332,
+    "openIssues": 44,
+    "language": "JavaScript",
+    "qualityScore": 1669,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:43:15.909Z"
   }
 ]

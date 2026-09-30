@@ -2600,3 +2600,11 @@ https://github.com/opensolon/solon
 https://github.com/sparfenyuk/mcp-proxy
 # [AI-AGENTS] openags/paper-search-mcp (1759 score) - MCP, CLI, Skills for searching and downloading academic papers from multiple sou
 https://github.com/openags/paper-search-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:43:15.909Z] ---
+# [AI-AGENTS] jgravelle/jcodemunch-mcp (1725 score) - Cut AI token costs 95%+ on code exploration. The leading MCP server for precise,
+https://github.com/jgravelle/jcodemunch-mcp
+# [AI-AGENTS] metatool-ai/metamcp (1928 score) - MCP Aggregator, Orchestrator, Middleware, Gateway in one docker
+https://github.com/metatool-ai/metamcp
+# [AI-AGENTS] brightdata/brightdata-mcp (1669 score) - A powerful Model Context Protocol (MCP) server that provides an all-in-one solut
+https://github.com/brightdata/brightdata-mcp
