@@ -11715,5 +11715,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "langroid-langroid": {
+    "name": "langroid/langroid",
+    "officialUrl": "https://github.com/langroid/langroid",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:59:42.650Z",
+    "lastVerified": "2026-09-30T20:59:42.650Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
