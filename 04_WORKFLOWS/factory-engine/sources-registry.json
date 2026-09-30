@@ -10571,5 +10571,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sachaos-viddy": {
+    "name": "sachaos/viddy",
+    "officialUrl": "https://github.com/sachaos/viddy",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:18:48.724Z",
+    "lastVerified": "2026-09-30T20:18:48.724Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
