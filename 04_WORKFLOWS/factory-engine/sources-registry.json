@@ -7191,5 +7191,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apsl-react-native-keyboard-aware-scroll-view": {
+    "name": "APSL/react-native-keyboard-aware-scroll-view",
+    "officialUrl": "https://github.com/APSL/react-native-keyboard-aware-scroll-view",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T18:26:24.881Z",
+    "lastVerified": "2026-09-30T18:26:24.881Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
