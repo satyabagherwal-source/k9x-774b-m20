@@ -4357,5 +4357,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-inclusionai-ming-image-0.1-design": {
+    "name": "inclusionAI/Ming-Image-0.1-Design",
+    "officialUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:34:28.691Z",
+    "lastVerified": "2026-09-30T17:34:28.691Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

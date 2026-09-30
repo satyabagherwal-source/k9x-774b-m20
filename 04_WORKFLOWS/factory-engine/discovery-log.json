@@ -3313,5 +3313,41 @@
     "qualityScore": 2462,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T17:31:52.787Z"
+  },
+  {
+    "name": "inclusionAI/Ming-Image-0.1-Design",
+    "fullName": "inclusionAI/Ming-Image-0.1-Design",
+    "url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: inclusionAI/Ming-Image-0.1-Design (355 likes, 0 downloads)",
+    "likes": 355,
+    "downloads": 0,
+    "qualityScore": 3550,
+    "discoveredAt": "2026-09-30T17:34:26.261Z"
+  },
+  {
+    "name": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "fullName": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: deepseek-ai/DeepSeek-V4.1-Flash (3925 likes, 721211 downloads)",
+    "likes": 3925,
+    "downloads": 721211,
+    "qualityScore": 41250,
+    "discoveredAt": "2026-09-30T17:34:26.262Z"
+  },
+  {
+    "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "fullName": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: akatz-ai/MiniMax-H3-Character-Swap-LoRA (179 likes, 8078 downloads)",
+    "likes": 179,
+    "downloads": 8078,
+    "qualityScore": 3790,
+    "discoveredAt": "2026-09-30T17:34:26.262Z"
   }
 ]

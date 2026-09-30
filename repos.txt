@@ -1136,3 +1136,11 @@ https://github.com/ekmas/neobrutalism-components
 https://github.com/elrumordelaluz/reactour
 # [FULLSTACK-UI] xiaolin/react-image-gallery (2462 score) - React carousel image gallery component with thumbnail support  🖼
 https://github.com/xiaolin/react-image-gallery
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:34:26.262Z] ---
+# [HUGGINGFACE-AI-MODELS] inclusionAI/Ming-Image-0.1-Design (3550 score) - Verified Hugging Face Model: inclusionAI/Ming-Image-0.1-Design (355 likes, 0 dow
+https://huggingface.co/inclusionAI/Ming-Image-0.1-Design
+# [HUGGINGFACE-AI-MODELS] deepseek-ai/DeepSeek-V4.1-Flash (41250 score) - Verified Hugging Face Model: deepseek-ai/DeepSeek-V4.1-Flash (3925 likes, 721211
+https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash
+# [HUGGINGFACE-AI-MODELS] akatz-ai/MiniMax-H3-Character-Swap-LoRA (3790 score) - Verified Hugging Face Model: akatz-ai/MiniMax-H3-Character-Swap-LoRA (179 likes,
+https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA
