@@ -6411,5 +6411,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wix-react-native-ui-lib": {
+    "name": "wix/react-native-ui-lib",
+    "officialUrl": "https://github.com/wix/react-native-ui-lib",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:18:34.711Z",
+    "lastVerified": "2026-09-30T18:18:34.711Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
