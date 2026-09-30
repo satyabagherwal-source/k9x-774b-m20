@@ -3824,5 +3824,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-taichuai-zdtaichu5.0-9b": {
+    "name": "TaichuAI/ZDTaichu5.0-9B",
+    "officialUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:28:50.244Z",
+    "lastVerified": "2026-09-30T17:28:50.244Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
