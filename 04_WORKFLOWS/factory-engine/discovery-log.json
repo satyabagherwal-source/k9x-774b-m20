@@ -8191,5 +8191,50 @@
     "qualityScore": 5562,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:55:41.388Z"
+  },
+  {
+    "name": "PraisonAI",
+    "fullName": "MervinPraison/PraisonAI",
+    "url": "https://github.com/MervinPraison/PraisonAI",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "PraisonAI 🦞 — Hire a 24/7 AI Workforce. Stop writing boilerplate and start shipping autonomous self-improving agents that research, plan, code, and execute tasks. Deployed in 5 lines of code with built-in memory, RAG, and support for 100+ LLMs.",
+    "stars": 9114,
+    "forks": 1459,
+    "openIssues": 114,
+    "language": "Python",
+    "qualityScore": 5445,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:57:07.009Z"
+  },
+  {
+    "name": "astron-agent",
+    "fullName": "iflytek/astron-agent",
+    "url": "https://github.com/iflytek/astron-agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Enterprise-grade, commercial-friendly agentic workflow platform for building next-generation SuperAgents.",
+    "stars": 9102,
+    "forks": 909,
+    "openIssues": 47,
+    "language": "Java",
+    "qualityScore": 5168,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:57:07.009Z"
+  },
+  {
+    "name": "xiaobei",
+    "fullName": "TeamWiseFlow/xiaobei",
+    "url": "https://github.com/TeamWiseFlow/xiaobei",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "为OPC/中小微企业量身打造的自媒体获客智能体",
+    "stars": 8573,
+    "forks": 1455,
+    "openIssues": 3,
+    "language": "Python",
+    "qualityScore": 4979,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:57:07.009Z"
   }
 ]

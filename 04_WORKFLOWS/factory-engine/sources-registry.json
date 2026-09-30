@@ -8608,5 +8608,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mervinpraison-praisonai": {
+    "name": "MervinPraison/PraisonAI",
+    "officialUrl": "https://github.com/MervinPraison/PraisonAI",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:57:31.078Z",
+    "lastVerified": "2026-09-30T18:57:31.078Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

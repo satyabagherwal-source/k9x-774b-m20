@@ -2018,3 +2018,11 @@ https://github.com/alibaba/spring-ai-alibaba
 https://github.com/spinabot/brigade
 # [AI-AGENTS] adongwanai/AgentGuide (5562 score) - https://adongwanai.github.io/AgentGuide | AI Agent开发指南 | LangGraph实战 | 高级RAG | 转
 https://github.com/adongwanai/AgentGuide
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:57:07.010Z] ---
+# [AI-AGENTS] MervinPraison/PraisonAI (5445 score) - PraisonAI 🦞 — Hire a 24/7 AI Workforce. Stop writing boilerplate and start ship
+https://github.com/MervinPraison/PraisonAI
+# [AI-AGENTS] iflytek/astron-agent (5168 score) - Enterprise-grade, commercial-friendly agentic workflow platform for building nex
+https://github.com/iflytek/astron-agent
+# [AI-AGENTS] TeamWiseFlow/xiaobei (4979 score) - 为OPC/中小微企业量身打造的自媒体获客智能体
+https://github.com/TeamWiseFlow/xiaobei
