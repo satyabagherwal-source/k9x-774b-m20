@@ -5111,5 +5111,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "timvisee-ffsend": {
+    "name": "timvisee/ffsend",
+    "officialUrl": "https://github.com/timvisee/ffsend",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:41:44.897Z",
+    "lastVerified": "2026-09-30T17:41:44.897Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
