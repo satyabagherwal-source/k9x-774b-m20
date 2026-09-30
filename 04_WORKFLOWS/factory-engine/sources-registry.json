@@ -12443,5 +12443,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nativescript-nativescript": {
+    "name": "NativeScript/NativeScript",
+    "officialUrl": "https://github.com/NativeScript/NativeScript",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T21:36:57.877Z",
+    "lastVerified": "2026-09-30T21:36:57.877Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
