@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T20:15:12.094Z",
+        "lastActiveAt": "2026-09-30T20:16:07.193Z",
         "lastHarvestedAt": "2026-09-30T19:58:48.947Z",
         "totalHarvested": 6,
         "lastError": null
@@ -203,9 +203,9 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T20:15:12.121Z",
-        "lastHarvestedAt": "2026-09-30T17:24:15.748Z",
-        "totalHarvested": 1,
+        "lastActiveAt": "2026-09-30T20:16:05.390Z",
+        "lastHarvestedAt": "2026-09-30T20:16:05.390Z",
+        "totalHarvested": 2,
         "lastError": null
       },
       {

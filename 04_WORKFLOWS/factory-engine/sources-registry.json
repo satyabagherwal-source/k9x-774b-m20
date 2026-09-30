@@ -10441,5 +10441,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "komi-store-komi-store": {
+    "name": "komi-store/komi-store",
+    "officialUrl": "https://github.com/komi-store/komi-store",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T20:16:09.573Z",
+    "lastVerified": "2026-09-30T20:16:09.573Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
