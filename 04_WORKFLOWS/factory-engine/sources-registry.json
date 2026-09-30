@@ -11403,5 +11403,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sparfenyuk-mcp-proxy": {
+    "name": "sparfenyuk/mcp-proxy",
+    "officialUrl": "https://github.com/sparfenyuk/mcp-proxy",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:42:35.818Z",
+    "lastVerified": "2026-09-30T20:42:35.818Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
