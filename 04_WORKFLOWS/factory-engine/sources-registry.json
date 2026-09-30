@@ -12833,5 +12833,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agi-edgerunners-llm-agents-papers": {
+    "name": "AGI-Edgerunners/LLM-Agents-Papers",
+    "officialUrl": "https://github.com/AGI-Edgerunners/LLM-Agents-Papers",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T22:03:06.320Z",
+    "lastVerified": "2026-09-30T22:03:06.320Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
