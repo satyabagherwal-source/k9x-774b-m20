@@ -11988,5 +11988,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "om-ai-lab-omagent": {
+    "name": "om-ai-lab/OmAgent",
+    "officialUrl": "https://github.com/om-ai-lab/OmAgent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:10:34.099Z",
+    "lastVerified": "2026-09-30T21:10:34.099Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
