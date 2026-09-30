@@ -6008,5 +6008,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "qovery-replibyte": {
+    "name": "Qovery/Replibyte",
+    "officialUrl": "https://github.com/Qovery/Replibyte",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:16:44.825Z",
+    "lastVerified": "2026-09-30T18:16:44.825Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
