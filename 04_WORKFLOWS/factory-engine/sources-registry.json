@@ -3733,5 +3733,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xampprocky-tokei": {
+    "name": "XAMPPRocky/tokei",
+    "officialUrl": "https://github.com/XAMPPRocky/tokei",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:27:24.256Z",
+    "lastVerified": "2026-09-30T17:27:24.256Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
