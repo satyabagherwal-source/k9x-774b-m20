@@ -7321,5 +7321,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gocd-gocd": {
+    "name": "gocd/gocd",
+    "officialUrl": "https://github.com/gocd/gocd",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T18:28:52.577Z",
+    "lastVerified": "2026-09-30T18:28:52.577Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
