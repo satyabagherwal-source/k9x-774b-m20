@@ -203,7 +203,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:12:22.451Z",
+        "lastActiveAt": "2026-09-30T21:13:37.573Z",
         "lastHarvestedAt": "2026-09-30T20:16:05.390Z",
         "totalHarvested": 2,
         "lastError": null
@@ -223,7 +223,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:12:22.469Z",
+        "lastActiveAt": "2026-09-30T21:13:34.272Z",
         "lastHarvestedAt": "2026-09-30T21:06:33.037Z",
         "totalHarvested": 6,
         "lastError": null
