@@ -8855,5 +8855,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sentelabsai-openexecutive": {
+    "name": "SenteLabsAI/OpenExecutive",
+    "officialUrl": "https://github.com/SenteLabsAI/OpenExecutive",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:16:03.548Z",
+    "lastVerified": "2026-09-30T19:16:03.548Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
