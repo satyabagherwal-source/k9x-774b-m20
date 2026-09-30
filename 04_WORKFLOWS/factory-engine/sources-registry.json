@@ -7373,5 +7373,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "itinance-react-native-fs": {
+    "name": "itinance/react-native-fs",
+    "officialUrl": "https://github.com/itinance/react-native-fs",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T18:29:22.032Z",
+    "lastVerified": "2026-09-30T18:29:22.032Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
