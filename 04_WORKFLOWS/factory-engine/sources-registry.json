@@ -11845,5 +11845,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "samuraigpt-llm-wiki-agent": {
+    "name": "SamurAIGPT/llm-wiki-agent",
+    "officialUrl": "https://github.com/SamurAIGPT/llm-wiki-agent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:05:03.378Z",
+    "lastVerified": "2026-09-30T21:05:03.378Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
