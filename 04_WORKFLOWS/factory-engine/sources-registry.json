@@ -4019,5 +4019,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gitoxidelabs-gitoxide": {
+    "name": "GitoxideLabs/gitoxide",
+    "officialUrl": "https://github.com/GitoxideLabs/gitoxide",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:30:22.128Z",
+    "lastVerified": "2026-09-30T17:30:22.128Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
