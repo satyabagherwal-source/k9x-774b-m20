@@ -6489,5 +6489,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "franken-ui-ui": {
+    "name": "franken-ui/ui",
+    "officialUrl": "https://github.com/franken-ui/ui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:19:02.098Z",
+    "lastVerified": "2026-09-30T18:19:02.098Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
