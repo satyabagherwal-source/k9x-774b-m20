@@ -11338,5 +11338,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vexa-ai-vexa": {
+    "name": "Vexa-ai/vexa",
+    "officialUrl": "https://github.com/Vexa-ai/vexa",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:40:44.515Z",
+    "lastVerified": "2026-09-30T20:40:44.515Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

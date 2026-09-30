@@ -2584,3 +2584,11 @@ https://github.com/silexlabs/Silex
 https://github.com/Ryze-AI-Adgent/open-seo-mcp-skills
 # [AI-AGENTS] zhizhuodemao/js-reverse-mcp (1815 score) - AI Agent-first JS 逆向 MCP Server：有头 Chrome 调试、断点、网络/WebSocket 分析、Patchright 反检测，可
 https://github.com/zhizhuodemao/js-reverse-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:40:19.694Z] ---
+# [AI-AGENTS] Vexa-ai/vexa (2021 score) - Open-source meeting transcription API for Google Meet, Microsoft Teams & Zoom. A
+https://github.com/Vexa-ai/vexa
+# [AI-AGENTS] zinja-coder/jadx-ai-mcp (1765 score) - Plugin for JADX to integrate MCP server
+https://github.com/zinja-coder/jadx-ai-mcp
+# [AI-AGENTS] rusq/slackdump (1740 score) - Save or export your private and public Slack messages, threads, files, and users
+https://github.com/rusq/slackdump

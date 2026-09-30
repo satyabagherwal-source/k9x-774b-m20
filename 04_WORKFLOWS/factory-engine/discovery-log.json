@@ -11341,5 +11341,50 @@
     "qualityScore": 1815,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:38:49.573Z"
+  },
+  {
+    "name": "vexa",
+    "fullName": "Vexa-ai/vexa",
+    "url": "https://github.com/Vexa-ai/vexa",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source meeting transcription API for Google Meet, Microsoft Teams & Zoom. Auto-join bots, real-time WebSocket transcripts, MCP server for AI agents. Self-host or use hosted SaaS.",
+    "stars": 2844,
+    "forks": 497,
+    "openIssues": 621,
+    "language": "Python",
+    "qualityScore": 2021,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:40:14.539Z"
+  },
+  {
+    "name": "jadx-ai-mcp",
+    "fullName": "zinja-coder/jadx-ai-mcp",
+    "url": "https://github.com/zinja-coder/jadx-ai-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Plugin for JADX to integrate MCP server",
+    "stars": 2842,
+    "forks": 260,
+    "openIssues": 8,
+    "language": "Java",
+    "qualityScore": 1765,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:40:19.693Z"
+  },
+  {
+    "name": "slackdump",
+    "fullName": "rusq/slackdump",
+    "url": "https://github.com/rusq/slackdump",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Save or export your private and public Slack messages, threads, files, and users locally without admin privileges.",
+    "stars": 2807,
+    "forks": 168,
+    "openIssues": 18,
+    "language": "Go",
+    "qualityScore": 1740,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:40:19.693Z"
   }
 ]
