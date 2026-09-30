@@ -10454,5 +10454,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "argoproj-argo-workflows": {
+    "name": "argoproj/argo-workflows",
+    "officialUrl": "https://github.com/argoproj/argo-workflows",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T20:16:17.961Z",
+    "lastVerified": "2026-09-30T20:16:17.961Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
