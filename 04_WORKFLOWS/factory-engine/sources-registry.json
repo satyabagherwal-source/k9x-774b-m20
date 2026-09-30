@@ -6554,5 +6554,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "typestack-routing-controllers": {
+    "name": "typestack/routing-controllers",
+    "officialUrl": "https://github.com/typestack/routing-controllers",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:19:26.719Z",
+    "lastVerified": "2026-09-30T18:19:26.719Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
