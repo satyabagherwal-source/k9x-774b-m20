@@ -1858,3 +1858,43 @@ https://github.com/GreptimeTeam/greptimedb
 https://github.com/ydb-platform/ydb
 # [DATABASE-STORAGE-ENGINES] Netflix/dynomite (2714 score) - A generic dynamo implementation for different k-v storage engines
 https://github.com/Netflix/dynomite
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:37:09.742Z] ---
+# [AI-AGENTS] headroomlabs-ai/headroom (39254 score) - Compress tool outputs, logs, files, and RAG chunks before they reach the LLM. 20
+https://github.com/headroomlabs-ai/headroom
+# [AI-AGENTS] mem0ai/mem0 (35885 score) - The Memory Layer for AI Agents - Drop-in memory infrastructure for AI agents and
+https://github.com/mem0ai/mem0
+# [AI-AGENTS] bojieli/ai-agent-book (28015 score) - 《深入理解 AI Agent：设计原理与工程实践》（李博杰 著）开源主仓库：全书正文、编译版 PDF 与按章配套代码
+https://github.com/bojieli/ai-agent-book
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:37:10.658Z] ---
+# [HIGH-PERF-SYSTEMS] Dicklesworthstone/destructive_command_guard (3383 score) - The Destructive Command Guard (dcg) is for blocking dangerous git and shell comm
+https://github.com/Dicklesworthstone/destructive_command_guard
+# [HIGH-PERF-SYSTEMS] golutra/golutra (2422 score) - Multi-agent AI orchestration platform for automation, workflows, and developer t
+https://github.com/golutra/golutra
+# [HIGH-PERF-SYSTEMS] yvgude/lean-ctx (2300 score) - LeanCTX — Context Intelligence for AI systems.
+https://github.com/yvgude/lean-ctx
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:37:11.824Z] ---
+# [DATABASE-STORAGE-ENGINES] olric-data/olric (2085 score) - Distributed, in-memory key/value store and cache. It can be used as an embedded 
+https://github.com/olric-data/olric
+# [DATABASE-STORAGE-ENGINES] lindb/lindb (1890 score) - LinDB is a scalable, high performance, high availability distributed time series
+https://github.com/lindb/lindb
+# [DATABASE-STORAGE-ENGINES] ytsaurus/ytsaurus (1623 score) - YTsaurus is a scalable and fault-tolerant open-source big data platform.
+https://github.com/ytsaurus/ytsaurus
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:37:12.372Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] pytest-dev/pytest-testinfra (1697 score) - Testinfra test your infrastructures
+https://github.com/pytest-dev/pytest-testinfra
+# [DEVOPS-CLOUD-INFRASTRUCTURE] kcl-lang/kcl (1543 score) - KCL Core and API
+https://github.com/kcl-lang/kcl
+# [DEVOPS-CLOUD-INFRASTRUCTURE] cycloidio/terracognita (1687 score) - Reads from existing public and private cloud providers (reverse Terraform) and g
+https://github.com/cycloidio/terracognita
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:37:21.786Z] ---
+# [MOBILE-CROSS-PLATFORM] callstack/agent-device (2960 score) - Mobile app automation and verification for AI coding agents. CLI, MCP server, an
+https://github.com/callstack/agent-device
+# [MOBILE-CROSS-PLATFORM] xinthink/react-native-material-kit (3026 score) - Bringing Material Design to React Native
+https://github.com/xinthink/react-native-material-kit
+# [MOBILE-CROSS-PLATFORM] gitpoint/git-point (3066 score) - GitHub in your pocket :iphone:
+https://github.com/gitpoint/git-point

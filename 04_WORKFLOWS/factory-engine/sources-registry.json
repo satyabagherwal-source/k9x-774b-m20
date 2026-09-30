@@ -7841,5 +7841,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "headroomlabs-ai-headroom": {
+    "name": "headroomlabs-ai/headroom",
+    "officialUrl": "https://github.com/headroomlabs-ai/headroom",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:37:33.081Z",
+    "lastVerified": "2026-09-30T18:37:33.081Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 74,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
