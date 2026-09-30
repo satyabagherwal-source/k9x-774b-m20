@@ -8075,5 +8075,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "chatchat-space-langchain-chatchat": {
+    "name": "chatchat-space/Langchain-Chatchat",
+    "officialUrl": "https://github.com/chatchat-space/Langchain-Chatchat",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:40:38.141Z",
+    "lastVerified": "2026-09-30T18:40:38.141Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
