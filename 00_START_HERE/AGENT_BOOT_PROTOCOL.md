@@ -1,11 +1,13 @@
 # Canonical Universal Agent Boot Protocol
 
 > **Reference**: `AI-Builder-Brain/00_START_HERE/AGENT_BOOT_PROTOCOL.md`  
-> **Mandate**: Mandatory 15-step execution sequence for any AI agent booting inside any project operating under AI-Builder-Brain.
+> **Mandate**: Mandatory execution sequence for any AI agent booting inside any project operating under AI-Builder-Brain.  
+> ⚡ **Micro-Task Fast Path**: For simple tasks (color, text, single-line fix, basic landing page), use [`00_START_HERE/TASK_COMPLEXITY_ROUTER.md`](file:///c:/AI-Builder-Brain/00_START_HERE/TASK_COMPLEXITY_ROUTER.md) to execute in 3 steps (< 300 tokens).  
+> 🛡️ **Anti-Regression Mandate**: Always enforce [`00_START_HERE/SURGICAL_FIX_REGRESSION_SHIELD.md`](file:///c:/AI-Builder-Brain/00_START_HERE/SURGICAL_FIX_REGRESSION_SHIELD.md) to guarantee zero collateral damage.
 
 ---
 
-## The 15-Step Universal Boot Sequence
+## The Universal Boot Sequence
 
 When an AI agent starts work or boots up in any workspace, it MUST execute these 15 steps:
 
