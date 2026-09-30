@@ -9557,5 +9557,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "firerpa-lamda": {
+    "name": "firerpa/lamda",
+    "officialUrl": "https://github.com/firerpa/lamda",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:39:46.080Z",
+    "lastVerified": "2026-09-30T19:39:46.080Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
