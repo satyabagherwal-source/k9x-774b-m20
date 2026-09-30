@@ -11065,5 +11065,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bethington-ghidra-mcp": {
+    "name": "bethington/ghidra-mcp",
+    "officialUrl": "https://github.com/bethington/ghidra-mcp",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T20:30:55.042Z",
+    "lastVerified": "2026-09-30T20:30:55.042Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
