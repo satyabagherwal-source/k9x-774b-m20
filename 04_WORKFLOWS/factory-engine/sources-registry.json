@@ -13041,5 +13041,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "twostraws-controlroom": {
+    "name": "twostraws/ControlRoom",
+    "officialUrl": "https://github.com/twostraws/ControlRoom",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:36:34.819Z",
+    "lastVerified": "2026-09-30T22:36:34.819Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -13306,5 +13306,35 @@
     "qualityScore": 3510,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T22:30:00.982Z"
+  },
+  {
+    "name": "ControlRoom",
+    "fullName": "twostraws/ControlRoom",
+    "url": "https://github.com/twostraws/ControlRoom",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A macOS app to control the Xcode Simulator.",
+    "stars": 6104,
+    "forks": 320,
+    "openIssues": 35,
+    "language": "Swift",
+    "qualityScore": 3468,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:36:19.350Z"
+  },
+  {
+    "name": "OnlySwitch",
+    "fullName": "jacklandrin/OnlySwitch",
+    "url": "https://github.com/jacklandrin/OnlySwitch",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "⚙️ All-in-One menu bar app, hide 💻MacBook Pro's notch, dark mode, AirPods, Shortcuts",
+    "stars": 5953,
+    "forks": 242,
+    "openIssues": 56,
+    "language": "Swift",
+    "qualityScore": 3411,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:36:19.350Z"
   }
 ]
