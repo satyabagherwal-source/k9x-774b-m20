@@ -7516,5 +7516,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "aquasecurity-tfsec": {
+    "name": "aquasecurity/tfsec",
+    "officialUrl": "https://github.com/aquasecurity/tfsec",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:31:34.268Z",
+    "lastVerified": "2026-09-30T18:31:34.268Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
