@@ -2888,5 +2888,18 @@
     "closedIssuesCount": 4,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agentscope-ai-qwenpaw": {
+    "name": "agentscope-ai/QwenPaw",
+    "officialUrl": "https://github.com/agentscope-ai/QwenPaw",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:15:27.072Z",
+    "lastVerified": "2026-09-30T17:15:27.072Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 61,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
