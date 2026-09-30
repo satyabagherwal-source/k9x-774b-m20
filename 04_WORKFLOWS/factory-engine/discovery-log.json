@@ -10126,5 +10126,50 @@
     "qualityScore": 4798,
     "verifiedOrg": true,
     "discoveredAt": "2026-09-30T20:09:24.184Z"
+  },
+  {
+    "name": "LaVague",
+    "fullName": "lavague-ai/LaVague",
+    "url": "https://github.com/lavague-ai/LaVague",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Large Action Model framework to develop AI Web Agents",
+    "stars": 6394,
+    "forks": 573,
+    "openIssues": 106,
+    "language": "Python",
+    "qualityScore": 3819,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:10:48.059Z"
+  },
+  {
+    "name": "potpie",
+    "fullName": "potpie-ai/potpie",
+    "url": "https://github.com/potpie-ai/potpie",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Context Graph for AI Native SDLC",
+    "stars": 5738,
+    "forks": 685,
+    "openIssues": 113,
+    "language": "Python",
+    "qualityScore": 3425,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:10:48.060Z"
+  },
+  {
+    "name": "UltraRAG",
+    "fullName": "OpenBMB/UltraRAG",
+    "url": "https://github.com/OpenBMB/UltraRAG",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A Low-Code MCP Framework for Building Complex and Innovative RAG Pipelines",
+    "stars": 5711,
+    "forks": 449,
+    "openIssues": 12,
+    "language": "Python",
+    "qualityScore": 3264,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:10:48.060Z"
   }
 ]

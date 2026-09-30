@@ -2364,3 +2364,11 @@ https://github.com/Osmantic/ODS
 https://github.com/adbar/trafilatura
 # [AI-AGENTS] run-llama/rags (4798 score [VERIFIED ORG]) - Build ChatGPT over your data, all with natural language
 https://github.com/run-llama/rags
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:10:48.060Z] ---
+# [AI-AGENTS] lavague-ai/LaVague (3819 score) - Large Action Model framework to develop AI Web Agents
+https://github.com/lavague-ai/LaVague
+# [AI-AGENTS] potpie-ai/potpie (3425 score) - Context Graph for AI Native SDLC
+https://github.com/potpie-ai/potpie
+# [AI-AGENTS] OpenBMB/UltraRAG (3264 score) - A Low-Code MCP Framework for Building Complex and Innovative RAG Pipelines
+https://github.com/OpenBMB/UltraRAG

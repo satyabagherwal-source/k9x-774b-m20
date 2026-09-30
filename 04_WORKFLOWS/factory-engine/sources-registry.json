@@ -10285,5 +10285,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lavague-ai-lavague": {
+    "name": "lavague-ai/LaVague",
+    "officialUrl": "https://github.com/lavague-ai/LaVague",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:11:12.680Z",
+    "lastVerified": "2026-09-30T20:11:12.680Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
