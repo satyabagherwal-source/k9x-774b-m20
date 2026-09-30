@@ -6320,5 +6320,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "earthtojake-text-to-cad": {
+    "name": "earthtojake/text-to-cad",
+    "officialUrl": "https://github.com/earthtojake/text-to-cad",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:18:10.435Z",
+    "lastVerified": "2026-09-30T18:18:10.435Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
