@@ -6229,5 +6229,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "skyzh-mini-lsm": {
+    "name": "skyzh/mini-lsm",
+    "officialUrl": "https://github.com/skyzh/mini-lsm",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:17:48.557Z",
+    "lastVerified": "2026-09-30T18:17:48.557Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
