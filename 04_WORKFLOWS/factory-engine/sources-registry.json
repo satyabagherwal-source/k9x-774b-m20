@@ -11572,5 +11572,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lysine-dev-okio": {
+    "name": "lysine-dev/okio",
+    "officialUrl": "https://github.com/lysine-dev/okio",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T20:50:01.341Z",
+    "lastVerified": "2026-09-30T20:50:01.341Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
