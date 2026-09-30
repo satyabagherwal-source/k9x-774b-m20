@@ -2732,3 +2732,11 @@ https://github.com/InternLM/HuixiangDou
 https://github.com/beir-cellar/beir
 # [AI-AGENTS] qhjqhj00/MemoRAG (1479 score) - Empowering RAG with a memory-based data interface for all-purpose applications!
 https://github.com/qhjqhj00/MemoRAG
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:12:34.656Z] ---
+# [AI-AGENTS] NanoNets/docext (1384 score) - An on-premises, OCR-free unstructured data extraction, markdown conversion and b
+https://github.com/NanoNets/docext
+# [AI-AGENTS] HKUDS/MiniRAG (1307 score) - [ACL2026] "MiniRAG: Making RAG Simpler with Small and Open-Sourced Language Mode
+https://github.com/HKUDS/MiniRAG
+# [AI-AGENTS] NVIDIA-AI-Blueprints/video-search-and-summarization (1410 score) - NVIDIA AI Blueprint for video search and summarization (VSS) is a GPU-accelerate
+https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization

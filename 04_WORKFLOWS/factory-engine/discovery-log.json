@@ -12166,5 +12166,50 @@
     "qualityScore": 1479,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:11:11.585Z"
+  },
+  {
+    "name": "docext",
+    "fullName": "NanoNets/docext",
+    "url": "https://github.com/NanoNets/docext",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An on-premises, OCR-free unstructured data extraction, markdown conversion and benchmarking toolkit. (https://idp-leaderboard.org/)",
+    "stars": 2086,
+    "forks": 157,
+    "openIssues": 22,
+    "language": "Python",
+    "qualityScore": 1384,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:12:34.655Z"
+  },
+  {
+    "name": "MiniRAG",
+    "fullName": "HKUDS/MiniRAG",
+    "url": "https://github.com/HKUDS/MiniRAG",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "[ACL2026] \"MiniRAG: Making RAG Simpler with Small and Open-Sourced Language Models\"",
+    "stars": 2016,
+    "forks": 257,
+    "openIssues": 36,
+    "language": "Python",
+    "qualityScore": 1307,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:12:34.655Z"
+  },
+  {
+    "name": "video-search-and-summarization",
+    "fullName": "NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "url": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "NVIDIA AI Blueprint for video search and summarization (VSS) is a GPU-accelerated reference architecture for building video analytics agents with real-time verified alerts, visual Q&A, and automated reporting. The VSS Blueprint uses vision language models (VLMs) such as NVIDIA Cosmos, LLMs such as NVIDIA Nemotron, RAG, and NVIDIA NIMs.",
+    "stars": 1883,
+    "forks": 396,
+    "openIssues": 201,
+    "language": "Python",
+    "qualityScore": 1410,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:12:34.655Z"
   }
 ]
