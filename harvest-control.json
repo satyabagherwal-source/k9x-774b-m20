@@ -127,7 +127,19 @@
   "localSyncStrategy": "Auto-pull on agent boot or IDE start (git pull --rebase origin main)",
   "autoDiscovery": {
     "enabled": true,
-    "scoutSchedule": "Automatic on queue drain or every 6 hours",
+    "autonomousEndlessMode": true,
+    "zeroManualUrlsNeeded": true,
+    "scoutSchedule": "Continuous 24/7 self-replenishing queue buffer with persistent cursor",
+    "minUnharvestedBuffer": 15,
+    "autoReplenishBatchSize": 24,
+    "trustGatePolicy": {
+      "antiSpamStrictFilter": true,
+      "skipUnverifiedForks": true,
+      "skipArchivedOrDisabled": true,
+      "skipNonCodeLists": true,
+      "verifiedOrgsPriority": true,
+      "minTrustScore": 400
+    },
     "domains": [
       "ai-agents",
       "fullstack-ui",
@@ -139,9 +151,8 @@
       "database-storage-engines"
     ],
     "multiAgentDomainPartitioning": true,
-    "minStars": 1500,
-    "maxReposPerScoutRun": 3,
-    "lastScoutedAt": "2026-09-28T04:50:11.496Z"
+    "cursorFile": "04_WORKFLOWS/factory-engine/discovery-cursor.json",
+    "lastScoutedAt": "2026-09-30T13:37:05.000Z"
   },
   "multiAgentFleet": {
     "enabled": true,
@@ -152,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T06:56:22.440Z",
+        "lastActiveAt": "2026-09-30T02:56:10.793Z",
         "lastHarvestedAt": "2026-09-30T02:56:10.793Z",
         "totalHarvested": 1,
         "lastError": null
@@ -162,7 +173,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T06:55:14.133Z",
+        "lastActiveAt": "2026-09-30T02:53:01.039Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -172,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T06:55:05.710Z",
+        "lastActiveAt": "2026-09-30T02:53:04.130Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -182,7 +193,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T06:54:05.367Z",
+        "lastActiveAt": "2026-09-30T02:51:57.033Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -192,7 +203,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T06:54:12.220Z",
+        "lastActiveAt": "2026-09-30T02:52:03.702Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -202,7 +213,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T06:54:16.696Z",
+        "lastActiveAt": "2026-09-30T02:52:08.194Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -212,7 +223,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T06:54:12.365Z",
+        "lastActiveAt": "2026-09-30T02:52:04.037Z",
         "lastHarvestedAt": "2026-09-29T21:27:34.473Z",
         "totalHarvested": 1,
         "lastError": null
@@ -222,7 +233,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T06:54:15.729Z",
+        "lastActiveAt": "2026-09-30T02:52:07.227Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null

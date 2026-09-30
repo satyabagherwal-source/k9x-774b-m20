@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fork } from 'child_process';
 import { fileURLToPath } from 'url';
-import { DISCOVERY_DOMAINS } from './auto-discovery-scout.mjs';
+import { DISCOVERY_DOMAINS, ensureQueueReplenished } from './auto-discovery-scout.mjs';
 import { pushWithRebaseRetry } from './concurrency-coordinator.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -282,6 +282,14 @@ export async function runMultiAgentFleet(options = {}) {
     }
     console.log(`   ${i + 1}. ${agent.id} -> Domain: ${agent.domain} | Status: ${statusLabel} | Harvested: ${lifecycle.totalHarvested || 0}`);
   });
+
+  // Autonomous Self-Replenishing Guard: Ensure unharvested targets exist before launch
+  try {
+    await ensureQueueReplenished(15, 24);
+  } catch (err) {
+    console.warn(`[REPLENISH WARNING] Auto-replenish failed: ${err.message}. Proceeding with existing queue.`);
+  }
+
   console.log(`\n⚡ Launching active agents simultaneously in parallel...\n`);
 
   const startTime = Date.now();

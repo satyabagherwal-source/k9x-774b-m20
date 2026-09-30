@@ -1,6 +1,5 @@
 # ==============================================================================
 # AI-Builder-Brain Universal Harvesting Queue
-# ==============================================================================
 # Paste your target GitHub or Hugging Face repository/model URLs here (one per line).
 # Lines beginning with '#' and blank lines are ignored.
 #
@@ -8,32 +7,26 @@
 # 1. Method 1 (Full-Clone Batch Harvester):
 #    - CLI: node 04_WORKFLOWS/factory-engine/batch-auto-harvester.mjs
 #    - Chat: "In sabhi repos se harvest kar lo"
-#
 # 2. Method 2 (Zero-Clone 24/7 Cloud Harvester):
 #    - Runs continuously in GitHub cloud (24/7 even when laptop is closed/offline)
 #    - CLI: node 04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs
 #    - Control: node 04_WORKFLOWS/factory-engine/harvester-control.mjs [start|stop|status|sync]
 #    - Chat: "Cloud harvester chalu karo" / "Cloud harvester stop karo"
-# ==============================================================================
 
 https://github.com/shadcn-ui/ui
 https://github.com/tailwindlabs/tailwindcss
 https://github.com/vllm-project/vllm
 https://huggingface.co/meta-llama/Llama-3.2-1B
-
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T04:50:11.496Z] ---
 # [AI-AGENTS] affaan-m/ECC (173237 score) - The agent harness performance optimization system. Skills, instincts, memory, se
 https://github.com/affaan-m/ECC
 # [AI-AGENTS] NousResearch/hermes-agent (165754 score) - The agent that grows with you
 https://github.com/NousResearch/hermes-agent
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T04:57:25.010Z] ---
 # [HIGH-PERF-SYSTEMS] rtk-ai/rtk (50759 score) - CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. S
 https://github.com/rtk-ai/rtk
 # [HIGH-PERF-SYSTEMS] sxyazi/yazi (25787 score) - 💥 Blazing fast terminal file manager written in Rust, based on async I/O.
 https://github.com/sxyazi/yazi
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T16:34:01.477Z] ---
 # [AI-AGENTS] deepseek-ai/deepseek-harness (151773 score) - DeepSeek Harness: Everything is a Plugin.
 https://github.com/deepseek-ai/deepseek-harness
@@ -41,393 +34,666 @@ https://github.com/deepseek-ai/deepseek-harness
 https://github.com/ionic-team/ionic-framework
 # [HIGH-PERF-SYSTEMS] herdrdev/herdr (25673 score) - the runtime your coding agents live on
 https://github.com/herdrdev/herdr
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T17:27:15.405Z] ---
 # [FULLSTACK-UI] vuetifyjs/vuetify (26761 score) - 🐉 Vue Component Framework
 https://github.com/vuetifyjs/vuetify
 # [FULLSTACK-UI] chakra-ui/chakra-ui (25497 score) - Chakra UI is a component system for building SaaS products with speed ⚡️
 https://github.com/chakra-ui/chakra-ui
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T17:34:53.689Z] ---
 # [FULLSTACK-UI] lucide-icons/lucide (15440 score) - Beautiful & consistent icon toolkit made by the community. Open-source project a
 https://github.com/lucide-icons/lucide
 # [FULLSTACK-UI] radix-ui/primitives (11979 score) - Radix Primitives is an open-source UI component library for building high-qualit
 https://github.com/radix-ui/primitives
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T17:34:53.743Z] ---
 # [AI-AGENTS] firecrawl/firecrawl (114512 score) - The web data API to search, scrape, and interact at scale. 🔥
 https://github.com/firecrawl/firecrawl
 # [AI-AGENTS] DietrichGebert/ponytail (90921 score) - Makes your AI agent think like the laziest senior dev in the room. The best code
 https://github.com/DietrichGebert/ponytail
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T17:34:53.751Z] ---
 # [HIGH-PERF-SYSTEMS] lapce/lapce (23721 score) - Lightning-fast and Powerful Code Editor written in Rust
 https://github.com/lapce/lapce
 # [HIGH-PERF-SYSTEMS] TabbyML/tabby (20871 score) - Self-hosted AI coding assistant
 https://github.com/TabbyML/tabby
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.405Z] ---
 # [MOBILE-CROSS-PLATFORM] react/react-native (83639 score) - A framework for building native applications using React
 https://github.com/react/react-native
 # [MOBILE-CROSS-PLATFORM] justjavac/free-programming-books-zh_CN (79979 score) - :books: 免费的计算机编程类中文书籍，欢迎投稿
 https://github.com/justjavac/free-programming-books-zh_CN
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.411Z] ---
 # [HIGH-PERF-SYSTEMS] surrealdb/surrealdb (20257 score) - A scalable, distributed, collaborative, document-graph database, for the realtim
 https://github.com/surrealdb/surrealdb
 # [HIGH-PERF-SYSTEMS] iii-hq/iii (11770 score) - Effortlessly compose, extend, and observe every service in real-time for the fir
 https://github.com/iii-hq/iii
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.464Z] ---
 # [DATABASE-STORAGE-ENGINES] Mintplex-Labs/anything-llm (42156 score) - Stop renting your intelligence. Own it with AnythingLLM. Everything you need for
 https://github.com/Mintplex-Labs/anything-llm
 # [DATABASE-STORAGE-ENGINES] meilisearch/meilisearch (36474 score) - A lightning-fast search engine API bringing AI-powered hybrid search to your sit
 https://github.com/meilisearch/meilisearch
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.485Z] ---
 # [AI-AGENTS] langchain-ai/langchain (95717 score) - The agent engineering platform.
 https://github.com/langchain-ai/langchain
 # [AI-AGENTS] Graphify-Labs/graphify (76896 score) - Turn any codebase, with its docs, SQL schemas, configs, and PDFs, into a queryab
 https://github.com/Graphify-Labs/graphify
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.525Z] ---
 # [DEVOPS-CLOUD-INFRASTRUCTURE] stakater/Reloader (6468 score) - A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling
 https://github.com/stakater/Reloader
 # [DEVOPS-CLOUD-INFRASTRUCTURE] bitnami/sealed-secrets (5810 score) - A Kubernetes controller and tool for one-way encrypted Secrets
 https://github.com/bitnami/sealed-secrets
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.542Z] ---
 # [FULLSTACK-UI] tusen-ai/naive-ui (11795 score) - A Vue 3 Component Library. Fairly Complete. Theme Customizable. Uses TypeScript.
 https://github.com/tusen-ai/naive-ui
 # [FULLSTACK-UI] adobe/react-spectrum (10112 score) - A collection of libraries and tools that help you build adaptive, accessible, an
 https://github.com/adobe/react-spectrum
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.563Z] ---
 # [CYBERSECURITY-DEFENSES] gravitl/netmaker (7280 score) - Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and dis
 https://github.com/gravitl/netmaker
 # [CYBERSECURITY-DEFENSES] microsoft/Security-101 (4543 score) - 8 Lessons, Kick-start Your Cybersecurity Learning.
 https://github.com/microsoft/Security-101
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:30.343Z] ---
-# [MOBILE-CROSS-PLATFORM] react/react-native (83639 score) - A framework for building native applications using React
-https://github.com/react/react-native
-# [DEVOPS-CLOUD-INFRASTRUCTURE] stakater/Reloader (6468 score) - A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling
-https://github.com/stakater/Reloader
-# [CYBERSECURITY-DEFENSES] gravitl/netmaker (7280 score) - Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and dis
-https://github.com/gravitl/netmaker
-# [DATABASE-STORAGE-ENGINES] Mintplex-Labs/anything-llm (42156 score) - Stop renting your intelligence. Own it with AnythingLLM. Everything you need for
-https://github.com/Mintplex-Labs/anything-llm
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.186Z] ---
 # [DATABASE-STORAGE-ENGINES] pathwaycom/llm-app (35773 score) - Ready-to-run cloud templates for RAG, AI pipelines, and enterprise search with l
 https://github.com/pathwaycom/llm-app
 # [DATABASE-STORAGE-ENGINES] run-llama/llama_index (33873 score) - LlamaIndex is the document processing platform for AI
 https://github.com/run-llama/llama_index
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.402Z] ---
 # [DEVOPS-CLOUD-INFRASTRUCTURE] actions/actions-runner-controller (4365 score) - Kubernetes controller for GitHub Actions self-hosted runners
 https://github.com/actions/actions-runner-controller
 # [DEVOPS-CLOUD-INFRASTRUCTURE] nginx/kubernetes-ingress (3663 score) - NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 https://github.com/nginx/kubernetes-ingress
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.433Z] ---
 # [FULLSTACK-UI] tamagui/tamagui (8709 score) - Style React fast with 100% parity on React Native, an optional UI kit, and optim
 https://github.com/tamagui/tamagui
 # [FULLSTACK-UI] assistant-ui/assistant-ui (7766 score) - Typescript/React Library for AI Chat 💬🚀
 https://github.com/assistant-ui/assistant-ui
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.436Z] ---
 # [AI-AGENTS] browser-use/browser-use (73826 score) - Agents that use the browser.
 https://github.com/browser-use/browser-use
 # [AI-AGENTS] google-gemini/gemini-cli (68696 score) - An open-source AI agent that brings the power of Gemini directly into your termi
 https://github.com/google-gemini/gemini-cli
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.437Z] ---
 # [CYBERSECURITY-DEFENSES] microsoft/agent-governance-toolkit (4153 score) - AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution
 https://github.com/microsoft/agent-governance-toolkit
 # [CYBERSECURITY-DEFENSES] openziti/zrok (3001 score) - Secure internet sharing made simple.
 https://github.com/openziti/zrok
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.474Z] ---
 # [HIGH-PERF-SYSTEMS] Automattic/harper (9909 score) - Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 https://github.com/Automattic/harper
 # [HIGH-PERF-SYSTEMS] max-sixty/worktrunk (5158 score) - Worktrunk is a CLI for Git worktree management, designed for parallel AI agent w
 https://github.com/max-sixty/worktrunk
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.496Z] ---
 # [MOBILE-CROSS-PLATFORM] storybookjs/storybook (57842 score) - Storybook is the industry standard workshop for building, documenting, and testi
 https://github.com/storybookjs/storybook
 # [MOBILE-CROSS-PLATFORM] enaqx/awesome-react (47150 score) - A collection of awesome things regarding React ecosystem
 https://github.com/enaqx/awesome-react
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:14.334Z] ---
-# [MOBILE-CROSS-PLATFORM] storybookjs/storybook (57842 score) - Storybook is the industry standard workshop for building, documenting, and testi
-https://github.com/storybookjs/storybook
-# [DEVOPS-CLOUD-INFRASTRUCTURE] actions/actions-runner-controller (4365 score) - Kubernetes controller for GitHub Actions self-hosted runners
-https://github.com/actions/actions-runner-controller
-# [CYBERSECURITY-DEFENSES] microsoft/agent-governance-toolkit (4153 score) - AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution
-https://github.com/microsoft/agent-governance-toolkit
-# [DATABASE-STORAGE-ENGINES] pathwaycom/llm-app (35773 score) - Ready-to-run cloud templates for RAG, AI pipelines, and enterprise search with l
-https://github.com/pathwaycom/llm-app
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:09.043Z] ---
 # [MOBILE-CROSS-PLATFORM] appwrite/appwrite (36227 score) - Appwrite® - complete cloud infrastructure for your web, mobile and AI apps. Incl
 https://github.com/appwrite/appwrite
 # [MOBILE-CROSS-PLATFORM] laurent22/joplin (35805 score) - Joplin - the privacy-focused note taking app with sync capabilities for Windows,
 https://github.com/laurent22/joplin
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:09.175Z] ---
 # [DATABASE-STORAGE-ENGINES] milvus-io/milvus (29147 score) - Milvus is a high-performance, cloud-native vector database built for scalable ve
 https://github.com/milvus-io/milvus
 # [DATABASE-STORAGE-ENGINES] VectifyAI/PageIndex (22617 score) - 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 https://github.com/VectifyAI/PageIndex
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:09.254Z] ---
 # [CYBERSECURITY-DEFENSES] smallstep/cli (2795 score) - 🧰  A zero trust swiss army knife for working with X509, OAuth, JWT, OATH OTP, e
 https://github.com/smallstep/cli
 # [CYBERSECURITY-DEFENSES] nolabs-ai/nono (2643 score) - agent runtime security - zero trust, zero setup, zero latency.
 https://github.com/nolabs-ai/nono
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:09.286Z] ---
 # [DEVOPS-CLOUD-INFRASTRUCTURE] kubernetes-sigs/aws-load-balancer-controller (3196 score) - A Kubernetes controller for Elastic Load Balancers
 https://github.com/kubernetes-sigs/aws-load-balancer-controller
 # [DEVOPS-CLOUD-INFRASTRUCTURE] open-policy-agent/gatekeeper (2834 score) - 🐊 Policy Controller for Kubernetes
 https://github.com/open-policy-agent/gatekeeper
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:11.337Z] ---
 # [FULLSTACK-UI] cosscom/coss (6641 score) - coss.com/ui is the official design system of Cal.com
 https://github.com/cosscom/coss
 # [FULLSTACK-UI] skeletonlabs/skeleton (3754 score) - Skeleton is an adaptive design system powered by Tailwind CSS.
 https://github.com/skeletonlabs/skeleton
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:11.618Z] ---
 # [AI-AGENTS] thedotmack/claude-mem (59523 score) - Persistent Context Across Sessions for Every Agent –  Captures everything your a
 https://github.com/thedotmack/claude-mem
 # [AI-AGENTS] agentscope-ai/agentscope (20580 score) - Build and run agents you can see, understand and trust.
 https://github.com/agentscope-ai/agentscope
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:11.625Z] ---
 # [HIGH-PERF-SYSTEMS] ducaale/xh (4907 score) - Friendly and fast tool for sending HTTP requests
 https://github.com/ducaale/xh
 # [HIGH-PERF-SYSTEMS] BurntSushi/ripgrep (42395 score) - ripgrep recursively searches directories for a regex pattern while respecting yo
 https://github.com/BurntSushi/ripgrep
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:19.830Z] ---
-# [MOBILE-CROSS-PLATFORM] appwrite/appwrite (36227 score) - Appwrite® - complete cloud infrastructure for your web, mobile and AI apps. Incl
-https://github.com/appwrite/appwrite
-# [DEVOPS-CLOUD-INFRASTRUCTURE] kubernetes-sigs/aws-load-balancer-controller (3196 score) - A Kubernetes controller for Elastic Load Balancers
-https://github.com/kubernetes-sigs/aws-load-balancer-controller
-# [CYBERSECURITY-DEFENSES] smallstep/cli (2795 score) - 🧰  A zero trust swiss army knife for working with X509, OAuth, JWT, OATH OTP, e
-https://github.com/smallstep/cli
-# [DATABASE-STORAGE-ENGINES] milvus-io/milvus (29147 score) - Milvus is a high-performance, cloud-native vector database built for scalable ve
-https://github.com/milvus-io/milvus
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:48.663Z] ---
 # [CYBERSECURITY-DEFENSES] hashicorp/boundary (2531 score) - Boundary enables identity-based access management for dynamic infrastructure. 
 https://github.com/hashicorp/boundary
 # [CYBERSECURITY-DEFENSES] DefGuard/defguard (1845 score) - Zero-Trust access management with true WireGuard® 2FA/MFA
 https://github.com/DefGuard/defguard
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:48.688Z] ---
 # [MOBILE-CROSS-PLATFORM] expo/expo (35867 score) - An open-source framework for making universal native apps with React. Expo runs 
 https://github.com/expo/expo
 # [MOBILE-CROSS-PLATFORM] dkhamsing/open-source-ios-apps (33345 score) - :iphone: Collaborative List of Open-Source iOS Apps
 https://github.com/dkhamsing/open-source-ios-apps
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:48.846Z] ---
 # [DEVOPS-CLOUD-INFRASTRUCTURE] projectcontour/contour (2592 score) - Contour is a Kubernetes ingress controller using Envoy proxy.
 https://github.com/projectcontour/contour
 # [DEVOPS-CLOUD-INFRASTRUCTURE] kube-rs/kube (2426 score) - Rust Kubernetes client and controller runtime
 https://github.com/kube-rs/kube
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:48.856Z] ---
 # [DATABASE-STORAGE-ENGINES] qdrant/qdrant (21733 score) - Qdrant - High-performance, massive-scale Vector Database and Vector Search Engin
 https://github.com/qdrant/qdrant
 # [DATABASE-STORAGE-ENGINES] topoteretes/cognee (19731 score) - Cognee is the open-source AI memory platform for agents. Give your AI agents per
 https://github.com/topoteretes/cognee
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:51.197Z] ---
 # [HIGH-PERF-SYSTEMS] sharkdp/bat (37225 score) - A cat(1) clone with wings.
 https://github.com/sharkdp/bat
 # [HIGH-PERF-SYSTEMS] sharkdp/fd (27088 score) - A simple, fast and user-friendly alternative to 'find'
 https://github.com/sharkdp/fd
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:51.223Z] ---
 # [AI-AGENTS] feder-cr/invisible_playwright_mcp (20519 score) - Playwright MCP server undetected by anti-bots and captchas: AI agent browses the
 https://github.com/feder-cr/invisible_playwright_mcp
 # [AI-AGENTS] titanwings/distilly (15806 score) - Distilly — Distill how they think into reusable Skills for any Agent or Bot. For
 https://github.com/titanwings/distilly
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:53.622Z] ---
 # [FULLSTACK-UI] DavidHDev/react-bits (29739 score) - An open source collection of animated, interactive & fully customizable React co
 https://github.com/DavidHDev/react-bits
 # [FULLSTACK-UI] saadeghi/daisyui (26010 score) - 🌼 🌼 🌼 🌼 🌼  The most popular, free and open-source Tailwind CSS component li
 https://github.com/saadeghi/daisyui
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:59.968Z] ---
-# [MOBILE-CROSS-PLATFORM] expo/expo (35867 score) - An open-source framework for making universal native apps with React. Expo runs 
-https://github.com/expo/expo
-# [DEVOPS-CLOUD-INFRASTRUCTURE] projectcontour/contour (2592 score) - Contour is a Kubernetes ingress controller using Envoy proxy.
-https://github.com/projectcontour/contour
-# [CYBERSECURITY-DEFENSES] hashicorp/boundary (2531 score) - Boundary enables identity-based access management for dynamic infrastructure. 
-https://github.com/hashicorp/boundary
-# [DATABASE-STORAGE-ENGINES] qdrant/qdrant (21733 score) - Qdrant - High-performance, massive-scale Vector Database and Vector Search Engin
-https://github.com/qdrant/qdrant
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:02.641Z] ---
 # [DATABASE-STORAGE-ENGINES] NirDiamant/RAG_Techniques (18961 score) - This repository showcases various advanced techniques for Retrieval-Augmented Ge
 https://github.com/NirDiamant/RAG_Techniques
 # [DATABASE-STORAGE-ENGINES] weaviate/weaviate (10640 score) - Weaviate is an open-source vector database that stores both objects and vectors,
 https://github.com/weaviate/weaviate
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:02.765Z] ---
 # [MOBILE-CROSS-PLATFORM] react-hook-form/react-hook-form (27661 score) - 📋 React Hooks for form state management and validation (Web + React Native)
 https://github.com/react-hook-form/react-hook-form
 # [MOBILE-CROSS-PLATFORM] sudheerj/reactjs-interview-questions (30122 score) - List of top 500 ReactJS Interview Questions & Answers....Coding exercise questio
 https://github.com/sudheerj/reactjs-interview-questions
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:05.025Z] ---
 # [HIGH-PERF-SYSTEMS] Hmbown/Codewhale (25793 score) - Open-source coding agent for your terminal, built in Rust and on a journey of co
 https://github.com/Hmbown/Codewhale
 # [HIGH-PERF-SYSTEMS] ajeetdsouza/zoxide (24217 score) - A smarter cd command. Supports all major shells.
 https://github.com/ajeetdsouza/zoxide
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:05.110Z] ---
 # [DEVOPS-CLOUD-INFRASTRUCTURE] gardener/gardener (2251 score) - Homogeneous Kubernetes clusters at scale on any infrastructure using hosted cont
 https://github.com/gardener/gardener
 # [DEVOPS-CLOUD-INFRASTRUCTURE] devspace-sh/devspace (3343 score) - DevSpace - The Fastest Developer Tool for Kubernetes ⚡ Automate your deployment 
 https://github.com/devspace-sh/devspace
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:05.169Z] ---
 # [CYBERSECURITY-DEFENSES] ChrispyBacon-dev/DockFlare (1615 score) - DockFlare: Automate Cloudflare Tunnels with Docker Labels
 https://github.com/ChrispyBacon-dev/DockFlare
 # [CYBERSECURITY-DEFENSES] bee-san/Ciphey (13517 score) - ⚡ Automatically decrypt encryptions without knowing the key or cipher, decode en
 https://github.com/bee-san/Ciphey
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:05.296Z] ---
 # [AI-AGENTS] letta-ai/letta (15771 score) - Platform for stateful agents: AI with advanced memory that can learn and self-im
 https://github.com/letta-ai/letta
 # [AI-AGENTS] HKUDS/DeepCode (10645 score) - "DeepCode: Open Agentic Coding (Agent Harness & Loop Engineering & Multi-Agent O
 https://github.com/HKUDS/DeepCode
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:07.494Z] ---
 # [FULLSTACK-UI] Tencent/omi (8439 score) - Web Components Framework - Web组件框架
 https://github.com/Tencent/omi
 # [FULLSTACK-UI] markmead/hyperui (7503 score) - Free Tailwind CSS v4 components for your next project, designed to enhance your 
 https://github.com/markmead/hyperui
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:13.657Z] ---
-# [MOBILE-CROSS-PLATFORM] react-hook-form/react-hook-form (27661 score) - 📋 React Hooks for form state management and validation (Web + React Native)
-https://github.com/react-hook-form/react-hook-form
-# [DEVOPS-CLOUD-INFRASTRUCTURE] gardener/gardener (2251 score) - Homogeneous Kubernetes clusters at scale on any infrastructure using hosted cont
-https://github.com/gardener/gardener
-# [CYBERSECURITY-DEFENSES] ChrispyBacon-dev/DockFlare (1615 score) - DockFlare: Automate Cloudflare Tunnels with Docker Labels
-https://github.com/ChrispyBacon-dev/DockFlare
-# [DATABASE-STORAGE-ENGINES] NirDiamant/RAG_Techniques (18961 score) - This repository showcases various advanced techniques for Retrieval-Augmented Ge
-https://github.com/NirDiamant/RAG_Techniques
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:00.502Z] ---
 # [AI-AGENTS] lsdefine/GenericAgent (9157 score) - Self-evolving agent: grows skill tree from 3.3K-line seed, achieving full system
 https://github.com/lsdefine/GenericAgent
 # [AI-AGENTS] The-Pocket/PocketFlow (7187 score) - Pocket Flow: 100-line LLM framework. Let Agents build Agents!
 https://github.com/The-Pocket/PocketFlow
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:00.511Z] ---
 # [DATABASE-STORAGE-ENGINES] influxdata/influxdb (20171 score) - Scalable datastore for metrics, events, and real-time analytics
 https://github.com/influxdata/influxdb
 # [DATABASE-STORAGE-ENGINES] chroma-core/chroma (18504 score) - Search infrastructure for AI
 https://github.com/chroma-core/chroma
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:00.531Z] ---
 # [CYBERSECURITY-DEFENSES] rustls/rustls (4956 score) - A modern TLS library in Rust
 https://github.com/rustls/rustls
 # [CYBERSECURITY-DEFENSES] mimblewimble/grin (3456 score) - Minimal implementation of the Mimblewimble protocol.
 https://github.com/mimblewimble/grin
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:02.671Z] ---
 # [HIGH-PERF-SYSTEMS] googleworkspace/cli (19276 score) - Google Workspace CLI — one command-line tool for Drive, Gmail, Calendar, Sheets,
 https://github.com/googleworkspace/cli
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:02.866Z] ---
 # [FULLSTACK-UI] themesberg/flowbite (5878 score) - Open-source UI component library and front-end development framework based on Ta
 https://github.com/themesberg/flowbite
 # [FULLSTACK-UI] hunvreus/basecoat (2743 score) - A components library built with Tailwind CSS that works with any web stack.
 https://github.com/hunvreus/basecoat
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T16:23:08.986Z] ---
 # [DATABASE-STORAGE-ENGINES] clockworklabs/SpacetimeDB (15470 score) - Development at the speed of light
 https://github.com/clockworklabs/SpacetimeDB
 # [DATABASE-STORAGE-ENGINES] tursodatabase/turso (15172 score) - A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimen
 https://github.com/tursodatabase/turso
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T16:23:09.047Z] ---
 # [CYBERSECURITY-DEFENSES] ProvableHQ/snarkOS (3527 score) - A Decentralized Operating System for ZK Applications
 https://github.com/ProvableHQ/snarkOS
 # [CYBERSECURITY-DEFENSES] freenet/freenet-core (1917 score) - Declare your digital independence
 https://github.com/freenet/freenet-core
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T16:23:11.406Z] ---
 # [FULLSTACK-UI] Megabit/Blazorise (2382 score) - Blazorise is a component library built on top of Blazor with support for CSS fra
 https://github.com/Megabit/Blazorise
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T16:23:11.628Z] ---
 # [AI-AGENTS] assafelovic/gpt-researcher (19096 score) - An autonomous agent that conducts deep research on any data using any LLM provid
 https://github.com/assafelovic/gpt-researcher
 # [AI-AGENTS] Fosowl/agenticSeek (17449 score) - Fully Local Manus AI. No APIs, No $200 monthly bills. Enjoy an autonomous agent 
 https://github.com/Fosowl/agenticSeek
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T16:24:14.883Z] ---
 # [AI-AGENTS] gptme/gptme (2896 score) - Your agent in your terminal, equipped with local tools: writes code, uses the te
 https://github.com/gptme/gptme
 # [DATABASE-STORAGE-ENGINES] neondatabase/neon (14223 score) - Neon: Serverless Postgres. We separated storage and compute to offer autoscaling
 https://github.com/neondatabase/neon
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T21:27:16.074Z] ---
 # [DATABASE-STORAGE-ENGINES] t8y2/dbx (13863 score) - 25 MB lightweight cross-platform database client for 100+ databases, including M
 https://github.com/t8y2/dbx
 # [DATABASE-STORAGE-ENGINES] valeriansaliou/sonic (12999 score) - 🦔 Fast, lightweight & schema-less search backend. An alternative to Elasticsear
 https://github.com/valeriansaliou/sonic
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T21:27:16.088Z] ---
 # [CYBERSECURITY-DEFENSES] cryfs/cryfs (1536 score) - Cryptographic filesystem for the cloud
 https://github.com/cryfs/cryfs
 # [CYBERSECURITY-DEFENSES] RustCrypto/hashes (1463 score) - Collection of cryptographic hash functions written in pure Rust
 https://github.com/RustCrypto/hashes
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T21:27:20.921Z] ---
 # [AI-AGENTS] ascending-llc/jarvis-registry (2179 score) - Connect any AI copilot or autonomous agent to your enterprise tools — through a 
 https://github.com/ascending-llc/jarvis-registry
 # [AI-AGENTS] n8n-io/n8n (142061 score) - Fair-code workflow automation platform with native AI capabilities. Combine visu
 https://github.com/n8n-io/n8n
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-29T21:27:30.624Z] ---
 # [DATABASE-STORAGE-ENGINES] SeaQL/sea-orm (6164 score) - 🐚 A powerful relational ORM for Rust
 https://github.com/SeaQL/sea-orm
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T01:21:08.765Z] ---
 # [AI-AGENTS] koala73/worldmonitor (56656 score) - Real-time global intelligence dashboard. AI-powered news aggregation, geopolitic
 https://github.com/koala73/worldmonitor
 # [AI-AGENTS] D4Vinci/Scrapling (53414 score) - 🕷️ An adaptive Web Scraping framework that handles everything from a single req
 https://github.com/D4Vinci/Scrapling
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T02:52:00.936Z] ---
 # [FULLSTACK-UI] onlook-dev/onlook (16832 score) - The Developer Tool for Designers • An Open-Source AI-First Design tool • Visuall
 https://github.com/onlook-dev/onlook
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T02:52:03.319Z] ---
 # [AI-AGENTS] ruvnet/ruflo (46833 score) - 🌊 The original agent harness. Deploy intelligent multi-player swarms, coordinat
 https://github.com/ruvnet/ruflo
 # [AI-AGENTS] sansan0/TrendRadar (45042 score) - ⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, 
 https://github.com/sansan0/TrendRadar
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T03:07:58.190Z] ---
 # [AI-AGENTS] upstash/context7 (38435 score) - Context7 Platform -- Up-to-date code documentation for LLMs and AI code editors
 https://github.com/upstash/context7
 # [AI-AGENTS] ChromeDevTools/chrome-devtools-mcp (33236 score) - Chrome DevTools for coding agents
 https://github.com/ChromeDevTools/chrome-devtools-mcp
-
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T06:54:12.030Z] ---
 # [AI-AGENTS] DeusData/codebase-memory-mcp (28525 score) - High-performance code intelligence MCP server. Indexes codebases into a persiste
 https://github.com/DeusData/codebase-memory-mcp
 # [AI-AGENTS] reactive-resume/reactive-resume (27596 score) - A one-of-a-kind resume builder that keeps your privacy in mind. Completely secur
 https://github.com/reactive-resume/reactive-resume
+# ==============================================================================
+# AI-Builder-Brain Universal Harvesting Queue
+# Paste your target GitHub or Hugging Face repository/model URLs here (one per line).
+# Lines beginning with '#' and blank lines are ignored.
+#
+# Supported Harvesting Modes:
+# 1. Method 1 (Full-Clone Batch Harvester):
+#    - CLI: node 04_WORKFLOWS/factory-engine/batch-auto-harvester.mjs
+#    - Chat: "In sabhi repos se harvest kar lo"
+# 2. Method 2 (Zero-Clone 24/7 Cloud Harvester):
+#    - Runs continuously in GitHub cloud (24/7 even when laptop is closed/offline)
+#    - CLI: node 04_WORKFLOWS/factory-engine/zero-clone-harvester.mjs
+#    - Control: node 04_WORKFLOWS/factory-engine/harvester-control.mjs [start|stop|status|sync]
+#    - Chat: "Cloud harvester chalu karo" / "Cloud harvester stop karo"
+
+https://github.com/shadcn-ui/ui
+https://github.com/tailwindlabs/tailwindcss
+https://github.com/vllm-project/vllm
+https://huggingface.co/meta-llama/Llama-3.2-1B
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T04:50:11.496Z] ---
+# [AI-AGENTS] affaan-m/ECC (173237 score) - The agent harness performance optimization system. Skills, instincts, memory, se
+https://github.com/affaan-m/ECC
+# [AI-AGENTS] NousResearch/hermes-agent (165754 score) - The agent that grows with you
+https://github.com/NousResearch/hermes-agent
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T04:57:25.010Z] ---
+# [HIGH-PERF-SYSTEMS] rtk-ai/rtk (50759 score) - CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. S
+https://github.com/rtk-ai/rtk
+# [HIGH-PERF-SYSTEMS] sxyazi/yazi (25787 score) - 💥 Blazing fast terminal file manager written in Rust, based on async I/O.
+https://github.com/sxyazi/yazi
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T16:34:01.477Z] ---
+# [AI-AGENTS] deepseek-ai/deepseek-harness (151773 score) - DeepSeek Harness: Everything is a Plugin.
+https://github.com/deepseek-ai/deepseek-harness
+# [FULLSTACK-UI] ionic-team/ionic-framework (35702 score) - A powerful cross-platform UI toolkit for building native-quality iOS, Android, a
+https://github.com/ionic-team/ionic-framework
+# [HIGH-PERF-SYSTEMS] herdrdev/herdr (25673 score) - the runtime your coding agents live on
+https://github.com/herdrdev/herdr
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T17:27:15.405Z] ---
+# [FULLSTACK-UI] vuetifyjs/vuetify (26761 score) - 🐉 Vue Component Framework
+https://github.com/vuetifyjs/vuetify
+# [FULLSTACK-UI] chakra-ui/chakra-ui (25497 score) - Chakra UI is a component system for building SaaS products with speed ⚡️
+https://github.com/chakra-ui/chakra-ui
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T17:34:53.689Z] ---
+# [FULLSTACK-UI] lucide-icons/lucide (15440 score) - Beautiful & consistent icon toolkit made by the community. Open-source project a
+https://github.com/lucide-icons/lucide
+# [FULLSTACK-UI] radix-ui/primitives (11979 score) - Radix Primitives is an open-source UI component library for building high-qualit
+https://github.com/radix-ui/primitives
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T17:34:53.743Z] ---
+# [AI-AGENTS] firecrawl/firecrawl (114512 score) - The web data API to search, scrape, and interact at scale. 🔥
+https://github.com/firecrawl/firecrawl
+# [AI-AGENTS] DietrichGebert/ponytail (90921 score) - Makes your AI agent think like the laziest senior dev in the room. The best code
+https://github.com/DietrichGebert/ponytail
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T17:34:53.751Z] ---
+# [HIGH-PERF-SYSTEMS] lapce/lapce (23721 score) - Lightning-fast and Powerful Code Editor written in Rust
+https://github.com/lapce/lapce
+# [HIGH-PERF-SYSTEMS] TabbyML/tabby (20871 score) - Self-hosted AI coding assistant
+https://github.com/TabbyML/tabby
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.405Z] ---
+# [MOBILE-CROSS-PLATFORM] react/react-native (83639 score) - A framework for building native applications using React
+https://github.com/react/react-native
+# [MOBILE-CROSS-PLATFORM] justjavac/free-programming-books-zh_CN (79979 score) - :books: 免费的计算机编程类中文书籍，欢迎投稿
+https://github.com/justjavac/free-programming-books-zh_CN
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.411Z] ---
+# [HIGH-PERF-SYSTEMS] surrealdb/surrealdb (20257 score) - A scalable, distributed, collaborative, document-graph database, for the realtim
+https://github.com/surrealdb/surrealdb
+# [HIGH-PERF-SYSTEMS] iii-hq/iii (11770 score) - Effortlessly compose, extend, and observe every service in real-time for the fir
+https://github.com/iii-hq/iii
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.464Z] ---
+# [DATABASE-STORAGE-ENGINES] Mintplex-Labs/anything-llm (42156 score) - Stop renting your intelligence. Own it with AnythingLLM. Everything you need for
+https://github.com/Mintplex-Labs/anything-llm
+# [DATABASE-STORAGE-ENGINES] meilisearch/meilisearch (36474 score) - A lightning-fast search engine API bringing AI-powered hybrid search to your sit
+https://github.com/meilisearch/meilisearch
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.485Z] ---
+# [AI-AGENTS] langchain-ai/langchain (95717 score) - The agent engineering platform.
+https://github.com/langchain-ai/langchain
+# [AI-AGENTS] Graphify-Labs/graphify (76896 score) - Turn any codebase, with its docs, SQL schemas, configs, and PDFs, into a queryab
+https://github.com/Graphify-Labs/graphify
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.525Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] stakater/Reloader (6468 score) - A Kubernetes controller to watch changes in ConfigMap and Secrets and do rolling
+https://github.com/stakater/Reloader
+# [DEVOPS-CLOUD-INFRASTRUCTURE] bitnami/sealed-secrets (5810 score) - A Kubernetes controller and tool for one-way encrypted Secrets
+https://github.com/bitnami/sealed-secrets
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.542Z] ---
+# [FULLSTACK-UI] tusen-ai/naive-ui (11795 score) - A Vue 3 Component Library. Fairly Complete. Theme Customizable. Uses TypeScript.
+https://github.com/tusen-ai/naive-ui
+# [FULLSTACK-UI] adobe/react-spectrum (10112 score) - A collection of libraries and tools that help you build adaptive, accessible, an
+https://github.com/adobe/react-spectrum
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:19.563Z] ---
+# [CYBERSECURITY-DEFENSES] gravitl/netmaker (7280 score) - Netmaker makes networks with WireGuard. Netmaker automates fast, secure, and dis
+https://github.com/gravitl/netmaker
+# [CYBERSECURITY-DEFENSES] microsoft/Security-101 (4543 score) - 8 Lessons, Kick-start Your Cybersecurity Learning.
+https://github.com/microsoft/Security-101
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T18:54:30.343Z] ---
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.186Z] ---
+# [DATABASE-STORAGE-ENGINES] pathwaycom/llm-app (35773 score) - Ready-to-run cloud templates for RAG, AI pipelines, and enterprise search with l
+https://github.com/pathwaycom/llm-app
+# [DATABASE-STORAGE-ENGINES] run-llama/llama_index (33873 score) - LlamaIndex is the document processing platform for AI
+https://github.com/run-llama/llama_index
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.402Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] actions/actions-runner-controller (4365 score) - Kubernetes controller for GitHub Actions self-hosted runners
+https://github.com/actions/actions-runner-controller
+# [DEVOPS-CLOUD-INFRASTRUCTURE] nginx/kubernetes-ingress (3663 score) - NGINX and  NGINX Plus Ingress Controllers for Kubernetes
+https://github.com/nginx/kubernetes-ingress
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.433Z] ---
+# [FULLSTACK-UI] tamagui/tamagui (8709 score) - Style React fast with 100% parity on React Native, an optional UI kit, and optim
+https://github.com/tamagui/tamagui
+# [FULLSTACK-UI] assistant-ui/assistant-ui (7766 score) - Typescript/React Library for AI Chat 💬🚀
+https://github.com/assistant-ui/assistant-ui
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.436Z] ---
+# [AI-AGENTS] browser-use/browser-use (73826 score) - Agents that use the browser.
+https://github.com/browser-use/browser-use
+# [AI-AGENTS] google-gemini/gemini-cli (68696 score) - An open-source AI agent that brings the power of Gemini directly into your termi
+https://github.com/google-gemini/gemini-cli
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.437Z] ---
+# [CYBERSECURITY-DEFENSES] microsoft/agent-governance-toolkit (4153 score) - AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution
+https://github.com/microsoft/agent-governance-toolkit
+# [CYBERSECURITY-DEFENSES] openziti/zrok (3001 score) - Secure internet sharing made simple.
+https://github.com/openziti/zrok
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.474Z] ---
+# [HIGH-PERF-SYSTEMS] Automattic/harper (9909 score) - Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
+https://github.com/Automattic/harper
+# [HIGH-PERF-SYSTEMS] max-sixty/worktrunk (5158 score) - Worktrunk is a CLI for Git worktree management, designed for parallel AI agent w
+https://github.com/max-sixty/worktrunk
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:03.496Z] ---
+# [MOBILE-CROSS-PLATFORM] storybookjs/storybook (57842 score) - Storybook is the industry standard workshop for building, documenting, and testi
+https://github.com/storybookjs/storybook
+# [MOBILE-CROSS-PLATFORM] enaqx/awesome-react (47150 score) - A collection of awesome things regarding React ecosystem
+https://github.com/enaqx/awesome-react
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T19:14:14.334Z] ---
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:09.043Z] ---
+# [MOBILE-CROSS-PLATFORM] appwrite/appwrite (36227 score) - Appwrite® - complete cloud infrastructure for your web, mobile and AI apps. Incl
+https://github.com/appwrite/appwrite
+# [MOBILE-CROSS-PLATFORM] laurent22/joplin (35805 score) - Joplin - the privacy-focused note taking app with sync capabilities for Windows,
+https://github.com/laurent22/joplin
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:09.175Z] ---
+# [DATABASE-STORAGE-ENGINES] milvus-io/milvus (29147 score) - Milvus is a high-performance, cloud-native vector database built for scalable ve
+https://github.com/milvus-io/milvus
+# [DATABASE-STORAGE-ENGINES] VectifyAI/PageIndex (22617 score) - 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
+https://github.com/VectifyAI/PageIndex
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:09.254Z] ---
+# [CYBERSECURITY-DEFENSES] smallstep/cli (2795 score) - 🧰  A zero trust swiss army knife for working with X509, OAuth, JWT, OATH OTP, e
+https://github.com/smallstep/cli
+# [CYBERSECURITY-DEFENSES] nolabs-ai/nono (2643 score) - agent runtime security - zero trust, zero setup, zero latency.
+https://github.com/nolabs-ai/nono
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:09.286Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] kubernetes-sigs/aws-load-balancer-controller (3196 score) - A Kubernetes controller for Elastic Load Balancers
+https://github.com/kubernetes-sigs/aws-load-balancer-controller
+# [DEVOPS-CLOUD-INFRASTRUCTURE] open-policy-agent/gatekeeper (2834 score) - 🐊 Policy Controller for Kubernetes
+https://github.com/open-policy-agent/gatekeeper
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:11.337Z] ---
+# [FULLSTACK-UI] cosscom/coss (6641 score) - coss.com/ui is the official design system of Cal.com
+https://github.com/cosscom/coss
+# [FULLSTACK-UI] skeletonlabs/skeleton (3754 score) - Skeleton is an adaptive design system powered by Tailwind CSS.
+https://github.com/skeletonlabs/skeleton
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:11.618Z] ---
+# [AI-AGENTS] thedotmack/claude-mem (59523 score) - Persistent Context Across Sessions for Every Agent –  Captures everything your a
+https://github.com/thedotmack/claude-mem
+# [AI-AGENTS] agentscope-ai/agentscope (20580 score) - Build and run agents you can see, understand and trust.
+https://github.com/agentscope-ai/agentscope
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:11.625Z] ---
+# [HIGH-PERF-SYSTEMS] ducaale/xh (4907 score) - Friendly and fast tool for sending HTTP requests
+https://github.com/ducaale/xh
+# [HIGH-PERF-SYSTEMS] BurntSushi/ripgrep (42395 score) - ripgrep recursively searches directories for a regex pattern while respecting yo
+https://github.com/BurntSushi/ripgrep
+# --- Automatically Discovered by AI Scout Engine [2026-09-28T20:20:19.830Z] ---
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:48.663Z] ---
+# [CYBERSECURITY-DEFENSES] hashicorp/boundary (2531 score) - Boundary enables identity-based access management for dynamic infrastructure. 
+https://github.com/hashicorp/boundary
+# [CYBERSECURITY-DEFENSES] DefGuard/defguard (1845 score) - Zero-Trust access management with true WireGuard® 2FA/MFA
+https://github.com/DefGuard/defguard
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:48.688Z] ---
+# [MOBILE-CROSS-PLATFORM] expo/expo (35867 score) - An open-source framework for making universal native apps with React. Expo runs 
+https://github.com/expo/expo
+# [MOBILE-CROSS-PLATFORM] dkhamsing/open-source-ios-apps (33345 score) - :iphone: Collaborative List of Open-Source iOS Apps
+https://github.com/dkhamsing/open-source-ios-apps
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:48.846Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] projectcontour/contour (2592 score) - Contour is a Kubernetes ingress controller using Envoy proxy.
+https://github.com/projectcontour/contour
+# [DEVOPS-CLOUD-INFRASTRUCTURE] kube-rs/kube (2426 score) - Rust Kubernetes client and controller runtime
+https://github.com/kube-rs/kube
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:48.856Z] ---
+# [DATABASE-STORAGE-ENGINES] qdrant/qdrant (21733 score) - Qdrant - High-performance, massive-scale Vector Database and Vector Search Engin
+https://github.com/qdrant/qdrant
+# [DATABASE-STORAGE-ENGINES] topoteretes/cognee (19731 score) - Cognee is the open-source AI memory platform for agents. Give your AI agents per
+https://github.com/topoteretes/cognee
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:51.197Z] ---
+# [HIGH-PERF-SYSTEMS] sharkdp/bat (37225 score) - A cat(1) clone with wings.
+https://github.com/sharkdp/bat
+# [HIGH-PERF-SYSTEMS] sharkdp/fd (27088 score) - A simple, fast and user-friendly alternative to 'find'
+https://github.com/sharkdp/fd
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:51.223Z] ---
+# [AI-AGENTS] feder-cr/invisible_playwright_mcp (20519 score) - Playwright MCP server undetected by anti-bots and captchas: AI agent browses the
+https://github.com/feder-cr/invisible_playwright_mcp
+# [AI-AGENTS] titanwings/distilly (15806 score) - Distilly — Distill how they think into reusable Skills for any Agent or Bot. For
+https://github.com/titanwings/distilly
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:53.622Z] ---
+# [FULLSTACK-UI] DavidHDev/react-bits (29739 score) - An open source collection of animated, interactive & fully customizable React co
+https://github.com/DavidHDev/react-bits
+# [FULLSTACK-UI] saadeghi/daisyui (26010 score) - 🌼 🌼 🌼 🌼 🌼  The most popular, free and open-source Tailwind CSS component li
+https://github.com/saadeghi/daisyui
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T01:22:59.968Z] ---
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:02.641Z] ---
+# [DATABASE-STORAGE-ENGINES] NirDiamant/RAG_Techniques (18961 score) - This repository showcases various advanced techniques for Retrieval-Augmented Ge
+https://github.com/NirDiamant/RAG_Techniques
+# [DATABASE-STORAGE-ENGINES] weaviate/weaviate (10640 score) - Weaviate is an open-source vector database that stores both objects and vectors,
+https://github.com/weaviate/weaviate
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:02.765Z] ---
+# [MOBILE-CROSS-PLATFORM] react-hook-form/react-hook-form (27661 score) - 📋 React Hooks for form state management and validation (Web + React Native)
+https://github.com/react-hook-form/react-hook-form
+# [MOBILE-CROSS-PLATFORM] sudheerj/reactjs-interview-questions (30122 score) - List of top 500 ReactJS Interview Questions & Answers....Coding exercise questio
+https://github.com/sudheerj/reactjs-interview-questions
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:05.025Z] ---
+# [HIGH-PERF-SYSTEMS] Hmbown/Codewhale (25793 score) - Open-source coding agent for your terminal, built in Rust and on a journey of co
+https://github.com/Hmbown/Codewhale
+# [HIGH-PERF-SYSTEMS] ajeetdsouza/zoxide (24217 score) - A smarter cd command. Supports all major shells.
+https://github.com/ajeetdsouza/zoxide
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:05.110Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] gardener/gardener (2251 score) - Homogeneous Kubernetes clusters at scale on any infrastructure using hosted cont
+https://github.com/gardener/gardener
+# [DEVOPS-CLOUD-INFRASTRUCTURE] devspace-sh/devspace (3343 score) - DevSpace - The Fastest Developer Tool for Kubernetes ⚡ Automate your deployment 
+https://github.com/devspace-sh/devspace
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:05.169Z] ---
+# [CYBERSECURITY-DEFENSES] ChrispyBacon-dev/DockFlare (1615 score) - DockFlare: Automate Cloudflare Tunnels with Docker Labels
+https://github.com/ChrispyBacon-dev/DockFlare
+# [CYBERSECURITY-DEFENSES] bee-san/Ciphey (13517 score) - ⚡ Automatically decrypt encryptions without knowing the key or cipher, decode en
+https://github.com/bee-san/Ciphey
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:05.296Z] ---
+# [AI-AGENTS] letta-ai/letta (15771 score) - Platform for stateful agents: AI with advanced memory that can learn and self-im
+https://github.com/letta-ai/letta
+# [AI-AGENTS] HKUDS/DeepCode (10645 score) - "DeepCode: Open Agentic Coding (Agent Harness & Loop Engineering & Multi-Agent O
+https://github.com/HKUDS/DeepCode
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:07.494Z] ---
+# [FULLSTACK-UI] Tencent/omi (8439 score) - Web Components Framework - Web组件框架
+https://github.com/Tencent/omi
+# [FULLSTACK-UI] markmead/hyperui (7503 score) - Free Tailwind CSS v4 components for your next project, designed to enhance your 
+https://github.com/markmead/hyperui
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T07:44:13.657Z] ---
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:00.502Z] ---
+# [AI-AGENTS] lsdefine/GenericAgent (9157 score) - Self-evolving agent: grows skill tree from 3.3K-line seed, achieving full system
+https://github.com/lsdefine/GenericAgent
+# [AI-AGENTS] The-Pocket/PocketFlow (7187 score) - Pocket Flow: 100-line LLM framework. Let Agents build Agents!
+https://github.com/The-Pocket/PocketFlow
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:00.511Z] ---
+# [DATABASE-STORAGE-ENGINES] influxdata/influxdb (20171 score) - Scalable datastore for metrics, events, and real-time analytics
+https://github.com/influxdata/influxdb
+# [DATABASE-STORAGE-ENGINES] chroma-core/chroma (18504 score) - Search infrastructure for AI
+https://github.com/chroma-core/chroma
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:00.531Z] ---
+# [CYBERSECURITY-DEFENSES] rustls/rustls (4956 score) - A modern TLS library in Rust
+https://github.com/rustls/rustls
+# [CYBERSECURITY-DEFENSES] mimblewimble/grin (3456 score) - Minimal implementation of the Mimblewimble protocol.
+https://github.com/mimblewimble/grin
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:02.671Z] ---
+# [HIGH-PERF-SYSTEMS] googleworkspace/cli (19276 score) - Google Workspace CLI — one command-line tool for Drive, Gmail, Calendar, Sheets,
+https://github.com/googleworkspace/cli
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T14:30:02.866Z] ---
+# [FULLSTACK-UI] themesberg/flowbite (5878 score) - Open-source UI component library and front-end development framework based on Ta
+https://github.com/themesberg/flowbite
+# [FULLSTACK-UI] hunvreus/basecoat (2743 score) - A components library built with Tailwind CSS that works with any web stack.
+https://github.com/hunvreus/basecoat
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T16:23:08.986Z] ---
+# [DATABASE-STORAGE-ENGINES] clockworklabs/SpacetimeDB (15470 score) - Development at the speed of light
+https://github.com/clockworklabs/SpacetimeDB
+# [DATABASE-STORAGE-ENGINES] tursodatabase/turso (15172 score) - A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimen
+https://github.com/tursodatabase/turso
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T16:23:09.047Z] ---
+# [CYBERSECURITY-DEFENSES] ProvableHQ/snarkOS (3527 score) - A Decentralized Operating System for ZK Applications
+https://github.com/ProvableHQ/snarkOS
+# [CYBERSECURITY-DEFENSES] freenet/freenet-core (1917 score) - Declare your digital independence
+https://github.com/freenet/freenet-core
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T16:23:11.406Z] ---
+# [FULLSTACK-UI] Megabit/Blazorise (2382 score) - Blazorise is a component library built on top of Blazor with support for CSS fra
+https://github.com/Megabit/Blazorise
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T16:23:11.628Z] ---
+# [AI-AGENTS] assafelovic/gpt-researcher (19096 score) - An autonomous agent that conducts deep research on any data using any LLM provid
+https://github.com/assafelovic/gpt-researcher
+# [AI-AGENTS] Fosowl/agenticSeek (17449 score) - Fully Local Manus AI. No APIs, No $200 monthly bills. Enjoy an autonomous agent 
+https://github.com/Fosowl/agenticSeek
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T16:24:14.883Z] ---
+# [AI-AGENTS] gptme/gptme (2896 score) - Your agent in your terminal, equipped with local tools: writes code, uses the te
+https://github.com/gptme/gptme
+# [DATABASE-STORAGE-ENGINES] neondatabase/neon (14223 score) - Neon: Serverless Postgres. We separated storage and compute to offer autoscaling
+https://github.com/neondatabase/neon
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T21:27:16.074Z] ---
+# [DATABASE-STORAGE-ENGINES] t8y2/dbx (13863 score) - 25 MB lightweight cross-platform database client for 100+ databases, including M
+https://github.com/t8y2/dbx
+# [DATABASE-STORAGE-ENGINES] valeriansaliou/sonic (12999 score) - 🦔 Fast, lightweight & schema-less search backend. An alternative to Elasticsear
+https://github.com/valeriansaliou/sonic
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T21:27:16.088Z] ---
+# [CYBERSECURITY-DEFENSES] cryfs/cryfs (1536 score) - Cryptographic filesystem for the cloud
+https://github.com/cryfs/cryfs
+# [CYBERSECURITY-DEFENSES] RustCrypto/hashes (1463 score) - Collection of cryptographic hash functions written in pure Rust
+https://github.com/RustCrypto/hashes
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T21:27:20.921Z] ---
+# [AI-AGENTS] ascending-llc/jarvis-registry (2179 score) - Connect any AI copilot or autonomous agent to your enterprise tools — through a 
+https://github.com/ascending-llc/jarvis-registry
+# [AI-AGENTS] n8n-io/n8n (142061 score) - Fair-code workflow automation platform with native AI capabilities. Combine visu
+https://github.com/n8n-io/n8n
+# --- Automatically Discovered by AI Scout Engine [2026-09-29T21:27:30.624Z] ---
+# [DATABASE-STORAGE-ENGINES] SeaQL/sea-orm (6164 score) - 🐚 A powerful relational ORM for Rust
+https://github.com/SeaQL/sea-orm
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T01:21:08.765Z] ---
+# [AI-AGENTS] koala73/worldmonitor (56656 score) - Real-time global intelligence dashboard. AI-powered news aggregation, geopolitic
+https://github.com/koala73/worldmonitor
+# [AI-AGENTS] D4Vinci/Scrapling (53414 score) - 🕷️ An adaptive Web Scraping framework that handles everything from a single req
+https://github.com/D4Vinci/Scrapling
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T02:52:00.936Z] ---
+# [FULLSTACK-UI] onlook-dev/onlook (16832 score) - The Developer Tool for Designers • An Open-Source AI-First Design tool • Visuall
+https://github.com/onlook-dev/onlook
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T02:52:03.319Z] ---
+# [AI-AGENTS] ruvnet/ruflo (46833 score) - 🌊 The original agent harness. Deploy intelligent multi-player swarms, coordinat
+https://github.com/ruvnet/ruflo
+# [AI-AGENTS] sansan0/TrendRadar (45042 score) - ⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, 
+https://github.com/sansan0/TrendRadar
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T13:35:32.170Z] ---
+# [AI-AGENTS] infiniflow/ragflow (49382 score) - RAGFlow is a leading open-source Retrieval-Augmented Generation (RAG) engine tha
+https://github.com/infiniflow/ragflow
+# [AI-AGENTS] unclecode/crawl4ai (45348 score) - Open-source web crawler and scraper for LLMs and AI agents: any website into cle
+https://github.com/unclecode/crawl4ai
+# [AI-AGENTS] bytedance/deer-flow (46446 score [VERIFIED ORG]) - An open-source long-horizon SuperAgent harness that researches, codes, and creat
+https://github.com/bytedance/deer-flow
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T13:36:24.511Z] ---
+# [HUGGINGFACE-AI-MODELS] convaiinnovations/laya (45930 score) - Verified Hugging Face Model: convaiinnovations/laya (4593 likes, 0 downloads)
+https://huggingface.co/convaiinnovations/laya
+# [HUGGINGFACE-AI-MODELS] Edge0/Audio8-ASR-Infinite (17750 score) - Verified Hugging Face Model: Edge0/Audio8-ASR-Infinite (1575 likes, 26749 downlo
+https://huggingface.co/Edge0/Audio8-ASR-Infinite
+# [HUGGINGFACE-AI-MODELS] abenzerps/Qwen-Image-2.1-Uncensored-GGUF (26970 score) - Verified Hugging Face Model: abenzerps/Qwen-Image-2.1-Uncensored-GGUF (2497 like
+https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T13:37:05.903Z] ---
+# [AI-AGENTS] microsoft/ai-agents-for-beginners (46904 score [VERIFIED ORG]) - 18 Lessons to Get Started Building AI Agents
+https://github.com/microsoft/ai-agents-for-beginners
+# [AI-AGENTS] thedaviddias/Front-End-Checklist (39307 score) - 🗂 The essential checklist for modern web development, for humans and AI agents
+https://github.com/thedaviddias/Front-End-Checklist
+# [AI-AGENTS] diegosouzapw/OmniRoute (39320 score) - Never stop coding. Free MIT AI gateway: one endpoint, 359 providers (150+ free),
+https://github.com/diegosouzapw/OmniRoute
+# [FULLSTACK-UI] GeekyAnts/NativeBase (11354 score) - Mobile-first, accessible components for React Native & Web to build consistent U
+https://github.com/GeekyAnts/NativeBase
+# [FULLSTACK-UI] tambo-ai/tambo (6000 score) - Generative UI SDK for React
+https://github.com/tambo-ai/tambo
+# [FULLSTACK-UI] wix/react-native-calendars (6525 score) - React Native Calendar Components 🗓️ 📆 
+https://github.com/wix/react-native-calendars
+# [HIGH-PERF-SYSTEMS] cachix/devenv (4369 score) - Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
+https://github.com/cachix/devenv
+# [HIGH-PERF-SYSTEMS] watchexec/watchexec (3985 score) - Executes commands in response to file modifications
+https://github.com/watchexec/watchexec
+# [HIGH-PERF-SYSTEMS] FalkorDB/FalkorDB (3767 score) - A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacen
+https://github.com/FalkorDB/FalkorDB
+# [HUGGINGFACE-AI-MODELS] sentence-transformers/all-MiniLM-L6-v2 (63510 score) - Verified Hugging Face Model: sentence-transformers/all-MiniLM-L6-v2 (6151 likes,
+https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+# [HUGGINGFACE-AI-MODELS] cross-encoder/ms-marco-MiniLM-L6-v2 (5540 score) - Verified Hugging Face Model: cross-encoder/ms-marco-MiniLM-L6-v2 (354 likes, 861
+https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2
+# [HUGGINGFACE-AI-MODELS] BAAI/bge-small-en-v1.5 (7940 score) - Verified Hugging Face Model: BAAI/bge-small-en-v1.5 (594 likes, 63395169 downloa
+https://huggingface.co/BAAI/bge-small-en-v1.5
+# [MOBILE-CROSS-PLATFORM] mattermost/mattermost (22672 score) - Mattermost is an open source platform for secure collaboration across the entire
+https://github.com/mattermost/mattermost
+# [MOBILE-CROSS-PLATFORM] NervJS/taro (20763 score) - 开放式跨端跨框架解决方案，支持使用 React/Vue 等框架来开发微信/京东/百度/支付宝/字节跳动/ QQ 小程序/H5/React Native 等应用。
+https://github.com/NervJS/taro
+# [MOBILE-CROSS-PLATFORM] jaredpalmer/formik (18341 score) - Build forms in React, without the tears 😭 
+https://github.com/jaredpalmer/formik
+# [DEVOPS-CLOUD-INFRASTRUCTURE] Kong/kubernetes-ingress-controller (1845 score) - :gorilla: Kong for Kubernetes: The official Ingress Controller for Kubernetes.
+https://github.com/Kong/kubernetes-ingress-controller
+# [DEVOPS-CLOUD-INFRASTRUCTURE] flux-iac/tofu-controller (1361 score) - A GitOps OpenTofu and Terraform controller for Flux
+https://github.com/flux-iac/tofu-controller
+# [DEVOPS-CLOUD-INFRASTRUCTURE] emberstack/kubernetes-reflector (1035 score) - Custom Kubernetes controller that can be used to replicate secrets, configmaps a
+https://github.com/emberstack/kubernetes-reflector
+# [CYBERSECURITY-DEFENSES] build-trust/ockam (2820 score) - Orchestrate end-to-end encryption, cryptographic identities, mutual authenticati
+https://github.com/build-trust/ockam
+# [CYBERSECURITY-DEFENSES] lunasec-io/lunasec (1231 score) - LunaSec - Dependency Security Scanner that automatically notifies you about vuln
+https://github.com/lunasec-io/lunasec
+# [CYBERSECURITY-DEFENSES] nexus-xyz/nexus-zkvm (1801 score) - The Nexus zkVM: The zero-knowledge virtual machine
+https://github.com/nexus-xyz/nexus-zkvm
+# [DATABASE-STORAGE-ENGINES] memvid/memvid (9028 score) - Memory layer for AI Agents. Replace complex RAG pipelines with a serverless, sin
+https://github.com/memvid/memvid
+# [DATABASE-STORAGE-ENGINES] alibaba/zvec (9697 score [VERIFIED ORG]) - A lightweight, lightning-fast, in-process vector database
+https://github.com/alibaba/zvec
+# [DATABASE-STORAGE-ENGINES] langchain4j/langchain4j (7813 score) - LangChain4j is an idiomatic, open-source Java library for building LLM-powered a
+https://github.com/langchain4j/langchain4j

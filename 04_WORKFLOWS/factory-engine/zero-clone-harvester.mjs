@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { shouldHarvestSource } from './upgrade-checker.mjs';
 import { acquireTargetLock, releaseTargetLock, pushWithRebaseRetry } from './concurrency-coordinator.mjs';
-import { runAutoDiscoveryScout } from './auto-discovery-scout.mjs';
+import { runAutoDiscoveryScout, ensureQueueReplenished, getUnharvestedQueueCount } from './auto-discovery-scout.mjs';
 import {
   synthesizeIntelligenceWithGemini,
   saveGeminiLearningRecord,
@@ -584,13 +584,36 @@ export async function runZeroCloneHarvester(customUrls = null) {
     run('git pull --rebase origin main', BRAIN_ROOT);
   } catch (e) {}
 
-  // 3. Resolve Queue
+  // 3. Autonomous Queue Pre-flight & Replenishment
+  const isCustomRun = Boolean(Array.isArray(customUrls) && customUrls.length > 0);
+  if (!isCustomRun) {
+    const unharvested = getUnharvestedQueueCount();
+    if (unharvested < 10) {
+      console.log(`⚡ [AUTO-REPLENISH PRE-FLIGHT] Queue buffer low (${unharvested} unharvested). Auto-scouting fresh batch...`);
+      try {
+        await ensureQueueReplenished(15, 24);
+      } catch (err) {
+        console.warn(`[WARN] Auto-replenish failed: ${err.message}`);
+      }
+    }
+  }
+
+  // 4. Resolve Queue
   let queue = [];
-  if (Array.isArray(customUrls) && customUrls.length > 0) {
+  if (isCustomRun) {
     queue = customUrls.map(parseSourceUrl).filter(Boolean);
   } else {
     queue = loadSourcesQueue();
   }
+
+  // Unharvested-First Prioritization: Unharvested targets are evaluated first to maximize learning efficiency
+  queue.sort((a, b) => {
+    const aDoc = fs.existsSync(path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${a.slug}-learnings.md`));
+    const bDoc = fs.existsSync(path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${b.slug}-learnings.md`));
+    if (!aDoc && bDoc) return -1;
+    if (aDoc && !bDoc) return 1;
+    return 0;
+  });
 
   if (queue.length === 0) {
     console.log(`[QUEUE EMPTY] No targets found in repos.txt or arguments.`);
@@ -685,16 +708,14 @@ export async function runZeroCloneHarvester(customUrls = null) {
 
   // Auto-Discovery: If all existing targets are up to date, scout fresh top repositories
   const successCount = results.filter((r) => r.status === 'SUCCESS').length;
-  const isCustomRun = Boolean(customUrls && customUrls.length > 0);
   const skipScout = process.argv.includes('--no-scout');
 
   if (successCount === 0 && !isCustomRun && !skipScout) {
-    console.log(`\n🔭 [AUTONOMOUS SCOUT TRIGGER] All targets are up-to-date. Triggering Auto-Discovery Scout for fresh top repositories...`);
-    const scoutRes = await runAutoDiscoveryScout({ maxPerDomain: 1 });
-    if (scoutRes.discovered > 0) {
-      console.log(`🚀 [HARVESTING NEWLY DISCOVERED TARGETS] Immediately processing ${scoutRes.discovered} freshly scouted repos...`);
-      const newUrls = scoutRes.items.map((i) => i.url);
-      const secondPass = await runZeroCloneHarvester(newUrls);
+    console.log(`\n🔭 [AUTONOMOUS SCOUT TRIGGER] All targets in current batch are up-to-date. Triggering Auto-Discovery Scout for fresh top repositories...`);
+    const scoutRes = await ensureQueueReplenished(15, 24);
+    if (scoutRes.added > 0) {
+      console.log(`🚀 [HARVESTING NEWLY DISCOVERED TARGETS] Immediately processing freshly scouted repos...`);
+      const secondPass = await runZeroCloneHarvester();
       return {
         success: true,
         count: queue.length + secondPass.count,

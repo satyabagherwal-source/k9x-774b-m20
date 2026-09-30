@@ -1770,5 +1770,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bytedance-deer-flow": {
+    "name": "bytedance/deer-flow",
+    "officialUrl": "https://github.com/bytedance/deer-flow",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T13:41:51.664Z",
+    "lastVerified": "2026-09-30T13:41:51.664Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 92,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
