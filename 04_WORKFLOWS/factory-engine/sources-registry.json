@@ -3434,5 +3434,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pinecone-io-examples": {
+    "name": "pinecone-io/examples",
+    "officialUrl": "https://github.com/pinecone-io/examples",
+    "sourceType": "github",
+    "technology": "Jupyter Notebook",
+    "lastChecked": "2026-09-30T17:24:23.322Z",
+    "lastVerified": "2026-09-30T17:24:23.322Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
