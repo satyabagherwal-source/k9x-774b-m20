@@ -8699,5 +8699,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nextlevelbuilder-goclaw": {
+    "name": "nextlevelbuilder/goclaw",
+    "officialUrl": "https://github.com/nextlevelbuilder/goclaw",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T19:13:23.430Z",
+    "lastVerified": "2026-09-30T19:13:23.430Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 60,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

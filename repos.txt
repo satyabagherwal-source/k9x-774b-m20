@@ -2074,3 +2074,11 @@ https://github.com/simonlin1212/TradingAgents-astock
 https://github.com/datamllab/rlcard
 # [AI-AGENTS] foryourhealth111-pixel/Vibe-Skills (2180 score) - Intelligent Skill routing and workflow orchestration for AI agents — +21.12 pp r
 https://github.com/foryourhealth111-pixel/Vibe-Skills
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:11:20.488Z] ---
+# [AI-AGENTS] AlephAITech/WorkBuddyGuide (1946 score) - A practical, open-source guide to mastering WorkBuddy through real-world workflo
+https://github.com/AlephAITech/WorkBuddyGuide
+# [AI-AGENTS] bradygaster/squad (2222 score) - Squad: AI agent teams for any project
+https://github.com/bradygaster/squad
+# [AI-AGENTS] MaxMiksa/Auto-Company (1972 score) - An auto-company works for 24/7 on your own PC - Windows/Linux/macOS.
+https://github.com/MaxMiksa/Auto-Company

@@ -8506,5 +8506,50 @@
     "qualityScore": 2180,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:08:47.003Z"
+  },
+  {
+    "name": "WorkBuddyGuide",
+    "fullName": "AlephAITech/WorkBuddyGuide",
+    "url": "https://github.com/AlephAITech/WorkBuddyGuide",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A practical, open-source guide to mastering WorkBuddy through real-world workflows.开源的 WorkBuddy 实战蓝皮书：教程、真实工作流、Skills、MCP、自动化与多智能体实践。",
+    "stars": 3271,
+    "forks": 468,
+    "openIssues": 10,
+    "language": "TypeScript",
+    "qualityScore": 1946,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:11:20.477Z"
+  },
+  {
+    "name": "squad",
+    "fullName": "bradygaster/squad",
+    "url": "https://github.com/bradygaster/squad",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Squad: AI agent teams for any project",
+    "stars": 3243,
+    "forks": 500,
+    "openIssues": 127,
+    "language": "TypeScript",
+    "qualityScore": 2222,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:11:20.477Z"
+  },
+  {
+    "name": "Auto-Company",
+    "fullName": "MaxMiksa/Auto-Company",
+    "url": "https://github.com/MaxMiksa/Auto-Company",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An auto-company works for 24/7 on your own PC - Windows/Linux/macOS.",
+    "stars": 3112,
+    "forks": 492,
+    "openIssues": 9,
+    "language": "Python",
+    "qualityScore": 1972,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:11:20.477Z"
   }
 ]
