@@ -2784,5 +2784,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zeronsh-zeron": {
+    "name": "zeronsh/zeron",
+    "officialUrl": "https://github.com/zeronsh/zeron",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:14:45.690Z",
+    "lastVerified": "2026-09-30T17:14:45.690Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
