@@ -1216,3 +1216,19 @@ https://github.com/devhubapp/devhub
 https://github.com/i18next/react-i18next
 # [MOBILE-CROSS-PLATFORM] oblador/react-native-animatable (5523 score) - Standard set of easy to use animations and declarative transitions for React Nat
 https://github.com/oblador/react-native-animatable
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:37:05.088Z] ---
+# [DATABASE-STORAGE-ENGINES] supervc-stack/VectorChord (1110 score) - Scalable, fast, and disk-friendly vector search in Postgres, the successor of pg
+https://github.com/supervc-stack/VectorChord
+# [DATABASE-STORAGE-ENGINES] parthsarthi03/raptor (1290 score) - The official implementation of RAPTOR: Recursive Abstractive Processing for Tree
+https://github.com/parthsarthi03/raptor
+# [DATABASE-STORAGE-ENGINES] LLPhant/LLPhant (1229 score) - LLPhant - A comprehensive PHP Generative AI Framework using OpenAI GPT 4. Inspir
+https://github.com/LLPhant/LLPhant
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:37:07.008Z] ---
+# [AI-AGENTS] pascalorg/editor (13324 score) - Open-source 3D architectural editor with a local CLI, MCP tools, and practical w
+https://github.com/pascalorg/editor
+# [AI-AGENTS] micro/go-micro (12529 score) - A Go agent harness and service framework
+https://github.com/micro/go-micro
+# [AI-AGENTS] NVIDIA/NemoClaw (12592 score) - Run agents like Hermes, LangChain Deep Agents, and OpenClaw more securely inside
+https://github.com/NVIDIA/NemoClaw
