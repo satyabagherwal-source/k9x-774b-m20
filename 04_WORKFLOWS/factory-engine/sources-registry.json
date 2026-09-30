@@ -13249,5 +13249,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "igorescodro-alkaa": {
+    "name": "igorescodro/alkaa",
+    "officialUrl": "https://github.com/igorescodro/alkaa",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T23:32:34.298Z",
+    "lastVerified": "2026-09-30T23:32:34.298Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

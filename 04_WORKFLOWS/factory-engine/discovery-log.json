@@ -13546,5 +13546,50 @@
     "qualityScore": 963,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T23:26:08.789Z"
+  },
+  {
+    "name": "alkaa",
+    "fullName": "igorescodro/alkaa",
+    "url": "https://github.com/igorescodro/alkaa",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Kotlin multiplatform app to manage your tasks",
+    "stars": 1647,
+    "forks": 164,
+    "openIssues": 15,
+    "language": "Kotlin",
+    "qualityScore": 1153,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:32:20.425Z"
+  },
+  {
+    "name": "Emoji",
+    "fullName": "vanniktech/Emoji",
+    "url": "https://github.com/vanniktech/Emoji",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A library to add Emoji support to your Android / iOS / JVM Application",
+    "stars": 1641,
+    "forks": 293,
+    "openIssues": 12,
+    "language": "Kotlin",
+    "qualityScore": 1082,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:32:20.425Z"
+  },
+  {
+    "name": "Bifrost",
+    "fullName": "zacharee/Bifrost",
+    "url": "https://github.com/zacharee/Bifrost",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Cross-platform tool for downloading Samsung mobile device firmware.",
+    "stars": 1610,
+    "forks": 154,
+    "openIssues": 3,
+    "language": "Kotlin",
+    "qualityScore": 1107,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:32:20.425Z"
   }
 ]

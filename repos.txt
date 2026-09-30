@@ -2980,3 +2980,11 @@ https://github.com/Mirascope/mirascope
 https://github.com/myshell-ai/AIlice
 # [AI-AGENTS] Xiangyue-Zhang/auto-deep-researcher-24x7 (963 score) - 🔥 An autonomous AI agent that runs your deep learning experiments 24/7 while yo
 https://github.com/Xiangyue-Zhang/auto-deep-researcher-24x7
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T23:32:20.427Z] ---
+# [MOBILE-CROSS-PLATFORM] igorescodro/alkaa (1153 score) - Kotlin multiplatform app to manage your tasks
+https://github.com/igorescodro/alkaa
+# [MOBILE-CROSS-PLATFORM] vanniktech/Emoji (1082 score) - A library to add Emoji support to your Android / iOS / JVM Application
+https://github.com/vanniktech/Emoji
+# [MOBILE-CROSS-PLATFORM] zacharee/Bifrost (1107 score) - Cross-platform tool for downloading Samsung mobile device firmware.
+https://github.com/zacharee/Bifrost
