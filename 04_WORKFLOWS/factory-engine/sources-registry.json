@@ -9219,5 +9219,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oraios-serena": {
+    "name": "oraios/serena",
+    "officialUrl": "https://github.com/oraios/serena",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:27:43.540Z",
+    "lastVerified": "2026-09-30T19:27:43.540Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
