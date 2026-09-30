@@ -12937,5 +12937,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "juanpe-about-swiftui": {
+    "name": "Juanpe/About-SwiftUI",
+    "officialUrl": "https://github.com/Juanpe/About-SwiftUI",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:23:16.340Z",
+    "lastVerified": "2026-09-30T22:23:16.340Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
