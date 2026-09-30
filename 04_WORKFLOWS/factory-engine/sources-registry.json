@@ -12534,5 +12534,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "shroominic-codeinterpreter-api": {
+    "name": "shroominic/codeinterpreter-api",
+    "officialUrl": "https://github.com/shroominic/codeinterpreter-api",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:44:15.897Z",
+    "lastVerified": "2026-09-30T21:44:15.897Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 22,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

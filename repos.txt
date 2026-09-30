@@ -2832,3 +2832,11 @@ https://github.com/linkwarden/linkwarden
 https://github.com/oblador/react-native-vector-icons
 # [MOBILE-CROSS-PLATFORM] microsoft/react-native-windows (10487 score [VERIFIED ORG]) - A framework for building native Windows apps with React.
 https://github.com/microsoft/react-native-windows
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:43:55.242Z] ---
+# [AI-AGENTS] shroominic/codeinterpreter-api (2429 score) - 👾 Open source implementation of the ChatGPT Code Interpreter
+https://github.com/shroominic/codeinterpreter-api
+# [AI-AGENTS] xiaobright/dsh-anchored-standard (2220 score) - Two-phase DeepSeek Harness preset: Minimal-aligned bootstrap, then full Standard
+https://github.com/xiaobright/dsh-anchored-standard
+# [AI-AGENTS] THUDM/AgentBench (2274 score) - A Comprehensive Benchmark to Evaluate LLMs as Agents (ICLR'24)
+https://github.com/THUDM/AgentBench

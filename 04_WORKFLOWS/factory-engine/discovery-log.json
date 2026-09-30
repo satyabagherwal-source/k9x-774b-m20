@@ -12721,5 +12721,50 @@
     "qualityScore": 10487,
     "verifiedOrg": true,
     "discoveredAt": "2026-09-30T21:41:50.896Z"
+  },
+  {
+    "name": "codeinterpreter-api",
+    "fullName": "shroominic/codeinterpreter-api",
+    "url": "https://github.com/shroominic/codeinterpreter-api",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "👾 Open source implementation of the ChatGPT Code Interpreter",
+    "stars": 3843,
+    "forks": 386,
+    "openIssues": 71,
+    "language": "Python",
+    "qualityScore": 2429,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:43:55.238Z"
+  },
+  {
+    "name": "dsh-anchored-standard",
+    "fullName": "xiaobright/dsh-anchored-standard",
+    "url": "https://github.com/xiaobright/dsh-anchored-standard",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Two-phase DeepSeek Harness preset: Minimal-aligned bootstrap, then full Standard tools (Project2 98/99)",
+    "stars": 3783,
+    "forks": 120,
+    "openIssues": 21,
+    "language": "JavaScript",
+    "qualityScore": 2220,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:43:55.238Z"
+  },
+  {
+    "name": "AgentBench",
+    "fullName": "THUDM/AgentBench",
+    "url": "https://github.com/THUDM/AgentBench",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A Comprehensive Benchmark to Evaluate LLMs as Agents (ICLR'24)",
+    "stars": 3761,
+    "forks": 285,
+    "openIssues": 79,
+    "language": "Python",
+    "qualityScore": 2274,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:43:55.239Z"
   }
 ]
