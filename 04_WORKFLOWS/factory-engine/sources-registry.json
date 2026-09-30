@@ -11871,5 +11871,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nvidia-skills": {
+    "name": "NVIDIA/skills",
+    "officialUrl": "https://github.com/NVIDIA/skills",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:06:23.436Z",
+    "lastVerified": "2026-09-30T21:06:23.436Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
