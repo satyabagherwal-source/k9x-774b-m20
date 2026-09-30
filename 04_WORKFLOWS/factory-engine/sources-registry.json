@@ -7646,5 +7646,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "starrocks-starrocks": {
+    "name": "StarRocks/starrocks",
+    "officialUrl": "https://github.com/StarRocks/starrocks",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T18:33:40.724Z",
+    "lastVerified": "2026-09-30T18:33:40.724Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

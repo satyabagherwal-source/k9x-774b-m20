@@ -5,7 +5,7 @@
       "page": 4
     },
     "fullstack-ui": {
-      "queryIndex": 3,
+      "queryIndex": 6,
       "page": 1
     },
     "high-perf-systems": {
@@ -18,7 +18,7 @@
     },
     "mobile-cross-platform": {
       "queryIndex": 0,
-      "page": 1
+      "page": 3
     },
     "devops-cloud-infrastructure": {
       "queryIndex": 4,
@@ -38,5 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 58,
-  "lastReplenishedAt": "2026-09-30T18:33:17.784Z"
+  "lastReplenishedAt": "2026-09-30T18:33:38.883Z"
 }
