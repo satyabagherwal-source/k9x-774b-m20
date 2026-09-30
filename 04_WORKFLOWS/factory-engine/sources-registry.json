@@ -6268,5 +6268,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tradecatlabs-vibe-coding-cn": {
+    "name": "tradecatlabs/vibe-coding-cn",
+    "officialUrl": "https://github.com/tradecatlabs/vibe-coding-cn",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:18:05.986Z",
+    "lastVerified": "2026-09-30T18:18:05.986Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
