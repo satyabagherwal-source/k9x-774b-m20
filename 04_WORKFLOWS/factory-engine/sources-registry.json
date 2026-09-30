@@ -12703,5 +12703,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mohamedrejeb-compose-rich-editor": {
+    "name": "MohamedRejeb/compose-rich-editor",
+    "officialUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:56:04.575Z",
+    "lastVerified": "2026-09-30T21:56:04.575Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 21,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
