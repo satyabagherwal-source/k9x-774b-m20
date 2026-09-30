@@ -9136,5 +9136,50 @@
     "qualityScore": 6907,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:33:45.183Z"
+  },
+  {
+    "name": "QuantDinger",
+    "fullName": "OpenByteInc/QuantDinger",
+    "url": "https://github.com/OpenByteInc/QuantDinger",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source AI Trading OS, agent trading, and vibe trading, with Jev System One integration. Research, build Python strategies, backtest, and paper/live trade across crypto, stocks, and forex. Launch your own multi-tenant trading SaaS with built-in user management, billing, payments, and settlement.",
+    "stars": 12343,
+    "forks": 2523,
+    "openIssues": 42,
+    "language": "Python",
+    "qualityScore": 7162,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:35:05.549Z"
+  },
+  {
+    "name": "fastapi_mcp",
+    "fullName": "tadata-org/fastapi_mcp",
+    "url": "https://github.com/tadata-org/fastapi_mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Expose your FastAPI endpoints as Model Context Protocol (MCP) tools, with Auth!",
+    "stars": 12013,
+    "forks": 971,
+    "openIssues": 171,
+    "language": "Python",
+    "qualityScore": 6748,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:35:05.549Z"
+  },
+  {
+    "name": "nginx-ui",
+    "fullName": "0xJacky/nginx-ui",
+    "url": "https://github.com/0xJacky/nginx-ui",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Yet another WebUI for Nginx",
+    "stars": 11562,
+    "forks": 885,
+    "openIssues": 39,
+    "language": "Go",
+    "qualityScore": 6275,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:35:05.550Z"
   }
 ]

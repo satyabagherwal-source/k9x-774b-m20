@@ -2186,3 +2186,11 @@ https://github.com/modelcontextprotocol/typescript-sdk
 https://github.com/JoeanAmier/XHS-Downloader
 # [AI-AGENTS] mrexodia/ida-pro-mcp (6907 score) - AI-powered reverse engineering assistant that bridges IDA Pro with language mode
 https://github.com/mrexodia/ida-pro-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:35:05.551Z] ---
+# [AI-AGENTS] OpenByteInc/QuantDinger (7162 score) - Open-source AI Trading OS, agent trading, and vibe trading, with Jev System One 
+https://github.com/OpenByteInc/QuantDinger
+# [AI-AGENTS] tadata-org/fastapi_mcp (6748 score) - Expose your FastAPI endpoints as Model Context Protocol (MCP) tools, with Auth!
+https://github.com/tadata-org/fastapi_mcp
+# [AI-AGENTS] 0xJacky/nginx-ui (6275 score) - Yet another WebUI for Nginx
+https://github.com/0xJacky/nginx-ui
