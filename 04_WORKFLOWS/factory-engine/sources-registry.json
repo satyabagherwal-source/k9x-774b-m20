@@ -4695,5 +4695,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "skyhook-io-radar": {
+    "name": "skyhook-io/radar",
+    "officialUrl": "https://github.com/skyhook-io/radar",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:37:35.049Z",
+    "lastVerified": "2026-09-30T17:37:35.049Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
