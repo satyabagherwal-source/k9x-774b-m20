@@ -2355,5 +2355,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oramasearch-orama": {
+    "name": "oramasearch/orama",
+    "officialUrl": "https://github.com/oramasearch/orama",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T14:03:18.633Z",
+    "lastVerified": "2026-09-30T14:03:18.633Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 42,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
