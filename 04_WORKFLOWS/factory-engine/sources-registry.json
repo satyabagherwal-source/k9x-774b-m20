@@ -13145,5 +13145,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mohamedrejeb-calf": {
+    "name": "MohamedRejeb/Calf",
+    "officialUrl": "https://github.com/MohamedRejeb/Calf",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T23:00:56.888Z",
+    "lastVerified": "2026-09-30T23:00:56.888Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
