@@ -11195,5 +11195,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "neomjs-neo": {
+    "name": "neomjs/neo",
+    "officialUrl": "https://github.com/neomjs/neo",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T20:35:33.363Z",
+    "lastVerified": "2026-09-30T20:35:33.363Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
