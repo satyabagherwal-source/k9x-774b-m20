@@ -10337,5 +10337,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "packtpublishing-llm-engineers-handbook": {
+    "name": "PacktPublishing/LLM-Engineers-Handbook",
+    "officialUrl": "https://github.com/PacktPublishing/LLM-Engineers-Handbook",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:13:03.631Z",
+    "lastVerified": "2026-09-30T20:13:03.631Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
