@@ -6957,5 +6957,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "guokaigdg-animal-island-ui": {
+    "name": "guokaigdg/animal-island-ui",
+    "officialUrl": "https://github.com/guokaigdg/animal-island-ui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:23:57.203Z",
+    "lastVerified": "2026-09-30T18:23:57.203Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
