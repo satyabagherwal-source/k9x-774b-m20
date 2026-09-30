@@ -7490,5 +7490,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "goss-org-goss": {
+    "name": "goss-org/goss",
+    "officialUrl": "https://github.com/goss-org/goss",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:31:30.350Z",
+    "lastVerified": "2026-09-30T18:31:30.350Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
