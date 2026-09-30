@@ -11910,5 +11910,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "qdrant-fastembed": {
+    "name": "qdrant/fastembed",
+    "officialUrl": "https://github.com/qdrant/fastembed",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:07:52.449Z",
+    "lastVerified": "2026-09-30T21:07:52.449Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 46,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
