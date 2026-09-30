@@ -8114,5 +8114,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "startrail-org-leann": {
+    "name": "StarTrail-org/LEANN",
+    "officialUrl": "https://github.com/StarTrail-org/LEANN",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:40:46.530Z",
+    "lastVerified": "2026-09-30T18:40:46.530Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 56,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
