@@ -2303,5 +2303,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sickn33-agentic-awesome-skills": {
+    "name": "sickn33/agentic-awesome-skills",
+    "officialUrl": "https://github.com/sickn33/agentic-awesome-skills",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T14:02:39.235Z",
+    "lastVerified": "2026-09-30T14:02:39.235Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
