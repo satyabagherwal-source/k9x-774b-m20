@@ -2492,3 +2492,35 @@ https://github.com/agent-of-empires/agent-of-empires
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T20:27:23.384Z] ---
 # [DEVOPS-CLOUD-INFRASTRUCTURE] databricks/click (1108 score) - The "Command Line Interactive Controller for Kubernetes"
 https://github.com/databricks/click
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:28:12.208Z] ---
+# [AI-AGENTS] dagucloud/dagu (2650 score) - Self-hostable workflow orchestrator for teams whose main work isn't orchestratio
+https://github.com/dagucloud/dagu
+# [AI-AGENTS] haris-musa/excel-mcp-server (2495 score) - A Model Context Protocol server for Excel file manipulation
+https://github.com/haris-musa/excel-mcp-server
+# [AI-AGENTS] txn2/kubefwd (2427 score) - Bulk port forwarding Kubernetes services for local development.
+https://github.com/txn2/kubefwd
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:28:13.933Z] ---
+# [HIGH-PERF-SYSTEMS] pamburus/hl (1946 score) - A fast and powerful log viewer and processor that converts JSON logs or logfmt l
+https://github.com/pamburus/hl
+# [HIGH-PERF-SYSTEMS] atanunq/viu (1916 score) - Terminal image viewer with native support for iTerm and Kitty
+https://github.com/atanunq/viu
+# [HIGH-PERF-SYSTEMS] imsnif/diskonaut (1941 score) - Terminal disk space navigator 🔭
+https://github.com/imsnif/diskonaut
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:28:23.812Z] ---
+# [MOBILE-CROSS-PLATFORM] brianegan/flutter_architecture_samples (5326 score) - TodoMVC for Flutter
+https://github.com/brianegan/flutter_architecture_samples
+# [MOBILE-CROSS-PLATFORM] hungps/flutter_pokedex (1687 score) - Pokedex app built with Flutter (with lots of animations) using Clean Architectur
+https://github.com/hungps/flutter_pokedex
+# [MOBILE-CROSS-PLATFORM] ResoCoder/flutter-tdd-clean-architecture-course (1438 score) - No description provided
+https://github.com/ResoCoder/flutter-tdd-clean-architecture-course
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:28:33.130Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] open-policy-agent/opa (7105 score) - Open Policy Agent (OPA) is an open source, general-purpose policy engine.
+https://github.com/open-policy-agent/opa
+# [DEVOPS-CLOUD-INFRASTRUCTURE] kubeshark/kubeshark (6661 score) - eBPF-powered network observability for Kubernetes. Indexes L4/L7 traffic with fu
+https://github.com/kubeshark/kubeshark
+# [DEVOPS-CLOUD-INFRASTRUCTURE] linkerd/linkerd2 (6617 score) - Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.
+https://github.com/linkerd/linkerd2

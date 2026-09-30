@@ -10896,5 +10896,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dagucloud-dagu": {
+    "name": "dagucloud/dagu",
+    "officialUrl": "https://github.com/dagucloud/dagu",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T20:28:37.116Z",
+    "lastVerified": "2026-09-30T20:28:37.116Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
