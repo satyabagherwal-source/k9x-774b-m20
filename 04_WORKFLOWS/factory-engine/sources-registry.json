@@ -8101,5 +8101,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "the-vibe-company-quivr": {
+    "name": "The-Vibe-Company/quivr",
+    "officialUrl": "https://github.com/The-Vibe-Company/quivr",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:40:39.170Z",
+    "lastVerified": "2026-09-30T18:40:39.170Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
