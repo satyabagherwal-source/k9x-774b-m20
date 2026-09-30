@@ -5189,5 +5189,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "keybase-client": {
+    "name": "keybase/client",
+    "officialUrl": "https://github.com/keybase/client",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:42:49.048Z",
+    "lastVerified": "2026-09-30T17:42:49.048Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
