@@ -6983,5 +6983,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dockview-dockview": {
+    "name": "dockview/dockview",
+    "officialUrl": "https://github.com/dockview/dockview",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:24:07.988Z",
+    "lastVerified": "2026-09-30T18:24:07.988Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 49,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
