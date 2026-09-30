@@ -12508,5 +12508,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oblador-react-native-vector-icons": {
+    "name": "oblador/react-native-vector-icons",
+    "officialUrl": "https://github.com/oblador/react-native-vector-icons",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T21:42:24.724Z",
+    "lastVerified": "2026-09-30T21:42:24.724Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
