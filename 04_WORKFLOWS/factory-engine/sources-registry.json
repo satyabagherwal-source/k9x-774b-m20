@@ -2719,5 +2719,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "databendlabs-databend": {
+    "name": "databendlabs/databend",
+    "officialUrl": "https://github.com/databendlabs/databend",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:14:23.744Z",
+    "lastVerified": "2026-09-30T17:14:23.744Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 46,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
