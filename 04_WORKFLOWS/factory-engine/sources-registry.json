@@ -6944,5 +6944,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xudong-huang-may": {
+    "name": "Xudong-Huang/may",
+    "officialUrl": "https://github.com/Xudong-Huang/may",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:23:50.782Z",
+    "lastVerified": "2026-09-30T18:23:50.782Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
