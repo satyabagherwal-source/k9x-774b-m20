@@ -11806,5 +11806,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pipeshub-ai-pipeshub-ai": {
+    "name": "pipeshub-ai/pipeshub-ai",
+    "officialUrl": "https://github.com/pipeshub-ai/pipeshub-ai",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:03:34.177Z",
+    "lastVerified": "2026-09-30T21:03:34.177Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 70,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
