@@ -7243,5 +7243,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "simular-ai-agent-s": {
+    "name": "simular-ai/Agent-S",
+    "officialUrl": "https://github.com/simular-ai/Agent-S",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:26:57.127Z",
+    "lastVerified": "2026-09-30T18:26:57.127Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
