@@ -7789,5 +7789,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "datawhalechina-hello-agents": {
+    "name": "datawhalechina/hello-agents",
+    "officialUrl": "https://github.com/datawhalechina/hello-agents",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:36:25.463Z",
+    "lastVerified": "2026-09-30T18:36:25.463Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
