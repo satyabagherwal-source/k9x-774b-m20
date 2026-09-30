@@ -11011,5 +11011,50 @@
     "qualityScore": 6617,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:28:33.129Z"
+  },
+  {
+    "name": "design-extract",
+    "fullName": "Manavarya09/design-extract",
+    "url": "https://github.com/Manavarya09/design-extract",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Extract any website's complete design system with one command. DTCG tokens, semantic+primitive+composite, MCP server for Claude Code/Cursor/Windsurf, multi-platform emitters (iOS SwiftUI, Android Compose, Flutter, WordPress), Tailwind v4, Figma variables, shadcn/ui, CSS health audit, WCAG remediation, Chrome extension. MIT, Playwright, Node 20+.",
+    "stars": 4150,
+    "forks": 351,
+    "openIssues": 23,
+    "language": "HTML",
+    "qualityScore": 2476,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:30:06.771Z"
+  },
+  {
+    "name": "ghidra-mcp",
+    "fullName": "bethington/ghidra-mcp",
+    "url": "https://github.com/bethington/ghidra-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Ghidra MCP Server — 200+ MCP tools for AI-powered reverse engineering. GUI plugin + headless server, lazy tool loading, convention enforcement, batch operations, Ghidra Server integration, and Docker deployment.",
+    "stars": 4066,
+    "forks": 163,
+    "openIssues": 46,
+    "language": "Java",
+    "qualityScore": 2424,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:30:06.771Z"
+  },
+  {
+    "name": "rust-sdk",
+    "fullName": "modelcontextprotocol/rust-sdk",
+    "url": "https://github.com/modelcontextprotocol/rust-sdk",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The official Rust SDK for the Model Context Protocol",
+    "stars": 3964,
+    "forks": 653,
+    "openIssues": 52,
+    "language": "Rust",
+    "qualityScore": 2532,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:30:06.771Z"
   }
 ]

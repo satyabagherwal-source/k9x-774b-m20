@@ -2524,3 +2524,11 @@ https://github.com/open-policy-agent/opa
 https://github.com/kubeshark/kubeshark
 # [DEVOPS-CLOUD-INFRASTRUCTURE] linkerd/linkerd2 (6617 score) - Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.
 https://github.com/linkerd/linkerd2
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:30:06.772Z] ---
+# [AI-AGENTS] Manavarya09/design-extract (2476 score) - Extract any website's complete design system with one command. DTCG tokens, sema
+https://github.com/Manavarya09/design-extract
+# [AI-AGENTS] bethington/ghidra-mcp (2424 score) - Ghidra MCP Server — 200+ MCP tools for AI-powered reverse engineering. GUI plugi
+https://github.com/bethington/ghidra-mcp
+# [AI-AGENTS] modelcontextprotocol/rust-sdk (2532 score) - The official Rust SDK for the Model Context Protocol
+https://github.com/modelcontextprotocol/rust-sdk

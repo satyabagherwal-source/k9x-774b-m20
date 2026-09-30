@@ -11052,5 +11052,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "manavarya09-design-extract": {
+    "name": "Manavarya09/design-extract",
+    "officialUrl": "https://github.com/Manavarya09/design-extract",
+    "sourceType": "github",
+    "technology": "HTML",
+    "lastChecked": "2026-09-30T20:30:29.169Z",
+    "lastVerified": "2026-09-30T20:30:29.169Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
