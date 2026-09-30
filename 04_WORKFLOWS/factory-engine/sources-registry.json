@@ -10779,5 +10779,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ouch-org-ouch": {
+    "name": "ouch-org/ouch",
+    "officialUrl": "https://github.com/ouch-org/ouch",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:24:46.935Z",
+    "lastVerified": "2026-09-30T20:24:46.935Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
