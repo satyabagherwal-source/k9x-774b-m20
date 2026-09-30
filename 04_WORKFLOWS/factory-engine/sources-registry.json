@@ -10298,5 +10298,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "potpie-ai-potpie": {
+    "name": "potpie-ai/potpie",
+    "officialUrl": "https://github.com/potpie-ai/potpie",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:11:37.430Z",
+    "lastVerified": "2026-09-30T20:11:37.430Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 51,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
