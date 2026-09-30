@@ -8335,5 +8335,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "memorilabs-memori": {
+    "name": "MemoriLabs/Memori",
+    "officialUrl": "https://github.com/MemoriLabs/Memori",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:46:45.027Z",
+    "lastVerified": "2026-09-30T18:46:45.027Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
