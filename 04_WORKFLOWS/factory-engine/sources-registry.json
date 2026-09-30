@@ -4136,5 +4136,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "matrixorigin-matrixone": {
+    "name": "matrixorigin/matrixone",
+    "officialUrl": "https://github.com/matrixorigin/matrixone",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:32:10.734Z",
+    "lastVerified": "2026-09-30T17:32:10.734Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 80,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
