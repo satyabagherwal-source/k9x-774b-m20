@@ -13636,5 +13636,50 @@
     "qualityScore": 1256,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T23:39:39.178Z"
+  },
+  {
+    "name": "inno-agent",
+    "fullName": "hhyqhh/inno-agent",
+    "url": "https://github.com/hhyqhh/inno-agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An open-source personal learning agent with three-layer memory (learner profile / wiki knowledge base / cross-conversation recall), a proactive scheduler, personal IM channels, and a workspace-scoped Practice Lab — built on the Pi SDK.",
+    "stars": 1288,
+    "forks": 231,
+    "openIssues": 9,
+    "language": "TypeScript",
+    "qualityScore": 881,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:45:08.284Z"
+  },
+  {
+    "name": "pi-from-scratch",
+    "fullName": "SaladDay/pi-from-scratch",
+    "url": "https://github.com/SaladDay/pi-from-scratch",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "600 行 TypeScript 写成的超级迷你版 pi，让你轻松从 0 写出属于你的 pi-agent",
+    "stars": 1256,
+    "forks": 100,
+    "openIssues": 2,
+    "language": "TypeScript",
+    "qualityScore": 912,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:45:08.284Z"
+  },
+  {
+    "name": "easy-stock",
+    "fullName": "jundizhou/easy-stock",
+    "url": "https://github.com/jundizhou/easy-stock",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A股行情分析与AI智能投研智能体：股票分析、量化交易分析、盘后复盘桌面工作台——easy stock",
+    "stars": 1109,
+    "forks": 77,
+    "openIssues": 0,
+    "language": "Go",
+    "qualityScore": 728,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:45:08.284Z"
   }
 ]

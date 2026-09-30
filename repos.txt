@@ -2996,3 +2996,11 @@ https://github.com/vinceglb/FileKit
 https://github.com/nsh07/Tomato
 # [MOBILE-CROSS-PLATFORM] modelcontextprotocol/kotlin-sdk (1256 score) - The official Kotlin SDK for Model Context Protocol servers and clients. Maintain
 https://github.com/modelcontextprotocol/kotlin-sdk
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T23:45:08.285Z] ---
+# [AI-AGENTS] hhyqhh/inno-agent (881 score) - An open-source personal learning agent with three-layer memory (learner profile 
+https://github.com/hhyqhh/inno-agent
+# [AI-AGENTS] SaladDay/pi-from-scratch (912 score) - 600 行 TypeScript 写成的超级迷你版 pi，让你轻松从 0 写出属于你的 pi-agent
+https://github.com/SaladDay/pi-from-scratch
+# [AI-AGENTS] jundizhou/easy-stock (728 score) - A股行情分析与AI智能投研智能体：股票分析、量化交易分析、盘后复盘桌面工作台——easy stock
+https://github.com/jundizhou/easy-stock

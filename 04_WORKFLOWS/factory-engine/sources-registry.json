@@ -13327,5 +13327,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hhyqhh-inno-agent": {
+    "name": "hhyqhh/inno-agent",
+    "officialUrl": "https://github.com/hhyqhh/inno-agent",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T23:45:30.669Z",
+    "lastVerified": "2026-09-30T23:45:30.669Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
