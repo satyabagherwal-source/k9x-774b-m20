@@ -7295,5 +7295,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "orange-cyberdefense-goad": {
+    "name": "Orange-Cyberdefense/GOAD",
+    "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
+    "sourceType": "github",
+    "technology": "PowerShell",
+    "lastChecked": "2026-09-30T18:28:42.054Z",
+    "lastVerified": "2026-09-30T18:28:42.054Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
