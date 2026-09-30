@@ -7854,5 +7854,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mem0ai-mem0": {
+    "name": "mem0ai/mem0",
+    "officialUrl": "https://github.com/mem0ai/mem0",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:37:35.960Z",
+    "lastVerified": "2026-09-30T18:37:35.960Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 64,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
