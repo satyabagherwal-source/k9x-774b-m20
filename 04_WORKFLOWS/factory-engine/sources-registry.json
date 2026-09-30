@@ -12885,5 +12885,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "swiftuix-swiftuix": {
+    "name": "SwiftUIX/SwiftUIX",
+    "officialUrl": "https://github.com/SwiftUIX/SwiftUIX",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:15:53.613Z",
+    "lastVerified": "2026-09-30T22:15:53.613Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

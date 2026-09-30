@@ -13126,5 +13126,50 @@
     "qualityScore": 1150,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T22:02:46.950Z"
+  },
+  {
+    "name": "SwiftUIX",
+    "fullName": "SwiftUIX/SwiftUIX",
+    "url": "https://github.com/SwiftUIX/SwiftUIX",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "An exhaustive expansion of the standard SwiftUI library.",
+    "stars": 8167,
+    "forks": 496,
+    "openIssues": 28,
+    "language": "Swift",
+    "qualityScore": 4538,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:15:34.014Z"
+  },
+  {
+    "name": "MochiDiffusion",
+    "fullName": "MochiDiffusion/MochiDiffusion",
+    "url": "https://github.com/MochiDiffusion/MochiDiffusion",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Run Stable Diffusion on Mac natively",
+    "stars": 7962,
+    "forks": 367,
+    "openIssues": 5,
+    "language": "Swift",
+    "qualityScore": 4351,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:15:34.014Z"
+  },
+  {
+    "name": "SwiftMessages",
+    "fullName": "SwiftKickMobile/SwiftMessages",
+    "url": "https://github.com/SwiftKickMobile/SwiftMessages",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A very flexible message bar for UIKit and SwiftUI.",
+    "stars": 7548,
+    "forks": 765,
+    "openIssues": 40,
+    "language": "Swift",
+    "qualityScore": 4334,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:15:34.015Z"
   }
 ]

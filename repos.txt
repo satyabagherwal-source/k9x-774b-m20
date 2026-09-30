@@ -2904,3 +2904,11 @@ https://github.com/AGI-Edgerunners/LLM-Agents-Papers
 https://github.com/Weizhena/Deep-Research-skills
 # [AI-AGENTS] SqueezeAILab/LLMCompiler (1150 score) - [ICML 2024] LLMCompiler: An LLM Compiler for Parallel Function Calling
 https://github.com/SqueezeAILab/LLMCompiler
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T22:15:34.016Z] ---
+# [MOBILE-CROSS-PLATFORM] SwiftUIX/SwiftUIX (4538 score) - An exhaustive expansion of the standard SwiftUI library.
+https://github.com/SwiftUIX/SwiftUIX
+# [MOBILE-CROSS-PLATFORM] MochiDiffusion/MochiDiffusion (4351 score) - Run Stable Diffusion on Mac natively
+https://github.com/MochiDiffusion/MochiDiffusion
+# [MOBILE-CROSS-PLATFORM] SwiftKickMobile/SwiftMessages (4334 score) - A very flexible message bar for UIKit and SwiftUI.
+https://github.com/SwiftKickMobile/SwiftMessages
