@@ -12040,5 +12040,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "qhjqhj00-memorag": {
+    "name": "qhjqhj00/MemoRAG",
+    "officialUrl": "https://github.com/qhjqhj00/MemoRAG",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:11:58.380Z",
+    "lastVerified": "2026-09-30T21:11:58.380Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 3,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
