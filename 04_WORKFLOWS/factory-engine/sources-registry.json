@@ -12898,5 +12898,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mochidiffusion-mochidiffusion": {
+    "name": "MochiDiffusion/MochiDiffusion",
+    "officialUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:16:02.672Z",
+    "lastVerified": "2026-09-30T22:16:02.672Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
