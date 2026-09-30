@@ -5345,5 +5345,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wasm-bindgen-wasm-pack": {
+    "name": "wasm-bindgen/wasm-pack",
+    "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:44:20.475Z",
+    "lastVerified": "2026-09-30T17:44:20.475Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
