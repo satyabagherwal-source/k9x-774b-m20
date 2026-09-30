@@ -3330,5 +3330,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jackwener-opencli": {
+    "name": "jackwener/OpenCLI",
+    "officialUrl": "https://github.com/jackwener/OpenCLI",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:23:49.630Z",
+    "lastVerified": "2026-09-30T17:23:49.630Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
