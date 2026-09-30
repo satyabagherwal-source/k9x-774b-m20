@@ -4240,5 +4240,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vxcontrol-pentagi": {
+    "name": "vxcontrol/pentagi",
+    "officialUrl": "https://github.com/vxcontrol/pentagi",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:32:54.735Z",
+    "lastVerified": "2026-09-30T17:32:54.735Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
