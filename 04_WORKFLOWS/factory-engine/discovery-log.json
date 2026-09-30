@@ -11296,5 +11296,50 @@
     "qualityScore": 1801,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:37:23.156Z"
+  },
+  {
+    "name": "Silex",
+    "fullName": "silexlabs/Silex",
+    "url": "https://github.com/silexlabs/Silex",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Silex is an online tool for visually creating static sites with dynamic data. With the free/libre spirit of internet, together.",
+    "stars": 2991,
+    "forks": 679,
+    "openIssues": 60,
+    "language": "TypeScript",
+    "qualityScore": 1969,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:38:49.573Z"
+  },
+  {
+    "name": "open-seo-mcp-skills",
+    "fullName": "Ryze-AI-Adgent/open-seo-mcp-skills",
+    "url": "https://github.com/Ryze-AI-Adgent/open-seo-mcp-skills",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Free SEO MCP server + open-source SEO and GEO skills for Claude: keyword research, rank tracking, audits, backlinks, AI visibility on your real GSC/GA4/ads data. claude mcp add ryze --transport http https://connector.get-ryze.ai/mcp",
+    "stars": 2940,
+    "forks": 359,
+    "openIssues": 1,
+    "language": "Shell",
+    "qualityScore": 1730,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:38:49.573Z"
+  },
+  {
+    "name": "js-reverse-mcp",
+    "fullName": "zhizhuodemao/js-reverse-mcp",
+    "url": "https://github.com/zhizhuodemao/js-reverse-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI Agent-first JS 逆向 MCP Server：有头 Chrome 调试、断点、网络/WebSocket 分析、Patchright 反检测，可选 CloakBrowser。",
+    "stars": 2863,
+    "forks": 371,
+    "openIssues": 11,
+    "language": "TypeScript",
+    "qualityScore": 1815,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:38:49.573Z"
   }
 ]

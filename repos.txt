@@ -2576,3 +2576,11 @@ https://github.com/punitarani/fli
 https://github.com/blazickjp/arxiv-mcp-server
 # [AI-AGENTS] deedy5/ddgs (1801 score) - A metasearch library that aggregates results from diverse web search services
 https://github.com/deedy5/ddgs
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:38:49.574Z] ---
+# [AI-AGENTS] silexlabs/Silex (1969 score) - Silex is an online tool for visually creating static sites with dynamic data. Wi
+https://github.com/silexlabs/Silex
+# [AI-AGENTS] Ryze-AI-Adgent/open-seo-mcp-skills (1730 score) - Free SEO MCP server + open-source SEO and GEO skills for Claude: keyword researc
+https://github.com/Ryze-AI-Adgent/open-seo-mcp-skills
+# [AI-AGENTS] zhizhuodemao/js-reverse-mcp (1815 score) - AI Agent-first JS 逆向 MCP Server：有头 Chrome 调试、断点、网络/WebSocket 分析、Patchright 反检测，可
+https://github.com/zhizhuodemao/js-reverse-mcp

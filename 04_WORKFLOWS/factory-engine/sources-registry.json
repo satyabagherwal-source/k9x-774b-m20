@@ -11299,5 +11299,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "silexlabs-silex": {
+    "name": "silexlabs/Silex",
+    "officialUrl": "https://github.com/silexlabs/Silex",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:39:17.916Z",
+    "lastVerified": "2026-09-30T20:39:17.916Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 46,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
