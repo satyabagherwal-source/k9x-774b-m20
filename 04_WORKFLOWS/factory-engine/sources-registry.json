@@ -3421,5 +3421,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openreplay-openreplay": {
+    "name": "openreplay/openreplay",
+    "officialUrl": "https://github.com/openreplay/openreplay",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:24:16.741Z",
+    "lastVerified": "2026-09-30T17:24:16.741Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
