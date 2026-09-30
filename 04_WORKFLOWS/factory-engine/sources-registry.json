@@ -4331,5 +4331,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "elrumordelaluz-reactour": {
+    "name": "elrumordelaluz/reactour",
+    "officialUrl": "https://github.com/elrumordelaluz/reactour",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:33:46.253Z",
+    "lastVerified": "2026-09-30T17:33:46.253Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
