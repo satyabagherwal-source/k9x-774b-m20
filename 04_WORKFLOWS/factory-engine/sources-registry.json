@@ -8387,5 +8387,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dataelement-bisheng": {
+    "name": "dataelement/bisheng",
+    "officialUrl": "https://github.com/dataelement/bisheng",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:48:10.629Z",
+    "lastVerified": "2026-09-30T18:48:10.629Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 61,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
