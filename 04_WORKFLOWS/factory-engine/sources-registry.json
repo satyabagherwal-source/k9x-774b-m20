@@ -3811,5 +3811,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-orcarouter-orcasaq-2-27b": {
+    "name": "orcarouter/OrcaSAQ-2-27B",
+    "officialUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:28:48.169Z",
+    "lastVerified": "2026-09-30T17:28:48.169Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
