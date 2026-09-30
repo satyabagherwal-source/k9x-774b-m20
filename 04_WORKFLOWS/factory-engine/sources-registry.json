@@ -10051,5 +10051,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tintinweb-pi-subagents": {
+    "name": "tintinweb/pi-subagents",
+    "officialUrl": "https://github.com/tintinweb/pi-subagents",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:58:42.450Z",
+    "lastVerified": "2026-09-30T19:58:42.450Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
