@@ -2472,5 +2472,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ant-design-pro-components": {
+    "name": "ant-design/pro-components",
+    "officialUrl": "https://github.com/ant-design/pro-components",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:13:24.196Z",
+    "lastVerified": "2026-09-30T17:13:24.196Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 56,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

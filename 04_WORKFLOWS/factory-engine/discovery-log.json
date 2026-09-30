@@ -1738,5 +1738,50 @@
     "qualityScore": 2600,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T17:12:58.586Z"
+  },
+  {
+    "name": "www-sacred",
+    "fullName": "internet-development/www-sacred",
+    "url": "https://github.com/internet-development/www-sacred",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "SRCL is an open-source React component and style repository that helps you build web applications, desktop applications, and static websites with terminal aesthetics.",
+    "stars": 1562,
+    "forks": 81,
+    "openIssues": 4,
+    "language": "TypeScript",
+    "qualityScore": 1063,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:13:00.096Z"
+  },
+  {
+    "name": "angular",
+    "fullName": "angular/angular",
+    "url": "https://github.com/angular/angular",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Deliver web apps with confidence 🚀",
+    "stars": 101029,
+    "forks": 29043,
+    "openIssues": 1136,
+    "language": "TypeScript",
+    "qualityScore": 59577,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:13:22.921Z"
+  },
+  {
+    "name": "hono",
+    "fullName": "honojs/hono",
+    "url": "https://github.com/honojs/hono",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Web framework built on Web Standards",
+    "stars": 32390,
+    "forks": 1361,
+    "openIssues": 413,
+    "language": "TypeScript",
+    "qualityScore": 16953,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:13:22.921Z"
   }
 ]
