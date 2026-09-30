@@ -3044,5 +3044,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cloakhq-cloakbrowser": {
+    "name": "CloakHQ/CloakBrowser",
+    "officialUrl": "https://github.com/CloakHQ/CloakBrowser",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:21:00.036Z",
+    "lastVerified": "2026-09-30T17:21:00.036Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 52,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
