@@ -10623,5 +10623,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agentconnect-md-agentconnect": {
+    "name": "agentconnect-md/agentconnect",
+    "officialUrl": "https://github.com/agentconnect-md/agentconnect",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:19:23.298Z",
+    "lastVerified": "2026-09-30T20:19:23.298Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
