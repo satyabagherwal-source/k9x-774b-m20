@@ -2560,3 +2560,11 @@ https://github.com/huangjunsen0406/py-xiaozhi
 https://github.com/neomjs/neo
 # [AI-AGENTS] taylorwilsdon/google_workspace_mcp (2389 score) - Control Gmail, Google Calendar, Docs, Sheets, Slides, Chat, Forms, Tasks, Search
 https://github.com/taylorwilsdon/google_workspace_mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:36:04.557Z] ---
+# [AI-AGENTS] samuelgursky/davinci-resolve-mcp (1999 score) - MCP server integration for DaVinci Resolve Studio
+https://github.com/samuelgursky/davinci-resolve-mcp
+# [AI-AGENTS] xpf0000/FlyEnv (2068 score) - Native local development environment for Windows, macOS & Linux. A modern altern
+https://github.com/xpf0000/FlyEnv
+# [AI-AGENTS] cortex-docs/cortex (1918 score) - Cortex - Generates interactive API documentation, typed SDKs, and MCP servers fr
+https://github.com/cortex-docs/cortex

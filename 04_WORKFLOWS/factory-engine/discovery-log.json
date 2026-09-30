@@ -11206,5 +11206,50 @@
     "qualityScore": 2389,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:34:43.043Z"
+  },
+  {
+    "name": "davinci-resolve-mcp",
+    "fullName": "samuelgursky/davinci-resolve-mcp",
+    "url": "https://github.com/samuelgursky/davinci-resolve-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "MCP server integration for DaVinci Resolve Studio",
+    "stars": 3259,
+    "forks": 384,
+    "openIssues": 2,
+    "language": "Python",
+    "qualityScore": 1999,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:36:04.518Z"
+  },
+  {
+    "name": "FlyEnv",
+    "fullName": "xpf0000/FlyEnv",
+    "url": "https://github.com/xpf0000/FlyEnv",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Native local development environment for Windows, macOS & Linux. A modern alternative to XAMPP, MAMP, Laragon and Laravel Herd, with runtimes, databases, web servers, local sites, HTTPS, AI coding tools and MCP.",
+    "stars": 3249,
+    "forks": 377,
+    "openIssues": 40,
+    "language": "TypeScript",
+    "qualityScore": 2068,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:36:04.518Z"
+  },
+  {
+    "name": "cortex",
+    "fullName": "cortex-docs/cortex",
+    "url": "https://github.com/cortex-docs/cortex",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Cortex - Generates interactive API documentation, typed SDKs, and MCP servers from OpenAPI, AsyncAPI, GraphQL, gRPC, OpenRPC, and Markdown.",
+    "stars": 3237,
+    "forks": 158,
+    "openIssues": 1,
+    "language": "TypeScript",
+    "qualityScore": 1918,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:36:04.518Z"
   }
 ]

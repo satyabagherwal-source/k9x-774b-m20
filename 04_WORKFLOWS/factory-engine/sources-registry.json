@@ -11221,5 +11221,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "samuelgursky-davinci-resolve-mcp": {
+    "name": "samuelgursky/davinci-resolve-mcp",
+    "officialUrl": "https://github.com/samuelgursky/davinci-resolve-mcp",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:36:27.734Z",
+    "lastVerified": "2026-09-30T20:36:27.734Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
