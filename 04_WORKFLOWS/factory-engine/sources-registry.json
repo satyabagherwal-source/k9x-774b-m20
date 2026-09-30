@@ -10987,5 +10987,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hungps-flutter_pokedex": {
+    "name": "hungps/flutter_pokedex",
+    "officialUrl": "https://github.com/hungps/flutter_pokedex",
+    "sourceType": "github",
+    "technology": "Dart",
+    "lastChecked": "2026-09-30T20:29:10.917Z",
+    "lastVerified": "2026-09-30T20:29:10.917Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
