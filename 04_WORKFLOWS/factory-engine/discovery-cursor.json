@@ -25,11 +25,11 @@
       "page": 1
     },
     "cybersecurity-defenses": {
-      "queryIndex": 4,
+      "queryIndex": 0,
       "page": 1
     },
     "database-storage-engines": {
-      "queryIndex": 4,
+      "queryIndex": 1,
       "page": 1
     }
   },
@@ -38,5 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 74,
-  "lastReplenishedAt": "2026-09-30T21:34:36.012Z"
+  "lastReplenishedAt": "2026-09-30T21:34:48.844Z"
 }

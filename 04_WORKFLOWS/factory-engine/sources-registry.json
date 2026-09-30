@@ -12391,5 +12391,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kosi-libs-kodein": {
+    "name": "kosi-libs/Kodein",
+    "officialUrl": "https://github.com/kosi-libs/Kodein",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:34:54.124Z",
+    "lastVerified": "2026-09-30T21:34:54.124Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
