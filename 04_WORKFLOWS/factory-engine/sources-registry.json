@@ -10181,5 +10181,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tinyhumansai-openhuman": {
+    "name": "tinyhumansai/openhuman",
+    "officialUrl": "https://github.com/tinyhumansai/openhuman",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:06:09.407Z",
+    "lastVerified": "2026-09-30T20:06:09.407Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
