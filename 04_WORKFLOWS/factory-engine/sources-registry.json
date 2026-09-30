@@ -10701,5 +10701,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "larlarua-autocve": {
+    "name": "larlarua/AutoCVE",
+    "officialUrl": "https://github.com/larlarua/AutoCVE",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:22:07.070Z",
+    "lastVerified": "2026-09-30T20:22:07.070Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
