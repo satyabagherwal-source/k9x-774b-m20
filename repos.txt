@@ -2488,3 +2488,7 @@ https://github.com/killercup/cargo-edit
 https://github.com/bahdotsh/wrkflw
 # [HIGH-PERF-SYSTEMS] agent-of-empires/agent-of-empires (2213 score) - Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy acc
 https://github.com/agent-of-empires/agent-of-empires
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:27:23.384Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] databricks/click (1108 score) - The "Command Line Interactive Controller for Kubernetes"
+https://github.com/databricks/click

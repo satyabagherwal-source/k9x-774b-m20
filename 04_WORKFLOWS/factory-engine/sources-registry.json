@@ -10857,5 +10857,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bahdotsh-wrkflw": {
+    "name": "bahdotsh/wrkflw",
+    "officialUrl": "https://github.com/bahdotsh/wrkflw",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:27:32.153Z",
+    "lastVerified": "2026-09-30T20:27:32.153Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 58,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

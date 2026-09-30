@@ -10816,5 +10816,20 @@
     "qualityScore": 2213,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:26:42.915Z"
+  },
+  {
+    "name": "click",
+    "fullName": "databricks/click",
+    "url": "https://github.com/databricks/click",
+    "type": "github",
+    "domain": "devops-cloud-infrastructure",
+    "description": "The \"Command Line Interactive Controller for Kubernetes\"",
+    "stars": 1508,
+    "forks": 92,
+    "openIssues": 38,
+    "language": "Rust",
+    "qualityScore": 1108,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:27:23.383Z"
   }
 ]
