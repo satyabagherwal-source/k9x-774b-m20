@@ -6138,5 +6138,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kubeshop-botkube": {
+    "name": "kubeshop/botkube",
+    "officialUrl": "https://github.com/kubeshop/botkube",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:17:30.392Z",
+    "lastVerified": "2026-09-30T18:17:30.392Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
