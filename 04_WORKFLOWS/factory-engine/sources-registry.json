@@ -5436,5 +5436,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "emcie-co-parlant": {
+    "name": "emcie-co/parlant",
+    "officialUrl": "https://github.com/emcie-co/parlant",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:45:35.012Z",
+    "lastVerified": "2026-09-30T17:45:35.012Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
