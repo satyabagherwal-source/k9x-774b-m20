@@ -7971,5 +7971,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kcl-lang-kcl": {
+    "name": "kcl-lang/kcl",
+    "officialUrl": "https://github.com/kcl-lang/kcl",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:38:30.200Z",
+    "lastVerified": "2026-09-30T18:38:30.200Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 64,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
