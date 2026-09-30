@@ -9986,5 +9986,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openai-openai-agents-js": {
+    "name": "openai/openai-agents-js",
+    "officialUrl": "https://github.com/openai/openai-agents-js",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:56:07.040Z",
+    "lastVerified": "2026-09-30T19:56:07.040Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 70,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
