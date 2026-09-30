@@ -11806,5 +11806,50 @@
     "qualityScore": 2419,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:58:46.871Z"
+  },
+  {
+    "name": "nano-graphrag",
+    "fullName": "gusye1234/nano-graphrag",
+    "url": "https://github.com/gusye1234/nano-graphrag",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A simple, easy-to-hack GraphRAG implementation",
+    "stars": 3990,
+    "forks": 429,
+    "openIssues": 84,
+    "language": "Python",
+    "qualityScore": 2542,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:01:10.132Z"
+  },
+  {
+    "name": "LazyLLM",
+    "fullName": "LazyAGI/LazyLLM",
+    "url": "https://github.com/LazyAGI/LazyLLM",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Easiest and laziest way for  building multi-agent LLMs applications.",
+    "stars": 3888,
+    "forks": 422,
+    "openIssues": 59,
+    "language": "Python",
+    "qualityScore": 2339,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:01:10.133Z"
+  },
+  {
+    "name": "SimpleMem",
+    "fullName": "aiming-lab/SimpleMem",
+    "url": "https://github.com/aiming-lab/SimpleMem",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "[ICML'26] SimpleMem: Efficient Lifelong Memory for LLM Agents — Text & Multimodal",
+    "stars": 3822,
+    "forks": 402,
+    "openIssues": 9,
+    "language": "Python",
+    "qualityScore": 2200,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:01:10.133Z"
   }
 ]

@@ -2668,3 +2668,11 @@ https://github.com/SylphAI-Inc/AdalFlow
 https://github.com/langroid/langroid
 # [AI-AGENTS] yifanfeng97/Hyper-Extract (2419 score) - Hypergraph is more powerful. Transform unstructured text into structured knowled
 https://github.com/yifanfeng97/Hyper-Extract
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:01:10.133Z] ---
+# [AI-AGENTS] gusye1234/nano-graphrag (2542 score) - A simple, easy-to-hack GraphRAG implementation
+https://github.com/gusye1234/nano-graphrag
+# [AI-AGENTS] LazyAGI/LazyLLM (2339 score) - Easiest and laziest way for  building multi-agent LLMs applications.
+https://github.com/LazyAGI/LazyLLM
+# [AI-AGENTS] aiming-lab/SimpleMem (2200 score) - [ICML'26] SimpleMem: Efficient Lifelong Memory for LLM Agents — Text & Multimoda
+https://github.com/aiming-lab/SimpleMem

@@ -11741,5 +11741,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gusye1234-nano-graphrag": {
+    "name": "gusye1234/nano-graphrag",
+    "officialUrl": "https://github.com/gusye1234/nano-graphrag",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:01:29.278Z",
+    "lastVerified": "2026-09-30T21:01:29.278Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
