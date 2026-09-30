@@ -11611,5 +11611,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kotest-kotest": {
+    "name": "kotest/kotest",
+    "officialUrl": "https://github.com/kotest/kotest",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T20:51:25.748Z",
+    "lastVerified": "2026-09-30T20:51:25.748Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
