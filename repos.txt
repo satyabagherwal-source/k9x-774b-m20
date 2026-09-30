@@ -756,3 +756,95 @@ https://github.com/goharbor/harbor
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T13:54:57.239Z] ---
 # [CYBERSECURITY-DEFENSES] zama-ai/tfhe-rs (1293 score) - TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer A
 https://github.com/zama-ai/tfhe-rs
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:12:53.028Z] ---
+# [AI-AGENTS] langchain-ai/langgraph (24873 score [VERIFIED ORG]) - Build resilient agents.
+https://github.com/langchain-ai/langgraph
+# [AI-AGENTS] agno-agi/agno (23472 score) - Build, run, and manage agent platforms.
+https://github.com/agno-agi/agno
+# [AI-AGENTS] HKUDS/DeepTutor (22273 score) - DeepTutor: Lifelong Personalized Tutoring. https://deeptutor.info/.
+https://github.com/HKUDS/DeepTutor
+# [FULLSTACK-UI] chakra-ui/zag (2899 score) - Build your design system in React, Solid, Vue, Svelte or Vanilla. Powered by fin
+https://github.com/chakra-ui/zag
+# [FULLSTACK-UI] searchkit/searchkit (2919 score) - React + Vue Search UI for Elasticsearch & Opensearch. Compatible with Algolia's 
+https://github.com/searchkit/searchkit
+# [FULLSTACK-UI] ant-design/pro-components (3301 score) - 🏆 Use Ant Design like a Pro!
+https://github.com/ant-design/pro-components
+# [HIGH-PERF-SYSTEMS] fallow-rs/fallow (2803 score) - Codebase intelligence for TypeScript and JavaScript. Health, complexity hotspots
+https://github.com/fallow-rs/fallow
+# [HIGH-PERF-SYSTEMS] sayanarijit/xplr (2722 score) - A hackable, minimal, fast TUI file explorer
+https://github.com/sayanarijit/xplr
+# [HIGH-PERF-SYSTEMS] flox/flox (2564 score) - The Deterministic Foundation for your SDLC
+https://github.com/flox/flox
+# [HUGGINGFACE-AI-MODELS] moonshotai/Kimi-K3 (117540 score) - Verified Hugging Face Model: moonshotai/Kimi-K3 (11554 likes, 1302723 downloads)
+https://huggingface.co/moonshotai/Kimi-K3
+# [HUGGINGFACE-AI-MODELS] stabilityai/stable-diffusion-xl-base-1.0 (84560 score) - Verified Hugging Face Model: stabilityai/stable-diffusion-xl-base-1.0 (8256 like
+https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0
+# [HUGGINGFACE-AI-MODELS] meta-llama/Llama-3.1-8B-Instruct (82950 score) - Verified Hugging Face Model: meta-llama/Llama-3.1-8B-Instruct (8095 likes, 61924
+https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct
+# [MOBILE-CROSS-PLATFORM] react-native-elements/react-native-elements (14787 score) - Cross-Platform React Native UI Toolkit
+https://github.com/react-native-elements/react-native-elements
+# [MOBILE-CROSS-PLATFORM] react-navigation/react-navigation (13996 score) - Routing and navigation for React Native and Web apps
+https://github.com/react-navigation/react-navigation
+# [MOBILE-CROSS-PLATFORM] pubkey/rxdb (12341 score) - The local-first database that runs on every JS runtime and replicates with your 
+https://github.com/pubkey/rxdb
+# [DEVOPS-CLOUD-INFRASTRUCTURE] go-kratos/kratos (14680 score) - Your ultimate Go microservices framework for the cloud-native era.
+https://github.com/go-kratos/kratos
+# [DEVOPS-CLOUD-INFRASTRUCTURE] nats-io/nats-server (11351 score) - High-Performance server for NATS.io, the cloud and edge native messaging system.
+https://github.com/nats-io/nats-server
+# [DEVOPS-CLOUD-INFRASTRUCTURE] kubesphere/kubesphere (9807 score) - The container platform tailored for Kubernetes multi-cloud, datacenter, and edge
+https://github.com/kubesphere/kubesphere
+# [DATABASE-STORAGE-ENGINES] oceanbase/oceanbase (6174 score) - OceanBase is the unified distributed database for the AI era — open-source, mult
+https://github.com/oceanbase/oceanbase
+# [DATABASE-STORAGE-ENGINES] databendlabs/databend (5348 score) - Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — 
+https://github.com/databendlabs/databend
+# [DATABASE-STORAGE-ENGINES] paradedb/paradedb (5249 score) - One Postgres for your application data, full-text search, vector retrieval, and 
+https://github.com/paradedb/paradedb
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:12:54.963Z] ---
+# [HUGGINGFACE-AI-MODELS] XingChen-AGI/TeleOCR (12040 score) - Verified Hugging Face Model: XingChen-AGI/TeleOCR (1004 likes, 30383 downloads)
+https://huggingface.co/XingChen-AGI/TeleOCR
+# [HUGGINGFACE-AI-MODELS] Qwen/Qwen-Image-2.1 (29020 score) - Verified Hugging Face Model: Qwen/Qwen-Image-2.1 (2702 likes, 70687 downloads)
+https://huggingface.co/Qwen/Qwen-Image-2.1
+# [HUGGINGFACE-AI-MODELS] Contrastive-LM/CLM-v0.1-8B (7560 score) - Verified Hugging Face Model: Contrastive-LM/CLM-v0.1-8B (556 likes, 2392 downloa
+https://huggingface.co/Contrastive-LM/CLM-v0.1-8B
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:12:55.375Z] ---
+# [HIGH-PERF-SYSTEMS] tach-org/tach (1788 score) - A Python tool to visualize + enforce dependencies, using modular architecture 🌎
+https://github.com/tach-org/tach
+# [HIGH-PERF-SYSTEMS] Kuddev/pebrel (1795 score) - AI-native, GPU-accelerated terminal emulator for Windows with SSH, persistent se
+https://github.com/Kuddev/pebrel
+# [HIGH-PERF-SYSTEMS] zeronsh/zeron (1673 score) - A native control plane for Claude Code, Codex, Cursor, Devin and other coding ag
+https://github.com/zeronsh/zeron
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:12:55.628Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] loft-sh/vcluster (6296 score) - vCluster creates tenant clusters: fully isolated environments delivered as manag
+https://github.com/loft-sh/vcluster
+# [DEVOPS-CLOUD-INFRASTRUCTURE] siderolabs/talos (6255 score) - Talos Linux is a modern Linux distribution built for Kubernetes.
+https://github.com/siderolabs/talos
+# [DEVOPS-CLOUD-INFRASTRUCTURE] moby/buildkit (5958 score) - concurrent, cache-efficient, and Dockerfile-agnostic builder toolkit
+https://github.com/moby/buildkit
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:12:55.651Z] ---
+# [MOBILE-CROSS-PLATFORM] infinitered/reactotron (8538 score) - A desktop app for inspecting your React JS and React Native projects. macOS, Lin
+https://github.com/infinitered/reactotron
+# [MOBILE-CROSS-PLATFORM] feathersjs/feathers (8220 score) - The API and real-time application framework
+https://github.com/feathersjs/feathers
+# [MOBILE-CROSS-PLATFORM] streetwriters/notesnook (8106 score) - A fully open source & end-to-end encrypted note taking alternative to Evernote.
+https://github.com/streetwriters/notesnook
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:12:56.365Z] ---
+# [AI-AGENTS] agentscope-ai/QwenPaw (19087 score) - Your Personal AI Assistant; easy to install, deploy on your own machine or on th
+https://github.com/agentscope-ai/QwenPaw
+# [AI-AGENTS] mukul975/Anthropic-Cybersecurity-Skills (18379 score) - 817 structured cybersecurity skills for AI agents · Mapped to 6 frameworks: MITR
+https://github.com/mukul975/Anthropic-Cybersecurity-Skills
+# [AI-AGENTS] virgiliojr94/book-to-skill (17894 score) - Turn any technical book PDF into a Claude Code skill — ready to study, reference
+https://github.com/virgiliojr94/book-to-skill
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:12:58.587Z] ---
+# [DATABASE-STORAGE-ENGINES] volcengine/MineContext (3241 score) - MineContext is your proactive context-aware AI partner（Context-Engineering+ChatG
+https://github.com/volcengine/MineContext
+# [DATABASE-STORAGE-ENGINES] infiniflow/infinity (2850 score) - The AI-native database built for LLM applications, providing incredibly fast hyb
+https://github.com/infiniflow/infinity
+# [DATABASE-STORAGE-ENGINES] CaviraOSS/LongMemory (2600 score) - Local persistent memory store for LLM applications including claude desktop, git
+https://github.com/CaviraOSS/LongMemory

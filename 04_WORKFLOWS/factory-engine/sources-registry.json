@@ -2446,5 +2446,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agno-agi-agno": {
+    "name": "agno-agi/agno",
+    "officialUrl": "https://github.com/agno-agi/agno",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:13:20.186Z",
+    "lastVerified": "2026-09-30T17:13:20.186Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 75,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
