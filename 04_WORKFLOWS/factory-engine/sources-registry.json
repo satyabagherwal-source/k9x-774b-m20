@@ -1978,5 +1978,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "emberstack-kubernetes-reflector": {
+    "name": "emberstack/kubernetes-reflector",
+    "officialUrl": "https://github.com/emberstack/kubernetes-reflector",
+    "sourceType": "github",
+    "technology": "C#",
+    "lastChecked": "2026-09-30T14:00:04.235Z",
+    "lastVerified": "2026-09-30T14:00:04.235Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
