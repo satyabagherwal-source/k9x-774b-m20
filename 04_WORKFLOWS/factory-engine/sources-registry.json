@@ -9609,5 +9609,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "devlikeapro-waha": {
+    "name": "devlikeapro/waha",
+    "officialUrl": "https://github.com/devlikeapro/waha",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:41:20.151Z",
+    "lastVerified": "2026-09-30T19:41:20.151Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
