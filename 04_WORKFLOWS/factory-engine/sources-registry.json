@@ -10103,5 +10103,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dair-ai-prompt-engineering-guide": {
+    "name": "dair-ai/Prompt-Engineering-Guide",
+    "officialUrl": "https://github.com/dair-ai/Prompt-Engineering-Guide",
+    "sourceType": "github",
+    "technology": "MDX",
+    "lastChecked": "2026-09-30T20:03:17.372Z",
+    "lastVerified": "2026-09-30T20:03:17.372Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
