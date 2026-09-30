@@ -8010,5 +8010,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xinthink-react-native-material-kit": {
+    "name": "xinthink/react-native-material-kit",
+    "officialUrl": "https://github.com/xinthink/react-native-material-kit",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:38:57.560Z",
+    "lastVerified": "2026-09-30T18:38:57.560Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
