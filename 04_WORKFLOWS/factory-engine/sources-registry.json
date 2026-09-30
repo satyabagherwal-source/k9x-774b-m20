@@ -8816,5 +8816,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "modelengine-group-nexent": {
+    "name": "ModelEngine-Group/nexent",
+    "officialUrl": "https://github.com/ModelEngine-Group/nexent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:15:50.696Z",
+    "lastVerified": "2026-09-30T19:15:50.696Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 59,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
