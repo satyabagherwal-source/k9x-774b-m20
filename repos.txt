@@ -1530,3 +1530,49 @@ https://github.com/cloudscape-design/components
 https://github.com/franken-ui/ui
 # [FULLSTACK-UI] reshaped-ui/reshaped (1337 score) - Reshaped provides accessible React and Figma components for building beautiful p
 https://github.com/reshaped-ui/reshaped
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:04:53.185Z] ---
+# [HIGH-PERF-SYSTEMS] webrtc-rs/webrtc (2999 score) - Async-friendly WebRTC implementation in Rust
+https://github.com/webrtc-rs/webrtc
+# [HIGH-PERF-SYSTEMS] smol-rs/smol (2798 score) - A small and fast async runtime for Rust
+https://github.com/smol-rs/smol
+# [HIGH-PERF-SYSTEMS] tokio-rs/console (2704 score) - a debugger for async rust!
+https://github.com/tokio-rs/console
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:04:59.168Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] clastix/kamaji (1399 score) - Kamaji is the Hosted Control Plane Manager for Kubernetes.
+https://github.com/clastix/kamaji
+# [DEVOPS-CLOUD-INFRASTRUCTURE] nitrictech/nitric (1285 score) - Nitric is a multi-language framework for cloud applications with infrastructure 
+https://github.com/nitrictech/nitric
+# [DEVOPS-CLOUD-INFRASTRUCTURE] vinceanalytics/vince (1222 score) - Self Hosted Alternative To Google Analytics
+https://github.com/vinceanalytics/vince
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:04:59.260Z] ---
+# [AI-AGENTS] triggerdotdev/trigger.dev (9015 score) - Trigger.dev – build and deploy durable AI agents and workflows
+https://github.com/triggerdotdev/trigger.dev
+# [AI-AGENTS] HBAI-Ltd/Toonflow-app (9271 score) - Toonflow 是开源 AI 创作平台，融合无限画布、AI Agent 与可视化工作流，支持图像生成、视频生成、智能分镜及短剧创作。支持本地部署、自由接入模型
+https://github.com/HBAI-Ltd/Toonflow-app
+# [AI-AGENTS] ag-ui-protocol/ag-ui (8959 score) - AG-UI: the Agent-User Interaction Protocol. Bring Agents into Frontend Applicati
+https://github.com/ag-ui-protocol/ag-ui
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:04:59.484Z] ---
+# [MOBILE-CROSS-PLATFORM] software-mansion/react-native-gesture-handler (4027 score) - Declarative API exposing platform native touch and gesture system to React Nativ
+https://github.com/software-mansion/react-native-gesture-handler
+# [MOBILE-CROSS-PLATFORM] react-native-device-info/react-native-device-info (4080 score) - Device Information for React Native iOS and Android
+https://github.com/react-native-device-info/react-native-device-info
+# [MOBILE-CROSS-PLATFORM] ivpusic/react-native-image-crop-picker (4108 score) - iOS/Android image picker with support for camera, video, configurable compressio
+https://github.com/ivpusic/react-native-image-crop-picker
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:05:04.038Z] ---
+# [DATABASE-STORAGE-ENGINES] gluesql/gluesql (2100 score) - GlueSQL is quite sticky. It sticks to anything.
+https://github.com/gluesql/gluesql
+# [DATABASE-STORAGE-ENGINES] orbitinghail/sqlsync (1674 score) - SQLSync is a collaborative offline-first wrapper around SQLite. It is designed t
+https://github.com/orbitinghail/sqlsync
+# [DATABASE-STORAGE-ENGINES] skytable/skytable (1656 score) - Skytable is a modern scalable NoSQL database with BlueQL, designed for performan
+https://github.com/skytable/skytable
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:05:45.696Z] ---
+# [FULLSTACK-UI] lobehub/lobe-ui (1472 score) - 🍭  Lobe UI - an open-source UI component library for building AIGC web apps
+https://github.com/lobehub/lobe-ui
+# [FULLSTACK-UI] bergside/typeui (1195 score) - Build better UI with AI
+https://github.com/bergside/typeui
