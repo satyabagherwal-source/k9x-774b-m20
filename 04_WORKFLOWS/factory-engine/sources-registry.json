@@ -6788,5 +6788,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "htmlstreamofficial-preline": {
+    "name": "htmlstreamofficial/preline",
+    "officialUrl": "https://github.com/htmlstreamofficial/preline",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:21:53.999Z",
+    "lastVerified": "2026-09-30T18:21:53.999Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
