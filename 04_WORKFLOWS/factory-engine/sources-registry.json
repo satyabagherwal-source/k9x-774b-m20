@@ -1939,5 +1939,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jaredpalmer-formik": {
+    "name": "jaredpalmer/formik",
+    "officialUrl": "https://github.com/jaredpalmer/formik",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T13:58:30.842Z",
+    "lastVerified": "2026-09-30T13:58:30.842Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
