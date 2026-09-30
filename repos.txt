@@ -2258,3 +2258,11 @@ https://github.com/JerBouma/FinanceToolkit
 https://github.com/vitali87/code-graph-rag
 # [AI-AGENTS] TabularisDB/tabularis (3088 score) - Open-source desktop SQL workspace with 3 built-in database drivers and 16 shippe
 https://github.com/TabularisDB/tabularis
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:47:27.318Z] ---
+# [AI-AGENTS] exa-labs/exa-mcp-server (3001 score) - Exa MCP for web search and web crawling!
+https://github.com/exa-labs/exa-mcp-server
+# [AI-AGENTS] clidey/whodb (2805 score) - Where data access meets operational intelligence
+https://github.com/clidey/whodb
+# [AI-AGENTS] atilaahmettaner/tradingview-mcp (3019 score) - TradingView MCP server — real-time market data, technical analysis, screeners & 
+https://github.com/atilaahmettaner/tradingview-mcp

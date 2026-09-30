@@ -9541,5 +9541,50 @@
     "qualityScore": 3088,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:45:57.477Z"
+  },
+  {
+    "name": "exa-mcp-server",
+    "fullName": "exa-labs/exa-mcp-server",
+    "url": "https://github.com/exa-labs/exa-mcp-server",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Exa MCP for web search and web crawling!",
+    "stars": 5065,
+    "forks": 401,
+    "openIssues": 49,
+    "language": "TypeScript",
+    "qualityScore": 3001,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:47:27.317Z"
+  },
+  {
+    "name": "whodb",
+    "fullName": "clidey/whodb",
+    "url": "https://github.com/clidey/whodb",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Where data access meets operational intelligence",
+    "stars": 5033,
+    "forks": 242,
+    "openIssues": 33,
+    "language": "Go",
+    "qualityScore": 2805,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:47:27.317Z"
+  },
+  {
+    "name": "tradingview-mcp",
+    "fullName": "atilaahmettaner/tradingview-mcp",
+    "url": "https://github.com/atilaahmettaner/tradingview-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "TradingView MCP server — real-time market data, technical analysis, screeners & backtesting for Claude, ChatGPT, Cursor & any MCP client. Stocks, crypto, forex & futures across global exchanges. Hosted or self-host.",
+    "stars": 4880,
+    "forks": 982,
+    "openIssues": 17,
+    "language": "Python",
+    "qualityScore": 3019,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:47:27.317Z"
   }
 ]
