@@ -2130,3 +2130,11 @@ https://github.com/marlbenchmark/on-policy
 https://github.com/Lumiwealth/lumibot
 # [AI-AGENTS] showlab/Code2Video (1386 score) - [ICML 2026] Video generation via code
 https://github.com/showlab/Code2Video
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:24:11.414Z] ---
+# [AI-AGENTS] the-open-engine/zeroshot (1267 score) - Independent executor–verifier orchestration for software changes.
+https://github.com/the-open-engine/zeroshot
+# [AI-AGENTS] trpc-group/trpc-agent-go (1464 score) - A Go framework for building production agent systems with graph workflows, tools
+https://github.com/trpc-group/trpc-agent-go
+# [AI-AGENTS] geek-ai/MAgent (1292 score) - A Platform for Many-Agent Reinforcement Learning
+https://github.com/geek-ai/MAgent

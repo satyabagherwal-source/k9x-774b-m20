@@ -9154,5 +9154,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "the-open-engine-zeroshot": {
+    "name": "the-open-engine/zeroshot",
+    "officialUrl": "https://github.com/the-open-engine/zeroshot",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T19:24:36.899Z",
+    "lastVerified": "2026-09-30T19:24:36.899Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 53,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

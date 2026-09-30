@@ -8821,5 +8821,50 @@
     "qualityScore": 1386,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:22:45.077Z"
+  },
+  {
+    "name": "zeroshot",
+    "fullName": "the-open-engine/zeroshot",
+    "url": "https://github.com/the-open-engine/zeroshot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Independent executor–verifier orchestration for software changes.",
+    "stars": 1915,
+    "forks": 179,
+    "openIssues": 3,
+    "language": "Rust",
+    "qualityScore": 1267,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:24:11.413Z"
+  },
+  {
+    "name": "trpc-agent-go",
+    "fullName": "trpc-group/trpc-agent-go",
+    "url": "https://github.com/trpc-group/trpc-agent-go",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A Go framework for building production agent systems with graph workflows, tools, memory, A2A, AG-UI, MCP, evaluation, and observability.",
+    "stars": 1835,
+    "forks": 321,
+    "openIssues": 141,
+    "language": "Go",
+    "qualityScore": 1464,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:24:11.413Z"
+  },
+  {
+    "name": "MAgent",
+    "fullName": "geek-ai/MAgent",
+    "url": "https://github.com/geek-ai/MAgent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A Platform for Many-Agent Reinforcement Learning",
+    "stars": 1761,
+    "forks": 333,
+    "openIssues": 31,
+    "language": "Python",
+    "qualityScore": 1292,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:24:11.413Z"
   }
 ]
