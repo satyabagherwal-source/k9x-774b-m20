@@ -11039,5 +11039,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "linkerd-linkerd2": {
+    "name": "linkerd/linkerd2",
+    "officialUrl": "https://github.com/linkerd/linkerd2",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T20:29:38.787Z",
+    "lastVerified": "2026-09-30T20:29:38.787Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
