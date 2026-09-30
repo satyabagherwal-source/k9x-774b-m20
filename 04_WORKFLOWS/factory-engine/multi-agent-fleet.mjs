@@ -3,6 +3,7 @@ import path from 'path';
 import { fork } from 'child_process';
 import { fileURLToPath } from 'url';
 import { DISCOVERY_DOMAINS } from './auto-discovery-scout.mjs';
+import { pushWithRebaseRetry } from './concurrency-coordinator.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -309,6 +310,13 @@ export async function runMultiAgentFleet(options = {}) {
     console.log(`   - ${agent.id} [${agent.domain}]: ${statusText}`);
   });
   console.log(`======================================================================\n`);
+
+  // Synchronize Master Brain with atomic rebase retry
+  try {
+    await pushWithRebaseRetry('feat(fleet): 8-agent parallel fleet synchronized state [skip ci]', 5, BRAIN_ROOT);
+  } catch (err) {
+    console.warn(`[FLEET SYNC WARNING] ${err.message}`);
+  }
 }
 
 // CLI Execution Entry Point

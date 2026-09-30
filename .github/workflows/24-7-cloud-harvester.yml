@@ -19,14 +19,14 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout AI-Builder-Brain
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 1
+          fetch-depth: 0
 
       - name: Setup Node.js Runtime
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '22'
 
       - name: Configure Git Identity
         run: |
@@ -75,11 +75,16 @@ jobs:
 
       - name: Commit & Push Harvested Multi-Agent Intelligence to GitHub
         run: |
-          git pull --rebase origin main
           git add .
           if git diff --staged --quiet; then
-            echo "No new intelligence to commit from Multi-Agent Fleet."
+            echo "Working tree is clean. Multi-Agent Fleet intelligence is fully synced."
           else
             git commit -m "feat(fleet): 8-agent parallel fleet harvested multi-domain learnings [skip ci]"
-            git push origin main
+            for i in {1..5}; do
+              git push origin main && break || {
+                echo "Concurrent push detected. Rebasing and retrying ($i/5)..."
+                sleep $((1 + RANDOM % 3))
+                git pull --rebase origin main
+              }
+            done
           fi
