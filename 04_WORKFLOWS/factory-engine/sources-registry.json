@@ -4734,5 +4734,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "parthsarthi03-raptor": {
+    "name": "parthsarthi03/raptor",
+    "officialUrl": "https://github.com/parthsarthi03/raptor",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:37:59.187Z",
+    "lastVerified": "2026-09-30T17:37:59.187Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
