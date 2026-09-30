@@ -5293,5 +5293,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "risingwavelabs-risingwave": {
+    "name": "risingwavelabs/risingwave",
+    "officialUrl": "https://github.com/risingwavelabs/risingwave",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:43:43.073Z",
+    "lastVerified": "2026-09-30T17:43:43.073Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
