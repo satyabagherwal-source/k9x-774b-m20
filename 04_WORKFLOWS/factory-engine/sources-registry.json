@@ -10389,5 +10389,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-autogen": {
+    "name": "microsoft/autogen",
+    "officialUrl": "https://github.com/microsoft/autogen",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:15:58.508Z",
+    "lastVerified": "2026-09-30T20:15:58.508Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
