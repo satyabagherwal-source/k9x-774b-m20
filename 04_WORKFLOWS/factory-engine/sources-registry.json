@@ -4552,5 +4552,18 @@
     "closedIssuesCount": 4,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nasiko-labs-nasiko": {
+    "name": "Nasiko-Labs/nasiko",
+    "officialUrl": "https://github.com/Nasiko-Labs/nasiko",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:35:46.239Z",
+    "lastVerified": "2026-09-30T17:35:46.239Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
