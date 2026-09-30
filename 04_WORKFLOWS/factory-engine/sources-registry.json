@@ -3863,5 +3863,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lioensky-vcptoolbox": {
+    "name": "lioensky/VCPToolBox",
+    "officialUrl": "https://github.com/lioensky/VCPToolBox",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:29:15.350Z",
+    "lastVerified": "2026-09-30T17:29:15.350Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
