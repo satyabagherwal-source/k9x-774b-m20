@@ -6398,5 +6398,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ptomasroos-react-native-scrollable-tab-view": {
+    "name": "ptomasroos/react-native-scrollable-tab-view",
+    "officialUrl": "https://github.com/ptomasroos/react-native-scrollable-tab-view",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T18:18:34.543Z",
+    "lastVerified": "2026-09-30T18:18:34.543Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
