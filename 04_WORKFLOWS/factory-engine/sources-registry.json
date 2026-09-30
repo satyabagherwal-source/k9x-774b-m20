@@ -9050,5 +9050,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "moorcheh-ai-memanto": {
+    "name": "moorcheh-ai/memanto",
+    "officialUrl": "https://github.com/moorcheh-ai/memanto",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:20:52.087Z",
+    "lastVerified": "2026-09-30T19:20:52.087Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
