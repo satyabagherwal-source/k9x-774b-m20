@@ -4513,5 +4513,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "taubyte-tau": {
+    "name": "taubyte/tau",
+    "officialUrl": "https://github.com/taubyte/tau",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:35:23.291Z",
+    "lastVerified": "2026-09-30T17:35:23.291Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
