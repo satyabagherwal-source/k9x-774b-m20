@@ -5631,5 +5631,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rowboatlabs-rowboat": {
+    "name": "rowboatlabs/rowboat",
+    "officialUrl": "https://github.com/rowboatlabs/rowboat",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:48:11.176Z",
+    "lastVerified": "2026-09-30T17:48:11.176Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
