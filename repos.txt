@@ -2162,3 +2162,11 @@ https://github.com/modelscope/FunASR
 https://github.com/Evil0ctal/Douyin_TikTok_Download_API
 # [AI-AGENTS] nukeop/nuclear (9943 score) - Streaming music player that finds free music for you
 https://github.com/nukeop/nuclear
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:30:54.451Z] ---
+# [AI-AGENTS] microsoft/mcp-for-beginners (11677 score [VERIFIED ORG]) - This open-source curriculum introduces the fundamentals of Model Context Protoco
+https://github.com/microsoft/mcp-for-beginners
+# [AI-AGENTS] wanshuiyin/Auto-claude-code-research-in-sleep (9244 score) - ARIS ⚔️ (Auto-Research-In-Sleep) — Lightweight Markdown-only skills for autonomo
+https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep
+# [AI-AGENTS] xpzouying/xiaohongshu-mcp (9091 score) - MCP for xiaohongshu.com
+https://github.com/xpzouying/xiaohongshu-mcp

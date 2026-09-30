@@ -9001,5 +9001,50 @@
     "qualityScore": 9943,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:29:33.547Z"
+  },
+  {
+    "name": "mcp-for-beginners",
+    "fullName": "microsoft/mcp-for-beginners",
+    "url": "https://github.com/microsoft/mcp-for-beginners",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "This open-source curriculum introduces the fundamentals of Model Context Protocol (MCP) through real-world, cross-language examples in .NET, Java, TypeScript, JavaScript, Rust and Python. Designed for developers, it focuses on practical techniques for building modular, scalable, and secure AI workflows from session setup to service orchestration.",
+    "stars": 17368,
+    "forks": 5631,
+    "openIssues": 27,
+    "language": "Jupyter Notebook",
+    "qualityScore": 11677,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-09-30T19:30:54.449Z"
+  },
+  {
+    "name": "Auto-claude-code-research-in-sleep",
+    "fullName": "wanshuiyin/Auto-claude-code-research-in-sleep",
+    "url": "https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "ARIS ⚔️ (Auto-Research-In-Sleep) — Lightweight Markdown-only skills for autonomous ML research: cross-model review loops, idea discovery, and experiment automation. No framework, no lock-in — works with Claude Code, Codex, OpenClaw, or any LLM agent.",
+    "stars": 16857,
+    "forks": 1425,
+    "openIssues": 69,
+    "language": "Python",
+    "qualityScore": 9244,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:30:54.451Z"
+  },
+  {
+    "name": "xiaohongshu-mcp",
+    "fullName": "xpzouying/xiaohongshu-mcp",
+    "url": "https://github.com/xpzouying/xiaohongshu-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "MCP for xiaohongshu.com",
+    "stars": 16065,
+    "forks": 2360,
+    "openIssues": 103,
+    "language": "Go",
+    "qualityScore": 9091,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:30:54.451Z"
   }
 ]

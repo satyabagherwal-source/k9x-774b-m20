@@ -9310,5 +9310,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-mcp-for-beginners": {
+    "name": "microsoft/mcp-for-beginners",
+    "officialUrl": "https://github.com/microsoft/mcp-for-beginners",
+    "sourceType": "github",
+    "technology": "Jupyter Notebook",
+    "lastChecked": "2026-09-30T19:31:25.277Z",
+    "lastVerified": "2026-09-30T19:31:25.277Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
