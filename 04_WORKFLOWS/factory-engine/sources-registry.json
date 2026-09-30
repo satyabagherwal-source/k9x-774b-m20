@@ -5579,5 +5579,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "helixdb-helix-db": {
+    "name": "HelixDB/helix-db",
+    "officialUrl": "https://github.com/HelixDB/helix-db",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:47:16.908Z",
+    "lastVerified": "2026-09-30T17:47:16.908Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
