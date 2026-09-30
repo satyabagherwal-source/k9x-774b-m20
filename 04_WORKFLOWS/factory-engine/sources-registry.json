@@ -8179,5 +8179,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "silasmarvin-lsp-ai": {
+    "name": "SilasMarvin/lsp-ai",
+    "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:42:03.093Z",
+    "lastVerified": "2026-09-30T18:42:03.093Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 22,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
