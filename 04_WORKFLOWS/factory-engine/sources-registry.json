@@ -3356,5 +3356,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alexellis-k3sup": {
+    "name": "alexellis/k3sup",
+    "officialUrl": "https://github.com/alexellis/k3sup",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:23:53.853Z",
+    "lastVerified": "2026-09-30T17:23:53.853Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
