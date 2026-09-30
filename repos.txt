@@ -1394,3 +1394,43 @@ https://github.com/MaterializeInc/materialize
 https://github.com/HelixDB/helix-db
 # [DATABASE-STORAGE-ENGINES] trailbaseio/trailbase (3197 score) - An open, sub-millisecond, single-executable Firebase alternative with type-safe 
 https://github.com/trailbaseio/trailbase
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:47:46.361Z] ---
+# [AI-AGENTS] RightNow-AI/openfang (10242 score) - Open-source Agent Operating System
+https://github.com/RightNow-AI/openfang
+# [AI-AGENTS] rowboatlabs/rowboat (9983 score) - AI coworker with memory and collaboration
+https://github.com/rowboatlabs/rowboat
+# [AI-AGENTS] hypit-ai/hypit (9807 score) - Clone any viral video with AI agents. Not just a script, the whole workflow: swa
+https://github.com/hypit-ai/hypit
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:47:46.646Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] argoproj/argo-events (2050 score) - Event-driven Automation Framework for Kubernetes
+https://github.com/argoproj/argo-events
+# [DEVOPS-CLOUD-INFRASTRUCTURE] krakend/krakend-ce (1819 score) - KrakenD Community Edition: High-performance, stateless, declarative, API Gateway
+https://github.com/krakend/krakend-ce
+# [DEVOPS-CLOUD-INFRASTRUCTURE] apptainer/singularity (1690 score) - Singularity has been renamed to Apptainer as part of us moving the project to th
+https://github.com/apptainer/singularity
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:47:46.710Z] ---
+# [MOBILE-CROSS-PLATFORM] Shopify/react-native-skia (4953 score) - High-performance React Native Graphics using Skia
+https://github.com/Shopify/react-native-skia
+# [MOBILE-CROSS-PLATFORM] margelo/react-native-mmkv (4548 score) - ⚡️ The fastest key/value storage for React Native. ~30x faster than AsyncStorage
+https://github.com/margelo/react-native-mmkv
+# [MOBILE-CROSS-PLATFORM] DylanVann/react-native-fast-image (5012 score) - Performant React Native image component.
+https://github.com/DylanVann/react-native-fast-image
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:47:53.080Z] ---
+# [FULLSTACK-UI] primer/react (2523 score) - An implementation of GitHub's Primer Design System using React
+https://github.com/primer/react
+# [FULLSTACK-UI] React95/React95 (2216 score) - A React components library with Win95 UI
+https://github.com/React95/React95
+# [FULLSTACK-UI] heroui-inc/heroui-native (2156 score) - 📱Beautiful, fast and modern React Native UI library
+https://github.com/heroui-inc/heroui-native
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:47:53.414Z] ---
+# [DATABASE-STORAGE-ENGINES] malisper/pgrust (2966 score) - Postgres rewritten in Rust, now faster than Postgres and Clickhouse
+https://github.com/malisper/pgrust
+# [DATABASE-STORAGE-ENGINES] typedb/typedb (2801 score) - TypeDB: Built for systems, not records
+https://github.com/typedb/typedb
+# [DATABASE-STORAGE-ENGINES] Qovery/Replibyte (2699 score) - Seed your development database with real data ⚡️
+https://github.com/Qovery/Replibyte

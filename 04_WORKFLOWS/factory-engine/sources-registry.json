@@ -5605,5 +5605,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hypit-ai-hypit": {
+    "name": "hypit-ai/hypit",
+    "officialUrl": "https://github.com/hypit-ai/hypit",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:48:08.367Z",
+    "lastVerified": "2026-09-30T17:48:08.367Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
