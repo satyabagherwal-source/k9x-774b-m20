@@ -11286,5 +11286,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "blazickjp-arxiv-mcp-server": {
+    "name": "blazickjp/arxiv-mcp-server",
+    "officialUrl": "https://github.com/blazickjp/arxiv-mcp-server",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:38:15.498Z",
+    "lastVerified": "2026-09-30T20:38:15.498Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 64,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
