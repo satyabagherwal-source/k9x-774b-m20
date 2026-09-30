@@ -11676,5 +11676,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vectifyai-openkb": {
+    "name": "VectifyAI/OpenKB",
+    "officialUrl": "https://github.com/VectifyAI/OpenKB",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:58:15.740Z",
+    "lastVerified": "2026-09-30T20:58:15.740Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
