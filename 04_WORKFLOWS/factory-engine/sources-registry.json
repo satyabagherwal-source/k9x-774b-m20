@@ -1757,5 +1757,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "reactive-resume-reactive-resume": {
+    "name": "reactive-resume/reactive-resume",
+    "officialUrl": "https://github.com/reactive-resume/reactive-resume",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T06:56:08.461Z",
+    "lastVerified": "2026-09-30T06:56:08.461Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
