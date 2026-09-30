@@ -2485,5 +2485,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "searchkit-searchkit": {
+    "name": "searchkit/searchkit",
+    "officialUrl": "https://github.com/searchkit/searchkit",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:13:24.525Z",
+    "lastVerified": "2026-09-30T17:13:24.525Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
