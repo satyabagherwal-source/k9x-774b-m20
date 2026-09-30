@@ -12404,5 +12404,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "arkivanov-decompose": {
+    "name": "arkivanov/Decompose",
+    "officialUrl": "https://github.com/arkivanov/Decompose",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:34:58.628Z",
+    "lastVerified": "2026-09-30T21:34:58.628Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
