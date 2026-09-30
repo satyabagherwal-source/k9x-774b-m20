@@ -9451,5 +9451,50 @@
     "qualityScore": 3362,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:43:20.651Z"
+  },
+  {
+    "name": "klavis",
+    "fullName": "Klavis-AI/klavis",
+    "url": "https://github.com/Klavis-AI/klavis",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Klavis AI:  MCP integration platforms that let AI agents use tools reliably at any scale",
+    "stars": 5808,
+    "forks": 563,
+    "openIssues": 308,
+    "language": "Python",
+    "qualityScore": 3523,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:44:40.542Z"
+  },
+  {
+    "name": "lemonade",
+    "fullName": "lemonade-sdk/lemonade",
+    "url": "https://github.com/lemonade-sdk/lemonade",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Lemonade helps users discover and run local AI apps by serving optimized LLMs right from their own GPUs and NPUs. Join our discord: https://discord.gg/5xXzkMu8Zk",
+    "stars": 5807,
+    "forks": 513,
+    "openIssues": 559,
+    "language": "C++",
+    "qualityScore": 3507,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:44:40.543Z"
+  },
+  {
+    "name": "wigolo",
+    "fullName": "KnockOutEZ/wigolo",
+    "url": "https://github.com/KnockOutEZ/wigolo",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The go-to web for your AI coding agent — local-first search, fetch, crawl & research over MCP. No API keys, no cloud, $0/query. Public beta.",
+    "stars": 5435,
+    "forks": 447,
+    "openIssues": 70,
+    "language": "TypeScript",
+    "qualityScore": 3242,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:44:40.543Z"
   }
 ]

@@ -2242,3 +2242,11 @@ https://github.com/getsentry/MobileBuildMCP
 https://github.com/MinishLab/semble
 # [AI-AGENTS] asciimoo/hister (3362 score) - Your own search engine
 https://github.com/asciimoo/hister
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:44:40.544Z] ---
+# [AI-AGENTS] Klavis-AI/klavis (3523 score) - Klavis AI:  MCP integration platforms that let AI agents use tools reliably at a
+https://github.com/Klavis-AI/klavis
+# [AI-AGENTS] lemonade-sdk/lemonade (3507 score) - Lemonade helps users discover and run local AI apps by serving optimized LLMs ri
+https://github.com/lemonade-sdk/lemonade
+# [AI-AGENTS] KnockOutEZ/wigolo (3242 score) - The go-to web for your AI coding agent — local-first search, fetch, crawl & rese
+https://github.com/KnockOutEZ/wigolo

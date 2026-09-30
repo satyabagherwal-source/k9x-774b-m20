@@ -9700,5 +9700,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "klavis-ai-klavis": {
+    "name": "Klavis-AI/klavis",
+    "officialUrl": "https://github.com/Klavis-AI/klavis",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:44:59.550Z",
+    "lastVerified": "2026-09-30T19:44:59.550Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
