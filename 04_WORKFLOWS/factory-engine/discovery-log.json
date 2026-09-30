@@ -292,5 +292,33 @@
     "language": "Rust",
     "qualityScore": 6164,
     "discoveredAt": "2026-09-29T21:27:30.623Z"
+  },
+  {
+    "name": "worldmonitor",
+    "fullName": "koala73/worldmonitor",
+    "url": "https://github.com/koala73/worldmonitor",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Real-time global intelligence dashboard. AI-powered news aggregation, geopolitical monitoring, and infrastructure tracking in a unified situational awareness interface",
+    "stars": 87582,
+    "forks": 13356,
+    "openIssues": 351,
+    "language": "TypeScript",
+    "qualityScore": 56656,
+    "discoveredAt": "2026-09-30T01:21:08.764Z"
+  },
+  {
+    "name": "Scrapling",
+    "fullName": "D4Vinci/Scrapling",
+    "url": "https://github.com/D4Vinci/Scrapling",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🕷️ An adaptive Web Scraping framework that handles everything from a single request to a full-scale crawl! Don't be shy, join here: https://discord.gg/EMgGbDceNQ and follow here for daily tips and tricks: https://x.com/Scrapling_dev",
+    "stars": 84536,
+    "forks": 8642,
+    "openIssues": 6,
+    "language": "Python",
+    "qualityScore": 53414,
+    "discoveredAt": "2026-09-30T01:21:08.765Z"
   }
 ]

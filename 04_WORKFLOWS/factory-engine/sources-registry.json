@@ -1653,5 +1653,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "koala73-worldmonitor": {
+    "name": "koala73/worldmonitor",
+    "officialUrl": "https://github.com/koala73/worldmonitor",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T01:21:21.522Z",
+    "lastVerified": "2026-09-30T01:21:21.522Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
