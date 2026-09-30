@@ -8101,5 +8101,50 @@
     "qualityScore": 21594,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:52:26.100Z"
+  },
+  {
+    "name": "agent-framework",
+    "fullName": "microsoft/agent-framework",
+    "url": "https://github.com/microsoft/agent-framework",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A framework for building, orchestrating and deploying AI agents and multi-agent workflows with support for Python and .NET.",
+    "stars": 13881,
+    "forks": 2404,
+    "openIssues": 680,
+    "language": "Python",
+    "qualityScore": 9012,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-09-30T18:54:17.660Z"
+  },
+  {
+    "name": "agent-orchestrator",
+    "fullName": "Untrivial-ai/agent-orchestrator",
+    "url": "https://github.com/Untrivial-ai/agent-orchestrator",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Run and supervise teams of coding agents from planning to merge. Any harness (Claude code, codex, +25 more). Desktop, web, mobile, and cloud agents.",
+    "stars": 12570,
+    "forks": 1739,
+    "openIssues": 692,
+    "language": "Go",
+    "qualityScore": 7257,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:54:17.662Z"
+  },
+  {
+    "name": "ekko-studio",
+    "fullName": "EKKOLearnAI/ekko-studio",
+    "url": "https://github.com/EKKOLearnAI/ekko-studio",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Ekko Studio is a local-first AI workspace for multi-agent chat, coding, and visual workflows, available on desktop and the web.",
+    "stars": 11259,
+    "forks": 1387,
+    "openIssues": 441,
+    "language": "TypeScript",
+    "qualityScore": 6496,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:54:17.662Z"
   }
 ]

@@ -8530,5 +8530,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-agent-framework": {
+    "name": "microsoft/agent-framework",
+    "officialUrl": "https://github.com/microsoft/agent-framework",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:54:42.686Z",
+    "lastVerified": "2026-09-30T18:54:42.686Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

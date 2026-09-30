@@ -2002,3 +2002,11 @@ https://github.com/FoundationAgents/MetaGPT
 https://github.com/HKUDS/nanobot
 # [AI-AGENTS] wshobson/agents (21594 score) - Multi-harness agentic plugin marketplace for Claude Code, Codex, Cursor, OpenCod
 https://github.com/wshobson/agents
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:54:17.665Z] ---
+# [AI-AGENTS] microsoft/agent-framework (9012 score [VERIFIED ORG]) - A framework for building, orchestrating and deploying AI agents and multi-agent 
+https://github.com/microsoft/agent-framework
+# [AI-AGENTS] Untrivial-ai/agent-orchestrator (7257 score) - Run and supervise teams of coding agents from planning to merge. Any harness (Cl
+https://github.com/Untrivial-ai/agent-orchestrator
+# [AI-AGENTS] EKKOLearnAI/ekko-studio (6496 score) - Ekko Studio is a local-first AI workspace for multi-agent chat, coding, and visu
+https://github.com/EKKOLearnAI/ekko-studio
