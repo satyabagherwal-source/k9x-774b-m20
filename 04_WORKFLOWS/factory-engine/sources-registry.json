@@ -7282,5 +7282,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "megh-bari-pattern-craft": {
+    "name": "megh-bari/pattern-craft",
+    "officialUrl": "https://github.com/megh-bari/pattern-craft",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:27:51.349Z",
+    "lastVerified": "2026-09-30T18:27:51.349Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
