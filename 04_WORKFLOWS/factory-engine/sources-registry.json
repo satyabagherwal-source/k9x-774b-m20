@@ -7308,5 +7308,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bridgecrewio-checkov": {
+    "name": "bridgecrewio/checkov",
+    "officialUrl": "https://github.com/bridgecrewio/checkov",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:28:42.909Z",
+    "lastVerified": "2026-09-30T18:28:42.909Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 55,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
