@@ -1576,3 +1576,35 @@ https://github.com/skytable/skytable
 https://github.com/lobehub/lobe-ui
 # [FULLSTACK-UI] bergside/typeui (1195 score) - Build better UI with AI
 https://github.com/bergside/typeui
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:16:14.765Z] ---
+# [HIGH-PERF-SYSTEMS] salvo-rs/salvo (2497 score) - A powerful web framework built with a simplified design.
+https://github.com/salvo-rs/salvo
+# [HIGH-PERF-SYSTEMS] ekzhang/rustpad (2293 score) - Efficient and minimal collaborative code editor, self-hosted, no database requir
+https://github.com/ekzhang/rustpad
+# [HIGH-PERF-SYSTEMS] async-rs/async-std (2583 score) - Async version of the Rust standard library
+https://github.com/async-rs/async-std
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:16:16.100Z] ---
+# [FULLSTACK-UI] adonisjs/core (9939 score) - AdonisJS is a TypeScript-first web framework for building web apps and API serve
+https://github.com/adonisjs/core
+# [FULLSTACK-UI] vikejs/vike (3465 score) - (Replaces Next.js/Nuxt) 🔨 Build mission-critical applications with stability an
+https://github.com/vikejs/vike
+# [FULLSTACK-UI] typestack/routing-controllers (2721 score) - Create structured, declarative and beautifully organized class-based controllers
+https://github.com/typestack/routing-controllers
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:16:20.876Z] ---
+# [AI-AGENTS] plandex-ai/plandex (8478 score) - Open source AI coding agent. Designed for large projects and real world tasks.
+https://github.com/plandex-ai/plandex
+# [AI-AGENTS] superset-sh/superset (8132 score) - Superset is an agentic IDE to orchestrate 100+ coding agents in parallel. Run an
+https://github.com/superset-sh/superset
+# [AI-AGENTS] waooAI/waoowaoo (8557 score) - 首家工业级全流程 AI 影视生产平台。Industry-first professional AI Agent platform for controllabl
+https://github.com/waooAI/waoowaoo
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:16:21.158Z] ---
+# [MOBILE-CROSS-PLATFORM] ZSeven-W/openpencil (3470 score) - The world's first open-source AI-native vector design tool and the first to feat
+https://github.com/ZSeven-W/openpencil
+# [MOBILE-CROSS-PLATFORM] czy0729/Bangumi (3354 score) - :electron: An unofficial https://bgm.tv ui first app client for Android and iOS,
+https://github.com/czy0729/Bangumi
+# [MOBILE-CROSS-PLATFORM] jpush/aurora-imui (3490 score) - General IM UI components. Android/iOS/RectNative ready.  通用 IM 聊天 UI 组件，已经同时支持 A
+https://github.com/jpush/aurora-imui

@@ -5969,5 +5969,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react95-react95": {
+    "name": "React95/React95",
+    "officialUrl": "https://github.com/React95/React95",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:16:33.515Z",
+    "lastVerified": "2026-09-30T18:16:33.515Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
