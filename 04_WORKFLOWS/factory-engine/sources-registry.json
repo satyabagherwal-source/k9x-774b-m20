@@ -6736,5 +6736,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "aquasecurity-trivy": {
+    "name": "aquasecurity/trivy",
+    "officialUrl": "https://github.com/aquasecurity/trivy",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:21:27.524Z",
+    "lastVerified": "2026-09-30T18:21:27.524Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
