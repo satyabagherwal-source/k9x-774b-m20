@@ -2459,5 +2459,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hkuds-deeptutor": {
+    "name": "HKUDS/DeepTutor",
+    "officialUrl": "https://github.com/HKUDS/DeepTutor",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:13:20.831Z",
+    "lastVerified": "2026-09-30T17:13:20.831Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 72,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
