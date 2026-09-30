@@ -4279,5 +4279,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-comfy-org-qwen-image-2.1": {
+    "name": "Comfy-Org/Qwen-Image-2.1",
+    "officialUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:31:41.258Z",
+    "lastVerified": "2026-09-30T17:31:41.258Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
