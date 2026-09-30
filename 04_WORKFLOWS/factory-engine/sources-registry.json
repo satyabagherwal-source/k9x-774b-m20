@@ -4071,5 +4071,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "paullecam-react-leaflet": {
+    "name": "PaulLeCam/react-leaflet",
+    "officialUrl": "https://github.com/PaulLeCam/react-leaflet",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:31:16.124Z",
+    "lastVerified": "2026-09-30T17:31:16.124Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
