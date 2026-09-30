@@ -213,7 +213,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:28:42.810Z",
+        "lastActiveAt": "2026-09-30T17:30:15.491Z",
         "lastHarvestedAt": "2026-09-30T17:27:03.419Z",
         "totalHarvested": 1,
         "lastError": null

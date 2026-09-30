@@ -4006,5 +4006,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "o2sh-onefetch": {
+    "name": "o2sh/onefetch",
+    "officialUrl": "https://github.com/o2sh/onefetch",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:30:16.592Z",
+    "lastVerified": "2026-09-30T17:30:16.592Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
