@@ -9193,5 +9193,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bytedance-ui-tars-desktop": {
+    "name": "bytedance/UI-TARS-desktop",
+    "officialUrl": "https://github.com/bytedance/UI-TARS-desktop",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:26:50.846Z",
+    "lastVerified": "2026-09-30T19:26:50.846Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

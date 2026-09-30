@@ -8866,5 +8866,50 @@
     "qualityScore": 1292,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:24:11.413Z"
+  },
+  {
+    "name": "UI-TARS-desktop",
+    "fullName": "bytedance/UI-TARS-desktop",
+    "url": "https://github.com/bytedance/UI-TARS-desktop",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The Open-Source Multimodal AI Agent Stack: Connecting Cutting-Edge AI Models and Agent Infra",
+    "stars": 39172,
+    "forks": 3963,
+    "openIssues": 501,
+    "language": "TypeScript",
+    "qualityScore": 22225,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-09-30T19:26:28.478Z"
+  },
+  {
+    "name": "github-mcp-server",
+    "fullName": "github/github-mcp-server",
+    "url": "https://github.com/github/github-mcp-server",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "GitHub's official MCP Server",
+    "stars": 33305,
+    "forks": 5065,
+    "openIssues": 351,
+    "language": "Go",
+    "qualityScore": 18522,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:26:28.478Z"
+  },
+  {
+    "name": "serena",
+    "fullName": "oraios/serena",
+    "url": "https://github.com/oraios/serena",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A powerful MCP toolkit for coding, providing semantic retrieval and editing capabilities  - the IDE for your agent",
+    "stars": 29914,
+    "forks": 2036,
+    "openIssues": 189,
+    "language": "Python",
+    "qualityScore": 16018,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:26:28.478Z"
   }
 ]

@@ -2138,3 +2138,11 @@ https://github.com/the-open-engine/zeroshot
 https://github.com/trpc-group/trpc-agent-go
 # [AI-AGENTS] geek-ai/MAgent (1292 score) - A Platform for Many-Agent Reinforcement Learning
 https://github.com/geek-ai/MAgent
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:26:28.480Z] ---
+# [AI-AGENTS] bytedance/UI-TARS-desktop (22225 score [VERIFIED ORG]) - The Open-Source Multimodal AI Agent Stack: Connecting Cutting-Edge AI Models and
+https://github.com/bytedance/UI-TARS-desktop
+# [AI-AGENTS] github/github-mcp-server (18522 score) - GitHub's official MCP Server
+https://github.com/github/github-mcp-server
+# [AI-AGENTS] oraios/serena (16018 score) - A powerful MCP toolkit for coding, providing semantic retrieval and editing capa
+https://github.com/oraios/serena
