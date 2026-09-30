@@ -8127,5 +8127,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apache-incubator-pegasus": {
+    "name": "apache/incubator-pegasus",
+    "officialUrl": "https://github.com/apache/incubator-pegasus",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T18:40:50.514Z",
+    "lastVerified": "2026-09-30T18:40:50.514Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
