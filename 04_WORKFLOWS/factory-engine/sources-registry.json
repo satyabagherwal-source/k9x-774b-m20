@@ -9180,5 +9180,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "geek-ai-magent": {
+    "name": "geek-ai/MAgent",
+    "officialUrl": "https://github.com/geek-ai/MAgent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:25:04.589Z",
+    "lastVerified": "2026-09-30T19:25:04.589Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
