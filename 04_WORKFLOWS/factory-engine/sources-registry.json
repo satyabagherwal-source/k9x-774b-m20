@@ -5839,5 +5839,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hbai-ltd-toonflow-app": {
+    "name": "HBAI-Ltd/Toonflow-app",
+    "officialUrl": "https://github.com/HBAI-Ltd/Toonflow-app",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:14:17.174Z",
+    "lastVerified": "2026-09-30T18:14:17.174Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
