@@ -6580,5 +6580,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "superset-sh-superset": {
+    "name": "superset-sh/superset",
+    "officialUrl": "https://github.com/superset-sh/superset",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:19:35.984Z",
+    "lastVerified": "2026-09-30T18:19:35.984Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 56,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
