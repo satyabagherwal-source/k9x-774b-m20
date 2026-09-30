@@ -2066,3 +2066,11 @@ https://github.com/tutti-os/tutti
 https://github.com/xintaofei/codeg
 # [AI-AGENTS] nextlevelbuilder/goclaw (2485 score) - GoClaw - GoClaw is OpenClaw rebuilt in Go — with multi-tenant isolation, 5-layer
 https://github.com/nextlevelbuilder/goclaw
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:08:47.004Z] ---
+# [AI-AGENTS] simonlin1212/TradingAgents-astock (2328 score) - A股多Agent投研框架 — 适配A股数据源(龙虎榜/游资/解禁等)，7位分析师基于A股规则的辩论决策，基于TradingAgents深度改造，适配大A。A-s
+https://github.com/simonlin1212/TradingAgents-astock
+# [AI-AGENTS] datamllab/rlcard (2415 score) - Reinforcement Learning / AI Bots in Card (Poker) Games - Blackjack, Leduc, Texas
+https://github.com/datamllab/rlcard
+# [AI-AGENTS] foryourhealth111-pixel/Vibe-Skills (2180 score) - Intelligent Skill routing and workflow orchestration for AI agents — +21.12 pp r
+https://github.com/foryourhealth111-pixel/Vibe-Skills

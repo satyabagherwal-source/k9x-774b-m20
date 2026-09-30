@@ -8461,5 +8461,50 @@
     "qualityScore": 2485,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:06:32.890Z"
+  },
+  {
+    "name": "TradingAgents-astock",
+    "fullName": "simonlin1212/TradingAgents-astock",
+    "url": "https://github.com/simonlin1212/TradingAgents-astock",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A股多Agent投研框架 — 适配A股数据源(龙虎榜/游资/解禁等)，7位分析师基于A股规则的辩论决策，基于TradingAgents深度改造，适配大A。A-share multi-agent investment research framework — 7 AI analysts, bull/bear debate, risk assessment。",
+    "stars": 3598,
+    "forks": 916,
+    "openIssues": 2,
+    "language": "Python",
+    "qualityScore": 2328,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:08:47.002Z"
+  },
+  {
+    "name": "rlcard",
+    "fullName": "datamllab/rlcard",
+    "url": "https://github.com/datamllab/rlcard",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Reinforcement Learning / AI Bots in Card (Poker) Games - Blackjack, Leduc, Texas, DouDizhu, Mahjong, UNO.",
+    "stars": 3560,
+    "forks": 751,
+    "openIssues": 80,
+    "language": "Python",
+    "qualityScore": 2415,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:08:47.003Z"
+  },
+  {
+    "name": "Vibe-Skills",
+    "fullName": "foryourhealth111-pixel/Vibe-Skills",
+    "url": "https://github.com/foryourhealth111-pixel/Vibe-Skills",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Intelligent Skill routing and workflow orchestration for AI agents — +21.12 pp reward, −29.6% tokens on SkillsBench with DeepSeekV4Flash-VE.",
+    "stars": 3507,
+    "forks": 309,
+    "openIssues": 42,
+    "language": "Python",
+    "qualityScore": 2180,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:08:47.003Z"
   }
 ]
