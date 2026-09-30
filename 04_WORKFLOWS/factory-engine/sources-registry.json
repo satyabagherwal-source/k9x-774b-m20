@@ -12716,5 +12716,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "meshtastic-meshtastic-android": {
+    "name": "meshtastic/Meshtastic-Android",
+    "officialUrl": "https://github.com/meshtastic/Meshtastic-Android",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:56:10.483Z",
+    "lastVerified": "2026-09-30T21:56:10.483Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

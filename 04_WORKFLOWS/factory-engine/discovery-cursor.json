@@ -5,7 +5,7 @@
       "page": 1
     },
     "fullstack-ui": {
-      "queryIndex": 2,
+      "queryIndex": 6,
       "page": 1
     },
     "high-perf-systems": {
@@ -29,7 +29,7 @@
       "page": 1
     },
     "database-storage-engines": {
-      "queryIndex": 0,
+      "queryIndex": 4,
       "page": 1
     }
   },
@@ -38,5 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 77,
-  "lastReplenishedAt": "2026-09-30T21:56:03.250Z"
+  "lastReplenishedAt": "2026-09-30T21:56:08.292Z"
 }
