@@ -11091,5 +11091,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "veirt-weathr": {
+    "name": "Veirt/weathr",
+    "officialUrl": "https://github.com/Veirt/weathr",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:31:27.049Z",
+    "lastVerified": "2026-09-30T20:31:27.049Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
