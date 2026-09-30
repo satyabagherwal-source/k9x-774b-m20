@@ -11546,5 +11546,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "amir1376-ab-download-manager": {
+    "name": "amir1376/ab-download-manager",
+    "officialUrl": "https://github.com/amir1376/ab-download-manager",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T20:49:48.855Z",
+    "lastVerified": "2026-09-30T20:49:48.855Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

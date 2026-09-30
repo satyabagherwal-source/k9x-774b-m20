@@ -11581,5 +11581,50 @@
     "qualityScore": 1599,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:47:35.428Z"
+  },
+  {
+    "name": "ab-download-manager",
+    "fullName": "amir1376/ab-download-manager",
+    "url": "https://github.com/amir1376/ab-download-manager",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A Download Manager that speeds up your downloads",
+    "stars": 18170,
+    "forks": 929,
+    "openIssues": 452,
+    "language": "Kotlin",
+    "qualityScore": 9814,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:49:31.487Z"
+  },
+  {
+    "name": "koin",
+    "fullName": "InsertKoinIO/koin",
+    "url": "https://github.com/InsertKoinIO/koin",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Koin - a pragmatic lightweight dependency injection framework for Kotlin & Kotlin Multiplatform",
+    "stars": 10021,
+    "forks": 790,
+    "openIssues": 71,
+    "language": "Kotlin",
+    "qualityScore": 5640,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:49:31.487Z"
+  },
+  {
+    "name": "okio",
+    "fullName": "lysine-dev/okio",
+    "url": "https://github.com/lysine-dev/okio",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A modern I/O library for Android, Java, and Kotlin Multiplatform.",
+    "stars": 9045,
+    "forks": 1236,
+    "openIssues": 105,
+    "language": "Kotlin",
+    "qualityScore": 5343,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:49:31.487Z"
   }
 ]

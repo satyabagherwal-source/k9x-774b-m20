@@ -2628,3 +2628,11 @@ https://github.com/llmsresearch/paperbanana
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T20:48:28.071Z] ---
 # [AI-AGENTS] redhat-et/ripwire (1599 score) - The ripgrep of AI context: a zero-dependency C++23 CLI + MCP server for coding a
 https://github.com/redhat-et/ripwire
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:49:31.488Z] ---
+# [MOBILE-CROSS-PLATFORM] amir1376/ab-download-manager (9814 score) - A Download Manager that speeds up your downloads
+https://github.com/amir1376/ab-download-manager
+# [MOBILE-CROSS-PLATFORM] InsertKoinIO/koin (5640 score) - Koin - a pragmatic lightweight dependency injection framework for Kotlin & Kotli
+https://github.com/InsertKoinIO/koin
+# [MOBILE-CROSS-PLATFORM] lysine-dev/okio (5343 score) - A modern I/O library for Android, Java, and Kotlin Multiplatform.
+https://github.com/lysine-dev/okio
