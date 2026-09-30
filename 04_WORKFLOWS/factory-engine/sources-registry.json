@@ -8673,5 +8673,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "open-multi-agent-open-multi-agent": {
+    "name": "open-multi-agent/open-multi-agent",
+    "officialUrl": "https://github.com/open-multi-agent/open-multi-agent",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:59:22.783Z",
+    "lastVerified": "2026-09-30T18:59:22.783Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 42,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
