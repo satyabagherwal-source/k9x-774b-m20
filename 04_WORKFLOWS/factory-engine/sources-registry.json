@@ -4201,5 +4201,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "beclab-olares": {
+    "name": "beclab/Olares",
+    "officialUrl": "https://github.com/beclab/Olares",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:32:36.113Z",
+    "lastVerified": "2026-09-30T17:32:36.113Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
