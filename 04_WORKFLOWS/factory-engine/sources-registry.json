@@ -12196,5 +12196,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "iconoir-icons-iconoir": {
+    "name": "iconoir-icons/iconoir",
+    "officialUrl": "https://github.com/iconoir-icons/iconoir",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T21:16:54.545Z",
+    "lastVerified": "2026-09-30T21:16:54.545Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
