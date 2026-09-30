@@ -2914,5 +2914,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "volcengine-minecontext": {
+    "name": "volcengine/MineContext",
+    "officialUrl": "https://github.com/volcengine/MineContext",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:15:58.006Z",
+    "lastVerified": "2026-09-30T17:15:58.006Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 62,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
