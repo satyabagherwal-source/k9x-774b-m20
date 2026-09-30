@@ -5566,5 +5566,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "materializeinc-materialize": {
+    "name": "MaterializeInc/materialize",
+    "officialUrl": "https://github.com/MaterializeInc/materialize",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:46:56.611Z",
+    "lastVerified": "2026-09-30T17:46:56.611Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
