@@ -6437,5 +6437,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "slatedb-slatedb": {
+    "name": "slatedb/slatedb",
+    "officialUrl": "https://github.com/slatedb/slatedb",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:18:42.214Z",
+    "lastVerified": "2026-09-30T18:18:42.214Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
