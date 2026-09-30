@@ -4812,5 +4812,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nvidia-nemoclaw": {
+    "name": "NVIDIA/NemoClaw",
+    "officialUrl": "https://github.com/NVIDIA/NemoClaw",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:38:32.504Z",
+    "lastVerified": "2026-09-30T17:38:32.504Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 65,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
