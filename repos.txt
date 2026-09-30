@@ -2058,3 +2058,11 @@ https://github.com/ag2ai/ag2
 https://github.com/ApodexAI/FrontierAgent
 # [AI-AGENTS] totec448-spec/chat-on-steroids (2457 score) - Cross-platform local MCP capabilities for ChatGPT with Chrome integration, Goal,
 https://github.com/totec448-spec/chat-on-steroids
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:06:32.891Z] ---
+# [AI-AGENTS] tutti-os/tutti (2361 score) - Where people and agents build in tune.
+https://github.com/tutti-os/tutti
+# [AI-AGENTS] xintaofei/codeg (2468 score) - Collaborative multi-agent AI coding workspace: aggregate sessions from Claude Co
+https://github.com/xintaofei/codeg
+# [AI-AGENTS] nextlevelbuilder/goclaw (2485 score) - GoClaw - GoClaw is OpenClaw rebuilt in Go — with multi-tenant isolation, 5-layer
+https://github.com/nextlevelbuilder/goclaw

@@ -8416,5 +8416,50 @@
     "qualityScore": 2457,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:04:36.155Z"
+  },
+  {
+    "name": "tutti",
+    "fullName": "tutti-os/tutti",
+    "url": "https://github.com/tutti-os/tutti",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Where people and agents build in tune.",
+    "stars": 3791,
+    "forks": 384,
+    "openIssues": 192,
+    "language": "TypeScript",
+    "qualityScore": 2361,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:06:30.790Z"
+  },
+  {
+    "name": "codeg",
+    "fullName": "xintaofei/codeg",
+    "url": "https://github.com/xintaofei/codeg",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Collaborative multi-agent AI coding workspace: aggregate sessions from Claude Code, Codex, OpenCode, Pi, Grok Build, etc. Desktop app, self-hosted server, or Docker.",
+    "stars": 3747,
+    "forks": 483,
+    "openIssues": 285,
+    "language": "Rust",
+    "qualityScore": 2468,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:06:30.791Z"
+  },
+  {
+    "name": "goclaw",
+    "fullName": "nextlevelbuilder/goclaw",
+    "url": "https://github.com/nextlevelbuilder/goclaw",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "GoClaw - GoClaw is OpenClaw rebuilt in Go — with multi-tenant isolation, 5-layer security, and native concurrency. Deploy AI agent teams at scale without compromising on safety.",
+    "stars": 3634,
+    "forks": 1059,
+    "openIssues": 264,
+    "language": "Go",
+    "qualityScore": 2485,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:06:32.890Z"
   }
 ]
