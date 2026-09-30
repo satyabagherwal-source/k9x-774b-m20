@@ -8985,5 +8985,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wanikua-danghuangshang": {
+    "name": "wanikua/danghuangshang",
+    "officialUrl": "https://github.com/wanikua/danghuangshang",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:18:09.751Z",
+    "lastVerified": "2026-09-30T19:18:09.751Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 45,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
