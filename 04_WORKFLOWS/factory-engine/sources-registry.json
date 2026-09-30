@@ -3057,5 +3057,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nanocoai-nanoclaw": {
+    "name": "nanocoai/nanoclaw",
+    "officialUrl": "https://github.com/nanocoai/nanoclaw",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:21:01.118Z",
+    "lastVerified": "2026-09-30T17:21:01.118Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 56,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
