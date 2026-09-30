@@ -11273,5 +11273,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "deedy5-ddgs": {
+    "name": "deedy5/ddgs",
+    "officialUrl": "https://github.com/deedy5/ddgs",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:38:13.813Z",
+    "lastVerified": "2026-09-30T20:38:13.813Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
