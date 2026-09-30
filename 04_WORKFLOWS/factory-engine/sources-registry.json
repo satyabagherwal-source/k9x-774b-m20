@@ -4474,5 +4474,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jhen0409-react-native-debugger": {
+    "name": "jhen0409/react-native-debugger",
+    "officialUrl": "https://github.com/jhen0409/react-native-debugger",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:35:17.039Z",
+    "lastVerified": "2026-09-30T17:35:17.039Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
