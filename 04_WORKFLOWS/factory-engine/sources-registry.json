@@ -9934,5 +9934,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pyspur-dev-pyspur": {
+    "name": "PySpur-Dev/pyspur",
+    "officialUrl": "https://github.com/PySpur-Dev/pyspur",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:54:33.783Z",
+    "lastVerified": "2026-09-30T19:54:33.783Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
