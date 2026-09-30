@@ -11364,5 +11364,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rusq-slackdump": {
+    "name": "rusq/slackdump",
+    "officialUrl": "https://github.com/rusq/slackdump",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T20:41:11.725Z",
+    "lastVerified": "2026-09-30T20:41:11.725Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
