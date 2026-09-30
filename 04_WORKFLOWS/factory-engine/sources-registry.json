@@ -7906,5 +7906,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yvgude-lean-ctx": {
+    "name": "yvgude/lean-ctx",
+    "officialUrl": "https://github.com/yvgude/lean-ctx",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:38:02.218Z",
+    "lastVerified": "2026-09-30T18:38:02.218Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 58,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
