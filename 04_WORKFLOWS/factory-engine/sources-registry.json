@@ -10558,5 +10558,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "farama-foundation-chatarena": {
+    "name": "Farama-Foundation/ChatArena",
+    "officialUrl": "https://github.com/Farama-Foundation/ChatArena",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:17:53.081Z",
+    "lastVerified": "2026-09-30T20:17:53.081Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
