@@ -3525,5 +3525,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tremorlabs-tremor-npm": {
+    "name": "tremorlabs/tremor-npm",
+    "officialUrl": "https://github.com/tremorlabs/tremor-npm",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:25:43.551Z",
+    "lastVerified": "2026-09-30T17:25:43.551Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 59,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
