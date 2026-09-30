@@ -3616,5 +3616,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kestra-io-kestra": {
+    "name": "kestra-io/kestra",
+    "officialUrl": "https://github.com/kestra-io/kestra",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T17:26:37.511Z",
+    "lastVerified": "2026-09-30T17:26:37.511Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
