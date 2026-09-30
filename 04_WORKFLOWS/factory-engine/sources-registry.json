@@ -1822,5 +1822,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
+    "name": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+    "officialUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T13:54:44.277Z",
+    "lastVerified": "2026-09-30T13:54:44.277Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
