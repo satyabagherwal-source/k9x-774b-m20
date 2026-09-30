@@ -12625,5 +12625,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kotlin-kmp-production-sample": {
+    "name": "Kotlin/kmp-production-sample",
+    "officialUrl": "https://github.com/Kotlin/kmp-production-sample",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:47:37.816Z",
+    "lastVerified": "2026-09-30T21:47:37.816Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
