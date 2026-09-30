@@ -8236,5 +8236,50 @@
     "qualityScore": 4979,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:57:07.009Z"
+  },
+  {
+    "name": "munder-difflin",
+    "fullName": "chaitanyagiri/munder-difflin",
+    "url": "https://github.com/chaitanyagiri/munder-difflin",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A local multi-agent harness that works with your existing Claude Code, Codex subscriptions, allows you to run an office of agents",
+    "stars": 8207,
+    "forks": 1100,
+    "openIssues": 220,
+    "language": "TypeScript",
+    "qualityScore": 4884,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:58:27.241Z"
+  },
+  {
+    "name": "Star-Office-UI",
+    "fullName": "ringhyacinth/Star-Office-UI",
+    "url": "https://github.com/ringhyacinth/Star-Office-UI",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A pixel office for your OpenClaw: turn invisible work states into a cozy little space with characters, daily notes, and guest agents. Code under MIT; art assets for non-commercial learning only.",
+    "stars": 7495,
+    "forks": 794,
+    "openIssues": 22,
+    "language": "HTML",
+    "qualityScore": 4280,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:58:27.242Z"
+  },
+  {
+    "name": "open-multi-agent",
+    "fullName": "open-multi-agent/open-multi-agent",
+    "url": "https://github.com/open-multi-agent/open-multi-agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Self-hosted TypeScript agent runtime with durable approvals and verifiable run records. Own it, approve it, audit it.",
+    "stars": 6971,
+    "forks": 2432,
+    "openIssues": 6,
+    "language": "TypeScript",
+    "qualityScore": 4477,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:58:29.267Z"
   }
 ]

@@ -2026,3 +2026,11 @@ https://github.com/MervinPraison/PraisonAI
 https://github.com/iflytek/astron-agent
 # [AI-AGENTS] TeamWiseFlow/xiaobei (4979 score) - 为OPC/中小微企业量身打造的自媒体获客智能体
 https://github.com/TeamWiseFlow/xiaobei
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:58:29.268Z] ---
+# [AI-AGENTS] chaitanyagiri/munder-difflin (4884 score) - A local multi-agent harness that works with your existing Claude Code, Codex sub
+https://github.com/chaitanyagiri/munder-difflin
+# [AI-AGENTS] ringhyacinth/Star-Office-UI (4280 score) - A pixel office for your OpenClaw: turn invisible work states into a cozy little 
+https://github.com/ringhyacinth/Star-Office-UI
+# [AI-AGENTS] open-multi-agent/open-multi-agent (4477 score) - Self-hosted TypeScript agent runtime with durable approvals and verifiable run r
+https://github.com/open-multi-agent/open-multi-agent
