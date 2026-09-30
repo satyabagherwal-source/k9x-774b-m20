@@ -5020,5 +5020,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "peerdb-io-peerdb": {
+    "name": "PeerDB-io/peerdb",
+    "officialUrl": "https://github.com/PeerDB-io/peerdb",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:40:30.549Z",
+    "lastVerified": "2026-09-30T17:40:30.549Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
