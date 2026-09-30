@@ -8049,5 +8049,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ataraxy-labs-sem": {
+    "name": "Ataraxy-Labs/sem",
+    "officialUrl": "https://github.com/Ataraxy-Labs/sem",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:40:08.154Z",
+    "lastVerified": "2026-09-30T18:40:08.154Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
