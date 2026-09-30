@@ -11247,5 +11247,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cortex-docs-cortex": {
+    "name": "cortex-docs/cortex",
+    "officialUrl": "https://github.com/cortex-docs/cortex",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:36:56.070Z",
+    "lastVerified": "2026-09-30T20:36:56.070Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
