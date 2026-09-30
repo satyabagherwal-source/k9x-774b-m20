@@ -8543,5 +8543,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "untrivial-ai-agent-orchestrator": {
+    "name": "Untrivial-ai/agent-orchestrator",
+    "officialUrl": "https://github.com/Untrivial-ai/agent-orchestrator",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:55:13.633Z",
+    "lastVerified": "2026-09-30T18:55:13.633Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 65,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
