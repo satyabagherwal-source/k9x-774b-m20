@@ -7529,5 +7529,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "holaboss-ai-holaos": {
+    "name": "holaboss-ai/holaOS",
+    "officialUrl": "https://github.com/holaboss-ai/holaOS",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:31:36.505Z",
+    "lastVerified": "2026-09-30T18:31:36.505Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 51,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
