@@ -8348,5 +8348,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "modsetter-surfsense": {
+    "name": "MODSetter/SurfSense",
+    "officialUrl": "https://github.com/MODSetter/SurfSense",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:46:45.884Z",
+    "lastVerified": "2026-09-30T18:46:45.884Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
