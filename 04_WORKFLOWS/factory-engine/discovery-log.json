@@ -9046,5 +9046,50 @@
     "qualityScore": 9091,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:30:54.451Z"
+  },
+  {
+    "name": "docker-android",
+    "fullName": "budtmo/docker-android",
+    "url": "https://github.com/budtmo/docker-android",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Android in docker solution with noVNC supported, video recording, mcp server and AI-agent",
+    "stars": 15921,
+    "forks": 1757,
+    "openIssues": 162,
+    "language": "Python",
+    "qualityScore": 8938,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:32:17.673Z"
+  },
+  {
+    "name": "OpenMetadata",
+    "fullName": "open-metadata/OpenMetadata",
+    "url": "https://github.com/open-metadata/OpenMetadata",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The Open Context Layer for Data and AI ,  OpenMetadata is the open platform for building trusted data context and business semantics for humans, AI assistants, and agents.",
+    "stars": 15359,
+    "forks": 2419,
+    "openIssues": 870,
+    "language": "TypeScript",
+    "qualityScore": 8855,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:32:17.675Z"
+  },
+  {
+    "name": "Skill_Seekers",
+    "fullName": "yusufkaraaslan/Skill_Seekers",
+    "url": "https://github.com/yusufkaraaslan/Skill_Seekers",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Convert documentation websites, GitHub repositories, and PDFs into Claude AI skills with automatic conflict detection",
+    "stars": 15059,
+    "forks": 1536,
+    "openIssues": 47,
+    "language": "Python",
+    "qualityScore": 8334,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:32:19.846Z"
   }
 ]

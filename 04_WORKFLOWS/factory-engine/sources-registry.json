@@ -9349,5 +9349,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "budtmo-docker-android": {
+    "name": "budtmo/docker-android",
+    "officialUrl": "https://github.com/budtmo/docker-android",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:32:41.536Z",
+    "lastVerified": "2026-09-30T19:32:41.536Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

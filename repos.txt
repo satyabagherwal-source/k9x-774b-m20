@@ -2170,3 +2170,11 @@ https://github.com/microsoft/mcp-for-beginners
 https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep
 # [AI-AGENTS] xpzouying/xiaohongshu-mcp (9091 score) - MCP for xiaohongshu.com
 https://github.com/xpzouying/xiaohongshu-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:32:19.847Z] ---
+# [AI-AGENTS] budtmo/docker-android (8938 score) - Android in docker solution with noVNC supported, video recording, mcp server and
+https://github.com/budtmo/docker-android
+# [AI-AGENTS] open-metadata/OpenMetadata (8855 score) - The Open Context Layer for Data and AI ,  OpenMetadata is the open platform for 
+https://github.com/open-metadata/OpenMetadata
+# [AI-AGENTS] yusufkaraaslan/Skill_Seekers (8334 score) - Convert documentation websites, GitHub repositories, and PDFs into Claude AI ski
+https://github.com/yusufkaraaslan/Skill_Seekers
