@@ -2745,5 +2745,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "paradedb-paradedb": {
+    "name": "paradedb/paradedb",
+    "officialUrl": "https://github.com/paradedb/paradedb",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:14:30.055Z",
+    "lastVerified": "2026-09-30T17:14:30.055Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
