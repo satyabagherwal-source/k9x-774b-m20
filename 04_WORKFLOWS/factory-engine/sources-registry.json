@@ -11832,5 +11832,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dataherald-dataherald": {
+    "name": "Dataherald/dataherald",
+    "officialUrl": "https://github.com/Dataherald/dataherald",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:04:56.040Z",
+    "lastVerified": "2026-09-30T21:04:56.040Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
