@@ -12547,5 +12547,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xiaobright-dsh-anchored-standard": {
+    "name": "xiaobright/dsh-anchored-standard",
+    "officialUrl": "https://github.com/xiaobright/dsh-anchored-standard",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T21:44:40.858Z",
+    "lastVerified": "2026-09-30T21:44:40.858Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
