@@ -6649,5 +6649,35 @@
     "qualityScore": 7330,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:25:26.667Z"
+  },
+  {
+    "name": "fancy",
+    "fullName": "danielpetho/fancy",
+    "url": "https://github.com/danielpetho/fancy",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "No description provided",
+    "stars": 3210,
+    "forks": 121,
+    "openIssues": 7,
+    "language": "TypeScript",
+    "qualityScore": 1805,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:25:22.313Z"
+  },
+  {
+    "name": "pattern-craft",
+    "fullName": "megh-bari/pattern-craft",
+    "url": "https://github.com/megh-bari/pattern-craft",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Professional-grade background patterns and gradients for your websites and apps. Easily copy and paste into your next project. Crafted with modern CSS and Tailwind for seamless integration.",
+    "stars": 3084,
+    "forks": 232,
+    "openIssues": 35,
+    "language": "TypeScript",
+    "qualityScore": 1932,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:25:22.313Z"
   }
 ]

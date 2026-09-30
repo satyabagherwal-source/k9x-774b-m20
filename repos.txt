@@ -1738,3 +1738,9 @@ https://github.com/neuml/txtai
 https://github.com/simular-ai/Agent-S
 # [AI-AGENTS] 0x4m4/hexstrike-ai (7330 score) - HexStrike AI MCP Agents is an advanced MCP server that lets AI agents (Claude, G
 https://github.com/0x4m4/hexstrike-ai
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:26:04.161Z] ---
+# [FULLSTACK-UI] danielpetho/fancy (1805 score) - No description provided
+https://github.com/danielpetho/fancy
+# [FULLSTACK-UI] megh-bari/pattern-craft (1932 score) - Professional-grade background patterns and gradients for your websites and apps.
+https://github.com/megh-bari/pattern-craft
