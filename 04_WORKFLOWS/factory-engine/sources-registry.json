@@ -4825,5 +4825,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pemistahl-grex": {
+    "name": "pemistahl/grex",
+    "officialUrl": "https://github.com/pemistahl/grex",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:38:42.232Z",
+    "lastVerified": "2026-09-30T17:38:42.232Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
