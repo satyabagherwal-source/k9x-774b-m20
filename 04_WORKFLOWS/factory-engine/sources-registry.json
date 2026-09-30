@@ -2342,5 +2342,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lancedb-lancedb": {
+    "name": "lancedb/lancedb",
+    "officialUrl": "https://github.com/lancedb/lancedb",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T14:03:07.051Z",
+    "lastVerified": "2026-09-30T14:03:07.051Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
