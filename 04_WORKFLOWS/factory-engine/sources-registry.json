@@ -3798,5 +3798,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "uber-baseweb": {
+    "name": "uber/baseweb",
+    "officialUrl": "https://github.com/uber/baseweb",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:28:23.690Z",
+    "lastVerified": "2026-09-30T17:28:23.690Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
