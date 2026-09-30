@@ -9037,5 +9037,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jnmetacode-agency-orchestrator": {
+    "name": "jnMetaCode/agency-orchestrator",
+    "officialUrl": "https://github.com/jnMetaCode/agency-orchestrator",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:20:29.519Z",
+    "lastVerified": "2026-09-30T19:20:29.519Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 53,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

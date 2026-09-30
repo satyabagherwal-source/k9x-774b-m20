@@ -8686,5 +8686,50 @@
     "qualityScore": 1443,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:18:44.493Z"
+  },
+  {
+    "name": "agency-orchestrator",
+    "fullName": "jnMetaCode/agency-orchestrator",
+    "url": "https://github.com/jnMetaCode/agency-orchestrator",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🚀 One sentence → your one-person company of AI experts → complete deliverable in minutes. 276 CN + 184 EN + 5 more languages (ko/ru/pt-BR/id/ar) · zero-code YAML · auto-verified acceptance · Web Studio / Desktop / Docker · 15 LLM providers (11 key-free). 一句话组建你的「一人公司」AI 专家团队，几分钟交付完整方案；验收自动核验，网页 / 桌面 / Docker 全渠道。",
+    "stars": 2311,
+    "forks": 307,
+    "openIssues": 8,
+    "language": "TypeScript",
+    "qualityScore": 1514,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:20:06.673Z"
+  },
+  {
+    "name": "memanto",
+    "fullName": "moorcheh-ai/memanto",
+    "url": "https://github.com/moorcheh-ai/memanto",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Memory that AI Agents Love!",
+    "stars": 2303,
+    "forks": 733,
+    "openIssues": 65,
+    "language": "Python",
+    "qualityScore": 1751,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:20:06.674Z"
+  },
+  {
+    "name": "anything2explainer",
+    "fullName": "Vincentwei1021/anything2explainer",
+    "url": "https://github.com/Vincentwei1021/anything2explainer",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Topic in, narrated explainer video out. A Claude Code / Codex skill that turns any topic into a black-canvas motion-graphics explainer video with TTS voiceover, subtitles and a chapter progress bar. Chinese or English; every frame drawn in code with Remotion.",
+    "stars": 2200,
+    "forks": 305,
+    "openIssues": 4,
+    "language": "TypeScript",
+    "qualityScore": 1350,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:20:06.674Z"
   }
 ]

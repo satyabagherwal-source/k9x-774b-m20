@@ -2106,3 +2106,11 @@ https://github.com/KsanaDock/Microverse
 https://github.com/agentuniverse-ai/agentUniverse
 # [AI-AGENTS] AgentsMesh/AgentsMesh (1443 score) - The AI Agent Workforce Platform. Run a hundred AI coding agents across your own 
 https://github.com/AgentsMesh/AgentsMesh
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:20:06.675Z] ---
+# [AI-AGENTS] jnMetaCode/agency-orchestrator (1514 score) - 🚀 One sentence → your one-person company of AI experts → complete deliverable i
+https://github.com/jnMetaCode/agency-orchestrator
+# [AI-AGENTS] moorcheh-ai/memanto (1751 score) - Memory that AI Agents Love!
+https://github.com/moorcheh-ai/memanto
+# [AI-AGENTS] Vincentwei1021/anything2explainer (1350 score) - Topic in, narrated explainer video out. A Claude Code / Codex skill that turns a
+https://github.com/Vincentwei1021/anything2explainer
