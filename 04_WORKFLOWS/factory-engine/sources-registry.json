@@ -3915,5 +3915,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
+    "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:28:47.702Z",
+    "lastVerified": "2026-09-30T17:28:47.702Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
