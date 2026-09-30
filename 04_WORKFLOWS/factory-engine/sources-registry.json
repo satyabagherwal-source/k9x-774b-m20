@@ -2979,5 +2979,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "honojs-hono": {
+    "name": "honojs/hono",
+    "officialUrl": "https://github.com/honojs/hono",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:17:00.836Z",
+    "lastVerified": "2026-09-30T17:17:00.836Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 52,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
