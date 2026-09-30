@@ -7864,5 +7864,50 @@
     "qualityScore": 10146,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:44:29.434Z"
+  },
+  {
+    "name": "LangBot",
+    "fullName": "langbot-app/LangBot",
+    "url": "https://github.com/langbot-app/LangBot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Production-grade platform for building agentic IM bots - 生产级多平台智能机器人开发平台/ Agent、知识库编排、插件系统 / Bots for Discord / Slack / LINE / Telegram / WeChat(企业微信, 企微智能机器人, 公众号) / 飞书 / 钉钉 / QQ / Matrix e.g. Integrated with ChatGPT(GPT), DeepSeek, Dify, n8n, Langflow, Coze, Claude, Gemini, GLM, Ollama, SiliconFlow, Moonshot, openclaw / hermes agent, deerflow",
+    "stars": 17979,
+    "forks": 1618,
+    "openIssues": 125,
+    "language": "Python",
+    "qualityScore": 9925,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:45:48.135Z"
+  },
+  {
+    "name": "Memori",
+    "fullName": "MemoriLabs/Memori",
+    "url": "https://github.com/MemoriLabs/Memori",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Memori is agent-native memory infrastructure. A LLM-agnostic layer that turns agent execution and conversation into structured, persistent state for production systems. Built for enterprise, Memori works with the data infrastructure you already run, no rip-and-replace, and deploys across managed cloud, single-tenant cloud, VPC, and on-premises.",
+    "stars": 17026,
+    "forks": 3626,
+    "openIssues": 35,
+    "language": "Python",
+    "qualityScore": 9921,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:45:53.220Z"
+  },
+  {
+    "name": "SurfSense",
+    "fullName": "MODSetter/SurfSense",
+    "url": "https://github.com/MODSetter/SurfSense",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Air gapped, privacy focused open source NotebookLM alternative. Join our Discord: https://discord.gg/ejRNvftDp9",
+    "stars": 16303,
+    "forks": 1567,
+    "openIssues": 141,
+    "language": "Python",
+    "qualityScore": 9072,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:45:53.220Z"
   }
 ]

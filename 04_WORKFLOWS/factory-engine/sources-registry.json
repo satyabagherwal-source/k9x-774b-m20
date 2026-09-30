@@ -8322,5 +8322,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "langbot-app-langbot": {
+    "name": "langbot-app/LangBot",
+    "officialUrl": "https://github.com/langbot-app/LangBot",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:46:18.183Z",
+    "lastVerified": "2026-09-30T18:46:18.183Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 68,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

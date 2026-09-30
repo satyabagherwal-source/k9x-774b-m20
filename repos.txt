@@ -1958,3 +1958,11 @@ https://github.com/1Panel-dev/MaxKB
 https://github.com/eosphoros-ai/DB-GPT
 # [AI-AGENTS] arc53/DocsGPT (10146 score) - Private AI platform for agents, assistants and enterprise search. Built-in Agent
 https://github.com/arc53/DocsGPT
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:45:53.221Z] ---
+# [AI-AGENTS] langbot-app/LangBot (9925 score) - Production-grade platform for building agentic IM bots - 生产级多平台智能机器人开发平台/ Agent、
+https://github.com/langbot-app/LangBot
+# [AI-AGENTS] MemoriLabs/Memori (9921 score) - Memori is agent-native memory infrastructure. A LLM-agnostic layer that turns ag
+https://github.com/MemoriLabs/Memori
+# [AI-AGENTS] MODSetter/SurfSense (9072 score) - Air gapped, privacy focused open source NotebookLM alternative. Join our Discord
+https://github.com/MODSetter/SurfSense
