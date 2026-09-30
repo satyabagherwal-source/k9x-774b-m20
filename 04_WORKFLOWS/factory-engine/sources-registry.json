@@ -11598,5 +11598,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kizitonwose-calendar": {
+    "name": "kizitonwose/Calendar",
+    "officialUrl": "https://github.com/kizitonwose/Calendar",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T20:51:14.886Z",
+    "lastVerified": "2026-09-30T20:51:14.886Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
