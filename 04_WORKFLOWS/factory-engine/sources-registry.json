@@ -1692,5 +1692,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ruvnet-ruflo": {
+    "name": "ruvnet/ruflo",
+    "officialUrl": "https://github.com/ruvnet/ruflo",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T02:52:16.070Z",
+    "lastVerified": "2026-09-30T02:52:16.070Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
