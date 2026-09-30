@@ -5592,5 +5592,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "trailbaseio-trailbase": {
+    "name": "trailbaseio/trailbase",
+    "officialUrl": "https://github.com/trailbaseio/trailbase",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:47:22.862Z",
+    "lastVerified": "2026-09-30T17:47:22.862Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
