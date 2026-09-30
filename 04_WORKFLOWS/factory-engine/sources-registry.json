@@ -11793,5 +11793,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "peterh0323-streamer-sales": {
+    "name": "PeterH0323/Streamer-Sales",
+    "officialUrl": "https://github.com/PeterH0323/Streamer-Sales",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:03:33.882Z",
+    "lastVerified": "2026-09-30T21:03:33.882Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 21,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
