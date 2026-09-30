@@ -10714,5 +10714,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yohey-w-multi-agent-shogun": {
+    "name": "yohey-w/multi-agent-shogun",
+    "officialUrl": "https://github.com/yohey-w/multi-agent-shogun",
+    "sourceType": "github",
+    "technology": "Shell",
+    "lastChecked": "2026-09-30T20:22:10.756Z",
+    "lastVerified": "2026-09-30T20:22:10.756Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 63,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
