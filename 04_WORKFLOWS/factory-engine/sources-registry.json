@@ -2017,5 +2017,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wix-react-native-calendars": {
+    "name": "wix/react-native-calendars",
+    "officialUrl": "https://github.com/wix/react-native-calendars",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T13:56:01.029Z",
+    "lastVerified": "2026-09-30T13:56:01.029Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
