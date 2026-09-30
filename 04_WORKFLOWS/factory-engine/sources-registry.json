@@ -6892,5 +6892,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ntex-rs-ntex": {
+    "name": "ntex-rs/ntex",
+    "officialUrl": "https://github.com/ntex-rs/ntex",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:23:29.153Z",
+    "lastVerified": "2026-09-30T18:23:29.153Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
