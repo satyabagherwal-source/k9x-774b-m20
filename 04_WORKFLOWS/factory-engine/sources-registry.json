@@ -2095,5 +2095,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-black-forest-labs-flux.1-dev": {
+    "name": "black-forest-labs/FLUX.1-dev",
+    "officialUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T14:00:48.499Z",
+    "lastVerified": "2026-09-30T14:00:48.499Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
