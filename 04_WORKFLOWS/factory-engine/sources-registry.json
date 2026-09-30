@@ -8231,5 +8231,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "onyx-dot-app-onyx": {
+    "name": "onyx-dot-app/onyx",
+    "officialUrl": "https://github.com/onyx-dot-app/onyx",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:42:41.449Z",
+    "lastVerified": "2026-09-30T18:42:41.449Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
