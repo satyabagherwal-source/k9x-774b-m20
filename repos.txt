@@ -2824,3 +2824,11 @@ https://github.com/areal-project/AReaL
 https://github.com/ATH-MaaS/ComfyUI-Copilot
 # [AI-AGENTS] pguso/ai-agents-from-scratch (2895 score) - Demystify AI agents by building them yourself. Local LLMs, no black boxes, real 
 https://github.com/pguso/ai-agents-from-scratch
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:41:50.897Z] ---
+# [MOBILE-CROSS-PLATFORM] linkwarden/linkwarden (10548 score) - ⚡️⚡️⚡️ Self-hosted collaborative bookmark manager to collect, read, annotate, an
+https://github.com/linkwarden/linkwarden
+# [MOBILE-CROSS-PLATFORM] oblador/react-native-vector-icons (9877 score) - Customizable Icons for React Native with support for image source and full styli
+https://github.com/oblador/react-native-vector-icons
+# [MOBILE-CROSS-PLATFORM] microsoft/react-native-windows (10487 score [VERIFIED ORG]) - A framework for building native Windows apps with React.
+https://github.com/microsoft/react-native-windows

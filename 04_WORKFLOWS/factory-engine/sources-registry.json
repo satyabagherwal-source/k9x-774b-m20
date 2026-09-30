@@ -12495,5 +12495,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "linkwarden-linkwarden": {
+    "name": "linkwarden/linkwarden",
+    "officialUrl": "https://github.com/linkwarden/linkwarden",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T21:42:16.117Z",
+    "lastVerified": "2026-09-30T21:42:16.117Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

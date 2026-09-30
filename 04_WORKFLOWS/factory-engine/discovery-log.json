@@ -12676,5 +12676,50 @@
     "qualityScore": 2895,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:37:25.320Z"
+  },
+  {
+    "name": "linkwarden",
+    "fullName": "linkwarden/linkwarden",
+    "url": "https://github.com/linkwarden/linkwarden",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "⚡️⚡️⚡️ Self-hosted collaborative bookmark manager to collect, read, annotate, and fully preserve what matters, all in one place.",
+    "stars": 19883,
+    "forks": 854,
+    "openIssues": 674,
+    "language": "TypeScript",
+    "qualityScore": 10548,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:41:50.896Z"
+  },
+  {
+    "name": "react-native-vector-icons",
+    "fullName": "oblador/react-native-vector-icons",
+    "url": "https://github.com/oblador/react-native-vector-icons",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Customizable Icons for React Native with support for image source and full styling.",
+    "stars": 17918,
+    "forks": 2101,
+    "openIssues": 19,
+    "language": "TypeScript",
+    "qualityScore": 9877,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:41:50.896Z"
+  },
+  {
+    "name": "react-native-windows",
+    "fullName": "microsoft/react-native-windows",
+    "url": "https://github.com/microsoft/react-native-windows",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A framework for building native Windows apps with React.",
+    "stars": 17349,
+    "forks": 1208,
+    "openIssues": 805,
+    "language": "C++",
+    "qualityScore": 10487,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-09-30T21:41:50.896Z"
   }
 ]
