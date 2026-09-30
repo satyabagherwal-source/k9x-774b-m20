@@ -11156,5 +11156,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bytebase-dbhub": {
+    "name": "bytebase/dbhub",
+    "officialUrl": "https://github.com/bytebase/dbhub",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:34:09.641Z",
+    "lastVerified": "2026-09-30T20:34:09.641Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
