@@ -3447,5 +3447,18 @@
     "closedIssuesCount": 4,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pingcap-autoflow": {
+    "name": "pingcap/autoflow",
+    "officialUrl": "https://github.com/pingcap/autoflow",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:24:27.359Z",
+    "lastVerified": "2026-09-30T17:24:27.359Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
