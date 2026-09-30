@@ -8088,5 +8088,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hkuds-lightrag": {
+    "name": "HKUDS/LightRAG",
+    "officialUrl": "https://github.com/HKUDS/LightRAG",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:40:38.582Z",
+    "lastVerified": "2026-09-30T18:40:38.582Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
