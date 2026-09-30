@@ -11312,5 +11312,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ryze-ai-adgent-open-seo-mcp-skills": {
+    "name": "Ryze-AI-Adgent/open-seo-mcp-skills",
+    "officialUrl": "https://github.com/Ryze-AI-Adgent/open-seo-mcp-skills",
+    "sourceType": "github",
+    "technology": "Shell",
+    "lastChecked": "2026-09-30T20:39:30.758Z",
+    "lastVerified": "2026-09-30T20:39:30.758Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
