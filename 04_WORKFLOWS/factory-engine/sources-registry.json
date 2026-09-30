@@ -7620,5 +7620,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dnscontrol-dnscontrol": {
+    "name": "DNSControl/dnscontrol",
+    "officialUrl": "https://github.com/DNSControl/dnscontrol",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:33:12.783Z",
+    "lastVerified": "2026-09-30T18:33:12.783Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 43,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
