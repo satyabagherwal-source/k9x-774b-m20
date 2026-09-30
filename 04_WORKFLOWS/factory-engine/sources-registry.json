@@ -5332,5 +5332,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pimalaya-himalaya": {
+    "name": "pimalaya/himalaya",
+    "officialUrl": "https://github.com/pimalaya/himalaya",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:44:11.627Z",
+    "lastVerified": "2026-09-30T17:44:11.627Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
