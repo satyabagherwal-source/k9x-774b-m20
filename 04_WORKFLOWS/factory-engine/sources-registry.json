@@ -4526,5 +4526,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sorintlab-stolon": {
+    "name": "sorintlab/stolon",
+    "officialUrl": "https://github.com/sorintlab/stolon",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:35:27.745Z",
+    "lastVerified": "2026-09-30T17:35:27.745Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
