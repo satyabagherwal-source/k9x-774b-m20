@@ -10545,5 +10545,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "google-adk-java": {
+    "name": "google/adk-java",
+    "officialUrl": "https://github.com/google/adk-java",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T20:17:51.755Z",
+    "lastVerified": "2026-09-30T20:17:51.755Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 49,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
