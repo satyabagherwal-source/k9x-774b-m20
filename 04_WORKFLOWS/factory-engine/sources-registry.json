@@ -9921,5 +9921,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "langgenius-dify": {
+    "name": "langgenius/dify",
+    "officialUrl": "https://github.com/langgenius/dify",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:54:10.200Z",
+    "lastVerified": "2026-09-30T19:54:10.200Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

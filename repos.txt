@@ -2288,3 +2288,11 @@ https://github.com/archestra-ai/archestra
 https://github.com/microsoft/flint-chart
 # [AI-AGENTS] httprunner/httprunner (2984 score) - HttpRunner 是一款开源的 API/UI 测试框架，简单易用，功能强大，具有丰富的插件化机制和高度的可扩展能力。
 https://github.com/httprunner/httprunner
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:53:46.458Z] ---
+# [AI-AGENTS] langgenius/dify (86608 score) - Build Agentic workflows, RAG pipelines, with rich AI model and tool support on o
+https://github.com/langgenius/dify
+# [AI-AGENTS] PySpur-Dev/pyspur (3264 score) - A visual playground for agentic workflows: Iterate over your agents 10x faster
+https://github.com/PySpur-Dev/pyspur
+# [AI-AGENTS] aipoch/open-science (3144 score) - The open-source AI research workbench for scientific research and agent workflow
+https://github.com/aipoch/open-science

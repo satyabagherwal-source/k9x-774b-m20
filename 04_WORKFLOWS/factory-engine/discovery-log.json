@@ -9706,5 +9706,50 @@
     "qualityScore": 2984,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:51:34.099Z"
+  },
+  {
+    "name": "dify",
+    "fullName": "langgenius/dify",
+    "url": "https://github.com/langgenius/dify",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Build Agentic workflows, RAG pipelines, with rich AI model and tool support on one collaborative workspace. Deploy on cloud, VPC, or self-hosted, so teams move from prototype to production without rebuilding the stack.",
+    "stars": 157601,
+    "forks": 24857,
+    "openIssues": 906,
+    "language": "TypeScript",
+    "qualityScore": 86608,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:53:46.261Z"
+  },
+  {
+    "name": "pyspur",
+    "fullName": "PySpur-Dev/pyspur",
+    "url": "https://github.com/PySpur-Dev/pyspur",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A visual playground for agentic workflows: Iterate over your agents 10x faster",
+    "stars": 5799,
+    "forks": 429,
+    "openIssues": 43,
+    "language": "TypeScript",
+    "qualityScore": 3264,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:53:46.261Z"
+  },
+  {
+    "name": "open-science",
+    "fullName": "aipoch/open-science",
+    "url": "https://github.com/aipoch/open-science",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The open-source AI research workbench for scientific research and agent workflows. Local-first, model-agnostic desktop app with extensible skills, MCP tools and connectors, Python/R execution and traceable artifacts for reproducible research on macOS, Windows and Linux.",
+    "stars": 5326,
+    "forks": 489,
+    "openIssues": 42,
+    "language": "TypeScript",
+    "qualityScore": 3144,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:53:46.261Z"
   }
 ]
