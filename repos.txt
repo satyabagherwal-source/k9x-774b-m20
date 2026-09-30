@@ -2744,3 +2744,27 @@ https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T21:14:58.310Z] ---
 # [AI-AGENTS] SocialAI-tianji/Tianji (1119 score) - 制作懂人情世故的大语言模型 | 涵盖提示词工程、RAG、Agent、LLM微调教程
 https://github.com/SocialAI-tianji/Tianji
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:16:03.743Z] ---
+# [AI-AGENTS] preset-io/agor (1199 score) - Agor - team command center for all things agentic
+https://github.com/preset-io/agor
+# [AI-AGENTS] nrslib/takt (1106 score) - TAKT Agent Koordination Topology - Define how AI agents coordinate, where humans
+https://github.com/nrslib/takt
+# [AI-AGENTS] fastclaw-ai/fastclaw (1006 score) - Multi-Agent Framework
+https://github.com/fastclaw-ai/fastclaw
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:16:05.207Z] ---
+# [DATABASE-STORAGE-ENGINES] postgresml/postgresml (3971 score) - Postgres with GPUs for ML/AI apps.
+https://github.com/postgresml/postgresml
+# [DATABASE-STORAGE-ENGINES] genkit-ai/genkit (3837 score) - Open-source framework for building agentic apps in JavaScript, Go, Dart, and Pyt
+https://github.com/genkit-ai/genkit
+# [DATABASE-STORAGE-ENGINES] RediSearch/RediSearch (3752 score) - A query and indexing engine for Redis, providing secondary indexing, full-text s
+https://github.com/RediSearch/RediSearch
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:16:05.924Z] ---
+# [MOBILE-CROSS-PLATFORM] futurice/pepperoni-app-kit (2881 score) - Pepperoni - React Native App Starter Kit for Android and iOS
+https://github.com/futurice/pepperoni-app-kit
+# [MOBILE-CROSS-PLATFORM] iconoir-icons/iconoir (2791 score) - An open source icons library with 1600+ icons, supporting React, React Native, F
+https://github.com/iconoir-icons/iconoir
+# [MOBILE-CROSS-PLATFORM] onejs/one (2491 score) - ❶ One lets you target React web and React Native with a single Vite plugin. Ever
+https://github.com/onejs/one
