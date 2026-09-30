@@ -6463,5 +6463,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cloudscape-design-components": {
+    "name": "cloudscape-design/components",
+    "officialUrl": "https://github.com/cloudscape-design/components",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:18:58.114Z",
+    "lastVerified": "2026-09-30T18:18:58.114Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
