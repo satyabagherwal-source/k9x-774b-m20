@@ -4435,5 +4435,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dolthub-dolt": {
+    "name": "dolthub/dolt",
+    "officialUrl": "https://github.com/dolthub/dolt",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:34:56.830Z",
+    "lastVerified": "2026-09-30T17:34:56.830Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
