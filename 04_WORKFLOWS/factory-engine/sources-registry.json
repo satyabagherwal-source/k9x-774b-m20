@@ -10831,5 +10831,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "railwayapp-nixpacks": {
+    "name": "railwayapp/nixpacks",
+    "officialUrl": "https://github.com/railwayapp/nixpacks",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:26:11.329Z",
+    "lastVerified": "2026-09-30T20:26:11.329Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
