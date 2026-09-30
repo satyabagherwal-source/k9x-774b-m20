@@ -11169,5 +11169,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "davepoon-buildwithclaude": {
+    "name": "davepoon/buildwithclaude",
+    "officialUrl": "https://github.com/davepoon/buildwithclaude",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:34:12.753Z",
+    "lastVerified": "2026-09-30T20:34:12.753Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
