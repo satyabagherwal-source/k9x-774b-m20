@@ -6112,5 +6112,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "go-eagle-eagle": {
+    "name": "go-eagle/eagle",
+    "officialUrl": "https://github.com/go-eagle/eagle",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:17:14.485Z",
+    "lastVerified": "2026-09-30T18:17:14.485Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
