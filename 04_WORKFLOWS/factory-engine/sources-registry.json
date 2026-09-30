@@ -11559,5 +11559,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "insertkoinio-koin": {
+    "name": "InsertKoinIO/koin",
+    "officialUrl": "https://github.com/InsertKoinIO/koin",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T20:49:54.198Z",
+    "lastVerified": "2026-09-30T20:49:54.198Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
