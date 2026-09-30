@@ -5059,5 +5059,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "stenciljs-core": {
+    "name": "stenciljs/core",
+    "officialUrl": "https://github.com/stenciljs/core",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:40:55.327Z",
+    "lastVerified": "2026-09-30T17:40:55.327Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 55,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
