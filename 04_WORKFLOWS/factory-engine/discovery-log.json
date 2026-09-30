@@ -11161,5 +11161,50 @@
     "qualityScore": 2231,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:33:15.865Z"
+  },
+  {
+    "name": "py-xiaozhi",
+    "fullName": "huangjunsen0406/py-xiaozhi",
+    "url": "https://github.com/huangjunsen0406/py-xiaozhi",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source AI assistant ecosystem with MCP integrations, multimodal workflows, IoT support, and cross-platform voice interaction.",
+    "stars": 3487,
+    "forks": 742,
+    "openIssues": 6,
+    "language": "Python",
+    "qualityScore": 2228,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:34:43.043Z"
+  },
+  {
+    "name": "neo",
+    "fullName": "neomjs/neo",
+    "url": "https://github.com/neomjs/neo",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Neo.mjs is a self-evolving software organism: a professional end-to-end AI engineering team whose cross-model swarm inhabits live apps via Neural Link, Active Hybrid GraphRAG, DreamService, and self-healing loops.",
+    "stars": 3282,
+    "forks": 244,
+    "openIssues": 155,
+    "language": "JavaScript",
+    "qualityScore": 2164,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:34:43.043Z"
+  },
+  {
+    "name": "google_workspace_mcp",
+    "fullName": "taylorwilsdon/google_workspace_mcp",
+    "url": "https://github.com/taylorwilsdon/google_workspace_mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Control Gmail, Google Calendar, Docs, Sheets, Slides, Chat, Forms, Tasks, Search & Drive with AI - Comprehensive Google Workspace MCP Server & CLI Tool",
+    "stars": 3265,
+    "forks": 1022,
+    "openIssues": 211,
+    "language": "Python",
+    "qualityScore": 2389,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:34:43.043Z"
   }
 ]

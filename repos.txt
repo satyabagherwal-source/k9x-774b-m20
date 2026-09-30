@@ -2552,3 +2552,11 @@ https://github.com/stickerdaniel/linkedin-mcp-server
 https://github.com/bytebase/dbhub
 # [AI-AGENTS] davepoon/buildwithclaude (2231 score) - A single hub to find Claude Skills, Agents, Commands, Hooks, Plugins, and Market
 https://github.com/davepoon/buildwithclaude
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:34:43.044Z] ---
+# [AI-AGENTS] huangjunsen0406/py-xiaozhi (2228 score) - Open-source AI assistant ecosystem with MCP integrations, multimodal workflows, 
+https://github.com/huangjunsen0406/py-xiaozhi
+# [AI-AGENTS] neomjs/neo (2164 score) - Neo.mjs is a self-evolving software organism: a professional end-to-end AI engin
+https://github.com/neomjs/neo
+# [AI-AGENTS] taylorwilsdon/google_workspace_mcp (2389 score) - Control Gmail, Google Calendar, Docs, Sheets, Slides, Chat, Forms, Tasks, Search
+https://github.com/taylorwilsdon/google_workspace_mcp

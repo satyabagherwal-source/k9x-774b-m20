@@ -11182,5 +11182,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "huangjunsen0406-py-xiaozhi": {
+    "name": "huangjunsen0406/py-xiaozhi",
+    "officialUrl": "https://github.com/huangjunsen0406/py-xiaozhi",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:35:06.620Z",
+    "lastVerified": "2026-09-30T20:35:06.620Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
