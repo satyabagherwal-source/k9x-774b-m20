@@ -7204,5 +7204,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "benoitvallon-react-native-nw-react-calculator": {
+    "name": "benoitvallon/react-native-nw-react-calculator",
+    "officialUrl": "https://github.com/benoitvallon/react-native-nw-react-calculator",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T18:26:41.357Z",
+    "lastVerified": "2026-09-30T18:26:41.357Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
