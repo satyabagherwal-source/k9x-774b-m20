@@ -173,7 +173,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T18:30:26.940Z",
+        "lastActiveAt": "2026-09-30T18:31:59.285Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -203,7 +203,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T18:30:27.206Z",
+        "lastActiveAt": "2026-09-30T18:32:04.097Z",
         "lastHarvestedAt": "2026-09-30T17:24:15.748Z",
         "totalHarvested": 1,
         "lastError": null
