@@ -2901,5 +2901,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "virgiliojr94-book-to-skill": {
+    "name": "virgiliojr94/book-to-skill",
+    "officialUrl": "https://github.com/virgiliojr94/book-to-skill",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:15:32.548Z",
+    "lastVerified": "2026-09-30T17:15:32.548Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
