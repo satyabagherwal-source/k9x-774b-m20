@@ -10766,5 +10766,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zvec-ai-zvec-grep": {
+    "name": "zvec-ai/zvec-grep",
+    "officialUrl": "https://github.com/zvec-ai/zvec-grep",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:24:20.532Z",
+    "lastVerified": "2026-09-30T20:24:20.532Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

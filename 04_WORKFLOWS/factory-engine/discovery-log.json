@@ -10681,5 +10681,50 @@
     "qualityScore": 2540,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:22:36.750Z"
+  },
+  {
+    "name": "zvec-grep",
+    "fullName": "zvec-ai/zvec-grep",
+    "url": "https://github.com/zvec-ai/zvec-grep",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Local-first search across your workspace, built for humans and AI agents.",
+    "stars": 3849,
+    "forks": 224,
+    "openIssues": 66,
+    "language": "Rust",
+    "qualityScore": 2274,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:23:59.951Z"
+  },
+  {
+    "name": "ouch",
+    "fullName": "ouch-org/ouch",
+    "url": "https://github.com/ouch-org/ouch",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Painless compression and decompression in the terminal",
+    "stars": 3774,
+    "forks": 155,
+    "openIssues": 103,
+    "language": "Rust",
+    "qualityScore": 2384,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:23:59.951Z"
+  },
+  {
+    "name": "doxx",
+    "fullName": "bgreenwell/doxx",
+    "url": "https://github.com/bgreenwell/doxx",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Expose the contents of .docx files without leaving your terminal. Fast, safe, and smart — no Office required!",
+    "stars": 3761,
+    "forks": 94,
+    "openIssues": 9,
+    "language": "Rust",
+    "qualityScore": 2177,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:23:59.953Z"
   }
 ]

@@ -2464,3 +2464,11 @@ https://github.com/jhspetersson/fselect
 https://github.com/crate-ci/typos
 # [HIGH-PERF-SYSTEMS] arxanas/git-branchless (2540 score) - High-velocity, monorepo-scale workflow for Git
 https://github.com/arxanas/git-branchless
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:23:59.954Z] ---
+# [HIGH-PERF-SYSTEMS] zvec-ai/zvec-grep (2274 score) - Local-first search across your workspace, built for humans and AI agents.
+https://github.com/zvec-ai/zvec-grep
+# [HIGH-PERF-SYSTEMS] ouch-org/ouch (2384 score) - Painless compression and decompression in the terminal
+https://github.com/ouch-org/ouch
+# [HIGH-PERF-SYSTEMS] bgreenwell/doxx (2177 score) - Expose the contents of .docx files without leaving your terminal. Fast, safe, an
+https://github.com/bgreenwell/doxx
