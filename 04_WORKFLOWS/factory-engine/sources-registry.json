@@ -6632,5 +6632,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jpush-aurora-imui": {
+    "name": "jpush/aurora-imui",
+    "officialUrl": "https://github.com/jpush/aurora-imui",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T18:20:03.391Z",
+    "lastVerified": "2026-09-30T18:20:03.391Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
