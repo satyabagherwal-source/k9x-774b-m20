@@ -2912,3 +2912,11 @@ https://github.com/SwiftUIX/SwiftUIX
 https://github.com/MochiDiffusion/MochiDiffusion
 # [MOBILE-CROSS-PLATFORM] SwiftKickMobile/SwiftMessages (4334 score) - A very flexible message bar for UIKit and SwiftUI.
 https://github.com/SwiftKickMobile/SwiftMessages
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T22:22:53.087Z] ---
+# [MOBILE-CROSS-PLATFORM] ParthJadhav/app-store-screenshots (3983 score) - end to end app store screenshot creation using AI
+https://github.com/ParthJadhav/app-store-screenshots
+# [MOBILE-CROSS-PLATFORM] Juanpe/About-SwiftUI (3855 score) - Gathering all info published, both by Apple and by others, about new framework S
+https://github.com/Juanpe/About-SwiftUI
+# [MOBILE-CROSS-PLATFORM] Dimillian/IceCubesApp (4204 score) - A SwiftUI Mastodon client
+https://github.com/Dimillian/IceCubesApp

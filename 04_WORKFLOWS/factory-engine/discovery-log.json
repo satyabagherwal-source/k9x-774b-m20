@@ -13171,5 +13171,50 @@
     "qualityScore": 4334,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T22:15:34.015Z"
+  },
+  {
+    "name": "app-store-screenshots",
+    "fullName": "ParthJadhav/app-store-screenshots",
+    "url": "https://github.com/ParthJadhav/app-store-screenshots",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "end to end app store screenshot creation using AI",
+    "stars": 7118,
+    "forks": 520,
+    "openIssues": 9,
+    "language": "TypeScript",
+    "qualityScore": 3983,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:22:53.085Z"
+  },
+  {
+    "name": "About-SwiftUI",
+    "fullName": "Juanpe/About-SwiftUI",
+    "url": "https://github.com/Juanpe/About-SwiftUI",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Gathering all info published, both by Apple and by others, about new framework SwiftUI. ",
+    "stars": 7084,
+    "forks": 676,
+    "openIssues": 5,
+    "language": "Swift",
+    "qualityScore": 3855,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:22:53.086Z"
+  },
+  {
+    "name": "IceCubesApp",
+    "fullName": "Dimillian/IceCubesApp",
+    "url": "https://github.com/Dimillian/IceCubesApp",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A SwiftUI Mastodon client",
+    "stars": 7074,
+    "forks": 722,
+    "openIssues": 580,
+    "language": "Swift",
+    "qualityScore": 4204,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:22:53.086Z"
   }
 ]
