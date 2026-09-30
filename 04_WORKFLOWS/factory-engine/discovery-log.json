@@ -12766,5 +12766,50 @@
     "qualityScore": 2274,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:43:55.239Z"
+  },
+  {
+    "name": "crosspaste-desktop",
+    "fullName": "CrossPaste/crosspaste-desktop",
+    "url": "https://github.com/CrossPaste/crosspaste-desktop",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, LAN-only, no cloud. OCR, CLI and MCP server built in.",
+    "stars": 2595,
+    "forks": 130,
+    "openIssues": 15,
+    "language": "Kotlin",
+    "qualityScore": 1517,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:46:01.544Z"
+  },
+  {
+    "name": "Splitties",
+    "fullName": "LouisCAD/Splitties",
+    "url": "https://github.com/LouisCAD/Splitties",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A collection of hand-crafted extensions for your Kotlin projects.",
+    "stars": 2583,
+    "forks": 159,
+    "openIssues": 53,
+    "language": "Kotlin",
+    "qualityScore": 1695,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:46:01.545Z"
+  },
+  {
+    "name": "KaMPKit",
+    "fullName": "touchlab/KaMPKit",
+    "url": "https://github.com/touchlab/KaMPKit",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "KaMP Kit by Touchlab. A collection of code & tools designed to get your mobile team started quickly w/Kotlin Multiplatform",
+    "stars": 2455,
+    "forks": 211,
+    "openIssues": 1,
+    "language": "Kotlin",
+    "qualityScore": 1543,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:46:01.545Z"
   }
 ]

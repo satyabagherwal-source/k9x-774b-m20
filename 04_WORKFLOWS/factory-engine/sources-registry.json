@@ -12573,5 +12573,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "louiscad-splitties": {
+    "name": "LouisCAD/Splitties",
+    "officialUrl": "https://github.com/LouisCAD/Splitties",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:46:18.051Z",
+    "lastVerified": "2026-09-30T21:46:18.051Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

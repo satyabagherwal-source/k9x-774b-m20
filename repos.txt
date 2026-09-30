@@ -2840,3 +2840,11 @@ https://github.com/shroominic/codeinterpreter-api
 https://github.com/xiaobright/dsh-anchored-standard
 # [AI-AGENTS] THUDM/AgentBench (2274 score) - A Comprehensive Benchmark to Evaluate LLMs as Agents (ICLR'24)
 https://github.com/THUDM/AgentBench
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:46:01.545Z] ---
+# [MOBILE-CROSS-PLATFORM] CrossPaste/crosspaste-desktop (1517 score) - Cross-device clipboard sync for macOS, Windows & Linux — end-to-end encrypted, L
+https://github.com/CrossPaste/crosspaste-desktop
+# [MOBILE-CROSS-PLATFORM] LouisCAD/Splitties (1695 score) - A collection of hand-crafted extensions for your Kotlin projects.
+https://github.com/LouisCAD/Splitties
+# [MOBILE-CROSS-PLATFORM] touchlab/KaMPKit (1543 score) - KaMP Kit by Touchlab. A collection of code & tools designed to get your mobile t
+https://github.com/touchlab/KaMPKit
