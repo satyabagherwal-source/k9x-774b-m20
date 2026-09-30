@@ -8621,5 +8621,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "iflytek-astron-agent": {
+    "name": "iflytek/astron-agent",
+    "officialUrl": "https://github.com/iflytek/astron-agent",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T18:57:59.505Z",
+    "lastVerified": "2026-09-30T18:57:59.505Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 59,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
