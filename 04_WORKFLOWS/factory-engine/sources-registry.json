@@ -4292,5 +4292,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sigoden-aichat": {
+    "name": "sigoden/aichat",
+    "officialUrl": "https://github.com/sigoden/aichat",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:33:13.977Z",
+    "lastVerified": "2026-09-30T17:33:13.977Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

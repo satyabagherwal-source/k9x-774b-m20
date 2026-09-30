@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:31:36.132Z",
+        "lastActiveAt": "2026-09-30T17:33:08.755Z",
         "lastHarvestedAt": "2026-09-30T02:56:10.793Z",
         "totalHarvested": 1,
         "lastError": null
@@ -183,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:31:36.141Z",
+        "lastActiveAt": "2026-09-30T17:33:04.421Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -193,7 +193,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:31:36.149Z",
+        "lastActiveAt": "2026-09-30T17:33:11.863Z",
         "lastHarvestedAt": "2026-09-30T17:20:42.525Z",
         "totalHarvested": 1,
         "lastError": null
