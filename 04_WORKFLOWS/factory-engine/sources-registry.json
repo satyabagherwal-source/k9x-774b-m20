@@ -3668,5 +3668,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "welldone-software-why-did-you-render": {
+    "name": "welldone-software/why-did-you-render",
+    "officialUrl": "https://github.com/welldone-software/why-did-you-render",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:26:50.859Z",
+    "lastVerified": "2026-09-30T17:26:50.859Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
