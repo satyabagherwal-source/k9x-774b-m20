@@ -11481,5 +11481,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "go-nunu-nunu": {
+    "name": "go-nunu/nunu",
+    "officialUrl": "https://github.com/go-nunu/nunu",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T20:45:35.480Z",
+    "lastVerified": "2026-09-30T20:45:35.480Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
