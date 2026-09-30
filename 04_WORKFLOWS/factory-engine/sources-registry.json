@@ -3369,5 +3369,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "authzed-spicedb": {
+    "name": "authzed/spicedb",
+    "officialUrl": "https://github.com/authzed/spicedb",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:24:02.362Z",
+    "lastVerified": "2026-09-30T17:24:02.362Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 45,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
