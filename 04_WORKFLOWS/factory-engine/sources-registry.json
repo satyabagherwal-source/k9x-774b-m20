@@ -10480,5 +10480,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "juicedata-juicefs": {
+    "name": "juicedata/juicefs",
+    "officialUrl": "https://github.com/juicedata/juicefs",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T20:16:28.861Z",
+    "lastVerified": "2026-09-30T20:16:28.861Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
