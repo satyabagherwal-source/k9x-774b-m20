@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:20:32.010Z",
+        "lastActiveAt": "2026-09-30T17:20:44.019Z",
         "lastHarvestedAt": "2026-09-30T02:56:10.793Z",
         "totalHarvested": 1,
         "lastError": null
@@ -193,9 +193,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:20:32.090Z",
-        "lastHarvestedAt": null,
-        "totalHarvested": 0,
+        "lastActiveAt": "2026-09-30T17:20:42.525Z",
+        "lastHarvestedAt": "2026-09-30T17:20:42.525Z",
+        "totalHarvested": 1,
         "lastError": null
       },
       {

@@ -3031,5 +3031,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fincept-corporation-finceptterminal": {
+    "name": "Fincept-Corporation/FinceptTerminal",
+    "officialUrl": "https://github.com/Fincept-Corporation/FinceptTerminal",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T17:20:57.259Z",
+    "lastVerified": "2026-09-30T17:20:57.259Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
