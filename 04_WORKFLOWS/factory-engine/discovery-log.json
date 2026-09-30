@@ -9226,5 +9226,50 @@
     "qualityScore": 5343,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:36:24.599Z"
+  },
+  {
+    "name": "mcp",
+    "fullName": "awslabs/mcp",
+    "url": "https://github.com/awslabs/mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open source MCP Servers for AWS",
+    "stars": 9744,
+    "forks": 1779,
+    "openIssues": 252,
+    "language": "Python",
+    "qualityScore": 5856,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:37:40.014Z"
+  },
+  {
+    "name": "Graft",
+    "fullName": "trailhq/Graft",
+    "url": "https://github.com/trailhq/Graft",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Turbocharge Claude Code, Cursor, Codex, Gemini & every coding agent: faster, cheaper, with contextual understanding specific to your codebase.",
+    "stars": 9429,
+    "forks": 865,
+    "openIssues": 188,
+    "language": "TypeScript",
+    "qualityScore": 5424,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:37:40.014Z"
+  },
+  {
+    "name": "openstatus",
+    "fullName": "openstatusHQ/openstatus",
+    "url": "https://github.com/openstatusHQ/openstatus",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🫖 Status page with uptime monitoring & API monitoring as code   🫖",
+    "stars": 9156,
+    "forks": 779,
+    "openIssues": 102,
+    "language": "TypeScript",
+    "qualityScore": 5262,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:37:40.015Z"
   }
 ]

@@ -2202,3 +2202,11 @@ https://github.com/xinnan-tech/xiaozhi-esp32-server
 https://github.com/mcp-use/mcp-use
 # [AI-AGENTS] Agents365-ai/drawio-skill (5343 score) - Agent skill that turns natural language, code, Terraform/K8s, SQL, OpenAPI, Asyn
 https://github.com/Agents365-ai/drawio-skill
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:37:40.015Z] ---
+# [AI-AGENTS] awslabs/mcp (5856 score) - Open source MCP Servers for AWS
+https://github.com/awslabs/mcp
+# [AI-AGENTS] trailhq/Graft (5424 score) - Turbocharge Claude Code, Cursor, Codex, Gemini & every coding agent: faster, che
+https://github.com/trailhq/Graft
+# [AI-AGENTS] openstatusHQ/openstatus (5262 score) - 🫖 Status page with uptime monitoring & API monitoring as code   🫖
+https://github.com/openstatusHQ/openstatus
