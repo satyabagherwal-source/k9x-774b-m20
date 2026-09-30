@@ -4461,5 +4461,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nocobase-nocobase": {
+    "name": "nocobase/nocobase",
+    "officialUrl": "https://github.com/nocobase/nocobase",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:35:04.204Z",
+    "lastVerified": "2026-09-30T17:35:04.204Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 69,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
