@@ -11626,5 +11626,50 @@
     "qualityScore": 5343,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:49:31.487Z"
+  },
+  {
+    "name": "sqldelight",
+    "fullName": "sqldelight/sqldelight",
+    "url": "https://github.com/sqldelight/sqldelight",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "SQLDelight - Generates typesafe Kotlin APIs from SQL",
+    "stars": 6887,
+    "forks": 581,
+    "openIssues": 367,
+    "language": "Kotlin",
+    "qualityScore": 4068,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:50:35.162Z"
+  },
+  {
+    "name": "Calendar",
+    "fullName": "kizitonwose/Calendar",
+    "url": "https://github.com/kizitonwose/Calendar",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A highly customizable calendar view and compose library for Android and Kotlin Multiplatform.",
+    "stars": 5607,
+    "forks": 584,
+    "openIssues": 10,
+    "language": "Kotlin",
+    "qualityScore": 3249,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:50:35.162Z"
+  },
+  {
+    "name": "kotest",
+    "fullName": "kotest/kotest",
+    "url": "https://github.com/kotest/kotest",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Powerful, elegant and flexible test framework for Kotlin with assertions, property testing and data driven tests.",
+    "stars": 4789,
+    "forks": 703,
+    "openIssues": 49,
+    "language": "Kotlin",
+    "qualityScore": 2953,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:50:35.162Z"
   }
 ]

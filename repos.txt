@@ -2636,3 +2636,11 @@ https://github.com/amir1376/ab-download-manager
 https://github.com/InsertKoinIO/koin
 # [MOBILE-CROSS-PLATFORM] lysine-dev/okio (5343 score) - A modern I/O library for Android, Java, and Kotlin Multiplatform.
 https://github.com/lysine-dev/okio
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:50:35.165Z] ---
+# [MOBILE-CROSS-PLATFORM] sqldelight/sqldelight (4068 score) - SQLDelight - Generates typesafe Kotlin APIs from SQL
+https://github.com/sqldelight/sqldelight
+# [MOBILE-CROSS-PLATFORM] kizitonwose/Calendar (3249 score) - A highly customizable calendar view and compose library for Android and Kotlin M
+https://github.com/kizitonwose/Calendar
+# [MOBILE-CROSS-PLATFORM] kotest/kotest (2953 score) - Powerful, elegant and flexible test framework for Kotlin with assertions, proper
+https://github.com/kotest/kotest

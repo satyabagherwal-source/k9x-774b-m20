@@ -11585,5 +11585,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sqldelight-sqldelight": {
+    "name": "sqldelight/sqldelight",
+    "officialUrl": "https://github.com/sqldelight/sqldelight",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T20:50:59.527Z",
+    "lastVerified": "2026-09-30T20:50:59.527Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
