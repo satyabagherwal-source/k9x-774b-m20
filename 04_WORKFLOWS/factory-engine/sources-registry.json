@@ -13301,5 +13301,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nsh07-tomato": {
+    "name": "nsh07/Tomato",
+    "officialUrl": "https://github.com/nsh07/Tomato",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T23:40:17.643Z",
+    "lastVerified": "2026-09-30T23:40:17.643Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
