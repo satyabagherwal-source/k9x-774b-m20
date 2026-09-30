@@ -13275,5 +13275,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zacharee-bifrost": {
+    "name": "zacharee/Bifrost",
+    "officialUrl": "https://github.com/zacharee/Bifrost",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T23:33:01.331Z",
+    "lastVerified": "2026-09-30T23:33:01.331Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
