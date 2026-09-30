@@ -7412,5 +7412,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-webrtc-react-native-webrtc": {
+    "name": "react-native-webrtc/react-native-webrtc",
+    "officialUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T18:29:32.588Z",
+    "lastVerified": "2026-09-30T18:29:32.588Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
