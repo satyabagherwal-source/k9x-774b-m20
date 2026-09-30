@@ -5800,5 +5800,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nitrictech-nitric": {
+    "name": "nitrictech/nitric",
+    "officialUrl": "https://github.com/nitrictech/nitric",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:13:56.343Z",
+    "lastVerified": "2026-09-30T18:13:56.343Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 66,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
