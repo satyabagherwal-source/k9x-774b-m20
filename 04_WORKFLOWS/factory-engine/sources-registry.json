@@ -12820,5 +12820,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xcodesorg-xcodesapp": {
+    "name": "XcodesOrg/XcodesApp",
+    "officialUrl": "https://github.com/XcodesOrg/XcodesApp",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:03:02.916Z",
+    "lastVerified": "2026-09-30T22:03:02.916Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
