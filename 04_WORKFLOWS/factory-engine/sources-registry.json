@@ -2615,5 +2615,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-navigation-react-navigation": {
+    "name": "react-navigation/react-navigation",
+    "officialUrl": "https://github.com/react-navigation/react-navigation",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:14:03.543Z",
+    "lastVerified": "2026-09-30T17:14:03.543Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 52,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
