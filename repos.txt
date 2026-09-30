@@ -1608,3 +1608,13 @@ https://github.com/ZSeven-W/openpencil
 https://github.com/czy0729/Bangumi
 # [MOBILE-CROSS-PLATFORM] jpush/aurora-imui (3490 score) - General IM UI components. Android/iOS/RectNative ready.  通用 IM 聊天 UI 组件，已经同时支持 A
 https://github.com/jpush/aurora-imui
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:16:55.222Z] ---
+# [DATABASE-STORAGE-ENGINES] sfu-db/connector-x (1845 score) - Fastest library to load data from DB to DataFrames in Rust and Python
+https://github.com/sfu-db/connector-x
+# [DATABASE-STORAGE-ENGINES] sqlpage/SQLPage (1786 score) - Fast SQL-only data application builder. Automatically build a UI on top of SQL q
+https://github.com/sqlpage/SQLPage
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:16:58.032Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] openyurtio/openyurt (1596 score) - OpenYurt - Extending your native Kubernetes to edge(project under CNCF)
+https://github.com/openyurtio/openyurt

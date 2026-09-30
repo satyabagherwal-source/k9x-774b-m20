@@ -5929,5 +5929,50 @@
     "qualityScore": 3490,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:16:21.156Z"
+  },
+  {
+    "name": "connector-x",
+    "fullName": "sfu-db/connector-x",
+    "url": "https://github.com/sfu-db/connector-x",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "Fastest library to load data from DB to DataFrames in Rust and Python",
+    "stars": 2654,
+    "forks": 226,
+    "openIssues": 226,
+    "language": "Rust",
+    "qualityScore": 1845,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:16:27.475Z"
+  },
+  {
+    "name": "SQLPage",
+    "fullName": "sqlpage/SQLPage",
+    "url": "https://github.com/sqlpage/SQLPage",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "Fast SQL-only data application builder. Automatically build a UI on top of SQL queries. ",
+    "stars": 2568,
+    "forks": 174,
+    "openIssues": 141,
+    "language": "Rust",
+    "qualityScore": 1786,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:16:27.475Z"
+  },
+  {
+    "name": "openyurt",
+    "fullName": "openyurtio/openyurt",
+    "url": "https://github.com/openyurtio/openyurt",
+    "type": "github",
+    "domain": "devops-cloud-infrastructure",
+    "description": "OpenYurt - Extending your native Kubernetes to edge(project under CNCF)",
+    "stars": 2001,
+    "forks": 486,
+    "openIssues": 133,
+    "language": "Go",
+    "qualityScore": 1596,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:16:20.942Z"
   }
 ]

@@ -21,11 +21,11 @@
       "page": 3
     },
     "devops-cloud-infrastructure": {
-      "queryIndex": 2,
-      "page": 2
+      "queryIndex": 4,
+      "page": 1
     },
     "cybersecurity-defenses": {
-      "queryIndex": 3,
+      "queryIndex": 0,
       "page": 1
     },
     "database-storage-engines": {
@@ -37,6 +37,6 @@
     "sortIndex": 0,
     "page": 1
   },
-  "totalAutoDiscovered": 55,
-  "lastReplenishedAt": "2026-09-30T18:16:45.032Z"
+  "totalAutoDiscovered": 56,
+  "lastReplenishedAt": "2026-09-30T18:16:58.032Z"
 }
