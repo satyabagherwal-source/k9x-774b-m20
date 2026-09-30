@@ -9869,5 +9869,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ivanmurzak-unity-mcp": {
+    "name": "IvanMurzak/Unity-MCP",
+    "officialUrl": "https://github.com/IvanMurzak/Unity-MCP",
+    "sourceType": "github",
+    "technology": "C#",
+    "lastChecked": "2026-09-30T19:51:00.188Z",
+    "lastVerified": "2026-09-30T19:51:00.188Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
