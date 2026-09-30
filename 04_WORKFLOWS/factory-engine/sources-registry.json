@@ -11689,5 +11689,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "flowelement-xinliuyuansu-m_flow": {
+    "name": "FlowElement-xinliuyuansu/m_flow",
+    "officialUrl": "https://github.com/FlowElement-xinliuyuansu/m_flow",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:58:19.658Z",
+    "lastVerified": "2026-09-30T20:58:19.658Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
