@@ -2042,3 +2042,11 @@ https://github.com/KunAgent/Kun
 https://github.com/elder-plinius/T3MP3ST
 # [AI-AGENTS] loopx-project/loopx (3686 score) - A control plane with a durable state kernel for long-horizon agents and teams. K
 https://github.com/loopx-project/loopx
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:02:45.735Z] ---
+# [AI-AGENTS] ModelEngine-Group/nexent (3621 score) - Nexent is a zero-code platform for auto-generating production-grade AI agents us
+https://github.com/ModelEngine-Group/nexent
+# [AI-AGENTS] the-open-agent/openagent (3376 score) - ⚡️next-generation personal AI assistant powered by LLM, RAG and agent loops, sup
+https://github.com/the-open-agent/openagent
+# [AI-AGENTS] SenteLabsAI/OpenExecutive (3061 score) - AI-powered virtual executive team — a single coherent executive persona backed b
+https://github.com/SenteLabsAI/OpenExecutive

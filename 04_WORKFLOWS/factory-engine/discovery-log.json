@@ -8326,5 +8326,50 @@
     "qualityScore": 3686,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:00:00.275Z"
+  },
+  {
+    "name": "nexent",
+    "fullName": "ModelEngine-Group/nexent",
+    "url": "https://github.com/ModelEngine-Group/nexent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Nexent is a zero-code platform for auto-generating production-grade AI agents using Harness Engineering principles — unified tools, skills, memory, and orchestration with built-in constraints, feedback loops, and control planes.",
+    "stars": 5900,
+    "forks": 735,
+    "openIssues": 269,
+    "language": "Python",
+    "qualityScore": 3621,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:02:45.734Z"
+  },
+  {
+    "name": "openagent",
+    "fullName": "the-open-agent/openagent",
+    "url": "https://github.com/the-open-agent/openagent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "⚡️next-generation personal AI assistant powered by LLM, RAG and agent loops, supporting computer-use, browser-use and coding agent, demo: https://demo.openagentai.org",
+    "stars": 5675,
+    "forks": 663,
+    "openIssues": 45,
+    "language": "Go",
+    "qualityScore": 3376,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:02:45.734Z"
+  },
+  {
+    "name": "OpenExecutive",
+    "fullName": "SenteLabsAI/OpenExecutive",
+    "url": "https://github.com/SenteLabsAI/OpenExecutive",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI-powered virtual executive team — a single coherent executive persona backed by 8 specialist agents (FastAPI + Next.js).",
+    "stars": 5425,
+    "forks": 580,
+    "openIssues": 12,
+    "language": "Python",
+    "qualityScore": 3061,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:02:45.734Z"
   }
 ]
