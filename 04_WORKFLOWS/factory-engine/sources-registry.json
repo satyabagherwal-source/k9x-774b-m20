@@ -12183,5 +12183,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "redisearch-redisearch": {
+    "name": "RediSearch/RediSearch",
+    "officialUrl": "https://github.com/RediSearch/RediSearch",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T21:16:52.596Z",
+    "lastVerified": "2026-09-30T21:16:52.596Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
