@@ -2199,5 +2199,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "serafimcloud-21st": {
+    "name": "serafimcloud/21st",
+    "officialUrl": "https://github.com/serafimcloud/21st",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T14:01:43.063Z",
+    "lastVerified": "2026-09-30T14:01:43.063Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
