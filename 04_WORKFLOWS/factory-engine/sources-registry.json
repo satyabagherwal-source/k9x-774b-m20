@@ -11494,5 +11494,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "samanhappy-mcphub": {
+    "name": "samanhappy/mcphub",
+    "officialUrl": "https://github.com/samanhappy/mcphub",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:46:35.044Z",
+    "lastVerified": "2026-09-30T20:46:35.044Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

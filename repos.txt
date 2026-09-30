@@ -2616,3 +2616,11 @@ https://github.com/crbnos/carbon
 https://github.com/chrisryugj/korean-law-mcp
 # [AI-AGENTS] go-nunu/nunu (1622 score) - A CLI tool for building Go applications.
 https://github.com/go-nunu/nunu
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:46:10.724Z] ---
+# [AI-AGENTS] samanhappy/mcphub (1626 score) - Self-hosted MCP gateway and control plane for connecting, controlling, and opera
+https://github.com/samanhappy/mcphub
+# [AI-AGENTS] nitrocloudofficial/nitrostack (2117 score) - The full-stack TypeScript framework to build, test, and deploy production-ready 
+https://github.com/nitrocloudofficial/nitrostack
+# [AI-AGENTS] llmsresearch/paperbanana (1568 score) - Open source implementation and extension of Google Research’s PaperBanana for au
+https://github.com/llmsresearch/paperbanana
