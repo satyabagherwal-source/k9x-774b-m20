@@ -8244,5 +8244,18 @@
     "closedIssuesCount": 4,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "scrapegraphai-scrapegraph-ai": {
+    "name": "ScrapeGraphAI/Scrapegraph-ai",
+    "officialUrl": "https://github.com/ScrapeGraphAI/Scrapegraph-ai",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:43:31.965Z",
+    "lastVerified": "2026-09-30T18:43:31.965Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

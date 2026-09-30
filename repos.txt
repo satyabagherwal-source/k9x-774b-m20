@@ -1942,3 +1942,11 @@ https://github.com/khoj-ai/khoj
 https://github.com/microsoft/graphrag
 # [AI-AGENTS] onyx-dot-app/onyx (17955 score) - Open Source AI Platform - AI Chat with advanced features that works with every L
 https://github.com/onyx-dot-app/onyx
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:43:07.817Z] ---
+# [AI-AGENTS] ScrapeGraphAI/Scrapegraph-ai (16866 score) - Python scraper based on AI
+https://github.com/ScrapeGraphAI/Scrapegraph-ai
+# [AI-AGENTS] getzep/graphiti (16977 score) - Build Real-Time Knowledge Graphs for AI Agents
+https://github.com/getzep/graphiti
+# [AI-AGENTS] Cinnamon/kotaemon (13993 score) - An open-source RAG-based tool for chatting with your documents.
+https://github.com/Cinnamon/kotaemon

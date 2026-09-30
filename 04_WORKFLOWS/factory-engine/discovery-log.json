@@ -7774,5 +7774,50 @@
     "qualityScore": 17955,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:41:42.842Z"
+  },
+  {
+    "name": "Scrapegraph-ai",
+    "fullName": "ScrapeGraphAI/Scrapegraph-ai",
+    "url": "https://github.com/ScrapeGraphAI/Scrapegraph-ai",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Python scraper based on AI",
+    "stars": 31445,
+    "forks": 3179,
+    "openIssues": 20,
+    "language": "Python",
+    "qualityScore": 16866,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:43:07.816Z"
+  },
+  {
+    "name": "graphiti",
+    "fullName": "getzep/graphiti",
+    "url": "https://github.com/getzep/graphiti",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Build Real-Time Knowledge Graphs for AI Agents",
+    "stars": 31326,
+    "forks": 3214,
+    "openIssues": 443,
+    "language": "Python",
+    "qualityScore": 16977,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:43:07.816Z"
+  },
+  {
+    "name": "kotaemon",
+    "fullName": "Cinnamon/kotaemon",
+    "url": "https://github.com/Cinnamon/kotaemon",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An open-source RAG-based tool for chatting with your documents.",
+    "stars": 25791,
+    "forks": 2157,
+    "openIssues": 253,
+    "language": "Python",
+    "qualityScore": 13993,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:43:07.816Z"
   }
 ]
