@@ -9284,5 +9284,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "evil0ctal-douyin_tiktok_download_api": {
+    "name": "Evil0ctal/Douyin_TikTok_Download_API",
+    "officialUrl": "https://github.com/Evil0ctal/Douyin_TikTok_Download_API",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:30:25.975Z",
+    "lastVerified": "2026-09-30T19:30:25.975Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
