@@ -4955,5 +4955,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "neural-maze-ava-whatsapp-agent-course": {
+    "name": "neural-maze/ava-whatsapp-agent-course",
+    "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:40:06.234Z",
+    "lastVerified": "2026-09-30T17:40:06.234Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
