@@ -7568,5 +7568,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "google-artemis": {
+    "name": "google/artemis",
+    "officialUrl": "https://github.com/google/artemis",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:31:51.570Z",
+    "lastVerified": "2026-09-30T18:31:51.570Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
