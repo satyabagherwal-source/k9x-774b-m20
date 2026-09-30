@@ -8374,5 +8374,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "datawhalechina-all-in-rag": {
+    "name": "datawhalechina/all-in-rag",
+    "officialUrl": "https://github.com/datawhalechina/all-in-rag",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:48:06.048Z",
+    "lastVerified": "2026-09-30T18:48:06.048Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
