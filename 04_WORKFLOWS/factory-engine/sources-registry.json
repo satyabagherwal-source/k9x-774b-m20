@@ -10233,5 +10233,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "itzcrazykns-vane": {
+    "name": "ItzCrazyKns/Vane",
+    "officialUrl": "https://github.com/ItzCrazyKns/Vane",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:07:31.094Z",
+    "lastVerified": "2026-09-30T20:07:31.094Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
