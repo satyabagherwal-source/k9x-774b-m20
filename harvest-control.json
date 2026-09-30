@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:18:39.310Z",
+        "lastActiveAt": "2026-09-30T21:19:54.503Z",
         "lastHarvestedAt": "2026-09-30T21:11:46.441Z",
         "totalHarvested": 9,
         "lastError": null
@@ -183,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:18:39.320Z",
+        "lastActiveAt": "2026-09-30T21:19:58.114Z",
         "lastHarvestedAt": "2026-09-30T20:24:54.056Z",
         "totalHarvested": 3,
         "lastError": null
@@ -213,7 +213,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:18:39.340Z",
+        "lastActiveAt": "2026-09-30T21:19:53.591Z",
         "lastHarvestedAt": "2026-09-30T21:16:56.398Z",
         "totalHarvested": 3,
         "lastError": null
