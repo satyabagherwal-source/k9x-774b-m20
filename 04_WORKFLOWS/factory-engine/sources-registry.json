@@ -1796,5 +1796,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "thedaviddias-front-end-checklist": {
+    "name": "thedaviddias/Front-End-Checklist",
+    "officialUrl": "https://github.com/thedaviddias/Front-End-Checklist",
+    "sourceType": "github",
+    "technology": "MDX",
+    "lastChecked": "2026-09-30T13:55:11.402Z",
+    "lastVerified": "2026-09-30T13:55:11.402Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
