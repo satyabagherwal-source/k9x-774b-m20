@@ -8296,5 +8296,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "eosphoros-ai-db-gpt": {
+    "name": "eosphoros-ai/DB-GPT",
+    "officialUrl": "https://github.com/eosphoros-ai/DB-GPT",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:45:19.967Z",
+    "lastVerified": "2026-09-30T18:45:19.967Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
