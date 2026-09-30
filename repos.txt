@@ -1244,3 +1244,9 @@ https://github.com/svenstaro/miniserve
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T17:37:53.902Z] ---
 # [FULLSTACK-UI] zhihu/griffith (1641 score) - A React-based web video player
 https://github.com/zhihu/griffith
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:39:33.436Z] ---
+# [HUGGINGFACE-AI-MODELS] Alissonerdx/BFS-Best-Face-Swap (12480 score) - Verified Hugging Face Model: Alissonerdx/BFS-Best-Face-Swap (1048 likes, 168110 
+https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap
+# [HUGGINGFACE-AI-MODELS] ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF (3660 score) - Verified Hugging Face Model: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF (166 like
+https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF

@@ -3895,5 +3895,29 @@
     "qualityScore": 1641,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T17:37:20.650Z"
+  },
+  {
+    "name": "Alissonerdx/BFS-Best-Face-Swap",
+    "fullName": "Alissonerdx/BFS-Best-Face-Swap",
+    "url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Alissonerdx/BFS-Best-Face-Swap (1048 likes, 168110 downloads)",
+    "likes": 1048,
+    "downloads": 168110,
+    "qualityScore": 12480,
+    "discoveredAt": "2026-09-30T17:39:33.436Z"
+  },
+  {
+    "name": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "fullName": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF (166 likes, 175005 downloads)",
+    "likes": 166,
+    "downloads": 175005,
+    "qualityScore": 3660,
+    "discoveredAt": "2026-09-30T17:39:33.436Z"
   }
 ]

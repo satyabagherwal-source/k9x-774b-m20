@@ -4877,5 +4877,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-alissonerdx-bfs-best-face-swap": {
+    "name": "Alissonerdx/BFS-Best-Face-Swap",
+    "officialUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:39:35.819Z",
+    "lastVerified": "2026-09-30T17:39:35.819Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
