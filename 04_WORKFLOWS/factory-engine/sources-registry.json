@@ -13223,5 +13223,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "myshell-ai-ailice": {
+    "name": "myshell-ai/AIlice",
+    "officialUrl": "https://github.com/myshell-ai/AIlice",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T23:26:53.291Z",
+    "lastVerified": "2026-09-30T23:26:53.291Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
