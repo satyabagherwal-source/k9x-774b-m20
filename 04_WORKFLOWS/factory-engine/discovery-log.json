@@ -9316,5 +9316,50 @@
     "qualityScore": 5082,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:39:05.903Z"
+  },
+  {
+    "name": "osaurus",
+    "fullName": "osaurus-ai/osaurus",
+    "url": "https://github.com/osaurus-ai/osaurus",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Own your AI. The native macOS harness for AI agents -- any model, persistent memory, autonomous execution, cryptographic identity. Built in Swift. Fully offline. Open source.",
+    "stars": 8015,
+    "forks": 476,
+    "openIssues": 249,
+    "language": "Swift",
+    "qualityScore": 4600,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:40:25.084Z"
+  },
+  {
+    "name": "firecrawl-mcp-server",
+    "fullName": "firecrawl/firecrawl-mcp-server",
+    "url": "https://github.com/firecrawl/firecrawl-mcp-server",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🔥 Official Firecrawl MCP Server - Adds powerful web scraping and search to Cursor, Claude and any other LLM clients.",
+    "stars": 7535,
+    "forks": 897,
+    "openIssues": 148,
+    "language": "JavaScript",
+    "qualityScore": 4487,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:40:25.085Z"
+  },
+  {
+    "name": "waha",
+    "fullName": "devlikeapro/waha",
+    "url": "https://github.com/devlikeapro/waha",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "WAHA - WhatsApp HTTP API (REST API) that you can configure in a click! Multiple engines: WEBJS (browser based), NOWEB (websocket nodejs), GOWS (websocket go), WPP (browser)",
+    "stars": 7519,
+    "forks": 1785,
+    "openIssues": 457,
+    "language": "TypeScript",
+    "qualityScore": 4745,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:40:25.085Z"
   }
 ]

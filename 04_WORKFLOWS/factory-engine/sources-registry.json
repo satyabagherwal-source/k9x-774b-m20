@@ -9583,5 +9583,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "osaurus-ai-osaurus": {
+    "name": "osaurus-ai/osaurus",
+    "officialUrl": "https://github.com/osaurus-ai/osaurus",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T19:40:51.297Z",
+    "lastVerified": "2026-09-30T19:40:51.297Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 21,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

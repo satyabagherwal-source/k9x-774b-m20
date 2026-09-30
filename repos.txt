@@ -2218,3 +2218,11 @@ https://github.com/apify/apify-mcp-server
 https://github.com/firerpa/lamda
 # [AI-AGENTS] maximhq/bifrost (5082 score) - Fastest enterprise AI gateway (50x faster than LiteLLM) with adaptive load balan
 https://github.com/maximhq/bifrost
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:40:25.086Z] ---
+# [AI-AGENTS] osaurus-ai/osaurus (4600 score) - Own your AI. The native macOS harness for AI agents -- any model, persistent mem
+https://github.com/osaurus-ai/osaurus
+# [AI-AGENTS] firecrawl/firecrawl-mcp-server (4487 score) - 🔥 Official Firecrawl MCP Server - Adds powerful web scraping and search to Curs
+https://github.com/firecrawl/firecrawl-mcp-server
+# [AI-AGENTS] devlikeapro/waha (4745 score) - WAHA - WhatsApp HTTP API (REST API) that you can configure in a click! Multiple 
+https://github.com/devlikeapro/waha
