@@ -9297,5 +9297,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nukeop-nuclear": {
+    "name": "nukeop/nuclear",
+    "officialUrl": "https://github.com/nukeop/nuclear",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:30:28.443Z",
+    "lastVerified": "2026-09-30T19:30:28.443Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
