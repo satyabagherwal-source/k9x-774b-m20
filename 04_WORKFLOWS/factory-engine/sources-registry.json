@@ -3109,5 +3109,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "higress-group-higress": {
+    "name": "higress-group/higress",
+    "officialUrl": "https://github.com/higress-group/higress",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:21:28.531Z",
+    "lastVerified": "2026-09-30T17:21:28.531Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 76,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
