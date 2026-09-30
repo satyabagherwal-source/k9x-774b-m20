@@ -7334,5 +7334,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rqlite-rqlite": {
+    "name": "rqlite/rqlite",
+    "officialUrl": "https://github.com/rqlite/rqlite",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:28:53.815Z",
+    "lastVerified": "2026-09-30T18:28:53.815Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
