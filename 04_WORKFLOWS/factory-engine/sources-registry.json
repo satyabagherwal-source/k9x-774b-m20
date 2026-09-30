@@ -4903,5 +4903,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dingodb-dingo": {
+    "name": "dingodb/dingo",
+    "officialUrl": "https://github.com/dingodb/dingo",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T17:39:58.796Z",
+    "lastVerified": "2026-09-30T17:39:58.796Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 88,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

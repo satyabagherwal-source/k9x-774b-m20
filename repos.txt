@@ -1282,3 +1282,19 @@ https://github.com/docmost/docmost
 https://github.com/google/adk-python
 # [AI-AGENTS] NirDiamant/agents-towards-production (11874 score) - End-to-end, code-first tutorials for building production-grade GenAI agents. Fro
 https://github.com/NirDiamant/agents-towards-production
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:39:39.682Z] ---
+# [FULLSTACK-UI] stenciljs/core (7175 score) - A toolchain for building scalable, enterprise-ready component systems on top of 
+https://github.com/stenciljs/core
+# [FULLSTACK-UI] DouyinFE/semi-design (5764 score) - 🚀A modern, comprehensive, flexible design system and React UI library, AI-frien
+https://github.com/DouyinFE/semi-design
+# [FULLSTACK-UI] react95-io/React95 (4038 score) - 🌈🕹  Windows 95 style UI component library for React
+https://github.com/react95-io/React95
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:39:41.698Z] ---
+# [HIGH-PERF-SYSTEMS] mufeedvh/code2prompt (4176 score) - A CLI tool to convert your codebase into a single LLM prompt with source tree, p
+https://github.com/mufeedvh/code2prompt
+# [HIGH-PERF-SYSTEMS] timvisee/ffsend (3988 score) - :mailbox_with_mail: Easily and securely share files from the command line. A ful
+https://github.com/timvisee/ffsend
+# [HIGH-PERF-SYSTEMS] chmln/sd (4052 score) - Intuitive find & replace CLI (sed alternative)
+https://github.com/chmln/sd
