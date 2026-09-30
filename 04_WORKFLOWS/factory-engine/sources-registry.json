@@ -1900,5 +1900,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-sentence-transformers-all-minilm-l6-v2": {
+    "name": "sentence-transformers/all-MiniLM-L6-v2",
+    "officialUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T13:56:20.598Z",
+    "lastVerified": "2026-09-30T13:56:20.598Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
