@@ -7399,5 +7399,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jeffallan-claude-skills": {
+    "name": "Jeffallan/claude-skills",
+    "officialUrl": "https://github.com/Jeffallan/claude-skills",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:29:32.098Z",
+    "lastVerified": "2026-09-30T18:29:32.098Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
