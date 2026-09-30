@@ -2108,5 +2108,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alibaba-zvec": {
+    "name": "alibaba/zvec",
+    "officialUrl": "https://github.com/alibaba/zvec",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T14:00:49.996Z",
+    "lastVerified": "2026-09-30T14:00:49.996Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 44,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
