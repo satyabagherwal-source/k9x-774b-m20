@@ -2,7 +2,7 @@
   "domains": {
     "ai-agents": {
       "queryIndex": 2,
-      "page": 5
+      "page": 2
     },
     "fullstack-ui": {
       "queryIndex": 1,
@@ -21,7 +21,7 @@
       "page": 3
     },
     "devops-cloud-infrastructure": {
-      "queryIndex": 4,
+      "queryIndex": 1,
       "page": 1
     },
     "cybersecurity-defenses": {
@@ -37,6 +37,6 @@
     "sortIndex": 0,
     "page": 1
   },
-  "totalAutoDiscovered": 70,
-  "lastReplenishedAt": "2026-09-30T19:43:20.651Z"
+  "totalAutoDiscovered": 67,
+  "lastReplenishedAt": "2026-09-30T19:44:02.304Z"
 }

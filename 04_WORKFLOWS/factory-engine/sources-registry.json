@@ -9674,5 +9674,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "minishlab-semble": {
+    "name": "MinishLab/semble",
+    "officialUrl": "https://github.com/MinishLab/semble",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:44:07.849Z",
+    "lastVerified": "2026-09-30T19:44:07.849Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 22,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
