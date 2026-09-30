@@ -8777,5 +8777,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "maxmiksa-auto-company": {
+    "name": "MaxMiksa/Auto-Company",
+    "officialUrl": "https://github.com/MaxMiksa/Auto-Company",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:14:36.035Z",
+    "lastVerified": "2026-09-30T19:14:36.035Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
