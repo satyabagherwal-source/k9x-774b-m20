@@ -2420,5 +2420,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zama-ai-tfhe-rs": {
+    "name": "zama-ai/tfhe-rs",
+    "officialUrl": "https://github.com/zama-ai/tfhe-rs",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T14:04:56.599Z",
+    "lastVerified": "2026-09-30T14:04:56.599Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
