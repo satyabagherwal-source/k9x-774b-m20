@@ -5644,5 +5644,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "argoproj-argo-events": {
+    "name": "argoproj/argo-events",
+    "officialUrl": "https://github.com/argoproj/argo-events",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:48:16.790Z",
+    "lastVerified": "2026-09-30T17:48:16.790Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
