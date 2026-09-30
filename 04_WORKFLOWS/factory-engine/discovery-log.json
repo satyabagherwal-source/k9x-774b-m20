@@ -11716,5 +11716,50 @@
     "qualityScore": 4129,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:55:23.255Z"
+  },
+  {
+    "name": "chonkie",
+    "fullName": "feyninc/chonkie",
+    "url": "https://github.com/feyninc/chonkie",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🦛 CHONK docs with Chonkie ✨ — The lightweight ingestion library for fast, efficient and robust RAG pipelines",
+    "stars": 4779,
+    "forks": 362,
+    "openIssues": 49,
+    "language": "Python",
+    "qualityScore": 2846,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:57:30.029Z"
+  },
+  {
+    "name": "OpenKB",
+    "fullName": "VectifyAI/OpenKB",
+    "url": "https://github.com/VectifyAI/OpenKB",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "OpenKB: Open LLM Knowledge Base",
+    "stars": 4677,
+    "forks": 491,
+    "openIssues": 85,
+    "language": "Python",
+    "qualityScore": 2806,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:57:30.030Z"
+  },
+  {
+    "name": "m_flow",
+    "fullName": "FlowElement-xinliuyuansu/m_flow",
+    "url": "https://github.com/FlowElement-xinliuyuansu/m_flow",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A bio-inspired cognitive memory engine — a new paradigm for Graph RAG.",
+    "stars": 4511,
+    "forks": 260,
+    "openIssues": 13,
+    "language": "Python",
+    "qualityScore": 2610,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:57:30.030Z"
   }
 ]

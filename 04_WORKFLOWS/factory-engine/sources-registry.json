@@ -11663,5 +11663,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "feyninc-chonkie": {
+    "name": "feyninc/chonkie",
+    "officialUrl": "https://github.com/feyninc/chonkie",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:57:53.413Z",
+    "lastVerified": "2026-09-30T20:57:53.413Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -2652,3 +2652,11 @@ https://github.com/activeloopai/deeplake
 https://github.com/MariaDB/server
 # [DATABASE-STORAGE-ENGINES] vespa-engine/vespa (4129 score) - The AI search platform
 https://github.com/vespa-engine/vespa
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:57:30.030Z] ---
+# [AI-AGENTS] feyninc/chonkie (2846 score) - 🦛 CHONK docs with Chonkie ✨ — The lightweight ingestion library for fast, effic
+https://github.com/feyninc/chonkie
+# [AI-AGENTS] VectifyAI/OpenKB (2806 score) - OpenKB: Open LLM Knowledge Base
+https://github.com/VectifyAI/OpenKB
+# [AI-AGENTS] FlowElement-xinliuyuansu/m_flow (2610 score) - A bio-inspired cognitive memory engine — a new paradigm for Graph RAG.
+https://github.com/FlowElement-xinliuyuansu/m_flow
