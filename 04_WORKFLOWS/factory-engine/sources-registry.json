@@ -13015,5 +13015,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "github-copilotforxcode": {
+    "name": "github/CopilotForXcode",
+    "officialUrl": "https://github.com/github/CopilotForXcode",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:30:42.456Z",
+    "lastVerified": "2026-09-30T22:30:42.456Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
