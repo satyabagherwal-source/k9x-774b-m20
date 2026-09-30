@@ -11962,5 +11962,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "trustgraph-ai-trustgraph": {
+    "name": "trustgraph-ai/trustgraph",
+    "officialUrl": "https://github.com/trustgraph-ai/trustgraph",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:09:12.149Z",
+    "lastVerified": "2026-09-30T21:09:12.149Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
