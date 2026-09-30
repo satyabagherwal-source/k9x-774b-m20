@@ -5995,5 +5995,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "heroui-inc-heroui-native": {
+    "name": "heroui-inc/heroui-native",
+    "officialUrl": "https://github.com/heroui-inc/heroui-native",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:16:40.756Z",
+    "lastVerified": "2026-09-30T18:16:40.756Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 45,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
