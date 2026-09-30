@@ -3538,5 +3538,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-fastino-gliner2.5-decide": {
+    "name": "fastino/GLiNER2.5-Decide",
+    "officialUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:26:07.157Z",
+    "lastVerified": "2026-09-30T17:26:07.157Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

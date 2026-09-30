@@ -968,3 +968,43 @@ https://github.com/react-bootstrap/react-bootstrap
 https://github.com/microsoft/fluentui
 # [FULLSTACK-UI] tremorlabs/tremor-npm (8663 score) - React components to build charts and dashboards
 https://github.com/tremorlabs/tremor-npm
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:26:03.980Z] ---
+# [HUGGINGFACE-AI-MODELS] apple/LensVLM-9B (4750 score) - Verified Hugging Face Model: apple/LensVLM-9B (275 likes, 2103 downloads)
+https://huggingface.co/apple/LensVLM-9B
+# [HUGGINGFACE-AI-MODELS] fastino/GLiNER2.5-Decide (4510 score) - Verified Hugging Face Model: fastino/GLiNER2.5-Decide (251 likes, 34664 download
+https://huggingface.co/fastino/GLiNER2.5-Decide
+# [HUGGINGFACE-AI-MODELS] Altworld/Hemmingway-1 (9830 score) - Verified Hugging Face Model: Altworld/Hemmingway-1 (783 likes, 8524 downloads)
+https://huggingface.co/Altworld/Hemmingway-1
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:26:04.561Z] ---
+# [DATABASE-STORAGE-ENGINES] liyupi/yu-ai-agent (1660 score) - 编程导航 AI 开发实战新项目，基于 Spring Boot 3 + Java 21 + Spring AI 构建 AI 恋爱大师应用和 ReAct 模式自主规
+https://github.com/liyupi/yu-ai-agent
+# [DATABASE-STORAGE-ENGINES] xerj-org/xerj (1609 score) - XERJ is the new way for AI to search data. Its autoindex capability activates ag
+https://github.com/xerj-org/xerj
+# [DATABASE-STORAGE-ENGINES] milvus-io/bootcamp (1677 score) - Dealing with all unstructured data, such as reverse image search, audio search, 
+https://github.com/milvus-io/bootcamp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:26:04.636Z] ---
+# [AI-AGENTS] alibaba/page-agent (16882 score [VERIFIED ORG]) - JavaScript in-page GUI agent. Control web interfaces with natural language.
+https://github.com/alibaba/page-agent
+# [AI-AGENTS] harvard-edge/cs249r_book (15727 score) - Machine Learning Systems: Foundations, Scaling, Agentic AI, and Physical AI (Vol
+https://github.com/harvard-edge/cs249r_book
+# [AI-AGENTS] kestra-io/kestra (15550 score) - Event Driven Orchestration & Scheduling Platform for Mission Critical Applicatio
+https://github.com/kestra-io/kestra
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:26:04.755Z] ---
+# [MOBILE-CROSS-PLATFORM] alibaba/formily (8226 score [VERIFIED ORG]) - 📱🚀 🧩 Cross Device & High Performance Normal Form/Dynamic(JSON Schema) Form/Fo
+https://github.com/alibaba/formily
+# [MOBILE-CROSS-PLATFORM] welldone-software/why-did-you-render (6669 score) - why-did-you-render by Welldone Software monkey patches React to notify you about
+https://github.com/welldone-software/why-did-you-render
+# [MOBILE-CROSS-PLATFORM] boardgameio/boardgame.io (6858 score) - State Management and Multiplayer Networking for Turn-Based Games
+https://github.com/boardgameio/boardgame.io
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:26:05.643Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] nats-io/nats.go (4082 score) - Golang client for NATS, the cloud native messaging system.
+https://github.com/nats-io/nats.go
+# [DEVOPS-CLOUD-INFRASTRUCTURE] goodrain/rainbond (3655 score) - Rainbond is an open-source container platform that requires no Kubernetes expert
+https://github.com/goodrain/rainbond
+# [DEVOPS-CLOUD-INFRASTRUCTURE] Permify/permify (3507 score) - An open-source authorization as a service inspired by Google Zanzibar, designed 
+https://github.com/Permify/permify
