@@ -362,5 +362,33 @@
     "language": "Python",
     "qualityScore": 45042,
     "discoveredAt": "2026-09-30T02:52:03.318Z"
+  },
+  {
+    "name": "context7",
+    "fullName": "upstash/context7",
+    "url": "https://github.com/upstash/context7",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Context7 Platform -- Up-to-date code documentation for LLMs and AI code editors",
+    "stars": 62540,
+    "forks": 3036,
+    "openIssues": 68,
+    "language": "TypeScript",
+    "qualityScore": 38435,
+    "discoveredAt": "2026-09-30T03:07:58.188Z"
+  },
+  {
+    "name": "chrome-devtools-mcp",
+    "fullName": "ChromeDevTools/chrome-devtools-mcp",
+    "url": "https://github.com/ChromeDevTools/chrome-devtools-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Chrome DevTools for coding agents",
+    "stars": 52762,
+    "forks": 5262,
+    "openIssues": 118,
+    "language": "TypeScript",
+    "qualityScore": 33236,
+    "discoveredAt": "2026-09-30T03:07:58.189Z"
   }
 ]

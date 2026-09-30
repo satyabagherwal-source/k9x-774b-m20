@@ -419,3 +419,9 @@ https://github.com/onlook-dev/onlook
 https://github.com/ruvnet/ruflo
 # [AI-AGENTS] sansan0/TrendRadar (45042 score) - ⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, 
 https://github.com/sansan0/TrendRadar
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T03:07:58.190Z] ---
+# [AI-AGENTS] upstash/context7 (38435 score) - Context7 Platform -- Up-to-date code documentation for LLMs and AI code editors
+https://github.com/upstash/context7
+# [AI-AGENTS] ChromeDevTools/chrome-devtools-mcp (33236 score) - Chrome DevTools for coding agents
+https://github.com/ChromeDevTools/chrome-devtools-mcp
