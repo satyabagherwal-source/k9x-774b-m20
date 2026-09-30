@@ -8933,5 +8933,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mvschwarz-openrig": {
+    "name": "mvschwarz/openrig",
+    "officialUrl": "https://github.com/mvschwarz/openrig",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:16:27.237Z",
+    "lastVerified": "2026-09-30T19:16:27.237Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

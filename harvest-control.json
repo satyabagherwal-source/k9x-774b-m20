@@ -173,7 +173,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T19:14:57.159Z",
+        "lastActiveAt": "2026-09-30T19:16:20.109Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -183,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T19:14:57.179Z",
+        "lastActiveAt": "2026-09-30T19:16:24.143Z",
         "lastHarvestedAt": "2026-09-30T18:23:41.104Z",
         "totalHarvested": 1,
         "lastError": null
@@ -203,7 +203,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T19:14:57.240Z",
+        "lastActiveAt": "2026-09-30T19:16:26.151Z",
         "lastHarvestedAt": "2026-09-30T17:24:15.748Z",
         "totalHarvested": 1,
         "lastError": null
