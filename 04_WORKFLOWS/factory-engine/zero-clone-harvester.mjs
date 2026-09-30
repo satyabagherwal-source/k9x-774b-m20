@@ -204,8 +204,8 @@ async function harvestGitHubZeroClone(target) {
 
   const defaultBranch = repoMeta.default_branch || 'main';
 
-  // 2. Recent Commits & Deep Patch Extraction
-  const commitsRaw = await compliantFetch(`${target.apiUrl}/commits?per_page=30`) || [];
+  // 2. Recent Commits & Deep Patch Extraction (Exhaustive Forensic Sweep)
+  const commitsRaw = await compliantFetch(`${target.apiUrl}/commits?per_page=100`) || [];
   const commits = (Array.isArray(commitsRaw) ? commitsRaw : []).map((c) => ({
     sha: c.sha?.slice(0, 8),
     fullSha: c.sha,
@@ -219,11 +219,11 @@ async function harvestGitHubZeroClone(target) {
   );
 
   const targetFixCommits = candidateFixCommits.length > 0
-    ? candidateFixCommits.slice(0, 5)
-    : commits.slice(0, 3);
+    ? candidateFixCommits.slice(0, 10)
+    : commits.slice(0, 6);
 
   // FORENSIC DIFF EXTRACTION: Fetch the exact changed files and code patches
-  console.log(`[FORENSIC EXTRACTION] Fetching code patches for ${targetFixCommits.length} critical fix commits...`);
+  console.log(`[DEEP FORENSIC EXTRACTION] Fetching complete code patches for ${targetFixCommits.length} critical fix commits...`);
   const deepFixPatches = [];
   for (const fix of targetFixCommits) {
     if (!fix.fullSha) continue;
@@ -231,55 +231,55 @@ async function harvestGitHubZeroClone(target) {
     if (commitDetail && Array.isArray(commitDetail.files)) {
       const filesWithPatches = commitDetail.files
         .filter((f) => f.patch)
-        .slice(0, 3)
+        .slice(0, 5)
         .map((f) => ({
           filename: f.filename,
           status: f.status,
           additions: f.additions,
           deletions: f.deletions,
-          patchSnippet: f.patch.slice(0, 1500) // Empirical code diff
+          patchSnippet: f.patch.slice(0, 4000) // Deep empirical code diff
         }));
 
       deepFixPatches.push({
         sha: fix.sha,
         date: fix.date,
-        message: fix.fullMessage.slice(0, 600),
+        message: fix.fullMessage.slice(0, 1200),
         files: filesWithPatches
       });
     }
   }
 
   // 3. Closed Bug Issues & Deep Post-Mortems
-  const closedIssuesRaw = await compliantFetch(`${target.apiUrl}/issues?state=closed&labels=bug&per_page=10`) || [];
+  const closedIssuesRaw = await compliantFetch(`${target.apiUrl}/issues?state=closed&labels=bug&per_page=20`) || [];
   const candidateIssues = (Array.isArray(closedIssuesRaw) && closedIssuesRaw.length > 0)
     ? closedIssuesRaw
-    : (await compliantFetch(`${target.apiUrl}/issues?state=closed&per_page=8`) || []);
+    : (await compliantFetch(`${target.apiUrl}/issues?state=closed&per_page=15`) || []);
 
   const deepIssues = [];
-  for (const issue of (Array.isArray(candidateIssues) ? candidateIssues.slice(0, 3) : [])) {
+  for (const issue of (Array.isArray(candidateIssues) ? candidateIssues.slice(0, 8) : [])) {
     // Fetch comments to see the root cause analysis and resolution discussion
-    const commentsRaw = await compliantFetch(`${target.apiUrl}/issues/${issue.number}/comments?per_page=2`) || [];
+    const commentsRaw = await compliantFetch(`${target.apiUrl}/issues/${issue.number}/comments?per_page=3`) || [];
     const comments = Array.isArray(commentsRaw)
-      ? commentsRaw.map((c) => (c.body ? c.body.slice(0, 400).replace(/\r?\n/g, ' ') : '')).filter(Boolean)
+      ? commentsRaw.map((c) => (c.body ? c.body.slice(0, 1000).replace(/\r?\n/g, ' ') : '')).filter(Boolean)
       : [];
 
     deepIssues.push({
       number: issue.number,
       title: issue.title,
       closedAt: issue.closed_at?.slice(0, 10),
-      bodySnippet: issue.body ? issue.body.slice(0, 600).replace(/\r?\n/g, ' ') : '',
+      bodySnippet: issue.body ? issue.body.slice(0, 1500).replace(/\r?\n/g, ' ') : '',
       resolutionComments: comments
     });
   }
 
   // 4. Closed Pull Requests
-  const closedPRsRaw = await compliantFetch(`${target.apiUrl}/pulls?state=closed&per_page=10`) || [];
-  const closedPRs = (Array.isArray(closedPRsRaw) ? closedPRsRaw : []).slice(0, 5).map((pr) => ({
+  const closedPRsRaw = await compliantFetch(`${target.apiUrl}/pulls?state=closed&per_page=15`) || [];
+  const closedPRs = (Array.isArray(closedPRsRaw) ? closedPRsRaw : []).slice(0, 8).map((pr) => ({
     number: pr.number,
     title: pr.title,
     mergedAt: pr.merged_at?.slice(0, 10),
     author: pr.user?.login,
-    bodySnippet: pr.body ? pr.body.slice(0, 300).replace(/\r?\n/g, ' ') : ''
+    bodySnippet: pr.body ? pr.body.slice(0, 800).replace(/\r?\n/g, ' ') : ''
   }));
 
   // 5. Codebase Directory Tree Analysis
@@ -289,24 +289,24 @@ async function harvestGitHubZeroClone(target) {
     const treeMeta = await compliantFetch(`${target.apiUrl}/git/trees/${defaultBranch}?recursive=1`);
     if (treeMeta && Array.isArray(treeMeta.tree)) {
       const allBlobs = treeMeta.tree.filter((t) => t.type === 'blob').map((t) => t.path);
-      treeSample = allBlobs.slice(0, 35);
+      treeSample = allBlobs.slice(0, 60);
       coreSourceCandidates = allBlobs
         .filter((p) => {
           if (/test|spec|dist|build|\.min\.|vendor|node_modules|\.git|docs/i.test(p)) return false;
           return /\.(ts|js|mjs|py|rs|go|cpp|c|h|tsx|jsx)$/i.test(p);
         })
-        .slice(0, 3);
+        .slice(0, 8);
     }
   } catch (e) {}
 
   // 6. Deep Key Source File Sampling (Real internal implementation code)
-  console.log(`[CORE SOURCE INSPECTION] Sampling ${coreSourceCandidates.length} foundational source modules...`);
+  console.log(`[DEEP CORE SOURCE INSPECTION] Sampling ${coreSourceCandidates.length} foundational source modules...`);
   const discoveredSourceSnippets = {};
   for (const filePath of coreSourceCandidates) {
     const rawUrl = `https://raw.githubusercontent.com/${target.owner}/${target.repo}/${defaultBranch}/${filePath}`;
     const rawCode = await compliantFetch(rawUrl);
     if (rawCode && typeof rawCode === 'string') {
-      discoveredSourceSnippets[filePath] = rawCode.slice(0, 2500);
+      discoveredSourceSnippets[filePath] = rawCode.slice(0, 8000);
     }
   }
 
@@ -318,7 +318,7 @@ async function harvestGitHubZeroClone(target) {
     const rawUrl = `https://raw.githubusercontent.com/${target.owner}/${target.repo}/${defaultBranch}/${m}`;
     const rawContent = await compliantFetch(rawUrl);
     if (rawContent && typeof rawContent === 'string') {
-      discoveredManifests[m] = rawContent.slice(0, 2000);
+      discoveredManifests[m] = rawContent.slice(0, 4000);
     }
   }
 

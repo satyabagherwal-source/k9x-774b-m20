@@ -112,6 +112,13 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 - Gemini independently performs D1-D8 deep analysis, micro-learning extraction, and universal rule formulation without requiring a laptop or Antigravity IDE to be open.
 - When opening Antigravity IDE locally, Step 1 (`git pull --rebase origin main`) automatically ingests all Gemini-synthesized learnings.
 
+### Step 18: Deep Forensic Learning Over Velocity Invariant
+- **Foundational Law**: *"Bhale hi 1 din ka kaam 10 din me ho paye, par totally deep learning karni h na ki shallow."*
+- Quality, forensic depth, and empirical verification ALWAYS take precedence over speed, repo count, or throughput.
+- Never produce shallow summaries, promotional fluff, or generic bullet points.
+- Every harvested codebase must be mined for real commit diffs (`- Buggy Code`, `+ Safe Invariant`), root-cause autopsies of closed bug issues, subsystem contracts, and substantive universal engineering rules.
+
+
 
 
 

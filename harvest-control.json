@@ -55,6 +55,19 @@
     "stagingDirectory": "07_PROJECT_LEARNING",
     "masterBrainPatternsFile": "05_KNOWLEDGE/engineering-patterns.md"
   },
+  "learningDepthPolicy": {
+    "mode": "EXHAUSTIVE_DEEP_FORENSIC_ONLY",
+    "philosophy": "Depth over speed invariant: Even if 1 day of work takes 10 days, learning must be completely deep, exhaustive, and forensic. Shallow skimming is strictly prohibited.",
+    "substanceThreshold": "OLLAMA_GRADE_FORENSIC_DEPTH",
+    "minFixPatchesInspected": 10,
+    "minClosedIssuesInspected": 8,
+    "minCoreSourceFilesInspected": 8,
+    "maxPatchSnippetBytes": 4000,
+    "maxSourceSnippetBytes": 8000,
+    "enforceConcreteDiffs": true,
+    "enforceBeforeAfterCode": true,
+    "enforceNegativeConstraints": true
+  },
   "deepLearningDimensions": [
     "architecture",
     "core abstractions",
