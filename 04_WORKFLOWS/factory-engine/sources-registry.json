@@ -9570,5 +9570,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "maximhq-bifrost": {
+    "name": "maximhq/bifrost",
+    "officialUrl": "https://github.com/maximhq/bifrost",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T19:39:56.422Z",
+    "lastVerified": "2026-09-30T19:39:56.422Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
