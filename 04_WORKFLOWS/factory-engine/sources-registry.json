@@ -1887,5 +1887,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-cross-encoder-ms-marco-minilm-l6-v2": {
+    "name": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "officialUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T13:56:47.741Z",
+    "lastVerified": "2026-09-30T13:56:47.741Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
