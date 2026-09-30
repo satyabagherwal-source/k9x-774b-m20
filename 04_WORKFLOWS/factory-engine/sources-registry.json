@@ -9752,5 +9752,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vitali87-code-graph-rag": {
+    "name": "vitali87/code-graph-rag",
+    "officialUrl": "https://github.com/vitali87/code-graph-rag",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:46:45.696Z",
+    "lastVerified": "2026-09-30T19:46:45.696Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
