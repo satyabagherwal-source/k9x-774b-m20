@@ -3174,5 +3174,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "giancarloerra-socraticode": {
+    "name": "giancarloerra/SocratiCode",
+    "officialUrl": "https://github.com/giancarloerra/SocratiCode",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:21:55.683Z",
+    "lastVerified": "2026-09-30T17:21:55.683Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 46,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
