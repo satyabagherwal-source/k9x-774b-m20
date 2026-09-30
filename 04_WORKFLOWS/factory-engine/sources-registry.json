@@ -4422,5 +4422,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "seekstorm-seekstorm": {
+    "name": "SeekStorm/SeekStorm",
+    "officialUrl": "https://github.com/SeekStorm/SeekStorm",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:34:56.594Z",
+    "lastVerified": "2026-09-30T17:34:56.594Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
