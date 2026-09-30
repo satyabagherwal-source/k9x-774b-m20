@@ -11520,5 +11520,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "llmsresearch-paperbanana": {
+    "name": "llmsresearch/paperbanana",
+    "officialUrl": "https://github.com/llmsresearch/paperbanana",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:47:02.845Z",
+    "lastVerified": "2026-09-30T20:47:02.845Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
