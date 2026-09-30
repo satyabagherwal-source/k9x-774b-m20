@@ -2264,5 +2264,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zulip-zulip": {
+    "name": "zulip/zulip",
+    "officialUrl": "https://github.com/zulip/zulip",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T14:02:25.612Z",
+    "lastVerified": "2026-09-30T14:02:25.612Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
