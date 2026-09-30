@@ -8634,5 +8634,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "teamwiseflow-xiaobei": {
+    "name": "TeamWiseFlow/xiaobei",
+    "officialUrl": "https://github.com/TeamWiseFlow/xiaobei",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:58:05.040Z",
+    "lastVerified": "2026-09-30T18:58:05.040Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
