@@ -2381,5 +2381,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zeromicro-go-zero": {
+    "name": "zeromicro/go-zero",
+    "officialUrl": "https://github.com/zeromicro/go-zero",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T14:04:03.047Z",
+    "lastVerified": "2026-09-30T14:04:03.047Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 21,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
