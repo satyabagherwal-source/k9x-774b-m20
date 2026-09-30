@@ -8465,5 +8465,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xerrors-yuxi": {
+    "name": "xerrors/Yuxi",
+    "officialUrl": "https://github.com/xerrors/Yuxi",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:50:55.734Z",
+    "lastVerified": "2026-09-30T18:50:55.734Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
