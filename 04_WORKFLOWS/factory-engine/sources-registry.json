@@ -13353,5 +13353,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jundizhou-easy-stock": {
+    "name": "jundizhou/easy-stock",
+    "officialUrl": "https://github.com/jundizhou/easy-stock",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T23:45:59.269Z",
+    "lastVerified": "2026-09-30T23:45:59.269Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
