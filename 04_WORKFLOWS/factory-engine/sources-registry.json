@@ -2706,5 +2706,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kubesphere-kubesphere": {
+    "name": "kubesphere/kubesphere",
+    "officialUrl": "https://github.com/kubesphere/kubesphere",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:14:19.896Z",
+    "lastVerified": "2026-09-30T17:14:19.896Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
