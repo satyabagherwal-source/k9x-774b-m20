@@ -2340,3 +2340,11 @@ https://github.com/shanraisshan/claude-code-best-practice
 https://github.com/rohitg00/ai-engineering-from-scratch
 # [AI-AGENTS] crewAIInc/crewAI (32551 score) - Framework for orchestrating role-playing, autonomous AI agents. By fostering col
 https://github.com/crewAIInc/crewAI
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:05:14.997Z] ---
+# [AI-AGENTS] aaif-goose/goose (29762 score) - an open source, extensible AI agent that goes beyond code suggestions - install,
+https://github.com/aaif-goose/goose
+# [AI-AGENTS] tinyhumansai/openhuman (21761 score) - OpenHuman is the fastest, cheapest, most efficient open-source agent harness. Wr
+https://github.com/tinyhumansai/openhuman
+# [AI-AGENTS] Yeachan-Heo/oh-my-claudecode (21055 score) - Teams-first Multi-agent orchestration for Claude Code
+https://github.com/Yeachan-Heo/oh-my-claudecode

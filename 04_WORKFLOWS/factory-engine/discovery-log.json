@@ -9991,5 +9991,50 @@
     "qualityScore": 32551,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:03:45.414Z"
+  },
+  {
+    "name": "goose",
+    "fullName": "aaif-goose/goose",
+    "url": "https://github.com/aaif-goose/goose",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "an open source, extensible AI agent that goes beyond code suggestions - install, execute, edit, and test with any LLM",
+    "stars": 54815,
+    "forks": 6349,
+    "openIssues": 408,
+    "language": "Rust",
+    "qualityScore": 29762,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:05:12.847Z"
+  },
+  {
+    "name": "openhuman",
+    "fullName": "tinyhumansai/openhuman",
+    "url": "https://github.com/tinyhumansai/openhuman",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "OpenHuman is the fastest, cheapest, most efficient open-source agent harness. Written in Rust",
+    "stars": 40235,
+    "forks": 3977,
+    "openIssues": 270,
+    "language": "Rust",
+    "qualityScore": 21761,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:05:14.997Z"
+  },
+  {
+    "name": "oh-my-claudecode",
+    "fullName": "Yeachan-Heo/oh-my-claudecode",
+    "url": "https://github.com/Yeachan-Heo/oh-my-claudecode",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Teams-first Multi-agent orchestration for Claude Code",
+    "stars": 39479,
+    "forks": 3530,
+    "openIssues": 3,
+    "language": "TypeScript",
+    "qualityScore": 21055,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:05:14.997Z"
   }
 ]
