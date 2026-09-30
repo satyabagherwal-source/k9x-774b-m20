@@ -6775,5 +6775,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "radix-ui-themes": {
+    "name": "radix-ui/themes",
+    "officialUrl": "https://github.com/radix-ui/themes",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:21:52.340Z",
+    "lastVerified": "2026-09-30T18:21:52.340Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
