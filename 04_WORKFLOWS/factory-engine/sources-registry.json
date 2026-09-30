@@ -12872,5 +12872,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "squeezeailab-llmcompiler": {
+    "name": "SqueezeAILab/LLMCompiler",
+    "officialUrl": "https://github.com/SqueezeAILab/LLMCompiler",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T22:03:12.843Z",
+    "lastVerified": "2026-09-30T22:03:12.843Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
