@@ -6840,5 +6840,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crazycodeboy-react-native-splash-screen": {
+    "name": "crazycodeboy/react-native-splash-screen",
+    "officialUrl": "https://github.com/crazycodeboy/react-native-splash-screen",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T18:22:19.832Z",
+    "lastVerified": "2026-09-30T18:22:19.832Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
