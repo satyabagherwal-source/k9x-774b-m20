@@ -11013,5 +11013,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "open-policy-agent-opa": {
+    "name": "open-policy-agent/opa",
+    "officialUrl": "https://github.com/open-policy-agent/opa",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T20:29:25.448Z",
+    "lastVerified": "2026-09-30T20:29:25.448Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
