@@ -11468,5 +11468,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "chrisryugj-korean-law-mcp": {
+    "name": "chrisryugj/korean-law-mcp",
+    "officialUrl": "https://github.com/chrisryugj/korean-law-mcp",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:45:31.337Z",
+    "lastVerified": "2026-09-30T20:45:31.337Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
