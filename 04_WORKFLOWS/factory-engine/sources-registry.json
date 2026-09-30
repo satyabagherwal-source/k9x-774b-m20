@@ -13236,5 +13236,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xiangyue-zhang-auto-deep-researcher-24x7": {
+    "name": "Xiangyue-Zhang/auto-deep-researcher-24x7",
+    "officialUrl": "https://github.com/Xiangyue-Zhang/auto-deep-researcher-24x7",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T23:27:14.211Z",
+    "lastVerified": "2026-09-30T23:27:14.211Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
