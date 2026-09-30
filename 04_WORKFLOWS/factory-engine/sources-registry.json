@@ -8946,5 +8946,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "opennswm-lab-faros": {
+    "name": "OpenNSWM-Lab/FAROS",
+    "officialUrl": "https://github.com/OpenNSWM-Lab/FAROS",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:16:28.059Z",
+    "lastVerified": "2026-09-30T19:16:28.059Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
