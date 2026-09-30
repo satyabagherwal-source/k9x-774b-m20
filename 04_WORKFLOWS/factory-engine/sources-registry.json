@@ -12001,5 +12001,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zleap-ai-sag": {
+    "name": "Zleap-AI/SAG",
+    "officialUrl": "https://github.com/Zleap-AI/SAG",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:10:36.908Z",
+    "lastVerified": "2026-09-30T21:10:36.908Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
