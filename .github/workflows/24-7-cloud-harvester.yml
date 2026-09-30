@@ -2,10 +2,14 @@ name: 24-7 Multi-Agent Parallel Autonomous Harvester with Google Gemini AI
 
 on:
   schedule:
-    # Runs at minute 23 of every hour (Off-peak minute avoids GitHub :00 congestion, ensuring reliable 1-2 hour execution)
-    - cron: '23 * * * *'
+    # Multi-staggered cron triggers ensure that even if GitHub delays one schedule, another catches it
+    - cron: '15 * * * *'
+    - cron: '45 * * * *'
   workflow_dispatch:
-    # Allows manual trigger anytime from GitHub Web UI
+    # Allows manual trigger anytime from GitHub Web UI or CLI
+  repository_dispatch:
+    # Allows external server-to-server triggers via REST API
+    types: [trigger-harvester, 24-7-cloud-fleet]
   push:
     paths:
       - 'repos.txt'
@@ -13,6 +17,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 jobs:
   cloud-multi-agent-fleet:
@@ -87,4 +92,19 @@ jobs:
                 git pull --rebase origin main
               }
             done
+          fi
+
+      - name: Autonomous 24/7 Self-Relay Dispatcher
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_RELAY_TOKEN }}
+        run: |
+          echo "======================================================================"
+          echo "🔄 24/7 AUTONOMOUS CONTINUOUS LEARNING RELAY DISPATCHER"
+          echo "======================================================================"
+          if [ -n "$GH_TOKEN" ]; then
+            echo "🚀 Dispatching next server-to-server learning cycle via GitHub API..."
+            gh workflow run 24-7-cloud-harvester.yml --repo "${{ github.repository }}" || echo "⚠️ Self-relay trigger deferred to multi-cron"
+          else
+            echo "ℹ️ WORKFLOW_RELAY_TOKEN not detected. Multi-staggered cron will handle the next cycle."
           fi
