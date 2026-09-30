@@ -10142,5 +10142,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rohitg00-ai-engineering-from-scratch": {
+    "name": "rohitg00/ai-engineering-from-scratch",
+    "officialUrl": "https://github.com/rohitg00/ai-engineering-from-scratch",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:04:28.525Z",
+    "lastVerified": "2026-09-30T20:04:28.525Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
