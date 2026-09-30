@@ -7035,5 +7035,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xiaomimimo-mimo-code": {
+    "name": "XiaomiMiMo/MiMo-Code",
+    "officialUrl": "https://github.com/XiaomiMiMo/MiMo-Code",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:24:37.108Z",
+    "lastVerified": "2026-09-30T18:24:37.108Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 58,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
