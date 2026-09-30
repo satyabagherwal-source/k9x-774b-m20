@@ -9687,5 +9687,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "asciimoo-hister": {
+    "name": "asciimoo/hister",
+    "officialUrl": "https://github.com/asciimoo/hister",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T19:44:12.379Z",
+    "lastVerified": "2026-09-30T19:44:12.379Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
