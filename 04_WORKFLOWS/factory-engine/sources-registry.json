@@ -10467,5 +10467,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rook-rook": {
+    "name": "rook/rook",
+    "officialUrl": "https://github.com/rook/rook",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T20:16:28.187Z",
+    "lastVerified": "2026-09-30T20:16:28.187Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
