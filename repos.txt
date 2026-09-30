@@ -2324,3 +2324,11 @@ https://github.com/trendy-design/llmchat
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T20:00:13.357Z] ---
 # [AI-AGENTS] HKUDS/Vibe-Trading (19208 score) - "Vibe-Trading: Your Personal Trading Agent"
 https://github.com/HKUDS/Vibe-Trading
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:02:27.322Z] ---
+# [AI-AGENTS] stablyai/orca (43184 score) - Orca is the ADE for working with a fleet of parallel agents. Run any coding agen
+https://github.com/stablyai/orca
+# [AI-AGENTS] dair-ai/Prompt-Engineering-Guide (42422 score) - 🐙 Guides, papers, lessons, notebooks and resources for prompt engineering, cont
+https://github.com/dair-ai/Prompt-Engineering-Guide
+# [AI-AGENTS] code-yeongyu/oh-my-openagent (36913 score) - OmO: Just type "mass ulw" keyword with your prompt. Now you are the master of gr
+https://github.com/code-yeongyu/oh-my-openagent

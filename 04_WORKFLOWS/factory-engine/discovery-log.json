@@ -9901,5 +9901,50 @@
     "qualityScore": 19208,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:59:16.339Z"
+  },
+  {
+    "name": "orca",
+    "fullName": "stablyai/orca",
+    "url": "https://github.com/stablyai/orca",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Orca is the ADE for working with a fleet of parallel agents. Run any coding agent with your own subscription. Available on desktop, mobile and remote runtime.",
+    "stars": 82261,
+    "forks": 5346,
+    "openIssues": 7204,
+    "language": "TypeScript",
+    "qualityScore": 43184,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:02:25.189Z"
+  },
+  {
+    "name": "Prompt-Engineering-Guide",
+    "fullName": "dair-ai/Prompt-Engineering-Guide",
+    "url": "https://github.com/dair-ai/Prompt-Engineering-Guide",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🐙 Guides, papers, lessons, notebooks and resources for prompt engineering, context engineering, RAG, and AI Agents.",
+    "stars": 78752,
+    "forks": 8653,
+    "openIssues": 287,
+    "language": "MDX",
+    "qualityScore": 42422,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:02:25.190Z"
+  },
+  {
+    "name": "oh-my-openagent",
+    "fullName": "code-yeongyu/oh-my-openagent",
+    "url": "https://github.com/code-yeongyu/oh-my-openagent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "OmO: Just type \"mass ulw\" keyword with your prompt. Now you are the master of graph engineering.",
+    "stars": 69687,
+    "forks": 5732,
+    "openIssues": 1094,
+    "language": "TypeScript",
+    "qualityScore": 36913,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:02:27.321Z"
   }
 ]
