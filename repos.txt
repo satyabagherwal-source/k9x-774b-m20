@@ -1804,3 +1804,9 @@ https://github.com/holaboss-ai/holaOS
 https://github.com/cobusgreyling/loop-engineering
 # [AI-AGENTS] google/artemis (7131 score [VERIFIED ORG]) - ARTEMIS turns natural-language instructions into reliable Android automation. It
 https://github.com/google/artemis
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:31:05.346Z] ---
+# [MOBILE-CROSS-PLATFORM] tiajinsha/JKVideo (3612 score) - 高颜值第三方 B 站 React Native 客户端
+https://github.com/tiajinsha/JKVideo
+# [MOBILE-CROSS-PLATFORM] shoutem/ui (3077 score) - Customizable set of components for React Native applications
+https://github.com/shoutem/ui

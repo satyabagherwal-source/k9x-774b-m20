@@ -1,8 +1,8 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 1,
-      "page": 1
+      "queryIndex": 0,
+      "page": 4
     },
     "fullstack-ui": {
       "queryIndex": 6,
@@ -18,7 +18,7 @@
     },
     "mobile-cross-platform": {
       "queryIndex": 0,
-      "page": 3
+      "page": 1
     },
     "devops-cloud-infrastructure": {
       "queryIndex": 4,
@@ -37,6 +37,6 @@
     "sortIndex": 0,
     "page": 1
   },
-  "totalAutoDiscovered": 61,
-  "lastReplenishedAt": "2026-09-30T18:30:42.085Z"
+  "totalAutoDiscovered": 60,
+  "lastReplenishedAt": "2026-09-30T18:31:05.345Z"
 }

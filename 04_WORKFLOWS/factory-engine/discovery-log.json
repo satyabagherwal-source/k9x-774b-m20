@@ -7009,5 +7009,35 @@
     "qualityScore": 7131,
     "verifiedOrg": true,
     "discoveredAt": "2026-09-30T18:30:42.084Z"
+  },
+  {
+    "name": "JKVideo",
+    "fullName": "tiajinsha/JKVideo",
+    "url": "https://github.com/tiajinsha/JKVideo",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "高颜值第三方 B 站 React Native 客户端",
+    "stars": 4991,
+    "forks": 2847,
+    "openIssues": 6,
+    "language": "TypeScript",
+    "qualityScore": 3612,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:30:41.699Z"
+  },
+  {
+    "name": "ui",
+    "fullName": "shoutem/ui",
+    "url": "https://github.com/shoutem/ui",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Customizable set of components for React Native applications",
+    "stars": 4983,
+    "forks": 451,
+    "openIssues": 103,
+    "language": "JavaScript",
+    "qualityScore": 3077,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:30:41.700Z"
   }
 ]

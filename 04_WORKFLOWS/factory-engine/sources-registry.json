@@ -7477,5 +7477,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "citusdata-citus": {
+    "name": "citusdata/citus",
+    "officialUrl": "https://github.com/citusdata/citus",
+    "sourceType": "github",
+    "technology": "C",
+    "lastChecked": "2026-09-30T18:31:08.375Z",
+    "lastVerified": "2026-09-30T18:31:08.375Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 42,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
