@@ -3096,5 +3096,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "danilowoz-react-content-loader": {
+    "name": "danilowoz/react-content-loader",
+    "officialUrl": "https://github.com/danilowoz/react-content-loader",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:21:14.305Z",
+    "lastVerified": "2026-09-30T17:21:14.305Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
