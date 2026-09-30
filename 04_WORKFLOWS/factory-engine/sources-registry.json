@@ -2849,5 +2849,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "feathersjs-feathers": {
+    "name": "feathersjs/feathers",
+    "officialUrl": "https://github.com/feathersjs/feathers",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:15:15.995Z",
+    "lastVerified": "2026-09-30T17:15:15.995Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 46,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
