@@ -11130,5 +11130,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "geekjourneyx-md2wechat-skill": {
+    "name": "geekjourneyx/md2wechat-skill",
+    "officialUrl": "https://github.com/geekjourneyx/md2wechat-skill",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T20:32:49.574Z",
+    "lastVerified": "2026-09-30T20:32:49.574Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
