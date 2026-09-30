@@ -12287,5 +12287,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apollographql-apollo-kotlin": {
+    "name": "apollographql/apollo-kotlin",
+    "officialUrl": "https://github.com/apollographql/apollo-kotlin",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:21:11.072Z",
+    "lastVerified": "2026-09-30T21:21:11.072Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
