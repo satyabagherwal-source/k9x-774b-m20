@@ -9011,5 +9011,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agentuniverse-ai-agentuniverse": {
+    "name": "agentuniverse-ai/agentUniverse",
+    "officialUrl": "https://github.com/agentuniverse-ai/agentUniverse",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:19:30.937Z",
+    "lastVerified": "2026-09-30T19:19:30.937Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 71,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
