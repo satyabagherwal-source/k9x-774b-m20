@@ -11000,5 +11000,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "resocoder-flutter-tdd-clean-architecture-course": {
+    "name": "ResoCoder/flutter-tdd-clean-architecture-course",
+    "officialUrl": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
+    "sourceType": "github",
+    "technology": "Dart",
+    "lastChecked": "2026-09-30T20:29:18.240Z",
+    "lastVerified": "2026-09-30T20:29:18.240Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
