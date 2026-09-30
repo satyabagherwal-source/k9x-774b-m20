@@ -3018,5 +3018,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
+    "name": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "officialUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:20:37.300Z",
+    "lastVerified": "2026-09-30T17:20:37.300Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
