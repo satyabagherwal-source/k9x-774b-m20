@@ -3223,5 +3223,50 @@
     "qualityScore": 14040,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T17:31:41.764Z"
+  },
+  {
+    "name": "bore",
+    "fullName": "ekzhang/bore",
+    "url": "https://github.com/ekzhang/bore",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "🕳 bore is a simple CLI tool for making tunnels to localhost",
+    "stars": 11517,
+    "forks": 528,
+    "openIssues": 18,
+    "language": "Rust",
+    "qualityScore": 6103,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:31:44.429Z"
+  },
+  {
+    "name": "aichat",
+    "fullName": "sigoden/aichat",
+    "url": "https://github.com/sigoden/aichat",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "All-in-one LLM CLI tool featuring Shell Assistant, Chat-REPL, RAG, AI Tools & Agents, with access to OpenAI, Claude, Gemini, Ollama, Groq, and more.",
+    "stars": 10473,
+    "forks": 745,
+    "openIssues": 104,
+    "language": "Rust",
+    "qualityScore": 5910,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:31:44.429Z"
+  },
+  {
+    "name": "claurst",
+    "fullName": "Kuberwastaken/claurst",
+    "url": "https://github.com/Kuberwastaken/claurst",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Agentic Coding for Builders who Ship",
+    "stars": 10314,
+    "forks": 7723,
+    "openIssues": 45,
+    "language": "Rust",
+    "qualityScore": 7814,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:31:44.429Z"
   }
 ]

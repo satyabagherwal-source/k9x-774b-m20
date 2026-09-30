@@ -1120,3 +1120,11 @@ https://github.com/browserbase/stagehand
 https://github.com/vxcontrol/pentagi
 # [AI-AGENTS] activepieces/activepieces (14040 score) - AI Agents & MCPs & AI Workflow Automation • (~400 MCP servers for AI agents) • A
 https://github.com/activepieces/activepieces
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:31:44.430Z] ---
+# [HIGH-PERF-SYSTEMS] ekzhang/bore (6103 score) - 🕳 bore is a simple CLI tool for making tunnels to localhost
+https://github.com/ekzhang/bore
+# [HIGH-PERF-SYSTEMS] sigoden/aichat (5910 score) - All-in-one LLM CLI tool featuring Shell Assistant, Chat-REPL, RAG, AI Tools & Ag
+https://github.com/sigoden/aichat
+# [HIGH-PERF-SYSTEMS] Kuberwastaken/claurst (7814 score) - Agentic Coding for Builders who Ship
+https://github.com/Kuberwastaken/claurst

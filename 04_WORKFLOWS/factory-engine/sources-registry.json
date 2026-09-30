@@ -4097,5 +4097,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-akhilaaa3-jev-omni": {
+    "name": "akhilaaa3/Jev-Omni",
+    "officialUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:31:43.535Z",
+    "lastVerified": "2026-09-30T17:31:43.535Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
