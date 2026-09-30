@@ -2250,3 +2250,11 @@ https://github.com/Klavis-AI/klavis
 https://github.com/lemonade-sdk/lemonade
 # [AI-AGENTS] KnockOutEZ/wigolo (3242 score) - The go-to web for your AI coding agent — local-first search, fetch, crawl & rese
 https://github.com/KnockOutEZ/wigolo
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:45:57.478Z] ---
+# [AI-AGENTS] JerBouma/FinanceToolkit (3153 score) - Transparent and Efficient Financial Analysis
+https://github.com/JerBouma/FinanceToolkit
+# [AI-AGENTS] vitali87/code-graph-rag (3252 score) - The ultimate RAG for your monorepo. Query, understand, and edit multi-language c
+https://github.com/vitali87/code-graph-rag
+# [AI-AGENTS] TabularisDB/tabularis (3088 score) - Open-source desktop SQL workspace with 3 built-in database drivers and 16 shippe
+https://github.com/TabularisDB/tabularis

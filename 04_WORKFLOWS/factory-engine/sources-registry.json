@@ -9739,5 +9739,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jerbouma-financetoolkit": {
+    "name": "JerBouma/FinanceToolkit",
+    "officialUrl": "https://github.com/JerBouma/FinanceToolkit",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:46:18.186Z",
+    "lastVerified": "2026-09-30T19:46:18.186Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -9496,5 +9496,50 @@
     "qualityScore": 3242,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:44:40.543Z"
+  },
+  {
+    "name": "FinanceToolkit",
+    "fullName": "JerBouma/FinanceToolkit",
+    "url": "https://github.com/JerBouma/FinanceToolkit",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Transparent and Efficient Financial Analysis",
+    "stars": 5391,
+    "forks": 626,
+    "openIssues": 10,
+    "language": "Python",
+    "qualityScore": 3153,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:45:57.476Z"
+  },
+  {
+    "name": "code-graph-rag",
+    "fullName": "vitali87/code-graph-rag",
+    "url": "https://github.com/vitali87/code-graph-rag",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The ultimate RAG for your monorepo. Query, understand, and edit multi-language codebases with the power of AI and knowledge graphs",
+    "stars": 5191,
+    "forks": 689,
+    "openIssues": 388,
+    "language": "Python",
+    "qualityScore": 3252,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:45:57.477Z"
+  },
+  {
+    "name": "tabularis",
+    "fullName": "TabularisDB/tabularis",
+    "url": "https://github.com/TabularisDB/tabularis",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source desktop SQL workspace with 3 built-in database drivers and 16 shipped plugins, including SQL Server, DuckDB, ClickHouse and Redis. Built-in MCP server for Claude, Cursor and Devin, SQL notebooks and visual EXPLAIN.",
+    "stars": 5087,
+    "forks": 334,
+    "openIssues": 97,
+    "language": "TypeScript",
+    "qualityScore": 3088,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:45:57.477Z"
   }
 ]
