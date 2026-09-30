@@ -7061,5 +7061,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "insforge-insforge": {
+    "name": "InsForge/InsForge",
+    "officialUrl": "https://github.com/InsForge/InsForge",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:24:50.510Z",
+    "lastVerified": "2026-09-30T18:24:50.510Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 60,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
