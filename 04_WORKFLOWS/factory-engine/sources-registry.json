@@ -6762,5 +6762,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ng-zorro-ng-zorro-antd": {
+    "name": "NG-ZORRO/ng-zorro-antd",
+    "officialUrl": "https://github.com/NG-ZORRO/ng-zorro-antd",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:21:50.078Z",
+    "lastVerified": "2026-09-30T18:21:50.078Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 51,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
