@@ -11429,5 +11429,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "brightdata-brightdata-mcp": {
+    "name": "brightdata/brightdata-mcp",
+    "officialUrl": "https://github.com/brightdata/brightdata-mcp",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T20:44:02.763Z",
+    "lastVerified": "2026-09-30T20:44:02.763Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
