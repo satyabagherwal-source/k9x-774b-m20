@@ -2641,5 +2641,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-xingchen-agi-teleocr": {
+    "name": "XingChen-AGI/TeleOCR",
+    "officialUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:14:09.856Z",
+    "lastVerified": "2026-09-30T17:14:09.856Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
