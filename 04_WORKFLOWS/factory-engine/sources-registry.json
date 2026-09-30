@@ -3486,5 +3486,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "asciinema-asciinema": {
+    "name": "asciinema/asciinema",
+    "officialUrl": "https://github.com/asciinema/asciinema",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:24:51.608Z",
+    "lastVerified": "2026-09-30T17:24:51.608Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
