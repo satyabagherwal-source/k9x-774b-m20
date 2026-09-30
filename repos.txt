@@ -2972,3 +2972,11 @@ https://github.com/stakpak/agent
 https://github.com/xingyaoww/code-act
 # [AI-AGENTS] AgentEra/Agently (1165 score) - [GenAI Application Development Framework]  🚀 Build GenAI application quick and 
 https://github.com/AgentEra/Agently
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T23:26:08.790Z] ---
+# [AI-AGENTS] Mirascope/mirascope (993 score) - The LLM Anti-Framework
+https://github.com/Mirascope/mirascope
+# [AI-AGENTS] myshell-ai/AIlice (1035 score) - AIlice is a fully autonomous, general-purpose AI agent.
+https://github.com/myshell-ai/AIlice
+# [AI-AGENTS] Xiangyue-Zhang/auto-deep-researcher-24x7 (963 score) - 🔥 An autonomous AI agent that runs your deep learning experiments 24/7 while yo
+https://github.com/Xiangyue-Zhang/auto-deep-researcher-24x7

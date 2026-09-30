@@ -13501,5 +13501,50 @@
     "qualityScore": 1165,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T23:12:41.225Z"
+  },
+  {
+    "name": "mirascope",
+    "fullName": "Mirascope/mirascope",
+    "url": "https://github.com/Mirascope/mirascope",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The LLM Anti-Framework",
+    "stars": 1529,
+    "forks": 128,
+    "openIssues": 20,
+    "language": "Python",
+    "qualityScore": 993,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:26:08.789Z"
+  },
+  {
+    "name": "AIlice",
+    "fullName": "myshell-ai/AIlice",
+    "url": "https://github.com/myshell-ai/AIlice",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AIlice is a fully autonomous, general-purpose AI agent.",
+    "stars": 1417,
+    "forks": 207,
+    "openIssues": 7,
+    "language": "Python",
+    "qualityScore": 1035,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:26:08.789Z"
+  },
+  {
+    "name": "auto-deep-researcher-24x7",
+    "fullName": "Xiangyue-Zhang/auto-deep-researcher-24x7",
+    "url": "https://github.com/Xiangyue-Zhang/auto-deep-researcher-24x7",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🔥 An autonomous AI agent that runs your deep learning experiments 24/7 while you sleep. Zero-cost monitoring, Leader-Worker architecture, constant-size memory.",
+    "stars": 1293,
+    "forks": 116,
+    "openIssues": 16,
+    "language": "Python",
+    "qualityScore": 963,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:26:08.789Z"
   }
 ]

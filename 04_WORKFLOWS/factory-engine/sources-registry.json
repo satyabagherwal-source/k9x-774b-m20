@@ -13210,5 +13210,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mirascope-mirascope": {
+    "name": "Mirascope/mirascope",
+    "officialUrl": "https://github.com/Mirascope/mirascope",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T23:26:27.664Z",
+    "lastVerified": "2026-09-30T23:26:27.664Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
