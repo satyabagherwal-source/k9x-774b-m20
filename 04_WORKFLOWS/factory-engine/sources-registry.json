@@ -7048,5 +7048,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "corsairdev-corsair": {
+    "name": "corsairdev/corsair",
+    "officialUrl": "https://github.com/corsairdev/corsair",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:24:47.098Z",
+    "lastVerified": "2026-09-30T18:24:47.098Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
