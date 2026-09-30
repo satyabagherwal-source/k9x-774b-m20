@@ -12482,5 +12482,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ath-maas-comfyui-copilot": {
+    "name": "ATH-MaaS/ComfyUI-Copilot",
+    "officialUrl": "https://github.com/ATH-MaaS/ComfyUI-Copilot",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T21:38:15.794Z",
+    "lastVerified": "2026-09-30T21:38:15.794Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
