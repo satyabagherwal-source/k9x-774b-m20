@@ -3746,5 +3746,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "clementtsang-bottom": {
+    "name": "ClementTsang/bottom",
+    "officialUrl": "https://github.com/ClementTsang/bottom",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:27:32.468Z",
+    "lastVerified": "2026-09-30T17:27:32.468Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 22,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
