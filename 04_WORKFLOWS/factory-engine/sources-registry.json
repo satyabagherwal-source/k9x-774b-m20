@@ -3499,5 +3499,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-bootstrap-react-bootstrap": {
+    "name": "react-bootstrap/react-bootstrap",
+    "officialUrl": "https://github.com/react-bootstrap/react-bootstrap",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:25:12.709Z",
+    "lastVerified": "2026-09-30T17:25:12.709Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
