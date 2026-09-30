@@ -2282,3 +2282,9 @@ https://github.com/antvis/mcp-server-chart
 https://github.com/IvanMurzak/Unity-MCP
 # [AI-AGENTS] archestra-ai/archestra (2780 score) - Enterprise AI Platform with guardrails, MCP registry, gateway & orchestrator
 https://github.com/archestra-ai/archestra
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:52:29.691Z] ---
+# [AI-AGENTS] microsoft/flint-chart (3544 score [VERIFIED ORG]) - 🪄 Flint is a visualization language that lets AI agents reliably create express
+https://github.com/microsoft/flint-chart
+# [AI-AGENTS] httprunner/httprunner (2984 score) - HttpRunner 是一款开源的 API/UI 测试框架，简单易用，功能强大，具有丰富的插件化机制和高度的可扩展能力。
+https://github.com/httprunner/httprunner

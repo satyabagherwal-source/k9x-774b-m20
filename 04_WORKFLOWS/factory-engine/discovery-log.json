@@ -9676,5 +9676,35 @@
     "qualityScore": 2780,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:50:14.986Z"
+  },
+  {
+    "name": "flint-chart",
+    "fullName": "microsoft/flint-chart",
+    "url": "https://github.com/microsoft/flint-chart",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🪄 Flint is a visualization language that lets AI agents reliably create expressive, good-looking charts from simple, human-editable chart specs.",
+    "stars": 4321,
+    "forks": 245,
+    "openIssues": 30,
+    "language": "TypeScript",
+    "qualityScore": 3544,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-09-30T19:51:34.099Z"
+  },
+  {
+    "name": "httprunner",
+    "fullName": "httprunner/httprunner",
+    "url": "https://github.com/httprunner/httprunner",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "HttpRunner 是一款开源的 API/UI 测试框架，简单易用，功能强大，具有丰富的插件化机制和高度的可扩展能力。",
+    "stars": 4296,
+    "forks": 1285,
+    "openIssues": 503,
+    "language": "Go",
+    "qualityScore": 2984,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:51:34.099Z"
   }
 ]
