@@ -1965,5 +1965,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "flux-iac-tofu-controller": {
+    "name": "flux-iac/tofu-controller",
+    "officialUrl": "https://github.com/flux-iac/tofu-controller",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T13:59:47.928Z",
+    "lastVerified": "2026-09-30T13:59:47.928Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
