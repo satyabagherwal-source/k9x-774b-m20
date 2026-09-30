@@ -4916,5 +4916,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "margelo-react-native-vision-camera": {
+    "name": "margelo/react-native-vision-camera",
+    "officialUrl": "https://github.com/margelo/react-native-vision-camera",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:40:01.495Z",
+    "lastVerified": "2026-09-30T17:40:01.495Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
