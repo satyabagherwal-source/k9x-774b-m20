@@ -3889,5 +3889,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "deepset-ai-haystack": {
+    "name": "deepset-ai/haystack",
+    "officialUrl": "https://github.com/deepset-ai/haystack",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:29:22.958Z",
+    "lastVerified": "2026-09-30T17:29:22.958Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
