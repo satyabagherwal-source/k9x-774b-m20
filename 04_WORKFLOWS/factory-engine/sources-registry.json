@@ -12963,5 +12963,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "milanvarady-applite": {
+    "name": "milanvarady/Applite",
+    "officialUrl": "https://github.com/milanvarady/Applite",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:27:16.913Z",
+    "lastVerified": "2026-09-30T22:27:16.913Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

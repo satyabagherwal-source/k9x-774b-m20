@@ -13216,5 +13216,50 @@
     "qualityScore": 4204,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T22:22:53.086Z"
+  },
+  {
+    "name": "Applite",
+    "fullName": "milanvarady/Applite",
+    "url": "https://github.com/milanvarady/Applite",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A native macOS app store for software that isn't on the App Store, backed by Homebrew Cask",
+    "stars": 7064,
+    "forks": 179,
+    "openIssues": 9,
+    "language": "Swift",
+    "qualityScore": 3854,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:26:54.957Z"
+  },
+  {
+    "name": "PureMac",
+    "fullName": "momenbasel/PureMac",
+    "url": "https://github.com/momenbasel/PureMac",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Free, open-source macOS cleaner. CleanMyMac alternative with zero telemetry. Native SwiftUI, scheduled auto-cleaning, Xcode/Homebrew/system cache cleanup. MIT licensed.",
+    "stars": 6845,
+    "forks": 385,
+    "openIssues": 15,
+    "language": "Swift",
+    "qualityScore": 3818,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:26:54.957Z"
+  },
+  {
+    "name": "clean-architecture-swiftui",
+    "fullName": "nalexn/clean-architecture-swiftui",
+    "url": "https://github.com/nalexn/clean-architecture-swiftui",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "SwiftUI sample app using Clean Architecture. Examples of working with SwiftData persistence, networking, dependency injection, unit testing, and more.",
+    "stars": 6606,
+    "forks": 829,
+    "openIssues": 20,
+    "language": "Swift",
+    "qualityScore": 3742,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:26:54.957Z"
   }
 ]

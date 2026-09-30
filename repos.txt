@@ -2920,3 +2920,11 @@ https://github.com/ParthJadhav/app-store-screenshots
 https://github.com/Juanpe/About-SwiftUI
 # [MOBILE-CROSS-PLATFORM] Dimillian/IceCubesApp (4204 score) - A SwiftUI Mastodon client
 https://github.com/Dimillian/IceCubesApp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T22:26:54.958Z] ---
+# [MOBILE-CROSS-PLATFORM] milanvarady/Applite (3854 score) - A native macOS app store for software that isn't on the App Store, backed by Hom
+https://github.com/milanvarady/Applite
+# [MOBILE-CROSS-PLATFORM] momenbasel/PureMac (3818 score) - Free, open-source macOS cleaner. CleanMyMac alternative with zero telemetry. Nat
+https://github.com/momenbasel/PureMac
+# [MOBILE-CROSS-PLATFORM] nalexn/clean-architecture-swiftui (3742 score) - SwiftUI sample app using Clean Architecture. Examples of working with SwiftData 
+https://github.com/nalexn/clean-architecture-swiftui
