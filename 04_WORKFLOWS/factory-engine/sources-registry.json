@@ -4149,5 +4149,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gregberge-svgr": {
+    "name": "gregberge/svgr",
+    "officialUrl": "https://github.com/gregberge/svgr",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:32:15.015Z",
+    "lastVerified": "2026-09-30T17:32:15.015Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
