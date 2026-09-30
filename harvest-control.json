@@ -163,9 +163,9 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T19:57:54.543Z",
-        "lastHarvestedAt": "2026-09-30T19:45:35.519Z",
-        "totalHarvested": 5,
+        "lastActiveAt": "2026-09-30T19:58:48.947Z",
+        "lastHarvestedAt": "2026-09-30T19:58:48.947Z",
+        "totalHarvested": 6,
         "lastError": null
       },
       {
@@ -213,7 +213,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T19:57:54.572Z",
+        "lastActiveAt": "2026-09-30T19:58:44.742Z",
         "lastHarvestedAt": "2026-09-30T18:25:48.226Z",
         "totalHarvested": 2,
         "lastError": null
@@ -233,7 +233,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T19:57:54.595Z",
+        "lastActiveAt": "2026-09-30T19:58:44.465Z",
         "lastHarvestedAt": "2026-09-30T18:33:48.773Z",
         "totalHarvested": 4,
         "lastError": null

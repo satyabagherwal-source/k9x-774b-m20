@@ -10064,5 +10064,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "trendy-design-llmchat": {
+    "name": "trendy-design/llmchat",
+    "officialUrl": "https://github.com/trendy-design/llmchat",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:58:49.815Z",
+    "lastVerified": "2026-09-30T19:58:49.815Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 51,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
