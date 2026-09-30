@@ -2368,5 +2368,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pingcap-tidb": {
+    "name": "pingcap/tidb",
+    "officialUrl": "https://github.com/pingcap/tidb",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T14:03:34.890Z",
+    "lastVerified": "2026-09-30T14:03:34.890Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
