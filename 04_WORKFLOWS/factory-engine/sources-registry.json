@@ -6801,5 +6801,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "e2b-dev-e2b": {
+    "name": "e2b-dev/E2B",
+    "officialUrl": "https://github.com/e2b-dev/E2B",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:22:00.436Z",
+    "lastVerified": "2026-09-30T18:22:00.436Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
