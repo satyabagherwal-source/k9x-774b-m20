@@ -1128,3 +1128,11 @@ https://github.com/ekzhang/bore
 https://github.com/sigoden/aichat
 # [HIGH-PERF-SYSTEMS] Kuberwastaken/claurst (7814 score) - Agentic Coding for Builders who Ship
 https://github.com/Kuberwastaken/claurst
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:31:53.199Z] ---
+# [FULLSTACK-UI] ekmas/neobrutalism-components (3093 score) - A collection of neobrutalism-styled Tailwind components.
+https://github.com/ekmas/neobrutalism-components
+# [FULLSTACK-UI] elrumordelaluz/reactour (2564 score) - Tourist Guide into your React Components
+https://github.com/elrumordelaluz/reactour
+# [FULLSTACK-UI] xiaolin/react-image-gallery (2462 score) - React carousel image gallery component with thumbnail support  🖼
+https://github.com/xiaolin/react-image-gallery

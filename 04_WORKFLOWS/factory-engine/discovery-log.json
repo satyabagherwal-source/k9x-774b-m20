@@ -3268,5 +3268,50 @@
     "qualityScore": 7814,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T17:31:44.429Z"
+  },
+  {
+    "name": "neobrutalism-components",
+    "fullName": "ekmas/neobrutalism-components",
+    "url": "https://github.com/ekmas/neobrutalism-components",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "A collection of neobrutalism-styled Tailwind components.",
+    "stars": 5565,
+    "forks": 189,
+    "openIssues": 2,
+    "language": "TypeScript",
+    "qualityScore": 3093,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:31:47.916Z"
+  },
+  {
+    "name": "reactour",
+    "fullName": "elrumordelaluz/reactour",
+    "url": "https://github.com/elrumordelaluz/reactour",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Tourist Guide into your React Components",
+    "stars": 4089,
+    "forks": 350,
+    "openIssues": 82,
+    "language": "TypeScript",
+    "qualityScore": 2564,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:31:52.787Z"
+  },
+  {
+    "name": "react-image-gallery",
+    "fullName": "xiaolin/react-image-gallery",
+    "url": "https://github.com/xiaolin/react-image-gallery",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "React carousel image gallery component with thumbnail support  🖼",
+    "stars": 3941,
+    "forks": 713,
+    "openIssues": 14,
+    "language": "TypeScript",
+    "qualityScore": 2462,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:31:52.787Z"
   }
 ]
