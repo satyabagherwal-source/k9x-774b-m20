@@ -2810,5 +2810,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "siderolabs-talos": {
+    "name": "siderolabs/talos",
+    "officialUrl": "https://github.com/siderolabs/talos",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:14:58.199Z",
+    "lastVerified": "2026-09-30T17:14:58.199Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
