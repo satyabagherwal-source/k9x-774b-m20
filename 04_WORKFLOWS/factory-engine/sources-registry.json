@@ -7919,5 +7919,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "olric-data-olric": {
+    "name": "olric-data/olric",
+    "officialUrl": "https://github.com/olric-data/olric",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:38:10.612Z",
+    "lastVerified": "2026-09-30T18:38:10.612Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
