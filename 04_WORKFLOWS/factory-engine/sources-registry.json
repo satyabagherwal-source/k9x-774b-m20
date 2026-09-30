@@ -5007,5 +5007,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "docmost-docmost": {
+    "name": "docmost/docmost",
+    "officialUrl": "https://github.com/docmost/docmost",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:40:30.302Z",
+    "lastVerified": "2026-09-30T17:40:30.302Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 51,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
