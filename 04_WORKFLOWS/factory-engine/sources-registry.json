@@ -12079,5 +12079,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nvidia-ai-blueprints-video-search-and-summarization": {
+    "name": "NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "officialUrl": "https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:13:27.374Z",
+    "lastVerified": "2026-09-30T21:13:27.374Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 45,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
