@@ -5280,5 +5280,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "system-ui-theme-ui": {
+    "name": "system-ui/theme-ui",
+    "officialUrl": "https://github.com/system-ui/theme-ui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:43:24.319Z",
+    "lastVerified": "2026-09-30T17:43:24.319Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
