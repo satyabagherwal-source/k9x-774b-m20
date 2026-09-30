@@ -3213,5 +3213,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "1jehuang-jcode": {
+    "name": "1jehuang/jcode",
+    "officialUrl": "https://github.com/1jehuang/jcode",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:22:14.392Z",
+    "lastVerified": "2026-09-30T17:22:14.392Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
