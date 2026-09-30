@@ -2988,3 +2988,11 @@ https://github.com/igorescodro/alkaa
 https://github.com/vanniktech/Emoji
 # [MOBILE-CROSS-PLATFORM] zacharee/Bifrost (1107 score) - Cross-platform tool for downloading Samsung mobile device firmware.
 https://github.com/zacharee/Bifrost
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T23:39:39.179Z] ---
+# [MOBILE-CROSS-PLATFORM] vinceglb/FileKit (1076 score) - Pick and save Files, Medias and Folder for Kotlin Multiplatform / KMP and Compos
+https://github.com/vinceglb/FileKit
+# [MOBILE-CROSS-PLATFORM] nsh07/Tomato (1120 score) - Minimalist, data-oriented pomodoro timer for Android and Desktop based on Materi
+https://github.com/nsh07/Tomato
+# [MOBILE-CROSS-PLATFORM] modelcontextprotocol/kotlin-sdk (1256 score) - The official Kotlin SDK for Model Context Protocol servers and clients. Maintain
+https://github.com/modelcontextprotocol/kotlin-sdk

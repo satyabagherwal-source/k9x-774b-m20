@@ -13591,5 +13591,50 @@
     "qualityScore": 1107,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T23:32:20.425Z"
+  },
+  {
+    "name": "FileKit",
+    "fullName": "vinceglb/FileKit",
+    "url": "https://github.com/vinceglb/FileKit",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Pick and save Files, Medias and Folder for Kotlin Multiplatform / KMP and Compose Multiplatform / CMP",
+    "stars": 1542,
+    "forks": 82,
+    "openIssues": 15,
+    "language": "Kotlin",
+    "qualityScore": 1076,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:39:39.178Z"
+  },
+  {
+    "name": "Tomato",
+    "fullName": "nsh07/Tomato",
+    "url": "https://github.com/nsh07/Tomato",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Minimalist, data-oriented pomodoro timer for Android and Desktop based on Material 3 Expressive",
+    "stars": 1478,
+    "forks": 91,
+    "openIssues": 52,
+    "language": "Kotlin",
+    "qualityScore": 1120,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:39:39.178Z"
+  },
+  {
+    "name": "kotlin-sdk",
+    "fullName": "modelcontextprotocol/kotlin-sdk",
+    "url": "https://github.com/modelcontextprotocol/kotlin-sdk",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "The official Kotlin SDK for Model Context Protocol servers and clients. Maintained in collaboration with JetBrains",
+    "stars": 1463,
+    "forks": 249,
+    "openIssues": 124,
+    "language": "Kotlin",
+    "qualityScore": 1256,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:39:39.178Z"
   }
 ]

@@ -13288,5 +13288,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vinceglb-filekit": {
+    "name": "vinceglb/FileKit",
+    "officialUrl": "https://github.com/vinceglb/FileKit",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T23:39:53.903Z",
+    "lastVerified": "2026-09-30T23:39:53.903Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
