@@ -3083,5 +3083,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "faridsafi-react-native-gifted-chat": {
+    "name": "FaridSafi/react-native-gifted-chat",
+    "officialUrl": "https://github.com/FaridSafi/react-native-gifted-chat",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:21:08.090Z",
+    "lastVerified": "2026-09-30T17:21:08.090Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
