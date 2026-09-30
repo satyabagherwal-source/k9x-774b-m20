@@ -2146,3 +2146,11 @@ https://github.com/bytedance/UI-TARS-desktop
 https://github.com/github/github-mcp-server
 # [AI-AGENTS] oraios/serena (16018 score) - A powerful MCP toolkit for coding, providing semantic retrieval and editing capa
 https://github.com/oraios/serena
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:28:10.332Z] ---
+# [AI-AGENTS] modelcontextprotocol/python-sdk (13869 score) - The official Python SDK for Model Context Protocol servers and clients
+https://github.com/modelcontextprotocol/python-sdk
+# [AI-AGENTS] mksglu/context-mode (13087 score) - Context window optimization for AI coding agents. Sandboxes tool output (98% red
+https://github.com/mksglu/context-mode
+# [AI-AGENTS] czlonkowski/n8n-mcp (12998 score) - A MCP for Claude Desktop / Claude Code / Windsurf / Cursor to build n8n workflow
+https://github.com/czlonkowski/n8n-mcp

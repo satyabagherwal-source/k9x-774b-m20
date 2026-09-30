@@ -8911,5 +8911,50 @@
     "qualityScore": 16018,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:26:28.478Z"
+  },
+  {
+    "name": "python-sdk",
+    "fullName": "modelcontextprotocol/python-sdk",
+    "url": "https://github.com/modelcontextprotocol/python-sdk",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The official Python SDK for Model Context Protocol servers and clients",
+    "stars": 24442,
+    "forks": 3992,
+    "openIssues": 459,
+    "language": "Python",
+    "qualityScore": 13869,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:28:10.326Z"
+  },
+  {
+    "name": "context-mode",
+    "fullName": "mksglu/context-mode",
+    "url": "https://github.com/mksglu/context-mode",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Context window optimization for AI coding agents. Sandboxes tool output (98% reduction), persists session memory, and   enforces routing across 17 platforms via MCP + hooks.",
+    "stars": 24413,
+    "forks": 1767,
+    "openIssues": 304,
+    "language": "TypeScript",
+    "qualityScore": 13087,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:28:10.329Z"
+  },
+  {
+    "name": "n8n-mcp",
+    "fullName": "czlonkowski/n8n-mcp",
+    "url": "https://github.com/czlonkowski/n8n-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A MCP for Claude Desktop / Claude Code / Windsurf / Cursor to build n8n workflows for you ",
+    "stars": 23029,
+    "forks": 3664,
+    "openIssues": 67,
+    "language": "TypeScript",
+    "qualityScore": 12998,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:28:10.329Z"
   }
 ]

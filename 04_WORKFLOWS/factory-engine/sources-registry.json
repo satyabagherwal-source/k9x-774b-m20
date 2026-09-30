@@ -9232,5 +9232,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "modelcontextprotocol-python-sdk": {
+    "name": "modelcontextprotocol/python-sdk",
+    "officialUrl": "https://github.com/modelcontextprotocol/python-sdk",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:28:31.352Z",
+    "lastVerified": "2026-09-30T19:28:31.352Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
