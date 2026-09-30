@@ -5371,5 +5371,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "builderio-builder": {
+    "name": "BuilderIO/builder",
+    "officialUrl": "https://github.com/BuilderIO/builder",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:45:28.201Z",
+    "lastVerified": "2026-09-30T17:45:28.201Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
