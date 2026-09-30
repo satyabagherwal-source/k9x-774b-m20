@@ -2251,5 +2251,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "maotoumao-musicfree": {
+    "name": "maotoumao/MusicFree",
+    "officialUrl": "https://github.com/maotoumao/MusicFree",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T14:02:12.335Z",
+    "lastVerified": "2026-09-30T14:02:12.335Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 22,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
