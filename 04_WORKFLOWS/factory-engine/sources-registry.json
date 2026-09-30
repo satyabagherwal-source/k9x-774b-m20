@@ -4318,5 +4318,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ekmas-neobrutalism-components": {
+    "name": "ekmas/neobrutalism-components",
+    "officialUrl": "https://github.com/ekmas/neobrutalism-components",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:33:38.255Z",
+    "lastVerified": "2026-09-30T17:33:38.255Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 3,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
