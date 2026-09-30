@@ -6502,5 +6502,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ekzhang-rustpad": {
+    "name": "ekzhang/rustpad",
+    "officialUrl": "https://github.com/ekzhang/rustpad",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:19:04.547Z",
+    "lastVerified": "2026-09-30T18:19:04.547Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
