@@ -6671,5 +6671,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openyurtio-openyurt": {
+    "name": "openyurtio/openyurt",
+    "officialUrl": "https://github.com/openyurtio/openyurt",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:20:34.024Z",
+    "lastVerified": "2026-09-30T18:20:34.024Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 44,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
