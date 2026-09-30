@@ -8309,5 +8309,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "arc53-docsgpt": {
+    "name": "arc53/DocsGPT",
+    "officialUrl": "https://github.com/arc53/DocsGPT",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:45:20.001Z",
+    "lastVerified": "2026-09-30T18:45:20.001Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
