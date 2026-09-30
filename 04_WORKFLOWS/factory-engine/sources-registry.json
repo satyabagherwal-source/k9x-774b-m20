@@ -9947,5 +9947,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "aipoch-open-science": {
+    "name": "aipoch/open-science",
+    "officialUrl": "https://github.com/aipoch/open-science",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:54:44.689Z",
+    "lastVerified": "2026-09-30T19:54:44.689Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 59,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
