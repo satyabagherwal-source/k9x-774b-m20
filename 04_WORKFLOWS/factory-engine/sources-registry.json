@@ -4591,5 +4591,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "keenthemes-reui": {
+    "name": "keenthemes/reui",
+    "officialUrl": "https://github.com/keenthemes/reui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:36:13.022Z",
+    "lastVerified": "2026-09-30T17:36:13.022Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
