@@ -5410,5 +5410,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nesquena-hermes-webui": {
+    "name": "nesquena/hermes-webui",
+    "officialUrl": "https://github.com/nesquena/hermes-webui",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:45:34.046Z",
+    "lastVerified": "2026-09-30T17:45:34.046Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
