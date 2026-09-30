@@ -6359,5 +6359,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zarf-dev-zarf": {
+    "name": "zarf-dev/zarf",
+    "officialUrl": "https://github.com/zarf-dev/zarf",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:18:30.816Z",
+    "lastVerified": "2026-09-30T18:18:30.816Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
