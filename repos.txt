@@ -1950,3 +1950,11 @@ https://github.com/ScrapeGraphAI/Scrapegraph-ai
 https://github.com/getzep/graphiti
 # [AI-AGENTS] Cinnamon/kotaemon (13993 score) - An open-source RAG-based tool for chatting with your documents.
 https://github.com/Cinnamon/kotaemon
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:44:29.435Z] ---
+# [AI-AGENTS] 1Panel-dev/MaxKB (12598 score) - 🔥 MaxKB is an open-source platform for building enterprise-grade agents.  强大易用的
+https://github.com/1Panel-dev/MaxKB
+# [AI-AGENTS] eosphoros-ai/DB-GPT (11370 score) - open-source agentic AI data assistant for the next generation of AI + Data produ
+https://github.com/eosphoros-ai/DB-GPT
+# [AI-AGENTS] arc53/DocsGPT (10146 score) - Private AI platform for agents, assistants and enterprise search. Built-in Agent
+https://github.com/arc53/DocsGPT

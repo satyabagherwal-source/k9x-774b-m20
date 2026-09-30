@@ -8283,5 +8283,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "1panel-dev-maxkb": {
+    "name": "1Panel-dev/MaxKB",
+    "officialUrl": "https://github.com/1Panel-dev/MaxKB",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:44:53.002Z",
+    "lastVerified": "2026-09-30T18:44:53.002Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 63,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

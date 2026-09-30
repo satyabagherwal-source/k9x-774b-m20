@@ -7819,5 +7819,50 @@
     "qualityScore": 13993,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:43:07.816Z"
+  },
+  {
+    "name": "MaxKB",
+    "fullName": "1Panel-dev/MaxKB",
+    "url": "https://github.com/1Panel-dev/MaxKB",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🔥 MaxKB is an open-source platform for building enterprise-grade agents.  强大易用的开源企业级智能体平台。",
+    "stars": 22900,
+    "forks": 3165,
+    "openIssues": 24,
+    "language": "Python",
+    "qualityScore": 12598,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:44:29.434Z"
+  },
+  {
+    "name": "DB-GPT",
+    "fullName": "eosphoros-ai/DB-GPT",
+    "url": "https://github.com/eosphoros-ai/DB-GPT",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "open-source agentic AI data assistant for the next generation of AI + Data products.",
+    "stars": 20072,
+    "forks": 2946,
+    "openIssues": 452,
+    "language": "Python",
+    "qualityScore": 11370,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:44:29.434Z"
+  },
+  {
+    "name": "DocsGPT",
+    "fullName": "arc53/DocsGPT",
+    "url": "https://github.com/arc53/DocsGPT",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Private AI platform for agents, assistants and enterprise search. Built-in Agent Builder, Deep research, Document analysis, Multi-model support, and API connectivity for agents.",
+    "stars": 18295,
+    "forks": 2162,
+    "openIssues": 155,
+    "language": "Python",
+    "qualityScore": 10146,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:44:29.434Z"
   }
 ]
