@@ -12157,5 +12157,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "genkit-ai-genkit": {
+    "name": "genkit-ai/genkit",
+    "officialUrl": "https://github.com/genkit-ai/genkit",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T21:16:49.057Z",
+    "lastVerified": "2026-09-30T21:16:49.057Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 45,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
