@@ -3343,5 +3343,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kubeedge-kubeedge": {
+    "name": "kubeedge/kubeedge",
+    "officialUrl": "https://github.com/kubeedge/kubeedge",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:23:53.721Z",
+    "lastVerified": "2026-09-30T17:23:53.721Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 50,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
