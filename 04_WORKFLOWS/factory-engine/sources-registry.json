@@ -2186,5 +2186,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "21st-dev-magic-mcp": {
+    "name": "21st-dev/magic-mcp",
+    "officialUrl": "https://github.com/21st-dev/magic-mcp",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T14:01:25.428Z",
+    "lastVerified": "2026-09-30T14:01:25.428Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
