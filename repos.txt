@@ -1016,3 +1016,11 @@ https://github.com/XAMPPRocky/tokei
 https://github.com/ClementTsang/bottom
 # [HIGH-PERF-SYSTEMS] orf/gping (6797 score) - Ping, but with a graph
 https://github.com/orf/gping
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:26:13.612Z] ---
+# [FULLSTACK-UI] ant-design/ant-design-mobile (7223 score) - Essential UI blocks for building mobile web apps.
+https://github.com/ant-design/ant-design-mobile
+# [FULLSTACK-UI] mui/base-ui (6039 score) - Unstyled UI components for building accessible web apps and design systems. From
+https://github.com/mui/base-ui
+# [FULLSTACK-UI] uber/baseweb (5120 score) - A React Component library implementing the Base design language
+https://github.com/uber/baseweb

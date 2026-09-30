@@ -2656,5 +2656,50 @@
     "qualityScore": 6797,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T17:26:10.412Z"
+  },
+  {
+    "name": "ant-design-mobile",
+    "fullName": "ant-design/ant-design-mobile",
+    "url": "https://github.com/ant-design/ant-design-mobile",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Essential UI blocks for building mobile web apps.",
+    "stars": 12055,
+    "forks": 2485,
+    "openIssues": 221,
+    "language": "TypeScript",
+    "qualityScore": 7223,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:26:13.610Z"
+  },
+  {
+    "name": "base-ui",
+    "fullName": "mui/base-ui",
+    "url": "https://github.com/mui/base-ui",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Unstyled UI components for building accessible web apps and design systems. From the creators of Radix, Floating UI, and Material UI.",
+    "stars": 11043,
+    "forks": 558,
+    "openIssues": 435,
+    "language": "TypeScript",
+    "qualityScore": 6039,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:26:13.610Z"
+  },
+  {
+    "name": "baseweb",
+    "fullName": "uber/baseweb",
+    "url": "https://github.com/uber/baseweb",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "A React Component library implementing the Base design language",
+    "stars": 9008,
+    "forks": 885,
+    "openIssues": 170,
+    "language": "TypeScript",
+    "qualityScore": 5120,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:26:13.610Z"
   }
 ]

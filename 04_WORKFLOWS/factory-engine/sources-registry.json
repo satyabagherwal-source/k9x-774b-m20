@@ -3564,5 +3564,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "liyupi-yu-ai-agent": {
+    "name": "liyupi/yu-ai-agent",
+    "officialUrl": "https://github.com/liyupi/yu-ai-agent",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T17:26:23.243Z",
+    "lastVerified": "2026-09-30T17:26:23.243Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
