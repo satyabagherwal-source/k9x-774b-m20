@@ -10636,5 +10636,50 @@
     "qualityScore": 1064,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:21:19.898Z"
+  },
+  {
+    "name": "fselect",
+    "fullName": "jhspetersson/fselect",
+    "url": "https://github.com/jhspetersson/fselect",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Find files with SQL-like queries",
+    "stars": 4468,
+    "forks": 87,
+    "openIssues": 6,
+    "language": "Rust",
+    "qualityScore": 2522,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:22:36.748Z"
+  },
+  {
+    "name": "typos",
+    "fullName": "crate-ci/typos",
+    "url": "https://github.com/crate-ci/typos",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Source code spell checker",
+    "stars": 4164,
+    "forks": 187,
+    "openIssues": 151,
+    "language": "Rust",
+    "qualityScore": 2588,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:22:36.748Z"
+  },
+  {
+    "name": "git-branchless",
+    "fullName": "arxanas/git-branchless",
+    "url": "https://github.com/arxanas/git-branchless",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "High-velocity, monorepo-scale workflow for Git",
+    "stars": 4131,
+    "forks": 116,
+    "openIssues": 95,
+    "language": "Rust",
+    "qualityScore": 2540,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:22:36.750Z"
   }
 ]

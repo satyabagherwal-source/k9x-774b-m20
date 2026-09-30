@@ -10727,5 +10727,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jhspetersson-fselect": {
+    "name": "jhspetersson/fselect",
+    "officialUrl": "https://github.com/jhspetersson/fselect",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:23:00.413Z",
+    "lastVerified": "2026-09-30T20:23:00.413Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

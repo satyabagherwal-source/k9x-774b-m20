@@ -2456,3 +2456,11 @@ https://github.com/larlarua/AutoCVE
 https://github.com/google/adk-js
 # [AI-AGENTS] yohey-w/multi-agent-shogun (1064 score) - Samurai-inspired multi-agent system for Claude Code. Orchestrate parallel AI tas
 https://github.com/yohey-w/multi-agent-shogun
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:22:36.751Z] ---
+# [HIGH-PERF-SYSTEMS] jhspetersson/fselect (2522 score) - Find files with SQL-like queries
+https://github.com/jhspetersson/fselect
+# [HIGH-PERF-SYSTEMS] crate-ci/typos (2588 score) - Source code spell checker
+https://github.com/crate-ci/typos
+# [HIGH-PERF-SYSTEMS] arxanas/git-branchless (2540 score) - High-velocity, monorepo-scale workflow for Git
+https://github.com/arxanas/git-branchless
