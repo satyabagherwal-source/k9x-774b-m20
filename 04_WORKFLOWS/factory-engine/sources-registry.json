@@ -3148,5 +3148,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crate-crate": {
+    "name": "crate/crate",
+    "officialUrl": "https://github.com/crate/crate",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T17:21:32.951Z",
+    "lastVerified": "2026-09-30T17:21:32.951Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
