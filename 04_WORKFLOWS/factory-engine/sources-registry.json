@@ -4565,5 +4565,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mfontanini-presenterm": {
+    "name": "mfontanini/presenterm",
+    "officialUrl": "https://github.com/mfontanini/presenterm",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:35:49.361Z",
+    "lastVerified": "2026-09-30T17:35:49.361Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
