@@ -5072,5 +5072,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "douyinfe-semi-design": {
+    "name": "DouyinFE/semi-design",
+    "officialUrl": "https://github.com/DouyinFE/semi-design",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:41:01.653Z",
+    "lastVerified": "2026-09-30T17:41:01.653Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
