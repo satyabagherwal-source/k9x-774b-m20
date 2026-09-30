@@ -5137,5 +5137,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jnmetacode-agency-agents-zh": {
+    "name": "jnMetaCode/agency-agents-zh",
+    "officialUrl": "https://github.com/jnMetaCode/agency-agents-zh",
+    "sourceType": "github",
+    "technology": "Shell",
+    "lastChecked": "2026-09-30T17:42:42.879Z",
+    "lastVerified": "2026-09-30T17:42:42.879Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
