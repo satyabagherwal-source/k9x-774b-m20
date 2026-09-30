@@ -7386,5 +7386,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rcbyr-keen-slider": {
+    "name": "rcbyr/keen-slider",
+    "officialUrl": "https://github.com/rcbyr/keen-slider",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:29:22.594Z",
+    "lastVerified": "2026-09-30T18:29:22.594Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
