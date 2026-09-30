@@ -3876,5 +3876,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bloopai-vibe-kanban": {
+    "name": "BloopAI/vibe-kanban",
+    "officialUrl": "https://github.com/BloopAI/vibe-kanban",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:29:19.384Z",
+    "lastVerified": "2026-09-30T17:29:19.384Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
