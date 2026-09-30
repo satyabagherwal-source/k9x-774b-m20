@@ -8641,5 +8641,50 @@
     "qualityScore": 1830,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:17:01.432Z"
+  },
+  {
+    "name": "Microverse",
+    "fullName": "KsanaDock/Microverse",
+    "url": "https://github.com/KsanaDock/Microverse",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A god-simulation sandbox game built on Godot 4 as a multi-agent AI social simulation system. In this virtual world, AI characters possess independent thinking and memory, capable of autonomous social interactions, task completion, and developing complex social relationships through continuous communication.",
+    "stars": 2484,
+    "forks": 403,
+    "openIssues": 11,
+    "language": "GDScript",
+    "qualityScore": 1635,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:18:39.302Z"
+  },
+  {
+    "name": "agentUniverse",
+    "fullName": "agentuniverse-ai/agentUniverse",
+    "url": "https://github.com/agentuniverse-ai/agentUniverse",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "agentUniverse is a LLM multi-agent framework that allows developers to easily build multi-agent applications. ",
+    "stars": 2374,
+    "forks": 454,
+    "openIssues": 2564,
+    "language": "Python",
+    "qualityScore": 1773,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:18:39.302Z"
+  },
+  {
+    "name": "AgentsMesh",
+    "fullName": "AgentsMesh/AgentsMesh",
+    "url": "https://github.com/AgentsMesh/AgentsMesh",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The AI Agent Workforce Platform. Run a hundred AI coding agents across your own machines — schedule, isolate, and steer them all from one console.",
+    "stars": 2358,
+    "forks": 245,
+    "openIssues": 20,
+    "language": "Go",
+    "qualityScore": 1443,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:18:44.493Z"
   }
 ]

@@ -2098,3 +2098,11 @@ https://github.com/ningzimu/image-to-editable-ppt-skill
 https://github.com/wanikua/danghuangshang
 # [AI-AGENTS] nikmcfly/MiroFish-Offline (1830 score) - Offline multi-agent simulation & prediction engine. English fork of MiroFish wit
 https://github.com/nikmcfly/MiroFish-Offline
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:18:44.515Z] ---
+# [AI-AGENTS] KsanaDock/Microverse (1635 score) - A god-simulation sandbox game built on Godot 4 as a multi-agent AI social simula
+https://github.com/KsanaDock/Microverse
+# [AI-AGENTS] agentuniverse-ai/agentUniverse (1773 score) - agentUniverse is a LLM multi-agent framework that allows developers to easily bu
+https://github.com/agentuniverse-ai/agentUniverse
+# [AI-AGENTS] AgentsMesh/AgentsMesh (1443 score) - The AI Agent Workforce Platform. Run a hundred AI coding agents across your own 
+https://github.com/AgentsMesh/AgentsMesh
