@@ -12235,5 +12235,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "strands-agents-harness-sdk": {
+    "name": "strands-agents/harness-sdk",
+    "officialUrl": "https://github.com/strands-agents/harness-sdk",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:19:47.227Z",
+    "lastVerified": "2026-09-30T21:19:47.227Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
