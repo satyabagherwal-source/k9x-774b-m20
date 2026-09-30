@@ -12991,5 +12991,50 @@
     "qualityScore": 5208,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:59:35.634Z"
+  },
+  {
+    "name": "holmesgpt",
+    "fullName": "HolmesGPT/holmesgpt",
+    "url": "https://github.com/HolmesGPT/holmesgpt",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "SRE Agent - CNCF Sandbox Project",
+    "stars": 3484,
+    "forks": 511,
+    "openIssues": 443,
+    "language": "Python",
+    "qualityScore": 2345,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:00:48.408Z"
+  },
+  {
+    "name": "llm-for-zotero",
+    "fullName": "yilewang/llm-for-zotero",
+    "url": "https://github.com/yilewang/llm-for-zotero",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An open-source research agent system for your Zotero library.",
+    "stars": 3175,
+    "forks": 182,
+    "openIssues": 190,
+    "language": "TypeScript",
+    "qualityScore": 2092,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:00:48.408Z"
+  },
+  {
+    "name": "generative-ai",
+    "fullName": "genieincodebottle/generative-ai",
+    "url": "https://github.com/genieincodebottle/generative-ai",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Comprehensive resources on Generative AI, including a detailed roadmap, projects, use cases, interview preparation, and coding preparation.",
+    "stars": 2644,
+    "forks": 639,
+    "openIssues": 0,
+    "language": "Jupyter Notebook",
+    "qualityScore": 1764,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:00:48.408Z"
   }
 ]

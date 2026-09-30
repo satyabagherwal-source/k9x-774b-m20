@@ -2880,3 +2880,11 @@ https://github.com/thaw-app/Thaw
 https://github.com/gao-sun/eul
 # [MOBILE-CROSS-PLATFORM] ronitsingh10/FineTune (5208 score) - FineTune, a macOS menu bar app for per-app volume control, multi-device output, 
 https://github.com/ronitsingh10/FineTune
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T22:00:48.409Z] ---
+# [AI-AGENTS] HolmesGPT/holmesgpt (2345 score) - SRE Agent - CNCF Sandbox Project
+https://github.com/HolmesGPT/holmesgpt
+# [AI-AGENTS] yilewang/llm-for-zotero (2092 score) - An open-source research agent system for your Zotero library.
+https://github.com/yilewang/llm-for-zotero
+# [AI-AGENTS] genieincodebottle/generative-ai (1764 score) - Comprehensive resources on Generative AI, including a detailed roadmap, projects
+https://github.com/genieincodebottle/generative-ai
