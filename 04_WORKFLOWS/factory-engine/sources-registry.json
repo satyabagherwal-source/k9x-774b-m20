@@ -9791,5 +9791,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "clidey-whodb": {
+    "name": "clidey/whodb",
+    "officialUrl": "https://github.com/clidey/whodb",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T19:48:14.760Z",
+    "lastVerified": "2026-09-30T19:48:14.760Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
