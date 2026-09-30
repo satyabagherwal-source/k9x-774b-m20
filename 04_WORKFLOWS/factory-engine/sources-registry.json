@@ -4383,5 +4383,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-akatz-ai-minimax-h3-character-swap-lora": {
+    "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "officialUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:34:31.398Z",
+    "lastVerified": "2026-09-30T17:34:31.398Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
