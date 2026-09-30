@@ -1482,3 +1482,51 @@ https://github.com/skyzh/mini-lsm
 https://github.com/cozodb/cozo
 # [DATABASE-STORAGE-ENGINES] vlcn-io/cr-sqlite (2301 score) - Convergent, Replicated SQLite. Multi-writer and CRDT support for SQLite
 https://github.com/vlcn-io/cr-sqlite
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:55:51.825Z] ---
+# [HIGH-PERF-SYSTEMS] grpc/grpc-rust (6970 score) - A native gRPC client & server implementation with async/await support.
+https://github.com/grpc/grpc-rust
+# [HIGH-PERF-SYSTEMS] embassy-rs/embassy (5898 score) - Modern embedded framework, using Rust and async.
+https://github.com/embassy-rs/embassy
+# [HIGH-PERF-SYSTEMS] telemt/telemt (3258 score) - MTProxy for Telegram on Rust + Tokio
+https://github.com/telemt/telemt
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:55:57.905Z] ---
+# [AI-AGENTS] tradecatlabs/vibe-coding-cn (9275 score) - Vibe Coding 从入门到精通教程｜AI 结对编程工作流｜Prompt、Skill、Workflow、上下文管理、codex实战指南
+https://github.com/tradecatlabs/vibe-coding-cn
+# [AI-AGENTS] cft0808/edict (9283 score) - 🏛️ 三省六部制 · OpenClaw Multi-Agent Orchestration System — 9 specialized AI agents 
+https://github.com/cft0808/edict
+# [AI-AGENTS] earthtojake/text-to-cad (9053 score) - Give your agent CAD superpowers.
+https://github.com/earthtojake/text-to-cad
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:55:58.096Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] sealerio/sealer (1604 score) - Build, Share and Run Both Your Kubernetes Cluster and Distributed Applications  
+https://github.com/sealerio/sealer
+# [DEVOPS-CLOUD-INFRASTRUCTURE] zarf-dev/zarf (1564 score) - The Airgap Native Package Manager for Kubernetes
+https://github.com/zarf-dev/zarf
+# [DEVOPS-CLOUD-INFRASTRUCTURE] gocrane/crane (1447 score) - Crane is a FinOps Platform for Cloud Resource Analytics and Economics in Kuberne
+https://github.com/gocrane/crane
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:55:58.252Z] ---
+# [MOBILE-CROSS-PLATFORM] wix/react-native-ui-lib (4220 score) - UI Components Library for React Native
+https://github.com/wix/react-native-ui-lib
+# [MOBILE-CROSS-PLATFORM] ptomasroos/react-native-scrollable-tab-view (4444 score) - Tabbed navigation that you can swipe between, each tab can have  its own ScrollV
+https://github.com/ptomasroos/react-native-scrollable-tab-view
+# [MOBILE-CROSS-PLATFORM] fangwei716/30-days-of-react-native (4061 score) - 30 days of React Native demos
+https://github.com/fangwei716/30-days-of-react-native
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:56:03.212Z] ---
+# [DATABASE-STORAGE-ENGINES] AmrDeveloper/GQL (2058 score) - GitQL is a extensible SQL-like query language and SDK to perform queries on vari
+https://github.com/AmrDeveloper/GQL
+# [DATABASE-STORAGE-ENGINES] slatedb/slatedb (2270 score) - A cloud native embedded storage engine built on object storage.
+https://github.com/slatedb/slatedb
+# [DATABASE-STORAGE-ENGINES] TaKO8Ki/gobang (1956 score) - A cross-platform TUI database management tool written in Rust
+https://github.com/TaKO8Ki/gobang
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:56:07.820Z] ---
+# [FULLSTACK-UI] cloudscape-design/components (1750 score) - React components for Cloudscape Design System
+https://github.com/cloudscape-design/components
+# [FULLSTACK-UI] franken-ui/ui (1479 score) - Franken UI is an HTML-first UI component library built on UIkit 3 and extended w
+https://github.com/franken-ui/ui
+# [FULLSTACK-UI] reshaped-ui/reshaped (1337 score) - Reshaped provides accessible React and Figma components for building beautiful p
+https://github.com/reshaped-ui/reshaped
