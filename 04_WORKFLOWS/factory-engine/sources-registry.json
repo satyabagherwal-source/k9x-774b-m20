@@ -8556,5 +8556,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ekkolearnai-ekko-studio": {
+    "name": "EKKOLearnAI/ekko-studio",
+    "officialUrl": "https://github.com/EKKOLearnAI/ekko-studio",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:55:16.693Z",
+    "lastVerified": "2026-09-30T18:55:16.693Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 56,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
