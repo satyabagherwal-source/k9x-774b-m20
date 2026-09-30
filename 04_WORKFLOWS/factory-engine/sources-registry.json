@@ -7269,5 +7269,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "danielpetho-fancy": {
+    "name": "danielpetho/fancy",
+    "officialUrl": "https://github.com/danielpetho/fancy",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:27:23.114Z",
+    "lastVerified": "2026-09-30T18:27:23.114Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
