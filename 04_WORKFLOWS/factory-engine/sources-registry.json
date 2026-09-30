@@ -5449,5 +5449,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "liftbridge-io-liftbridge": {
+    "name": "liftbridge-io/liftbridge",
+    "officialUrl": "https://github.com/liftbridge-io/liftbridge",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:45:55.971Z",
+    "lastVerified": "2026-09-30T17:45:55.971Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
