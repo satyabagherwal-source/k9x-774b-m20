@@ -4175,5 +4175,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "akveo-react-native-ui-kitten": {
+    "name": "akveo/react-native-ui-kitten",
+    "officialUrl": "https://github.com/akveo/react-native-ui-kitten",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:32:27.283Z",
+    "lastVerified": "2026-09-30T17:32:27.283Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
