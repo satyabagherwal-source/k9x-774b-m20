@@ -4214,5 +4214,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openkruise-kruise": {
+    "name": "openkruise/kruise",
+    "officialUrl": "https://github.com/openkruise/kruise",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:32:37.119Z",
+    "lastVerified": "2026-09-30T17:32:37.119Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
