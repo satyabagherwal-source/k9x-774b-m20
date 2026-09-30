@@ -7737,5 +7737,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "snyk-driftctl": {
+    "name": "snyk/driftctl",
+    "officialUrl": "https://github.com/snyk/driftctl",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:35:56.336Z",
+    "lastVerified": "2026-09-30T18:35:56.336Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
