@@ -7009,5 +7009,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "flipkart-recyclerlistview": {
+    "name": "Flipkart/recyclerlistview",
+    "officialUrl": "https://github.com/Flipkart/recyclerlistview",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:24:18.329Z",
+    "lastVerified": "2026-09-30T18:24:18.329Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
