@@ -8764,5 +8764,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bradygaster-squad": {
+    "name": "bradygaster/squad",
+    "officialUrl": "https://github.com/bradygaster/squad",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:14:22.718Z",
+    "lastVerified": "2026-09-30T19:14:22.718Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 61,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
