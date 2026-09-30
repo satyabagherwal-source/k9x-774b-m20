@@ -3694,5 +3694,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nats-io-nats.go": {
+    "name": "nats-io/nats.go",
+    "officialUrl": "https://github.com/nats-io/nats.go",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:26:58.289Z",
+    "lastVerified": "2026-09-30T17:26:58.289Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 46,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
