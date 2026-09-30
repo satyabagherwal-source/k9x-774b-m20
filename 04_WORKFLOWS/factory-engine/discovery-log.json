@@ -3880,5 +3880,20 @@
     "qualityScore": 4392,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T17:37:10.450Z"
+  },
+  {
+    "name": "griffith",
+    "fullName": "zhihu/griffith",
+    "url": "https://github.com/zhihu/griffith",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "A React-based web video player",
+    "stars": 2507,
+    "forks": 226,
+    "openIssues": 35,
+    "language": "TypeScript",
+    "qualityScore": 1641,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:37:20.650Z"
   }
 ]

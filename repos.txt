@@ -1240,3 +1240,7 @@ https://github.com/pemistahl/grex
 https://github.com/fujiapple852/trippy
 # [HIGH-PERF-SYSTEMS] svenstaro/miniserve (4392 score) - 🌟 For when you really just want to serve some files over HTTP right now!
 https://github.com/svenstaro/miniserve
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:37:53.902Z] ---
+# [FULLSTACK-UI] zhihu/griffith (1641 score) - A React-based web video player
+https://github.com/zhihu/griffith

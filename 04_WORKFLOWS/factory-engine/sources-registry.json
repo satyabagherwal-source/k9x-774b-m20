@@ -4721,5 +4721,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "i18next-react-i18next": {
+    "name": "i18next/react-i18next",
+    "officialUrl": "https://github.com/i18next/react-i18next",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:37:54.303Z",
+    "lastVerified": "2026-09-30T17:37:54.303Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
