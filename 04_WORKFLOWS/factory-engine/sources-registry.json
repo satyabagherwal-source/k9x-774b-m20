@@ -3759,5 +3759,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "orf-gping": {
+    "name": "orf/gping",
+    "officialUrl": "https://github.com/orf/gping",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:27:33.469Z",
+    "lastVerified": "2026-09-30T17:27:33.469Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
