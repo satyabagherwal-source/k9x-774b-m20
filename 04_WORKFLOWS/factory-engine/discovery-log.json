@@ -12121,5 +12121,50 @@
     "qualityScore": 1455,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:09:47.445Z"
+  },
+  {
+    "name": "HuixiangDou",
+    "fullName": "InternLM/HuixiangDou",
+    "url": "https://github.com/InternLM/HuixiangDou",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "HuixiangDou: Overcoming Group Chat Scenarios with LLM-based Technical Assistance",
+    "stars": 2501,
+    "forks": 178,
+    "openIssues": 37,
+    "language": "Python",
+    "qualityScore": 1528,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:11:11.584Z"
+  },
+  {
+    "name": "beir",
+    "fullName": "beir-cellar/beir",
+    "url": "https://github.com/beir-cellar/beir",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A Heterogeneous Benchmark for Information Retrieval. Easy to use, evaluate your models across 15+ diverse IR datasets.",
+    "stars": 2305,
+    "forks": 252,
+    "openIssues": 84,
+    "language": "Python",
+    "qualityScore": 1646,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:11:11.585Z"
+  },
+  {
+    "name": "MemoRAG",
+    "fullName": "qhjqhj00/MemoRAG",
+    "url": "https://github.com/qhjqhj00/MemoRAG",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Empowering RAG with a memory-based data interface for all-purpose applications!",
+    "stars": 2269,
+    "forks": 160,
+    "openIssues": 23,
+    "language": "Python",
+    "qualityScore": 1479,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:11:11.585Z"
   }
 ]

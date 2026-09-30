@@ -2724,3 +2724,11 @@ https://github.com/zilliztech/memsearch
 https://github.com/om-ai-lab/OmAgent
 # [AI-AGENTS] Zleap-AI/SAG (1455 score) - A new SOTA for RAG — an original retrieval architecture and an open-source knowl
 https://github.com/Zleap-AI/SAG
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:11:11.586Z] ---
+# [AI-AGENTS] InternLM/HuixiangDou (1528 score) - HuixiangDou: Overcoming Group Chat Scenarios with LLM-based Technical Assistance
+https://github.com/InternLM/HuixiangDou
+# [AI-AGENTS] beir-cellar/beir (1646 score) - A Heterogeneous Benchmark for Information Retrieval. Easy to use, evaluate your 
+https://github.com/beir-cellar/beir
+# [AI-AGENTS] qhjqhj00/MemoRAG (1479 score) - Empowering RAG with a memory-based data interface for all-purpose applications!
+https://github.com/qhjqhj00/MemoRAG

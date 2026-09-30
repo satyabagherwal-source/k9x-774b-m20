@@ -12014,5 +12014,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "internlm-huixiangdou": {
+    "name": "InternLM/HuixiangDou",
+    "officialUrl": "https://github.com/InternLM/HuixiangDou",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:11:35.911Z",
+    "lastVerified": "2026-09-30T21:11:35.911Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
