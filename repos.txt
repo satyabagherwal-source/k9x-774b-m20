@@ -2122,3 +2122,11 @@ https://github.com/777genius/agent-teams-ai
 https://github.com/learnsyslab/gym-pybullet-drones
 # [AI-AGENTS] Orkas-AI/Orkas (1370 score) - Orkas is an open-source, local-first AI desktop app: a commander LLM directs spe
 https://github.com/Orkas-AI/Orkas
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:22:45.078Z] ---
+# [AI-AGENTS] marlbenchmark/on-policy (1483 score) - This is the official implementation of Multi-Agent PPO (MAPPO).
+https://github.com/marlbenchmark/on-policy
+# [AI-AGENTS] Lumiwealth/lumibot (1613 score) - AI agents that actually place the trade. 12 brokers, real backtests, stocks opti
+https://github.com/Lumiwealth/lumibot
+# [AI-AGENTS] showlab/Code2Video (1386 score) - [ICML 2026] Video generation via code
+https://github.com/showlab/Code2Video

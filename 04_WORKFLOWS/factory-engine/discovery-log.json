@@ -8776,5 +8776,50 @@
     "qualityScore": 1370,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:21:24.909Z"
+  },
+  {
+    "name": "on-policy",
+    "fullName": "marlbenchmark/on-policy",
+    "url": "https://github.com/marlbenchmark/on-policy",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "This is the official implementation of Multi-Agent PPO (MAPPO).",
+    "stars": 2110,
+    "forks": 385,
+    "openIssues": 31,
+    "language": "Python",
+    "qualityScore": 1483,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:22:45.077Z"
+  },
+  {
+    "name": "lumibot",
+    "fullName": "Lumiwealth/lumibot",
+    "url": "https://github.com/Lumiwealth/lumibot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI agents that actually place the trade. 12 brokers, real backtests, stocks options futures forex crypto and prediction markets.",
+    "stars": 2100,
+    "forks": 411,
+    "openIssues": 95,
+    "language": "Python",
+    "qualityScore": 1613,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:22:45.077Z"
+  },
+  {
+    "name": "Code2Video",
+    "fullName": "showlab/Code2Video",
+    "url": "https://github.com/showlab/Code2Video",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "[ICML 2026] Video generation via code",
+    "stars": 2090,
+    "forks": 291,
+    "openIssues": 2,
+    "language": "Python",
+    "qualityScore": 1386,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:22:45.077Z"
   }
 ]

@@ -9115,5 +9115,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "marlbenchmark-on-policy": {
+    "name": "marlbenchmark/on-policy",
+    "officialUrl": "https://github.com/marlbenchmark/on-policy",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:23:09.769Z",
+    "lastVerified": "2026-09-30T19:23:09.769Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
