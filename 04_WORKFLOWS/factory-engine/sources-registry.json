@@ -8153,5 +8153,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "camptocamp-terraboard": {
+    "name": "camptocamp/terraboard",
+    "officialUrl": "https://github.com/camptocamp/terraboard",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:41:16.195Z",
+    "lastVerified": "2026-09-30T18:41:16.195Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
