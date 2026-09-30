@@ -12664,5 +12664,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pointfreeco-swift-composable-architecture": {
+    "name": "pointfreeco/swift-composable-architecture",
+    "officialUrl": "https://github.com/pointfreeco/swift-composable-architecture",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T21:51:54.350Z",
+    "lastVerified": "2026-09-30T21:51:54.350Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
