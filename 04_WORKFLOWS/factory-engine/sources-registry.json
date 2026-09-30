@@ -5514,5 +5514,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kucherenko-jscpd": {
+    "name": "kucherenko/jscpd",
+    "officialUrl": "https://github.com/kucherenko/jscpd",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:46:24.021Z",
+    "lastVerified": "2026-09-30T17:46:24.021Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
