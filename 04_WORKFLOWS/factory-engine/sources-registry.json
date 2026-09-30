@@ -7022,5 +7022,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lingodotdev-lingo.dev": {
+    "name": "lingodotdev/lingo.dev",
+    "officialUrl": "https://github.com/lingodotdev/lingo.dev",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:24:23.192Z",
+    "lastVerified": "2026-09-30T18:24:23.192Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 44,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
