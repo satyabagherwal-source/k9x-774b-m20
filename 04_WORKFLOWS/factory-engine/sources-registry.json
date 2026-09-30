@@ -2056,5 +2056,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nexus-xyz-nexus-zkvm": {
+    "name": "nexus-xyz/nexus-zkvm",
+    "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T14:00:41.436Z",
+    "lastVerified": "2026-09-30T14:00:41.436Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
