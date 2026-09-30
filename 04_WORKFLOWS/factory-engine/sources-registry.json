@@ -9336,5 +9336,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wanshuiyin-auto-claude-code-research-in-sleep": {
+    "name": "wanshuiyin/Auto-claude-code-research-in-sleep",
+    "officialUrl": "https://github.com/wanshuiyin/Auto-claude-code-research-in-sleep",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:31:51.983Z",
+    "lastVerified": "2026-09-30T19:31:51.983Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
