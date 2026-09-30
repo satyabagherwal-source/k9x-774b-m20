@@ -4604,5 +4604,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "epicweb-dev-advanced-react-patterns": {
+    "name": "epicweb-dev/advanced-react-patterns",
+    "officialUrl": "https://github.com/epicweb-dev/advanced-react-patterns",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:36:14.118Z",
+    "lastVerified": "2026-09-30T17:36:14.118Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
