@@ -5423,5 +5423,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kortix-ai-suna": {
+    "name": "kortix-ai/suna",
+    "officialUrl": "https://github.com/kortix-ai/suna",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:45:34.561Z",
+    "lastVerified": "2026-09-30T17:45:34.561Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
