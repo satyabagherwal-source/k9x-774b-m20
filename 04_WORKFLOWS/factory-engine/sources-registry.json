@@ -10753,5 +10753,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "arxanas-git-branchless": {
+    "name": "arxanas/git-branchless",
+    "officialUrl": "https://github.com/arxanas/git-branchless",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:23:32.067Z",
+    "lastVerified": "2026-09-30T20:23:32.067Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
