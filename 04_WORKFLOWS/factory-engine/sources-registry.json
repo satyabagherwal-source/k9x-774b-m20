@@ -6658,5 +6658,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sqlpage-sqlpage": {
+    "name": "sqlpage/SQLPage",
+    "officialUrl": "https://github.com/sqlpage/SQLPage",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:20:10.953Z",
+    "lastVerified": "2026-09-30T18:20:10.953Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 62,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
