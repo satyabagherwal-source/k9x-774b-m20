@@ -7451,5 +7451,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kubearmor-kubearmor": {
+    "name": "kubearmor/KubeArmor",
+    "officialUrl": "https://github.com/kubearmor/KubeArmor",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:30:01.099Z",
+    "lastVerified": "2026-09-30T18:30:01.099Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
