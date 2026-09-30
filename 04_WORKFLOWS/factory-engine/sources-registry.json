@@ -7230,5 +7230,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "neuml-txtai": {
+    "name": "neuml/txtai",
+    "officialUrl": "https://github.com/neuml/txtai",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:26:50.256Z",
+    "lastVerified": "2026-09-30T18:26:50.256Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
