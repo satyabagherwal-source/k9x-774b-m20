@@ -2676,3 +2676,11 @@ https://github.com/gusye1234/nano-graphrag
 https://github.com/LazyAGI/LazyLLM
 # [AI-AGENTS] aiming-lab/SimpleMem (2200 score) - [ICML'26] SimpleMem: Efficient Lifelong Memory for LLM Agents — Text & Multimoda
 https://github.com/aiming-lab/SimpleMem
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:02:40.953Z] ---
+# [AI-AGENTS] Sumanth077/Hands-On-AI-Engineering (2299 score) - A curated collection of practical AI projects implementing OCR systems, RAG, AI 
+https://github.com/Sumanth077/Hands-On-AI-Engineering
+# [AI-AGENTS] pipeshub-ai/pipeshub-ai (2523 score) - PipesHub is an open-source platform for securely connecting enterprise knowledge
+https://github.com/pipeshub-ai/pipeshub-ai
+# [AI-AGENTS] PeterH0323/Streamer-Sales (2339 score) - Streamer-Sales 销冠 —— 卖货主播 LLM 大模型🛒🎁，一个能够根据给定的商品特点从激发用户购买意愿角度出发进行商品解说的卖货主播大模型。�
+https://github.com/PeterH0323/Streamer-Sales

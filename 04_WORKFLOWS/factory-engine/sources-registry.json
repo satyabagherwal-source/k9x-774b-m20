@@ -11780,5 +11780,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sumanth077-hands-on-ai-engineering": {
+    "name": "Sumanth077/Hands-On-AI-Engineering",
+    "officialUrl": "https://github.com/Sumanth077/Hands-On-AI-Engineering",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:03:05.807Z",
+    "lastVerified": "2026-09-30T21:03:05.807Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

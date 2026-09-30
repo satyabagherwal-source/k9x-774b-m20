@@ -11851,5 +11851,50 @@
     "qualityScore": 2200,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:01:10.133Z"
+  },
+  {
+    "name": "Hands-On-AI-Engineering",
+    "fullName": "Sumanth077/Hands-On-AI-Engineering",
+    "url": "https://github.com/Sumanth077/Hands-On-AI-Engineering",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A curated collection of practical AI projects implementing OCR systems, RAG, AI agents, and other AI use cases.",
+    "stars": 3805,
+    "forks": 920,
+    "openIssues": 10,
+    "language": "Python",
+    "qualityScore": 2299,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:02:38.846Z"
+  },
+  {
+    "name": "pipeshub-ai",
+    "fullName": "pipeshub-ai/pipeshub-ai",
+    "url": "https://github.com/pipeshub-ai/pipeshub-ai",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "PipesHub is an open-source platform for securely connecting enterprise knowledge to AI. Give AI agents trusted context and your team permission-aware search with verified citations across your business systems.",
+    "stars": 3791,
+    "forks": 591,
+    "openIssues": 211,
+    "language": "Python",
+    "qualityScore": 2523,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:02:40.952Z"
+  },
+  {
+    "name": "Streamer-Sales",
+    "fullName": "PeterH0323/Streamer-Sales",
+    "url": "https://github.com/PeterH0323/Streamer-Sales",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Streamer-Sales 销冠 —— 卖货主播 LLM 大模型🛒🎁，一个能够根据给定的商品特点从激发用户购买意愿角度出发进行商品解说的卖货主播大模型。🚀⭐内含详细的数据生成流程❗ 📦另外还集成了 LMDeploy 加速推理🚀、RAG检索增强生成 📚、TTS文字转语音🔊、数字人生成 🦸、 Agent 使用网络查询实时信息🌐、ASR 语音转文字🎙️、Vue 生态搭建前端🍍、FastAPI 搭建后端🗝️、Docker-compose 打包部署🐋",
+    "stars": 3778,
+    "forks": 572,
+    "openIssues": 14,
+    "language": "Python",
+    "qualityScore": 2339,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:02:40.952Z"
   }
 ]
