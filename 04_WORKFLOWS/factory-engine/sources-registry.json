@@ -10844,5 +10844,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "killercup-cargo-edit": {
+    "name": "killercup/cargo-edit",
+    "officialUrl": "https://github.com/killercup/cargo-edit",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:27:04.668Z",
+    "lastVerified": "2026-09-30T20:27:04.668Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

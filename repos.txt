@@ -2480,3 +2480,11 @@ https://github.com/str4d/rage
 https://github.com/railwayapp/nixpacks
 # [HIGH-PERF-SYSTEMS] zenbu-labs/terminal-browser (2224 score) - A browser inside your terminal
 https://github.com/zenbu-labs/terminal-browser
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:26:42.916Z] ---
+# [HIGH-PERF-SYSTEMS] killercup/cargo-edit (2176 score) - A utility for managing cargo dependencies from the command line.
+https://github.com/killercup/cargo-edit
+# [HIGH-PERF-SYSTEMS] bahdotsh/wrkflw (1958 score) - Validate and Run GitHub Actions locally.
+https://github.com/bahdotsh/wrkflw
+# [HIGH-PERF-SYSTEMS] agent-of-empires/agent-of-empires (2213 score) - Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy acc
+https://github.com/agent-of-empires/agent-of-empires

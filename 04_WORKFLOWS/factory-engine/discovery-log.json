@@ -10771,5 +10771,50 @@
     "qualityScore": 2224,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:25:20.303Z"
+  },
+  {
+    "name": "cargo-edit",
+    "fullName": "killercup/cargo-edit",
+    "url": "https://github.com/killercup/cargo-edit",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "A utility for managing cargo dependencies from the command line.",
+    "stars": 3456,
+    "forks": 166,
+    "openIssues": 74,
+    "language": "Rust",
+    "qualityScore": 2176,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:26:42.915Z"
+  },
+  {
+    "name": "wrkflw",
+    "fullName": "bahdotsh/wrkflw",
+    "url": "https://github.com/bahdotsh/wrkflw",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Validate and Run GitHub Actions locally.",
+    "stars": 3322,
+    "forks": 64,
+    "openIssues": 14,
+    "language": "Rust",
+    "qualityScore": 1958,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:26:42.915Z"
+  },
+  {
+    "name": "agent-of-empires",
+    "fullName": "agent-of-empires/agent-of-empires",
+    "url": "https://github.com/agent-of-empires/agent-of-empires",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.",
+    "stars": 3305,
+    "forks": 368,
+    "openIssues": 123,
+    "language": "Rust",
+    "qualityScore": 2213,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:26:42.915Z"
   }
 ]
