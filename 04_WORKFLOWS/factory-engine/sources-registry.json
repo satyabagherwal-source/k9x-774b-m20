@@ -2277,5 +2277,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zhayujie-cowagent": {
+    "name": "zhayujie/CowAgent",
+    "officialUrl": "https://github.com/zhayujie/CowAgent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T14:02:35.930Z",
+    "lastVerified": "2026-09-30T14:02:35.930Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 87,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
