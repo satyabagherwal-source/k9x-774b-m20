@@ -2563,5 +2563,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sayanarijit-xplr": {
+    "name": "sayanarijit/xplr",
+    "officialUrl": "https://github.com/sayanarijit/xplr",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:13:46.373Z",
+    "lastVerified": "2026-09-30T17:13:46.373Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
