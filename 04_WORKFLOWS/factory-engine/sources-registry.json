@@ -10792,5 +10792,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bgreenwell-doxx": {
+    "name": "bgreenwell/doxx",
+    "officialUrl": "https://github.com/bgreenwell/doxx",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:24:49.170Z",
+    "lastVerified": "2026-09-30T20:24:49.170Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
