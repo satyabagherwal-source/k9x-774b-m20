@@ -6476,5 +6476,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "salvo-rs-salvo": {
+    "name": "salvo-rs/salvo",
+    "officialUrl": "https://github.com/salvo-rs/salvo",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:19:01.903Z",
+    "lastVerified": "2026-09-30T18:19:01.903Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
