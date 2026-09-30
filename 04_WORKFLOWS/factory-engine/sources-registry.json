@@ -9401,5 +9401,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "joeanamier-xhs-downloader": {
+    "name": "JoeanAmier/XHS-Downloader",
+    "officialUrl": "https://github.com/JoeanAmier/XHS-Downloader",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T19:34:32.478Z",
+    "lastVerified": "2026-09-30T19:34:32.478Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
