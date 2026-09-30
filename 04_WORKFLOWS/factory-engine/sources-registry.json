@@ -3837,5 +3837,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vearch-vearch": {
+    "name": "vearch/vearch",
+    "officialUrl": "https://github.com/vearch/vearch",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:29:09.272Z",
+    "lastVerified": "2026-09-30T17:29:09.272Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
