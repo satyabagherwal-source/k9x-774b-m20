@@ -9453,5 +9453,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "0xjacky-nginx-ui": {
+    "name": "0xJacky/nginx-ui",
+    "officialUrl": "https://github.com/0xJacky/nginx-ui",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T19:35:59.266Z",
+    "lastVerified": "2026-09-30T19:35:59.266Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
