@@ -7126,5 +7126,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cockroachdb-cockroach": {
+    "name": "cockroachdb/cockroach",
+    "officialUrl": "https://github.com/cockroachdb/cockroach",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:25:53.590Z",
+    "lastVerified": "2026-09-30T18:25:53.590Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
