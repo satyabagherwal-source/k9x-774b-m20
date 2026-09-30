@@ -1434,3 +1434,51 @@ https://github.com/malisper/pgrust
 https://github.com/typedb/typedb
 # [DATABASE-STORAGE-ENGINES] Qovery/Replibyte (2699 score) - Seed your development database with real data ⚡️
 https://github.com/Qovery/Replibyte
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:50:45.378Z] ---
+# [HIGH-PERF-SYSTEMS] actix/actix-web (13441 score) - Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
+https://github.com/actix/actix-web
+# [HIGH-PERF-SYSTEMS] gitui-org/gitui (11852 score) - Blazing 💥 fast terminal-ui for git written in rust 🦀
+https://github.com/gitui-org/gitui
+# [HIGH-PERF-SYSTEMS] transact-rs/sqlx (9720 score) - 🧰 The Rust SQL Toolkit. An async, pure Rust SQL crate featuring compile-time ch
+https://github.com/transact-rs/sqlx
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:50:49.654Z] ---
+# [MOBILE-CROSS-PLATFORM] nativewind/nativewind (4441 score) - The utility-first workflow you love from Tailwind CSS in your React Native appli
+https://github.com/nativewind/nativewind
+# [MOBILE-CROSS-PLATFORM] midudev/preguntas-entrevista-react (4292 score) - Preguntas típicas sobre React para entrevistas de trabajo ⚛️
+https://github.com/midudev/preguntas-entrevista-react
+# [MOBILE-CROSS-PLATFORM] akveo/kittenTricks (4127 score) - React Native starter kit with over 40 screens and modern Light and Dark theme fo
+https://github.com/akveo/kittenTricks
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:50:49.743Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] Agent-Field/agentfield (1628 score) - Build, run and scale AI agents like API and microservices
+https://github.com/Agent-Field/agentfield
+# [DEVOPS-CLOUD-INFRASTRUCTURE] go-eagle/eagle (1600 score) - 🦅 A Go framework for the API or Microservice
+https://github.com/go-eagle/eagle
+# [DEVOPS-CLOUD-INFRASTRUCTURE] kubeshop/botkube (1629 score) - An app that helps you monitor your Kubernetes cluster, debug critical deployment
+https://github.com/kubeshop/botkube
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:50:51.795Z] ---
+# [AI-AGENTS] Canner/WrenAI (9956 score) - GenBI (Generative BI) for AI agents, an open-source, governed text-to-SQL throug
+https://github.com/Canner/WrenAI
+# [AI-AGENTS] img2threejs/img2threejs (9499 score) - Rebuild the object in a reference image as a code-only, procedural, quality-gate
+https://github.com/img2threejs/img2threejs
+# [AI-AGENTS] walkinglabs/learn-harness-engineering (9338 score) - Harness engineering beginner tutorial, from 0 to 1
+https://github.com/walkinglabs/learn-harness-engineering
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:50:53.577Z] ---
+# [FULLSTACK-UI] arco-design/arco-design-vue (2184 score) - A Vue.js 3 UI Library based on Arco Design
+https://github.com/arco-design/arco-design-vue
+# [FULLSTACK-UI] shadcn-ui/lint (2692 score [VERIFIED ORG]) - An agent-first linter for Tailwind design systems. Write design system rules tha
+https://github.com/shadcn-ui/lint
+# [FULLSTACK-UI] carbon-design-system/carbon-components-svelte (1987 score) - Svelte implementation of the Carbon Design System
+https://github.com/carbon-design-system/carbon-components-svelte
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:50:56.777Z] ---
+# [DATABASE-STORAGE-ENGINES] skyzh/mini-lsm (2536 score) - learn database internals by building a storage engine in Rust
+https://github.com/skyzh/mini-lsm
+# [DATABASE-STORAGE-ENGINES] cozodb/cozo (2462 score) - A transactional, relational-graph-vector database that uses Datalog for query. T
+https://github.com/cozodb/cozo
+# [DATABASE-STORAGE-ENGINES] vlcn-io/cr-sqlite (2301 score) - Convergent, Replicated SQLite. Multi-writer and CRDT support for SQLite
+https://github.com/vlcn-io/cr-sqlite
