@@ -2372,3 +2372,11 @@ https://github.com/lavague-ai/LaVague
 https://github.com/potpie-ai/potpie
 # [AI-AGENTS] OpenBMB/UltraRAG (3264 score) - A Low-Code MCP Framework for Building Complex and Innovative RAG Pipelines
 https://github.com/OpenBMB/UltraRAG
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:12:12.084Z] ---
+# [AI-AGENTS] TaskingAI/TaskingAI (3155 score) - The open source platform for AI-native application development.
+https://github.com/TaskingAI/TaskingAI
+# [AI-AGENTS] PacktPublishing/LLM-Engineers-Handbook (3390 score) - The LLM's practical guide: From the fundamentals to deploying advanced LLM and R
+https://github.com/PacktPublishing/LLM-Engineers-Handbook
+# [AI-AGENTS] superduper-io/superduper (3050 score) - Superduper: End-to-end framework for building custom AI applications and agents.
+https://github.com/superduper-io/superduper

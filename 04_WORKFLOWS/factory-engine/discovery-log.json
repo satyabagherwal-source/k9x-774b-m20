@@ -10171,5 +10171,50 @@
     "qualityScore": 3264,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:10:48.060Z"
+  },
+  {
+    "name": "TaskingAI",
+    "fullName": "TaskingAI/TaskingAI",
+    "url": "https://github.com/TaskingAI/TaskingAI",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The open source platform for AI-native application development.",
+    "stars": 5407,
+    "forks": 358,
+    "openIssues": 47,
+    "language": "Python",
+    "qualityScore": 3155,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:12:12.083Z"
+  },
+  {
+    "name": "LLM-Engineers-Handbook",
+    "fullName": "PacktPublishing/LLM-Engineers-Handbook",
+    "url": "https://github.com/PacktPublishing/LLM-Engineers-Handbook",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The LLM's practical guide: From the fundamentals to deploying advanced LLM and RAG apps to AWS using LLMOps best practices",
+    "stars": 5356,
+    "forks": 1306,
+    "openIssues": 35,
+    "language": "Python",
+    "qualityScore": 3390,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:12:12.083Z"
+  },
+  {
+    "name": "superduper",
+    "fullName": "superduper-io/superduper",
+    "url": "https://github.com/superduper-io/superduper",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Superduper: End-to-end framework for building custom AI applications and agents.",
+    "stars": 5329,
+    "forks": 546,
+    "openIssues": 36,
+    "language": "Python",
+    "qualityScore": 3050,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:12:12.083Z"
   }
 ]
