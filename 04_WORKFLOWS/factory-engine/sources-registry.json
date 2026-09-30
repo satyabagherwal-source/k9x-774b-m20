@@ -5852,5 +5852,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ag-ui-protocol-ag-ui": {
+    "name": "ag-ui-protocol/ag-ui",
+    "officialUrl": "https://github.com/ag-ui-protocol/ag-ui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:14:38.095Z",
+    "lastVerified": "2026-09-30T18:14:38.095Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
