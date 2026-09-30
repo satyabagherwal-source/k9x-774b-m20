@@ -9362,5 +9362,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "open-metadata-openmetadata": {
+    "name": "open-metadata/OpenMetadata",
+    "officialUrl": "https://github.com/open-metadata/OpenMetadata",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:33:09.988Z",
+    "lastVerified": "2026-09-30T19:33:09.988Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 65,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
