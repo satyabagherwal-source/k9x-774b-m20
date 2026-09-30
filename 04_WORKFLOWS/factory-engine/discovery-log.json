@@ -9751,5 +9751,50 @@
     "qualityScore": 3144,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:53:46.261Z"
+  },
+  {
+    "name": "magic",
+    "fullName": "dtyq/magic",
+    "url": "https://github.com/dtyq/magic",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Magicrew. The first open-source all-in-one AI productivity platform (Generalist AI Agent + Workflow Engine + IM + Online collaborative office system)",
+    "stars": 5047,
+    "forks": 567,
+    "openIssues": 21,
+    "language": "TypeScript",
+    "qualityScore": 2886,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:55:10.020Z"
+  },
+  {
+    "name": "eko",
+    "fullName": "FellouAI/eko",
+    "url": "https://github.com/FellouAI/eko",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Eko (Eko Keeps Operating) - Build Production-ready Agentic Workflow with Natural Language - eko.fellou.ai",
+    "stars": 4963,
+    "forks": 444,
+    "openIssues": 15,
+    "language": "TypeScript",
+    "qualityScore": 2795,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:55:10.020Z"
+  },
+  {
+    "name": "openai-agents-js",
+    "fullName": "openai/openai-agents-js",
+    "url": "https://github.com/openai/openai-agents-js",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A lightweight, powerful framework for multi-agent workflows and voice agents",
+    "stars": 3882,
+    "forks": 986,
+    "openIssues": 11,
+    "language": "TypeScript",
+    "qualityScore": 3509,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-09-30T19:55:10.020Z"
   }
 ]

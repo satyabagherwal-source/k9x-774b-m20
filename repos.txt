@@ -2296,3 +2296,11 @@ https://github.com/langgenius/dify
 https://github.com/PySpur-Dev/pyspur
 # [AI-AGENTS] aipoch/open-science (3144 score) - The open-source AI research workbench for scientific research and agent workflow
 https://github.com/aipoch/open-science
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:55:10.021Z] ---
+# [AI-AGENTS] dtyq/magic (2886 score) - Magicrew. The first open-source all-in-one AI productivity platform (Generalist 
+https://github.com/dtyq/magic
+# [AI-AGENTS] FellouAI/eko (2795 score) - Eko (Eko Keeps Operating) - Build Production-ready Agentic Workflow with Natural
+https://github.com/FellouAI/eko
+# [AI-AGENTS] openai/openai-agents-js (3509 score [VERIFIED ORG]) - A lightweight, powerful framework for multi-agent workflows and voice agents
+https://github.com/openai/openai-agents-js
