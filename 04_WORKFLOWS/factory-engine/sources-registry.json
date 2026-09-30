@@ -13197,5 +13197,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agentera-agently": {
+    "name": "AgentEra/Agently",
+    "officialUrl": "https://github.com/AgentEra/Agently",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T23:13:06.476Z",
+    "lastVerified": "2026-09-30T23:13:06.476Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
