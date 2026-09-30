@@ -11377,5 +11377,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "opensolon-solon": {
+    "name": "opensolon/solon",
+    "officialUrl": "https://github.com/opensolon/solon",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T20:42:04.977Z",
+    "lastVerified": "2026-09-30T20:42:04.977Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -2592,3 +2592,11 @@ https://github.com/Vexa-ai/vexa
 https://github.com/zinja-coder/jadx-ai-mcp
 # [AI-AGENTS] rusq/slackdump (1740 score) - Save or export your private and public Slack messages, threads, files, and users
 https://github.com/rusq/slackdump
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:41:44.307Z] ---
+# [AI-AGENTS] opensolon/solon (1767 score) - 🔥 Java enterprise application development framework for full scenario: Restrain
+https://github.com/opensolon/solon
+# [AI-AGENTS] sparfenyuk/mcp-proxy (1749 score) - A bridge between Streamable HTTP and stdio MCP transports
+https://github.com/sparfenyuk/mcp-proxy
+# [AI-AGENTS] openags/paper-search-mcp (1759 score) - MCP, CLI, Skills for searching and downloading academic papers from multiple sou
+https://github.com/openags/paper-search-mcp

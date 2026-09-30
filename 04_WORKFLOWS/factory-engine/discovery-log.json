@@ -11386,5 +11386,50 @@
     "qualityScore": 1740,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:40:19.693Z"
+  },
+  {
+    "name": "solon",
+    "fullName": "opensolon/solon",
+    "url": "https://github.com/opensolon/solon",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🔥 Java enterprise application development framework for full scenario: Restrained, Efficient, Open, Ecologicalll!!! 700% higher concurrency 50% memory savings Startup is 10 times faster. Packing 90% smaller; Compatible with java8 ~ java26; Supports LTS. (Replaceable spring)",
+    "stars": 2794,
+    "forks": 287,
+    "openIssues": 17,
+    "language": "Java",
+    "qualityScore": 1767,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:41:44.275Z"
+  },
+  {
+    "name": "mcp-proxy",
+    "fullName": "sparfenyuk/mcp-proxy",
+    "url": "https://github.com/sparfenyuk/mcp-proxy",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A bridge between Streamable HTTP and stdio MCP transports",
+    "stars": 2767,
+    "forks": 264,
+    "openIssues": 68,
+    "language": "Python",
+    "qualityScore": 1749,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:41:44.275Z"
+  },
+  {
+    "name": "paper-search-mcp",
+    "fullName": "openags/paper-search-mcp",
+    "url": "https://github.com/openags/paper-search-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "MCP, CLI, Skills for searching and downloading academic papers from multiple sources like arXiv, PubMed, bioRxiv, etc.",
+    "stars": 2724,
+    "forks": 282,
+    "openIssues": 31,
+    "language": "Python",
+    "qualityScore": 1759,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:41:44.275Z"
   }
 ]
