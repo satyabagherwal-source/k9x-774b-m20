@@ -2316,5 +2316,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "madslorentzen-ai-job-search": {
+    "name": "MadsLorentzen/ai-job-search",
+    "officialUrl": "https://github.com/MadsLorentzen/ai-job-search",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T14:02:51.576Z",
+    "lastVerified": "2026-09-30T14:02:51.576Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 69,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
