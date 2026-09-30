@@ -12118,5 +12118,31 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nrslib-takt": {
+    "name": "nrslib/takt",
+    "officialUrl": "https://github.com/nrslib/takt",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T21:16:27.113Z",
+    "lastVerified": "2026-09-30T21:16:27.113Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 64,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fastclaw-ai-fastclaw": {
+    "name": "fastclaw-ai/fastclaw",
+    "officialUrl": "https://github.com/fastclaw-ai/fastclaw",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T21:16:29.624Z",
+    "lastVerified": "2026-09-30T21:16:29.624Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 60,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
