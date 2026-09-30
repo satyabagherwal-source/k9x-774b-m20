@@ -4396,5 +4396,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "featureform-featureform": {
+    "name": "featureform/featureform",
+    "officialUrl": "https://github.com/featureform/featureform",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:34:51.758Z",
+    "lastVerified": "2026-09-30T17:34:51.758Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
