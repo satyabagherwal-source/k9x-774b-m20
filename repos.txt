@@ -2684,3 +2684,11 @@ https://github.com/Sumanth077/Hands-On-AI-Engineering
 https://github.com/pipeshub-ai/pipeshub-ai
 # [AI-AGENTS] PeterH0323/Streamer-Sales (2339 score) - Streamer-Sales 销冠 —— 卖货主播 LLM 大模型🛒🎁，一个能够根据给定的商品特点从激发用户购买意愿角度出发进行商品解说的卖货主播大模型。�
 https://github.com/PeterH0323/Streamer-Sales
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:04:06.560Z] ---
+# [AI-AGENTS] morphik-org/morphik-core (2234 score) - Open-source multimodal retrieval engine (Morphik Core)
+https://github.com/morphik-org/morphik-core
+# [AI-AGENTS] Dataherald/dataherald (2195 score) - Interact with your SQL database, Natural Language to SQL using LLMs
+https://github.com/Dataherald/dataherald
+# [AI-AGENTS] SamurAIGPT/llm-wiki-agent (2191 score) - A personal knowledge base that builds and maintains itself. Drop in sources — Cl
+https://github.com/SamurAIGPT/llm-wiki-agent

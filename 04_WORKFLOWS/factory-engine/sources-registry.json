@@ -11819,5 +11819,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "morphik-org-morphik-core": {
+    "name": "morphik-org/morphik-core",
+    "officialUrl": "https://github.com/morphik-org/morphik-core",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:04:26.739Z",
+    "lastVerified": "2026-09-30T21:04:26.739Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

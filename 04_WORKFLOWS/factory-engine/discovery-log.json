@@ -11896,5 +11896,50 @@
     "qualityScore": 2339,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:02:40.952Z"
+  },
+  {
+    "name": "morphik-core",
+    "fullName": "morphik-org/morphik-core",
+    "url": "https://github.com/morphik-org/morphik-core",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source multimodal retrieval engine (Morphik Core)",
+    "stars": 3715,
+    "forks": 329,
+    "openIssues": 64,
+    "language": "Python",
+    "qualityScore": 2234,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:04:06.559Z"
+  },
+  {
+    "name": "dataherald",
+    "fullName": "Dataherald/dataherald",
+    "url": "https://github.com/Dataherald/dataherald",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Interact with your SQL database, Natural Language to SQL using LLMs",
+    "stars": 3648,
+    "forks": 263,
+    "openIssues": 21,
+    "language": "Python",
+    "qualityScore": 2195,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:04:06.559Z"
+  },
+  {
+    "name": "llm-wiki-agent",
+    "fullName": "SamurAIGPT/llm-wiki-agent",
+    "url": "https://github.com/SamurAIGPT/llm-wiki-agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A personal knowledge base that builds and maintains itself. Drop in sources — Claude (or Codex/Gemini) reads them, extracts knowledge, and maintains a persistent interlinked wiki. Works with Claude Code, Codex, OpenCode, Gemini CLI. No API key needed.",
+    "stars": 3591,
+    "forks": 413,
+    "openIssues": 11,
+    "language": "Python",
+    "qualityScore": 2191,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:04:06.559Z"
   }
 ]
