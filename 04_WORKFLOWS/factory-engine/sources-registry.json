@@ -12300,5 +12300,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hasaneyldrm-exercises-dataset": {
+    "name": "hasaneyldrm/exercises-dataset",
+    "officialUrl": "https://github.com/hasaneyldrm/exercises-dataset",
+    "sourceType": "github",
+    "technology": "HTML",
+    "lastChecked": "2026-09-30T21:27:56.470Z",
+    "lastVerified": "2026-09-30T21:27:56.470Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -12451,5 +12451,50 @@
     "qualityScore": 2647,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:20:36.084Z"
+  },
+  {
+    "name": "swr",
+    "fullName": "vercel/swr",
+    "url": "https://github.com/vercel/swr",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "React Hooks for Data Fetching",
+    "stars": 32494,
+    "forks": 1384,
+    "openIssues": 225,
+    "language": "TypeScript",
+    "qualityScore": 18012,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-09-30T21:27:39.766Z"
+  },
+  {
+    "name": "exercises-dataset",
+    "fullName": "hasaneyldrm/exercises-dataset",
+    "url": "https://github.com/hasaneyldrm/exercises-dataset",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "1,324-exercise fitness dataset — animation GIFs, 180×180 thumbnails, muscle-group & equipment data, and step-by-step instructions in 6 languages. The exercise data layer behind the LogPress app.",
+    "stars": 22429,
+    "forks": 2862,
+    "openIssues": 50,
+    "language": "HTML",
+    "qualityScore": 12423,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:27:41.919Z"
+  },
+  {
+    "name": "react-native-web",
+    "fullName": "necolas/react-native-web",
+    "url": "https://github.com/necolas/react-native-web",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Cross-platform React UI packages",
+    "stars": 22138,
+    "forks": 1822,
+    "openIssues": 147,
+    "language": "JavaScript",
+    "qualityScore": 12066,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:27:41.920Z"
   }
 ]

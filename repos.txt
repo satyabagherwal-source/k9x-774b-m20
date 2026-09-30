@@ -2784,3 +2784,11 @@ https://github.com/tangshimin/MuJing
 https://github.com/mikepenz/AboutLibraries
 # [MOBILE-CROSS-PLATFORM] apollographql/apollo-kotlin (2647 score) - :rocket:  A strongly-typed, caching GraphQL client for the JVM, Android, and Kot
 https://github.com/apollographql/apollo-kotlin
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:27:41.921Z] ---
+# [MOBILE-CROSS-PLATFORM] vercel/swr (18012 score [VERIFIED ORG]) - React Hooks for Data Fetching
+https://github.com/vercel/swr
+# [MOBILE-CROSS-PLATFORM] hasaneyldrm/exercises-dataset (12423 score) - 1,324-exercise fitness dataset — animation GIFs, 180×180 thumbnails, muscle-grou
+https://github.com/hasaneyldrm/exercises-dataset
+# [MOBILE-CROSS-PLATFORM] necolas/react-native-web (12066 score) - Cross-platform React UI packages
+https://github.com/necolas/react-native-web
