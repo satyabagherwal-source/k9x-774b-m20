@@ -8062,5 +8062,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sentrux-sentrux": {
+    "name": "sentrux/sentrux",
+    "officialUrl": "https://github.com/sentrux/sentrux",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:40:35.389Z",
+    "lastVerified": "2026-09-30T18:40:35.389Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

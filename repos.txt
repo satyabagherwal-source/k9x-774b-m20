@@ -1914,3 +1914,15 @@ https://github.com/HKUDS/LightRAG
 https://github.com/The-Vibe-Company/quivr
 # [AI-AGENTS] chatchat-space/Langchain-Chatchat (21525 score) - Langchain-Chatchat（原Langchain-ChatGLM）基于 Langchain 与 ChatGLM, Qwen 与 Llama 等语言模型
 https://github.com/chatchat-space/Langchain-Chatchat
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:40:21.579Z] ---
+# [DATABASE-STORAGE-ENGINES] apache/incubator-pegasus (2482 score [VERIFIED ORG]) - Apache Pegasus - A horizontally scalable, strongly consistent and high-performan
+https://github.com/apache/incubator-pegasus
+# [DATABASE-STORAGE-ENGINES] StarTrail-org/LEANN (7190 score) - [MLsys2026 Best Paper]: https://arxiv.org/abs/2506.08276. RAG on Everything with
+https://github.com/StarTrail-org/LEANN
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:40:21.771Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] someengineering/fixinventory (1288 score) - Fix Inventory helps you identify and remove the most critical risks in AWS, GCP,
+https://github.com/someengineering/fixinventory
+# [DEVOPS-CLOUD-INFRASTRUCTURE] camptocamp/terraboard (1359 score) - :earth_africa: :clipboard:  A web dashboard to inspect Terraform States 
+https://github.com/camptocamp/terraboard
