@@ -10415,5 +10415,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "the-pocket-pocketflow-tutorial-codebase-knowledge": {
+    "name": "The-Pocket/PocketFlow-Tutorial-Codebase-Knowledge",
+    "officialUrl": "https://github.com/The-Pocket/PocketFlow-Tutorial-Codebase-Knowledge",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:16:02.265Z",
+    "lastVerified": "2026-09-30T20:16:02.265Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
