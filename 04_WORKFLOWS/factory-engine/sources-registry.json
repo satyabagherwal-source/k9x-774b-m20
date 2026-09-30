@@ -8426,5 +8426,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zilliztech-deep-searcher": {
+    "name": "zilliztech/deep-searcher",
+    "officialUrl": "https://github.com/zilliztech/deep-searcher",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:49:33.011Z",
+    "lastVerified": "2026-09-30T18:49:33.011Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
