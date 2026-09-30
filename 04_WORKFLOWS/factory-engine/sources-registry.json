@@ -4708,5 +4708,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "devhubapp-devhub": {
+    "name": "devhubapp/devhub",
+    "officialUrl": "https://github.com/devhubapp/devhub",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:37:43.607Z",
+    "lastVerified": "2026-09-30T17:37:43.607Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
