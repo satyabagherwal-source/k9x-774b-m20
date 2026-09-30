@@ -8751,5 +8751,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alephaitech-workbuddyguide": {
+    "name": "AlephAITech/WorkBuddyGuide",
+    "officialUrl": "https://github.com/AlephAITech/WorkBuddyGuide",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:14:08.166Z",
+    "lastVerified": "2026-09-30T19:14:08.166Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
