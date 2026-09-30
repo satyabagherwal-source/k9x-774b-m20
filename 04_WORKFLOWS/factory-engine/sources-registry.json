@@ -6619,5 +6619,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "czy0729-bangumi": {
+    "name": "czy0729/Bangumi",
+    "officialUrl": "https://github.com/czy0729/Bangumi",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:19:48.892Z",
+    "lastVerified": "2026-09-30T18:19:48.892Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
