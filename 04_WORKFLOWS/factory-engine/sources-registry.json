@@ -13171,5 +13171,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xingyaoww-code-act": {
+    "name": "xingyaoww/code-act",
+    "officialUrl": "https://github.com/xingyaoww/code-act",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T23:13:01.004Z",
+    "lastVerified": "2026-09-30T23:13:01.004Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

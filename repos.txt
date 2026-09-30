@@ -2964,3 +2964,11 @@ https://github.com/vanniktech/gradle-maven-publish-plugin
 https://github.com/GitLiveApp/firebase-kotlin-sdk
 # [MOBILE-CROSS-PLATFORM] MohamedRejeb/Calf (1173 score) - Calf is a library that allows you to easily create adaptive UIs and access platf
 https://github.com/MohamedRejeb/Calf
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T23:12:41.234Z] ---
+# [AI-AGENTS] stakpak/agent (1296 score) - Ship your code, on autopilot. An open source agent that lives on your machines 2
+https://github.com/stakpak/agent
+# [AI-AGENTS] xingyaoww/code-act (1177 score) - Official Repo for ICML 2024 paper "Executable Code Actions Elicit Better LLM Age
+https://github.com/xingyaoww/code-act
+# [AI-AGENTS] AgentEra/Agently (1165 score) - [GenAI Application Development Framework]  🚀 Build GenAI application quick and 
+https://github.com/AgentEra/Agently

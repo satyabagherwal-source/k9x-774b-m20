@@ -13456,5 +13456,50 @@
     "qualityScore": 1173,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T23:00:15.776Z"
+  },
+  {
+    "name": "agent",
+    "fullName": "stakpak/agent",
+    "url": "https://github.com/stakpak/agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Ship your code, on autopilot. An open source agent that lives on your machines 24/7 and keeps your apps running. 🦀",
+    "stars": 1805,
+    "forks": 197,
+    "openIssues": 42,
+    "language": "Rust",
+    "qualityScore": 1296,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:12:41.225Z"
+  },
+  {
+    "name": "code-act",
+    "fullName": "xingyaoww/code-act",
+    "url": "https://github.com/xingyaoww/code-act",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Official Repo for ICML 2024 paper \"Executable Code Actions Elicit Better LLM Agents\" by Xingyao Wang, Yangyi Chen, Lifan Yuan, Yizhe Zhang, Yunzhu Li, Hao Peng, Heng Ji.",
+    "stars": 1705,
+    "forks": 147,
+    "openIssues": 15,
+    "language": "Python",
+    "qualityScore": 1177,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:12:41.225Z"
+  },
+  {
+    "name": "Agently",
+    "fullName": "AgentEra/Agently",
+    "url": "https://github.com/AgentEra/Agently",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "[GenAI Application Development Framework]  🚀 Build GenAI application quick and easy 💬 Easy to interact with GenAI agent in code using structure data and chained-calls syntax 🧩 Use Event-Driven Flow *TriggerFlow* to manage complex GenAI working logic 🔀 Switch to any model without rewrite application code",
+    "stars": 1654,
+    "forks": 181,
+    "openIssues": 17,
+    "language": "Python",
+    "qualityScore": 1165,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T23:12:41.225Z"
   }
 ]
