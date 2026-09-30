@@ -6697,5 +6697,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mlua-rs-mlua": {
+    "name": "mlua-rs/mlua",
+    "officialUrl": "https://github.com/mlua-rs/mlua",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:21:19.937Z",
+    "lastVerified": "2026-09-30T18:21:19.937Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
