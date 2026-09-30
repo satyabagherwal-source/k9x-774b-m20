@@ -8731,5 +8731,50 @@
     "qualityScore": 1350,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:20:06.674Z"
+  },
+  {
+    "name": "agent-teams-ai",
+    "fullName": "777genius/agent-teams-ai",
+    "url": "https://github.com/777genius/agent-teams-ai",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "You're the boss, agents are your team. They handle tasks on their own, message each other, and review each other's work. You just watch the kanban board and give high-level commands. Codex/Claude/OpenCode/Cursor/Grok/GitHub/Kiro/Z.AI/Xiaomi/MiniMax/Kimi(300+ models, 200+ LLM providers, free models no auth) Build your AI company with multiple teams",
+    "stars": 2195,
+    "forks": 367,
+    "openIssues": 28,
+    "language": "TypeScript",
+    "qualityScore": 1514,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:21:24.908Z"
+  },
+  {
+    "name": "gym-pybullet-drones",
+    "fullName": "learnsyslab/gym-pybullet-drones",
+    "url": "https://github.com/learnsyslab/gym-pybullet-drones",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "PyBullet Gymnasium environments for single and multi-agent reinforcement learning of quadcopter control",
+    "stars": 2149,
+    "forks": 571,
+    "openIssues": 111,
+    "language": "Python",
+    "qualityScore": 1696,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:21:24.908Z"
+  },
+  {
+    "name": "Orkas",
+    "fullName": "Orkas-AI/Orkas",
+    "url": "https://github.com/Orkas-AI/Orkas",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Orkas is an open-source, local-first AI desktop app: a commander LLM directs specialist sub-agents, and runs your installed coding CLIs — Claude Code, Codex, OpenCode, OpenClaw, Hermes — as local sessions. Agents self-evolve via reflection and skill crystallization. BYO keys. macOS / Windows / Linux.",
+    "stars": 2136,
+    "forks": 86,
+    "openIssues": 13,
+    "language": "TypeScript",
+    "qualityScore": 1370,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:21:24.909Z"
   }
 ]

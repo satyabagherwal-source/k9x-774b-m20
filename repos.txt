@@ -2114,3 +2114,11 @@ https://github.com/jnMetaCode/agency-orchestrator
 https://github.com/moorcheh-ai/memanto
 # [AI-AGENTS] Vincentwei1021/anything2explainer (1350 score) - Topic in, narrated explainer video out. A Claude Code / Codex skill that turns a
 https://github.com/Vincentwei1021/anything2explainer
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:21:24.909Z] ---
+# [AI-AGENTS] 777genius/agent-teams-ai (1514 score) - You're the boss, agents are your team. They handle tasks on their own, message e
+https://github.com/777genius/agent-teams-ai
+# [AI-AGENTS] learnsyslab/gym-pybullet-drones (1696 score) - PyBullet Gymnasium environments for single and multi-agent reinforcement learnin
+https://github.com/learnsyslab/gym-pybullet-drones
+# [AI-AGENTS] Orkas-AI/Orkas (1370 score) - Orkas is an open-source, local-first AI desktop app: a commander LLM directs spe
+https://github.com/Orkas-AI/Orkas

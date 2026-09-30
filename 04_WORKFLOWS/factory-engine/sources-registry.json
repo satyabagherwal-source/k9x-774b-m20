@@ -9076,5 +9076,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "777genius-agent-teams-ai": {
+    "name": "777genius/agent-teams-ai",
+    "officialUrl": "https://github.com/777genius/agent-teams-ai",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:21:47.370Z",
+    "lastVerified": "2026-09-30T19:21:47.370Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 73,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
