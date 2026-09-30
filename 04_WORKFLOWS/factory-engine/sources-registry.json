@@ -7360,5 +7360,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "arangodb-arangodb": {
+    "name": "arangodb/arangodb",
+    "officialUrl": "https://github.com/arangodb/arangodb",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T18:29:15.541Z",
+    "lastVerified": "2026-09-30T18:29:15.541Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
