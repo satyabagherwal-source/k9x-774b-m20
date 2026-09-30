@@ -12326,5 +12326,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "necolas-react-native-web": {
+    "name": "necolas/react-native-web",
+    "officialUrl": "https://github.com/necolas/react-native-web",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T21:28:08.199Z",
+    "lastVerified": "2026-09-30T21:28:08.199Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 46,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
