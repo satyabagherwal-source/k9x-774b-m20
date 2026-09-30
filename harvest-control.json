@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T22:48:32.955Z",
+        "lastActiveAt": "2026-09-30T22:49:44.578Z",
         "lastHarvestedAt": "2026-09-30T22:03:19.571Z",
         "totalHarvested": 10,
         "lastError": null
@@ -203,9 +203,9 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T22:48:32.977Z",
-        "lastHarvestedAt": "2026-09-30T21:56:15.202Z",
-        "totalHarvested": 6,
+        "lastActiveAt": "2026-09-30T22:49:41.313Z",
+        "lastHarvestedAt": "2026-09-30T22:49:41.313Z",
+        "totalHarvested": 7,
         "lastError": null
       },
       {
@@ -233,7 +233,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T22:48:33.010Z",
+        "lastActiveAt": "2026-09-30T22:49:46.538Z",
         "lastHarvestedAt": "2026-09-30T22:16:12.633Z",
         "totalHarvested": 7,
         "lastError": null
