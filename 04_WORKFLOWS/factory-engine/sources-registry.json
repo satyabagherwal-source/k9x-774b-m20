@@ -4058,5 +4058,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lingui-js-lingui": {
+    "name": "lingui/js-lingui",
+    "officialUrl": "https://github.com/lingui/js-lingui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:30:54.786Z",
+    "lastVerified": "2026-09-30T17:30:54.786Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
