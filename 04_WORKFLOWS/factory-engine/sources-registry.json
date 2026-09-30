@@ -4305,5 +4305,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kuberwastaken-claurst": {
+    "name": "Kuberwastaken/claurst",
+    "officialUrl": "https://github.com/Kuberwastaken/claurst",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:33:18.749Z",
+    "lastVerified": "2026-09-30T17:33:18.749Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
