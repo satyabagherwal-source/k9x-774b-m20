@@ -1144,3 +1144,35 @@ https://huggingface.co/inclusionAI/Ming-Image-0.1-Design
 https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash
 # [HUGGINGFACE-AI-MODELS] akatz-ai/MiniMax-H3-Character-Swap-LoRA (3790 score) - Verified Hugging Face Model: akatz-ai/MiniMax-H3-Character-Swap-LoRA (179 likes,
 https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:34:28.940Z] ---
+# [DATABASE-STORAGE-ENGINES] featureform/featureform (1478 score) - The Virtual Feature Store. Turn your existing data infrastructure into a feature
+https://github.com/featureform/featureform
+# [DATABASE-STORAGE-ENGINES] doobidoo/mcp-memory-service (1386 score) - Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen
+https://github.com/doobidoo/mcp-memory-service
+# [DATABASE-STORAGE-ENGINES] SeekStorm/SeekStorm (1260 score) - SeekStorm: vector & lexical search - in-process library & multi-tenancy server, 
+https://github.com/SeekStorm/SeekStorm
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:34:28.964Z] ---
+# [AI-AGENTS] dolthub/dolt (12887 score) - Dolt – Git for Data
+https://github.com/dolthub/dolt
+# [AI-AGENTS] NirDiamant/GenAI_Agents (13750 score) - 50+ tutorials and implementations for Generative AI Agent techniques, from basic
+https://github.com/NirDiamant/GenAI_Agents
+# [AI-AGENTS] nocobase/nocobase (13426 score) - NocoBase is an open-source AI + no-code platform for building business systems f
+https://github.com/nocobase/nocobase
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:34:28.999Z] ---
+# [MOBILE-CROSS-PLATFORM] leecade/react-native-swiper (6377 score) - The best Swiper component for React Native.
+https://github.com/leecade/react-native-swiper
+# [MOBILE-CROSS-PLATFORM] jhen0409/react-native-debugger (5913 score) - The standalone app based on official debugger of React Native, and includes Reac
+https://github.com/jhen0409/react-native-debugger
+# [MOBILE-CROSS-PLATFORM] RunanywhereAI/runanywhere-sdks (5724 score) - Production ready toolkit to run AI locally
+https://github.com/RunanywhereAI/runanywhere-sdks
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:34:29.099Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] taubyte/tau (2825 score) - Fullstack Workspace for Humans & Machines
+https://github.com/taubyte/tau
+# [DEVOPS-CLOUD-INFRASTRUCTURE] sorintlab/stolon (2899 score) - PostgreSQL cloud native High Availability and more.
+https://github.com/sorintlab/stolon
+# [DEVOPS-CLOUD-INFRASTRUCTURE] cdk-team/CDK (2844 score) - 📦  Make security testing of K8s, Docker, and Containerd easier.
+https://github.com/cdk-team/CDK

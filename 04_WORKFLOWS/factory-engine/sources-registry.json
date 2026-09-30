@@ -4370,5 +4370,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-deepseek-ai-deepseek-v4.1-flash": {
+    "name": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:34:31.309Z",
+    "lastVerified": "2026-09-30T17:34:31.309Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
