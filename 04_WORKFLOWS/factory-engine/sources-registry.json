@@ -4851,5 +4851,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "svenstaro-miniserve": {
+    "name": "svenstaro/miniserve",
+    "officialUrl": "https://github.com/svenstaro/miniserve",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:39:02.253Z",
+    "lastVerified": "2026-09-30T17:39:02.253Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
