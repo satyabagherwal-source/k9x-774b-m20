@@ -6931,5 +6931,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cloudwego-volo": {
+    "name": "cloudwego/volo",
+    "officialUrl": "https://github.com/cloudwego/volo",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:23:40.952Z",
+    "lastVerified": "2026-09-30T18:23:40.952Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
