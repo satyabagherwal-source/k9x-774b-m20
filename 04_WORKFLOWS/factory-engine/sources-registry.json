@@ -2290,5 +2290,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mattermost-mattermost": {
+    "name": "mattermost/mattermost",
+    "officialUrl": "https://github.com/mattermost/mattermost",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T13:57:26.416Z",
+    "lastVerified": "2026-09-30T13:57:26.416Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
