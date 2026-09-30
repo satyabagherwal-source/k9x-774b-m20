@@ -12690,5 +12690,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "simonschubert-linuxcommandlibrary": {
+    "name": "SimonSchubert/LinuxCommandLibrary",
+    "officialUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:55:43.090Z",
+    "lastVerified": "2026-09-30T21:55:43.090Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

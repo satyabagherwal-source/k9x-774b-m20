@@ -12901,5 +12901,50 @@
     "qualityScore": 6202,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:51:16.701Z"
+  },
+  {
+    "name": "LinuxCommandLibrary",
+    "fullName": "SimonSchubert/LinuxCommandLibrary",
+    "url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "2M+ app downloads, 500k+ monthly website visitors, Linux basics, tips and formatted man pages",
+    "stars": 2034,
+    "forks": 172,
+    "openIssues": 25,
+    "language": "Kotlin",
+    "qualityScore": 1269,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:55:28.157Z"
+  },
+  {
+    "name": "compose-rich-editor",
+    "fullName": "MohamedRejeb/compose-rich-editor",
+    "url": "https://github.com/MohamedRejeb/compose-rich-editor",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A Rich text editor library for both Jetpack Compose and Compose Multiplatform, fully customizable, supports HTML and Markdown.",
+    "stars": 1858,
+    "forks": 161,
+    "openIssues": 84,
+    "language": "Kotlin",
+    "qualityScore": 1395,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:55:28.157Z"
+  },
+  {
+    "name": "Meshtastic-Android",
+    "fullName": "meshtastic/Meshtastic-Android",
+    "url": "https://github.com/meshtastic/Meshtastic-Android",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Android application for Meshtastic",
+    "stars": 1857,
+    "forks": 516,
+    "openIssues": 29,
+    "language": "Kotlin",
+    "qualityScore": 1391,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:55:28.157Z"
   }
 ]

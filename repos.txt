@@ -2864,3 +2864,11 @@ https://github.com/CodeEditApp/CodeEdit
 https://github.com/pointfreeco/swift-composable-architecture
 # [MOBILE-CROSS-PLATFORM] mrkai77/Loop (6202 score) - Window management made elegant.
 https://github.com/mrkai77/Loop
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:55:28.158Z] ---
+# [MOBILE-CROSS-PLATFORM] SimonSchubert/LinuxCommandLibrary (1269 score) - 2M+ app downloads, 500k+ monthly website visitors, Linux basics, tips and format
+https://github.com/SimonSchubert/LinuxCommandLibrary
+# [MOBILE-CROSS-PLATFORM] MohamedRejeb/compose-rich-editor (1395 score) - A Rich text editor library for both Jetpack Compose and Compose Multiplatform, f
+https://github.com/MohamedRejeb/compose-rich-editor
+# [MOBILE-CROSS-PLATFORM] meshtastic/Meshtastic-Android (1391 score) - Android application for Meshtastic
+https://github.com/meshtastic/Meshtastic-Android
