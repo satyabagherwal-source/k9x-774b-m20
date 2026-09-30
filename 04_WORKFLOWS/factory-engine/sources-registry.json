@@ -11351,5 +11351,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zinja-coder-jadx-ai-mcp": {
+    "name": "zinja-coder/jadx-ai-mcp",
+    "officialUrl": "https://github.com/zinja-coder/jadx-ai-mcp",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T20:41:02.378Z",
+    "lastVerified": "2026-09-30T20:41:02.378Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
