@@ -12365,5 +12365,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tencent-tds-kuiklyui": {
+    "name": "Tencent-TDS/KuiklyUI",
+    "officialUrl": "https://github.com/Tencent-TDS/KuiklyUI",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:29:31.144Z",
+    "lastVerified": "2026-09-30T21:29:31.144Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 64,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
