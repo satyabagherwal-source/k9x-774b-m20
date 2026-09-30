@@ -10259,5 +10259,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "run-llama-rags": {
+    "name": "run-llama/rags",
+    "officialUrl": "https://github.com/run-llama/rags",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:10:07.979Z",
+    "lastVerified": "2026-09-30T20:10:07.979Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
