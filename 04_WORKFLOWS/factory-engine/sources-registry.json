@@ -5384,5 +5384,31 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "founded-labs-react-native-reusables": {
+    "name": "founded-labs/react-native-reusables",
+    "officialUrl": "https://github.com/founded-labs/react-native-reusables",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:45:28.423Z",
+    "lastVerified": "2026-09-30T17:45:28.423Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-image-picker-react-native-image-picker": {
+    "name": "react-native-image-picker/react-native-image-picker",
+    "officialUrl": "https://github.com/react-native-image-picker/react-native-image-picker",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T17:45:30.233Z",
+    "lastVerified": "2026-09-30T17:45:30.233Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
