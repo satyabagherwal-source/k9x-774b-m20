@@ -12092,5 +12092,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "socialai-tianji-tianji": {
+    "name": "SocialAI-tianji/Tianji",
+    "officialUrl": "https://github.com/SocialAI-tianji/Tianji",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:15:24.061Z",
+    "lastVerified": "2026-09-30T21:15:24.061Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 45,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

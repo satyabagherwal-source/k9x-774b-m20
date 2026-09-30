@@ -12211,5 +12211,20 @@
     "qualityScore": 1410,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:12:34.655Z"
+  },
+  {
+    "name": "Tianji",
+    "fullName": "SocialAI-tianji/Tianji",
+    "url": "https://github.com/SocialAI-tianji/Tianji",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "制作懂人情世故的大语言模型 | 涵盖提示词工程、RAG、Agent、LLM微调教程",
+    "stars": 1827,
+    "forks": 158,
+    "openIssues": 4,
+    "language": "Python",
+    "qualityScore": 1119,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:14:04.737Z"
   }
 ]

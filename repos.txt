@@ -2740,3 +2740,7 @@ https://github.com/NanoNets/docext
 https://github.com/HKUDS/MiniRAG
 # [AI-AGENTS] NVIDIA-AI-Blueprints/video-search-and-summarization (1410 score) - NVIDIA AI Blueprint for video search and summarization (VSS) is a GPU-accelerate
 https://github.com/NVIDIA-AI-Blueprints/video-search-and-summarization
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:14:58.310Z] ---
+# [AI-AGENTS] SocialAI-tianji/Tianji (1119 score) - 制作懂人情世故的大语言模型 | 涵盖提示词工程、RAG、Agent、LLM微调教程
+https://github.com/SocialAI-tianji/Tianji
