@@ -2792,3 +2792,11 @@ https://github.com/vercel/swr
 https://github.com/hasaneyldrm/exercises-dataset
 # [MOBILE-CROSS-PLATFORM] necolas/react-native-web (12066 score) - Cross-platform React UI packages
 https://github.com/necolas/react-native-web
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:28:47.029Z] ---
+# [MOBILE-CROSS-PLATFORM] JetBrains/kotlinconf-app (2258 score) - The official KotlinConf application
+https://github.com/JetBrains/kotlinconf-app
+# [MOBILE-CROSS-PLATFORM] Tencent-TDS/KuiklyUI (2217 score) - A Kotlin Multiplatform UI framework from Tencent TDS — high-performance, one cod
+https://github.com/Tencent-TDS/KuiklyUI
+# [MOBILE-CROSS-PLATFORM] joreilly/PeopleInSpace (2078 score) - Kotlin Multiplatform sample with SwiftUI, Jetpack Compose, Compose for Wear, Com
+https://github.com/joreilly/PeopleInSpace

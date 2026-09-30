@@ -12339,5 +12339,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jetbrains-kotlinconf-app": {
+    "name": "JetBrains/kotlinconf-app",
+    "officialUrl": "https://github.com/JetBrains/kotlinconf-app",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:29:04.970Z",
+    "lastVerified": "2026-09-30T21:29:04.970Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

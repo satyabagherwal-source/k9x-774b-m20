@@ -12496,5 +12496,50 @@
     "qualityScore": 12066,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:27:41.920Z"
+  },
+  {
+    "name": "kotlinconf-app",
+    "fullName": "JetBrains/kotlinconf-app",
+    "url": "https://github.com/JetBrains/kotlinconf-app",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "The official KotlinConf application",
+    "stars": 3564,
+    "forks": 425,
+    "openIssues": 49,
+    "language": "Kotlin",
+    "qualityScore": 2258,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:28:41.935Z"
+  },
+  {
+    "name": "KuiklyUI",
+    "fullName": "Tencent-TDS/KuiklyUI",
+    "url": "https://github.com/Tencent-TDS/KuiklyUI",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A Kotlin Multiplatform UI framework from Tencent TDS — high-performance, one codebase for six platforms, with dynamic delivery.",
+    "stars": 3548,
+    "forks": 311,
+    "openIssues": 147,
+    "language": "Kotlin",
+    "qualityScore": 2217,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:28:41.935Z"
+  },
+  {
+    "name": "PeopleInSpace",
+    "fullName": "joreilly/PeopleInSpace",
+    "url": "https://github.com/joreilly/PeopleInSpace",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Kotlin Multiplatform sample with SwiftUI, Jetpack Compose, Compose for Wear, Compose for Desktop, and Compose for Web clients along with Ktor backend.",
+    "stars": 3430,
+    "forks": 317,
+    "openIssues": 9,
+    "language": "Kotlin",
+    "qualityScore": 2078,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:28:47.028Z"
   }
 ]
