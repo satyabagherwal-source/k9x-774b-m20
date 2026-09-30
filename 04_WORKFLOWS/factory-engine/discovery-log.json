@@ -11986,5 +11986,50 @@
     "qualityScore": 2054,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:05:38.067Z"
+  },
+  {
+    "name": "VideoRAG",
+    "fullName": "HKUDS/VideoRAG",
+    "url": "https://github.com/HKUDS/VideoRAG",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "[KDD'2026] \"VideoRAG: Chat with Your Videos\"",
+    "stars": 3388,
+    "forks": 476,
+    "openIssues": 21,
+    "language": "Python",
+    "qualityScore": 2029,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:07:00.498Z"
+  },
+  {
+    "name": "EvoAgentX",
+    "fullName": "ANative-Lab/EvoAgentX",
+    "url": "https://github.com/ANative-Lab/EvoAgentX",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🚀 EvoAgentX: Building a Self-Evolving Ecosystem of AI Agents",
+    "stars": 3362,
+    "forks": 311,
+    "openIssues": 27,
+    "language": "Python",
+    "qualityScore": 2078,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:07:00.499Z"
+  },
+  {
+    "name": "fastembed",
+    "fullName": "qdrant/fastembed",
+    "url": "https://github.com/qdrant/fastembed",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Fast, Accurate, Lightweight Python library to make State of the Art Embedding",
+    "stars": 3228,
+    "forks": 258,
+    "openIssues": 96,
+    "language": "Python",
+    "qualityScore": 2133,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:07:00.499Z"
   }
 ]

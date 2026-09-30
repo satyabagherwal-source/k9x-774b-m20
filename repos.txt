@@ -2700,3 +2700,11 @@ https://github.com/agentscope-ai/ReMe
 https://github.com/modelscope/evalscope
 # [AI-AGENTS] NVIDIA/skills (2054 score) - Agent Skills for NVIDIA products — install into Claude Code, Codex, and other co
 https://github.com/NVIDIA/skills
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:07:00.502Z] ---
+# [AI-AGENTS] HKUDS/VideoRAG (2029 score) - [KDD'2026] "VideoRAG: Chat with Your Videos"
+https://github.com/HKUDS/VideoRAG
+# [AI-AGENTS] ANative-Lab/EvoAgentX (2078 score) - 🚀 EvoAgentX: Building a Self-Evolving Ecosystem of AI Agents
+https://github.com/ANative-Lab/EvoAgentX
+# [AI-AGENTS] qdrant/fastembed (2133 score) - Fast, Accurate, Lightweight Python library to make State of the Art Embedding
+https://github.com/qdrant/fastembed
