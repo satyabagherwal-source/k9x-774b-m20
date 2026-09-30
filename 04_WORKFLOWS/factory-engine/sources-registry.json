@@ -4500,5 +4500,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "runanywhereai-runanywhere-sdks": {
+    "name": "RunanywhereAI/runanywhere-sdks",
+    "officialUrl": "https://github.com/RunanywhereAI/runanywhere-sdks",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T17:35:20.280Z",
+    "lastVerified": "2026-09-30T17:35:20.280Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 63,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
