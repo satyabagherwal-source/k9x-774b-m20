@@ -13106,5 +13106,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lottie-react-native-lottie-react-native": {
+    "name": "lottie-react-native/lottie-react-native",
+    "officialUrl": "https://github.com/lottie-react-native/lottie-react-native",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T22:49:33.333Z",
+    "lastVerified": "2026-09-30T22:49:33.333Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

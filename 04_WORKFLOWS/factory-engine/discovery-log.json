@@ -13381,5 +13381,35 @@
     "qualityScore": 3456,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T22:41:43.327Z"
+  },
+  {
+    "name": "lottie-react-native",
+    "fullName": "lottie-react-native/lottie-react-native",
+    "url": "https://github.com/lottie-react-native/lottie-react-native",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Lottie wrapper for React Native.",
+    "stars": 17207,
+    "forks": 1801,
+    "openIssues": 14,
+    "language": "TypeScript",
+    "qualityScore": 9322,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:48:57.648Z"
+  },
+  {
+    "name": "react-native-maps",
+    "fullName": "react-native-maps/react-native-maps",
+    "url": "https://github.com/react-native-maps/react-native-maps",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "React Native Mapview component for iOS + Android",
+    "stars": 16000,
+    "forks": 4961,
+    "openIssues": 88,
+    "language": "TypeScript",
+    "qualityScore": 9814,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:48:57.648Z"
   }
 ]

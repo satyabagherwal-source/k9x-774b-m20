@@ -2950,3 +2950,9 @@ https://github.com/alin23/Lunar
 https://github.com/amosgyamfi/open-swiftui-animations
 # [MOBILE-CROSS-PLATFORM] AppPear/ChartView (3456 score) - ChartView made in SwiftUI
 https://github.com/AppPear/ChartView
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T22:49:11.780Z] ---
+# [MOBILE-CROSS-PLATFORM] lottie-react-native/lottie-react-native (9322 score) - Lottie wrapper for React Native.
+https://github.com/lottie-react-native/lottie-react-native
+# [MOBILE-CROSS-PLATFORM] react-native-maps/react-native-maps (9814 score) - React Native Mapview component for iOS + Android
+https://github.com/react-native-maps/react-native-maps
