@@ -4760,5 +4760,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "supervc-stack-vectorchord": {
+    "name": "supervc-stack/VectorChord",
+    "officialUrl": "https://github.com/supervc-stack/VectorChord",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:38:04.252Z",
+    "lastVerified": "2026-09-30T17:38:04.252Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
