@@ -3408,5 +3408,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zilliztech-attu": {
+    "name": "zilliztech/attu",
+    "officialUrl": "https://github.com/zilliztech/attu",
+    "sourceType": "github",
+    "technology": "Shell",
+    "lastChecked": "2026-09-30T17:24:16.150Z",
+    "lastVerified": "2026-09-30T17:24:16.150Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
