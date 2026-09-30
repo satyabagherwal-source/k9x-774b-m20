@@ -4227,5 +4227,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "browserbase-stagehand": {
+    "name": "browserbase/stagehand",
+    "officialUrl": "https://github.com/browserbase/stagehand",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:32:45.811Z",
+    "lastVerified": "2026-09-30T17:32:45.811Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
