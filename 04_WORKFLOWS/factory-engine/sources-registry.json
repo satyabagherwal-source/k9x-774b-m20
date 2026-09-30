@@ -11442,5 +11442,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "metatool-ai-metamcp": {
+    "name": "metatool-ai/metamcp",
+    "officialUrl": "https://github.com/metatool-ai/metamcp",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:44:03.640Z",
+    "lastVerified": "2026-09-30T20:44:03.640Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 49,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
