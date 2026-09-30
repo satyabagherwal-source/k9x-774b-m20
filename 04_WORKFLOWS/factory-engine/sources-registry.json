@@ -7165,5 +7165,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nezhahq-nezha": {
+    "name": "nezhahq/nezha",
+    "officialUrl": "https://github.com/nezhahq/nezha",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:26:20.401Z",
+    "lastVerified": "2026-09-30T18:26:20.401Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
