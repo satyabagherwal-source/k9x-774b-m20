@@ -12076,5 +12076,50 @@
     "qualityScore": 1768,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:08:21.059Z"
+  },
+  {
+    "name": "memsearch",
+    "fullName": "zilliztech/memsearch",
+    "url": "https://github.com/zilliztech/memsearch",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A persistent, unified memory layer for all your AI agents (e.g. Claude Code, Codex, DSH), backed by Markdown and Milvus.",
+    "stars": 2686,
+    "forks": 264,
+    "openIssues": 273,
+    "language": "Python",
+    "qualityScore": 1872,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:09:42.250Z"
+  },
+  {
+    "name": "OmAgent",
+    "fullName": "om-ai-lab/OmAgent",
+    "url": "https://github.com/om-ai-lab/OmAgent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "[EMNLP-2024] Build multimodal language agents for fast prototype and production",
+    "stars": 2666,
+    "forks": 291,
+    "openIssues": 21,
+    "language": "Python",
+    "qualityScore": 1612,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:09:47.445Z"
+  },
+  {
+    "name": "SAG",
+    "fullName": "Zleap-AI/SAG",
+    "url": "https://github.com/Zleap-AI/SAG",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A new SOTA for RAG — an original retrieval architecture and an open-source knowledge base for humans and agents.",
+    "stars": 2512,
+    "forks": 164,
+    "openIssues": 0,
+    "language": "Python",
+    "qualityScore": 1455,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:09:47.445Z"
   }
 ]

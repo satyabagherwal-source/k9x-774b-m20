@@ -2716,3 +2716,11 @@ https://github.com/swirlai/swirl-search
 https://github.com/memodb-io/memobase
 # [AI-AGENTS] trustgraph-ai/trustgraph (1768 score) - The Semantic Intelligence Layer for Ontologies
 https://github.com/trustgraph-ai/trustgraph
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:09:47.446Z] ---
+# [AI-AGENTS] zilliztech/memsearch (1872 score) - A persistent, unified memory layer for all your AI agents (e.g. Claude Code, Cod
+https://github.com/zilliztech/memsearch
+# [AI-AGENTS] om-ai-lab/OmAgent (1612 score) - [EMNLP-2024] Build multimodal language agents for fast prototype and production
+https://github.com/om-ai-lab/OmAgent
+# [AI-AGENTS] Zleap-AI/SAG (1455 score) - A new SOTA for RAG — an original retrieval architecture and an open-source knowl
+https://github.com/Zleap-AI/SAG
