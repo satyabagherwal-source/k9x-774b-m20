@@ -3954,5 +3954,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nozbe-watermelondb": {
+    "name": "Nozbe/WatermelonDB",
+    "officialUrl": "https://github.com/Nozbe/WatermelonDB",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:29:45.909Z",
+    "lastVerified": "2026-09-30T17:29:45.909Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
