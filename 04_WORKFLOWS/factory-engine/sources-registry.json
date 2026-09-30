@@ -7711,5 +7711,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "transformeroptimus-superagi": {
+    "name": "TransformerOptimus/SuperAGI",
+    "officialUrl": "https://github.com/TransformerOptimus/SuperAGI",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:35:05.882Z",
+    "lastVerified": "2026-09-30T18:35:05.882Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
