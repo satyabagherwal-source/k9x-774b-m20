@@ -2644,3 +2644,11 @@ https://github.com/sqldelight/sqldelight
 https://github.com/kizitonwose/Calendar
 # [MOBILE-CROSS-PLATFORM] kotest/kotest (2953 score) - Powerful, elegant and flexible test framework for Kotlin with assertions, proper
 https://github.com/kotest/kotest
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:55:23.256Z] ---
+# [DATABASE-STORAGE-ENGINES] activeloopai/deeplake (5218 score) - Deeplake is AI Data Runtime for Agents. It provides serverless postgres with a m
+https://github.com/activeloopai/deeplake
+# [DATABASE-STORAGE-ENGINES] MariaDB/server (5138 score) - MariaDB server is a community developed fork of MySQL server. Started by core me
+https://github.com/MariaDB/server
+# [DATABASE-STORAGE-ENGINES] vespa-engine/vespa (4129 score) - The AI search platform
+https://github.com/vespa-engine/vespa

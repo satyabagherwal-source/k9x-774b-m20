@@ -11671,5 +11671,50 @@
     "qualityScore": 2953,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:50:35.162Z"
+  },
+  {
+    "name": "deeplake",
+    "fullName": "activeloopai/deeplake",
+    "url": "https://github.com/activeloopai/deeplake",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "Deeplake is AI Data Runtime for Agents. It provides serverless postgres with a multimodal datalake, enabling scalable retrieval and training.",
+    "stars": 9245,
+    "forks": 725,
+    "openIssues": 64,
+    "language": "C++",
+    "qualityScore": 5218,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:55:23.255Z"
+  },
+  {
+    "name": "server",
+    "fullName": "MariaDB/server",
+    "url": "https://github.com/MariaDB/server",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "MariaDB server is a community developed fork of MySQL server. Started by core members of the original MySQL team, MariaDB actively works with outside developers to deliver the most featureful, stable, and sanely licensed open SQL server in the industry.",
+    "stars": 8305,
+    "forks": 2118,
+    "openIssues": 548,
+    "language": "C++",
+    "qualityScore": 5138,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:55:23.255Z"
+  },
+  {
+    "name": "vespa",
+    "fullName": "vespa-engine/vespa",
+    "url": "https://github.com/vespa-engine/vespa",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "The AI search platform",
+    "stars": 7113,
+    "forks": 742,
+    "openIssues": 257,
+    "language": "Java",
+    "qualityScore": 4129,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:55:23.255Z"
   }
 ]

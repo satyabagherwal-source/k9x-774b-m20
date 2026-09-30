@@ -11624,5 +11624,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "activeloopai-deeplake": {
+    "name": "activeloopai/deeplake",
+    "officialUrl": "https://github.com/activeloopai/deeplake",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T20:55:46.894Z",
+    "lastVerified": "2026-09-30T20:55:46.894Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
