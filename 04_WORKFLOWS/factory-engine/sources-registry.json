@@ -8595,5 +8595,18 @@
     "closedIssuesCount": 4,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "adongwanai-agentguide": {
+    "name": "adongwanai/AgentGuide",
+    "officialUrl": "https://github.com/adongwanai/AgentGuide",
+    "sourceType": "github",
+    "technology": "MDX",
+    "lastChecked": "2026-09-30T18:56:40.691Z",
+    "lastVerified": "2026-09-30T18:56:40.691Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
