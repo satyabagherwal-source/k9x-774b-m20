@@ -4253,5 +4253,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ekzhang-bore": {
+    "name": "ekzhang/bore",
+    "officialUrl": "https://github.com/ekzhang/bore",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:32:57.621Z",
+    "lastVerified": "2026-09-30T17:32:57.621Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
