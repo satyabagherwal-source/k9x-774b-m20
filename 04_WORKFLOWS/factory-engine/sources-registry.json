@@ -2992,5 +2992,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nvidia-nemotron-3-diarization": {
+    "name": "nvidia/Nemotron-3-Diarization",
+    "officialUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:20:36.865Z",
+    "lastVerified": "2026-09-30T17:20:36.865Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
