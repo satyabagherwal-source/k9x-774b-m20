@@ -1,7 +1,7 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 2,
+      "queryIndex": 6,
       "page": 1
     },
     "fullstack-ui": {
@@ -9,7 +9,7 @@
       "page": 1
     },
     "high-perf-systems": {
-      "queryIndex": 2,
+      "queryIndex": 4,
       "page": 1
     },
     "huggingface-ai-models": {
@@ -38,5 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 74,
-  "lastReplenishedAt": "2026-09-30T21:42:20.274Z"
+  "lastReplenishedAt": "2026-09-30T21:42:29.859Z"
 }

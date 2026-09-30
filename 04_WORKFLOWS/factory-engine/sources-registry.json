@@ -12521,5 +12521,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-react-native-windows": {
+    "name": "microsoft/react-native-windows",
+    "officialUrl": "https://github.com/microsoft/react-native-windows",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T21:42:31.887Z",
+    "lastVerified": "2026-09-30T21:42:31.887Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
