@@ -6918,5 +6918,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "infracost-infracost": {
+    "name": "infracost/infracost",
+    "officialUrl": "https://github.com/infracost/infracost",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:23:33.293Z",
+    "lastVerified": "2026-09-30T18:23:33.293Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
