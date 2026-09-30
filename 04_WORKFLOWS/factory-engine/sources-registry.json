@@ -1783,5 +1783,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "diegosouzapw-omniroute": {
+    "name": "diegosouzapw/OmniRoute",
+    "officialUrl": "https://github.com/diegosouzapw/OmniRoute",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T13:55:22.050Z",
+    "lastVerified": "2026-09-30T13:55:22.050Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 79,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
