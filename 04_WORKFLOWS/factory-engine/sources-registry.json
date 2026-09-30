@@ -6827,5 +6827,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "browseros-ai-browseros": {
+    "name": "browseros-ai/BrowserOS",
+    "officialUrl": "https://github.com/browseros-ai/BrowserOS",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:22:18.430Z",
+    "lastVerified": "2026-09-30T18:22:18.430Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
