@@ -4162,5 +4162,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "software-mansion-react-native-reanimated": {
+    "name": "software-mansion/react-native-reanimated",
+    "officialUrl": "https://github.com/software-mansion/react-native-reanimated",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:32:16.717Z",
+    "lastVerified": "2026-09-30T17:32:16.717Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
