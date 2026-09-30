@@ -1913,5 +1913,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-baai-bge-small-en-v1.5": {
+    "name": "BAAI/bge-small-en-v1.5",
+    "officialUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T13:57:04.690Z",
+    "lastVerified": "2026-09-30T13:57:04.690Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
