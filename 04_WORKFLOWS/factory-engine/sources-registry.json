@@ -6424,5 +6424,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "amrdeveloper-gql": {
+    "name": "AmrDeveloper/GQL",
+    "officialUrl": "https://github.com/AmrDeveloper/GQL",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:18:38.621Z",
+    "lastVerified": "2026-09-30T18:18:38.621Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
