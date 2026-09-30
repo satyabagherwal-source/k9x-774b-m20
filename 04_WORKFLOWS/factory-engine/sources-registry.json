@@ -6866,5 +6866,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-metro": {
+    "name": "react/metro",
+    "officialUrl": "https://github.com/react/metro",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T18:22:40.913Z",
+    "lastVerified": "2026-09-30T18:22:40.913Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
