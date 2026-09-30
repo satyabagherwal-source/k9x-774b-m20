@@ -4045,5 +4045,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rsuite-rsuite": {
+    "name": "rsuite/rsuite",
+    "officialUrl": "https://github.com/rsuite/rsuite",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:30:52.439Z",
+    "lastVerified": "2026-09-30T17:30:52.439Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
