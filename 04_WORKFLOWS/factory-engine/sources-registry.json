@@ -13080,5 +13080,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "amosgyamfi-open-swiftui-animations": {
+    "name": "amosgyamfi/open-swiftui-animations",
+    "officialUrl": "https://github.com/amosgyamfi/open-swiftui-animations",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:42:13.003Z",
+    "lastVerified": "2026-09-30T22:42:13.003Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
