@@ -8281,5 +8281,50 @@
     "qualityScore": 4477,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:58:29.267Z"
+  },
+  {
+    "name": "Kun",
+    "fullName": "KunAgent/Kun",
+    "url": "https://github.com/KunAgent/Kun",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Local-first AI agent workspace for coding, writing, design, research, and automation — one runtime for desktop GUI and TUI.",
+    "stars": 6323,
+    "forks": 596,
+    "openIssues": 10,
+    "language": "TypeScript",
+    "qualityScore": 3610,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:00:00.274Z"
+  },
+  {
+    "name": "T3MP3ST",
+    "fullName": "elder-plinius/T3MP3ST",
+    "url": "https://github.com/elder-plinius/T3MP3ST",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "autonomous red teaming platform; multi-agent offensive-security meta-harness",
+    "stars": 6290,
+    "forks": 1316,
+    "openIssues": 8,
+    "language": "TypeScript",
+    "qualityScore": 3806,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:00:00.274Z"
+  },
+  {
+    "name": "loopx",
+    "fullName": "loopx-project/loopx",
+    "url": "https://github.com/loopx-project/loopx",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A control plane with a durable state kernel for long-horizon agents and teams. Keep work moving and improving across sessions, with less human attention.",
+    "stars": 6117,
+    "forks": 592,
+    "openIssues": 127,
+    "language": "Python",
+    "qualityScore": 3686,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:00:00.275Z"
   }
 ]

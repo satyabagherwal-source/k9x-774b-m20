@@ -2034,3 +2034,11 @@ https://github.com/chaitanyagiri/munder-difflin
 https://github.com/ringhyacinth/Star-Office-UI
 # [AI-AGENTS] open-multi-agent/open-multi-agent (4477 score) - Self-hosted TypeScript agent runtime with durable approvals and verifiable run r
 https://github.com/open-multi-agent/open-multi-agent
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:00:00.275Z] ---
+# [AI-AGENTS] KunAgent/Kun (3610 score) - Local-first AI agent workspace for coding, writing, design, research, and automa
+https://github.com/KunAgent/Kun
+# [AI-AGENTS] elder-plinius/T3MP3ST (3806 score) - autonomous red teaming platform; multi-agent offensive-security meta-harness
+https://github.com/elder-plinius/T3MP3ST
+# [AI-AGENTS] loopx-project/loopx (3686 score) - A control plane with a durable state kernel for long-horizon agents and teams. K
+https://github.com/loopx-project/loopx
