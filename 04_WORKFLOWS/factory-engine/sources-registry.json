@@ -3590,5 +3590,31 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "milvus-io-bootcamp": {
+    "name": "milvus-io/bootcamp",
+    "officialUrl": "https://github.com/milvus-io/bootcamp",
+    "sourceType": "github",
+    "technology": "Jupyter Notebook",
+    "lastChecked": "2026-09-30T17:26:28.438Z",
+    "lastVerified": "2026-09-30T17:26:28.438Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 3,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alibaba-page-agent": {
+    "name": "alibaba/page-agent",
+    "officialUrl": "https://github.com/alibaba/page-agent",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:26:33.338Z",
+    "lastVerified": "2026-09-30T17:26:33.338Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
