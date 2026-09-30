@@ -5033,5 +5033,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "google-adk-python": {
+    "name": "google/adk-python",
+    "officialUrl": "https://github.com/google/adk-python",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:40:33.657Z",
+    "lastVerified": "2026-09-30T17:40:33.657Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 62,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
