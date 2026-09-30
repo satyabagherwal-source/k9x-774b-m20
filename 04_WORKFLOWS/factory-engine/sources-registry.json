@@ -9635,5 +9635,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zipstack-unstract": {
+    "name": "Zipstack/unstract",
+    "officialUrl": "https://github.com/Zipstack/unstract",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:42:48.073Z",
+    "lastVerified": "2026-09-30T19:42:48.073Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
