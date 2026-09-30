@@ -9245,5 +9245,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mksglu-context-mode": {
+    "name": "mksglu/context-mode",
+    "officialUrl": "https://github.com/mksglu/context-mode",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:28:54.850Z",
+    "lastVerified": "2026-09-30T19:28:54.850Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
