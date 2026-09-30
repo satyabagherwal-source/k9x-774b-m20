@@ -13340,5 +13340,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "saladday-pi-from-scratch": {
+    "name": "SaladDay/pi-from-scratch",
+    "officialUrl": "https://github.com/SaladDay/pi-from-scratch",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T23:45:52.643Z",
+    "lastVerified": "2026-09-30T23:45:52.643Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
