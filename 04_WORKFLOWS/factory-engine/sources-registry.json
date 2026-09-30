@@ -3681,5 +3681,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "boardgameio-boardgame.io": {
+    "name": "boardgameio/boardgame.io",
+    "officialUrl": "https://github.com/boardgameio/boardgame.io",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:26:54.673Z",
+    "lastVerified": "2026-09-30T17:26:54.673Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
