@@ -2226,3 +2226,11 @@ https://github.com/osaurus-ai/osaurus
 https://github.com/firecrawl/firecrawl-mcp-server
 # [AI-AGENTS] devlikeapro/waha (4745 score) - WAHA - WhatsApp HTTP API (REST API) that you can configure in a click! Multiple 
 https://github.com/devlikeapro/waha
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:41:59.698Z] ---
+# [AI-AGENTS] AgentDeskAI/browser-tools-mcp (4084 score) - Monitor browser logs directly from Cursor and other MCP compatible IDEs.
+https://github.com/AgentDeskAI/browser-tools-mcp
+# [AI-AGENTS] Zipstack/unstract (4289 score) - LLM-Driven Extraction of Unstructured Data — Built for API Deployments & ETL Pip
+https://github.com/Zipstack/unstract
+# [AI-AGENTS] BrowserMCP/mcp (4199 score) - Browser MCP is a Model Context Provider (MCP) server that allows AI applications
+https://github.com/BrowserMCP/mcp

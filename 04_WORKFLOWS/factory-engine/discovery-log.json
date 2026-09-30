@@ -9361,5 +9361,50 @@
     "qualityScore": 4745,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:40:25.085Z"
+  },
+  {
+    "name": "browser-tools-mcp",
+    "fullName": "AgentDeskAI/browser-tools-mcp",
+    "url": "https://github.com/AgentDeskAI/browser-tools-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Monitor browser logs directly from Cursor and other MCP compatible IDEs.",
+    "stars": 7329,
+    "forks": 537,
+    "openIssues": 4,
+    "language": "TypeScript",
+    "qualityScore": 4084,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:41:59.696Z"
+  },
+  {
+    "name": "unstract",
+    "fullName": "Zipstack/unstract",
+    "url": "https://github.com/Zipstack/unstract",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "LLM-Driven Extraction of Unstructured Data — Built for API Deployments & ETL Pipeline Workflows",
+    "stars": 7266,
+    "forks": 720,
+    "openIssues": 95,
+    "language": "Python",
+    "qualityScore": 4289,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:41:59.697Z"
+  },
+  {
+    "name": "mcp",
+    "fullName": "BrowserMCP/mcp",
+    "url": "https://github.com/BrowserMCP/mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Browser MCP is a Model Context Provider (MCP) server that allows AI applications to control your browser",
+    "stars": 7147,
+    "forks": 585,
+    "openIssues": 151,
+    "language": "TypeScript",
+    "qualityScore": 4199,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:41:59.697Z"
   }
 ]
