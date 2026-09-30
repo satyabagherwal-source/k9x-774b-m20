@@ -10246,5 +10246,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "osmantic-ods": {
+    "name": "Osmantic/ODS",
+    "officialUrl": "https://github.com/Osmantic/ODS",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:09:47.043Z",
+    "lastVerified": "2026-09-30T20:09:47.043Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

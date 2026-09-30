@@ -10081,5 +10081,50 @@
     "qualityScore": 19464,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:06:40.174Z"
+  },
+  {
+    "name": "ODS",
+    "fullName": "Osmantic/ODS",
+    "url": "https://github.com/Osmantic/ODS",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "ODS V3 Pre-Release: Public testing and refinement ahead of the official V3 launch. Turn your PC, Mac, or Linux box into a private AI server.",
+    "stars": 6908,
+    "forks": 966,
+    "openIssues": 3846,
+    "language": "Python",
+    "qualityScore": 4194,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:09:24.183Z"
+  },
+  {
+    "name": "trafilatura",
+    "fullName": "adbar/trafilatura",
+    "url": "https://github.com/adbar/trafilatura",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Python & Command-line tool to gather text and metadata on the Web: Crawling, scraping, extraction, output as CSV, JSON, HTML, MD, TXT, XML",
+    "stars": 6894,
+    "forks": 447,
+    "openIssues": 58,
+    "language": "Python",
+    "qualityScore": 3847,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:09:24.184Z"
+  },
+  {
+    "name": "rags",
+    "fullName": "run-llama/rags",
+    "url": "https://github.com/run-llama/rags",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Build ChatGPT over your data, all with natural language",
+    "stars": 6552,
+    "forks": 654,
+    "openIssues": 38,
+    "language": "Python",
+    "qualityScore": 4798,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-09-30T20:09:24.184Z"
   }
 ]

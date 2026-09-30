@@ -2356,3 +2356,11 @@ https://github.com/ashishpatel26/500-AI-Agents-Projects
 https://github.com/ItzCrazyKns/Vane
 # [AI-AGENTS] JCodesMore/ai-website-cloner-template (19464 score) - Clone any website with one command using AI coding agents
 https://github.com/JCodesMore/ai-website-cloner-template
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:09:24.837Z] ---
+# [AI-AGENTS] Osmantic/ODS (4194 score) - ODS V3 Pre-Release: Public testing and refinement ahead of the official V3 launc
+https://github.com/Osmantic/ODS
+# [AI-AGENTS] adbar/trafilatura (3847 score) - Python & Command-line tool to gather text and metadata on the Web: Crawling, scr
+https://github.com/adbar/trafilatura
+# [AI-AGENTS] run-llama/rags (4798 score [VERIFIED ORG]) - Build ChatGPT over your data, all with natural language
+https://github.com/run-llama/rags
