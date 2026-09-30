@@ -2160,5 +2160,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cachix-devenv": {
+    "name": "cachix/devenv",
+    "officialUrl": "https://github.com/cachix/devenv",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T13:56:04.292Z",
+    "lastVerified": "2026-09-30T13:56:04.292Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 53,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
