@@ -10610,5 +10610,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fujibee-agmsg": {
+    "name": "fujibee/agmsg",
+    "officialUrl": "https://github.com/fujibee/agmsg",
+    "sourceType": "github",
+    "technology": "Shell",
+    "lastChecked": "2026-09-30T20:19:12.148Z",
+    "lastVerified": "2026-09-30T20:19:12.148Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
