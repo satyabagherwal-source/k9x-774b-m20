@@ -6333,5 +6333,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cft0808-edict": {
+    "name": "cft0808/edict",
+    "officialUrl": "https://github.com/cft0808/edict",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:18:11.308Z",
+    "lastVerified": "2026-09-30T18:18:11.308Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 56,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
