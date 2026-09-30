@@ -1810,3 +1810,19 @@ https://github.com/google/artemis
 https://github.com/tiajinsha/JKVideo
 # [MOBILE-CROSS-PLATFORM] shoutem/ui (3077 score) - Customizable set of components for React Native applications
 https://github.com/shoutem/ui
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:32:45.224Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] decodingai-magazine/llm-twin-course (2681 score) - 🤖 𝗟𝗲𝗮𝗿𝗻 for 𝗳𝗿𝗲𝗲 how to 𝗯𝘂𝗶𝗹𝗱 an end-to-end 𝗽𝗿𝗼𝗱𝘂𝗰𝘁𝗶𝗼𝗻-
+https://github.com/decodingai-magazine/llm-twin-course
+# [DEVOPS-CLOUD-INFRASTRUCTURE] DNSControl/dnscontrol (2462 score) - Infrastructure as code for DNS!
+https://github.com/DNSControl/dnscontrol
+# [DEVOPS-CLOUD-INFRASTRUCTURE] octodns/octodns (2174 score) - Tools for managing DNS across multiple providers
+https://github.com/octodns/octodns
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:32:46.951Z] ---
+# [DATABASE-STORAGE-ENGINES] StarRocks/starrocks (7208 score) - The world's fastest open query engine for sub-second analytics both on and off t
+https://github.com/StarRocks/starrocks
+# [DATABASE-STORAGE-ENGINES] pingcap/talent-plan (6221 score) - open source training courses about distributed database and distributed systems
+https://github.com/pingcap/talent-plan
+# [DATABASE-STORAGE-ENGINES] yugabyte/yugabyte-db (6132 score) - YugabyteDB - the cloud native distributed SQL database for mission-critical appl
+https://github.com/yugabyte/yugabyte-db

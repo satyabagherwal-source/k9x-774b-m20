@@ -7607,5 +7607,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "decodingai-magazine-llm-twin-course": {
+    "name": "decodingai-magazine/llm-twin-course",
+    "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:33:10.560Z",
+    "lastVerified": "2026-09-30T18:33:10.560Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
