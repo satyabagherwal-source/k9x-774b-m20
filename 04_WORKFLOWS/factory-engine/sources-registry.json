@@ -6905,5 +6905,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "aws-aws-cdk": {
+    "name": "aws/aws-cdk",
+    "officialUrl": "https://github.com/aws/aws-cdk",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:23:29.906Z",
+    "lastVerified": "2026-09-30T18:23:29.906Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
