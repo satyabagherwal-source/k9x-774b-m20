@@ -5618,5 +5618,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rightnow-ai-openfang": {
+    "name": "RightNow-AI/openfang",
+    "officialUrl": "https://github.com/RightNow-AI/openfang",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:48:09.765Z",
+    "lastVerified": "2026-09-30T17:48:09.765Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
