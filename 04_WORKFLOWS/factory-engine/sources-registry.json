@@ -5709,5 +5709,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "shopify-react-native-skia": {
+    "name": "Shopify/react-native-skia",
+    "officialUrl": "https://github.com/Shopify/react-native-skia",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:48:58.925Z",
+    "lastVerified": "2026-09-30T17:48:58.925Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
