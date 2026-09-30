@@ -10220,5 +10220,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jcodesmore-ai-website-cloner-template": {
+    "name": "JCodesMore/ai-website-cloner-template",
+    "officialUrl": "https://github.com/JCodesMore/ai-website-cloner-template",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:07:26.869Z",
+    "lastVerified": "2026-09-30T20:07:26.869Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
