@@ -6190,5 +6190,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "arco-design-arco-design-vue": {
+    "name": "arco-design/arco-design-vue",
+    "officialUrl": "https://github.com/arco-design/arco-design-vue",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:17:41.675Z",
+    "lastVerified": "2026-09-30T18:17:41.675Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
