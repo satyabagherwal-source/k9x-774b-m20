@@ -7828,5 +7828,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "netflix-dynomite": {
+    "name": "Netflix/dynomite",
+    "officialUrl": "https://github.com/Netflix/dynomite",
+    "sourceType": "github",
+    "technology": "C",
+    "lastChecked": "2026-09-30T18:36:44.108Z",
+    "lastVerified": "2026-09-30T18:36:44.108Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
