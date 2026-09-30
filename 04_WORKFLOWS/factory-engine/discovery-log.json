@@ -12541,5 +12541,50 @@
     "qualityScore": 2078,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:28:47.028Z"
+  },
+  {
+    "name": "Store",
+    "fullName": "MobileNativeFoundation/Store",
+    "url": "https://github.com/MobileNativeFoundation/Store",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A library for reading and writing data that lives in network, disk, and memory.",
+    "stars": 3422,
+    "forks": 216,
+    "openIssues": 56,
+    "language": "Kotlin",
+    "qualityScore": 2138,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:34:18.024Z"
+  },
+  {
+    "name": "Kodein",
+    "fullName": "kosi-libs/Kodein",
+    "url": "https://github.com/kosi-libs/Kodein",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Painless Kotlin Dependency Injection",
+    "stars": 3334,
+    "forks": 177,
+    "openIssues": 7,
+    "language": "Kotlin",
+    "qualityScore": 1984,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:34:18.024Z"
+  },
+  {
+    "name": "Decompose",
+    "fullName": "arkivanov/Decompose",
+    "url": "https://github.com/arkivanov/Decompose",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Kotlin Multiplatform lifecycle-aware business logic components (aka BLoCs) with routing (navigation) and pluggable UI (Jetpack Compose, SwiftUI, JS React, etc.)",
+    "stars": 2878,
+    "forks": 111,
+    "openIssues": 3,
+    "language": "Kotlin",
+    "qualityScore": 1728,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:34:18.024Z"
   }
 ]

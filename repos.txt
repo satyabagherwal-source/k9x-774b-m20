@@ -2800,3 +2800,11 @@ https://github.com/JetBrains/kotlinconf-app
 https://github.com/Tencent-TDS/KuiklyUI
 # [MOBILE-CROSS-PLATFORM] joreilly/PeopleInSpace (2078 score) - Kotlin Multiplatform sample with SwiftUI, Jetpack Compose, Compose for Wear, Com
 https://github.com/joreilly/PeopleInSpace
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:34:18.025Z] ---
+# [MOBILE-CROSS-PLATFORM] MobileNativeFoundation/Store (2138 score) - A library for reading and writing data that lives in network, disk, and memory.
+https://github.com/MobileNativeFoundation/Store
+# [MOBILE-CROSS-PLATFORM] kosi-libs/Kodein (1984 score) - Painless Kotlin Dependency Injection
+https://github.com/kosi-libs/Kodein
+# [MOBILE-CROSS-PLATFORM] arkivanov/Decompose (1728 score) - Kotlin Multiplatform lifecycle-aware business logic components (aka BLoCs) with 
+https://github.com/arkivanov/Decompose

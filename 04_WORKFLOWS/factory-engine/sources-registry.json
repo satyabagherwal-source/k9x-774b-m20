@@ -12378,5 +12378,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mobilenativefoundation-store": {
+    "name": "MobileNativeFoundation/Store",
+    "officialUrl": "https://github.com/MobileNativeFoundation/Store",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:34:36.226Z",
+    "lastVerified": "2026-09-30T21:34:36.226Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
