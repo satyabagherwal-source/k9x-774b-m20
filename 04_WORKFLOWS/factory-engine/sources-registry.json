@@ -11767,5 +11767,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "aiming-lab-simplemem": {
+    "name": "aiming-lab/SimpleMem",
+    "officialUrl": "https://github.com/aiming-lab/SimpleMem",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:02:06.346Z",
+    "lastVerified": "2026-09-30T21:02:06.346Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
