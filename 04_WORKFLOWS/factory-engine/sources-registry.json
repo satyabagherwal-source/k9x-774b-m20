@@ -3460,5 +3460,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rigellute-spotify-tui": {
+    "name": "Rigellute/spotify-tui",
+    "officialUrl": "https://github.com/Rigellute/spotify-tui",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:24:43.657Z",
+    "lastVerified": "2026-09-30T17:24:43.657Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
