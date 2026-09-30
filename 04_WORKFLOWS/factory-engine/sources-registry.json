@@ -3252,5 +3252,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "themeselection-flyonui": {
+    "name": "themeselection/flyonui",
+    "officialUrl": "https://github.com/themeselection/flyonui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:22:59.477Z",
+    "lastVerified": "2026-09-30T17:22:59.477Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
