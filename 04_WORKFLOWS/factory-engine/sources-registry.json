@@ -7438,5 +7438,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cocoindex-io-cocoindex": {
+    "name": "cocoindex-io/cocoindex",
+    "officialUrl": "https://github.com/cocoindex-io/cocoindex",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:29:46.348Z",
+    "lastVerified": "2026-09-30T18:29:46.348Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
