@@ -8270,5 +8270,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cinnamon-kotaemon": {
+    "name": "Cinnamon/kotaemon",
+    "officialUrl": "https://github.com/Cinnamon/kotaemon",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:44:00.816Z",
+    "lastVerified": "2026-09-30T18:44:00.816Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 50,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
