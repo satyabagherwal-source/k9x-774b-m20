@@ -2004,5 +2004,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-ai-agents-for-beginners": {
+    "name": "microsoft/ai-agents-for-beginners",
+    "officialUrl": "https://github.com/microsoft/ai-agents-for-beginners",
+    "sourceType": "github",
+    "technology": "Jupyter Notebook",
+    "lastChecked": "2026-09-30T13:55:07.440Z",
+    "lastVerified": "2026-09-30T13:55:07.440Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
