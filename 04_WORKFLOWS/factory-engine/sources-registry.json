@@ -5982,5 +5982,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "malisper-pgrust": {
+    "name": "malisper/pgrust",
+    "officialUrl": "https://github.com/malisper/pgrust",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:16:36.770Z",
+    "lastVerified": "2026-09-30T18:16:36.770Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
