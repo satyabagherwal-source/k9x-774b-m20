@@ -13093,5 +13093,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apppear-chartview": {
+    "name": "AppPear/ChartView",
+    "officialUrl": "https://github.com/AppPear/ChartView",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:42:31.498Z",
+    "lastVerified": "2026-09-30T22:42:31.498Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
