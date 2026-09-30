@@ -8920,5 +8920,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "scisharp-botsharp": {
+    "name": "SciSharp/BotSharp",
+    "officialUrl": "https://github.com/SciSharp/BotSharp",
+    "sourceType": "github",
+    "technology": "C#",
+    "lastChecked": "2026-09-30T19:16:19.488Z",
+    "lastVerified": "2026-09-30T19:16:19.488Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
