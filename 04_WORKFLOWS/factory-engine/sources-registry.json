@@ -4188,5 +4188,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "litmuschaos-litmus": {
+    "name": "litmuschaos/litmus",
+    "officialUrl": "https://github.com/litmuschaos/litmus",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:32:33.757Z",
+    "lastVerified": "2026-09-30T17:32:33.757Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 59,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
