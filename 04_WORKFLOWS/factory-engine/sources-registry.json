@@ -9726,5 +9726,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lemonade-sdk-lemonade": {
+    "name": "lemonade-sdk/lemonade",
+    "officialUrl": "https://github.com/lemonade-sdk/lemonade",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T19:45:28.489Z",
+    "lastVerified": "2026-09-30T19:45:28.489Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
