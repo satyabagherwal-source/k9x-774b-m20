@@ -11071,5 +11071,50 @@
     "qualityScore": 1854,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:30:08.764Z"
+  },
+  {
+    "name": "fast-agent",
+    "fullName": "evalstate/fast-agent",
+    "url": "https://github.com/evalstate/fast-agent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Code, Build and Evaluate agents - excellent Model and Skills/MCP/ACP/A2A Support",
+    "stars": 3925,
+    "forks": 447,
+    "openIssues": 32,
+    "language": "Python",
+    "qualityScore": 2311,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:31:53.402Z"
+  },
+  {
+    "name": "java-sdk",
+    "fullName": "modelcontextprotocol/java-sdk",
+    "url": "https://github.com/modelcontextprotocol/java-sdk",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The official Java SDK for Model Context Protocol servers and clients. Maintained in collaboration with Spring AI",
+    "stars": 3715,
+    "forks": 1148,
+    "openIssues": 274,
+    "language": "Java",
+    "qualityScore": 2652,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:31:53.403Z"
+  },
+  {
+    "name": "md2wechat-skill",
+    "fullName": "geekjourneyx/md2wechat-skill",
+    "url": "https://github.com/geekjourneyx/md2wechat-skill",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "面向 AI Agent 的微信公众号创作与发布 CLI：Markdown 排版、AI 配图、预览与草稿创建；支持由浏览器 Agent 保存知乎、CSDN、头条未发布草稿。",
+    "stars": 3687,
+    "forks": 415,
+    "openIssues": 5,
+    "language": "Go",
+    "qualityScore": 2228,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:31:53.403Z"
   }
 ]

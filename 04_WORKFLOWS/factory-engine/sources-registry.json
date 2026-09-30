@@ -11104,5 +11104,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "evalstate-fast-agent": {
+    "name": "evalstate/fast-agent",
+    "officialUrl": "https://github.com/evalstate/fast-agent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:32:18.563Z",
+    "lastVerified": "2026-09-30T20:32:18.563Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

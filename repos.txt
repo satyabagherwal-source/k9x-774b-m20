@@ -2536,3 +2536,11 @@ https://github.com/modelcontextprotocol/rust-sdk
 # --- Automatically Discovered by AI Scout Engine [2026-09-30T20:30:57.744Z] ---
 # [HIGH-PERF-SYSTEMS] Veirt/weathr (1854 score) - a terminal weather app with ascii animation
 https://github.com/Veirt/weathr
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:31:53.404Z] ---
+# [AI-AGENTS] evalstate/fast-agent (2311 score) - Code, Build and Evaluate agents - excellent Model and Skills/MCP/ACP/A2A Support
+https://github.com/evalstate/fast-agent
+# [AI-AGENTS] modelcontextprotocol/java-sdk (2652 score) - The official Java SDK for Model Context Protocol servers and clients. Maintained
+https://github.com/modelcontextprotocol/java-sdk
+# [AI-AGENTS] geekjourneyx/md2wechat-skill (2228 score) - 面向 AI Agent 的微信公众号创作与发布 CLI：Markdown 排版、AI 配图、预览与草稿创建；支持由浏览器 Agent 保存知乎、CSDN、头条未
+https://github.com/geekjourneyx/md2wechat-skill
