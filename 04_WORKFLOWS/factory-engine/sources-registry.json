@@ -7815,5 +7815,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ydb-platform-ydb": {
+    "name": "ydb-platform/ydb",
+    "officialUrl": "https://github.com/ydb-platform/ydb",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T18:36:43.871Z",
+    "lastVerified": "2026-09-30T18:36:43.871Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
