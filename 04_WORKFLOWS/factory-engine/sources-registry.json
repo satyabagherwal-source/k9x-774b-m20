@@ -8413,5 +8413,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "future-house-paper-qa": {
+    "name": "Future-House/paper-qa",
+    "officialUrl": "https://github.com/Future-House/paper-qa",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:49:27.947Z",
+    "lastVerified": "2026-09-30T18:49:27.947Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
