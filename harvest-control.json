@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:12:53.031Z",
+        "lastActiveAt": "2026-09-30T17:15:25.516Z",
         "lastHarvestedAt": "2026-09-30T02:56:10.793Z",
         "totalHarvested": 1,
         "lastError": null
@@ -203,7 +203,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:12:53.047Z",
+        "lastActiveAt": "2026-09-30T17:15:20.959Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -213,7 +213,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:12:53.053Z",
+        "lastActiveAt": "2026-09-30T17:15:23.924Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null

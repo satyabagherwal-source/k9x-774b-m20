@@ -2875,5 +2875,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mukul975-anthropic-cybersecurity-skills": {
+    "name": "mukul975/Anthropic-Cybersecurity-Skills",
+    "officialUrl": "https://github.com/mukul975/Anthropic-Cybersecurity-Skills",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:15:26.371Z",
+    "lastVerified": "2026-09-30T17:15:26.371Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
