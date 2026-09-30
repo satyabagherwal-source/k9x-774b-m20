@@ -8660,5 +8660,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ringhyacinth-star-office-ui": {
+    "name": "ringhyacinth/Star-Office-UI",
+    "officialUrl": "https://github.com/ringhyacinth/Star-Office-UI",
+    "sourceType": "github",
+    "technology": "HTML",
+    "lastChecked": "2026-09-30T18:59:18.818Z",
+    "lastVerified": "2026-09-30T18:59:18.818Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
