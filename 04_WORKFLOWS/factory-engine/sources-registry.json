@@ -10363,5 +10363,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "didilili-ai-agents-from-zero": {
+    "name": "didilili/ai-agents-from-zero",
+    "officialUrl": "https://github.com/didilili/ai-agents-from-zero",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:14:53.120Z",
+    "lastVerified": "2026-09-30T20:14:53.120Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -2380,3 +2380,7 @@ https://github.com/TaskingAI/TaskingAI
 https://github.com/PacktPublishing/LLM-Engineers-Handbook
 # [AI-AGENTS] superduper-io/superduper (3050 score) - Superduper: End-to-end framework for building custom AI applications and agents.
 https://github.com/superduper-io/superduper
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:14:32.847Z] ---
+# [AI-AGENTS] didilili/ai-agents-from-zero (3073 score) -  🚀 2026 最系统的 AI Agent 速成指南｜智能体实战教程 · 完整学习路径  + 实战项目 + 面试题库 · 对标大模型应用开发工程师岗位 · 覆
+https://github.com/didilili/ai-agents-from-zero

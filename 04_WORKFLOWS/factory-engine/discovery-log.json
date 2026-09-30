@@ -10216,5 +10216,20 @@
     "qualityScore": 3050,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:12:12.083Z"
+  },
+  {
+    "name": "ai-agents-from-zero",
+    "fullName": "didilili/ai-agents-from-zero",
+    "url": "https://github.com/didilili/ai-agents-from-zero",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": " 🚀 2026 最系统的 AI Agent 速成指南｜智能体实战教程 · 完整学习路径  + 实战项目 + 面试题库 · 对标大模型应用开发工程师岗位 · 覆盖LangChain / LangGraph / Coze / Dify / MCP / skills / LLM / RAG / 提示词 · 企业级部署与微调 · 从0到企业级落地 + 从学习到上线项目 + 面试准备一体化 ",
+    "stars": 5013,
+    "forks": 695,
+    "openIssues": 54,
+    "language": "Python",
+    "qualityScore": 3073,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:13:40.447Z"
   }
 ]
