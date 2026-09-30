@@ -9323,5 +9323,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xpzouying-xiaohongshu-mcp": {
+    "name": "xpzouying/xiaohongshu-mcp",
+    "officialUrl": "https://github.com/xpzouying/xiaohongshu-mcp",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T19:31:49.552Z",
+    "lastVerified": "2026-09-30T19:31:49.552Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
