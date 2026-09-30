@@ -2472,3 +2472,11 @@ https://github.com/zvec-ai/zvec-grep
 https://github.com/ouch-org/ouch
 # [HIGH-PERF-SYSTEMS] bgreenwell/doxx (2177 score) - Expose the contents of .docx files without leaving your terminal. Fast, safe, an
 https://github.com/bgreenwell/doxx
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:25:20.424Z] ---
+# [HIGH-PERF-SYSTEMS] str4d/rage (2271 score) - A simple, secure and modern file encryption tool (and Rust library) with small e
+https://github.com/str4d/rage
+# [HIGH-PERF-SYSTEMS] railwayapp/nixpacks (2316 score) - App source + Nix packages + Docker = Image
+https://github.com/railwayapp/nixpacks
+# [HIGH-PERF-SYSTEMS] zenbu-labs/terminal-browser (2224 score) - A browser inside your terminal
+https://github.com/zenbu-labs/terminal-browser

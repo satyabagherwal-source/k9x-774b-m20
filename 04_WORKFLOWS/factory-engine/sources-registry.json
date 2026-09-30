@@ -10805,5 +10805,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "str4d-rage": {
+    "name": "str4d/rage",
+    "officialUrl": "https://github.com/str4d/rage",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:25:44.105Z",
+    "lastVerified": "2026-09-30T20:25:44.105Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

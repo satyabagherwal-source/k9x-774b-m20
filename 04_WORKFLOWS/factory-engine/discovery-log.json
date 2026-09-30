@@ -10726,5 +10726,50 @@
     "qualityScore": 2177,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:23:59.953Z"
+  },
+  {
+    "name": "rage",
+    "fullName": "str4d/rage",
+    "url": "https://github.com/str4d/rage",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "A simple, secure and modern file encryption tool (and Rust library) with small explicit keys, no config options, and UNIX-style composability.",
+    "stars": 3673,
+    "forks": 160,
+    "openIssues": 68,
+    "language": "Rust",
+    "qualityScore": 2271,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:25:20.303Z"
+  },
+  {
+    "name": "nixpacks",
+    "fullName": "railwayapp/nixpacks",
+    "url": "https://github.com/railwayapp/nixpacks",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "App source + Nix packages + Docker = Image",
+    "stars": 3554,
+    "forks": 317,
+    "openIssues": 97,
+    "language": "Rust",
+    "qualityScore": 2316,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:25:20.303Z"
+  },
+  {
+    "name": "terminal-browser",
+    "fullName": "zenbu-labs/terminal-browser",
+    "url": "https://github.com/zenbu-labs/terminal-browser",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "A browser inside your terminal",
+    "stars": 3546,
+    "forks": 163,
+    "openIssues": 76,
+    "language": "Rust",
+    "qualityScore": 2224,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:25:20.303Z"
   }
 ]
