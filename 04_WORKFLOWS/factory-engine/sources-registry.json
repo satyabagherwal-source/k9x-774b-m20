@@ -12274,5 +12274,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mikepenz-aboutlibraries": {
+    "name": "mikepenz/AboutLibraries",
+    "officialUrl": "https://github.com/mikepenz/AboutLibraries",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:20:57.193Z",
+    "lastVerified": "2026-09-30T21:20:57.193Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
