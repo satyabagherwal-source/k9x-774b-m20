@@ -2433,5 +2433,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "michael-a-kuykendall-shimmy": {
+    "name": "Michael-A-Kuykendall/shimmy",
+    "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T14:01:16.759Z",
+    "lastVerified": "2026-09-30T14:01:16.759Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
