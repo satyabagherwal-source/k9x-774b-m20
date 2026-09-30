@@ -3317,5 +3317,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "decolua-9router": {
+    "name": "decolua/9router",
+    "officialUrl": "https://github.com/decolua/9router",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:23:44.918Z",
+    "lastVerified": "2026-09-30T17:23:44.918Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 55,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
