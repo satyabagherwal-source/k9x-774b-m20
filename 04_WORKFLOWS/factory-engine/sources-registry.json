@@ -7958,5 +7958,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pytest-dev-pytest-testinfra": {
+    "name": "pytest-dev/pytest-testinfra",
+    "officialUrl": "https://github.com/pytest-dev/pytest-testinfra",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:38:18.545Z",
+    "lastVerified": "2026-09-30T18:38:18.545Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
