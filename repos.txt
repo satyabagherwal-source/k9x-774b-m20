@@ -2816,3 +2816,11 @@ https://github.com/tw93/Mole
 https://github.com/jordanbaird/Ice
 # [MOBILE-CROSS-PLATFORM] NativeScript/NativeScript (13803 score) - ⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objectiv
 https://github.com/NativeScript/NativeScript
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:37:25.321Z] ---
+# [AI-AGENTS] areal-project/AReaL (3538 score) - The RL Bridge for LLM-based Agent Applications. Made Simple & Flexible.
+https://github.com/areal-project/AReaL
+# [AI-AGENTS] ATH-MaaS/ComfyUI-Copilot (3230 score) - An AI-powered custom node for ComfyUI designed to enhance workflow automation an
+https://github.com/ATH-MaaS/ComfyUI-Copilot
+# [AI-AGENTS] pguso/ai-agents-from-scratch (2895 score) - Demystify AI agents by building them yourself. Local LLMs, no black boxes, real 
+https://github.com/pguso/ai-agents-from-scratch

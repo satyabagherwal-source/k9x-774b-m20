@@ -12456,5 +12456,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "areal-project-areal": {
+    "name": "areal-project/AReaL",
+    "officialUrl": "https://github.com/areal-project/AReaL",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:37:48.055Z",
+    "lastVerified": "2026-09-30T21:37:48.055Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 51,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

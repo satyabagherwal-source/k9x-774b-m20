@@ -12631,5 +12631,50 @@
     "qualityScore": 13803,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:36:09.425Z"
+  },
+  {
+    "name": "AReaL",
+    "fullName": "areal-project/AReaL",
+    "url": "https://github.com/areal-project/AReaL",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The RL Bridge for LLM-based Agent Applications. Made Simple & Flexible.",
+    "stars": 5806,
+    "forks": 615,
+    "openIssues": 139,
+    "language": "Python",
+    "qualityScore": 3538,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:37:23.270Z"
+  },
+  {
+    "name": "ComfyUI-Copilot",
+    "fullName": "ATH-MaaS/ComfyUI-Copilot",
+    "url": "https://github.com/ATH-MaaS/ComfyUI-Copilot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An AI-powered custom node for ComfyUI designed to enhance workflow automation and provide intelligent assistance",
+    "stars": 5533,
+    "forks": 365,
+    "openIssues": 52,
+    "language": "TypeScript",
+    "qualityScore": 3230,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:37:25.319Z"
+  },
+  {
+    "name": "ai-agents-from-scratch",
+    "fullName": "pguso/ai-agents-from-scratch",
+    "url": "https://github.com/pguso/ai-agents-from-scratch",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Demystify AI agents by building them yourself. Local LLMs, no black boxes, real understanding of function calling, memory, and ReAct patterns.",
+    "stars": 4823,
+    "forks": 705,
+    "openIssues": 11,
+    "language": "JavaScript",
+    "qualityScore": 2895,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:37:25.320Z"
   }
 ]
