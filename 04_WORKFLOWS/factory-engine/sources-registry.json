@@ -3278,5 +3278,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-xingchen-agi-xing4.0-29b-a4b": {
+    "name": "XingChen-AGI/Xing4.0-29B-A4B",
+    "officialUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:23:22.844Z",
+    "lastVerified": "2026-09-30T17:23:22.844Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
