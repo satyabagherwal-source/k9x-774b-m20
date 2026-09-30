@@ -3902,5 +3902,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "donchitos-claude-code-game-studios": {
+    "name": "Donchitos/Claude-Code-Game-Studios",
+    "officialUrl": "https://github.com/Donchitos/Claude-Code-Game-Studios",
+    "sourceType": "github",
+    "technology": "Shell",
+    "lastChecked": "2026-09-30T17:29:25.298Z",
+    "lastVerified": "2026-09-30T17:29:25.298Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
