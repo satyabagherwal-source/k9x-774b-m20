@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T19:40:18.358Z",
+        "lastActiveAt": "2026-09-30T19:41:31.533Z",
         "lastHarvestedAt": "2026-09-30T19:23:18.172Z",
         "totalHarvested": 4,
         "lastError": null
@@ -223,7 +223,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T19:40:18.391Z",
+        "lastActiveAt": "2026-09-30T19:41:27.731Z",
         "lastHarvestedAt": "2026-09-30T18:31:38.414Z",
         "totalHarvested": 3,
         "lastError": null
