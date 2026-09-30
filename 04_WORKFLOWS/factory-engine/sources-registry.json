@@ -8192,5 +8192,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vercel-labs-opensrc": {
+    "name": "vercel-labs/opensrc",
+    "officialUrl": "https://github.com/vercel-labs/opensrc",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:42:29.453Z",
+    "lastVerified": "2026-09-30T18:42:29.453Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
