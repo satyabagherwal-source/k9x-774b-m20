@@ -9206,5 +9206,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "github-github-mcp-server": {
+    "name": "github/github-mcp-server",
+    "officialUrl": "https://github.com/github/github-mcp-server",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T19:27:17.576Z",
+    "lastVerified": "2026-09-30T19:27:17.576Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
