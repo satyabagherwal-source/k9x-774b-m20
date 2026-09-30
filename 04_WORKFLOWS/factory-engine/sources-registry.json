@@ -9713,5 +9713,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "knockoutez-wigolo": {
+    "name": "KnockOutEZ/wigolo",
+    "officialUrl": "https://github.com/KnockOutEZ/wigolo",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:45:28.403Z",
+    "lastVerified": "2026-09-30T19:45:28.403Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
