@@ -8517,5 +8517,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wshobson-agents": {
+    "name": "wshobson/agents",
+    "officialUrl": "https://github.com/wshobson/agents",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:53:51.326Z",
+    "lastVerified": "2026-09-30T18:53:51.326Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
