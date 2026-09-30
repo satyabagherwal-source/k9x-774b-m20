@@ -11728,5 +11728,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sylphai-inc-adalflow": {
+    "name": "SylphAI-Inc/AdalFlow",
+    "officialUrl": "https://github.com/SylphAI-Inc/AdalFlow",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:59:14.158Z",
+    "lastVerified": "2026-09-30T20:59:14.158Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 22,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
