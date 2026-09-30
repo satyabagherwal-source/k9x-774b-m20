@@ -6099,5 +6099,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "midudev-preguntas-entrevista-react": {
+    "name": "midudev/preguntas-entrevista-react",
+    "officialUrl": "https://github.com/midudev/preguntas-entrevista-react",
+    "sourceType": "github",
+    "technology": "Astro",
+    "lastChecked": "2026-09-30T18:17:13.039Z",
+    "lastVerified": "2026-09-30T18:17:13.039Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
