@@ -11754,5 +11754,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lazyagi-lazyllm": {
+    "name": "LazyAGI/LazyLLM",
+    "officialUrl": "https://github.com/LazyAGI/LazyLLM",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:02:01.533Z",
+    "lastVerified": "2026-09-30T21:02:01.533Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
