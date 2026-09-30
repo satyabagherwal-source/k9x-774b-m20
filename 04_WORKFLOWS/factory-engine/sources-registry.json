@@ -9089,5 +9089,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "learnsyslab-gym-pybullet-drones": {
+    "name": "learnsyslab/gym-pybullet-drones",
+    "officialUrl": "https://github.com/learnsyslab/gym-pybullet-drones",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:22:12.056Z",
+    "lastVerified": "2026-09-30T19:22:12.056Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
