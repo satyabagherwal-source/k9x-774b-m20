@@ -2082,5 +2082,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-qwen-qwen3.8-27b": {
+    "name": "Qwen/Qwen3.8-27B",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T14:00:47.330Z",
+    "lastVerified": "2026-09-30T14:00:47.330Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
