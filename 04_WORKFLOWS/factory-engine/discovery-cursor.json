@@ -22,7 +22,7 @@
     },
     "devops-cloud-infrastructure": {
       "queryIndex": 2,
-      "page": 2
+      "page": 5
     },
     "cybersecurity-defenses": {
       "queryIndex": 1,
@@ -34,9 +34,9 @@
     }
   },
   "huggingFace": {
-    "sortIndex": 1,
+    "sortIndex": 0,
     "page": 1
   },
-  "totalAutoDiscovered": 55,
-  "lastReplenishedAt": "2026-09-30T17:39:33.436Z"
+  "totalAutoDiscovered": 56,
+  "lastReplenishedAt": "2026-09-30T17:39:38.287Z"
 }

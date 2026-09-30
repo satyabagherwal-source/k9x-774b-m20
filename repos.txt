@@ -1250,3 +1250,35 @@ https://github.com/zhihu/griffith
 https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap
 # [HUGGINGFACE-AI-MODELS] ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF (3660 score) - Verified Hugging Face Model: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF (166 like
 https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:39:36.119Z] ---
+# [MOBILE-CROSS-PLATFORM] margelo/react-native-vision-camera (5579 score) - 📸 A powerful, high-performance React Native Camera library.
+https://github.com/margelo/react-native-vision-camera
+# [MOBILE-CROSS-PLATFORM] aws-amplify/amplify-js (5881 score) - A declarative JavaScript library for application development using cloud service
+https://github.com/aws-amplify/amplify-js
+# [MOBILE-CROSS-PLATFORM] berty/berty (5257 score) - Berty is a secure peer-to-peer messaging app that works with or without internet
+https://github.com/berty/berty
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:39:36.179Z] ---
+# [DATABASE-STORAGE-ENGINES] dingodb/dingo (1196 score) - A multi-modal vector database that supports upserts and vector queries using uni
+https://github.com/dingodb/dingo
+# [DATABASE-STORAGE-ENGINES] neural-maze/ava-whatsapp-agent-course (1228 score) - Meet Ava, the WhatsApp Agent
+https://github.com/neural-maze/ava-whatsapp-agent-course
+# [DATABASE-STORAGE-ENGINES] pixeltable/pixeltable (1193 score) - The backend agents build with - Multimodal database, orchestration, and serving 
+https://github.com/pixeltable/pixeltable
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:39:38.289Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] okteto/okteto (2207 score) - Develop your applications directly in your Kubernetes Cluster
+https://github.com/okteto/okteto
+# [DEVOPS-CLOUD-INFRASTRUCTURE] dragonflyoss/dragonfly (2102 score) - Delivers efficient, stable, and secure data distribution and acceleration powere
+https://github.com/dragonflyoss/dragonfly
+# [DEVOPS-CLOUD-INFRASTRUCTURE] PeerDB-io/peerdb (2061 score) - Fast, Simple and a cost effective tool to replicate data from Postgres to Data W
+https://github.com/PeerDB-io/peerdb
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T17:39:38.348Z] ---
+# [AI-AGENTS] docmost/docmost (11742 score) - Docmost is an open-source collaborative wiki and documentation software. It is a
+https://github.com/docmost/docmost
+# [AI-AGENTS] google/adk-python (13419 score [VERIFIED ORG]) - An open-source, code-first Python toolkit for building, evaluating, and deployin
+https://github.com/google/adk-python
+# [AI-AGENTS] NirDiamant/agents-towards-production (11874 score) - End-to-end, code-first tutorials for building production-grade GenAI agents. Fro
+https://github.com/NirDiamant/agents-towards-production
