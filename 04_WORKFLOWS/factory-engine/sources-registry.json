@@ -3239,5 +3239,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "charlie85270-tail-kit": {
+    "name": "Charlie85270/tail-kit",
+    "officialUrl": "https://github.com/Charlie85270/tail-kit",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:22:43.805Z",
+    "lastVerified": "2026-09-30T17:22:43.805Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
