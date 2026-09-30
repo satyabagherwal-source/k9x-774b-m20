@@ -13054,5 +13054,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jacklandrin-onlyswitch": {
+    "name": "jacklandrin/OnlySwitch",
+    "officialUrl": "https://github.com/jacklandrin/OnlySwitch",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:36:40.813Z",
+    "lastVerified": "2026-09-30T22:36:40.813Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
