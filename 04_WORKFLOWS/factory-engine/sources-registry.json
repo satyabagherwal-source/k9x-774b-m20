@@ -3187,5 +3187,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sharkdp-hyperfine": {
+    "name": "sharkdp/hyperfine",
+    "officialUrl": "https://github.com/sharkdp/hyperfine",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:22:01.698Z",
+    "lastVerified": "2026-09-30T17:22:01.698Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
