@@ -5813,5 +5813,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vinceanalytics-vince": {
+    "name": "vinceanalytics/vince",
+    "officialUrl": "https://github.com/vinceanalytics/vince",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:14:11.575Z",
+    "lastVerified": "2026-09-30T18:14:11.575Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
