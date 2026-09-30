@@ -6086,5 +6086,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "akveo-kittentricks": {
+    "name": "akveo/kittenTricks",
+    "officialUrl": "https://github.com/akveo/kittenTricks",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:17:12.962Z",
+    "lastVerified": "2026-09-30T18:17:12.962Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
