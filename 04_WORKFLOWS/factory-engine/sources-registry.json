@@ -8205,5 +8205,31 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "khoj-ai-khoj": {
+    "name": "khoj-ai/khoj",
+    "officialUrl": "https://github.com/khoj-ai/khoj",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:42:36.192Z",
+    "lastVerified": "2026-09-30T18:42:36.192Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-graphrag": {
+    "name": "microsoft/graphrag",
+    "officialUrl": "https://github.com/microsoft/graphrag",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:42:36.219Z",
+    "lastVerified": "2026-09-30T18:42:36.219Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
