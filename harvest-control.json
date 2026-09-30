@@ -223,9 +223,9 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T18:30:27.322Z",
-        "lastHarvestedAt": "2026-09-30T14:05:01.066Z",
-        "totalHarvested": 2,
+        "lastActiveAt": "2026-09-30T18:31:38.414Z",
+        "lastHarvestedAt": "2026-09-30T18:31:38.414Z",
+        "totalHarvested": 3,
         "lastError": null
       },
       {

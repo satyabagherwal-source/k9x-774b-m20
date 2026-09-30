@@ -7542,5 +7542,18 @@
     "closedIssuesCount": 4,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cobusgreyling-loop-engineering": {
+    "name": "cobusgreyling/loop-engineering",
+    "officialUrl": "https://github.com/cobusgreyling/loop-engineering",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:31:41.928Z",
+    "lastVerified": "2026-09-30T18:31:41.928Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
