@@ -7724,5 +7724,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "checkmarx-kics": {
+    "name": "Checkmarx/kics",
+    "officialUrl": "https://github.com/Checkmarx/kics",
+    "sourceType": "github",
+    "technology": "Open Policy Agent",
+    "lastChecked": "2026-09-30T18:35:55.904Z",
+    "lastVerified": "2026-09-30T18:35:55.904Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 59,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

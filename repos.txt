@@ -1834,3 +1834,27 @@ https://github.com/VoltAgent/voltagent
 https://github.com/omnigent-ai/omnigent
 # [AI-AGENTS] TransformerOptimus/SuperAGI (9969 score) - <⚡️> SuperAGI - A dev-first open source autonomous AI agent framework. Enabling 
 https://github.com/TransformerOptimus/SuperAGI
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:35:32.153Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] Checkmarx/kics (1921 score) - Find security vulnerabilities, compliance issues, and infrastructure misconfigur
+https://github.com/Checkmarx/kics
+# [DEVOPS-CLOUD-INFRASTRUCTURE] snyk/driftctl (1737 score) - Detect, track and alert on infrastructure drift
+https://github.com/snyk/driftctl
+# [DEVOPS-CLOUD-INFRASTRUCTURE] architect/architect (1617 score) - The simplest, most powerful way to build a functional web app (fwa)
+https://github.com/architect/architect
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:35:32.648Z] ---
+# [AI-AGENTS] open-webui/open-webui (84009 score) - User-friendly AI Interface (Supports Ollama, OpenAI API, ...)
+https://github.com/open-webui/open-webui
+# [AI-AGENTS] PaddlePaddle/PaddleOCR (49110 score) - Turn any PDF or image document into structured data for your AI. A powerful, lig
+https://github.com/PaddlePaddle/PaddleOCR
+# [AI-AGENTS] datawhalechina/hello-agents (44201 score) - 📚 《从零开始构建智能体》——从零开始的智能体原理与实践教程
+https://github.com/datawhalechina/hello-agents
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:35:33.828Z] ---
+# [DATABASE-STORAGE-ENGINES] GreptimeTeam/greptimedb (3978 score) - The open-source observability database. One columnar engine for metrics, logs, a
+https://github.com/GreptimeTeam/greptimedb
+# [DATABASE-STORAGE-ENGINES] ydb-platform/ydb (3083 score) - YDB is an open source Distributed SQL Database that combines high availability a
+https://github.com/ydb-platform/ydb
+# [DATABASE-STORAGE-ENGINES] Netflix/dynomite (2714 score) - A generic dynamo implementation for different k-v storage engines
+https://github.com/Netflix/dynomite
