@@ -5891,5 +5891,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ivpusic-react-native-image-crop-picker": {
+    "name": "ivpusic/react-native-image-crop-picker",
+    "officialUrl": "https://github.com/ivpusic/react-native-image-crop-picker",
+    "sourceType": "github",
+    "technology": "Objective-C",
+    "lastChecked": "2026-09-30T18:15:04.390Z",
+    "lastVerified": "2026-09-30T18:15:04.390Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
