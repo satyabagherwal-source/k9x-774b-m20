@@ -2660,3 +2660,11 @@ https://github.com/feyninc/chonkie
 https://github.com/VectifyAI/OpenKB
 # [AI-AGENTS] FlowElement-xinliuyuansu/m_flow (2610 score) - A bio-inspired cognitive memory engine — a new paradigm for Graph RAG.
 https://github.com/FlowElement-xinliuyuansu/m_flow
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:58:46.897Z] ---
+# [AI-AGENTS] SylphAI-Inc/AdalFlow (2612 score) - AdalFlow: The library to build & auto-optimize LLM applications.
+https://github.com/SylphAI-Inc/AdalFlow
+# [AI-AGENTS] langroid/langroid (2547 score) - Harness LLMs with Multi-Agent Programming
+https://github.com/langroid/langroid
+# [AI-AGENTS] yifanfeng97/Hyper-Extract (2419 score) - Hypergraph is more powerful. Transform unstructured text into structured knowled
+https://github.com/yifanfeng97/Hyper-Extract

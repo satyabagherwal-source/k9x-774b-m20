@@ -11761,5 +11761,50 @@
     "qualityScore": 2610,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:57:30.030Z"
+  },
+  {
+    "name": "AdalFlow",
+    "fullName": "SylphAI-Inc/AdalFlow",
+    "url": "https://github.com/SylphAI-Inc/AdalFlow",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AdalFlow: The library to build & auto-optimize LLM applications.",
+    "stars": 4220,
+    "forks": 386,
+    "openIssues": 68,
+    "language": "Python",
+    "qualityScore": 2612,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:58:46.871Z"
+  },
+  {
+    "name": "langroid",
+    "fullName": "langroid/langroid",
+    "url": "https://github.com/langroid/langroid",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Harness LLMs with Multi-Agent Programming",
+    "stars": 4109,
+    "forks": 408,
+    "openIssues": 60,
+    "language": "Python",
+    "qualityScore": 2547,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:58:46.871Z"
+  },
+  {
+    "name": "Hyper-Extract",
+    "fullName": "yifanfeng97/Hyper-Extract",
+    "url": "https://github.com/yifanfeng97/Hyper-Extract",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Hypergraph is more powerful. Transform unstructured text into structured knowledge with LLMs. Graphs, hypergraphs, and spatio-temporal extractions — with one command.",
+    "stars": 4052,
+    "forks": 464,
+    "openIssues": 2,
+    "language": "Python",
+    "qualityScore": 2419,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:58:46.871Z"
   }
 ]

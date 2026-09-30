@@ -11702,5 +11702,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yifanfeng97-hyper-extract": {
+    "name": "yifanfeng97/Hyper-Extract",
+    "officialUrl": "https://github.com/yifanfeng97/Hyper-Extract",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:59:41.654Z",
+    "lastVerified": "2026-09-30T20:59:41.654Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
