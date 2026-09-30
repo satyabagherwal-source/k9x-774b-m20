@@ -10129,5 +10129,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "shanraisshan-claude-code-best-practice": {
+    "name": "shanraisshan/claude-code-best-practice",
+    "officialUrl": "https://github.com/shanraisshan/claude-code-best-practice",
+    "sourceType": "github",
+    "technology": "HTML",
+    "lastChecked": "2026-09-30T20:04:00.346Z",
+    "lastVerified": "2026-09-30T20:04:00.346Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

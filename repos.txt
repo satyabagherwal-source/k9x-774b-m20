@@ -2332,3 +2332,11 @@ https://github.com/stablyai/orca
 https://github.com/dair-ai/Prompt-Engineering-Guide
 # [AI-AGENTS] code-yeongyu/oh-my-openagent (36913 score) - OmO: Just type "mass ulw" keyword with your prompt. Now you are the master of gr
 https://github.com/code-yeongyu/oh-my-openagent
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:03:45.414Z] ---
+# [AI-AGENTS] shanraisshan/claude-code-best-practice (35770 score) - from vibe coding to agentic engineering - practice makes claude perfect
+https://github.com/shanraisshan/claude-code-best-practice
+# [AI-AGENTS] rohitg00/ai-engineering-from-scratch (34595 score) - Learn it. Build it. Ship it for others.
+https://github.com/rohitg00/ai-engineering-from-scratch
+# [AI-AGENTS] crewAIInc/crewAI (32551 score) - Framework for orchestrating role-playing, autonomous AI agents. By fostering col
+https://github.com/crewAIInc/crewAI

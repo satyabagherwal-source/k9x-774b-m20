@@ -9946,5 +9946,50 @@
     "qualityScore": 36913,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:02:27.321Z"
+  },
+  {
+    "name": "claude-code-best-practice",
+    "fullName": "shanraisshan/claude-code-best-practice",
+    "url": "https://github.com/shanraisshan/claude-code-best-practice",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "from vibe coding to agentic engineering - practice makes claude perfect",
+    "stars": 66842,
+    "forks": 6675,
+    "openIssues": 48,
+    "language": "HTML",
+    "qualityScore": 35770,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:03:45.413Z"
+  },
+  {
+    "name": "ai-engineering-from-scratch",
+    "fullName": "rohitg00/ai-engineering-from-scratch",
+    "url": "https://github.com/rohitg00/ai-engineering-from-scratch",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Learn it. Build it. Ship it for others.",
+    "stars": 62087,
+    "forks": 10611,
+    "openIssues": 59,
+    "language": "Python",
+    "qualityScore": 34595,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:03:45.413Z"
+  },
+  {
+    "name": "crewAI",
+    "fullName": "crewAIInc/crewAI",
+    "url": "https://github.com/crewAIInc/crewAI",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Framework for orchestrating role-playing, autonomous AI agents. By fostering collaborative intelligence, CrewAI empowers agents to work together seamlessly, tackling complex tasks.",
+    "stars": 59232,
+    "forks": 8617,
+    "openIssues": 513,
+    "language": "Python",
+    "qualityScore": 32551,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:03:45.414Z"
   }
 ]
