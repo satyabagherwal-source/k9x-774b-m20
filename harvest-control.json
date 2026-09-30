@@ -193,9 +193,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:36:59.926Z",
-        "lastHarvestedAt": "2026-09-30T17:20:42.525Z",
-        "totalHarvested": 1,
+        "lastActiveAt": "2026-09-30T17:37:12.147Z",
+        "lastHarvestedAt": "2026-09-30T17:37:12.147Z",
+        "totalHarvested": 2,
         "lastError": null
       },
       {
@@ -213,7 +213,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:36:59.943Z",
+        "lastActiveAt": "2026-09-30T17:37:14.619Z",
         "lastHarvestedAt": "2026-09-30T17:27:03.419Z",
         "totalHarvested": 1,
         "lastError": null

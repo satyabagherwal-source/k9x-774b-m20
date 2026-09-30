@@ -3835,5 +3835,50 @@
     "qualityScore": 12592,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T17:37:07.006Z"
+  },
+  {
+    "name": "grex",
+    "fullName": "pemistahl/grex",
+    "url": "https://github.com/pemistahl/grex",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "A command-line tool and Rust library with Python bindings for generating regular expressions from user-provided test cases",
+    "stars": 8208,
+    "forks": 200,
+    "openIssues": 22,
+    "language": "Rust",
+    "qualityScore": 4358,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:37:10.450Z"
+  },
+  {
+    "name": "trippy",
+    "fullName": "fujiapple852/trippy",
+    "url": "https://github.com/fujiapple852/trippy",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "A network diagnostic tool ",
+    "stars": 7969,
+    "forks": 286,
+    "openIssues": 85,
+    "language": "Rust",
+    "qualityScore": 4490,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:37:10.450Z"
+  },
+  {
+    "name": "miniserve",
+    "fullName": "svenstaro/miniserve",
+    "url": "https://github.com/svenstaro/miniserve",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "🌟 For when you really just want to serve some files over HTTP right now!",
+    "stars": 7881,
+    "forks": 397,
+    "openIssues": 91,
+    "language": "Rust",
+    "qualityScore": 4392,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:37:10.450Z"
   }
 ]

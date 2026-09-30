@@ -4669,5 +4669,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "aliyuncontainerservice-pouch": {
+    "name": "AliyunContainerService/pouch",
+    "officialUrl": "https://github.com/AliyunContainerService/pouch",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:37:32.862Z",
+    "lastVerified": "2026-09-30T17:37:32.862Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 45,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
