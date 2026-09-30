@@ -8551,5 +8551,50 @@
     "qualityScore": 1972,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:11:20.477Z"
+  },
+  {
+    "name": "BotSharp",
+    "fullName": "SciSharp/BotSharp",
+    "url": "https://github.com/SciSharp/BotSharp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI Multi-Agent Framework in .NET",
+    "stars": 3109,
+    "forks": 650,
+    "openIssues": 49,
+    "language": "C#",
+    "qualityScore": 2098,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:15:04.017Z"
+  },
+  {
+    "name": "FAROS",
+    "fullName": "OpenNSWM-Lab/FAROS",
+    "url": "https://github.com/OpenNSWM-Lab/FAROS",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A blueprint-driven AutoResearch runtime for orchestrating AI research workflows from idea generation and experiments to paper writing and peer review.",
+    "stars": 3041,
+    "forks": 390,
+    "openIssues": 147,
+    "language": "Python",
+    "qualityScore": 1938,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:15:04.018Z"
+  },
+  {
+    "name": "openrig",
+    "fullName": "mvschwarz/openrig",
+    "url": "https://github.com/mvschwarz/openrig",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Multi-agent harness that runs Claude Code and Codex together as one system",
+    "stars": 2891,
+    "forks": 202,
+    "openIssues": 106,
+    "language": "TypeScript",
+    "qualityScore": 1956,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:15:04.018Z"
   }
 ]

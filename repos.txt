@@ -2082,3 +2082,11 @@ https://github.com/AlephAITech/WorkBuddyGuide
 https://github.com/bradygaster/squad
 # [AI-AGENTS] MaxMiksa/Auto-Company (1972 score) - An auto-company works for 24/7 on your own PC - Windows/Linux/macOS.
 https://github.com/MaxMiksa/Auto-Company
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:15:04.019Z] ---
+# [AI-AGENTS] SciSharp/BotSharp (2098 score) - AI Multi-Agent Framework in .NET
+https://github.com/SciSharp/BotSharp
+# [AI-AGENTS] OpenNSWM-Lab/FAROS (1938 score) - A blueprint-driven AutoResearch runtime for orchestrating AI research workflows 
+https://github.com/OpenNSWM-Lab/FAROS
+# [AI-AGENTS] mvschwarz/openrig (1956 score) - Multi-agent harness that runs Claude Code and Codex together as one system
+https://github.com/mvschwarz/openrig

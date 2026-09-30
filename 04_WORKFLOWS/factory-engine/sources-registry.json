@@ -8790,5 +8790,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "elder-plinius-t3mp3st": {
+    "name": "elder-plinius/T3MP3ST",
+    "officialUrl": "https://github.com/elder-plinius/T3MP3ST",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:15:21.979Z",
+    "lastVerified": "2026-09-30T19:15:21.979Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
