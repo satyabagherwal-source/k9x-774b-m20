@@ -5761,5 +5761,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "reshaped-ui-reshaped": {
+    "name": "reshaped-ui/reshaped",
+    "officialUrl": "https://github.com/reshaped-ui/reshaped",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:13:29.460Z",
+    "lastVerified": "2026-09-30T18:13:29.460Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
