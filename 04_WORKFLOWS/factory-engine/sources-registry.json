@@ -5163,5 +5163,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hummingbot-hummingbot": {
+    "name": "hummingbot/hummingbot",
+    "officialUrl": "https://github.com/hummingbot/hummingbot",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:42:47.136Z",
+    "lastVerified": "2026-09-30T17:42:47.136Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 46,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
