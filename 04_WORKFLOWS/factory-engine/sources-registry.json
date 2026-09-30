@@ -9544,5 +9544,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apify-apify-mcp-server": {
+    "name": "apify/apify-mcp-server",
+    "officialUrl": "https://github.com/apify/apify-mcp-server",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:39:29.259Z",
+    "lastVerified": "2026-09-30T19:39:29.259Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

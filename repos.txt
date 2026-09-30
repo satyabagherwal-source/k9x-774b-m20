@@ -2210,3 +2210,11 @@ https://github.com/awslabs/mcp
 https://github.com/trailhq/Graft
 # [AI-AGENTS] openstatusHQ/openstatus (5262 score) - 🫖 Status page with uptime monitoring & API monitoring as code   🫖
 https://github.com/openstatusHQ/openstatus
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:39:05.904Z] ---
+# [AI-AGENTS] apify/apify-mcp-server (5100 score) - The Apify MCP server enables your AI agents to extract data from social media, s
+https://github.com/apify/apify-mcp-server
+# [AI-AGENTS] firerpa/lamda (4946 score) - Android Full-Stack Device Control Platform: WebRTC/H.264 remote desktop, UI/OCR/
+https://github.com/firerpa/lamda
+# [AI-AGENTS] maximhq/bifrost (5082 score) - Fastest enterprise AI gateway (50x faster than LiteLLM) with adaptive load balan
+https://github.com/maximhq/bifrost
