@@ -3720,5 +3720,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "permify-permify": {
+    "name": "Permify/permify",
+    "officialUrl": "https://github.com/Permify/permify",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:27:08.418Z",
+    "lastVerified": "2026-09-30T17:27:08.418Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
