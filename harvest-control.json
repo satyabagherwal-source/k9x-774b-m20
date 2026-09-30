@@ -193,7 +193,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:28:42.795Z",
+        "lastActiveAt": "2026-09-30T17:29:34.472Z",
         "lastHarvestedAt": "2026-09-30T17:20:42.525Z",
         "totalHarvested": 1,
         "lastError": null
