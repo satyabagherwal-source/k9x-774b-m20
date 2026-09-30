@@ -7659,5 +7659,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pingcap-talent-plan": {
+    "name": "pingcap/talent-plan",
+    "officialUrl": "https://github.com/pingcap/talent-plan",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:33:42.280Z",
+    "lastVerified": "2026-09-30T18:33:42.280Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
