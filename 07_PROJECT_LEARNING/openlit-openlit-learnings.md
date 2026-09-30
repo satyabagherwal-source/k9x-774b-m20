@@ -1,0 +1,3234 @@
+# Forensic Learning Record (Deep Inspection): openlit/openlit
+
+> **Canonical Artifact**: `07_PROJECT_LEARNING/openlit-openlit-learnings.md`  
+> **Source Platform**: GitHub ([https://github.com/openlit/openlit](https://github.com/openlit/openlit))  
+> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
+> **Harvest Timestamp**: 2026-09-30T19:56:55.187Z  
+> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+
+---
+
+## 1. Context & Architectural Overview
+- **Repository / Resource**: `openlit/openlit`
+- **Description**: Open-source observability & evaluation platform for AI agents and coding agents. Trace LLMs, tools, prompts, costs & agent workflows with OpenTelemetry.
+- **Primary Language / Ecosystem**: TypeScript
+- **Discovered Manifests / Configurations**: README.md
+- **Stars / Engagement**: 2807 stars
+
+---
+
+## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+
+### D1: Architecture & Structural Boundaries
+- Entry configurations inspected via direct stream: README.md.
+- Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `cli/cmd/openlit/main.go`
+```
+// openlit is the OpenLit command-line tool. v1 ships the `coding`
+// subcommand group for AI-coding-agent observability (Claude Code, Cursor,
+// Codex). Future subcommand groups (prompts, traces, eval,
+// migrate) plug in by registering on the root in `registerSubcommands`.
+//
+// Crash-isolation guardrails (see internal/coding/hook):
+//   - hook subcommand never blocks the developer (always exits 0)
+//   - 5s hard timeout per invocation; 3s of that for OTLP flush
+//   - never writes to stdout (Claude Code parses stdout for JSON)
+//   - panic-recover wrapper around every command body
+package main
+
+import (
+	"os"
+
+	"github.com/openlit/openlit/cli/internal/coding"
+	"github.com/openlit/openlit/cli/internal/configure"
+	"github.com/openlit/openlit/cli/internal/doctor"
+	"github.com/openlit/openlit/cli/internal/version"
+	"github.com/spf13/cobra"
+)
+
+func main() {
+	root := newRootCmd()
+	if err := root.Execute(); err != nil {
+		// cobra already prints to stderr; just set the exit code.
+		// We never use os.Exit on telemetry-path errors; those swallow
+		// inside the command handlers themselves so the agent never
+		// sees a non-zero exit. Errors here are misuse (bad flags,
+		// unknown subcommands) where exiting non-zero is correct.
+		os.Exit(1)
+	}
+}
+
+func newRootCmd() *cobra.Command {
+	root := &cobra.Command{
+		Use:   "openlit",
+		Short: "OpenLit command-line tool",
+		Long: `openlit is the OpenLit command-line tool.
+
+v1 ships the 'coding' subcommand group for AI-coding-agent observability:
+
+  openlit coding install --vendor=all
+  openlit coding launch claude
+  openlit coding hook --vendor=cc --event=SessionStart
+
+Run 'openlit doctor' to diagnose configuration, OTLP reachability,
+and installed plugins in one shot.
+
+Future subcommand groups (prompts, traces, eval) will plug in alongside.
+
+Configure the OTLP endpoint and (optional) API key via:
+  - flags:  --otlp-endpoint, --api-key
+  - env:    OPENLIT_OTLP_ENDPOINT, OPENLIT_API_KEY
+  - or std: OTEL_EXPORTER_OTLP_ENDPOINT, OTEL_EXPORTER_OTLP_HEADERS
+  - or file: ~/.config/openlit/config.env (allow-listed keys)
+`,
+		// Suppress cobra's default usage spam on errors that bubble up
+		// from subcommands; the subcommands handle their own messaging.
+		SilenceUsage: true,
+		// Errors are printed by cobra by default. We keep that for misuse
+		// errors (bad flags) but swallow telemetry-path errors inside the
+		// subcommand handlers so they never leak to stdout/stderr at all.
+		SilenceErrors: false,
+	}
+
+	registerSubcommands(root)
+	return root
+}
+
+// registerSubcommands wires each top-level subcommand group on the root.
+// Adding a new group (e.g. `prompts`) is one line here plus a new package
+// under cli/internal/<group>/.
+func registerSubcommands(root *cobra.Command) {
+	root.AddCommand(coding.NewCmd())
+	root.AddCommand(configure.NewCmd())
+	root.AddCommand(doctor.NewCmd())
+	root.AddCommand(version.NewCmd())
+
+	// Future slots — left here intentionally as comments so contributors
+	// can see the shape we're building toward without scaffolding empty
+	// subtrees that confuse code search:
+	//
+	//   root.AddCommand(prompts.NewCmd())  // openlit prompts {pull,push,list,diff}
+	//   root.AddCommand(traces.NewCmd())   // openlit traces  {tail,query,export}
+	//   root.AddCommand(eval.NewCmd())     // openlit eval    {run,list}
+	//   root.AddCommand(migrate.NewCmd())  // openlit migrate
+	//   root.AddCommand(fleet.NewCmd())    // openlit fleet   {status,list}
+}
+
+```
+
+### Core Architecture Module: `cli/gen/doc.go`
+```
+// Package gen holds generated artifacts consumed by the dashboard
+// (`semconv.ts`). The Go source of truth lives in sdk/go/semconv/.
+//
+//go:generate go run ../internal/semconvgen
+package gen
+
+```
+
+### Core Architecture Module: `cli/gen/semconv.ts`
+```
+// Code generated by cli/internal/semconvgen. DO NOT EDIT.
+// Source: sdk/go/semconv/coding_agent.go
+//
+// Run `go generate ./...` from the cli/ module to regenerate.
+
+// Vendor identifiers (used as `gen_ai.agent.name` value).
+export const CodingAgentVendorClaudeCode = "claude-code";
+
+export const CodingAgentVendorCursor = "cursor";
+
+export const CodingAgentVendorCodex = "codex";
+
+export const CodingAgentVendorWindsurf = "windsurf";
+
+// CodingAgentSessionID identifies a single coding-agent session.
+// Used as the join key across all spans/events emitted for that session.
+export const CodingAgentSessionID = "coding_agent.session.id";
+
+// CodingAgentClient is the vendor identifier; mirror of gen_ai.agent.name.
+// Carried separately so dashboard widgets can filter without
+// pulling in the full gen_ai.* attribute set.
+export const CodingAgentClient = "coding_agent.client";
+
+// CodingAgentClientVersion is the vendor's client version.
+export const CodingAgentClientVersion = "coding_agent.client.version";
+
+// CodingAgentSessionOutcome captures how the session ended.
+// One of: merged | committed | abandoned_no_change | abandoned_with_change | cancelled.
+export const CodingAgentSessionOutcome = "coding_agent.session.outcome";
+
+// CodingAgentSessionDurationMs is wall-clock duration in milliseconds.
+export const CodingAgentSessionDurationMs = "coding_agent.session.duration_ms";
+
+// CodingAgentSessionToolCallCount totals tool invocations during the session.
+export const CodingAgentSessionToolCallCount = "coding_agent.session.tool_call_count";
+
+// CodingAgentSessionSubagentCount totals child/subagent spawns.
+export const CodingAgentSessionSubagentCount = "coding_agent.session.subagent_count";
+
+// CodingAgentSessionCostUSD is the realized USD cost.
+export const CodingAgentSessionCostUSD = "coding_agent.session.cost_usd";
+
+// Per-session code-change rollups stamped on the
+// `coding_agent.session` root span at SessionEnd. They aggregate
+// edit / accept / reject / line counts the adapter observed
+// across the session so dashboards don't have to fan out into
+// every `coding_agent.edit.decision` span.
+//
+// Mirrors Claude Code's native `claude_code.lines_of_code.count`
+// metric shape — when the operator ships both paths (hook + native
+// OTel exporter), the query layer coalesces.
+export const CodingAgentSessionLinesAdded = "coding_agent.session.lines.added";
+
+// Session structure attributes.
+export const CodingAgentSessionLinesRemoved = "coding_agent.session.lines.removed";
+
+export const CodingAgentSessionLinesAccepted = "coding_agent.session.lines.accepted";
+
+export const CodingAgentSessionLinesRejected = "coding_agent.session.lines.rejected";
+
+export const CodingAgentSessionEditAcceptCount = "coding_agent.session.edit.accept_count";
+
+export const CodingAgentSessionEditRejectCount = "coding_agent.session.edit.reject_count";
+
+export const CodingAgentSessionCommitCount = "coding_agent.session.commit_count";
+
+export const CodingAgentSessionPRCount = "coding_agent.session.pr_count";
+
+// CodingAgentSessionOutcomeCompleted — the agent reported a
+// successful end of the session (Cursor's reason="completed",
+// Claude Code's "stop", etc). The user may or may not have
+// merged anything; we stay agnostic on downstream VCS state.
+export const CodingAgentSessionOutcomeCompleted = "completed";
+
+// Session outcome values.
+export const CodingAgentSessionOutcomeMerged = "merged";
+
+export const CodingAgentSessionOutcomeCommitted = "committed";
+
+export const CodingAgentSessionOutcomeAbandonedNoChange = "abandoned_no_change";
+
+export const CodingAgentSessionOutcomeAbandonedWithChange = "abandoned_with_change";
+
+export const CodingAgentSessionOutcomeCancelled = "cancelled";
+
+// CodingAgentAgentID is a stable id for this agent instance within the
+// session (root or subagent). Use parent_id to walk the tree.
+export const CodingAgentAgentID = "coding_agent.agent.id";
+
+// CodingAgentAgentParentID points at the spawning agent's id.
+export const CodingAgentAgentParentID = "coding_agent.agent.parent_id";
+
+// CodingAgentAgentType is one of: main | subagent | task_tool.
+export const CodingAgentAgentType = "coding_agent.agent.type";
+
+// CodingAgentSubagentType is the vendor-specific subagent kind
+// (e.g. Claude Code's named subagents, Codex spawn types).
+export const CodingAgentSubagentType = "coding_agent.subagent.type";
+
+// CodingAgentLinkageConfidence reports how reliable the parent_id
+// linkage is for this vendor: high | medium | low.
+// Codex subagent linkage is often medium because parent is
+// inferred via process metadata rather than carried by the protocol.
+export const CodingAgentLinkageConfidence = "coding_agent.linkage_confidence";
+
+export const CodingAgentAgentTypeMain = "main";
+
+export const CodingAgentAgentTypeSubagent = "subagent";
+
+export const CodingAgentAgentTypeTaskTool = "task_tool";
+
+export const CodingAgentLinkageConfidenceHigh = "high";
+
+export const CodingAgentLinkageConfidenceMedium = "medium";
+
+export const CodingAgentLinkageConfidenceLow = "low";
+
+// CodingAgentEditDecision is one of: accept | reject | modify | auto_accepted.
+export const CodingAgentEditDecision = "coding_agent.edit.decision";
+
+// CodingAgentEditDecisionSource is the trigger:
+// user_interactive | user_permanent_rule | hook | config | policy.
+export const CodingAgentEditDecisionSource = "coding_agent.edit.decision.source";
+
+// CodingAgentEditLinesAdded is the count of added lines.
+export const CodingAgentEditLinesAdded = "coding_agent.edit.lines.added";
+
+// CodingAgentEditLinesRemoved is the count of removed lines.
+export const CodingAgentEditLinesRemoved = "coding_agent.edit.lines.removed";
+
+// CodingAgentEditLanguage is the detected programming language.
+export const CodingAgentEditLanguage = "coding_agent.edit.language";
+
+// CodingAgentEditToolName is the tool that produced the edit
+// (e.g. "Edit", "Write", "Apply Patch").
+export const CodingAgentEditToolName = "coding_agent.edit.tool.name";
+
+export const CodingAgentEditDecisionAccept = "accept";
+
+export const CodingAgentEditDecisionReject = "reject";
+
+export const CodingAgentEditDecisionModify = "modify";
+
+export const CodingAgentEditDecisionAutoAccepted = "auto_accepted";
+
+export const CodingAgentEditDecisionSourceUserInteractive = "user_interactive";
+
+export const CodingAgentEditDecisionSourceUserPermanentRule = "user_permanent_rule";
+
+export const CodingAgentEditDecisionSourceHook = "hook";
+
+export const CodingAgentEditDecisionSourceConfig = "config";
+
+export const CodingAgentEditDecisionSourcePolicy = "policy";
+
+// CodingAgentToolTriggeringLLMRequestID is the LLM response id
+// whose tool_calls produced this invocation.
+export const CodingAgentToolTriggeringLLMRequestID = "coding_agent.tool.triggering_llm_request_id";
+
+// CodingAgentToolIteration is the loop index for retried/iterated tools.
+export const CodingAgentToolIteration = "coding_agent.tool.iteration";
+
+// CodingAgentToolGroupID groups tools fired in the same model turn.
+export const CodingAgentToolGroupID = "coding_agent.tool.group.id";
+
+// CodingAgentToolGroupType describes the group's intent
+// (e.g. "file_edit", "search", "bash").
+export const CodingAgentToolGroupType = "coding_agent.tool.group.type";
+
+// CodingAgentMCPServerName is the MCP server identifier.
+export const CodingAgentMCPServerName = "coding_agent.mcp.server.name";
+
+// CodingAgentMCPScope is one of: user | project | local | enterprise.
+export const CodingAgentMCPScope = "coding_agent.mcp.scope";
+
+// CodingAgentMCPTransport is one of: stdio | sse | streamable_http.
+export const CodingAgentMCPTransport = "coding_agent.mcp.transport";
+
+// CodingAgentMCPSource is one of: builtin | plugin | marketplace.
+export const CodingAgentMCPSource = "coding_agent.mcp.source";
+
+export const CodingAgentMCPScopeUser = "user";
+
+export const CodingAgentMCPScopeProject = "project";
+
+export const CodingAgentMCPScopeLocal = "local";
+
+export const CodingAgentMCPScopeEnterprise = "enterprise";
+
+export const CodingAgentMCPTranspo
+```
+
+### Core Architecture Module: `cli/internal/coding/classify/classify.go`
+```
+// Package classify decides whether a coding-agent session is "work" or
+// "personal" based on high-confidence signals only.
+//
+// Two inputs:
+//
+//  1. API-key identity. If the openlit API key sending this telemetry
+//     is on the org's allowlist (configured in OpenLit's settings),
+//     the user is recognized as a work identity.
+//
+//  2. Repo origin. If the repo's remote URL matches one of the org's
+//     allowlist patterns (e.g. github.com/our-org/*), the code is
+//     work code.
+//
+// Surveillance-grade signals (keystroke timing, hours-of-day) explicitly
+// NOT used. The classification reason is stamped alongside the
+// classification so users can see why and dispute it.
+package classify
+
+import (
+	"strings"
+)
+
+// Classification is the result for one session.
+type Classification struct {
+	Value  string // "work" | "personal" | "disputed" | "unknown"
+	Reason string // human-readable signal name, e.g. "api_key_allowlist+repo_origin_match"
+}
+
+// Inputs are the signals we have at hook time.
+//
+// Both API-key fields are tristate-encoded across two booleans to avoid
+// the classic "is `false` an answer or a missing signal?" ambiguity:
+//
+//   - APIKeyAllowlistKnown=false  → we don't know either way. Treat the
+//     API-key signal as absent and lean on the repo signal.
+//   - APIKeyAllowlistKnown=true   → APIKeyOnAllowlist is authoritative.
+type Inputs struct {
+	// APIKeyOnAllowlist is true when the request's API key is
+	// registered as a "work identity" at the OpenLit deployment.
+	// Only meaningful when APIKeyAllowlistKnown is also true.
+	//
+	// In v1 the CLI cannot determine this on its own — there is no
+	// path from the local hook to the org's API-key allowlist — so
+	// per-vendor adapters set both fields to false and the classifier
+	// falls back to the repo signal. The server-side classifier in
+	// src/client/src/lib/platform/coding-agents/ may re-classify
+	// authoritatively once the org has registered its keys.
+	APIKeyOnAllowlist bool
+
+	// APIKeyAllowlistKnown distinguishes "we asked and the key is not
+	// on the allowlist" (true + false) from "we have no way to know
+	// yet" (false). Without this flag the classifier would treat
+	// "no allowlist infrastructure" the same as "key explicitly
+	// rejected", which produced a regression where every session
+	// ended up labelled `personal` regardless of repo origin.
+	APIKeyAllowlistKnown bool
+
+	// RepoURL is the canonical remote URL collected by internal/coding/git.
+	// May be empty if the session ran outside any repo.
+	RepoURL string
+
+	// RepoAllowlist is the user's local override for "what counts as
+	// my work repo". Read from OPENLIT_CODING_REPO_ALLOWLIST as a
+	// comma-separated list of substring patterns. Authoritative
+	// allowlists live server-side; this is just a hint the CLI
+	// stamps so the dashboard can pre-classify before the server
+	// re-classifies.
+	RepoAllowlist []string
+}
+
+// Classify returns the work/personal/disputed/unknown classification.
+//
+// Design constraints:
+//
+//   - We must NEVER classify a session as "personal" without explicit
+//     evidence of a non-work signal. "no API-key allowlist configured"
+//     is NOT evidence — it's an absence of signal.
+//   - "no_signal" must be distinguishable from "explicit allowlist
+//     mismatch" so the dashboard can render them differently.
+//   - When only one of the two signals (API key, repo origin) is
+//     authoritative, we still produce the best classification that
+//     signal supports rather than defaulting to "unknown".
+//   - Authoritative classification happens server-side; the CLI's job
+//     is to stamp the strongest signal it observed locally so the UI
+//     can pre-classify before the server's allowlist is applied.
+func Classify(in Inputs) Classification {
+	repoMatch := matchAllowlist(in.RepoURL, in.RepoAllowlist)
+	hasRepoAllowlist := len(in.RepoAllowlist) > 0
+	hasRepo := in.RepoURL != ""
+	keyKnown := in.APIKeyAllowlistKnown
+	keyAllow := in.APIKeyAllowlistKnown && in.APIKeyOnAllowlist
+	keyDeny := in.APIKeyAllowlistKnown && !in.APIKeyOnAllowlist
+
+	// Strongest signal: both allowlists agree this is work.
+	if keyAllow && repoMatch {
+		return Classification{Value: "work", Reason: "api_key_allowlist+repo_origin_match"}
+	}
+
+	// API key allowlisted but no repo (running outside any git tree).
+	if keyAllow && !hasRepo {
+		return Classification{Value: "work", Reason: "api_key_allowlist_only"}
+	}
+
+	// Conflict: work identity on a non-allowlisted repo. This could
+	// mean the engineer is running corp keys on a personal repo, OR
+	// that the allowlist is simply missing entries. We do NOT classify
+	// as personal here — that's the call the dispute UI exists to
+	// resolve. The reason makes the conflict legible on the dashboard.
+	if keyAllow && hasRepo && hasRepoAllowlist && !repoMatch {
+		return Classification{Value: "unknown", Reason: "api_key_work_on_non_allowlisted_repo"}
+	}
+
+	// Personal-on-work: identity is positively NOT on the API-key
+	// allowlist (and we know that because keyKnown=true), but the repo
+	// is. Only meaningful when an API-key allowlist actually exists;
+	// otherwise we can't make this call without false-flagging every
+	// session.
+	if keyDeny && repoMatch {
+		return Classification{Value: "personal", Reason: "api_key_personal_on_work_repo"}
+	}
+
+	// Repo IS on allowlist and the API-key allowlist is unknown — this
+	// is the common v1 case (no API-key allowlist infrastructure yet).
+	// The repo signal is strong on its own: the user has explicitly
+	// declared this remote as a work repo via OPENLIT_CODING_REPO_ALLOWLIST.
+	if repoMatch && !keyKnown {
+		return Classification{Value: "work", Reason: "repo_origin_match"}
+	}
+
+	// Repo URL exists, allowlist exists, and the URL did not match: the
+	// org has explicitly declared this repo non-work. This is the
+	// only branch where "personal" is safe without API-key data.
+	if hasRepo && hasRepoAllowlist && !repoMatch {
+		return Classification{Value: "personal", Reason: "repo_origin_no_match"}
+	}
+
+	// Nothing actionable: either no repo at all and no API key, or the
+	// only signal we have is "API key allowlist is unknown" without an
+	// allowlist to compare against. Don't pretend confidence.
+	if !hasRepo && !keyKnown {
+		return Classification{Value: "unknown", Reason: "no_signal"}
+	}
+	if hasRepo && !hasRepoAllowlist {
+		return Classification{Value: "unknown", Reason: "no_repo_allowlist_configured"}
+	}
+	return Classification{Value: "unknown", Reason: "ambiguous"}
+}
+
+// matchAllowlist returns true if any allowlist substring is present in url.
+// Patterns are matched case-insensitively against the bare URL.
+func matchAllowlist(url string, patterns []string) bool {
+	if url == "" || len(patterns) == 0 {
+		return false
+	}
+	low := strings.ToLower(url)
+	for _, p := range patterns {
+		p = strings.ToLower(strings.TrimSpace(p))
+		if p == "" {
+			continue
+		}
+		if strings.Contains(low, p) {
+			return true
+		}
+	}
+	return false
+}
+
+// SplitAllowlist parses the comma-separated form of OPENLIT_CODING_REPO_ALLOWLIST.
+func SplitAllowlist(s string) []string {
+	if s == "" {
+		return nil
+	}
+	parts := strings.Split(s, ",")
+	out := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
+}
+
+```
+
+### Core Architecture Module: `cli/internal/coding/cmd.go`
+```
+// Package coding hosts the `openlit coding ...` subcommand group.
+//
+// v1 ships the following children:
+//
+//	openlit coding hook      --vendor=cc|cursor|codex --event=...
+//	openlit coding install   --vendor=all|<single>
+//	openlit coding uninstall --vendor=all|<single> [--purge]
+//	openlit coding launch    <claude|cursor|codex>
+//
+// All children share the resolved config from internal/config and the
+// OTLP exporter from internal/otlp. The hook subcommand is the hot path
+// invoked once per agent event and follows the crash-isolation rules
+// documented on cmd/openlit/main.go.
+package coding
+
+import (
+	"github.com/openlit/openlit/cli/internal/coding/hook"
+	"github.com/openlit/openlit/cli/internal/coding/install"
+	"github.com/openlit/openlit/cli/internal/coding/launch"
+	"github.com/openlit/openlit/cli/internal/coding/uninstall"
+	"github.com/spf13/cobra"
+)
+
+// NewCmd returns the `coding` cobra command tree.
+func NewCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "coding",
+		Short: "Coding-agent observability (Claude Code, Cursor, Codex)",
+		Long: `Send telemetry from AI coding agents into OpenLit.
+
+Three install paths land at the same plugin manifests under plugins/:
+  A) openlit coding launch <claude|cursor|codex>             # one-liner
+  B) openlit coding install --vendor=all                     # write manifests, no agent TUI
+  C) From inside the agent: /plugin marketplace add openlit/openlit, then install.
+
+To stop tracking, use 'openlit coding uninstall --vendor=<v>' (add
+--purge to also drop ~/.config/openlit and the session-state cache).
+
+The 'hook' subcommand is invoked by the host plugin manifests once per
+agent event and is the hot path. It always exits 0 on telemetry-path
+failure so a broken pipeline never blocks a developer's prompt.`,
+		SilenceUsage:  true,
+		SilenceErrors: true,
+	}
+
+	cmd.AddCommand(hook.NewCmd())
+	cmd.AddCommand(install.NewCmd())
+	cmd.AddCommand(uninstall.NewCmd())
+	cmd.AddCommand(launch.NewCmd())
+
+	return cmd
+}
+
+```
+
+### Core Architecture Module: `cli/internal/coding/detect/detect.go`
+```
+// Package detect contains tiny, dependency-free string helpers the
+// per-vendor hook adapters use to recognise high-signal patterns in
+// shell commands and code patches:
+//
+//   - `git commit` invocations (and the SHA written to stdout)
+//   - pull / merge request creation (`gh pr create`, the URL printed
+//     by `git push -u origin <branch>`, GitLab equivalents)
+//   - unified-diff patch bodies (apply_patch on Codex, MultiEdit on
+//     Claude Code) → per-file lines-added / lines-removed
+//   - inline before / after text diffs (Claude Code Edit, Cursor
+//     afterFileEdit) → lines-added / lines-removed
+//
+// The helpers are best-effort by design: every vendor formats its
+// payload slightly differently, and the dashboards downstream prefer
+// "directionally honest" numbers over none. When in doubt the helpers
+// return zero and let the caller fall through to a vendor-specific
+// fallback.
+package detect
+
+import (
+	"regexp"
+	"strings"
+)
+
+// IsGitCommit reports whether `cmd` is (or contains) a `git commit`
+// invocation by the agent's shell tool. Recognises the common forms:
+//
+//	git commit -m "..."
+//	git commit --message="..."
+//	GIT_EDITOR=true git commit
+//	git -C subdir commit ...
+//
+// Quick exclusions:
+//   - `git commit --help` / `-h`
+//   - `git commit-tree` (plumbing; not a user commit)
+//   - `git commit ... --dry-run`
+//
+// The match is intentionally loose — false positives only inflate the
+// commit count, never lose data. Dashboards rely on the SHA span
+// attribute being present to dedupe against repeated invocations.
+func IsGitCommit(cmd string) bool {
+	if cmd == "" {
+		return false
+	}
+	low := strings.ToLower(cmd)
+	if !strings.Contains(low, "git") || !strings.Contains(low, "commit") {
+		return false
+	}
+	if strings.Contains(low, "git commit-tree") {
+		return false
+	}
+	if strings.Contains(low, "--dry-run") {
+		return false
+	}
+	if strings.Contains(low, "--help") || gitCommitDashHRe.MatchString(low) {
+		return false
+	}
+	// Accept any token sequence that has `git ... commit` with
+	// optional `-C <dir>` / `-c key=val` between them. The simplest
+	// reliable form is a regex over the tokenised command.
+	return gitCommitRe.MatchString(low)
+}
+
+// gitCommitRe matches `git [opts] commit` allowing `-C <path>`,
+// `-c key=val`, and env-var prefixes before `git`.
+var gitCommitRe = regexp.MustCompile(`(?:^|\s|;|&&|\|\||\()(?:[a-z_][a-z0-9_]*=\S+\s+)*git(?:\s+-[cCp]\s+\S+|\s+--[a-zA-Z-]+(?:=\S+)?|\s+-[a-zA-Z]+)*\s+commit(?:\s|$|;|&&|\|\|)`)
+
+// gitCommitDashHRe matches `git commit -h` invocations and is checked
+// alongside `--help` to skip help-only commands. Compiled once at
+// package init — the previous in-function MustCompile cost ~200 ns
+// per IsGitCommit call on the shell hook hot path.
+var gitCommitDashHRe = regexp.MustCompile(`\bgit\s+commit\s+-h\b`)
+
+// shaRe matches a 7-40 char hex SHA, the common short / full forms
+// printed by `git commit`'s stdout (e.g. `[main 1a2b3c4] message`).
+var shaRe = regexp.MustCompile(`\b([0-9a-f]{7,40})\b`)
+
+// commitOutputSHARe captures the SHA from the typical commit summary
+// line: `[<branch> <sha>] <message>`.
+var commitOutputSHARe = regexp.MustCompile(`\[[^\]]+\s+([0-9a-f]{7,40})\]`)
+
+// ExtractCommitSHA pulls the commit SHA out of the stdout/stderr of a
+// completed `git commit` invocation. Returns "" when no SHA-shaped
+// token is present. Vendors that don't surface the tool's stdout
+// (Codex's `local_shell` aggregated output) end up with "" and the
+// emitter falls back to the at-emit timestamp.
+func ExtractCommitSHA(output string) string {
+	if output == "" {
+		return ""
+	}
+	if m := commitOutputSHARe.FindStringSubmatch(output); len(m) > 1 {
+		return m[1]
+	}
+	// `git commit-tree` style fallback — the SHA is the only token on
+	// the line. Walk the lines and return the first 7+ hex run that
+	// looks like a SHA (avoids matching long hex blobs in diff
+	// output).
+	for _, line := range strings.Split(output, "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		if m := shaRe.FindStringSubmatch(line); len(m) > 1 {
+			// Heuristic: only accept if the SHA is the whole line
+			// OR the line starts with one (the common
+			// commit-tree output shape).
+			if line == m[1] || strings.HasPrefix(line, m[1]) {
+				return m[1]
+			}
+		}
+	}
+	return ""
+}
+
+// ExtractCommitMessage tries to recover the `-m`-supplied message
+// from a commit command. Returns "" when no quoted message is found.
+// This is best-effort and intentionally cheap — we don't try to
+// reconstruct heredoc-supplied or editor-supplied messages.
+func ExtractCommitMessage(cmd string) string {
+	if cmd == "" {
+		return ""
+	}
+	if m := firstGroup(dashMRe, cmd); m != "" {
+		return strings.TrimSpace(m)
+	}
+	if m := firstGroup(messageEqRe, cmd); m != "" {
+		return strings.TrimSpace(m)
+	}
+	return ""
+}
+
+// firstGroup returns the first non-empty capture group from
+// re.FindStringSubmatch(s). Lets us write one regex with several
+// quote-style alternatives and pick whichever matched.
+func firstGroup(re *regexp.Regexp, s string) string {
+	m := re.FindStringSubmatch(s)
+	for i := 1; i < len(m); i++ {
+		if m[i] != "" {
+			return m[i]
+		}
+	}
+	return ""
+}
+
+var (
+	dashMRe     = regexp.MustCompile(`-m\s+(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))`)
+	messageEqRe = regexp.MustCompile(`--message=(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))`)
+)
+
+// IsPullRequest reports whether `cmd` is a PR / MR creation
+// invocation. Covers:
+//
+//   - `gh pr create ...` (GitHub CLI)
+//   - `gh pr create --base ...` etc.
+//   - `glab mr create ...` (GitLab CLI)
+//   - `tea pr create ...` (Gitea CLI)
+//
+// Closing / listing / viewing PRs are NOT counted — only creation.
+func IsPullRequest(cmd string) bool {
+	if cmd == "" {
+		return false
+	}
+	low := strings.ToLower(cmd)
+	if strings.Contains(low, "gh pr create") {
+		return true
+	}
+	if strings.Contains(low, "glab mr create") {
+		return true
+	}
+	if strings.Contains(low, "tea pr create") {
+		return true
+	}
+	return false
+}
+
+// prURLRe matches a typical GitHub / GitLab / Bitbucket PR/MR URL.
+// We accept the form printed by `gh pr create` (always full URL) and
+// by `git push -u origin <branch>` (PR-creation hint URL).
+var prURLRe = regexp.MustCompile(`https?://[^\s\)]+/(?:pull|pull-request|pull-requests|merge_requests|merge-requests|pulls)/(\d+)\b`)
+
+// prURLCompareRe matches the PR-create-hint URL git prints after
+// `git push -u origin <branch>` (`/pull/new/<branch>`) and the
+// GitLab "create new MR" URL (`-/merge_requests/new?...`).
+var prURLCompareRe = regexp.MustCompile(`https?://[^\s\)]+/(?:pull/new/\S+|compare/\S+|-/merge_requests/new\?\S+)`)
+
+// ExtractPRURLAndNumber returns the PR URL and number embedded in the
+// command's stdout/stderr. Returns ("",0) when no URL is found.
+func ExtractPRURLAndNumber(output string) (string, int) {
+	if output == "" {
+		return "", 0
+	}
+	if m := prURLRe.FindStringSubmatch(output); len(m) > 1 {
+		url := strings.TrimRight(m[0], ".,;:)")
+		var n int
+		for _, c := range m[1] {
+			if c < '0' || c > '9' {
+				break
+			}
+			n = n*10 + int(c-'0')
+		}
+		return url, n
+	}
+	if m := prURLCompareRe.FindStringSubmatch(output); len(m) > 0 {
+		return strings.TrimRight(m[0], ".,;:)"), 0
+	}
+	return "", 0
+}
+
+// ExtractPRTitle returns the value passed to `--title`, when present.
+// Best-effort, mirrors ExtractCommitMessage.
+func ExtractPRTitle(cmd string) string {
+	if cmd == "" {
+		return ""
+	}
+	if m := firstGroup(titleEqRe, cmd); m != "" {
+		return strings.TrimSpace(m)
+	}
+	if m := firstGroup(titleFlagRe, cmd); m != "" {
+		return strings.TrimSpace(m)
+	}
+	return ""
+}
+
+var (
+	titleEqRe   = regexp.MustCompile(`--title=(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))`)
+	titleFlagRe = regexp.MustCompile(`--title\s+(?:"((?:[^"\\]|\\.)*)"|'((?:[^'\\]|\\.)*)'|(\S+))`)
+)
+
+// PatchLineCounts is the output of CountPatchLines: per-file totals of
+// added / removed lines. The slice preserves the order the files
+// appeared in the patch so callers can attribute each file as its
+// own EditDecis
+```
+
+### Core Architecture Module: `cli/internal/coding/git/git.go`
+```
+// Package git collects the minimal VCS context every hook adapter
+// stamps on its spans (vcs.repository.url.full, vcs.ref.head.revision,
+// vcs.ref.head.name, coding_agent.vcs.dirty).
+//
+// Why we shell out to `git` rather than parse `.git/` ourselves: git's
+// CLI is universally installed on developer machines, handles edge
+// cases (worktrees, submodules, the GIT_DIR / GIT_WORK_TREE env vars),
+// and is a small fraction of the hook's overall budget. Each call here
+// has an explicit deadline; failures are silently dropped (we'd rather
+// emit a span without VCS context than wedge the hook).
+package git
+
+import (
+	"context"
+	"errors"
+	"net/url"
+	"os/exec"
+	"strings"
+	"time"
+)
+
+// perSubcommandBudget bounds how long any single `git` invocation can
+// take. The original hook deadline (a couple of seconds, see the
+// caller) is shared across roughly 4 git calls per Snapshot, so a
+// hung clone or a flaky filesystem can swallow the entire budget and
+// starve the actual span emission. 500ms is more than enough for a
+// healthy local repo and short enough that a hung call fails fast.
+const perSubcommandBudget = 500 * time.Millisecond
+
+// Context is the VCS snapshot captured at hook time. All fields are
+// best-effort — empty values mean "not in a repo" or "git not on PATH".
+type Context struct {
+	// RepoURL is the canonical remote URL (https://… or git@…), pulled
+	// from the configured upstream of HEAD or, failing that, `origin`.
+	RepoURL string
+	// HeadSHA is the full HEAD commit SHA.
+	HeadSHA string
+	// Branch is the current branch name; empty in detached-HEAD state.
+	Branch string
+	// Dirty is true if the working tree has uncommitted changes
+	// (porcelain output non-empty).
+	Dirty bool
+}
+
+// Empty reports whether the snapshot is entirely empty (no VCS context
+// available). Callers can use this to decide whether to stamp the
+// vcs.dirty boolean.
+func (c Context) Empty() bool {
+	return c.RepoURL == "" && c.HeadSHA == "" && c.Branch == ""
+}
+
+// Snapshot returns the VCS context for `dir`. If `dir` is empty, the
+// process's current working directory is used.
+func Snapshot(ctx context.Context, dir string) Context {
+	if _, err := exec.LookPath("git"); err != nil {
+		return Context{}
+	}
+
+	out := Context{}
+	out.HeadSHA = run(ctx, dir, "rev-parse", "HEAD")
+	out.Branch = strings.TrimSpace(run(ctx, dir, "rev-parse", "--abbrev-ref", "HEAD"))
+	if out.Branch == "HEAD" {
+		out.Branch = "" // detached HEAD
+	}
+
+	out.RepoURL = NormalizeRepoURL(remoteURL(ctx, dir))
+
+	// `git status --porcelain` is empty iff the worktree is clean.
+	if status := run(ctx, dir, "status", "--porcelain"); strings.TrimSpace(status) != "" {
+		out.Dirty = true
+	}
+	return out
+}
+
+// remoteURL prefers the upstream of HEAD; falls back to `origin`. Both
+// queries are cheap and non-network-touching.
+func remoteURL(ctx context.Context, dir string) string {
+	upstream := strings.TrimSpace(run(ctx, dir, "rev-parse", "--abbrev-ref", "--symbolic-full-name", "@{u}"))
+	if upstream != "" {
+		// upstream looks like "origin/main"; the remote is the prefix.
+		if i := strings.IndexByte(upstream, '/'); i > 0 {
+			remote := upstream[:i]
+			if url := strings.TrimSpace(run(ctx, dir, "remote", "get-url", remote)); url != "" {
+				return url
+			}
+		}
+	}
+	if url := strings.TrimSpace(run(ctx, dir, "remote", "get-url", "origin")); url != "" {
+		return url
+	}
+	return ""
+}
+
+// run executes a git subcommand in `dir` (or cwd if empty) and returns
+// stdout trimmed of trailing whitespace. Errors and non-zero exits map
+// to the empty string — git's stderr is intentionally ignored because
+// we never want to surface "fatal: not a git repository" to the user.
+//
+// Each invocation is wrapped in its own perSubcommandBudget so a
+// single hung call can't starve the surrounding hook deadline.
+func run(ctx context.Context, dir string, args ...string) string {
+	if ctx.Err() != nil {
+		return ""
+	}
+	subCtx, cancel := context.WithTimeout(ctx, perSubcommandBudget)
+	defer cancel()
+	cmd := exec.CommandContext(subCtx, "git", args...)
+	if dir != "" {
+		cmd.Dir = dir
+	}
+	out, err := cmd.Output()
+	if err != nil {
+		// Distinguish "not a repo" (exit code 128) from a real error
+		// only when we want to log; here we drop both to keep the
+		// hook silent on stderr.
+		var ee *exec.ExitError
+		if errors.As(err, &ee) {
+			return ""
+		}
+		return ""
+	}
+	return strings.TrimRight(string(out), "\n\r")
+}
+
+// NormalizeRepoURL coerces remote URLs to the canonical https form so
+// dashboards group sessions from `git@github.com:org/repo.git`,
+// `https://github.com/org/repo.git`, and `ssh://git@github.com/org/repo`
+// into the same VCS bucket. Returns the input untouched when it
+// doesn't look like a recognisable git URL.
+//
+// F10: this is the single source of truth — adapters call into here
+// rather than rolling their own normalisation.
+func NormalizeRepoURL(raw string) string {
+	raw = strings.TrimSpace(raw)
+	if raw == "" {
+		return ""
+	}
+	// scp-style (`git@host:path`) — convert to https.
+	if !strings.Contains(raw, "://") && strings.Contains(raw, "@") && strings.Contains(raw, ":") {
+		at := strings.IndexByte(raw, '@')
+		colon := strings.IndexByte(raw[at+1:], ':')
+		if colon > 0 {
+			host := raw[at+1 : at+1+colon]
+			path := raw[at+1+colon+1:]
+			raw = "https://" + host + "/" + path
+		}
+	}
+	// Strip trailing .git so https://github.com/o/r and the same with
+	// .git produce identical keys.
+	if u, err := url.Parse(raw); err == nil && u.Scheme != "" {
+		u.Scheme = "https"
+		u.User = nil
+		u.Path = strings.TrimSuffix(u.Path, ".git")
+		return u.String()
+	}
+	return raw
+}
+
+```
+
+### Core Architecture Module: `cli/internal/coding/hook/claudecode/claudecode.go`
+```
+// Package claudecode implements the Claude Code hook adapter.
+//
+// Claude Code invokes the hook by name (SessionStart, UserPromptSubmit,
+// PreToolUse, PostToolUse, Stop, SubagentStop, SessionEnd) with a JSON
+// payload on stdin. We additionally tail the per-session transcript
+// file (`transcript_path` in the payload) for authoritative token
+// usage and cost on SessionEnd, and for an early model attribution on
+// SessionStart.
+//
+// Claude Code also exposes its own OTel exporter via
+// `CLAUDE_CODE_ENABLE_TELEMETRY=1`. When the user has both paths on,
+// the query layer dedupes per `session.id` (see
+// `agent-guides/coding-agents-convention.md` §5). This adapter is
+// responsible for the hook path only; it stamps
+// `coding_agent.signal_source = "hook"` (via the resource attribute
+// set in `cli/internal/otlp/exporter.go`) so the dual-path coalesce
+// can tell them apart.
+package claudecode
+
+import (
+	"context"
+
+	"github.com/openlit/openlit/cli/internal/coding/normalize"
+	"github.com/openlit/openlit/sdk/go/semconv"
+)
+
+// New returns a new Claude Code adapter.
+func New() normalize.Adapter { return &adapter{} }
+
+type adapter struct{}
+
+func (a *adapter) Vendor() string { return semconv.CodingAgentVendorClaudeCode }
+
+func (a *adapter) Handle(ctx context.Context, in normalize.Input) error {
+	return handle(ctx, in)
+}
+
+```
+
+
+### D2: Asynchronous State & Concurrency
+- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
+
+### D3: Error Boundaries, Recovery & Rollbacks
+- Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1519** (2026-09-11): **Bug: ClickHouse migrations report success after partially failing on an auth error, leaving the application schema incomplete**
+  *Symptoms*: ### Component  OpenLIT  ### What happened?  When OpenLIT cannot authenticate to ClickHouse partway through initialisation, it creates the otel_* and openlit_controller_* tables, fails to create any application tables, and then reports success and continues — logging ClickHouse tables created, running the data migration, and reporting Seeding Dashboards Completed (seeded 4, skipped 0).  The failure only surfaces later as UNKNOWN_TABLE errors at runtime, in a component unrelated to the actual cause. This makes the root cause very difficult to identify.  ### Steps to reproduce  A ClickHouse container was first initialised without a .env file present, or with a path fail or other defect in .env.  So it took the compose fallback password. A .env with a different password was added afterwards. **_Because CLICKHOUSE_PASSWORD is only honoured on first initialisation of the data directory_**, OpenLIT was then configured with credentials ClickHouse did not have.  This is user error and I'm not reporting it as a bug. The bug is that OpenLIT's response to it was to report success making triage of the subsequent failure difficult.  SHOW TABLES FROM openlit at this point returned only the six openlit_controller_* tables and the nine otel_* tables — no application tables at all.   This led me to go back and repull the previously successful logs, and renumerate the chain of events, where I discovered the mismatch env.   [DB-Conn-Fail.txt](https://github.com/user-attachments/files/31821869/DB
+  **Post-Mortem & Fix Analysis**:
+  > Implemented in PR #1522. ClickHouse migration orchestration now fails on reported query errors or incomplete batches, preserves the underlying error, and prevents dependent migrations from continuing. Dashboard seeding now runs only after all four expected dashboard tables (openlit_folder, openlit_board, openlit_widget, openlit_board_widget) are verified; missing table names are reported. Added regression coverage for fail-fast orchestration, missing-table reporting, and seed suppression. Local focused tests, lint, and production build pass; the full Jest run had 3,209 passed tests, with the remaining failures limited to existing Windows/JSDOM baseline issues in path, locale, and Prisma/TextEncoder behavior. The PR is awaiting repository review and approval gates.
+
+- **Issue #1518** (2026-09-08): **Bug: Onboarding in inescapable loop on :latest.. Step 3 renders no db config ui option.**
+  *Symptoms*: ### Component  OpenLIT  ### What happened?  On a fresh Docker Compose deployment using ghcr.io/openlit/openlit:latest, the onboarding wizard skips step 2 and lands on step 3 ("connect a database") with no interactive elements at all — no "Add new config" button, no modal, no form. Every other route (/home, /dashboard, /requests) redirects back to /onboarding, so the instance is unusable.  Pinning to a tagged release, with an otherwise identical compose file, ClickHouse volume, and configuration, renders the same step correctly with an "Add new config" control available. This appears to be a regression in latest. Works great and as intended.   The backend is healthy throughout: ClickHouse contains the complete application schema, credentials authenticate, and OTLP ingestion works — traces from a LiteLLM proxy land in otel_traces the whole time the UI is inaccessible.  ### Steps to reproduce  Openlit latest Clickhouse 24.4.1 Host: Docker desktop, Windows 11, WSL2 Backend Deploy: Docker compose from repo's docker-compose.yml telemetry source: LiteLLM Latest:otel callback over http (local net)  Deviation from Norms:  Existing openwebui instance is pinned to tcp:3000 so openlit compose WAS changes to 3001 to avoid port conflict.  Wait for INIT_DB_* to seed ClickHouse connection.   Login, create account. Add an arbitrary org name 'My cool org'. UI Skips step 2, bypass step 3 DB onboard. Fails in an infinite loop.   Wiping the openlit-data volume and re-running does not help — onboa
+
+- **Issue #1418** (2026-07-31): **Bug: x86_64 CUDA eBPF decodes cudaLaunchKernel arguments incorrectly (block size and core usage are zero)**
+  *Symptoms*: ### Component  OpenTelemetry GPU Collector  ### What happened?  On Linux x86_64 with an NVIDIA Tesla T4 and CUDA 13, the OpenTelemetry GPU Collector successfully attaches to a dynamically linked libcudart.so and exports CUDA eBPF metrics. However:  - gpu.kernel.block.size_sum is always 0, although every test launch uses a block size of 256. - process.gpu.core.usage is always 0 under sustained load (about 90% GPU utilization). - cuda.kernel.name falls back to an ASLR-dependent 0x... address instead of the kernel symbol.  Other values from the same workload are correct:  - gpu.kernel.grid.size_sum / gpu.kernel.grid.size_count = 2048 - gpu.memory.allocations = 1073741824 bytes (1 GiB) - maximum gpu.memory.copies value = 16777216 bytes (16 MiB) - device GPU utilization reaches 0.91 - process GPU utilization reaches 0.90  This indicates that attachment, event transport, OTLP export, and metric aggregation are working, while cudaLaunchKernel argument decoding is incorrect.  The current x86 branch in opentelemetry-gpu-collector/internal/ebpf/bpf/gpuevent.c reads block_x from the high half of PT_REGS_PARM3. For the x86_64 SysV ABI, PT_REGS_PARM3 contains gridDim.z plus padding; blockDim.x/y are in PT_REGS_PARM4 and blockDim.z is in PT_REGS_PARM5. This explains the observed zero block-size product and the downstream zero core-usage estimate.  ### Steps to reproduce  1. Run the OpenTelemetry GPU Collector on Linux x86_64 with host PID visibility, NVIDIA GPU access, and the documented e
+
+- **Issue #1319** (2026-07-12): **Bug: Disable metrics not working**
+  *Symptoms*: ### Component  OpenLIT Python SDK  ### What happened?  The parameter disable_metrics is not working, even when setting it to True, my meter provider is still trying to export metrics  ### Steps to reproduce  openlit.init(disable_metrics=True_  ### Expected behavior  It should not create and try to export metrics  ### Environment  _No response_  ### Additional context  _No response_  ### Pre-submission checklist  - [x] I searched existing issues and didn't find a duplicate  ### Are you willing to submit PR?  _No response_
+  **Post-Mortem & Fix Analysis**:
+  > Hi, I would like to take this one!   I'll trace where disable_metrics is read in openlit.init() and check whether it gates meter provider initialization or just sets a flag that isn't checked before the provider starts. Will add a test confirming no meter provider is created when disable_metrics=True.  Could you please assign this to me?
+  > @VanshikaMehta18 assigned this to you now
+
+- **Issue #1316** (2026-07-02): **Bug: Agents dashboard: SDK-instrumented agents disappear ~10 min after last span, ignoring the selected time range (24H/7D/…)**
+  *Symptoms*: ### Component  OpenLIT  ### What happened?  On the **Agents** dashboard, agents instrumented **via the SDK** (no OpenLIT controller / no eBPF auto-instrumentation) **drop off the list ~10 minutes after their last span**, even though the time-range selector is set to **24H** (or 7D/1M/3M). The spans are still in ClickHouse and well within the selected window.  The UI presents a 24H/7D/1M/3M selector, implying the list is bounded by that range, but SDK-source rows are actually bounded by a hardcoded 10-minute staleness guard.  **Root cause** — `src/client/src/lib/platform/agents/index.ts`, `loadAgents()`:      // Hide stale SDK-only rows... Controller-source rows are left untouched     // because they get refreshed every controller heartbeat (~10s).     where.push(`(s.source != 'sdk' OR s.last_seen >= now() - INTERVAL 10 MINUTE)`);  For `source = 'sdk'` rows this AND-s in a hardcoded 10-minute upper bound that overrides the user-selected `start`. Controller-managed rows bypass it (refreshed by ~10s heartbeats), so only SDK-only deployments are affected. (Related: `agents/materialize.ts` sets `SDK_DISCOVERY_LOOKBACK_MINUTES = 30`, but the 10-minute guard above is the tighter, binding one.)  **Evidence** (via ClickHouse `system.query_log` + hitting the internal API): - `GET /api/agents?start=<now-24h>` → **0 agents** when the newest span is ~17 min old (data present in ClickHouse, within 24h). - Immediately after emitting a fresh span → the same agents return.  ### Steps to repro
+
+- **Issue #1287** (2026-06-29): **Bug: LangGraph instrumentation writes non-assistant messages (e.g. HumanMessage) to gen_ai.output.messages**
+  *Symptoms*: ### Component  OpenLIT  ### What happened?  Summary  Two issues:  1. The LangGraph instrumentation in `sdk\python\src\openlit\instrumentation\langgraph\utils.py:196` incorrectly writes messages with non-assistant roles. Per the OTel GenAI semantic convention, only assistant/AI messages should appear in output—human/user messages belong exclusively in gen_ai.input.messages.  2. About the role, in Langchain we have a mapping - `openlit\sdk\python\src\openlit\instrumentation\langchain\utils.py:93`, but there's no such mapping in Langgraph.   ### Steps to reproduce  Instrument a LangGraph application with openlit Have a graph node return {"messages": [..., HumanMessage(content="...")]} as its result Observe the span for that node—[gen_ai.output.messages] will contain {"role": "human", "content": "..."}  ### Expected behavior  Only assistant/ai messages should be written to [gen_ai.output.messages] Human/user messages should only appear in [gen_ai.input.messages] LangChain-native roles should be mapped to OTel convention roles consistently across all instrumentations  FYR: https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-agent-spans.md#invoke-agent-client-span   ### Environment  the latest version.  ### Additional context  _No response_  ### Pre-submission checklist  - [x] I searched existing issues and didn't find a duplicate  ### Are you willing to submit PR?  None
+
+- **Issue #1282** (2026-06-30): **Bug: VictoriaMetrics Stack should be renamed to Victoria Stack**
+  *Symptoms*: ### Component  OpenLIT  ### What happened?  `VictoriaMetrics Stack` was incorrectly named when destination was initially added.  VictoriaMetrics will stick to `Victoria Stack` name in their docs and references, to reduce confisuon with metrics only.  ### Steps to reproduce  Check https://docs.openlit.io/latest/sdk/destinations/victoriametrics-stack  ### Expected behavior  The page should mention `Victoria Stack` instead of  `VictoriaMetrics Stack`.  ### Environment  _No response_  ### Additional context  _No response_  ### Pre-submission checklist  - [x] I searched existing issues and didn't find a duplicate  ### Are you willing to submit PR?  Yes, I am willing to submit a PR!
+  **Post-Mortem & Fix Analysis**:
+  > I checked the docs source. The term "VictoriaMetrics stack" appears in:  1. `docs/latest/sdk/destinations/victoriametrics-stack.mdx` — frontmatter title: "VictoriaMetrics stack" 2. `docs/snippets/destinations/victoriametrics-stack/intro.mdx` — heading and body text (3 occurrences) 3. File/directory names: `victoriametrics-stack.mdx` and `victoriametrics-stack/`  The rename to "Victoria Stack" needs to update:  - Frontmatter title in `.mdx` → `"Victoria Stack"` - All prose references in `intro.mdx` → "Victoria Stack" (lowercase "stack") - Any sidebar/nav configuration that references the old path  The file/directory rename (`victoriametrics-stack` → `victoria-stack`) is a separate concern — it would require updating internal cross-references and may be better as a follow-up PR to avoid breaking existing links.  Happy to open a PR covering the prose and frontmatter changes if there are no other in-flight changes to these files.
+  > Hi @cschanhniem! Thanks for your reply! I have no intent on changing the directory name to keep links unchanged. See PR https://github.com/openlit/openlit/pull/1283
+
+- **Issue #1251** (2026-06-03): **Bug: The GPU Collector does not build on native arm64**
+  *Symptoms*: ### Component  OpenTelemetry GPU Collector  ### What happened?  For arm64 support, cross-compilation from amd64 using Linux header manipulated in the build process (https://github.com/openlit/openlit/pull/1213) was chosen over a clean build system using native runners (https://github.com/openlit/openlit/pull/1215). As a result native builds (`make all`) no longer work on an arm64 host as is.  The generated vmliunx.h file is fundamentally platform specific. Cross-compilation of arm64 on amd64 is currently "hacked" to work by manipulating that file. Unfortunately, this "shim" only works one way. I don't see a way how the "shim" could be made to work both ways based on how the structures are defined in the vmlinux.h header for the relevant platforms.  Two possibilities:  1. Commit pre-generated vmlinux.h headers to the repository and select the matching one at compile-time based on __TARGET_ARCH_x86/__TARGET_ARCH_arm64. Downside: committed headers may potentially go out of date. 2. Modify the code to only attempt cross-compilation on amd64 (where the vmlinux.h hack works) while on arm64 only the native build is performed. Cross-compilation is one way but at least native builds work.  Both approaches will still need native runners for CI to either generate the native vmlinux.h (or at least verify it) or to verify the native build on arm64 works.   ### Steps to reproduce  1. Run `cd openlit/opentelemetry-gpu-collector && make all` on an arm64 host  ### Expected behavior  1. Build 
+  **Post-Mortem & Fix Analysis**:
+  > @cbirkhold I kicked off a new release (0.0.6)
+  > https://github.com/openlit/openlit/actions/runs/26869896895
+
+### D4: Resource Lifecycle & Leak Defenses
+- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
+
+### D5: Boundary Deserialization & Encoding
+- Schema deserialization, payload validation, and untrusted input guards.
+
+### D6: Cross-Platform & Runtime Gotchas
+- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
+
+### D7: Build, CI/CD, Deployment & Tooling
+- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
+
+### D8: Forensic Bug Fixes & Real Production Code Patches
+Observed empirical fixes and code patches:
+
+### Incident Patch 1: `d6938906` (2026-09-29)
+**Commit Message**: docs(sdk/typescript): fix broken docs.openlit.io links in README (#1678)
+
+Co-authored-by: drgg <224951927+drgg@users.noreply.github.com>
+Co-authored-by: Claude Opus 5.5 <noreply@anthropic.com>
+Co-authored-by: Aman Agarwal <agarwal.aman041@gmail.com>
+
+**File**: `sdk/typescript/README.md` (modified, +35/-35)
+```diff
+@@ -34,52 +34,52 @@ This project proudly follows and maintains the [Semantic Conventions](https://gi
+ 
+ | LLMs                                                                                        |
+ | ------------------------------------------------------------------------------------------- |
+-| [✅ OpenAI](https://docs.openlit.io/latest/integrations/openai)                             |
+-| [✅ Anthropic](https://docs.openlit.io/latest/integrations/anthropic)                       |
+-| [✅ Cohere](https://docs.openlit.io/latest/integrations/cohere)                             |
+-| [✅ Groq](https://docs.openlit.io/latest/integrations/groq)                                 |
+-| [✅ Mistral](https://docs.openlit.io/latest/integrations/mistral)                           |
+-| [✅ Google AI Studio](https://docs.openlit.io/latest/integrations/google-ai-studio)         |
+-| [✅ Google Vertex AI](https://docs.openlit.io/latest/integrations/vertex-ai) *(via `@google-cloud/vertexai`)* |
+-| [✅ Together AI](https://docs.openlit.io/latest/integrations/together)                      |
+-| [✅ Ollama](https://docs.openlit.io/latest/integrations/ollama)                             |
+-| [✅ AWS Bedrock](https://docs.openlit.io/latest/integrations/bedrock)                        |
+-| [✅ Hugging Face](https://docs.openlit.io/latest/integrations/huggingface) *(Inference API + local Transformers.js)* |
+-| [✅ Replicate](https://docs.openlit.io/latest/integrations/replicate)                      |
+-| [✅ Azure OpenAI](https://docs.openlit.io/latest/integrations/azure-openai) *(via OpenAI SDK)* |
++| [✅ OpenAI](https://docs.openlit.io/latest/sdk/integrations/openai)                         |
++| [✅ Anthropic](https://docs.openlit.io/latest/sdk/integrations/anthropic)                   |
++| [✅ Cohere](https://docs.openlit.io/latest/sdk/integrations/cohere)                         |
++| [✅ Groq](https://docs.openlit.io/latest/sdk/integrations/groq)                             |
++| [✅ Mistral](https://docs.openlit.io/latest/sdk/integrations/mistral)                       |
++| [✅ Google AI Studio](https://docs.openlit.io/latest/sdk/integrations/google-ai-studio)     |
++| [✅ Google Vertex AI](https://docs.openlit.io/latest/sdk/integrations/vertexai) *(via `@google-cloud/vertexai`)* |
++| [✅ Together AI](https://docs.openlit.io/latest/sdk/integrations/together)                  |
++| [✅ Ollama](https://docs.openlit.io/latest/sdk/integrations/ollama)                         |
++| [✅ AWS Bedrock](https://docs.openlit.io/latest/sdk/integrations/bedrock)                    |
++| [✅ Hugging Face](https://docs.openlit.io/latest/sdk/integrations/huggingface) *(Inference API + local Transformers.js)* |
++| [✅ Replicate](https://docs.openlit.io/latest/sdk/integrations/replicate)                  |
++| [✅ Azure OpenAI](https://docs.openlit.io/latest/sdk/integrations/azure-openai) *(via OpenAI SDK)* |
+ 
+ | Audio / Speech                                                                              |
+ | ------------------------------------------------------------------------------------------- |
+ | [✅ ElevenLabs](https://docs.openlit.io/latest/sdk/integrations/elevenlabs)                   |
+ 
+ | Vector Databases                                                                            |
+ | ------------------------------------------------------------------------------------------- |
+-| [✅ Chroma](https://docs.openlit.io/latest/integrations/chromadb)                           |
+-| [✅ Pinecone](https://docs.openlit.io/latest/integrations/pinecone)                         |
+-| [✅ Qdrant](https://docs.openlit.io/latest/integrations/qdrant)                             |
+-| [✅ Milvus](https://docs.openlit.io/latest/integrations/milvus)                             |
++| [✅ Chroma](https://docs.openlit.io/latest/sdk/integrations/chromadb)                       |
++| [✅ Pinecone](https://docs.openlit.io/latest/sdk/integrations/pinecone)                     |
++| [✅ Qdrant](https://docs.openlit.io/
+```
+
+---
+
+### Incident Patch 2: `c663b113` (2026-09-29)
+**Commit Message**: feat(client): add Memcode memory connector (#1632)
+
+Co-authored-by: amanagarwal042 <patcher@openlit.io>
+Co-authored-by: AmanAgarwal041 <agarwal.aman041@gmail.com>
+Co-authored-by: Cursor <cursoragent@cursor.com>
+
+**File**: `docs/latest/openlit/organisation/connectors.mdx` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++---
++title: 'Connectors'
++sidebarTitle: 'Connectors'
++description: 'Connect OpenLIT to ClickHouse and OpenPlait-backed observability backends — atomic connectors, actions, and the roadmap for a unified connector registry'
++icon: 'plug'
++---
++
++**Connectors** are how OpenLIT attaches to data systems. Each connector is an **atomic** integration: one backend, one credential set, and a clear set of **actions** (test connection, validate AI telemetry, bind signals, manage secrets).
++
++Open the connectors experience from **Organisation → Project → Connectors** (Data sources). Always select the correct [project](/latest/openlit/organisation/projects) and [environment](/latest/openlit/organisation/environments) first — connectors belong to the project, not the organisation root.
++
++<Frame>
++  <img src="/images/organisation/connectors-list.png" alt="OpenLIT Connectors page showing configured connectors and the connector catalog" />
++</Frame>
++
++<Info>
++Connectors are the long-term integration point in OpenLIT: **data-source connectors** for telemetry, **memory connectors** for agent memory providers, with the same registry model expanding to notifications and other action types over time. Several read paths use portable [@openplait](https://github.com/openlit/openplait) adapters so query behavior stays consistent across backends.
++</Info>
++
++## Mental model
++
++```mermaid
++flowchart LR
++  subgraph org [Organisation]
++    proj[Project]
++  end
++  subgraph env [Environment]
++    bindT[traces binding]
++    bindL[logs binding]
++    bindM[metrics binding]
++  end
++  proj --> env
++  bindT --> C1[Connector A]
++  bindL --> C2[Connector B]
++  bindM --> C3[Connector C]
++  C1 --> Tempo[Tempo]
++  C2 --> Loki[Loki]
++  C3 --> Prom[Prometheus]
++```
++
++- **Atomic connectors** — never a multi-backend blob. One Tempo instance, one Loki instance, one Prometheus endpoint.
++- **Signal routing** — each of traces / logs / metrics is bound independently. See [Signal routing](/latest/openlit/organisation/signal-routing).
++- **Database Config** — ClickHouse lives as a Database Config and appears as the built-in connector. See [Database Config](/latest/openlit/organisation/database-config).
++
++## Supported connectors (OpenLIT + OpenPlait)
++
++These are the connectors available in open-source OpenLIT. OpenPlait packages power the portable query adapters for ClickHouse, Tempo, Loki, Prometheus, and Jaeger.
++
++### Built-in app store
++
++| Connector | Package / implementation | Signals | What it’s for |
++| --- | --- | --- | --- |
++| **ClickHouse** | Database Config + `@openplait/adapter-clickhouse` | traces, logs, metrics (+ intelligence) | Default store; full correlation, raw SQL, evals metadata, vault |
++
++### Data-source connectors
++
++| Connector | Package / implementation | Signals | What it’s for |
++| --- | --- | --- | --- |
++| **Grafana Tempo** | `@openplait/adapter-tempo` | traces | TraceQL search, trace tree, span events |
++| **Grafana Loki** | `@openplait/adapter-loki` | logs | LogQL logs; correlate by trace id / service |
++| **Prometheus** | `@openplait/adapter-prometheus` | metrics | PromQL HTTP API (also works with Prometheus-compatible endpoints such as Mimir when you point at their query URL) |
++| **Jaeger** | `@openplait/adapter-jaeger` | traces | Jaeger Query HTTP API; sampled in-process aggregates |
++
++<Tip>
++Prometheus-compatible APIs (for example Grafana Mimir’s PromQL endpoint) use the **Prometheus** connector — there is no separate Mimir connector type in open-source OpenLIT.
++</Tip>
++
++## Capability matrix
++
++| Connector | Signals | Trace tree | Span events | Server aggregation | Raw SQL | Cross-signal correlation |
++| --- | --- | --- | --- | --- | --- | --- |
++| ClickHouse | traces, logs, metrics | Yes | Yes | Yes | Yes | Full |
++| Tempo | traces | Yes | Yes | No* | No | trace / span / service |
++| Loki | logs | — | — | No | No | trace id, service |
++| Prometheus | metrics | — | — | Yes | No | — |
++| Jaeger | traces | Yes | Yes |
+```
+
+**File**: `src/client/src/__tests__/helpers/client/database-config.test.ts` (modified, +8/-0)
+```diff
+@@ -103,6 +103,14 @@ describe('fetchDatabaseConfigList', () => {
+     expect(successCb).toHaveBeenCalledWith([{ id: 'db1' }]);
+     expect(mockSetList).toHaveBeenCalledWith([{ id: 'db1' }]);
+   });
++
++  it('coerces non-array payloads to an empty list', async () => {
++    (asaw as jest.Mock).mockResolvedValue([null, '<html>login</html>']);
++    const successCb = jest.fn();
++    await fetchDatabaseConfigList(successCb);
++    expect(successCb).toHaveBeenCalledWith([]);
++    expect(mockSetList).toHaveBeenCalledWith([]);
++  });
+ });
+ 
+ describe('pingActiveDatabaseConfig', () => {
+```
+
+**File**: `src/client/src/__tests__/lib/platform/connectors/coverage.test.ts` (modified, +28/-1)
+```diff
+@@ -1,13 +1,19 @@
+ import { ensureAdaptersRegistered, __resetBootstrapForTests } from "@/lib/platform/connectors/datasource/bootstrap";
++import { ensureMemoryAdaptersRegistered, __resetMemoryBootstrapForTests } from "@/lib/platform/connectors/memory/bootstrap";
+ import { __resetRegistryForTests, getAdapterFactory, listSourceTypeDescriptors } from "@/lib/platform/connectors/datasource/registry";
+-import { listConnectorTypes } from "@/lib/platform/connectors/registry";
++import { __resetMemoryRegistryForTests, hasMemoryAdapterFactory } from "@/lib/platform/connectors/memory/registry";
++import { __resetConnectorRegistryForTests, listConnectorTypes } from "@/lib/platform/connectors/registry";
++import { connectorIconPath } from "@/lib/platform/connectors/icons";
+ 
+ jest.mock("@/lib/session", () => ({ getCurrentUser: jest.fn() }));
+ 
+ describe("connector coverage", () => {
+ 	afterEach(() => {
+ 		__resetBootstrapForTests();
+ 		__resetRegistryForTests();
++		__resetMemoryBootstrapForTests();
++		__resetMemoryRegistryForTests();
++		__resetConnectorRegistryForTests();
+ 	});
+ 
+ 	it("exposes every atomic collector through the adapter and connector registries", () => {
+@@ -27,4 +33,25 @@ describe("connector coverage", () => {
+ 		const registeredTypes = new Set(connectorTypes.map((descriptor) => descriptor.type));
+ 		for (const descriptor of descriptors) expect(registeredTypes.has(descriptor.type)).toBe(true);
+ 	});
++
++	it("exposes memory connectors through the adapter and connector registries", () => {
++		ensureMemoryAdaptersRegistered();
++		expect(hasMemoryAdapterFactory("claude")).toBe(true);
++		expect(hasMemoryAdapterFactory("mem0")).toBe(true);
++		expect(hasMemoryAdapterFactory("memcode")).toBe(true);
++		expect(hasMemoryAdapterFactory("zep")).toBe(true);
++		expect(listConnectorTypes("memory").map((item) => item.type).sort()).toEqual([
++			"claude",
++			"mem0",
++			"memcode",
++			"zep",
++		]);
++	});
++
++	it("maps memory vendors to local brand assets", () => {
++		expect(connectorIconPath("claude")).toBe("/images/connectors/claude.svg");
++		expect(connectorIconPath("mem0")).toBe("/images/connectors/mem0.svg");
++		expect(connectorIconPath("memcode")).toBe("/images/connectors/memcode.png");
++		expect(connectorIconPath("zep")).toBe("/images/connectors/zep.svg");
++	});
+ });
+```
+
+**File**: `src/client/src/__tests__/lib/platform/connectors/memory-adapters.test.ts` (modified, +604/-2)
+```diff
+@@ -26,19 +26,21 @@ const mockSafeFetch = jest.fn();
+ 
+ import { ClaudeAdapter, claudeAdapterFactory } from "@/lib/platform/connectors/memory/claude/adapter";
+ import { Mem0Adapter, mem0AdapterFactory } from "@/lib/platform/connectors/memory/mem0/adapter";
++import { MemcodeAdapter, memcodeAdapterFactory } from "@/lib/platform/connectors/memory/memcode/adapter";
+ import { ZepAdapter, zepAdapterFactory } from "@/lib/platform/connectors/memory/zep/adapter";
+ import { SourceResponseError } from "@/lib/platform/connectors/datasource/http/safe-fetch";
+ import { resolveSourceSecret } from "@/lib/platform/connectors/datasource/http/secret";
+ import type { MemorySourceDescriptor } from "@/lib/platform/connectors/memory/types";
+ 
+-function defaultUrl(type: "claude" | "mem0" | "zep"): string {
++function defaultUrl(type: "claude" | "mem0" | "memcode" | "zep"): string {
+ 	if (type === "claude") return "https://api.anthropic.com";
+ 	if (type === "mem0") return "https://api.mem0.ai";
++	if (type === "memcode") return "https://memory.memcode.in";
+ 	return "https://api.getzep.com";
+ }
+ 
+ function descriptor(
+-	type: "claude" | "mem0" | "zep",
++	type: "claude" | "mem0" | "memcode" | "zep",
+ 	settings: Record<string, unknown> = {}
+ ): MemorySourceDescriptor {
+ 	return {
+@@ -755,6 +757,606 @@ describe("Mem0 adapter", () => {
+ 	});
+ });
+ 
++describe("Memcode adapter", () => {
++	it("describes list with no page filters at all", () => {
++		const described = memcodeAdapterFactory.describe();
++		expect(described.type).toBe("memcode");
++		expect(described.capabilities).toEqual({
++			add: true,
++			search: true,
++			get: false,
++			list: true,
++			update: false,
++			delete: false,
++			feedback: false,
++		});
++		expect(described.configFields.map((field) => field.key)).toEqual(
++			expect.arrayContaining(["url", "apiKey"])
++		);
++		// The API key is the tenant: Memory API v2 discards a client-sent user_id
++		// in production, so offering a user control would be a lie.
++		expect(described.filterFields).toEqual([]);
++		// v2 has no get-by-id route, so a listed record is the whole record and
++		// the detail sheet must not warn about a fetch it never needed.
++		expect(described.detailFromList).toBe(true);
++		expect(described.docsUrl).toBe("https://memcode.in/docs");
++	});
++
++	it("probes liveness then GET /v2/test, never the list route", async () => {
++		mockSafeFetch
++			.mockResolvedValueOnce({ status: "ok", data: { status: "ready" } })
++			.mockResolvedValueOnce({
++				status: "ok",
++				data: {
++					authenticated: true,
++					principal_type: "legacy_user",
++					user_id: "user-123",
++					username: "ishaan",
++				},
++			});
++		const adapter = new MemcodeAdapter(descriptor("memcode"));
++		await expect(adapter.healthCheck()).resolves.toEqual(
++			expect.objectContaining({ ok: true })
++		);
++		const urls = mockSafeFetch.mock.calls.map((call) => String(call[0]));
++		expect(urls).toEqual([
++			"https://memory.memcode.in/health",
++			"https://memory.memcode.in/v2/test",
++		]);
++		// A limit=1 list still materialises the whole account server-side, so it
++		// must never be the probe.
++		expect(urls.some((url) => url.includes("/v2/memory"))).toBe(false);
++		expect(mockSafeFetch.mock.calls[1][1].headers.Authorization).toBe(
++			"Bearer secret-key"
++		);
++	});
++
++	it("tells the operator when a deployment predates GET /v2/test", async () => {
++		mockSafeFetch
++			.mockResolvedValueOnce({ status: "ok", data: { status: "ready" } })
++			.mockRejectedValueOnce(new SourceResponseError(404, "Not Found"));
++		const adapter = new MemcodeAdapter(descriptor("memcode"));
++		await expect(adapter.healthCheck()).resolves.toEqual(
++			expect.objectContaining({
++				ok: false,
++				message: expect.stringMatching(/\/v2\/test/),
++			})
++		);
++	});
++
++	it("reports a rejected key instead of passing the connection", async () => {
++		mockSafeFetch
++			.mockResolvedValueOnce({ status: "ok", data: { status: "ready" } })
++			.mockRejectedValueOnce(new SourceResponseError(401, "invalid api key
+```
+
+**File**: `src/client/src/__tests__/lib/platform/connectors/memory-bootstrap.test.ts` (modified, +4/-1)
+```diff
+@@ -24,15 +24,17 @@ beforeEach(() => {
+ });
+ 
+ describe("memory connector bootstrap", () => {
+-	it("registers Claude, Mem0, and Zep exactly once", () => {
++	it("registers Claude, Mem0, MemCode, and Zep exactly once", () => {
+ 		ensureMemoryAdaptersRegistered();
+ 		ensureMemoryAdaptersRegistered();
+ 		expect(hasMemoryAdapterFactory("claude")).toBe(true);
+ 		expect(hasMemoryAdapterFactory("mem0")).toBe(true);
++		expect(hasMemoryAdapterFactory("memcode")).toBe(true);
+ 		expect(hasMemoryAdapterFactory("zep")).toBe(true);
+ 		expect(listMemoryTypeDescriptors().map((item) => item.type).sort()).toEqual([
+ 			"claude",
+ 			"mem0",
++			"memcode",
+ 			"zep",
+ 		]);
+ 	});
+@@ -61,6 +63,7 @@ describe("memory connector bootstrap", () => {
+ 		expect(listConnectorTypes("memory").map((item) => item.type).sort()).toEqual([
+ 			"claude",
+ 			"mem0",
++			"memcode",
+ 			"zep",
+ 		]);
+ 		expect(listConnectorTypes("datasource")).toHaveLength(0);
+```
+
+---
+
+### Incident Patch 3: `a098764f` (2026-09-28)
+**Commit Message**: docs: send OpenLIT traces to Oodle from the collector (#1557)
+
+Co-authored-by: Aman Agarwal <agarwal.aman041@gmail.com>
+
+**File**: `docs/latest/sdk/destinations/oodle.mdx` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ ---
+ title: 'Oodle'
+-description: 'Send OpenLIT AI observability data to Oodle for high-scale, cost-efficient LLM metrics and log storage'
++description: 'Send OpenLIT traces and metrics to Oodle for high-scale, cost-efficient agent observability'
+ ---
+ 
+ import Intro from '/snippets/destinations/oodle/intro.mdx';
+```
+
+**File**: `docs/snippets/destinations/oodle/intro.mdx` (modified, +9/-8)
+```diff
+@@ -1,10 +1,14 @@
+-To send OpenTelemetry metrics generated by OpenLIT from your AI Application to Oodle, follow the below steps.
++<Frame>
++  <img src="/images/oodle-agent-observability.png" />
++</Frame>
++
++To send OpenTelemetry traces and metrics generated by OpenLIT from your AI Application to Oodle, follow the below steps.
+ 
+ ### 1. Get your Oodle Credentials
+ 
+ 1. **Sign in to your Oodle account**
+ 2. **Get your Oodle credentials**:
+-   - **OODLE_ENDPOINT**: Your Oodle metrics ingestion endpoint
++   - **OODLE_ENDPOINT**: Your Oodle OTLP ingestion endpoint
+    - **INSTANCE_ID**: Your Oodle instance identifier
+    - **API_KEY**: Your Oodle API key for authentication
+ 
+@@ -30,13 +34,10 @@ processors:
+ 
+ exporters:
+   otlphttp/oodle:
+-    metrics_endpoint: "https://OODLE_ENDPOINT/v1/otlp/metrics/INSTANCE_ID"
++    endpoint: "https://OODLE_ENDPOINT"
+     headers:
++      X-OODLE-INSTANCE: "INSTANCE_ID"
+       X-API-KEY: "API_KEY"
+-  debug:
+-    verbosity: detailed
+-    sampling_initial: 5
+-    sampling_thereafter: 200
+ 
+ service:
+   pipelines:
+@@ -47,7 +48,7 @@ service:
+     traces:
+       receivers: [otlp]
+       processors: [batch]
+-      exporters: [debug]
++      exporters: [otlphttp/oodle]
+ ```
+ </Accordion>
+ 
+```
+
+---
+
+### Incident Patch 4: `5c6b95d2` (2026-09-28)
+**Commit Message**: fix(client): attribute Perplexity requests (#1628)
+
+Co-authored-by: Aman Agarwal <agarwal.aman041@gmail.com>
+
+**File**: `src/client/src/__tests__/lib/platform/chat/stream.test.ts` (modified, +9/-0)
+```diff
+@@ -101,6 +101,15 @@ describe('getModelInstance', () => {
+     expect(instance).toBeDefined();
+   });
+ 
++  it('attributes Perplexity requests to OpenLIT', () => {
++    getModelInstance('perplexity', 'key', 'sonar');
++    expect(createOpenAI).toHaveBeenCalledWith({
++      baseURL: 'https://api.perplexity.ai',
++      apiKey: 'key',
++      headers: { 'X-Pplx-Integration': 'openlit' },
++    });
++  });
++
+   it('supports all built-in providers including MiniMax', () => {
+     const providers = [
+       'openai', 'anthropic', 'google', 'mistral', 'cohere',
+```
+
+**File**: `src/client/src/__tests__/lib/platform/evaluation/run-evaluation.test.ts` (modified, +5/-1)
+```diff
+@@ -96,7 +96,11 @@ describe('runEvaluation — provider routing', () => {
+ 
+   it('creates OpenAI-compatible model for provider=perplexity', async () => {
+     await runEvaluation({ ...BASE_PARAMS, provider: 'perplexity' });
+-    expect(createOpenAI).toHaveBeenCalledWith(expect.objectContaining({ baseURL: 'https://api.perplexity.ai' }));
++    expect(createOpenAI).toHaveBeenCalledWith({
++      baseURL: 'https://api.perplexity.ai',
++      apiKey: 'sk-test',
++      headers: { 'X-Pplx-Integration': 'openlit' },
++    });
+   });
+ 
+   it('creates OpenAI-compatible model for provider=deepseek', async () => {
+```
+
+**File**: `src/client/src/__tests__/lib/platform/openground/ai-sdk-adapter.test.ts` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++jest.mock('ai', () => ({ generateText: jest.fn() }));
++jest.mock('@ai-sdk/openai', () => ({ createOpenAI: jest.fn() }));
++jest.mock('@ai-sdk/anthropic', () => ({ createAnthropic: jest.fn() }));
++jest.mock('@ai-sdk/google', () => ({ google: jest.fn() }));
++jest.mock('@ai-sdk/mistral', () => ({ createMistral: jest.fn() }));
++jest.mock('@ai-sdk/cohere', () => ({ createCohere: jest.fn() }));
++
++import { generateText } from 'ai';
++import { createOpenAI } from '@ai-sdk/openai';
++import { AISdkAdapter } from '@/lib/platform/openground/ai-sdk-adapter';
++
++it('attributes Perplexity requests to OpenLIT', async () => {
++  const model = {};
++  (createOpenAI as jest.Mock).mockReturnValue(() => model);
++  (generateText as jest.Mock).mockResolvedValue({
++    text: 'response',
++    usage: { inputTokens: 1, outputTokens: 1 },
++    finishReason: 'stop',
++  });
++
++  await AISdkAdapter.generateCompletion({
++    provider: 'perplexity',
++    model: 'sonar',
++    apiKey: 'key',
++  });
++
++  expect(createOpenAI).toHaveBeenCalledWith({
++    baseURL: 'https://api.perplexity.ai',
++    apiKey: 'key',
++    headers: { 'X-Pplx-Integration': 'openlit' },
++  });
++});
+```
+
+**File**: `src/client/src/lib/platform/chat/stream.ts` (modified, +5/-1)
+```diff
+@@ -27,7 +27,11 @@ const providerFactories: Record<string, ProviderFactory> = {
+ 	mistral: (apiKey) => createMistral({ apiKey }),
+ 	cohere: (apiKey) => createCohere({ apiKey }),
+ 	groq: (apiKey) => createOpenAI({ baseURL: "https://api.groq.com/openai/v1", apiKey }),
+-	perplexity: (apiKey) => createOpenAI({ baseURL: "https://api.perplexity.ai", apiKey }),
++	perplexity: (apiKey) => createOpenAI({
++		baseURL: "https://api.perplexity.ai",
++		apiKey,
++		headers: { "X-Pplx-Integration": "openlit" },
++	}),
+ 	azure: (apiKey) => createOpenAI({
+ 		baseURL: process.env.AZURE_OPENAI_ENDPOINT || "https://your-resource.openai.azure.com",
+ 		apiKey,
+```
+
+**File**: `src/client/src/lib/platform/evaluation/run-evaluation.ts` (modified, +1/-0)
+```diff
+@@ -87,6 +87,7 @@ function getModel(provider: string, model: string, apiKey: string) {
+ 			return createOpenAI({
+ 				baseURL: "https://api.perplexity.ai",
+ 				apiKey,
++				headers: { "X-Pplx-Integration": "openlit" },
+ 			})(model);
+ 		case "deepseek":
+ 			return createOpenAI({
+```
+
+---
+
+### Incident Patch 5: `9cbcc324` (2026-09-15)
+**Commit Message**: fix(vertexai): track reasoning tokens from thoughts_token_count (#1544)
+
+**File**: `sdk/python/src/openlit/instrumentation/vertexai/async_vertexai.py` (modified, +1/-0)
+```diff
+@@ -59,6 +59,7 @@ def __init__(
+             self._llmresponse = ""
+             self._input_tokens = 0
+             self._output_tokens = 0
++            self._reasoning_tokens = 0
+             self._cache_read_input_tokens = 0
+             self._cache_creation_input_tokens = 0
+             self._kwargs = kwargs
+```
+
+**File**: `sdk/python/src/openlit/instrumentation/vertexai/utils.py` (modified, +23/-0)
+```diff
+@@ -229,6 +229,10 @@ def emit_inference_event(
+                 attributes[SemanticConvention.GEN_AI_USAGE_INPUT_TOKENS] = value
+             elif key == "output_tokens":
+                 attributes[SemanticConvention.GEN_AI_USAGE_OUTPUT_TOKENS] = value
++            elif key == "reasoning_tokens":
++                # Vertex/Gemini: thoughts_token_count is separate from
++                # candidates_token_count, not a subset of output tokens.
++                attributes[SemanticConvention.GEN_AI_USAGE_REASONING_TOKENS] = value
+             elif key == "cache_read_input_tokens":
+                 attributes[SemanticConvention.GEN_AI_USAGE_CACHE_READ_INPUT_TOKENS] = (
+                     value
+@@ -277,6 +281,9 @@ def process_chunk(scope, chunk):
+     scope._output_tokens = (
+         getattr(usage_metadata, "candidates_token_count", 0) if usage_metadata else 0
+     )
++    scope._reasoning_tokens = (
++        getattr(usage_metadata, "thoughts_token_count", 0) if usage_metadata else 0
++    ) or 0
+     scope._cache_read_input_tokens = (
+         getattr(usage_metadata, "cached_content_token_count", 0)
+         if usage_metadata
+@@ -424,6 +431,17 @@ def common_chat_logic(
+     )
+     scope._span.set_attribute(SemanticConvention.GEN_AI_USAGE_COST, cost)
+ 
++    # Reasoning tokens
++    if (
++        hasattr(scope, "_reasoning_tokens")
++        and scope._reasoning_tokens
++        and scope._reasoning_tokens > 0
++    ):
++        scope._span.set_attribute(
++            SemanticConvention.GEN_AI_USAGE_REASONING_TOKENS,
++            scope._reasoning_tokens,
++        )
++
+     # OTel cached token attributes (set even when 0)
+     if hasattr(scope, "_cache_read_input_tokens"):
+         scope._span.set_attribute(
+@@ -529,6 +547,8 @@ def common_chat_logic(
+                 "output_tokens": output_tokens,
+                 **version_extras,
+             }
++            if hasattr(scope, "_reasoning_tokens") and scope._reasoning_tokens:
++                extra["reasoning_tokens"] = scope._reasoning_tokens
+             if capture_message_content and system_instr:
+                 extra["system_instructions"] = system_instr
+             emit_inference_event(
+@@ -642,6 +662,9 @@ def process_chat_response(
+     scope._output_tokens = (
+         getattr(usage_metadata, "candidates_token_count", 0) if usage_metadata else 0
+     )
++    scope._reasoning_tokens = (
++        getattr(usage_metadata, "thoughts_token_count", 0) if usage_metadata else 0
++    ) or 0
+     scope._cache_read_input_tokens = (
+         getattr(usage_metadata, "cached_content_token_count", 0)
+         if usage_metadata
+```
+
+**File**: `sdk/python/src/openlit/instrumentation/vertexai/vertexai.py` (modified, +1/-0)
+```diff
+@@ -59,6 +59,7 @@ def __init__(
+             self._llmresponse = ""
+             self._input_tokens = 0
+             self._output_tokens = 0
++            self._reasoning_tokens = 0
+             self._cache_read_input_tokens = 0
+             self._cache_creation_input_tokens = 0
+             self._kwargs = kwargs
+```
+
+**File**: `sdk/python/tests/test_vertexai_reasoning_tokens.py` (added, +253/-0)
+```diff
+@@ -0,0 +1,253 @@
++# pylint: disable=protected-access, missing-function-docstring
++"""Vertex AI thoughts_token_count is not a subset of output tokens.
++
++Gemini/Vertex report thinking separately from candidate output:
++
++  * ``candidates_token_count`` = visible output only
++  * ``thoughts_token_count`` = thinking tokens (an addend to total, not a
++    facet of output)
++  * ``total_token_count`` = prompt + candidates + thoughts (+ tool-use)
++
++That is the opposite of the OpenAI #1537 subset invariant, where reasoning
++is already inside ``output_tokens``. These tests lock the Vertex instrumentor
++to the google_ai_studio pattern: emit ``gen_ai.usage.reasoning_tokens`` when
++thoughts > 0, and leave ``gen_ai.usage.output_tokens`` as candidates only.
++"""
++
++import time
++from types import SimpleNamespace
++from unittest.mock import MagicMock
++
++from opentelemetry.sdk.trace import TracerProvider
++from opentelemetry.sdk.trace.export import SimpleSpanProcessor
++from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
++    InMemorySpanExporter,
++)
++
++from openlit._config import OpenlitConfig
++from openlit.instrumentation.vertexai import utils as vertexai_utils
++from openlit.semcov import SemanticConvention
++
++PROMPT_TOKENS = 100
++CANDIDATE_TOKENS = 50
++THOUGHT_TOKENS = 25
++
++
++def _tracer_with_exporter():
++    OpenlitConfig.reset_to_defaults()
++    exporter = InMemorySpanExporter()
++    provider = TracerProvider()
++    provider.add_span_processor(SimpleSpanProcessor(exporter))
++    return provider.get_tracer(__name__), exporter
++
++
++def _usage(prompt=PROMPT_TOKENS, candidates=CANDIDATE_TOKENS, thoughts=None):
++    kwargs = {
++        "prompt_token_count": prompt,
++        "candidates_token_count": candidates,
++        "cached_content_token_count": 0,
++        "cache_creation_input_tokens": 0,
++    }
++    if thoughts is not None:
++        kwargs["thoughts_token_count"] = thoughts
++    return SimpleNamespace(**kwargs)
++
++
++def _candidate(finish_reason="STOP"):
++    return SimpleNamespace(finish_reason=finish_reason)
++
++
++def _response(usage, text="hello"):
++    return SimpleNamespace(
++        text=text,
++        usage_metadata=usage,
++        candidates=[_candidate()],
++        id="resp_vertex_1",
++        name=None,
++    )
++
++
++def _stream_scope(span):
++    """Mirrors TracedSyncStream.__init__ plus fields process_chunk writes."""
++    return SimpleNamespace(
++        _span=span,
++        _llmresponse="",
++        _finish_reason="",
++        _response_id="",
++        _input_tokens=0,
++        _output_tokens=0,
++        _reasoning_tokens=0,
++        _cache_read_input_tokens=0,
++        _cache_creation_input_tokens=0,
++        _response_model="gemini-2.5-pro",
++        _request_model="gemini-2.5-pro",
++        _tools=None,
++        _kwargs={"contents": [], "generation_config": {}},
++        _args=[[]],
++        _start_time=time.time(),
++        _end_time=None,
++        _timestamps=[],
++        _ttft=0,
++        _tbt=0,
++        _server_address="us-central1-aiplatform.googleapis.com",
++        _server_port=443,
++    )
++
++
++def _chunk(text="", usage=None, finish_reason=""):
++    return SimpleNamespace(
++        text=text,
++        usage_metadata=usage,
++        candidates=[_candidate(finish_reason)] if finish_reason else [],
++    )
++
++
++def _assert_thoughts_not_folded_into_output(attrs, thoughts=THOUGHT_TOKENS):
++    """Thoughts are recorded separately and must not change output_tokens."""
++    assert attrs[SemanticConvention.GEN_AI_USAGE_INPUT_TOKENS] == PROMPT_TOKENS
++    assert attrs[SemanticConvention.GEN_AI_USAGE_OUTPUT_TOKENS] == CANDIDATE_TOKENS
++    assert attrs[SemanticConvention.GEN_AI_USAGE_REASONING_TOKENS] == thoughts
++    # Total usage stays prompt + candidates, matching google_ai_studio.
++    assert (
++        attrs[SemanticConvention.GEN_AI_CLIENT_TOKEN_USAGE]
++        == PROMPT_TOKENS + CANDIDATE_TOKENS
++    )
++    # OpenAI #1537 subset attributes must not be applied to Vertex/Gemini.
++    assert SemanticConventio
+```
+
+---
+
+### Incident Patch 6: `f806ffb7` (2026-09-15)
+**Commit Message**: fix(openai): measured-zero reasoning vs unknown + derived completed tokens (#1537 chat-completions path) (#1543)
+
+**File**: `sdk/python/src/openlit/instrumentation/openai/async_openai.py` (modified, +3/-1)
+```diff
+@@ -308,7 +308,9 @@ def __init__(
+             self._finish_reason = ""
+             self._input_tokens = 0
+             self._output_tokens = 0
+-            self._reasoning_tokens = 0
++            # Do not default _reasoning_tokens. Absence means no usage was
++            # received yet; a literal 0 is a measured zero and would be emitted
++            # as reported=true if the stream ends without response.completed.
+             self._operation_type = "responses"
+             self._service_tier = "default"
+             self._tools = None
+```
+
+**File**: `sdk/python/src/openlit/instrumentation/openai/openai.py` (modified, +3/-1)
+```diff
+@@ -310,7 +310,9 @@ def __init__(
+             self._finish_reason = ""
+             self._input_tokens = 0
+             self._output_tokens = 0
+-            self._reasoning_tokens = 0
++            # Do not default _reasoning_tokens. Absence means no usage was
++            # received yet; a literal 0 is a measured zero and would be emitted
++            # as reported=true if the stream ends without response.completed.
+             self._operation_type = "responses"
+             self._service_tier = "default"
+             self._tools = None
+```
+
+**File**: `sdk/python/src/openlit/instrumentation/openai/utils.py` (modified, +67/-26)
+```diff
+@@ -105,16 +105,67 @@ def extract_reasoning_content(payload):
+ 
+ 
+ def extract_reasoning_tokens(usage, details_key):
+-    """Return reasoning tokens (a subset of output tokens) from a usage dict.
++    """Return reasoning tokens (a subset of output tokens) from a usage dict,
++    or None when the provider did not report the details object.
+ 
+     Works for both chat completions (``completion_tokens_details``) and the
+-    responses API (``output_tokens_details``) and falls back to 0 whenever the
+-    details object is missing or not a dict.
++    responses API (``output_tokens_details``). A missing or non-dict details
++    object means "unknown" and stays distinguishable from an explicit
++    ``reasoning_tokens: 0`` measurement (None vs 0): a reported 0 is a
++    measurement, an absent object is an unknown, and the two must not collapse
++    into the same value.
+     """
+-    details = (usage or {}).get(details_key) or {}
++    details = (usage or {}).get(details_key)
+     if not isinstance(details, dict):
+-        details = {}
+-    return details.get("reasoning_tokens", 0) or 0
++        return None
++    value = details.get("reasoning_tokens")
++    if not isinstance(value, (int, float)) or isinstance(value, bool):
++        return None
++    return value
++
++
++def set_reasoning_subset_attributes(span, output_tokens, reasoning_tokens):
++    """Emit reasoning-token attributes under the subset invariant.
++
++    ``gen_ai.usage.reasoning.output_tokens`` is a facet of the output total,
++    never an addend. Three states stay distinguishable:
++
++    * provider reported a value (including an explicit 0): the facet is
++      emitted, ``...output_tokens.reported`` is true, and the derived
++      completed figure is available;
++    * provider sent no details object: no facet value, marker false
++      (unknown, not a guessed 0);
++    * no usage at all (stream without include_usage): nothing emitted.
++
++    The completed figure is output minus reasoning and lives under the
++    ``gen_ai.usage.derived.*`` namespace so it can never be mistaken for a
++    provider-reported number.
++    """
++    if reasoning_tokens is None:
++        span.set_attribute(
++            SemanticConvention.GEN_AI_USAGE_REASONING_OUTPUT_TOKENS_REPORTED,
++            False,
++        )
++        return
++    span.set_attribute(
++        SemanticConvention.GEN_AI_USAGE_REASONING_OUTPUT_TOKENS_REPORTED,
++        True,
++    )
++    span.set_attribute(
++        SemanticConvention.GEN_AI_USAGE_REASONING_OUTPUT_TOKENS,
++        reasoning_tokens,
++    )
++    # OpenLIT legacy alias (pre-OTel naming), kept for backward compat; only
++    # nonzero values so legacy consumers see no behavior change.
++    if reasoning_tokens > 0:
++        span.set_attribute(
++            SemanticConvention.GEN_AI_USAGE_REASONING_TOKENS,
++            reasoning_tokens,
++        )
++    span.set_attribute(
++        SemanticConvention.GEN_AI_USAGE_DERIVED_COMPLETED_OUTPUT_TOKENS,
++        max(output_tokens - reasoning_tokens, 0),
++    )
+ 
+ 
+ def format_content(messages):
+@@ -1076,16 +1127,11 @@ def common_response_logic(
+ 
+     # Reasoning tokens. OTel: gen_ai.usage.reasoning.output_tokens is a subset
+     # of gen_ai.usage.output_tokens (already set above), so it is recorded as a
+-    # separate attribute and never added on top of the output total.
+-    if hasattr(scope, "_reasoning_tokens") and scope._reasoning_tokens > 0:
+-        scope._span.set_attribute(
+-            SemanticConvention.GEN_AI_USAGE_REASONING_OUTPUT_TOKENS,
+-            scope._reasoning_tokens,
+-        )
+-        # OpenLIT legacy alias (pre-OTel naming), kept for backward compat.
+-        scope._span.set_attribute(
+-            SemanticConvention.GEN_AI_USAGE_REASONING_TOKENS,
+-            scope._reasoning_tokens,
++    # separate attribute and never added on top of the output total. Missing
++    # details surface as unknown (marker false), never as a guessed 0.
++    if hasattr(scope, "_reasoning_tokens"):
++        set_reasoning_subset_att
+```
+
+**File**: `sdk/python/src/openlit/semcov/__init__.py` (modified, +6/-0)
+```diff
+@@ -571,6 +571,12 @@ class SemanticConvention:
+     GEN_AI_USAGE_COMPLETION_TOKENS_DETAILS_REASONING = (
+         "gen_ai.usage.completion_tokens_details.reasoning_tokens"
+     )
++    GEN_AI_USAGE_REASONING_OUTPUT_TOKENS_REPORTED = (
++        "gen_ai.usage.reasoning.output_tokens.reported"
++    )
++    GEN_AI_USAGE_DERIVED_COMPLETED_OUTPUT_TOKENS = (
++        "gen_ai.usage.derived.completed_output_tokens"
++    )
+     # OTel GenAI semconv (experimental): reasoning output tokens are a subset of
+     # gen_ai.usage.output_tokens and MUST NOT be added on top of it.
+     GEN_AI_USAGE_REASONING_OUTPUT_TOKENS = "gen_ai.usage.reasoning.output_tokens"
+```
+
+**File**: `sdk/python/tests/test_openai_reasoning_subset_fixture.py` (added, +333/-0)
+```diff
+@@ -0,0 +1,333 @@
++"""Fixture tests for the reasoning-subset invariant (Issue #1537).
++
++Locks the invariant into a regression fixture for the OpenAI chat-completions
++path, in the exact shape proposed in #1537:
++
++    usage = {output_tokens: 1000, reasoning_tokens: 700}
++      -> recorded output = 1000 (provider total, unchanged)
++      -> reasoning emitted as a facet (700), never added on top
++      -> no downstream aggregate can reach 1700
++      -> a derived "completed tokens" figure equals output - reasoning and is
++         namespaced gen_ai.usage.derived.* so it reads as derived
++      -> a provider that stops sending *_tokens_details surfaces as unknown
++         (reported marker false, no facet value), never as a guessed 0
++      -> an explicit reasoning_tokens: 0 is a measurement: facet 0, marker true
++"""
++
++import time
++from types import SimpleNamespace
++from unittest.mock import MagicMock
++
++from opentelemetry.sdk.trace import TracerProvider
++from opentelemetry.sdk.trace.export import SimpleSpanProcessor
++from opentelemetry.sdk.trace.export.in_memory_span_exporter import (
++    InMemorySpanExporter,
++)
++
++from openlit._config import OpenlitConfig
++from openlit.instrumentation.openai.utils import (
++    process_chat_chunk,
++    process_chat_response,
++    process_response_chunk,
++    process_streaming_chat_response,
++    process_streaming_response_response,
++)
++from openlit.semcov import SemanticConvention
++
++
++def _tracer_and_exporter():
++    OpenlitConfig.reset_to_defaults()
++    exporter = InMemorySpanExporter()
++    tracer_provider = TracerProvider()
++    tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
++    return tracer_provider.get_tracer("test-openai-reasoning-fixture"), exporter
++
++
++def _metrics_dict():
++    return {
++        "genai_client_usage_tokens": MagicMock(),
++        "genai_client_operation_duration": MagicMock(),
++        "genai_client_time_to_first_chunk": MagicMock(),
++        "genai_client_time_per_output_chunk": MagicMock(),
++        "genai_server_tbt": MagicMock(),
++        "genai_server_ttft": MagicMock(),
++        "genai_server_request_duration": MagicMock(),
++        "genai_cost": MagicMock(),
++    }
++
++
++def _stream_scope(span):
++    return SimpleNamespace(
++        _span=span,
++        _llmresponse="",
++        _response_id="",
++        _response_model="",
++        _finish_reason="",
++        _system_fingerprint="",
++        _service_tier="auto",
++        _tools=None,
++        _kwargs={
++            "model": "o3-mini",
++            "messages": [{"role": "user", "content": "think step by step"}],
++        },
++        _start_time=time.time(),
++        _end_time=None,
++        _timestamps=[],
++        _ttft=0,
++        _tbt=0,
++        _server_address="api.openai.com",
++        _server_port=443,
++    )
++
++
++def _run_chat_response(exporter, tracer, metrics, usage):
++    response = {
++        "id": "chatcmpl_fixture",
++        "model": "o3-mini",
++        "choices": [
++            {
++                "message": {"role": "assistant", "content": "The answer is 42."},
++                "finish_reason": "stop",
++            }
++        ],
++        "usage": usage,
++    }
++    with tracer.start_as_current_span("chat fixture") as span:
++        process_chat_response(
++            response,
++            request_model="o3-mini",
++            pricing_info={},
++            server_port=443,
++            server_address="api.openai.com",
++            environment="test-env",
++            application_name="test-app",
++            metrics=metrics,
++            start_time=time.time(),
++            span=span,
++            capture_message_content=False,
++            disable_metrics=False,
++            version="test-version",
++            model="o3-mini",
++            messages=[{"role": "user", "content": "hi"}],
++        )
++    return exporter.get_finished_spans()[0].attributes
++
++
++def test_fixture_recorded_values_never_reach_the_sum():
++    """output 1000 / reasoning 700: facet 700, derived 300
+```
+
+---
+
+### Incident Patch 7: `d921e530` (2026-09-15)
+**Commit Message**: fix(python-sdk): capture streamed tool calls (#1542)
+
+**File**: `sdk/python/src/openlit/instrumentation/ai21/utils.py` (modified, +28/-6)
+```diff
+@@ -285,15 +285,37 @@ def process_chunk(scope, chunk):
+     chunked = response_as_dict(chunk)
+ 
+     # Collect message IDs and aggregated response from events
+-    if (
+-        len(chunked.get("choices", [])) > 0
+-        and "delta" in chunked.get("choices")[0]
+-        and "content" in chunked.get("choices")[0].get("delta", {})
+-    ):
+-        content = chunked.get("choices")[0].get("delta").get("content")
++    choices = chunked.get("choices", [])
++    if choices and "delta" in choices[0]:
++        delta = choices[0].get("delta", {})
++        content = delta.get("content")
+         if content:
+             scope._llmresponse += content
+ 
++        delta_tools = delta.get("tool_calls")
++        if delta_tools:
++            scope._tools = scope._tools or []
++            for tool in delta_tools:
++                index = tool.get("index", 0)
++                scope._tools.extend([{}] * (index + 1 - len(scope._tools)))
++                function = tool.get("function") or {}
++                if tool.get("id"):
++                    scope._tools[index] = {
++                        "id": tool["id"],
++                        "function": {
++                            # `or ""` handles explicit None from OpenAI-compatible SDKs
++                            "name": function.get("name") or "",
++                            "arguments": function.get("arguments") or "",
++                        },
++                        "type": tool.get("type", "function"),
++                    }
++                elif scope._tools[index] and "function" in tool:
++                    new_args = function.get("arguments") or ""
++                    if scope._tools[index]["function"]["arguments"] is None:
++                        scope._tools[index]["function"]["arguments"] = new_args
++                    else:
++                        scope._tools[index]["function"]["arguments"] += new_args
++
+     # Handle token usage including reasoning tokens and cached tokens
+     if chunked.get("usage"):
+         usage = chunked.get("usage", {})
+```
+
+**File**: `sdk/python/src/openlit/instrumentation/groq/utils.py` (modified, +24/-0)
+```diff
+@@ -287,6 +287,30 @@ def process_chunk(scope, chunk):
+             scope._llmresponse += content
+         append_scope_reasoning(scope, extract_reasoning_content(delta, "reasoning"))
+ 
++        delta_tools = delta.get("tool_calls")
++        if delta_tools:
++            scope._tools = scope._tools or []
++            for tool in delta_tools:
++                index = tool.get("index", 0)
++                scope._tools.extend([{}] * (index + 1 - len(scope._tools)))
++                function = tool.get("function") or {}
++                if tool.get("id"):
++                    scope._tools[index] = {
++                        "id": tool["id"],
++                        "function": {
++                            # `or ""` handles explicit None from OpenAI-compatible SDKs
++                            "name": function.get("name") or "",
++                            "arguments": function.get("arguments") or "",
++                        },
++                        "type": tool.get("type", "function"),
++                    }
++                elif scope._tools[index] and "function" in tool:
++                    new_args = function.get("arguments") or ""
++                    if scope._tools[index]["function"]["arguments"] is None:
++                        scope._tools[index]["function"]["arguments"] = new_args
++                    else:
++                        scope._tools[index]["function"]["arguments"] += new_args
++
+     if chunked.get("x_groq") is not None:
+         if chunked.get("x_groq").get("usage") is not None:
+             # Handle token usage including reasoning tokens and cached tokens
+```
+
+**File**: `sdk/python/src/openlit/instrumentation/together/utils.py` (modified, +28/-5)
+```diff
+@@ -66,14 +66,37 @@ def process_chunk(scope, chunk):
+ 
+     chunked = response_as_dict(chunk)
+     # Collect message IDs and aggregated response from events
+-    if len(chunked.get("choices")) > 0 and (
+-        "delta" in chunked.get("choices")[0]
+-        and "content" in chunked.get("choices")[0].get("delta")
+-    ):
+-        content = chunked.get("choices")[0].get("delta").get("content")
++    choices = chunked.get("choices", [])
++    if choices and "delta" in choices[0]:
++        delta = choices[0].get("delta", {})
++        content = delta.get("content")
+         if content:
+             scope._llmresponse += content
+ 
++        delta_tools = delta.get("tool_calls")
++        if delta_tools:
++            scope._tools = scope._tools or []
++            for tool in delta_tools:
++                index = tool.get("index", 0)
++                scope._tools.extend([{}] * (index + 1 - len(scope._tools)))
++                function = tool.get("function") or {}
++                if tool.get("id"):
++                    scope._tools[index] = {
++                        "id": tool["id"],
++                        "function": {
++                            # `or ""` handles explicit None from OpenAI-compatible SDKs
++                            "name": function.get("name") or "",
++                            "arguments": function.get("arguments") or "",
++                        },
++                        "type": tool.get("type", "function"),
++                    }
++                elif scope._tools[index] and "function" in tool:
++                    new_args = function.get("arguments") or ""
++                    if scope._tools[index]["function"]["arguments"] is None:
++                        scope._tools[index]["function"]["arguments"] = new_args
++                    else:
++                        scope._tools[index]["function"]["arguments"] += new_args
++
+     if chunked.get("usage"):
+         scope._response_id = chunked.get("id")
+         scope._response_model = chunked.get("model")
+```
+
+**File**: `sdk/python/tests/test_streaming_tool_calls.py` (added, +194/-0)
+```diff
+@@ -0,0 +1,194 @@
++# pylint: disable=missing-function-docstring
++"""Regression tests: streamed tool-call deltas must populate scope._tools.
++
++Groq, AI21, and Together only assigned scope._tools on the non-streaming path.
++process_chunk ignored delta.tool_calls (and AI21/Together skipped tool-only
++deltas that had no content), so common_chat_logic never emitted tool span
++attributes. These tests drive the real process_chunk helpers with synthetic
++OpenAI-compatible chunks.
++
++Fixes: https://github.com/openlit/openlit/issues/1540
++"""
++
++from types import SimpleNamespace
++
++import pytest
++
++from openlit.instrumentation.ai21 import utils as ai21_utils
++from openlit.instrumentation.groq import utils as groq_utils
++from openlit.instrumentation.together import utils as together_utils
++
++PROVIDERS = [groq_utils, ai21_utils, together_utils]
++
++
++def _scope():
++    return SimpleNamespace(
++        _timestamps=[],
++        _start_time=0,
++        _llmresponse="",
++        _tools=None,
++    )
++
++
++@pytest.mark.parametrize("utils", PROVIDERS)
++def test_streaming_tool_calls_are_accumulated(utils):
++    scope = _scope()
++
++    utils.process_chunk(
++        scope,
++        {
++            "choices": [
++                {
++                    "delta": {
++                        "tool_calls": [
++                            {
++                                "index": 0,
++                                "id": "call_1",
++                                "type": "function",
++                                "function": {
++                                    "name": "lookup",
++                                    "arguments": '{"q":"',
++                                },
++                            }
++                        ]
++                    }
++                }
++            ]
++        },
++    )
++    utils.process_chunk(
++        scope,
++        {
++            "choices": [
++                {
++                    "delta": {
++                        "tool_calls": [
++                            {
++                                "index": 0,
++                                "function": {"arguments": "weather"},
++                            }
++                        ]
++                    }
++                }
++            ]
++        },
++    )
++
++    assert scope._tools == [
++        {
++            "id": "call_1",
++            "type": "function",
++            "function": {"name": "lookup", "arguments": '{"q":"weather'},
++        }
++    ]
++
++
++@pytest.mark.parametrize("utils", PROVIDERS)
++def test_streaming_tool_calls_tolerate_null_arguments(utils):
++    """OpenAI-compatible SDKs often send arguments=None on the first delta."""
++    scope = _scope()
++
++    utils.process_chunk(
++        scope,
++        {
++            "choices": [
++                {
++                    "delta": {
++                        "tool_calls": [
++                            {
++                                "index": 0,
++                                "id": "call_1",
++                                "type": "function",
++                                "function": {"name": "lookup", "arguments": None},
++                            }
++                        ]
++                    }
++                }
++            ]
++        },
++    )
++    utils.process_chunk(
++        scope,
++        {
++            "choices": [
++                {
++                    "delta": {
++                        "tool_calls": [
++                            {
++                                "index": 0,
++                                "function": {"arguments": '{"q":"weather"}'},
++                            }
++                        ]
++                    }
++                }
++            ]
++        },
++    )
++
++    assert scope._tools[0]["function"]["name"] == "lookup"
++    assert scope._tools[0]["function"]["arguments"] == '{"q":"weather"}'
++
++
++@pytest.mark.parametrize("utils", PROVIDERS)
++def test_streaming_parallel_tool_calls_use_index(utils):
++    scope = _scope()
++
++    utils.process_chunk(
++   
+```
+
+---
+
+### Incident Patch 8: `2e5cd2d9` (2026-09-15)
+**Commit Message**: fix(python-sdk): support mistralai 2.x instrumentation paths (#1539)
+
+**File**: `sdk/python/src/openlit/guard/_integration.py` (modified, +12/-0)
+```diff
+@@ -251,6 +251,18 @@ def _extract_generic_output(response: Any) -> str:
+         _extract_generic_input,
+         _extract_generic_output,
+     ),
++    (
++        "mistralai.client.chat",
++        "Chat.complete",
++        _extract_generic_input,
++        _extract_generic_output,
++    ),
++    (
++        "mistralai.client.chat",
++        "Chat.complete_async",
++        _extract_generic_input,
++        _extract_generic_output,
++    ),
+     # Cohere
+     (
+         "cohere.client_v2",
+```
+
+**File**: `sdk/python/src/openlit/instrumentation/mistral/__init__.py` (modified, +123/-94)
+```diff
+@@ -1,5 +1,6 @@
+ """Initializer of Auto Instrumentation of Mistral Functions"""
+ 
++import logging
+ from typing import Collection
+ import importlib.metadata
+ from opentelemetry import _logs
+@@ -17,6 +18,32 @@
+ 
+ _instruments = ("mistralai >= 1.0.0",)
+ 
++logger = logging.getLogger(__name__)
++
++# 1.x keeps chat/embeddings at the package root. 2.x moved them under
++# mistralai.client. Both layouts expose the same class and method names.
++_CHAT_MODULES = ("mistralai.chat", "mistralai.client.chat")
++_EMBEDDINGS_MODULES = ("mistralai.embeddings", "mistralai.client.embeddings")
++
++
++def _safe_wrap(module, class_method, wrapper):
++    """Wrap a function, skipping SDK module layouts that are not installed.
++
++    wrapt 2.x imports the target module immediately, so wrapping the 1.x
++    path on mistralai 2.x (and vice versa) raises ``ModuleNotFoundError``.
++    wrapt 2.4+ wraps that as ``TargetModuleNotFoundError``, a
++    ``ModuleNotFoundError`` subclass, so catching the base exception covers
++    both. wrapt 1.x registers a post-import hook instead and does not raise.
++    """
++    try:
++        wrap_function_wrapper(module, class_method, wrapper)
++    except (ModuleNotFoundError, AttributeError):
++        logger.debug(
++            "Skipping %s.%s - not available in this mistralai version",
++            module,
++            class_method,
++        )
++
+ 
+ class MistralInstrumentor(BaseInstrumentor):
+     """
+@@ -37,105 +64,107 @@ def _instrument(self, **kwargs):
+         event_provider = _logs.get_logger_provider().get_logger(__name__)
+         version = importlib.metadata.version("mistralai")
+ 
+-        # sync chat completions
+-        wrap_function_wrapper(
+-            "mistralai.chat",
+-            "Chat.complete",
+-            complete(
+-                version,
+-                environment,
+-                application_name,
+-                tracer,
+-                pricing_info,
+-                capture_message_content,
+-                metrics,
+-                disable_metrics,
+-                event_provider,
+-            ),
+-        )
++        for chat_module in _CHAT_MODULES:
++            # sync chat completions
++            _safe_wrap(
++                chat_module,
++                "Chat.complete",
++                complete(
++                    version,
++                    environment,
++                    application_name,
++                    tracer,
++                    pricing_info,
++                    capture_message_content,
++                    metrics,
++                    disable_metrics,
++                    event_provider,
++                ),
++            )
+ 
+-        # sync chat streaming
+-        wrap_function_wrapper(
+-            "mistralai.chat",
+-            "Chat.stream",
+-            stream(
+-                version,
+-                environment,
+-                application_name,
+-                tracer,
+-                pricing_info,
+-                capture_message_content,
+-                metrics,
+-                disable_metrics,
+-                event_provider,
+-            ),
+-        )
++            # sync chat streaming
++            _safe_wrap(
++                chat_module,
++                "Chat.stream",
++                stream(
++                    version,
++                    environment,
++                    application_name,
++                    tracer,
++                    pricing_info,
++                    capture_message_content,
++                    metrics,
++                    disable_metrics,
++                    event_provider,
++                ),
++            )
+ 
+-        # sync embeddings
+-        wrap_function_wrapper(
+-            "mistralai.embeddings",
+-            "Embeddings.create",
+-            embed(
+-                version,
+-                environment,
+-                application_name,
+-                tracer,
+-                pricing_info,
+-                capture_message_content,
+-                metrics,
+-                disable_metrics,
+-            ),
+-        
+```
+
+**File**: `sdk/python/tests/test_guard_integration.py` (modified, +16/-0)
+```diff
+@@ -9,6 +9,7 @@
+ from openlit.guard import _integration
+ from openlit.guard._base import GuardDeniedError
+ from openlit.guard._integration import (
++    GUARDED_METHODS,
+     _extract_openai_input,
+     _extract_anthropic_input,
+     _extract_generic_input,
+@@ -85,6 +86,21 @@ def test_generic_input_prompt_string(self):
+         assert text == "Generate something"
+ 
+ 
++def test_guarded_methods_include_mistral_v1_and_v2_sdk_layouts():
++    """Mistral SDK 1.x and 2.x expose chat under different modules."""
++
++    def has_guarded_method(module_path, class_method):
++        return any(
++            method[0] == module_path and method[1] == class_method
++            for method in GUARDED_METHODS
++        )
++
++    assert has_guarded_method("mistralai.chat", "Chat.complete")
++    assert has_guarded_method("mistralai.chat", "Chat.complete_async")
++    assert has_guarded_method("mistralai.client.chat", "Chat.complete")
++    assert has_guarded_method("mistralai.client.chat", "Chat.complete_async")
++
++
+ class TestPreflightIntegration:
+     """``_apply_preflight`` runs guards on extracted input kwargs."""
+ 
+```
+
+**File**: `sdk/python/tests/test_mistral_instrumentation.py` (added, +129/-0)
+```diff
+@@ -0,0 +1,129 @@
++# pylint: disable=protected-access, missing-class-docstring, missing-function-docstring, too-few-public-methods
++"""Tests for Mistral instrumentation setup."""
++
++import sys
++import types
++
++import openlit.instrumentation.mistral as mistral_instrumentation
++from openlit._config import OpenlitConfig
++from openlit.instrumentation.mistral import MistralInstrumentor
++
++EXPECTED_TARGETS = {
++    ("mistralai.chat", "Chat.complete"),
++    ("mistralai.chat", "Chat.stream"),
++    ("mistralai.chat", "Chat.complete_async"),
++    ("mistralai.chat", "Chat.stream_async"),
++    ("mistralai.embeddings", "Embeddings.create"),
++    ("mistralai.embeddings", "Embeddings.create_async"),
++    ("mistralai.client.chat", "Chat.complete"),
++    ("mistralai.client.chat", "Chat.stream"),
++    ("mistralai.client.chat", "Chat.complete_async"),
++    ("mistralai.client.chat", "Chat.stream_async"),
++    ("mistralai.client.embeddings", "Embeddings.create"),
++    ("mistralai.client.embeddings", "Embeddings.create_async"),
++}
++
++
++def _instrument(**kwargs):
++    OpenlitConfig.reset_to_defaults()
++    MistralInstrumentor()._instrument(
++        environment="test",
++        application_name="test",
++        pricing_info={},
++        disable_metrics=True,
++        **kwargs,
++    )
++
++
++def test_mistral_instrumentor_registers_v1_and_v2_sdk_layouts(monkeypatch):
++    """Mistral SDK 1.x and 2.x expose chat and embeddings under different modules."""
++    wrapped_targets = []
++
++    monkeypatch.setattr(
++        mistral_instrumentation.importlib.metadata,
++        "version",
++        lambda package_name: "2.9.4",
++    )
++    monkeypatch.setattr(
++        mistral_instrumentation,
++        "wrap_function_wrapper",
++        lambda module, class_method, wrapper: wrapped_targets.append(
++            (module, class_method)
++        ),
++    )
++
++    _instrument()
++
++    assert set(wrapped_targets) == EXPECTED_TARGETS
++
++
++def test_mistral_instrumentor_skips_missing_layout_and_wraps_available(monkeypatch):
++    """A missing 1.x module must not abort 2.x wrapping (wrapt 2.x raises)."""
++    wrapped_targets = []
++    v1_modules = {"mistralai.chat", "mistralai.embeddings"}
++
++    def fake_wrap(module, class_method, wrapper):
++        if module in v1_modules:
++            raise ModuleNotFoundError(module)
++        wrapped_targets.append((module, class_method))
++
++    monkeypatch.setattr(
++        mistral_instrumentation.importlib.metadata,
++        "version",
++        lambda package_name: "2.9.4",
++    )
++    monkeypatch.setattr(
++        mistral_instrumentation, "wrap_function_wrapper", fake_wrap
++    )
++
++    _instrument()
++
++    assert set(wrapped_targets) == {
++        target for target in EXPECTED_TARGETS if target[0] not in v1_modules
++    }
++
++
++def test_mistral_instrumentor_binds_v2_chat_complete(monkeypatch):
++    """Wrapping mistralai.client.chat must intercept Chat.complete."""
++    package = types.ModuleType("mistralai")
++    package.__path__ = []
++    client = types.ModuleType("mistralai.client")
++    client.__path__ = []
++    chat = types.ModuleType("mistralai.client.chat")
++
++    class Chat:
++        def complete(self, **kwargs):
++            return kwargs.get("model", "ok")
++
++    chat.Chat = Chat
++    client.chat = chat
++    package.client = client
++
++    added = {
++        "mistralai": package,
++        "mistralai.client": client,
++        "mistralai.client.chat": chat,
++    }
++    original = {name: sys.modules.get(name) for name in added}
++    sys.modules.update(added)
++
++    monkeypatch.setattr(
++        mistral_instrumentation.importlib.metadata,
++        "version",
++        lambda package_name: "2.9.4",
++    )
++    monkeypatch.setattr(
++        mistral_instrumentation, "_CHAT_MODULES", ("mistralai.client.chat",)
++    )
++    monkeypatch.setattr(mistral_instrumentation, "_EMBEDDINGS_MODULES", ())
++
++    try:
++        _instrument()
++        assert Chat().complete(model="mistral-small-latest") == "mistral-small-latest"
++        assert hasattr(Ch
+```
+
+---
+
+### Incident Patch 9: `95c22aba` (2026-09-11)
+**Commit Message**: fix(client): do not record the vault encryption migration when it did not encrypt (#1523)
+
+**File**: `src/client/src/__tests__/clickhouse/migrations/encrypt-vault-values-migration.test.ts` (modified, +67/-0)
+```diff
+@@ -60,4 +60,71 @@ describe("EncryptVaultValuesMigration", () => {
+ 		expect(query).toContain("UPDATE value = 'enc:v1:plain\\\\value\\'secret'");
+ 		expect(query).toContain("WHERE id = 'secret\\\\1'");
+ 	});
++
++	it("leaves the migration pending when the vault table cannot be read", async () => {
++		(dataCollector as jest.Mock).mockReset();
++		(dataCollector as jest.Mock).mockResolvedValueOnce({
++			data: undefined,
++			err: "default: Authentication failed: password is incorrect",
++		});
++
++		const result = await EncryptVaultValuesMigration();
++
++		expect(prisma.clickhouseMigrations.create).not.toHaveBeenCalled();
++		expect(result).toEqual({
++			migrationExist: false,
++			queriesRun: false,
++			err: "default: Authentication failed: password is incorrect",
++		});
++	});
++
++	it("leaves the migration pending when a secret fails to encrypt", async () => {
++		(dataCollector as jest.Mock).mockReset();
++		(dataCollector as jest.Mock)
++			.mockResolvedValueOnce({
++				data: [
++					{ id: "secret-1", value: "plaintext-1" },
++					{ id: "secret-2", value: "plaintext-2" },
++				],
++				err: null,
++			})
++			.mockResolvedValueOnce({ err: null })
++			.mockResolvedValueOnce({ err: "TABLE_IS_READ_ONLY" });
++
++		const result = await EncryptVaultValuesMigration();
++
++		expect(prisma.clickhouseMigrations.create).not.toHaveBeenCalled();
++		expect(result).toEqual({
++			migrationExist: false,
++			queriesRun: false,
++			err: "Vault encryption migration: 1 of 2 secrets still hold plaintext, leaving the migration pending",
++		});
++	});
++
++	it("records the migration when the vault holds no rows to encrypt", async () => {
++		(dataCollector as jest.Mock).mockReset();
++		(dataCollector as jest.Mock).mockResolvedValueOnce({ data: [], err: null });
++
++		const result = await EncryptVaultValuesMigration();
++
++		expect(prisma.clickhouseMigrations.create).toHaveBeenCalledTimes(1);
++		expect(result).toEqual({ migrationExist: false, queriesRun: true });
++	});
++
++	it("leaves the migration pending when the vault read is not a row list", async () => {
++		(dataCollector as jest.Mock).mockReset();
++		(dataCollector as jest.Mock).mockResolvedValueOnce({
++			data: undefined,
++			err: null,
++		});
++
++		const result = await EncryptVaultValuesMigration();
++
++		expect(prisma.clickhouseMigrations.create).not.toHaveBeenCalled();
++		expect(result).toEqual({
++			migrationExist: false,
++			queriesRun: false,
++			err: "Vault encryption migration: unexpected vault read result",
++		});
++	});
+ });
+```
+
+**File**: `src/client/src/clickhouse/migrations/encrypt-vault-values-migration.ts` (modified, +20/-5)
+```diff
+@@ -48,12 +48,18 @@ export default async function EncryptVaultValuesMigration(
+ 			dbConfig.id
+ 		);
+ 
+-		if (readErr || !data || !Array.isArray(data)) {
++		if (readErr) {
+ 			consoleLog(
+-				`Vault encryption migration: no data to migrate or error: ${readErr}`
++				`Vault encryption migration: could not read the vault table: ${readErr}`
+ 			);
+-			await markMigrationComplete(dbConfig.id);
+-			return { migrationExist: false, queriesRun: true };
++			return { migrationExist: false, queriesRun: false, err: readErr };
++		}
++
++		if (!data || !Array.isArray(data)) {
++			const unexpectedRead =
++				"Vault encryption migration: unexpected vault read result";
++			consoleLog(unexpectedRead);
++			return { migrationExist: false, queriesRun: false, err: unexpectedRead };
+ 		}
+ 
+ 		const plaintextSecrets = (data as any[]).filter(
+@@ -66,6 +72,8 @@ export default async function EncryptVaultValuesMigration(
+ 			return { migrationExist: false, queriesRun: true };
+ 		}
+ 
++		let failedCount = 0;
++
+ 		for (const secret of plaintextSecrets) {
+ 			const encrypted = escapeClickHouseString(encryptValue(secret.value));
+ 			const secretId = escapeClickHouseString(secret.id);
+@@ -82,12 +90,19 @@ export default async function EncryptVaultValuesMigration(
+ 			);
+ 
+ 			if (updateErr) {
++				failedCount += 1;
+ 				consoleLog(
+ 					`Vault encryption migration: failed to encrypt secret ${secret.id}: ${updateErr}`
+ 				);
+ 			}
+ 		}
+ 
++		if (failedCount > 0) {
++			const pendingErr = `Vault encryption migration: ${failedCount} of ${plaintextSecrets.length} secrets still hold plaintext, leaving the migration pending`;
++			consoleLog(pendingErr);
++			return { migrationExist: false, queriesRun: false, err: pendingErr };
++		}
++
+ 		consoleLog(
+ 			`Vault encryption migration: encrypted ${plaintextSecrets.length} secrets`
+ 		);
+@@ -97,7 +112,7 @@ export default async function EncryptVaultValuesMigration(
+ 		return { migrationExist: false, queriesRun: true };
+ 	} catch (migrationError) {
+ 		consoleLog(`Vault encryption migration error: ${migrationError}`);
+-		return { migrationExist: false, queriesRun: false };
++		return { migrationExist: false, queriesRun: false, err: migrationError };
+ 	}
+ }
+ 
+```
+
+---
+
+### Incident Patch 10: `1783f61d` (2026-09-11)
+**Commit Message**: fix: fail fast when clickhouse migrations fail (#1522)
+
+**File**: `src/client/src/__tests__/clickhouse/migrations/create-custom-dashboards-migration.test.ts` (added, +82/-0)
+```diff
+@@ -0,0 +1,82 @@
++describe("custom dashboard migration", () => {
++  it("does not seed dashboards when table creation fails", async () => {
++    jest.resetModules();
++    const mockHelper = jest.fn().mockResolvedValue({
++      migrationExist: false,
++      queriesRun: false,
++    });
++    const mockTableCollector = jest.fn().mockResolvedValue({
++      data: [
++        { name: "openlit_folder" },
++        { name: "openlit_board" },
++        { name: "openlit_widget" },
++        { name: "openlit_board_widget" },
++      ],
++    });
++    const mockSeed = jest.fn();
++    jest.doMock("@/clickhouse/migrations/migration-helper", () => ({
++      __esModule: true,
++      default: mockHelper,
++    }));
++    jest.doMock("@/clickhouse/seed/dashboards", () => ({
++      __esModule: true,
++      default: mockSeed,
++    }));
++    jest.doMock("@/lib/platform/common", () => ({
++      __esModule: true,
++      intelligenceDataCollector: mockTableCollector,
++    }));
++
++    const { default: migration } =
++      await import("@/clickhouse/migrations/create-custom-dashboards-migration");
++
++    await expect(migration("db-1")).resolves.toEqual({
++      migrationExist: false,
++      queriesRun: false,
++    });
++    expect(mockSeed).not.toHaveBeenCalled();
++  });
++
++  it("reports missing dashboard tables and does not seed", async () => {
++    jest.resetModules();
++    const mockHelper = jest.fn().mockResolvedValue({
++      migrationExist: false,
++      queriesRun: true,
++    });
++    const mockTableCollector = jest.fn().mockResolvedValue({
++      data: [{ name: "openlit_folder" }, { name: "openlit_board" }],
++    });
++    const mockSeed = jest.fn();
++    jest.doMock("@/clickhouse/migrations/migration-helper", () => ({
++      __esModule: true,
++      default: mockHelper,
++    }));
++    jest.doMock("@/clickhouse/seed/dashboards", () => ({
++      __esModule: true,
++      default: mockSeed,
++    }));
++    jest.doMock("@/lib/platform/common", () => ({
++      __esModule: true,
++      intelligenceDataCollector: mockTableCollector,
++    }));
++
++    const { default: migration } =
++      await import("@/clickhouse/migrations/create-custom-dashboards-migration");
++
++    await expect(migration("db-1")).resolves.toMatchObject({
++      migrationExist: false,
++      queriesRun: true,
++      err: expect.stringContaining(
++        "missing tables: openlit_widget, openlit_board_widget"
++      ),
++    });
++    expect(mockSeed).not.toHaveBeenCalled();
++    expect(mockTableCollector).toHaveBeenCalledWith(
++      expect.objectContaining({
++        query: expect.stringContaining("system.tables"),
++      }),
++      "query",
++      "db-1"
++    );
++  });
++});
+```
+
+**File**: `src/client/src/__tests__/clickhouse/migrations/migrations-index.test.ts` (added, +109/-0)
+```diff
+@@ -0,0 +1,109 @@
++const mockMigration = jest.fn();
++
++const MIGRATION_MODULES = [
++  "@/clickhouse/migrations/create-prompt-migration",
++  "@/clickhouse/migrations/create-vault-migration",
++  "@/clickhouse/migrations/create-evaluation-migration",
++  "@/clickhouse/migrations/create-evaluation-type-defaults-migration",
++  "@/clickhouse/migrations/create-cron-log-migration",
++  "@/clickhouse/migrations/create-custom-dashboards-migration",
++  "@/clickhouse/migrations/create-openground-migration",
++  "@/clickhouse/migrations/create-rule-engine-migration",
++  "@/clickhouse/migrations/create-controller-migration",
++  "@/clickhouse/migrations/create-chat-migration",
++  "@/clickhouse/migrations/create-agents-summary-migration",
++  "@/clickhouse/migrations/create-agent-versions-migration",
++  "@/clickhouse/migrations/alter-controller-mode-migration",
++  "@/clickhouse/migrations/add-controller-resource-attrs-migration",
++  "@/clickhouse/migrations/add-controller-workload-key-migration",
++  "@/clickhouse/migrations/add-controller-sdk-actions-migration",
++  "@/clickhouse/migrations/add-controller-ttl-migration",
++  "@/clickhouse/migrations/add-controller-cluster-id-migration",
++  "@/clickhouse/migrations/update-controller-actions-ttl-migration",
++  "@/clickhouse/migrations/generalize-controller-desired-states-migration",
++  "@/clickhouse/migrations/add-controller-skipping-indexes-migration",
++  "@/clickhouse/migrations/create-providers-migration",
++  "@/clickhouse/migrations/add-provider-models-cache-prices-migration",
++  "@/clickhouse/migrations/create-provider-metadata-migration",
++  "@/clickhouse/migrations/drop-legacy-openground-tables-migration",
++  "@/clickhouse/migrations/seed-orcarouter-provider-migration",
++  "@/clickhouse/migrations/encrypt-vault-values-migration",
++  "@/clickhouse/migrations/add-chat-conversation-type-migration",
++  "@/clickhouse/migrations/add-chat-message-model-attribution-migration",
++  "@/clickhouse/migrations/create-trace-analysis-migration",
++  "@/clickhouse/migrations/create-otter-runs-migration",
++  "@/clickhouse/migrations/add-agents-summary-skip-indexes-migration",
++  "@/clickhouse/migrations/optimize-agent-tables-storage-migration",
++  "@/clickhouse/migrations/add-coding-agent-summary-fields-migration",
++  "@/clickhouse/migrations/create-coding-agents-audit-migration",
++  "@/clickhouse/migrations/add-coding-agent-loc-summary-fields-migration",
++  "@/clickhouse/migrations/create-telemetry-rollups-migration",
++  "@/clickhouse/migrations/alter-telemetry-rollups-dimensions-migration",
++  "@/clickhouse/migrations/drop-vcs-migration",
++];
++
++describe("ClickHouse migration orchestration", () => {
++  beforeEach(() => {
++    jest.resetModules();
++    mockMigration.mockReset();
++    for (const moduleName of MIGRATION_MODULES) {
++      jest.doMock(moduleName, () => ({
++        __esModule: true,
++        default: mockMigration,
++      }));
++    }
++  });
++
++  it("rejects when a migration reports partially failed queries", async () => {
++    mockMigration.mockResolvedValue({ migrationExist: true });
++    mockMigration.mockResolvedValueOnce({
++      migrationExist: false,
++      queriesRun: false,
++    });
++
++    const { default: migrations } = await import("@/clickhouse/migrations");
++
++    await expect(migrations("db-1")).rejects.toThrow(
++      'ClickHouse migration "create-prompt" failed',
++    );
++    // All independent creates may already be in flight, but dependent
++    // groups must not start after the failed group completes.
++    expect(mockMigration).toHaveBeenCalledTimes(12);
++  });
++
++  it("rejects when a migration returns no result", async () => {
++    let callCount = 0;
++    mockMigration.mockImplementation(async () => {
++      callCount += 1;
++      // Group 1 is 12 parallel creates; the first sequential migration is
++      // add-controller-cluster-id's predecessor, alter-controller-mode.
++      if (callCount === 13) return undefined;
++      return { migrationExist: true };
++    });
++
++    const { 
+```
+
+**File**: `src/client/src/clickhouse/migrations/add-controller-cluster-id-migration.ts` (modified, +16/-7)
+```diff
+@@ -1,15 +1,24 @@
+-import { dataCollector } from "@/lib/platform/common";
++import {
++	CONTROLLER_ACTIONS_TABLE,
++	CONTROLLER_INSTANCES_TABLE,
++	CONTROLLER_SERVICES_TABLE,
++} from "@/lib/platform/controller/table-details";
++import migrationHelper from "./migration-helper";
++
++const MIGRATION_ID = "add-controller-cluster-id";
+ 
+ export default async function AddControllerClusterIdMigration(
+ 	databaseConfigId?: string
+ ) {
+ 	const queries = [
+-		`ALTER TABLE openlit_controller_services ADD COLUMN IF NOT EXISTS cluster_id String DEFAULT 'default'`,
+-		`ALTER TABLE openlit_controller_instances ADD COLUMN IF NOT EXISTS cluster_id String DEFAULT 'default'`,
+-		`ALTER TABLE openlit_controller_actions ADD COLUMN IF NOT EXISTS cluster_id String DEFAULT 'default'`,
++		`ALTER TABLE ${CONTROLLER_SERVICES_TABLE} ADD COLUMN IF NOT EXISTS cluster_id String DEFAULT 'default';`,
++		`ALTER TABLE ${CONTROLLER_INSTANCES_TABLE} ADD COLUMN IF NOT EXISTS cluster_id String DEFAULT 'default';`,
++		`ALTER TABLE ${CONTROLLER_ACTIONS_TABLE} ADD COLUMN IF NOT EXISTS cluster_id String DEFAULT 'default';`,
+ 	];
+ 
+-	for (const query of queries) {
+-		await dataCollector({ query }, "query", databaseConfigId);
+-	}
++	return migrationHelper({
++		clickhouseMigrationId: MIGRATION_ID,
++		databaseConfigId,
++		queries,
++	});
+ }
+```
+
+**File**: `src/client/src/clickhouse/migrations/create-custom-dashboards-migration.ts` (modified, +72/-2)
+```diff
+@@ -1,5 +1,6 @@
+ import migrationHelper from "./migration-helper";
+ import CreateCustomDashboardsSeed from "../seed/dashboards";
++import { intelligenceDataCollector } from "@/lib/platform/common";
+ 
+ const MIGRATION_ID = "create-custom-dashboards-table";
+ 
+@@ -8,6 +9,50 @@ const CUSTOM_DASHBOARDS_BOARDS_TABLE = "openlit_board";
+ const CUSTOM_DASHBOARDS_FOLDERS_TABLE = "openlit_folder";
+ const CUSTOM_DASHBOARDS_WIDGETS_TABLE = "openlit_widget";
+ const CUSTOM_DASHBOARDS_BOARD_WIDGETS_TABLE = "openlit_board_widget";
++const EXPECTED_CUSTOM_DASHBOARD_TABLES = [
++  CUSTOM_DASHBOARDS_FOLDERS_TABLE,
++  CUSTOM_DASHBOARDS_BOARDS_TABLE,
++  CUSTOM_DASHBOARDS_WIDGETS_TABLE,
++  CUSTOM_DASHBOARDS_BOARD_WIDGETS_TABLE,
++];
++
++async function verifyCustomDashboardTables(databaseConfigId?: string) {
++  // `system.tables` has a stable `name` column. `SHOW TABLES` JSONEachRow
++  // shapes have varied across ClickHouse versions; a parse miss here would
++  // fail this group-1 migration and skip every later schema migration.
++  const quotedNames = EXPECTED_CUSTOM_DASHBOARD_TABLES.map(
++    (tableName) => `'${tableName}'`
++  ).join(", ");
++  const { data, err } = await intelligenceDataCollector(
++    {
++      query: `
++        SELECT name
++        FROM system.tables
++        WHERE database = currentDatabase()
++          AND name IN (${quotedNames})
++      `,
++    },
++    "query",
++    databaseConfigId
++  );
++  if (err) return { err };
++
++  const existingTables = new Set(
++    (Array.isArray(data) ? data : [])
++      .map((row) => {
++        if (typeof row === "string") return row;
++        if (!row || typeof row !== "object") return "";
++        const tableRow = row as { name?: unknown; table?: unknown };
++        return String(tableRow.name ?? tableRow.table ?? "");
++      })
++      .filter(Boolean)
++  );
++  const missingTables = EXPECTED_CUSTOM_DASHBOARD_TABLES.filter(
++    (tableName) => !existingTables.has(tableName)
++  );
++
++  return { missingTables };
++}
+ 
+ export default async function CreateCustomDashboardsMigration(databaseConfigId?: string) {
+   const queries = [
+@@ -95,15 +140,40 @@ export default async function CreateCustomDashboardsMigration(databaseConfigId?:
+       PRIMARY KEY id
+     ) ENGINE = MergeTree()
+     ORDER BY (id, board_id, widget_id, created_at);
+-    `
++    `,
+   ];
+ 
+-  const { migrationExist, queriesRun } = await migrationHelper({
++  const { migrationExist, queriesRun, err: migrationErr } = await migrationHelper({
+     clickhouseMigrationId: MIGRATION_ID,
+     databaseConfigId,
+     queries,
+   });
+ 
++  const tableVerification = await verifyCustomDashboardTables(databaseConfigId);
++  if (tableVerification.err) {
++    const errorMessage = migrationErr
++      ? `ClickHouse migration failed: ${String(migrationErr)}; table verification also failed: ${String(tableVerification.err)}`
++      : `ClickHouse dashboard table verification failed: ${String(tableVerification.err)}`;
++    console.error(errorMessage);
++    return { migrationExist, queriesRun, err: errorMessage };
++  }
++
++  if (tableVerification.missingTables?.length) {
++    const errorMessage = `${migrationErr ? `ClickHouse migration failed: ${String(migrationErr)}; ` : ""}ClickHouse dashboard table verification failed; missing tables: ${tableVerification.missingTables.join(", ")}`;
++    console.error(errorMessage);
++    return { migrationExist, queriesRun, err: errorMessage };
++  }
++
++  // Do not seed dashboards when table creation failed. The migration helper
++  // deliberately leaves failed migrations unrecorded so a later boot can
++  // retry them, but the seed path needs the same failure boundary; otherwise
++  // startup can report success while dashboard inserts hit missing tables.
++  if (!migrationExist && !queriesRun) {
++    return migrationErr
++      ? { migrationExist, queriesRun, err: migrationErr }
++      : { migrationExist, queriesRun };
++  }
++
+   // Always run the seed -- it is idempotent per-title via
+   // `boardExistsByTitle` and exists precisely so tha
+```
+
+**File**: `src/client/src/clickhouse/migrations/index.ts` (modified, +70/-39)
+```diff
+@@ -38,77 +38,108 @@ import SeedOrcaRouterProviderMigration from "./seed-orcarouter-provider-migratio
+ import CreateTelemetryRollupsMigration from "./create-telemetry-rollups-migration";
+ import AlterTelemetryRollupsDimensionsMigration from "./alter-telemetry-rollups-dimensions-migration";
+ 
++type MigrationResult = {
++	migrationExist?: boolean;
++	queriesRun?: boolean;
++	err?: unknown;
++	data?: unknown;
++};
++
++function migrationSucceeded(result: unknown): result is MigrationResult {
++	if (!result || typeof result !== "object") return false;
++
++	const migrationResult = result as MigrationResult;
++	if (migrationResult.err) return false;
++	if (migrationResult.migrationExist === true) return true;
++	if ("queriesRun" in migrationResult) {
++		return migrationResult.queriesRun === true;
++	}
++
++	// A few legacy migrations return `{ data: ... }` instead of the
++	// migrationHelper result shape. Keep accepting that successful contract,
++	// while rejecting missing or unrecognised results.
++	return "data" in migrationResult;
++}
++
++async function runMigration(name: string, migration: () => Promise<unknown>): Promise<MigrationResult> {
++	const result = await migration();
++	if (migrationSucceeded(result)) return result;
++
++	const details = result && typeof result === "object" && "err" in result ? String((result as MigrationResult).err) : "the migration did not report successful completion";
++	throw new Error(`ClickHouse migration "${name}" failed: ${details}`);
++}
++
+ export default async function migrations(databaseConfigId?: string) {
+ 	// Group 1: Independent table creations (safe to parallel)
+ 	await Promise.all([
+-		CreatePromptMigration(databaseConfigId),
+-		CreateVaultMigration(databaseConfigId),
+-		CreateEvaluationMigration(databaseConfigId),
+-		CreateEvaluationTypeDefaultsMigration(databaseConfigId),
+-		CreateCronLogMigration(databaseConfigId),
+-		CreateCustomDashboardsMigration(databaseConfigId),
+-		CreateOpengroundMigration(databaseConfigId),
+-		CreateRuleEngineMigration(databaseConfigId),
+-		CreateControllerMigration(databaseConfigId),
+-		CreateChatMigration(databaseConfigId),
+-		CreateAgentsSummaryMigration(databaseConfigId),
+-		CreateAgentVersionsMigration(databaseConfigId),
++		runMigration("create-prompt", () => CreatePromptMigration(databaseConfigId)),
++		runMigration("create-vault", () => CreateVaultMigration(databaseConfigId)),
++		runMigration("create-evaluation", () => CreateEvaluationMigration(databaseConfigId)),
++		runMigration("create-evaluation-type-defaults", () => CreateEvaluationTypeDefaultsMigration(databaseConfigId)),
++		runMigration("create-cron-log", () => CreateCronLogMigration(databaseConfigId)),
++		runMigration("create-custom-dashboards", () => CreateCustomDashboardsMigration(databaseConfigId)),
++		runMigration("create-openground", () => CreateOpengroundMigration(databaseConfigId)),
++		runMigration("create-rule-engine", () => CreateRuleEngineMigration(databaseConfigId)),
++		runMigration("create-controller", () => CreateControllerMigration(databaseConfigId)),
++		runMigration("create-chat", () => CreateChatMigration(databaseConfigId)),
++		runMigration("create-agents-summary", () => CreateAgentsSummaryMigration(databaseConfigId)),
++		runMigration("create-agent-versions", () => CreateAgentVersionsMigration(databaseConfigId)),
+ 	]);
+ 
+ 	// Group 2: Controller schema modifications (must be sequential --
+ 	// each ALTER/CREATE depends on the previous step completing)
+-	await AlterControllerModeMigration(databaseConfigId);
+-	await AddControllerResourceAttrsMigration(databaseConfigId);
+-	await AddControllerWorkloadKeyMigration(databaseConfigId);
+-	await AddControllerSDKActionsMigration(databaseConfigId);
+-	await AddControllerTTLMigration(databaseConfigId);
+-	await AddControllerClusterIdMigration(databaseConfigId);
+-	await UpdateControllerActionsTTLMigration(databaseConfigId);
+-	await GeneralizeControllerDesiredStatesMigration(databaseConfigId);
+-	await AddControllerSkippingIndexesMigration(databaseConfigId);
++	await ru
+```
+
+#### Recent Merged Pull Requests:
+- **PR #1678** (2026-09-29): docs(sdk/typescript): fix broken docs.openlit.io links in README (@drgg)
+- **PR #1672** (2026-09-28): docs: remove dead Mintlify nav entries for missing pages (@aniketkrs)
+- **PR #1665** (2026-09-25): feat: add CE no-op license boot sync hook (@AmanAgarwal041)
+- **PR #1654** (2026-09-22): feat: add a founder call link and refresh the auth screen (@AmanAgarwal041)
+- **PR #1652** (2026-09-28): docs: surface content capture controls in the AI observability quickstart (@v0ropaev)
+- **PR #1651** (2026-09-22): docs: add sponsors, deployment partners, and contributors to the README (@AmanAgarwal041)
+- **PR #1642** (closed): build(deps): update langchain-core requirement from >=1.5.0 to >=1.6.3 in /sdk/python/tests (@dependabot[bot])
+- **PR #1640** (closed): build(deps): update langchain requirement from <2.0.0,>=1.3.14 to >=1.4.1,<2.0.0 in /sdk/python/tests (@dependabot[bot])
+
+---
+
+## 3. Empirical Evidence & Compliance Certification
+- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
+- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
+- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
+
+---
+
+## 4. Promotion & Integration Status
+- **Status**: HARVESTED_DEEP_FORENSIC
+- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.

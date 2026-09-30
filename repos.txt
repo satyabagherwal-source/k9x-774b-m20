@@ -2304,3 +2304,11 @@ https://github.com/dtyq/magic
 https://github.com/FellouAI/eko
 # [AI-AGENTS] openai/openai-agents-js (3509 score [VERIFIED ORG]) - A lightweight, powerful framework for multi-agent workflows and voice agents
 https://github.com/openai/openai-agents-js
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:56:31.839Z] ---
+# [AI-AGENTS] openlit/openlit (1877 score) - Open-source observability & evaluation platform for AI agents and coding agents.
+https://github.com/openlit/openlit
+# [AI-AGENTS] afar1/fieldtheory-cli (1315 score) - Field Theory CLI for bookmarks, Library, commands, and agent workflows
+https://github.com/afar1/fieldtheory-cli
+# [AI-AGENTS] badlogic/lemmy (1077 score) - Wrapper around tool using LLMs for agentic workflows
+https://github.com/badlogic/lemmy

@@ -9796,5 +9796,50 @@
     "qualityScore": 3509,
     "verifiedOrg": true,
     "discoveredAt": "2026-09-30T19:55:10.020Z"
+  },
+  {
+    "name": "openlit",
+    "fullName": "openlit/openlit",
+    "url": "https://github.com/openlit/openlit",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source observability & evaluation platform for AI agents and coding agents. Trace LLMs, tools, prompts, costs & agent workflows with OpenTelemetry.",
+    "stars": 2807,
+    "forks": 411,
+    "openIssues": 136,
+    "language": "TypeScript",
+    "qualityScore": 1877,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:56:31.838Z"
+  },
+  {
+    "name": "fieldtheory-cli",
+    "fullName": "afar1/fieldtheory-cli",
+    "url": "https://github.com/afar1/fieldtheory-cli",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Field Theory CLI for bookmarks, Library, commands, and agent workflows",
+    "stars": 2031,
+    "forks": 210,
+    "openIssues": 43,
+    "language": "TypeScript",
+    "qualityScore": 1315,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:56:31.838Z"
+  },
+  {
+    "name": "lemmy",
+    "fullName": "badlogic/lemmy",
+    "url": "https://github.com/badlogic/lemmy",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Wrapper around tool using LLMs for agentic workflows",
+    "stars": 1643,
+    "forks": 299,
+    "openIssues": 33,
+    "language": "TypeScript",
+    "qualityScore": 1077,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:56:31.838Z"
   }
 ]

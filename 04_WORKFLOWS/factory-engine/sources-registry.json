@@ -9999,5 +9999,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openlit-openlit": {
+    "name": "openlit/openlit",
+    "officialUrl": "https://github.com/openlit/openlit",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:56:55.187Z",
+    "lastVerified": "2026-09-30T19:56:55.187Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 60,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
