@@ -12430,5 +12430,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jordanbaird-ice": {
+    "name": "jordanbaird/Ice",
+    "officialUrl": "https://github.com/jordanbaird/Ice",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T21:36:46.451Z",
+    "lastVerified": "2026-09-30T21:36:46.451Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
