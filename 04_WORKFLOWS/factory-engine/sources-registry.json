@@ -12417,5 +12417,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tw93-mole": {
+    "name": "tw93/Mole",
+    "officialUrl": "https://github.com/tw93/Mole",
+    "sourceType": "github",
+    "technology": "Shell",
+    "lastChecked": "2026-09-30T21:36:32.483Z",
+    "lastVerified": "2026-09-30T21:36:32.483Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

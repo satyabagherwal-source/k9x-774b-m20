@@ -2808,3 +2808,11 @@ https://github.com/MobileNativeFoundation/Store
 https://github.com/kosi-libs/Kodein
 # [MOBILE-CROSS-PLATFORM] arkivanov/Decompose (1728 score) - Kotlin Multiplatform lifecycle-aware business logic components (aka BLoCs) with 
 https://github.com/arkivanov/Decompose
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:36:09.426Z] ---
+# [MOBILE-CROSS-PLATFORM] tw93/Mole (35330 score) - 🐹 Clean, uninstall, analyze, optimize, and monitor your Mac. Free open-source C
+https://github.com/tw93/Mole
+# [MOBILE-CROSS-PLATFORM] jordanbaird/Ice (15503 score) - Powerful menu bar manager for macOS
+https://github.com/jordanbaird/Ice
+# [MOBILE-CROSS-PLATFORM] NativeScript/NativeScript (13803 score) - ⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objectiv
+https://github.com/NativeScript/NativeScript

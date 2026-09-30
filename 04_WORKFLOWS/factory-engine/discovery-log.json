@@ -12586,5 +12586,50 @@
     "qualityScore": 1728,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:34:18.024Z"
+  },
+  {
+    "name": "Mole",
+    "fullName": "tw93/Mole",
+    "url": "https://github.com/tw93/Mole",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "🐹 Clean, uninstall, analyze, optimize, and monitor your Mac. Free open-source CLI, plus a native Mac app.",
+    "stars": 68865,
+    "forks": 2445,
+    "openIssues": 7,
+    "language": "Shell",
+    "qualityScore": 35330,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:36:09.425Z"
+  },
+  {
+    "name": "Ice",
+    "fullName": "jordanbaird/Ice",
+    "url": "https://github.com/jordanbaird/Ice",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Powerful menu bar manager for macOS",
+    "stars": 29726,
+    "forks": 965,
+    "openIssues": 438,
+    "language": "Swift",
+    "qualityScore": 15503,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:36:09.425Z"
+  },
+  {
+    "name": "NativeScript",
+    "fullName": "NativeScript/NativeScript",
+    "url": "https://github.com/NativeScript/NativeScript",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "⚡ Write Native with TypeScript ✨ Best of all worlds (TypeScript, Swift, Objective C, Kotlin, Java, Dart). Use what you love ❤️ Angular, React, Solid, Svelte, Vue with: iOS (UIKit, SwiftUI), Android (View, Jetpack Compose), Flutter and you name it compatible.",
+    "stars": 25662,
+    "forks": 1741,
+    "openIssues": 859,
+    "language": "TypeScript",
+    "qualityScore": 13803,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:36:09.425Z"
   }
 ]
