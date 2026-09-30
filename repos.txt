@@ -2440,3 +2440,19 @@ https://github.com/fujibee/agmsg
 https://github.com/DemonDamon/FinnewsHunter
 # [AI-AGENTS] agentconnect-md/agentconnect (947 score) - The open-source, multi-agent alternative to Claude Tag.  @ any agent, wherever w
 https://github.com/agentconnect-md/agentconnect
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:21:08.566Z] ---
+# [HIGH-PERF-SYSTEMS] topgrade-rs/topgrade (2739 score) - Upgrade all the things
+https://github.com/topgrade-rs/topgrade
+# [HIGH-PERF-SYSTEMS] medialab/xan (2743 score) - The CSV magician
+https://github.com/medialab/xan
+# [HIGH-PERF-SYSTEMS] restatedev/restate (2761 score) - Restate is the platform for building resilient applications that tolerate all in
+https://github.com/restatedev/restate
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:21:19.899Z] ---
+# [AI-AGENTS] larlarua/AutoCVE (1032 score) - Agent-driven automated CVE discovery platform for source code auditing, vulnerab
+https://github.com/larlarua/AutoCVE
+# [AI-AGENTS] google/adk-js (2104 score [VERIFIED ORG]) - An open-source, code-first Typescript toolkit for building, evaluating, and depl
+https://github.com/google/adk-js
+# [AI-AGENTS] yohey-w/multi-agent-shogun (1064 score) - Samurai-inspired multi-agent system for Claude Code. Orchestrate parallel AI tas
+https://github.com/yohey-w/multi-agent-shogun

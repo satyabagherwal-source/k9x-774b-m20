@@ -10649,5 +10649,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "topgrade-rs-topgrade": {
+    "name": "topgrade-rs/topgrade",
+    "officialUrl": "https://github.com/topgrade-rs/topgrade",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:21:33.165Z",
+    "lastVerified": "2026-09-30T20:21:33.165Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 21,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
