@@ -10909,5 +10909,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "haris-musa-excel-mcp-server": {
+    "name": "haris-musa/excel-mcp-server",
+    "officialUrl": "https://github.com/haris-musa/excel-mcp-server",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:28:38.068Z",
+    "lastVerified": "2026-09-30T20:28:38.068Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
