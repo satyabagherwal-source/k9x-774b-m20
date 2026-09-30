@@ -5865,5 +5865,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "software-mansion-react-native-gesture-handler": {
+    "name": "software-mansion/react-native-gesture-handler",
+    "officialUrl": "https://github.com/software-mansion/react-native-gesture-handler",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:14:41.377Z",
+    "lastVerified": "2026-09-30T18:14:41.377Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
