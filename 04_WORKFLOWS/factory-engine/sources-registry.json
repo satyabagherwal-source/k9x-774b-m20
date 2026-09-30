@@ -9375,5 +9375,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yusufkaraaslan-skill_seekers": {
+    "name": "yusufkaraaslan/Skill_Seekers",
+    "officialUrl": "https://github.com/yusufkaraaslan/Skill_Seekers",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:33:16.929Z",
+    "lastVerified": "2026-09-30T19:33:16.929Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
