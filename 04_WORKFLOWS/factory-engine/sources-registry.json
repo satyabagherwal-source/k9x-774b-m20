@@ -3200,5 +3200,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ratatui-ratatui": {
+    "name": "ratatui/ratatui",
+    "officialUrl": "https://github.com/ratatui/ratatui",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:22:02.539Z",
+    "lastVerified": "2026-09-30T17:22:02.539Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 22,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
