@@ -2329,5 +2329,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zilliztech-claude-context": {
+    "name": "zilliztech/claude-context",
+    "officialUrl": "https://github.com/zilliztech/claude-context",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T14:03:05.093Z",
+    "lastVerified": "2026-09-30T14:03:05.093Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
