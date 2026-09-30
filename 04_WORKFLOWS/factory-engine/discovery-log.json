@@ -11056,5 +11056,20 @@
     "qualityScore": 2532,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:30:06.771Z"
+  },
+  {
+    "name": "weathr",
+    "fullName": "Veirt/weathr",
+    "url": "https://github.com/Veirt/weathr",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "a terminal weather app with ascii animation",
+    "stars": 3062,
+    "forks": 116,
+    "openIssues": 19,
+    "language": "Rust",
+    "qualityScore": 1854,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:30:08.764Z"
   }
 ]

@@ -2532,3 +2532,7 @@ https://github.com/Manavarya09/design-extract
 https://github.com/bethington/ghidra-mcp
 # [AI-AGENTS] modelcontextprotocol/rust-sdk (2532 score) - The official Rust SDK for the Model Context Protocol
 https://github.com/modelcontextprotocol/rust-sdk
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:30:57.744Z] ---
+# [HIGH-PERF-SYSTEMS] Veirt/weathr (1854 score) - a terminal weather app with ascii animation
+https://github.com/Veirt/weathr

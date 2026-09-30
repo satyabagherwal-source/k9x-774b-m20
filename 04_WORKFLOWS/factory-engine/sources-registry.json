@@ -11078,5 +11078,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "modelcontextprotocol-rust-sdk": {
+    "name": "modelcontextprotocol/rust-sdk",
+    "officialUrl": "https://github.com/modelcontextprotocol/rust-sdk",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:31:06.728Z",
+    "lastVerified": "2026-09-30T20:31:06.728Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
