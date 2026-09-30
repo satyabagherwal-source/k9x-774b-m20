@@ -7178,5 +7178,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "u-root-u-root": {
+    "name": "u-root/u-root",
+    "officialUrl": "https://github.com/u-root/u-root",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:26:22.342Z",
+    "lastVerified": "2026-09-30T18:26:22.342Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
