@@ -320,5 +320,47 @@
     "language": "Python",
     "qualityScore": 53414,
     "discoveredAt": "2026-09-30T01:21:08.765Z"
+  },
+  {
+    "name": "onlook",
+    "fullName": "onlook-dev/onlook",
+    "url": "https://github.com/onlook-dev/onlook",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "The Developer Tool for Designers • An Open-Source AI-First Design tool • Visually build, style, and edit your code with AI • World's best, top-most agent recommended #1 Developer tool for Designers to design with Real Code.",
+    "stars": 26831,
+    "forks": 2111,
+    "openIssues": 381,
+    "language": "TypeScript",
+    "qualityScore": 16832,
+    "discoveredAt": "2026-09-30T02:51:58.577Z"
+  },
+  {
+    "name": "ruflo",
+    "fullName": "ruvnet/ruflo",
+    "url": "https://github.com/ruvnet/ruflo",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🌊 The original agent harness. Deploy intelligent multi-player swarms, coordinate autonomous workflows, and build conversational AI systems. Features adaptive memory, self-learning intelligence, federation, vector RAG integration, and native Claude Code / Codex / Hermes and many more Integrated",
+    "stars": 73525,
+    "forks": 8726,
+    "openIssues": 1027,
+    "language": "TypeScript",
+    "qualityScore": 46833,
+    "discoveredAt": "2026-09-30T02:52:03.318Z"
+  },
+  {
+    "name": "TrendRadar",
+    "fullName": "sansan0/TrendRadar",
+    "url": "https://github.com/sansan0/TrendRadar",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, and smart alerts.🎯 告别信息过载，你的 AI 舆情监控助手与热点筛选工具！聚合多平台热点 +  RSS 订阅，支持关键词精准筛选。AI 智能筛选新闻 + AI 翻译 +  AI 分析简报直推手机，也支持接入 MCP 架构，赋能 AI 自然语言对话分析、情感洞察与趋势预测等。支持 Docker ，数据本地/云端自持。集成微信/飞书/钉钉/Telegram/邮件/ntfy/bark/slack 等渠道智能推送。",
+    "stars": 62619,
+    "forks": 24903,
+    "openIssues": 67,
+    "language": "Python",
+    "qualityScore": 45042,
+    "discoveredAt": "2026-09-30T02:52:03.318Z"
   }
 ]

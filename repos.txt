@@ -409,3 +409,13 @@ https://github.com/SeaQL/sea-orm
 https://github.com/koala73/worldmonitor
 # [AI-AGENTS] D4Vinci/Scrapling (53414 score) - 🕷️ An adaptive Web Scraping framework that handles everything from a single req
 https://github.com/D4Vinci/Scrapling
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T02:52:00.936Z] ---
+# [FULLSTACK-UI] onlook-dev/onlook (16832 score) - The Developer Tool for Designers • An Open-Source AI-First Design tool • Visuall
+https://github.com/onlook-dev/onlook
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T02:52:03.319Z] ---
+# [AI-AGENTS] ruvnet/ruflo (46833 score) - 🌊 The original agent harness. Deploy intelligent multi-player swarms, coordinat
+https://github.com/ruvnet/ruflo
+# [AI-AGENTS] sansan0/TrendRadar (45042 score) - ⭐AI-driven public opinion & trend monitor with multi-platform aggregation, RSS, 
+https://github.com/sansan0/TrendRadar

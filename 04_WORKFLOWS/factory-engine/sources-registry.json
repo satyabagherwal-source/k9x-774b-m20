@@ -1679,5 +1679,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "onlook-dev-onlook": {
+    "name": "onlook-dev/onlook",
+    "officialUrl": "https://github.com/onlook-dev/onlook",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T02:52:13.983Z",
+    "lastVerified": "2026-09-30T02:52:13.983Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
