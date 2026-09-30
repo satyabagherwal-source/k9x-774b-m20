@@ -5,7 +5,7 @@
       "page": 4
     },
     "fullstack-ui": {
-      "queryIndex": 0,
+      "queryIndex": 4,
       "page": 1
     },
     "high-perf-systems": {
@@ -21,7 +21,7 @@
       "page": 3
     },
     "devops-cloud-infrastructure": {
-      "queryIndex": 1,
+      "queryIndex": 4,
       "page": 1
     },
     "cybersecurity-defenses": {
@@ -38,5 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 73,
-  "lastReplenishedAt": "2026-09-30T21:06:20.733Z"
+  "lastReplenishedAt": "2026-09-30T21:06:26.986Z"
 }

@@ -11884,5 +11884,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "modelscope-evalscope": {
+    "name": "modelscope/evalscope",
+    "officialUrl": "https://github.com/modelscope/evalscope",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:06:30.897Z",
+    "lastVerified": "2026-09-30T21:06:30.897Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 64,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
