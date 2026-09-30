@@ -10272,5 +10272,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "adbar-trafilatura": {
+    "name": "adbar/trafilatura",
+    "officialUrl": "https://github.com/adbar/trafilatura",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:10:08.564Z",
+    "lastVerified": "2026-09-30T20:10:08.564Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 67,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
