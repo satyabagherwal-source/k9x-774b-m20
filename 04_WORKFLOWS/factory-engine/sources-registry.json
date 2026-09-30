@@ -9843,5 +9843,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "open-webui-mcpo": {
+    "name": "open-webui/mcpo",
+    "officialUrl": "https://github.com/open-webui/mcpo",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:49:45.080Z",
+    "lastVerified": "2026-09-30T19:49:45.080Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
