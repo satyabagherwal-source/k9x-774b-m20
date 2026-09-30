@@ -11116,5 +11116,50 @@
     "qualityScore": 2228,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:31:53.403Z"
+  },
+  {
+    "name": "linkedin-mcp-server",
+    "fullName": "stickerdaniel/linkedin-mcp-server",
+    "url": "https://github.com/stickerdaniel/linkedin-mcp-server",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source MCP server for LinkedIn. Give Claude and any MCP-compatible AI agent access to profiles, companies, jobs, and messages.",
+    "stars": 3681,
+    "forks": 642,
+    "openIssues": 170,
+    "language": "Python",
+    "qualityScore": 2383,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:33:15.865Z"
+  },
+  {
+    "name": "dbhub",
+    "fullName": "bytebase/dbhub",
+    "url": "https://github.com/bytebase/dbhub",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Token conscious database MCP server for Postgres, MySQL, SQL Server, Oracle, MariaDB, SQLite.",
+    "stars": 3586,
+    "forks": 310,
+    "openIssues": 6,
+    "language": "TypeScript",
+    "qualityScore": 2148,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:33:15.865Z"
+  },
+  {
+    "name": "buildwithclaude",
+    "fullName": "davepoon/buildwithclaude",
+    "url": "https://github.com/davepoon/buildwithclaude",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A single hub to find Claude Skills, Agents, Commands, Hooks, Plugins, and Marketplace collections to extend Claude Code, Claude Desktop, Agent SDK and OpenClaw",
+    "stars": 3572,
+    "forks": 544,
+    "openIssues": 16,
+    "language": "Python",
+    "qualityScore": 2231,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:33:15.865Z"
   }
 ]

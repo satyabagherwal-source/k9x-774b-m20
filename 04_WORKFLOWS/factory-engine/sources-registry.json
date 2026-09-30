@@ -11143,5 +11143,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "stickerdaniel-linkedin-mcp-server": {
+    "name": "stickerdaniel/linkedin-mcp-server",
+    "officialUrl": "https://github.com/stickerdaniel/linkedin-mcp-server",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:33:41.145Z",
+    "lastVerified": "2026-09-30T20:33:41.145Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
