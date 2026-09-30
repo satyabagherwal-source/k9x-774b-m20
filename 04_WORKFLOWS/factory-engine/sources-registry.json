@@ -2862,5 +2862,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "infinitered-reactotron": {
+    "name": "infinitered/reactotron",
+    "officialUrl": "https://github.com/infinitered/reactotron",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:15:16.554Z",
+    "lastVerified": "2026-09-30T17:15:16.554Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
