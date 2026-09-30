@@ -12755,5 +12755,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ronitsingh10-finetune": {
+    "name": "ronitsingh10/FineTune",
+    "officialUrl": "https://github.com/ronitsingh10/FineTune",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:00:17.379Z",
+    "lastVerified": "2026-09-30T22:00:17.379Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
