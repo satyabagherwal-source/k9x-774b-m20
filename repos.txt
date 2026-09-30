@@ -2348,3 +2348,11 @@ https://github.com/aaif-goose/goose
 https://github.com/tinyhumansai/openhuman
 # [AI-AGENTS] Yeachan-Heo/oh-my-claudecode (21055 score) - Teams-first Multi-agent orchestration for Claude Code
 https://github.com/Yeachan-Heo/oh-my-claudecode
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:06:40.175Z] ---
+# [AI-AGENTS] ashishpatel26/500-AI-Agents-Projects (21540 score) - The 500 AI Agents Projects is a curated collection of AI agent use cases across 
+https://github.com/ashishpatel26/500-AI-Agents-Projects
+# [AI-AGENTS] ItzCrazyKns/Vane (20053 score) - Vane is an AI-powered answering engine.
+https://github.com/ItzCrazyKns/Vane
+# [AI-AGENTS] JCodesMore/ai-website-cloner-template (19464 score) - Clone any website with one command using AI coding agents
+https://github.com/JCodesMore/ai-website-cloner-template

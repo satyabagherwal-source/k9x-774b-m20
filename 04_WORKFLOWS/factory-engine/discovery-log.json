@@ -10036,5 +10036,50 @@
     "qualityScore": 21055,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:05:14.997Z"
+  },
+  {
+    "name": "500-AI-Agents-Projects",
+    "fullName": "ashishpatel26/500-AI-Agents-Projects",
+    "url": "https://github.com/ashishpatel26/500-AI-Agents-Projects",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The 500 AI Agents Projects is a curated collection of AI agent use cases across various industries. It showcases practical applications and provides links to open-source projects for implementation, illustrating how AI agents are transforming sectors such as healthcare, finance, education, retail, and more.",
+    "stars": 38207,
+    "forks": 6836,
+    "openIssues": 68,
+    "language": "Python",
+    "qualityScore": 21540,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:06:40.174Z"
+  },
+  {
+    "name": "Vane",
+    "fullName": "ItzCrazyKns/Vane",
+    "url": "https://github.com/ItzCrazyKns/Vane",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Vane is an AI-powered answering engine.",
+    "stars": 36945,
+    "forks": 4103,
+    "openIssues": 356,
+    "language": "TypeScript",
+    "qualityScore": 20053,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:06:40.174Z"
+  },
+  {
+    "name": "ai-website-cloner-template",
+    "fullName": "JCodesMore/ai-website-cloner-template",
+    "url": "https://github.com/JCodesMore/ai-website-cloner-template",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Clone any website with one command using AI coding agents",
+    "stars": 35505,
+    "forks": 5193,
+    "openIssues": 2,
+    "language": "TypeScript",
+    "qualityScore": 19464,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:06:40.174Z"
   }
 ]
