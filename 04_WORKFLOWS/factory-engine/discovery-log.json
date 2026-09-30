@@ -2611,5 +2611,50 @@
     "qualityScore": 3507,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T17:26:05.642Z"
+  },
+  {
+    "name": "tokei",
+    "fullName": "XAMPPRocky/tokei",
+    "url": "https://github.com/XAMPPRocky/tokei",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Count your code, quickly.",
+    "stars": 14961,
+    "forks": 709,
+    "openIssues": 249,
+    "language": "Rust",
+    "qualityScore": 8043,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:26:10.412Z"
+  },
+  {
+    "name": "bottom",
+    "fullName": "ClementTsang/bottom",
+    "url": "https://github.com/ClementTsang/bottom",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Yet another cross-platform graphical process/system monitor.",
+    "stars": 14074,
+    "forks": 391,
+    "openIssues": 103,
+    "language": "Rust",
+    "qualityScore": 7604,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:26:10.412Z"
+  },
+  {
+    "name": "gping",
+    "fullName": "orf/gping",
+    "url": "https://github.com/orf/gping",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Ping, but with a graph",
+    "stars": 12697,
+    "forks": 369,
+    "openIssues": 44,
+    "language": "Rust",
+    "qualityScore": 6797,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T17:26:10.412Z"
   }
 ]
