@@ -5488,5 +5488,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "go-chassis-go-chassis": {
+    "name": "go-chassis/go-chassis",
+    "officialUrl": "https://github.com/go-chassis/go-chassis",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:45:59.889Z",
+    "lastVerified": "2026-09-30T17:45:59.889Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
