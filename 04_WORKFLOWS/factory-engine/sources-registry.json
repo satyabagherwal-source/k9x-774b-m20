@@ -10636,5 +10636,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pauljuliusmartinez-jless": {
+    "name": "PaulJuliusMartinez/jless",
+    "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:18:38.554Z",
+    "lastVerified": "2026-09-30T20:18:38.554Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
