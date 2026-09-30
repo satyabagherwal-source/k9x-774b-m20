@@ -10194,5 +10194,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yeachan-heo-oh-my-claudecode": {
+    "name": "Yeachan-Heo/oh-my-claudecode",
+    "officialUrl": "https://github.com/Yeachan-Heo/oh-my-claudecode",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:06:10.448Z",
+    "lastVerified": "2026-09-30T20:06:10.448Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 42,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
