@@ -5696,5 +5696,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dylanvann-react-native-fast-image": {
+    "name": "DylanVann/react-native-fast-image",
+    "officialUrl": "https://github.com/DylanVann/react-native-fast-image",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:48:54.156Z",
+    "lastVerified": "2026-09-30T17:48:54.156Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
