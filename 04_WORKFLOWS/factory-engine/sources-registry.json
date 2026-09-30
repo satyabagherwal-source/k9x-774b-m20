@@ -5956,5 +5956,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bergside-typeui": {
+    "name": "bergside/typeui",
+    "officialUrl": "https://github.com/bergside/typeui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:15:54.189Z",
+    "lastVerified": "2026-09-30T18:15:54.189Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
