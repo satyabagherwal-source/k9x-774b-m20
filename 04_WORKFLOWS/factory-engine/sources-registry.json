@@ -5202,5 +5202,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gorhom-react-native-bottom-sheet": {
+    "name": "gorhom/react-native-bottom-sheet",
+    "officialUrl": "https://github.com/gorhom/react-native-bottom-sheet",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:42:52.459Z",
+    "lastVerified": "2026-09-30T17:42:52.459Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 52,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
