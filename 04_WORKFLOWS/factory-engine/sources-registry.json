@@ -3070,5 +3070,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "callstack-react-native-paper": {
+    "name": "callstack/react-native-paper",
+    "officialUrl": "https://github.com/callstack/react-native-paper",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:21:05.025Z",
+    "lastVerified": "2026-09-30T17:21:05.025Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
