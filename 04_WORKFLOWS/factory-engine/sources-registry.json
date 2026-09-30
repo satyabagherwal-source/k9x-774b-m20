@@ -1705,5 +1705,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sansan0-trendradar": {
+    "name": "sansan0/TrendRadar",
+    "officialUrl": "https://github.com/sansan0/TrendRadar",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T02:56:07.099Z",
+    "lastVerified": "2026-09-30T02:56:07.099Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
