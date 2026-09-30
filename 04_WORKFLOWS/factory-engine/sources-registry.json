@@ -10311,5 +10311,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openbmb-ultrarag": {
+    "name": "OpenBMB/UltraRAG",
+    "officialUrl": "https://github.com/OpenBMB/UltraRAG",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:11:41.966Z",
+    "lastVerified": "2026-09-30T20:11:41.966Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
