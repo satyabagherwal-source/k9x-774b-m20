@@ -10428,5 +10428,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "open-ani-animeko": {
+    "name": "open-ani/animeko",
+    "officialUrl": "https://github.com/open-ani/animeko",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T20:16:04.974Z",
+    "lastVerified": "2026-09-30T20:16:04.974Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
