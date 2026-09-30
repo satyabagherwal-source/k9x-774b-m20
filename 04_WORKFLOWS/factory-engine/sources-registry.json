@@ -10974,5 +10974,18 @@
     "closedIssuesCount": 4,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "brianegan-flutter_architecture_samples": {
+    "name": "brianegan/flutter_architecture_samples",
+    "officialUrl": "https://github.com/brianegan/flutter_architecture_samples",
+    "sourceType": "github",
+    "technology": "Dart",
+    "lastChecked": "2026-09-30T20:29:10.521Z",
+    "lastVerified": "2026-09-30T20:29:10.521Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
