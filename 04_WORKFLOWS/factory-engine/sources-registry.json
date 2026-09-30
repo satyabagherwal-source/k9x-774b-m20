@@ -2836,5 +2836,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "streetwriters-notesnook": {
+    "name": "streetwriters/notesnook",
+    "officialUrl": "https://github.com/streetwriters/notesnook",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:15:15.958Z",
+    "lastVerified": "2026-09-30T17:15:15.958Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 42,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
