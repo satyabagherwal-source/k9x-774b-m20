@@ -11208,5 +11208,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "taylorwilsdon-google_workspace_mcp": {
+    "name": "taylorwilsdon/google_workspace_mcp",
+    "officialUrl": "https://github.com/taylorwilsdon/google_workspace_mcp",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:35:34.639Z",
+    "lastVerified": "2026-09-30T20:35:34.639Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
