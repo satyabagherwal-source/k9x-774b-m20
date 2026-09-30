@@ -8569,5 +8569,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alibaba-spring-ai-alibaba": {
+    "name": "alibaba/spring-ai-alibaba",
+    "officialUrl": "https://github.com/alibaba/spring-ai-alibaba",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T18:56:08.129Z",
+    "lastVerified": "2026-09-30T18:56:08.129Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 73,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

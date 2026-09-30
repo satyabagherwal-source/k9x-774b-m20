@@ -8146,5 +8146,50 @@
     "qualityScore": 6496,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:54:17.662Z"
+  },
+  {
+    "name": "spring-ai-alibaba",
+    "fullName": "alibaba/spring-ai-alibaba",
+    "url": "https://github.com/alibaba/spring-ai-alibaba",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Agentic AI Framework for Java Developers",
+    "stars": 10952,
+    "forks": 2435,
+    "openIssues": 161,
+    "language": "Java",
+    "qualityScore": 7557,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-09-30T18:55:41.388Z"
+  },
+  {
+    "name": "brigade",
+    "fullName": "spinabot/brigade",
+    "url": "https://github.com/spinabot/brigade",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Brigade — Your personal intelligence, built enterprise-grade",
+    "stars": 10602,
+    "forks": 58,
+    "openIssues": 12,
+    "language": "TypeScript",
+    "qualityScore": 5592,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:55:41.388Z"
+  },
+  {
+    "name": "AgentGuide",
+    "fullName": "adongwanai/AgentGuide",
+    "url": "https://github.com/adongwanai/AgentGuide",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "https://adongwanai.github.io/AgentGuide | AI Agent开发指南 | LangGraph实战 | 高级RAG | 转行大模型 | 大模型面试 | 算法工程师 | 面试题库 | 强化学习｜数据合成",
+    "stars": 10310,
+    "forks": 978,
+    "openIssues": 7,
+    "language": "MDX",
+    "qualityScore": 5562,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:55:41.388Z"
   }
 ]

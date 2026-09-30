@@ -2010,3 +2010,11 @@ https://github.com/microsoft/agent-framework
 https://github.com/Untrivial-ai/agent-orchestrator
 # [AI-AGENTS] EKKOLearnAI/ekko-studio (6496 score) - Ekko Studio is a local-first AI workspace for multi-agent chat, coding, and visu
 https://github.com/EKKOLearnAI/ekko-studio
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:55:41.392Z] ---
+# [AI-AGENTS] alibaba/spring-ai-alibaba (7557 score [VERIFIED ORG]) - Agentic AI Framework for Java Developers
+https://github.com/alibaba/spring-ai-alibaba
+# [AI-AGENTS] spinabot/brigade (5592 score) - Brigade — Your personal intelligence, built enterprise-grade
+https://github.com/spinabot/brigade
+# [AI-AGENTS] adongwanai/AgentGuide (5562 score) - https://adongwanai.github.io/AgentGuide | AI Agent开发指南 | LangGraph实战 | 高级RAG | 转
+https://github.com/adongwanai/AgentGuide
