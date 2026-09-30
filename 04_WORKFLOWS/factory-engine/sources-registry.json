@@ -3473,5 +3473,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "orange-opensource-hurl": {
+    "name": "Orange-OpenSource/hurl",
+    "officialUrl": "https://github.com/Orange-OpenSource/hurl",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:24:47.470Z",
+    "lastVerified": "2026-09-30T17:24:47.470Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
