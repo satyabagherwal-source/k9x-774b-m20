@@ -7152,5 +7152,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gotham-rs-gotham": {
+    "name": "gotham-rs/gotham",
+    "officialUrl": "https://github.com/gotham-rs/gotham",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:26:14.198Z",
+    "lastVerified": "2026-09-30T18:26:14.198Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
