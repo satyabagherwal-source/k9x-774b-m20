@@ -1982,3 +1982,11 @@ https://github.com/StarTrail-org/PixelRAG
 https://github.com/Future-House/paper-qa
 # [AI-AGENTS] zilliztech/deep-searcher (4751 score) - Open Source Deep Research Alternative to Reason and Search on Private Data. Writ
 https://github.com/zilliztech/deep-searcher
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:50:01.268Z] ---
+# [AI-AGENTS] SciPhi-AI/R2R (4552 score) - SoTA production-ready AI retrieval system. Agentic Retrieval-Augmented Generatio
+https://github.com/SciPhi-AI/R2R
+# [AI-AGENTS] Upsonic/Upsonic (4420 score) - Build autonomous AI agents in Python.
+https://github.com/Upsonic/Upsonic
+# [AI-AGENTS] xerrors/Yuxi (4388 score) - 可私有部署的多租户知识智能体平台：统一 RAG、知识图谱、多智能体、MCP/Skills、沙盒与权限管理。Yuxi = Cloud Agents + Knowl
+https://github.com/xerrors/Yuxi

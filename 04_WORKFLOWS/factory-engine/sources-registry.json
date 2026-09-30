@@ -8439,5 +8439,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sciphi-ai-r2r": {
+    "name": "SciPhi-AI/R2R",
+    "officialUrl": "https://github.com/SciPhi-AI/R2R",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:50:22.541Z",
+    "lastVerified": "2026-09-30T18:50:22.541Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
