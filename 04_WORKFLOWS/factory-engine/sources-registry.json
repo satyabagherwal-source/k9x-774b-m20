@@ -6216,5 +6216,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "shadcn-ui-lint": {
+    "name": "shadcn-ui/lint",
+    "officialUrl": "https://github.com/shadcn-ui/lint",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:17:42.950Z",
+    "lastVerified": "2026-09-30T18:17:42.950Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
