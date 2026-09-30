@@ -9141,5 +9141,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "showlab-code2video": {
+    "name": "showlab/Code2Video",
+    "officialUrl": "https://github.com/showlab/Code2Video",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:23:36.022Z",
+    "lastVerified": "2026-09-30T19:23:36.022Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
