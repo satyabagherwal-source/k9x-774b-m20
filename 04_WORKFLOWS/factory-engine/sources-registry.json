@@ -3382,5 +3382,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "expo-create-react-native-app": {
+    "name": "expo/create-react-native-app",
+    "officialUrl": "https://github.com/expo/create-react-native-app",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:24:09.635Z",
+    "lastVerified": "2026-09-30T17:24:09.635Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
