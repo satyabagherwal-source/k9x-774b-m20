@@ -2927,5 +2927,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "infiniflow-infinity": {
+    "name": "infiniflow/infinity",
+    "officialUrl": "https://github.com/infiniflow/infinity",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T17:16:03.309Z",
+    "lastVerified": "2026-09-30T17:16:03.309Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
