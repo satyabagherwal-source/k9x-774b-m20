@@ -6255,5 +6255,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vlcn-io-cr-sqlite": {
+    "name": "vlcn-io/cr-sqlite",
+    "officialUrl": "https://github.com/vlcn-io/cr-sqlite",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:18:02.054Z",
+    "lastVerified": "2026-09-30T18:18:02.054Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
