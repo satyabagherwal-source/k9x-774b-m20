@@ -12856,5 +12856,50 @@
     "qualityScore": 1480,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:47:02.365Z"
+  },
+  {
+    "name": "CodeEdit",
+    "fullName": "CodeEditApp/CodeEdit",
+    "url": "https://github.com/CodeEditApp/CodeEdit",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "📝 CodeEdit App for macOS – Elevate your code editing experience. Open source, free forever.",
+    "stars": 23053,
+    "forks": 1193,
+    "openIssues": 214,
+    "language": "Swift",
+    "qualityScore": 12334,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:51:16.701Z"
+  },
+  {
+    "name": "swift-composable-architecture",
+    "fullName": "pointfreeco/swift-composable-architecture",
+    "url": "https://github.com/pointfreeco/swift-composable-architecture",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A library for building applications in a consistent and understandable way, with composition, testing, and ergonomics in mind.",
+    "stars": 14944,
+    "forks": 1679,
+    "openIssues": 24,
+    "language": "Swift",
+    "qualityScore": 8274,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:51:16.701Z"
+  },
+  {
+    "name": "Loop",
+    "fullName": "mrkai77/Loop",
+    "url": "https://github.com/mrkai77/Loop",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Window management made elegant.",
+    "stars": 11705,
+    "forks": 278,
+    "openIssues": 58,
+    "language": "Swift",
+    "qualityScore": 6202,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:51:16.701Z"
   }
 ]

@@ -12651,5 +12651,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "codeeditapp-codeedit": {
+    "name": "CodeEditApp/CodeEdit",
+    "officialUrl": "https://github.com/CodeEditApp/CodeEdit",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T21:51:37.484Z",
+    "lastVerified": "2026-09-30T21:51:37.484Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 21,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
