@@ -7464,5 +7464,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apache-zookeeper": {
+    "name": "apache/zookeeper",
+    "officialUrl": "https://github.com/apache/zookeeper",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T18:30:57.819Z",
+    "lastVerified": "2026-09-30T18:30:57.819Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
