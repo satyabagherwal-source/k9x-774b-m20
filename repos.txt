@@ -2090,3 +2090,11 @@ https://github.com/SciSharp/BotSharp
 https://github.com/OpenNSWM-Lab/FAROS
 # [AI-AGENTS] mvschwarz/openrig (1956 score) - Multi-agent harness that runs Claude Code and Codex together as one system
 https://github.com/mvschwarz/openrig
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:17:01.433Z] ---
+# [AI-AGENTS] ningzimu/image-to-editable-ppt-skill (1671 score) - Codex skill for converting slide images, PDFs, and image-based PPTX files into e
+https://github.com/ningzimu/image-to-editable-ppt-skill
+# [AI-AGENTS] wanikua/danghuangshang (1751 score) - Open-source multi-agent collaboration system inspired by Chinese governance — de
+https://github.com/wanikua/danghuangshang
+# [AI-AGENTS] nikmcfly/MiroFish-Offline (1830 score) - Offline multi-agent simulation & prediction engine. English fork of MiroFish wit
+https://github.com/nikmcfly/MiroFish-Offline

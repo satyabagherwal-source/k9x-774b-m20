@@ -8959,5 +8959,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ningzimu-image-to-editable-ppt-skill": {
+    "name": "ningzimu/image-to-editable-ppt-skill",
+    "officialUrl": "https://github.com/ningzimu/image-to-editable-ppt-skill",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:17:27.366Z",
+    "lastVerified": "2026-09-30T19:17:27.366Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

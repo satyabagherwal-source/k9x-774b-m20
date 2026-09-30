@@ -8596,5 +8596,50 @@
     "qualityScore": 1956,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:15:04.018Z"
+  },
+  {
+    "name": "image-to-editable-ppt-skill",
+    "fullName": "ningzimu/image-to-editable-ppt-skill",
+    "url": "https://github.com/ningzimu/image-to-editable-ppt-skill",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Codex skill for converting slide images, PDFs, and image-based PPTX files into editable PowerPoint decks.",
+    "stars": 2748,
+    "forks": 150,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 1671,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:17:01.432Z"
+  },
+  {
+    "name": "danghuangshang",
+    "fullName": "wanikua/danghuangshang",
+    "url": "https://github.com/wanikua/danghuangshang",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source multi-agent collaboration system inspired by Chinese governance — deploy and coordinate specialized AI agents with OpenClaw.",
+    "stars": 2701,
+    "forks": 256,
+    "openIssues": 37,
+    "language": "TypeScript",
+    "qualityScore": 1751,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:17:01.432Z"
+  },
+  {
+    "name": "MiroFish-Offline",
+    "fullName": "nikmcfly/MiroFish-Offline",
+    "url": "https://github.com/nikmcfly/MiroFish-Offline",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Offline multi-agent simulation & prediction engine. English fork of MiroFish with Neo4j + Ollama local stack.",
+    "stars": 2566,
+    "forks": 663,
+    "openIssues": 49,
+    "language": "Python",
+    "qualityScore": 1830,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:17:01.432Z"
   }
 ]
