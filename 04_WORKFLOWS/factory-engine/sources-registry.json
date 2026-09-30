@@ -13314,5 +13314,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "modelcontextprotocol-kotlin-sdk": {
+    "name": "modelcontextprotocol/kotlin-sdk",
+    "officialUrl": "https://github.com/modelcontextprotocol/kotlin-sdk",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T23:40:18.718Z",
+    "lastVerified": "2026-09-30T23:40:18.718Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
