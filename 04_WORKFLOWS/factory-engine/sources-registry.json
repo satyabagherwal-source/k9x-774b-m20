@@ -3395,5 +3395,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wix-react-native-navigation": {
+    "name": "wix/react-native-navigation",
+    "officialUrl": "https://github.com/wix/react-native-navigation",
+    "sourceType": "github",
+    "technology": "MDX",
+    "lastChecked": "2026-09-30T17:24:14.332Z",
+    "lastVerified": "2026-09-30T17:24:14.332Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
