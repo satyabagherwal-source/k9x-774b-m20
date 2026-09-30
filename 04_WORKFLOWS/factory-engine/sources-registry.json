@@ -5527,5 +5527,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "chakra-ui-ark": {
+    "name": "chakra-ui/ark",
+    "officialUrl": "https://github.com/chakra-ui/ark",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:46:28.386Z",
+    "lastVerified": "2026-09-30T17:46:28.386Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
