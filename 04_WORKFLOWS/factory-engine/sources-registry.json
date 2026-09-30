@@ -3161,5 +3161,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ontos-ai-knowhere": {
+    "name": "Ontos-AI/knowhere",
+    "officialUrl": "https://github.com/Ontos-AI/knowhere",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:21:44.377Z",
+    "lastVerified": "2026-09-30T17:21:44.377Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 42,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
