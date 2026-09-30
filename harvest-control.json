@@ -163,9 +163,9 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T18:37:05.372Z",
-        "lastHarvestedAt": "2026-09-30T17:45:32.883Z",
-        "totalHarvested": 2,
+        "lastActiveAt": "2026-09-30T18:37:42.299Z",
+        "lastHarvestedAt": "2026-09-30T18:37:42.299Z",
+        "totalHarvested": 3,
         "lastError": null
       },
       {

@@ -7893,5 +7893,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "golutra-golutra": {
+    "name": "golutra/golutra",
+    "officialUrl": "https://github.com/golutra/golutra",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:37:43.452Z",
+    "lastVerified": "2026-09-30T18:37:43.452Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
