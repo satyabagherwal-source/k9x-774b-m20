@@ -12222,5 +12222,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "evomap-evolver": {
+    "name": "EvoMap/evolver",
+    "officialUrl": "https://github.com/EvoMap/evolver",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T21:19:45.866Z",
+    "lastVerified": "2026-09-30T21:19:45.866Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

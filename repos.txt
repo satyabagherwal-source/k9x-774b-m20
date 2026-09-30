@@ -2768,3 +2768,11 @@ https://github.com/futurice/pepperoni-app-kit
 https://github.com/iconoir-icons/iconoir
 # [MOBILE-CROSS-PLATFORM] onejs/one (2491 score) - ❶ One lets you target React web and React Native with a single Vite plugin. Ever
 https://github.com/onejs/one
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:19:25.194Z] ---
+# [AI-AGENTS] EvoMap/evolver (5130 score) - The GEP-powered self-evolving engine for AI agents. Auditable evolution with Gen
+https://github.com/EvoMap/evolver
+# [AI-AGENTS] strands-agents/harness-sdk (5132 score) - Build an agent harness and control it end-to-end. Open-source SDK for production
+https://github.com/strands-agents/harness-sdk
+# [AI-AGENTS] Mai-with-u/MaiBot (3661 score) - MaiSaka, an LLM-based intelligent agent, is a digital lifeform devoted to unders
+https://github.com/Mai-with-u/MaiBot

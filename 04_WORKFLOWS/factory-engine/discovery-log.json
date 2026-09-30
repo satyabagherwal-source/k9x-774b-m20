@@ -12361,5 +12361,50 @@
     "qualityScore": 2491,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:16:05.921Z"
+  },
+  {
+    "name": "evolver",
+    "fullName": "EvoMap/evolver",
+    "url": "https://github.com/EvoMap/evolver",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The GEP-powered self-evolving engine for AI agents. Auditable evolution with Genes, Capsules, and Events. | evomap.ai",
+    "stars": 9130,
+    "forks": 850,
+    "openIssues": 30,
+    "language": "JavaScript",
+    "qualityScore": 5130,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:19:25.192Z"
+  },
+  {
+    "name": "harness-sdk",
+    "fullName": "strands-agents/harness-sdk",
+    "url": "https://github.com/strands-agents/harness-sdk",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Build an agent harness and control it end-to-end. Open-source SDK for production AI agents in Python & TypeScript - any model, any cloud.",
+    "stars": 8587,
+    "forks": 1294,
+    "openIssues": 898,
+    "language": "Python",
+    "qualityScore": 5132,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:19:25.192Z"
+  },
+  {
+    "name": "MaiBot",
+    "fullName": "Mai-with-u/MaiBot",
+    "url": "https://github.com/Mai-with-u/MaiBot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "MaiSaka, an LLM-based intelligent agent, is a digital lifeform devoted to understanding you and interacting in the style of a real human. She does not pursue perfection, nor does she seek efficiency; instead, she values warmth, authenticity, and genuine connection.",
+    "stars": 6084,
+    "forks": 642,
+    "openIssues": 88,
+    "language": "Python",
+    "qualityScore": 3661,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:19:25.192Z"
   }
 ]
