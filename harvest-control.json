@@ -173,7 +173,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:15:49.657Z",
+        "lastActiveAt": "2026-09-30T21:16:58.484Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -183,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:15:49.661Z",
+        "lastActiveAt": "2026-09-30T21:17:02.697Z",
         "lastHarvestedAt": "2026-09-30T20:24:54.056Z",
         "totalHarvested": 3,
         "lastError": null
@@ -203,7 +203,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:15:49.675Z",
+        "lastActiveAt": "2026-09-30T21:17:03.521Z",
         "lastHarvestedAt": "2026-09-30T20:16:05.390Z",
         "totalHarvested": 2,
         "lastError": null
@@ -213,9 +213,9 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:15:49.686Z",
-        "lastHarvestedAt": "2026-09-30T18:25:48.226Z",
-        "totalHarvested": 2,
+        "lastActiveAt": "2026-09-30T21:16:56.398Z",
+        "lastHarvestedAt": "2026-09-30T21:16:56.398Z",
+        "totalHarvested": 3,
         "lastError": null
       },
       {
@@ -233,7 +233,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T21:15:49.702Z",
+        "lastActiveAt": "2026-09-30T21:17:00.261Z",
         "lastHarvestedAt": "2026-09-30T18:33:48.773Z",
         "totalHarvested": 4,
         "lastError": null
