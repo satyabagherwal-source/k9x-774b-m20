@@ -9479,5 +9479,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "agents365-ai-drawio-skill": {
+    "name": "Agents365-ai/drawio-skill",
+    "officialUrl": "https://github.com/Agents365-ai/drawio-skill",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:37:12.950Z",
+    "lastVerified": "2026-09-30T19:37:12.950Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
