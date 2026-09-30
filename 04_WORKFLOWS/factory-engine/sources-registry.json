@@ -13067,5 +13067,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alin23-lunar": {
+    "name": "alin23/Lunar",
+    "officialUrl": "https://github.com/alin23/Lunar",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T22:42:09.129Z",
+    "lastVerified": "2026-09-30T22:42:09.129Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

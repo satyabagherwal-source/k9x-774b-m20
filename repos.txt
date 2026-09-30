@@ -2942,3 +2942,11 @@ https://github.com/TableProApp/TablePro
 https://github.com/twostraws/ControlRoom
 # [MOBILE-CROSS-PLATFORM] jacklandrin/OnlySwitch (3411 score) - ⚙️ All-in-One menu bar app, hide 💻MacBook Pro's notch, dark mode, AirPods, Shor
 https://github.com/jacklandrin/OnlySwitch
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T22:41:43.328Z] ---
+# [MOBILE-CROSS-PLATFORM] alin23/Lunar (3058 score) - Intelligent adaptive brightness for your external monitors
+https://github.com/alin23/Lunar
+# [MOBILE-CROSS-PLATFORM] amosgyamfi/open-swiftui-animations (3206 score) - You don't need an animation library to add a simple effect to your SwiftUI app. 
+https://github.com/amosgyamfi/open-swiftui-animations
+# [MOBILE-CROSS-PLATFORM] AppPear/ChartView (3456 score) - ChartView made in SwiftUI
+https://github.com/AppPear/ChartView

@@ -13336,5 +13336,50 @@
     "qualityScore": 3411,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T22:36:19.350Z"
+  },
+  {
+    "name": "Lunar",
+    "fullName": "alin23/Lunar",
+    "url": "https://github.com/alin23/Lunar",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Intelligent adaptive brightness for your external monitors",
+    "stars": 5707,
+    "forks": 147,
+    "openIssues": 5,
+    "language": "Swift",
+    "qualityScore": 3058,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:41:43.327Z"
+  },
+  {
+    "name": "open-swiftui-animations",
+    "fullName": "amosgyamfi/open-swiftui-animations",
+    "url": "https://github.com/amosgyamfi/open-swiftui-animations",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "You don't need an animation library to add a simple effect to your SwiftUI app. Create it yourself with SwiftUI. This repo inspires you to add helpful and expressive SwiftUI animations like loading/progress, looping, on-off, enter, exit, fade, spin, and background animations to your next project. The repo also contains tremendous spring animations.",
+    "stars": 5655,
+    "forks": 296,
+    "openIssues": 20,
+    "language": "Swift",
+    "qualityScore": 3206,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:41:43.327Z"
+  },
+  {
+    "name": "ChartView",
+    "fullName": "AppPear/ChartView",
+    "url": "https://github.com/AppPear/ChartView",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "ChartView made in SwiftUI",
+    "stars": 5646,
+    "forks": 635,
+    "openIssues": 96,
+    "language": "Swift",
+    "qualityScore": 3456,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:41:43.327Z"
   }
 ]
