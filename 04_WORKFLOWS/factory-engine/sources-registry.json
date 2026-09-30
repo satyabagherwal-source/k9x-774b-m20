@@ -12677,5 +12677,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mrkai77-loop": {
+    "name": "mrkai77/Loop",
+    "officialUrl": "https://github.com/mrkai77/Loop",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-09-30T21:52:02.125Z",
+    "lastVerified": "2026-09-30T21:52:02.125Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
