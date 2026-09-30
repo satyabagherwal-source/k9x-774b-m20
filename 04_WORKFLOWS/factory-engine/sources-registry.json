@@ -4630,5 +4630,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-unsloth-qwen-image-2.1-gguf": {
+    "name": "unsloth/Qwen-Image-2.1-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-09-30T17:37:04.757Z",
+    "lastVerified": "2026-09-30T17:37:04.757Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
