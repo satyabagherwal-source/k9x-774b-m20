@@ -5917,5 +5917,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gluesql-gluesql": {
+    "name": "gluesql/gluesql",
+    "officialUrl": "https://github.com/gluesql/gluesql",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:15:06.794Z",
+    "lastVerified": "2026-09-30T18:15:06.794Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
