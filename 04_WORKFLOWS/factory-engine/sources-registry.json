@@ -10961,5 +10961,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "imsnif-diskonaut": {
+    "name": "imsnif/diskonaut",
+    "officialUrl": "https://github.com/imsnif/diskonaut",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:28:57.432Z",
+    "lastVerified": "2026-09-30T20:28:57.432Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
