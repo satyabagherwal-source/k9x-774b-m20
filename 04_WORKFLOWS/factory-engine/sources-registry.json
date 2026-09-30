@@ -1991,5 +1991,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "unclecode-crawl4ai": {
+    "name": "unclecode/crawl4ai",
+    "officialUrl": "https://github.com/unclecode/crawl4ai",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T13:55:04.763Z",
+    "lastVerified": "2026-09-30T13:55:04.763Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 82,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
