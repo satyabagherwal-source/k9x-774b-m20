@@ -5267,5 +5267,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "arco-design-arco-design": {
+    "name": "arco-design/arco-design",
+    "officialUrl": "https://github.com/arco-design/arco-design",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:43:21.712Z",
+    "lastVerified": "2026-09-30T17:43:21.712Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 51,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
