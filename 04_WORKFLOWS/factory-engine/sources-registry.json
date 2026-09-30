@@ -9804,5 +9804,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "atilaahmettaner-tradingview-mcp": {
+    "name": "atilaahmettaner/tradingview-mcp",
+    "officialUrl": "https://github.com/atilaahmettaner/tradingview-mcp",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:48:15.670Z",
+    "lastVerified": "2026-09-30T19:48:15.670Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
