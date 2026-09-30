@@ -10038,5 +10038,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "limecloud-lime": {
+    "name": "limecloud/lime",
+    "officialUrl": "https://github.com/limecloud/lime",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:58:18.325Z",
+    "lastVerified": "2026-09-30T19:58:18.325Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 57,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

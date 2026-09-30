@@ -2312,3 +2312,11 @@ https://github.com/openlit/openlit
 https://github.com/afar1/fieldtheory-cli
 # [AI-AGENTS] badlogic/lemmy (1077 score) - Wrapper around tool using LLMs for agentic workflows
 https://github.com/badlogic/lemmy
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:57:57.254Z] ---
+# [AI-AGENTS] limecloud/lime (927 score) - Full-stack AI agent for coding, files, terminals, tools, research, content, mult
+https://github.com/limecloud/lime
+# [AI-AGENTS] tintinweb/pi-subagents (1155 score) - Claude Code like Sub-Agents & Workflow Orchestration for Pi — parallel execution
+https://github.com/tintinweb/pi-subagents
+# [AI-AGENTS] trendy-design/llmchat (884 score) - Unified interface for AI chat, Agentic workflows and more ...
+https://github.com/trendy-design/llmchat

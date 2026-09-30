@@ -9841,5 +9841,50 @@
     "qualityScore": 1077,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:56:31.838Z"
+  },
+  {
+    "name": "lime",
+    "fullName": "limecloud/lime",
+    "url": "https://github.com/limecloud/lime",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Full-stack AI agent for coding, files, terminals, tools, research, content, multimodal work, and multi-agent workflows.",
+    "stars": 1481,
+    "forks": 208,
+    "openIssues": 12,
+    "language": "TypeScript",
+    "qualityScore": 927,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:57:57.252Z"
+  },
+  {
+    "name": "pi-subagents",
+    "fullName": "tintinweb/pi-subagents",
+    "url": "https://github.com/tintinweb/pi-subagents",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Claude Code like Sub-Agents & Workflow Orchestration for Pi — parallel execution, live widget, fleet view, custom agent types, mid-run steering, claude compatible dynamic workflows and more ...",
+    "stars": 1233,
+    "forks": 296,
+    "openIssues": 129,
+    "language": "TypeScript",
+    "qualityScore": 1155,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:57:57.252Z"
+  },
+  {
+    "name": "llmchat",
+    "fullName": "trendy-design/llmchat",
+    "url": "https://github.com/trendy-design/llmchat",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Unified interface for AI chat, Agentic workflows and more ...",
+    "stars": 1074,
+    "forks": 195,
+    "openIssues": 19,
+    "language": "TypeScript",
+    "qualityScore": 884,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:57:57.252Z"
   }
 ]
