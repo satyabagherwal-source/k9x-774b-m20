@@ -3135,5 +3135,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "chaos-mesh-chaos-mesh": {
+    "name": "chaos-mesh/chaos-mesh",
+    "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:21:31.163Z",
+    "lastVerified": "2026-09-30T17:21:31.163Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
