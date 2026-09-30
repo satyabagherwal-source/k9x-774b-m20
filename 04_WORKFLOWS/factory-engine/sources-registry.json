@@ -10532,5 +10532,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "google-deepmind-concordia": {
+    "name": "google-deepmind/concordia",
+    "officialUrl": "https://github.com/google-deepmind/concordia",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:17:46.411Z",
+    "lastVerified": "2026-09-30T20:17:46.411Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
