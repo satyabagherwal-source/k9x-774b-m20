@@ -11949,5 +11949,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "memodb-io-memobase": {
+    "name": "memodb-io/memobase",
+    "officialUrl": "https://github.com/memodb-io/memobase",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:09:11.306Z",
+    "lastVerified": "2026-09-30T21:09:11.306Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
