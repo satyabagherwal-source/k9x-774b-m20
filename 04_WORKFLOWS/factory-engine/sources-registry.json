@@ -2225,5 +2225,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "metalbear-co-mirrord": {
+    "name": "metalbear-co/mirrord",
+    "officialUrl": "https://github.com/metalbear-co/mirrord",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T14:01:18.357Z",
+    "lastVerified": "2026-09-30T14:01:18.357Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
