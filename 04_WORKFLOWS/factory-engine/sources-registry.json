@@ -12066,5 +12066,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hkuds-minirag": {
+    "name": "HKUDS/MiniRAG",
+    "officialUrl": "https://github.com/HKUDS/MiniRAG",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:13:23.671Z",
+    "lastVerified": "2026-09-30T21:13:23.671Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
