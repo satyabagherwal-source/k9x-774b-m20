@@ -6047,5 +6047,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gitui-org-gitui": {
+    "name": "gitui-org/gitui",
+    "officialUrl": "https://github.com/gitui-org/gitui",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:17:04.016Z",
+    "lastVerified": "2026-09-30T18:17:04.016Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
