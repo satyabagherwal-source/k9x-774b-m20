@@ -6294,5 +6294,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "grpc-grpc-rust": {
+    "name": "grpc/grpc-rust",
+    "officialUrl": "https://github.com/grpc/grpc-rust",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:18:07.753Z",
+    "lastVerified": "2026-09-30T18:18:07.753Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 20,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
