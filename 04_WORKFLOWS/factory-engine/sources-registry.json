@@ -5683,5 +5683,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "margelo-react-native-mmkv": {
+    "name": "margelo/react-native-mmkv",
+    "officialUrl": "https://github.com/margelo/react-native-mmkv",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:48:46.427Z",
+    "lastVerified": "2026-09-30T17:48:46.427Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
