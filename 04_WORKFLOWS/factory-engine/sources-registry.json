@@ -8582,5 +8582,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "spinabot-brigade": {
+    "name": "spinabot/brigade",
+    "officialUrl": "https://github.com/spinabot/brigade",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:56:36.415Z",
+    "lastVerified": "2026-09-30T18:56:36.415Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 49,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
