@@ -2320,3 +2320,7 @@ https://github.com/limecloud/lime
 https://github.com/tintinweb/pi-subagents
 # [AI-AGENTS] trendy-design/llmchat (884 score) - Unified interface for AI chat, Agentic workflows and more ...
 https://github.com/trendy-design/llmchat
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:00:13.357Z] ---
+# [AI-AGENTS] HKUDS/Vibe-Trading (19208 score) - "Vibe-Trading: Your Personal Trading Agent"
+https://github.com/HKUDS/Vibe-Trading

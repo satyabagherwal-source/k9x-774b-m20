@@ -9886,5 +9886,20 @@
     "qualityScore": 884,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:57:57.252Z"
+  },
+  {
+    "name": "Vibe-Trading",
+    "fullName": "HKUDS/Vibe-Trading",
+    "url": "https://github.com/HKUDS/Vibe-Trading",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "\"Vibe-Trading: Your Personal Trading Agent\"",
+    "stars": 34384,
+    "forks": 5587,
+    "openIssues": 45,
+    "language": "Python",
+    "qualityScore": 19208,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:59:16.339Z"
   }
 ]

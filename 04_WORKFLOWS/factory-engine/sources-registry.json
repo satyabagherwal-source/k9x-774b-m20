@@ -10077,5 +10077,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hkuds-vibe-trading": {
+    "name": "HKUDS/Vibe-Trading",
+    "officialUrl": "https://github.com/HKUDS/Vibe-Trading",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:00:35.792Z",
+    "lastVerified": "2026-09-30T20:00:35.792Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
