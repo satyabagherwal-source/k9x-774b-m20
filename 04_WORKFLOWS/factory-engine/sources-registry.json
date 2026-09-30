@@ -7698,5 +7698,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "omnigent-ai-omnigent": {
+    "name": "omnigent-ai/omnigent",
+    "officialUrl": "https://github.com/omnigent-ai/omnigent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:34:37.350Z",
+    "lastVerified": "2026-09-30T18:34:37.350Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
