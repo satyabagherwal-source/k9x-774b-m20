@@ -11390,5 +11390,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openags-paper-search-mcp": {
+    "name": "openags/paper-search-mcp",
+    "officialUrl": "https://github.com/openags/paper-search-mcp",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:42:34.723Z",
+    "lastVerified": "2026-09-30T20:42:34.723Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
