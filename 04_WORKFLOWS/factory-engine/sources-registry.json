@@ -4487,5 +4487,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "leecade-react-native-swiper": {
+    "name": "leecade/react-native-swiper",
+    "officialUrl": "https://github.com/leecade/react-native-swiper",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T17:35:17.193Z",
+    "lastVerified": "2026-09-30T17:35:17.193Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
