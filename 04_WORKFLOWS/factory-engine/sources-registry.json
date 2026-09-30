@@ -2797,5 +2797,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "loft-sh-vcluster": {
+    "name": "loft-sh/vcluster",
+    "officialUrl": "https://github.com/loft-sh/vcluster",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:14:55.001Z",
+    "lastVerified": "2026-09-30T17:14:55.001Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 49,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
