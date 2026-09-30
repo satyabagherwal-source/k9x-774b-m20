@@ -5943,5 +5943,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lobehub-lobe-ui": {
+    "name": "lobehub/lobe-ui",
+    "officialUrl": "https://github.com/lobehub/lobe-ui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:15:31.578Z",
+    "lastVerified": "2026-09-30T18:15:31.578Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
