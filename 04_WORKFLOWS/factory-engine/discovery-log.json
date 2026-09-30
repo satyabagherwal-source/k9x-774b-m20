@@ -13261,5 +13261,50 @@
     "qualityScore": 3742,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T22:26:54.957Z"
+  },
+  {
+    "name": "swiftui-introspect",
+    "fullName": "siteline/swiftui-introspect",
+    "url": "https://github.com/siteline/swiftui-introspect",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Introspect underlying UIKit/AppKit components from SwiftUI",
+    "stars": 6559,
+    "forks": 418,
+    "openIssues": 16,
+    "language": "Swift",
+    "qualityScore": 3587,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:30:00.981Z"
+  },
+  {
+    "name": "CopilotForXcode",
+    "fullName": "github/CopilotForXcode",
+    "url": "https://github.com/github/CopilotForXcode",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "AI coding assistant for Xcode",
+    "stars": 6309,
+    "forks": 2037,
+    "openIssues": 249,
+    "language": "Swift",
+    "qualityScore": 4116,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:30:00.982Z"
+  },
+  {
+    "name": "TablePro",
+    "fullName": "TableProApp/TablePro",
+    "url": "https://github.com/TableProApp/TablePro",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Free and open source database client built natively for developers",
+    "stars": 6173,
+    "forks": 411,
+    "openIssues": 75,
+    "language": "Swift",
+    "qualityScore": 3510,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T22:30:00.982Z"
   }
 ]

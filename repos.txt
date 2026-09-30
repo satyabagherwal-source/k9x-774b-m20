@@ -2928,3 +2928,11 @@ https://github.com/milanvarady/Applite
 https://github.com/momenbasel/PureMac
 # [MOBILE-CROSS-PLATFORM] nalexn/clean-architecture-swiftui (3742 score) - SwiftUI sample app using Clean Architecture. Examples of working with SwiftData 
 https://github.com/nalexn/clean-architecture-swiftui
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T22:30:00.983Z] ---
+# [MOBILE-CROSS-PLATFORM] siteline/swiftui-introspect (3587 score) - Introspect underlying UIKit/AppKit components from SwiftUI
+https://github.com/siteline/swiftui-introspect
+# [MOBILE-CROSS-PLATFORM] github/CopilotForXcode (4116 score) - AI coding assistant for Xcode
+https://github.com/github/CopilotForXcode
+# [MOBILE-CROSS-PLATFORM] TableProApp/TablePro (3510 score) - Free and open source database client built natively for developers
+https://github.com/TableProApp/TablePro
