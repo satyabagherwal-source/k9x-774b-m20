@@ -183,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:47:39.803Z",
+        "lastActiveAt": "2026-09-30T17:50:28.736Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -223,7 +223,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:47:39.832Z",
+        "lastActiveAt": "2026-09-30T17:50:01.755Z",
         "lastHarvestedAt": "2026-09-30T14:05:01.066Z",
         "totalHarvested": 2,
         "lastError": null
@@ -233,7 +233,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-09-30T17:47:39.882Z",
+        "lastActiveAt": "2026-09-30T17:49:46.039Z",
         "lastHarvestedAt": "2026-09-30T17:40:07.428Z",
         "totalHarvested": 3,
         "lastError": null
