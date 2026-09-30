@@ -3629,5 +3629,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "harvard-edge-cs249r_book": {
+    "name": "harvard-edge/cs249r_book",
+    "officialUrl": "https://github.com/harvard-edge/cs249r_book",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T17:26:39.153Z",
+    "lastVerified": "2026-09-30T17:26:39.153Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 21,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
