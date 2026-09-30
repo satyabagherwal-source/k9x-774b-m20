@@ -2576,5 +2576,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fallow-rs-fallow": {
+    "name": "fallow-rs/fallow",
+    "officialUrl": "https://github.com/fallow-rs/fallow",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:13:50.239Z",
+    "lastVerified": "2026-09-30T17:13:50.239Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
