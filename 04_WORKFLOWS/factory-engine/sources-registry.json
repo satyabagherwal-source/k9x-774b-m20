@@ -3577,5 +3577,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xerj-org-xerj": {
+    "name": "xerj-org/xerj",
+    "officialUrl": "https://github.com/xerj-org/xerj",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:26:28.414Z",
+    "lastVerified": "2026-09-30T17:26:28.414Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
