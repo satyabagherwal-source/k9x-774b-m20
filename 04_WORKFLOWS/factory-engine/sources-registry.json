@@ -10740,5 +10740,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crate-ci-typos": {
+    "name": "crate-ci/typos",
+    "officialUrl": "https://github.com/crate-ci/typos",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:23:30.287Z",
+    "lastVerified": "2026-09-30T20:23:30.287Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
