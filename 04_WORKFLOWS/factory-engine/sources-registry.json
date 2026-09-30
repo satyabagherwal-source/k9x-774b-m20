@@ -9661,5 +9661,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "getsentry-mobilebuildmcp": {
+    "name": "getsentry/MobileBuildMCP",
+    "officialUrl": "https://github.com/getsentry/MobileBuildMCP",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:43:44.002Z",
+    "lastVerified": "2026-09-30T19:43:44.002Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

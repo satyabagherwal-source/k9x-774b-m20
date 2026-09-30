@@ -9406,5 +9406,50 @@
     "qualityScore": 4199,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:41:59.697Z"
+  },
+  {
+    "name": "MobileBuildMCP",
+    "fullName": "getsentry/MobileBuildMCP",
+    "url": "https://github.com/getsentry/MobileBuildMCP",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A Model Context Protocol (MCP) server and CLI that provides tools for agent use when working on iOS and macOS projects.",
+    "stars": 6449,
+    "forks": 322,
+    "openIssues": 30,
+    "language": "TypeScript",
+    "qualityScore": 3531,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:43:20.651Z"
+  },
+  {
+    "name": "semble",
+    "fullName": "MinishLab/semble",
+    "url": "https://github.com/MinishLab/semble",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Fast and Accurate Code Search for Agents. Uses 99% fewer tokens than grep+read",
+    "stars": 6165,
+    "forks": 271,
+    "openIssues": 2,
+    "language": "Python",
+    "qualityScore": 3318,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:43:20.651Z"
+  },
+  {
+    "name": "hister",
+    "fullName": "asciimoo/hister",
+    "url": "https://github.com/asciimoo/hister",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Your own search engine",
+    "stars": 5810,
+    "forks": 256,
+    "openIssues": 65,
+    "language": "Go",
+    "qualityScore": 3362,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:43:20.651Z"
   }
 ]

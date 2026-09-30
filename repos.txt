@@ -2234,3 +2234,11 @@ https://github.com/AgentDeskAI/browser-tools-mcp
 https://github.com/Zipstack/unstract
 # [AI-AGENTS] BrowserMCP/mcp (4199 score) - Browser MCP is a Model Context Provider (MCP) server that allows AI applications
 https://github.com/BrowserMCP/mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:43:20.652Z] ---
+# [AI-AGENTS] getsentry/MobileBuildMCP (3531 score) - A Model Context Protocol (MCP) server and CLI that provides tools for agent use 
+https://github.com/getsentry/MobileBuildMCP
+# [AI-AGENTS] MinishLab/semble (3318 score) - Fast and Accurate Code Search for Agents. Uses 99% fewer tokens than grep+read
+https://github.com/MinishLab/semble
+# [AI-AGENTS] asciimoo/hister (3362 score) - Your own search engine
+https://github.com/asciimoo/hister
