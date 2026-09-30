@@ -12144,5 +12144,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "postgresml-postgresml": {
+    "name": "postgresml/postgresml",
+    "officialUrl": "https://github.com/postgresml/postgresml",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T21:16:34.430Z",
+    "lastVerified": "2026-09-30T21:16:34.430Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

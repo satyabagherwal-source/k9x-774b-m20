@@ -9,7 +9,7 @@
       "page": 1
     },
     "high-perf-systems": {
-      "queryIndex": 6,
+      "queryIndex": 4,
       "page": 1
     },
     "huggingface-ai-models": {
@@ -21,7 +21,7 @@
       "page": 3
     },
     "devops-cloud-infrastructure": {
-      "queryIndex": 5,
+      "queryIndex": 4,
       "page": 1
     },
     "cybersecurity-defenses": {
@@ -38,5 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 74,
-  "lastReplenishedAt": "2026-09-30T21:16:27.340Z"
+  "lastReplenishedAt": "2026-09-30T21:16:31.619Z"
 }
