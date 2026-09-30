@@ -12586,5 +12586,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crosspaste-crosspaste-desktop": {
+    "name": "CrossPaste/crosspaste-desktop",
+    "officialUrl": "https://github.com/CrossPaste/crosspaste-desktop",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:46:25.386Z",
+    "lastVerified": "2026-09-30T21:46:25.386Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
