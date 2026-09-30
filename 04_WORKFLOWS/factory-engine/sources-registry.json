@@ -5670,5 +5670,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apptainer-singularity": {
+    "name": "apptainer/singularity",
+    "officialUrl": "https://github.com/apptainer/singularity",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:48:36.117Z",
+    "lastVerified": "2026-09-30T17:48:36.117Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
