@@ -6710,5 +6710,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nvidia-cuda-rust": {
+    "name": "NVIDIA/cuda-rust",
+    "officialUrl": "https://github.com/NVIDIA/cuda-rust",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:21:20.666Z",
+    "lastVerified": "2026-09-30T18:21:20.666Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 55,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
