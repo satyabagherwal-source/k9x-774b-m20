@@ -7256,5 +7256,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "0x4m4-hexstrike-ai": {
+    "name": "0x4m4/hexstrike-ai",
+    "officialUrl": "https://github.com/0x4m4/hexstrike-ai",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:27:08.058Z",
+    "lastVerified": "2026-09-30T18:27:08.058Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
