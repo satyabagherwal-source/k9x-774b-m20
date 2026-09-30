@@ -8023,5 +8023,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gitpoint-git-point": {
+    "name": "gitpoint/git-point",
+    "officialUrl": "https://github.com/gitpoint/git-point",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T18:39:11.367Z",
+    "lastVerified": "2026-09-30T18:39:11.367Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
