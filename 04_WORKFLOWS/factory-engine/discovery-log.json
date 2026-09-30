@@ -8044,5 +8044,17 @@
     "qualityScore": 4388,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:50:01.268Z"
+  },
+  {
+    "name": "PSRben/VisionHOPE",
+    "fullName": "PSRben/VisionHOPE",
+    "url": "https://huggingface.co/PSRben/VisionHOPE",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: PSRben/VisionHOPE (219 likes, 137 downloads)",
+    "likes": 219,
+    "downloads": 137,
+    "qualityScore": 2327,
+    "discoveredAt": "2026-09-30T18:51:23.028Z"
   }
 ]

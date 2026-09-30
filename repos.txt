@@ -1990,3 +1990,7 @@ https://github.com/SciPhi-AI/R2R
 https://github.com/Upsonic/Upsonic
 # [AI-AGENTS] xerrors/Yuxi (4388 score) - 可私有部署的多租户知识智能体平台：统一 RAG、知识图谱、多智能体、MCP/Skills、沙盒与权限管理。Yuxi = Cloud Agents + Knowl
 https://github.com/xerrors/Yuxi
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:51:23.030Z] ---
+# [HUGGINGFACE-AI-MODELS] PSRben/VisionHOPE (2327 score) - Verified Hugging Face Model: PSRben/VisionHOPE (219 likes, 137 downloads)
+https://huggingface.co/PSRben/VisionHOPE

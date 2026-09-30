@@ -34,9 +34,9 @@
     }
   },
   "huggingFace": {
-    "sortIndex": 0,
+    "sortIndex": 1,
     "page": 1
   },
-  "totalAutoDiscovered": 61,
-  "lastReplenishedAt": "2026-09-30T18:50:50.489Z"
+  "totalAutoDiscovered": 62,
+  "lastReplenishedAt": "2026-09-30T18:51:23.029Z"
 }
