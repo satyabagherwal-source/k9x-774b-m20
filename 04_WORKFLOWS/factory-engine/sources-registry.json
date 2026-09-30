@@ -7581,5 +7581,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tiajinsha-jkvideo": {
+    "name": "tiajinsha/JKVideo",
+    "officialUrl": "https://github.com/tiajinsha/JKVideo",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:31:56.521Z",
+    "lastVerified": "2026-09-30T18:31:56.521Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
