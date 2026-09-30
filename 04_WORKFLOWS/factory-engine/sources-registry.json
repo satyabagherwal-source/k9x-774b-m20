@@ -5306,5 +5306,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "erikgrinaker-toydb": {
+    "name": "erikgrinaker/toydb",
+    "officialUrl": "https://github.com/erikgrinaker/toydb",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:43:48.561Z",
+    "lastVerified": "2026-09-30T17:43:48.561Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
