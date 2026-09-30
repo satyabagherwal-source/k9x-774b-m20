@@ -8868,5 +8868,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apodexai-frontieragent": {
+    "name": "ApodexAI/FrontierAgent",
+    "officialUrl": "https://github.com/ApodexAI/FrontierAgent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:16:03.897Z",
+    "lastVerified": "2026-09-30T19:16:03.897Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
