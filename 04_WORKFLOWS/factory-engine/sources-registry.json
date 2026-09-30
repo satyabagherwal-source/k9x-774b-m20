@@ -11533,5 +11533,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "redhat-et-ripwire": {
+    "name": "redhat-et/ripwire",
+    "officialUrl": "https://github.com/redhat-et/ripwire",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-09-30T20:48:46.256Z",
+    "lastVerified": "2026-09-30T20:48:46.256Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

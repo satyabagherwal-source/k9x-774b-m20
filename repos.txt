@@ -2624,3 +2624,7 @@ https://github.com/samanhappy/mcphub
 https://github.com/nitrocloudofficial/nitrostack
 # [AI-AGENTS] llmsresearch/paperbanana (1568 score) - Open source implementation and extension of Google Research’s PaperBanana for au
 https://github.com/llmsresearch/paperbanana
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:48:28.071Z] ---
+# [AI-AGENTS] redhat-et/ripwire (1599 score) - The ripgrep of AI context: a zero-dependency C++23 CLI + MCP server for coding a
+https://github.com/redhat-et/ripwire

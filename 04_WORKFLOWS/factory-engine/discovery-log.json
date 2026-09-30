@@ -11566,5 +11566,20 @@
     "qualityScore": 1568,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:46:10.699Z"
+  },
+  {
+    "name": "ripwire",
+    "fullName": "redhat-et/ripwire",
+    "url": "https://github.com/redhat-et/ripwire",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The ripgrep of AI context: a zero-dependency C++23 CLI + MCP server for coding agents. Find what you want without reading the repo, then check you built what you meant — blast radius, tests-to-run, quality deltas. Signatures at 74.7% fewer bytes than bodies; every guess labelled, every loss published. Paddle out with a map.",
+    "stars": 2375,
+    "forks": 151,
+    "openIssues": 58,
+    "language": "C++",
+    "qualityScore": 1599,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:47:35.428Z"
   }
 ]
