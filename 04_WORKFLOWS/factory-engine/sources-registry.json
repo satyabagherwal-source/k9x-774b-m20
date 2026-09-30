@@ -7984,5 +7984,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cycloidio-terracognita": {
+    "name": "cycloidio/terracognita",
+    "officialUrl": "https://github.com/cycloidio/terracognita",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:38:42.600Z",
+    "lastVerified": "2026-09-30T18:38:42.600Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
