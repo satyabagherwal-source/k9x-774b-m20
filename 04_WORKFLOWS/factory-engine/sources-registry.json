@@ -4539,5 +4539,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cdk-team-cdk": {
+    "name": "cdk-team/CDK",
+    "officialUrl": "https://github.com/cdk-team/CDK",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:35:39.841Z",
+    "lastVerified": "2026-09-30T17:35:39.841Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 4,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
