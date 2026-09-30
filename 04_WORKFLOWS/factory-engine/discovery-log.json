@@ -8371,5 +8371,50 @@
     "qualityScore": 3061,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:02:45.734Z"
+  },
+  {
+    "name": "ag2",
+    "fullName": "ag2ai/ag2",
+    "url": "https://github.com/ag2ai/ag2",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AG2 (formerly AutoGen): The Open-Source AgentOS.Join us at: https://discord.gg/sNGSwQME3x",
+    "stars": 4969,
+    "forks": 730,
+    "openIssues": 42,
+    "language": "Python",
+    "qualityScore": 3038,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:04:36.154Z"
+  },
+  {
+    "name": "FrontierAgent",
+    "fullName": "ApodexAI/FrontierAgent",
+    "url": "https://github.com/ApodexAI/FrontierAgent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🧩 FrontierAgent, our agent framework, open-sourced alongside it — native command-line TUI, ReAct and Agent Team modes, one command on macOS and Linux, no preinstall, no hard Docker dependency.",
+    "stars": 4727,
+    "forks": 253,
+    "openIssues": 12,
+    "language": "Python",
+    "qualityScore": 2713,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:04:36.155Z"
+  },
+  {
+    "name": "chat-on-steroids",
+    "fullName": "totec448-spec/chat-on-steroids",
+    "url": "https://github.com/totec448-spec/chat-on-steroids",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Cross-platform local MCP capabilities for ChatGPT with Chrome integration, Goal, Compact & Resume, and durable multi-agent workflows.",
+    "stars": 4210,
+    "forks": 559,
+    "openIssues": 17,
+    "language": "TypeScript",
+    "qualityScore": 2457,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:04:36.155Z"
   }
 ]

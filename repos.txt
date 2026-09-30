@@ -2050,3 +2050,11 @@ https://github.com/ModelEngine-Group/nexent
 https://github.com/the-open-agent/openagent
 # [AI-AGENTS] SenteLabsAI/OpenExecutive (3061 score) - AI-powered virtual executive team — a single coherent executive persona backed b
 https://github.com/SenteLabsAI/OpenExecutive
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:04:36.155Z] ---
+# [AI-AGENTS] ag2ai/ag2 (3038 score) - AG2 (formerly AutoGen): The Open-Source AgentOS.Join us at: https://discord.gg/s
+https://github.com/ag2ai/ag2
+# [AI-AGENTS] ApodexAI/FrontierAgent (2713 score) - 🧩 FrontierAgent, our agent framework, open-sourced alongside it — native comman
+https://github.com/ApodexAI/FrontierAgent
+# [AI-AGENTS] totec448-spec/chat-on-steroids (2457 score) - Cross-platform local MCP capabilities for ChatGPT with Chrome integration, Goal,
+https://github.com/totec448-spec/chat-on-steroids
