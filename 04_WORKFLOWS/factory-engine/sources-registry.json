@@ -4773,5 +4773,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "llphant-llphant": {
+    "name": "LLPhant/LLPhant",
+    "officialUrl": "https://github.com/LLPhant/LLPhant",
+    "sourceType": "github",
+    "technology": "PHP",
+    "lastChecked": "2026-09-30T17:38:16.578Z",
+    "lastVerified": "2026-09-30T17:38:16.578Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
