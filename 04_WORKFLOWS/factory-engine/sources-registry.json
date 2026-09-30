@@ -6996,5 +6996,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "thecodingmachine-react-native-boilerplate": {
+    "name": "thecodingmachine/react-native-boilerplate",
+    "officialUrl": "https://github.com/thecodingmachine/react-native-boilerplate",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:24:09.946Z",
+    "lastVerified": "2026-09-30T18:24:09.946Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
