@@ -9181,5 +9181,50 @@
     "qualityScore": 6275,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:35:05.550Z"
+  },
+  {
+    "name": "xiaozhi-esp32-server",
+    "fullName": "xinnan-tech/xiaozhi-esp32-server",
+    "url": "https://github.com/xinnan-tech/xiaozhi-esp32-server",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "本项目为xiaozhi-esp32提供后端服务，帮助您快速搭建ESP32设备控制服务器。Backend service for xiaozhi-esp32, helps you quickly build an ESP32 device control server.",
+    "stars": 10716,
+    "forks": 3657,
+    "openIssues": 715,
+    "language": "JavaScript",
+    "qualityScore": 6905,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:36:24.599Z"
+  },
+  {
+    "name": "mcp-use",
+    "fullName": "mcp-use/mcp-use",
+    "url": "https://github.com/mcp-use/mcp-use",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The fullstack MCP framework to develop MCP Apps for ChatGPT / Claude & MCP Servers for AI Agents.",
+    "stars": 10702,
+    "forks": 1486,
+    "openIssues": 77,
+    "language": "TypeScript",
+    "qualityScore": 6101,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:36:24.599Z"
+  },
+  {
+    "name": "drawio-skill",
+    "fullName": "Agents365-ai/drawio-skill",
+    "url": "https://github.com/Agents365-ai/drawio-skill",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Agent skill that turns natural language, code, Terraform/K8s, SQL, OpenAPI, AsyncAPI, Protobuf and GraphQL sources into editable, tested draw.io architecture diagrams: incremental sync, multi-view projection, drift diff, CI architecture tests, whiteboard derasterize, interactive HTML/PPTX/Mermaid exports.",
+    "stars": 9774,
+    "forks": 685,
+    "openIssues": 0,
+    "language": "Python",
+    "qualityScore": 5343,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:36:24.599Z"
   }
 ]

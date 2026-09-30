@@ -2194,3 +2194,11 @@ https://github.com/OpenByteInc/QuantDinger
 https://github.com/tadata-org/fastapi_mcp
 # [AI-AGENTS] 0xJacky/nginx-ui (6275 score) - Yet another WebUI for Nginx
 https://github.com/0xJacky/nginx-ui
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:36:24.600Z] ---
+# [AI-AGENTS] xinnan-tech/xiaozhi-esp32-server (6905 score) - 本项目为xiaozhi-esp32提供后端服务，帮助您快速搭建ESP32设备控制服务器。Backend service for xiaozhi-esp32, h
+https://github.com/xinnan-tech/xiaozhi-esp32-server
+# [AI-AGENTS] mcp-use/mcp-use (6101 score) - The fullstack MCP framework to develop MCP Apps for ChatGPT / Claude & MCP Serve
+https://github.com/mcp-use/mcp-use
+# [AI-AGENTS] Agents365-ai/drawio-skill (5343 score) - Agent skill that turns natural language, code, Terraform/K8s, SQL, OpenAPI, Asyn
+https://github.com/Agents365-ai/drawio-skill
