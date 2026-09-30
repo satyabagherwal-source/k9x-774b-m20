@@ -5098,5 +5098,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mufeedvh-code2prompt": {
+    "name": "mufeedvh/code2prompt",
+    "officialUrl": "https://github.com/mufeedvh/code2prompt",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:41:30.035Z",
+    "lastVerified": "2026-09-30T17:41:30.035Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
