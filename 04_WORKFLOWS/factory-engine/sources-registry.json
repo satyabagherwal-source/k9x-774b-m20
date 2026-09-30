@@ -1952,5 +1952,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "watchexec-watchexec": {
+    "name": "watchexec/watchexec",
+    "officialUrl": "https://github.com/watchexec/watchexec",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T13:56:20.204Z",
+    "lastVerified": "2026-09-30T13:56:20.204Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
