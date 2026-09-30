@@ -2708,3 +2708,11 @@ https://github.com/HKUDS/VideoRAG
 https://github.com/ANative-Lab/EvoAgentX
 # [AI-AGENTS] qdrant/fastembed (2133 score) - Fast, Accurate, Lightweight Python library to make State of the Art Embedding
 https://github.com/qdrant/fastembed
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:08:21.059Z] ---
+# [AI-AGENTS] swirlai/swirl-search (1861 score) - AI Search & RAG Without Moving Your Data. Get instant answers from your company'
+https://github.com/swirlai/swirl-search
+# [AI-AGENTS] memodb-io/memobase (1750 score) - User Profile-Based Long-Term Memory for AI Chatbot Applications. 
+https://github.com/memodb-io/memobase
+# [AI-AGENTS] trustgraph-ai/trustgraph (1768 score) - The Semantic Intelligence Layer for Ontologies
+https://github.com/trustgraph-ai/trustgraph

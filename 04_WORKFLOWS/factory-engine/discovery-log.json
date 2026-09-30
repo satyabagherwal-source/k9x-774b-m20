@@ -12031,5 +12031,50 @@
     "qualityScore": 2133,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:07:00.499Z"
+  },
+  {
+    "name": "swirl-search",
+    "fullName": "swirlai/swirl-search",
+    "url": "https://github.com/swirlai/swirl-search",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI Search & RAG Without Moving Your Data. Get instant answers from your company's knowledge across 100+ apps while keeping data secure. Deploy in minutes, not months.",
+    "stars": 3046,
+    "forks": 286,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 1861,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:08:21.058Z"
+  },
+  {
+    "name": "memobase",
+    "fullName": "memodb-io/memobase",
+    "url": "https://github.com/memodb-io/memobase",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "User Profile-Based Long-Term Memory for AI Chatbot Applications. ",
+    "stars": 2921,
+    "forks": 238,
+    "openIssues": 34,
+    "language": "Python",
+    "qualityScore": 1750,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:08:21.058Z"
+  },
+  {
+    "name": "trustgraph",
+    "fullName": "trustgraph-ai/trustgraph",
+    "url": "https://github.com/trustgraph-ai/trustgraph",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The Semantic Intelligence Layer for Ontologies",
+    "stars": 2764,
+    "forks": 328,
+    "openIssues": 19,
+    "language": "Python",
+    "qualityScore": 1768,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:08:21.059Z"
   }
 ]

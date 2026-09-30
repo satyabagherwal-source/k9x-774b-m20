@@ -11936,5 +11936,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "swirlai-swirl-search": {
+    "name": "swirlai/swirl-search",
+    "officialUrl": "https://github.com/swirlai/swirl-search",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:08:44.705Z",
+    "lastVerified": "2026-09-30T21:08:44.705Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 13,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
