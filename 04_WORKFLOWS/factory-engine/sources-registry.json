@@ -10584,5 +10584,18 @@
     "closedIssuesCount": 4,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "demondamon-finnewshunter": {
+    "name": "DemonDamon/FinnewsHunter",
+    "officialUrl": "https://github.com/DemonDamon/FinnewsHunter",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:19:07.397Z",
+    "lastVerified": "2026-09-30T20:19:07.397Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 4,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
