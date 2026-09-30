@@ -12406,5 +12406,50 @@
     "qualityScore": 3661,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T21:19:25.192Z"
+  },
+  {
+    "name": "MuJing",
+    "fullName": "tangshimin/MuJing",
+    "url": "https://github.com/tangshimin/MuJing",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "一款通过电影、美剧或文档中的真实语境学习英语单词的应用，让您在原汁原味的情境中记忆词汇，提升学习效率。",
+    "stars": 4632,
+    "forks": 342,
+    "openIssues": 54,
+    "language": "Kotlin",
+    "qualityScore": 2777,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:20:36.084Z"
+  },
+  {
+    "name": "AboutLibraries",
+    "fullName": "mikepenz/AboutLibraries",
+    "url": "https://github.com/mikepenz/AboutLibraries",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "AboutLibraries automatically collects all dependencies and licenses of any gradle project (Kotlin MultiPlatform), and provides easy to integrate UI components for Android and Compose Multiplatform environments ",
+    "stars": 4452,
+    "forks": 597,
+    "openIssues": 5,
+    "language": "Kotlin",
+    "qualityScore": 2665,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:20:36.084Z"
+  },
+  {
+    "name": "apollo-kotlin",
+    "fullName": "apollographql/apollo-kotlin",
+    "url": "https://github.com/apollographql/apollo-kotlin",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": ":rocket:  A strongly-typed, caching GraphQL client for the JVM, Android, and Kotlin multiplatform.",
+    "stars": 3976,
+    "forks": 698,
+    "openIssues": 111,
+    "language": "Kotlin",
+    "qualityScore": 2647,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T21:20:36.084Z"
   }
 ]

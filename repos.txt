@@ -2776,3 +2776,11 @@ https://github.com/EvoMap/evolver
 https://github.com/strands-agents/harness-sdk
 # [AI-AGENTS] Mai-with-u/MaiBot (3661 score) - MaiSaka, an LLM-based intelligent agent, is a digital lifeform devoted to unders
 https://github.com/Mai-with-u/MaiBot
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T21:20:36.085Z] ---
+# [MOBILE-CROSS-PLATFORM] tangshimin/MuJing (2777 score) - 一款通过电影、美剧或文档中的真实语境学习英语单词的应用，让您在原汁原味的情境中记忆词汇，提升学习效率。
+https://github.com/tangshimin/MuJing
+# [MOBILE-CROSS-PLATFORM] mikepenz/AboutLibraries (2665 score) - AboutLibraries automatically collects all dependencies and licenses of any gradl
+https://github.com/mikepenz/AboutLibraries
+# [MOBILE-CROSS-PLATFORM] apollographql/apollo-kotlin (2647 score) - :rocket:  A strongly-typed, caching GraphQL client for the JVM, Android, and Kot
+https://github.com/apollographql/apollo-kotlin

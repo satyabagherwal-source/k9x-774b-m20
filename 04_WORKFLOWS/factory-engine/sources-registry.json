@@ -12261,5 +12261,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tangshimin-mujing": {
+    "name": "tangshimin/MuJing",
+    "officialUrl": "https://github.com/tangshimin/MuJing",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T21:20:52.416Z",
+    "lastVerified": "2026-09-30T21:20:52.416Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
