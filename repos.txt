@@ -2274,3 +2274,11 @@ https://github.com/u14app/deep-research
 https://github.com/modelcontextprotocol/csharp-sdk
 # [AI-AGENTS] open-webui/mcpo (2705 score) - A simple, secure MCP-to-OpenAPI proxy server
 https://github.com/open-webui/mcpo
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T19:50:14.987Z] ---
+# [AI-AGENTS] antvis/mcp-server-chart (2482 score) - 🤖 A visualization mcp & skills contains 25+ visual charts using @antvis. Using 
+https://github.com/antvis/mcp-server-chart
+# [AI-AGENTS] IvanMurzak/Unity-MCP (2658 score) - AI Skills, MCP Tools, and CLI for Unity Engine. Full AI develop and test loop. U
+https://github.com/IvanMurzak/Unity-MCP
+# [AI-AGENTS] archestra-ai/archestra (2780 score) - Enterprise AI Platform with guardrails, MCP registry, gateway & orchestrator
+https://github.com/archestra-ai/archestra

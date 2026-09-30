@@ -9856,5 +9856,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "antvis-mcp-server-chart": {
+    "name": "antvis/mcp-server-chart",
+    "officialUrl": "https://github.com/antvis/mcp-server-chart",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T19:50:38.003Z",
+    "lastVerified": "2026-09-30T19:50:38.003Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -9631,5 +9631,50 @@
     "qualityScore": 2705,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T19:48:54.359Z"
+  },
+  {
+    "name": "mcp-server-chart",
+    "fullName": "antvis/mcp-server-chart",
+    "url": "https://github.com/antvis/mcp-server-chart",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🤖 A visualization mcp & skills contains 25+ visual charts using @antvis. Using for chart generation and data analysis.",
+    "stars": 4387,
+    "forks": 420,
+    "openIssues": 6,
+    "language": "TypeScript",
+    "qualityScore": 2482,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:50:14.986Z"
+  },
+  {
+    "name": "Unity-MCP",
+    "fullName": "IvanMurzak/Unity-MCP",
+    "url": "https://github.com/IvanMurzak/Unity-MCP",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI Skills, MCP Tools, and CLI for Unity Engine. Full AI develop and test loop. Use cli for quick setup. Efficient token usage, advanced tools. Any C# method may be turned into a tool by a single line. Works with Claude Code, Gemini, Copilot, Cursor and any other absolutely for free.",
+    "stars": 4368,
+    "forks": 386,
+    "openIssues": 54,
+    "language": "C#",
+    "qualityScore": 2658,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:50:14.986Z"
+  },
+  {
+    "name": "archestra",
+    "fullName": "archestra-ai/archestra",
+    "url": "https://github.com/archestra-ai/archestra",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Enterprise AI Platform with guardrails, MCP registry, gateway & orchestrator",
+    "stars": 4324,
+    "forks": 1214,
+    "openIssues": 52,
+    "language": "TypeScript",
+    "qualityScore": 2780,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T19:50:14.986Z"
   }
 ]
