@@ -11650,5 +11650,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vespa-engine-vespa": {
+    "name": "vespa-engine/vespa",
+    "officialUrl": "https://github.com/vespa-engine/vespa",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-09-30T20:55:50.983Z",
+    "lastVerified": "2026-09-30T20:55:50.983Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
