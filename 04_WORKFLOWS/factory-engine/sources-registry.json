@@ -10116,5 +10116,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "code-yeongyu-oh-my-openagent": {
+    "name": "code-yeongyu/oh-my-openagent",
+    "officialUrl": "https://github.com/code-yeongyu/oh-my-openagent",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:03:20.966Z",
+    "lastVerified": "2026-09-30T20:03:20.966Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
