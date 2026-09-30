@@ -7074,5 +7074,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "encoredev-encore": {
+    "name": "encoredev/encore",
+    "officialUrl": "https://github.com/encoredev/encore",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T18:25:39.673Z",
+    "lastVerified": "2026-09-30T18:25:39.673Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

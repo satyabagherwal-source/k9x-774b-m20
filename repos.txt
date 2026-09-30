@@ -1698,3 +1698,43 @@ https://github.com/XiaomiMiMo/MiMo-Code
 https://github.com/corsairdev/corsair
 # [AI-AGENTS] InsForge/InsForge (7340 score) - The all-in-one, open-source backend platform for agentic coding. InsForge gives 
 https://github.com/InsForge/InsForge
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:25:14.882Z] ---
+# [DEVOPS-CLOUD-INFRASTRUCTURE] encoredev/encore (6741 score) - The infrastructure platform for the intelligence era
+https://github.com/encoredev/encore
+# [DEVOPS-CLOUD-INFRASTRUCTURE] crossplane/crossplane (6794 score) - The Cloud Native Control Plane
+https://github.com/crossplane/crossplane
+# [DEVOPS-CLOUD-INFRASTRUCTURE] meshery/meshery (7566 score) - Meshery, the cloud native manager
+https://github.com/meshery/meshery
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:25:16.665Z] ---
+# [DATABASE-STORAGE-ENGINES] etcd-io/etcd (29672 score) - Distributed reliable key-value store for the most critical data of a distributed
+https://github.com/etcd-io/etcd
+# [DATABASE-STORAGE-ENGINES] cockroachdb/cockroach (17955 score) - CockroachDB — the cloud native, distributed SQL database designed for high avail
+https://github.com/cockroachdb/cockroach
+# [DATABASE-STORAGE-ENGINES] apache/shardingsphere (13923 score [VERIFIED ORG]) - Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and
+https://github.com/apache/shardingsphere
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:25:20.615Z] ---
+# [HIGH-PERF-SYSTEMS] gotham-rs/gotham (1452 score) - A flexible web framework that promotes stability, safety, security and speed.
+https://github.com/gotham-rs/gotham
+# [HIGH-PERF-SYSTEMS] nezhahq/nezha (5915 score) - :trollface: Self-hosted, lightweight server and website monitoring and O&M tool
+https://github.com/nezhahq/nezha
+# [HIGH-PERF-SYSTEMS] u-root/u-root (2127 score) - A fully Go userland with Linux bootloaders! u-root can create a one-binary root 
+https://github.com/u-root/u-root
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:25:26.558Z] ---
+# [MOBILE-CROSS-PLATFORM] APSL/react-native-keyboard-aware-scroll-view (3328 score) - A ScrollView component that handles keyboard appearance and automatically scroll
+https://github.com/APSL/react-native-keyboard-aware-scroll-view
+# [MOBILE-CROSS-PLATFORM] benoitvallon/react-native-nw-react-calculator (3159 score) - Mobile, desktop and website Apps with the same code
+https://github.com/benoitvallon/react-native-nw-react-calculator
+# [MOBILE-CROSS-PLATFORM] learnapollo/learnapollo (2764 score) - 👩🏻‍🏫   Learn Apollo - A hands-on tutorial for Apollo GraphQL Client (created 
+https://github.com/learnapollo/learnapollo
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T18:25:26.667Z] ---
+# [AI-AGENTS] neuml/txtai (7043 score) - 💡 All-in-one AI framework for semantic search, LLM orchestration and language m
+https://github.com/neuml/txtai
+# [AI-AGENTS] simular-ai/Agent-S (7020 score) - Agent S: an open agentic framework that uses computers like a human
+https://github.com/simular-ai/Agent-S
+# [AI-AGENTS] 0x4m4/hexstrike-ai (7330 score) - HexStrike AI MCP Agents is an advanced MCP server that lets AI agents (Claude, G
+https://github.com/0x4m4/hexstrike-ai
