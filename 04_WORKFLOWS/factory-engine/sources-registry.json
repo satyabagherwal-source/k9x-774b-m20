@@ -6073,5 +6073,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nativewind-nativewind": {
+    "name": "nativewind/nativewind",
+    "officialUrl": "https://github.com/nativewind/nativewind",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-09-30T18:17:08.136Z",
+    "lastVerified": "2026-09-30T18:17:08.136Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
