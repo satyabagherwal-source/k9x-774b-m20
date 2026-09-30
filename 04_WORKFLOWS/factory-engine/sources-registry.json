@@ -6814,5 +6814,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nanobrowser-nanobrowser": {
+    "name": "nanobrowser/nanobrowser",
+    "officialUrl": "https://github.com/nanobrowser/nanobrowser",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:22:15.743Z",
+    "lastVerified": "2026-09-30T18:22:15.743Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
