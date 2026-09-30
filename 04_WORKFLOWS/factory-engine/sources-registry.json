@@ -8972,5 +8972,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nikmcfly-mirofish-offline": {
+    "name": "nikmcfly/MiroFish-Offline",
+    "officialUrl": "https://github.com/nikmcfly/MiroFish-Offline",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T19:17:59.199Z",
+    "lastVerified": "2026-09-30T19:17:59.199Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
