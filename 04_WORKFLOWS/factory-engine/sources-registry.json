@@ -8452,5 +8452,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "upsonic-upsonic": {
+    "name": "Upsonic/Upsonic",
+    "officialUrl": "https://github.com/Upsonic/Upsonic",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:50:53.910Z",
+    "lastVerified": "2026-09-30T18:50:53.910Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
