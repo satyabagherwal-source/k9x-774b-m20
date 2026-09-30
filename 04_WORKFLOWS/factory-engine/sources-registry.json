@@ -13262,5 +13262,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vanniktech-emoji": {
+    "name": "vanniktech/Emoji",
+    "officialUrl": "https://github.com/vanniktech/Emoji",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-09-30T23:32:57.152Z",
+    "lastVerified": "2026-09-30T23:32:57.152Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 44,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
