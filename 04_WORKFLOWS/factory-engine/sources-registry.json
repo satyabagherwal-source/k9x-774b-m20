@@ -4929,5 +4929,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "aws-amplify-amplify-js": {
+    "name": "aws-amplify/amplify-js",
+    "officialUrl": "https://github.com/aws-amplify/amplify-js",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:40:01.925Z",
+    "lastVerified": "2026-09-30T17:40:01.925Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

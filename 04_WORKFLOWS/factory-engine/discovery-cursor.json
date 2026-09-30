@@ -9,8 +9,8 @@
       "page": 1
     },
     "high-perf-systems": {
-      "queryIndex": 1,
-      "page": 4
+      "queryIndex": 0,
+      "page": 3
     },
     "huggingface-ai-models": {
       "queryIndex": 0,
@@ -25,8 +25,8 @@
       "page": 2
     },
     "cybersecurity-defenses": {
-      "queryIndex": 1,
-      "page": 2
+      "queryIndex": 4,
+      "page": 1
     },
     "database-storage-engines": {
       "queryIndex": 0,
@@ -37,6 +37,6 @@
     "sortIndex": 0,
     "page": 1
   },
-  "totalAutoDiscovered": 56,
-  "lastReplenishedAt": "2026-09-30T17:39:41.697Z"
+  "totalAutoDiscovered": 53,
+  "lastReplenishedAt": "2026-09-30T17:40:01.649Z"
 }
