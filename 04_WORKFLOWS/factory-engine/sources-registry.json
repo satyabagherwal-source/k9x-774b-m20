@@ -6060,5 +6060,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "transact-rs-sqlx": {
+    "name": "transact-rs/sqlx",
+    "officialUrl": "https://github.com/transact-rs/sqlx",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:17:07.540Z",
+    "lastVerified": "2026-09-30T18:17:07.540Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
