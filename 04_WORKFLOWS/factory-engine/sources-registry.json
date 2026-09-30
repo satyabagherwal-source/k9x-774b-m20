@@ -5475,5 +5475,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sharkdp-pastel": {
+    "name": "sharkdp/pastel",
+    "officialUrl": "https://github.com/sharkdp/pastel",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T17:45:56.745Z",
+    "lastVerified": "2026-09-30T17:45:56.745Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
