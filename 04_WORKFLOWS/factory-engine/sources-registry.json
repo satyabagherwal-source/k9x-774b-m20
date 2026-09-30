@@ -5774,5 +5774,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "smol-rs-smol": {
+    "name": "smol-rs/smol",
+    "officialUrl": "https://github.com/smol-rs/smol",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:13:44.994Z",
+    "lastVerified": "2026-09-30T18:13:44.994Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
