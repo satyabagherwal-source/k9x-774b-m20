@@ -6645,5 +6645,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sfu-db-connector-x": {
+    "name": "sfu-db/connector-x",
+    "officialUrl": "https://github.com/sfu-db/connector-x",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T18:20:04.833Z",
+    "lastVerified": "2026-09-30T18:20:04.833Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
