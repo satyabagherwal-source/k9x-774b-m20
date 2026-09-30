@@ -1744,5 +1744,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "deusdata-codebase-memory-mcp": {
+    "name": "DeusData/codebase-memory-mcp",
+    "officialUrl": "https://github.com/DeusData/codebase-memory-mcp",
+    "sourceType": "github",
+    "technology": "C",
+    "lastChecked": "2026-09-30T06:54:35.231Z",
+    "lastVerified": "2026-09-30T06:54:35.231Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 73,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

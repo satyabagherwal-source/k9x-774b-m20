@@ -425,3 +425,9 @@ https://github.com/sansan0/TrendRadar
 https://github.com/upstash/context7
 # [AI-AGENTS] ChromeDevTools/chrome-devtools-mcp (33236 score) - Chrome DevTools for coding agents
 https://github.com/ChromeDevTools/chrome-devtools-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T06:54:12.030Z] ---
+# [AI-AGENTS] DeusData/codebase-memory-mcp (28525 score) - High-performance code intelligence MCP server. Indexes codebases into a persiste
+https://github.com/DeusData/codebase-memory-mcp
+# [AI-AGENTS] reactive-resume/reactive-resume (27596 score) - A one-of-a-kind resume builder that keeps your privacy in mind. Completely secur
+https://github.com/reactive-resume/reactive-resume
