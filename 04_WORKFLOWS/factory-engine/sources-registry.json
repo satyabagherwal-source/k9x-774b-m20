@@ -2628,5 +2628,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pubkey-rxdb": {
+    "name": "pubkey/rxdb",
+    "officialUrl": "https://github.com/pubkey/rxdb",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:14:05.113Z",
+    "lastVerified": "2026-09-30T17:14:05.113Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
