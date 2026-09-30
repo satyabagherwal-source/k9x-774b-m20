@@ -11234,5 +11234,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "xpf0000-flyenv": {
+    "name": "xpf0000/FlyEnv",
+    "officialUrl": "https://github.com/xpf0000/FlyEnv",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T20:36:54.794Z",
+    "lastVerified": "2026-09-30T20:36:54.794Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
