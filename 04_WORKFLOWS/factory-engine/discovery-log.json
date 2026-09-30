@@ -7909,5 +7909,50 @@
     "qualityScore": 9072,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T18:45:53.220Z"
+  },
+  {
+    "name": "EverOS",
+    "fullName": "EverMind-AI/EverOS",
+    "url": "https://github.com/EverMind-AI/EverOS",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "One portable memory layer for every AI agent: local-first, Markdown-native, user-owned, and self-evolving across apps, tools, and workflows.",
+    "stars": 13313,
+    "forks": 924,
+    "openIssues": 73,
+    "language": "Python",
+    "qualityScore": 7330,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:47:20.241Z"
+  },
+  {
+    "name": "bisheng",
+    "fullName": "dataelement/bisheng",
+    "url": "https://github.com/dataelement/bisheng",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "BISHENG is an open LLM devops platform for next generation Enterprise AI applications. Powerful and comprehensive features include: GenAI workflow, RAG, Agent, Unified model management, Evaluation, SFT, Dataset Management, Enterprise-level System Management, Observability and more.",
+    "stars": 12017,
+    "forks": 1974,
+    "openIssues": 48,
+    "language": "Python",
+    "qualityScore": 6847,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:47:20.241Z"
+  },
+  {
+    "name": "all-in-rag",
+    "fullName": "datawhalechina/all-in-rag",
+    "url": "https://github.com/datawhalechina/all-in-rag",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🔍大模型应用开发实战一：RAG 技术全栈指南，在线阅读地址：https://datawhalechina.github.io/all-in-rag/",
+    "stars": 11593,
+    "forks": 5727,
+    "openIssues": 26,
+    "language": "Python",
+    "qualityScore": 7667,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T18:47:20.241Z"
   }
 ]
