@@ -5540,5 +5540,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "alibaba-fusion-next": {
+    "name": "alibaba-fusion/next",
+    "officialUrl": "https://github.com/alibaba-fusion/next",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:46:32.979Z",
+    "lastVerified": "2026-09-30T17:46:32.979Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
