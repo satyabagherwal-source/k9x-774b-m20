@@ -12560,5 +12560,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "thudm-agentbench": {
+    "name": "THUDM/AgentBench",
+    "officialUrl": "https://github.com/THUDM/AgentBench",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T21:45:04.774Z",
+    "lastVerified": "2026-09-30T21:45:04.774Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
