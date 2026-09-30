@@ -10155,5 +10155,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crewaiinc-crewai": {
+    "name": "crewAIInc/crewAI",
+    "officialUrl": "https://github.com/crewAIInc/crewAI",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:04:45.246Z",
+    "lastVerified": "2026-09-30T20:04:45.246Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
