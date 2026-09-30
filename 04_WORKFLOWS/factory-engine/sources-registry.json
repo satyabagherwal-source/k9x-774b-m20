@@ -10818,5 +10818,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zenbu-labs-terminal-browser": {
+    "name": "zenbu-labs/terminal-browser",
+    "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-09-30T20:26:10.342Z",
+    "lastVerified": "2026-09-30T20:26:10.342Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 14,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
