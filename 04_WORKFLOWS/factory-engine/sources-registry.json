@@ -6970,5 +6970,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "taiga-family-taiga-ui": {
+    "name": "taiga-family/taiga-ui",
+    "officialUrl": "https://github.com/taiga-family/taiga-ui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T18:24:04.199Z",
+    "lastVerified": "2026-09-30T18:24:04.199Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 35,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
