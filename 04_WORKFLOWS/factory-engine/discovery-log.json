@@ -11251,5 +11251,50 @@
     "qualityScore": 1918,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T20:36:04.518Z"
+  },
+  {
+    "name": "fli",
+    "fullName": "punitarani/fli",
+    "url": "https://github.com/punitarani/fli",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Google Flights MCP, CLI and Python Library",
+    "stars": 3199,
+    "forks": 398,
+    "openIssues": 18,
+    "language": "Python",
+    "qualityScore": 2005,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:37:23.156Z"
+  },
+  {
+    "name": "arxiv-mcp-server",
+    "fullName": "blazickjp/arxiv-mcp-server",
+    "url": "https://github.com/blazickjp/arxiv-mcp-server",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A local MCP server for agent literature work. Original-LaTeX section reads, BibTeX from arXiv metadata, and topic watches. Papers stay on disk. Search is optional.",
+    "stars": 3183,
+    "forks": 258,
+    "openIssues": 4,
+    "language": "Python",
+    "qualityScore": 1927,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:37:23.156Z"
+  },
+  {
+    "name": "ddgs",
+    "fullName": "deedy5/ddgs",
+    "url": "https://github.com/deedy5/ddgs",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A metasearch library that aggregates results from diverse web search services",
+    "stars": 2998,
+    "forks": 286,
+    "openIssues": 33,
+    "language": "Python",
+    "qualityScore": 1801,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-09-30T20:37:23.156Z"
   }
 ]

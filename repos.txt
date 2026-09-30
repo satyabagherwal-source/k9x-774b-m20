@@ -2568,3 +2568,11 @@ https://github.com/samuelgursky/davinci-resolve-mcp
 https://github.com/xpf0000/FlyEnv
 # [AI-AGENTS] cortex-docs/cortex (1918 score) - Cortex - Generates interactive API documentation, typed SDKs, and MCP servers fr
 https://github.com/cortex-docs/cortex
+
+# --- Automatically Discovered by AI Scout Engine [2026-09-30T20:37:23.157Z] ---
+# [AI-AGENTS] punitarani/fli (2005 score) - Google Flights MCP, CLI and Python Library
+https://github.com/punitarani/fli
+# [AI-AGENTS] blazickjp/arxiv-mcp-server (1927 score) - A local MCP server for agent literature work. Original-LaTeX section reads, BibT
+https://github.com/blazickjp/arxiv-mcp-server
+# [AI-AGENTS] deedy5/ddgs (1801 score) - A metasearch library that aggregates results from diverse web search services
+https://github.com/deedy5/ddgs

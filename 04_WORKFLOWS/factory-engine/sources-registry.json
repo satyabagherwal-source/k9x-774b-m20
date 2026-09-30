@@ -11260,5 +11260,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "punitarani-fli": {
+    "name": "punitarani/fli",
+    "officialUrl": "https://github.com/punitarani/fli",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T20:37:48.754Z",
+    "lastVerified": "2026-09-30T20:37:48.754Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
