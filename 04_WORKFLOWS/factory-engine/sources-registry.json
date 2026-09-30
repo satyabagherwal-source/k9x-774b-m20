@@ -3772,5 +3772,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ant-design-ant-design-mobile": {
+    "name": "ant-design/ant-design-mobile",
+    "officialUrl": "https://github.com/ant-design/ant-design-mobile",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T17:27:59.766Z",
+    "lastVerified": "2026-09-30T17:27:59.766Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
