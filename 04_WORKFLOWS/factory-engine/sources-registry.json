@@ -5046,5 +5046,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nirdiamant-agents-towards-production": {
+    "name": "NirDiamant/agents-towards-production",
+    "officialUrl": "https://github.com/NirDiamant/agents-towards-production",
+    "sourceType": "github",
+    "technology": "Jupyter Notebook",
+    "lastChecked": "2026-09-30T17:40:53.749Z",
+    "lastVerified": "2026-09-30T17:40:53.749Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
