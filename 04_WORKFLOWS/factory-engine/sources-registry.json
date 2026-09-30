@@ -6151,5 +6151,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "canner-wrenai": {
+    "name": "Canner/WrenAI",
+    "officialUrl": "https://github.com/Canner/WrenAI",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:17:31.253Z",
+    "lastVerified": "2026-09-30T18:17:31.253Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 46,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
