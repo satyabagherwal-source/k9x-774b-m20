@@ -3993,5 +3993,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kgateway-dev-kgateway": {
+    "name": "kgateway-dev/kgateway",
+    "officialUrl": "https://github.com/kgateway-dev/kgateway",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-09-30T17:30:08.941Z",
+    "lastVerified": "2026-09-30T17:30:08.941Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
