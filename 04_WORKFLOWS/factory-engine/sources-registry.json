@@ -12781,5 +12781,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yilewang-llm-for-zotero": {
+    "name": "yilewang/llm-for-zotero",
+    "officialUrl": "https://github.com/yilewang/llm-for-zotero",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-09-30T22:01:34.220Z",
+    "lastVerified": "2026-09-30T22:01:34.220Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
