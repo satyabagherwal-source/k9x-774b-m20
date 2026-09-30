@@ -7776,5 +7776,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "paddlepaddle-paddleocr": {
+    "name": "PaddlePaddle/PaddleOCR",
+    "officialUrl": "https://github.com/PaddlePaddle/PaddleOCR",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-09-30T18:36:24.962Z",
+    "lastVerified": "2026-09-30T18:36:24.962Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
