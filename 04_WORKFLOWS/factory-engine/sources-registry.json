@@ -13457,5 +13457,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "productdevbook-port-killer": {
+    "name": "productdevbook/port-killer",
+    "officialUrl": "https://github.com/productdevbook/port-killer",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T00:21:17.409Z",
+    "lastVerified": "2026-10-01T00:21:17.409Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
