@@ -13535,5 +13535,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "leetcode-mafia-cheetah": {
+    "name": "leetcode-mafia/cheetah",
+    "officialUrl": "https://github.com/leetcode-mafia/cheetah",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T01:24:33.608Z",
+    "lastVerified": "2026-10-01T01:24:33.608Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
