@@ -437,11 +437,24 @@ async function scoutGitHubDomain(domainKey, domainConfig, knownRepos, maxCandida
 
   if (queries.length === 0) return candidates;
 
+  // Master Switch Check: Do not attempt any search queries if GitHub is resting
+  const ghAvail = checkServiceAvailability(MASTER_SERVICES.GITHUB_API);
+  if (!ghAvail.available) {
+    console.log(`⏳ [SCOUT PAUSED] GitHub API Master Switch is OFF until ${ghAvail.resetAt} (${ghAvail.waitSec}s left). Skipping domain search.`);
+    return candidates;
+  }
+
   let queryIdx = domainCursor.queryIndex % queries.length;
   let page = domainCursor.page || 1;
   let attempts = 0;
 
   while (candidates.length < maxCandidates && attempts < queries.length * 2) {
+    // Re-check master switch on every query
+    if (!checkServiceAvailability(MASTER_SERVICES.GITHUB_API).available) {
+      console.log(`⏳ [SCOUT HALTED] GitHub API entered cooldown. Breaking query loop.`);
+      break;
+    }
+
     attempts++;
     const currentQuery = queries[queryIdx];
     const encodedQuery = encodeURIComponent(currentQuery);
@@ -453,6 +466,10 @@ async function scoutGitHubDomain(domainKey, domainConfig, knownRepos, maxCandida
     await sleep(1500); // Respect search API rate limits
 
     if (!data || !Array.isArray(data.items) || data.items.length === 0) {
+      // If circuit was tripped, abort immediately
+      if (!checkServiceAvailability(MASTER_SERVICES.GITHUB_API).available) {
+        break;
+      }
       // Query exhausted or no results: move to next query and reset page to 1
       queryIdx = (queryIdx + 1) % queries.length;
       page = 1;
