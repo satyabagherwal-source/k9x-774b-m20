@@ -13681,5 +13681,50 @@
     "qualityScore": 728,
     "verifiedOrg": false,
     "discoveredAt": "2026-09-30T23:45:08.284Z"
+  },
+  {
+    "name": "ongrid",
+    "fullName": "ongridio/ongrid",
+    "url": "https://github.com/ongridio/ongrid",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An ops AI Agent that understands your infrastructure, finds the root cause, and fixes it — right from Slack, Telegram, Lark or DingTalk.",
+    "stars": 1104,
+    "forks": 238,
+    "openIssues": 84,
+    "language": "Go",
+    "qualityScore": 941,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:02:42.717Z"
+  },
+  {
+    "name": "tribe",
+    "fullName": "StreetLamb/tribe",
+    "url": "https://github.com/StreetLamb/tribe",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Low code tool to rapidly build and coordinate multi-agent teams",
+    "stars": 1084,
+    "forks": 137,
+    "openIssues": 9,
+    "language": "TypeScript",
+    "qualityScore": 751,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:02:42.717Z"
+  },
+  {
+    "name": "Multi-Agent-CAD",
+    "fullName": "Pan-Chera/Multi-Agent-CAD",
+    "url": "https://github.com/Pan-Chera/Multi-Agent-CAD",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "MAC (Multi-Agent CAD): A decoupled multi-agent framework for text-to-CAD generation via constrained test-time compute",
+    "stars": 1013,
+    "forks": 94,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 787,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:02:47.503Z"
   }
 ]

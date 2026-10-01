@@ -3004,3 +3004,11 @@ https://github.com/hhyqhh/inno-agent
 https://github.com/SaladDay/pi-from-scratch
 # [AI-AGENTS] jundizhou/easy-stock (728 score) - A股行情分析与AI智能投研智能体：股票分析、量化交易分析、盘后复盘桌面工作台——easy stock
 https://github.com/jundizhou/easy-stock
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T00:02:47.504Z] ---
+# [AI-AGENTS] ongridio/ongrid (941 score) - An ops AI Agent that understands your infrastructure, finds the root cause, and 
+https://github.com/ongridio/ongrid
+# [AI-AGENTS] StreetLamb/tribe (751 score) - Low code tool to rapidly build and coordinate multi-agent teams
+https://github.com/StreetLamb/tribe
+# [AI-AGENTS] Pan-Chera/Multi-Agent-CAD (787 score) - MAC (Multi-Agent CAD): A decoupled multi-agent framework for text-to-CAD generat
+https://github.com/Pan-Chera/Multi-Agent-CAD

@@ -13366,5 +13366,18 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ongridio-ongrid": {
+    "name": "ongridio/ongrid",
+    "officialUrl": "https://github.com/ongridio/ongrid",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-01T00:03:11.469Z",
+    "lastVerified": "2026-10-01T00:03:11.469Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 50,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
