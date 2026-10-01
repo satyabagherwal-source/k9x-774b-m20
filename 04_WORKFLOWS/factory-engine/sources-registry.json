@@ -13483,5 +13483,18 @@
     "closedIssuesCount": 6,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sventiigi-whatsnewkit": {
+    "name": "SvenTiigi/WhatsNewKit",
+    "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T00:45:58.609Z",
+    "lastVerified": "2026-10-01T00:45:58.609Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

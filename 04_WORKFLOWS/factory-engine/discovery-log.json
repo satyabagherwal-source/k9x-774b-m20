@@ -13816,5 +13816,50 @@
     "qualityScore": 2796,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-01T00:20:37.747Z"
+  },
+  {
+    "name": "WhatsNewKit",
+    "fullName": "SvenTiigi/WhatsNewKit",
+    "url": "https://github.com/SvenTiigi/WhatsNewKit",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Showcase your awesome new app features 📱",
+    "stars": 4431,
+    "forks": 218,
+    "openIssues": 11,
+    "language": "Swift",
+    "qualityScore": 2553,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:45:41.784Z"
+  },
+  {
+    "name": "iOS-Clean-Architecture-MVVM",
+    "fullName": "kudoleh/iOS-Clean-Architecture-MVVM",
+    "url": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Template iOS app using Clean Architecture and MVVM. Includes DIContainer, FlowCoordinator, DTO, Response Caching and one of the views in SwiftUI ",
+    "stars": 4413,
+    "forks": 732,
+    "openIssues": 10,
+    "language": "Swift",
+    "qualityScore": 2546,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:45:41.784Z"
+  },
+  {
+    "name": "Pow",
+    "fullName": "EmergeTools/Pow",
+    "url": "https://github.com/EmergeTools/Pow",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Delightful SwiftUI effects for your app",
+    "stars": 4407,
+    "forks": 199,
+    "openIssues": 20,
+    "language": "Swift",
+    "qualityScore": 2453,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:45:41.785Z"
   }
 ]

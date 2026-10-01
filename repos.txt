@@ -3028,3 +3028,11 @@ https://github.com/bernaferrari/FigmaToCode
 https://github.com/productdevbook/port-killer
 # [MOBILE-CROSS-PLATFORM] buresdv/Cork (2796 score) - [NO AI] Fast GUI for Homebrew written in SwiftUI
 https://github.com/buresdv/Cork
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T00:45:41.785Z] ---
+# [MOBILE-CROSS-PLATFORM] SvenTiigi/WhatsNewKit (2553 score) - Showcase your awesome new app features 📱
+https://github.com/SvenTiigi/WhatsNewKit
+# [MOBILE-CROSS-PLATFORM] kudoleh/iOS-Clean-Architecture-MVVM (2546 score) - Template iOS app using Clean Architecture and MVVM. Includes DIContainer, FlowCo
+https://github.com/kudoleh/iOS-Clean-Architecture-MVVM
+# [MOBILE-CROSS-PLATFORM] EmergeTools/Pow (2453 score) - Delightful SwiftUI effects for your app
+https://github.com/EmergeTools/Pow
