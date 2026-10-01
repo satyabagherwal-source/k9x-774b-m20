@@ -13561,5 +13561,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sergdort-moderncleanarchitectureswiftui": {
+    "name": "sergdort/ModernCleanArchitectureSwiftUI",
+    "officialUrl": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T01:51:15.126Z",
+    "lastVerified": "2026-10-01T01:51:15.126Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
