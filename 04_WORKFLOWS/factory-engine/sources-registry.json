@@ -13418,5 +13418,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jinxiansen-swiftui": {
+    "name": "Jinxiansen/SwiftUI",
+    "officialUrl": "https://github.com/Jinxiansen/SwiftUI",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T00:13:43.214Z",
+    "lastVerified": "2026-10-01T00:13:43.214Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
