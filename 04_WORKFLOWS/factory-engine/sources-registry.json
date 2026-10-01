@@ -13470,5 +13470,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bernaferrari-figmatocode": {
+    "name": "bernaferrari/FigmaToCode",
+    "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-01T00:21:00.125Z",
+    "lastVerified": "2026-10-01T00:21:00.125Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 38,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

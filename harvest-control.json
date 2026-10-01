@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:20:16.644Z",
+        "lastActiveAt": "2026-10-01T00:21:32.313Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": null
@@ -173,7 +173,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:20:16.650Z",
+        "lastActiveAt": "2026-10-01T00:21:22.812Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -183,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:20:16.652Z",
+        "lastActiveAt": "2026-10-01T00:21:18.654Z",
         "lastHarvestedAt": "2026-09-30T20:24:54.056Z",
         "totalHarvested": 3,
         "lastError": null
@@ -213,9 +213,9 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:20:16.663Z",
-        "lastHarvestedAt": "2026-09-30T22:03:16.093Z",
-        "totalHarvested": 4,
+        "lastActiveAt": "2026-10-01T00:21:28.218Z",
+        "lastHarvestedAt": "2026-10-01T00:21:28.218Z",
+        "totalHarvested": 5,
         "lastError": null
       },
       {
@@ -223,9 +223,9 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:20:16.667Z",
-        "lastHarvestedAt": "2026-10-01T00:13:54.205Z",
-        "totalHarvested": 10,
+        "lastActiveAt": "2026-10-01T00:21:29.128Z",
+        "lastHarvestedAt": "2026-10-01T00:21:29.128Z",
+        "totalHarvested": 11,
         "lastError": null
       },
       {
