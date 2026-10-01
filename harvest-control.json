@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:52:45.151Z",
+        "lastActiveAt": "2026-10-01T00:54:08.897Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": null
@@ -173,7 +173,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:52:32.607Z",
+        "lastActiveAt": "2026-10-01T00:54:02.102Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -183,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:52:36.017Z",
+        "lastActiveAt": "2026-10-01T00:54:02.053Z",
         "lastHarvestedAt": "2026-09-30T20:24:54.056Z",
         "totalHarvested": 3,
         "lastError": null
@@ -193,7 +193,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:51:35.756Z",
+        "lastActiveAt": "2026-10-01T00:53:04.523Z",
         "lastHarvestedAt": "2026-09-30T17:39:43.491Z",
         "totalHarvested": 3,
         "lastError": null
@@ -203,7 +203,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:52:15.534Z",
+        "lastActiveAt": "2026-10-01T00:53:49.295Z",
         "lastHarvestedAt": "2026-09-30T22:49:41.313Z",
         "totalHarvested": 7,
         "lastError": null
@@ -213,7 +213,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:52:26.907Z",
+        "lastActiveAt": "2026-10-01T00:53:58.817Z",
         "lastHarvestedAt": "2026-10-01T00:21:28.218Z",
         "totalHarvested": 5,
         "lastError": null
@@ -223,7 +223,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:52:15.418Z",
+        "lastActiveAt": "2026-10-01T00:53:49.007Z",
         "lastHarvestedAt": "2026-10-01T00:21:29.128Z",
         "totalHarvested": 11,
         "lastError": null
@@ -233,7 +233,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T00:52:22.968Z",
+        "lastActiveAt": "2026-10-01T00:53:58.599Z",
         "lastHarvestedAt": "2026-09-30T22:16:12.633Z",
         "totalHarvested": 7,
         "lastError": null
