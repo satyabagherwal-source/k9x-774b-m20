@@ -13587,5 +13587,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sayaka-sh-spmp": {
+    "name": "sayaka-sh/spmp",
+    "officialUrl": "https://github.com/sayaka-sh/spmp",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-01T02:08:30.857Z",
+    "lastVerified": "2026-10-01T02:08:30.857Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

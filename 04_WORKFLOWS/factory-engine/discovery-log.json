@@ -13936,5 +13936,50 @@
     "qualityScore": 2375,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-01T01:50:41.520Z"
+  },
+  {
+    "name": "spmp",
+    "fullName": "sayaka-sh/spmp",
+    "url": "https://github.com/sayaka-sh/spmp",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "SpMp has been succeeded by Kanon, see README --- A YouTube Music client with a focus on customisation of colours and song metadata. Built with Compose Multiplatform for Android and desktop.",
+    "stars": 1451,
+    "forks": 55,
+    "openIssues": 46,
+    "language": "Kotlin",
+    "qualityScore": 1084,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T02:08:13.069Z"
+  },
+  {
+    "name": "xcode-kotlin",
+    "fullName": "touchlab/xcode-kotlin",
+    "url": "https://github.com/touchlab/xcode-kotlin",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Kotlin Native Xcode Plugin",
+    "stars": 1399,
+    "forks": 55,
+    "openIssues": 5,
+    "language": "Python",
+    "qualityScore": 976,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T02:08:13.069Z"
+  },
+  {
+    "name": "SKIE",
+    "fullName": "touchlab/SKIE",
+    "url": "https://github.com/touchlab/SKIE",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "SKIE - Swift Kotlin Interface Enhancer",
+    "stars": 1330,
+    "forks": 34,
+    "openIssues": 18,
+    "language": "Kotlin",
+    "qualityScore": 961,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T02:08:13.069Z"
   }
 ]

@@ -3050,3 +3050,11 @@ https://github.com/jellyfin/Swiftfin
 https://github.com/sergdort/ModernCleanArchitectureSwiftUI
 # [MOBILE-CROSS-PLATFORM] exyte/PopupView (2375 score) - Toasts and popups library written with SwiftUI
 https://github.com/exyte/PopupView
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T02:08:13.070Z] ---
+# [MOBILE-CROSS-PLATFORM] sayaka-sh/spmp (1084 score) - SpMp has been succeeded by Kanon, see README --- A YouTube Music client with a f
+https://github.com/sayaka-sh/spmp
+# [MOBILE-CROSS-PLATFORM] touchlab/xcode-kotlin (976 score) - Kotlin Native Xcode Plugin
+https://github.com/touchlab/xcode-kotlin
+# [MOBILE-CROSS-PLATFORM] touchlab/SKIE (961 score) - SKIE - Swift Kotlin Interface Enhancer
+https://github.com/touchlab/SKIE
