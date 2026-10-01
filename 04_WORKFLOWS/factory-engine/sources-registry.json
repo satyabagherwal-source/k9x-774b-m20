@@ -13431,5 +13431,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "maziyarpanahi-openmed": {
+    "name": "maziyarpanahi/openmed",
+    "officialUrl": "https://github.com/maziyarpanahi/openmed",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-01T00:13:50.889Z",
+    "lastVerified": "2026-10-01T00:13:50.889Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
