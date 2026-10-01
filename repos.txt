@@ -3070,3 +3070,11 @@ https://github.com/Dimillian/RedditOS
 https://github.com/EhPanda-Team/EhPanda
 # [MOBILE-CROSS-PLATFORM] thebaselab/codeapp (2446 score) - Building a full-fledged code editor for iPad
 https://github.com/thebaselab/codeapp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T16:27:15.980Z] ---
+# [HUGGINGFACE-AI-MODELS] ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF (6180 score) - Verified Hugging Face Model: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF (418 li
+https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF
+# [HUGGINGFACE-AI-MODELS] unsloth/Qwen3.8-27B-GGUF (49740 score) - Verified Hugging Face Model: unsloth/Qwen3.8-27B-GGUF (4774 likes, 6271224 downl
+https://huggingface.co/unsloth/Qwen3.8-27B-GGUF
+# [HUGGINGFACE-AI-MODELS] DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF (15180 score) - Verified Hugging Face Model: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882
+https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF

@@ -14038,5 +14038,41 @@
     "qualityScore": 2446,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-01T05:22:44.232Z"
+  },
+  {
+    "name": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "fullName": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF (418 likes, 952084 downloads)",
+    "likes": 418,
+    "downloads": 952084,
+    "qualityScore": 6180,
+    "discoveredAt": "2026-10-01T16:27:15.976Z"
+  },
+  {
+    "name": "unsloth/Qwen3.8-27B-GGUF",
+    "fullName": "unsloth/Qwen3.8-27B-GGUF",
+    "url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: unsloth/Qwen3.8-27B-GGUF (4774 likes, 6271224 downloads)",
+    "likes": 4774,
+    "downloads": 6271224,
+    "qualityScore": 49740,
+    "discoveredAt": "2026-10-01T16:27:15.976Z"
+  },
+  {
+    "name": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "fullName": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF (1318 likes, 1817224 downloads)",
+    "likes": 1318,
+    "downloads": 1817224,
+    "qualityScore": 15180,
+    "discoveredAt": "2026-10-01T16:27:15.976Z"
   }
 ]

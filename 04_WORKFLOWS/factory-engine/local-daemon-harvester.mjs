@@ -35,6 +35,44 @@ function runCmd(cmd) {
   }
 }
 
+const PID_FILE = path.join(BRAIN_ROOT, '.harvest-locks', 'daemon.pid');
+
+function acquireDaemonPidLock() {
+  const locksDir = path.dirname(PID_FILE);
+  if (!fs.existsSync(locksDir)) fs.mkdirSync(locksDir, { recursive: true });
+
+  if (fs.existsSync(PID_FILE)) {
+    try {
+      const oldPid = parseInt(fs.readFileSync(PID_FILE, 'utf-8').trim(), 10);
+      if (oldPid && !isNaN(oldPid) && oldPid !== process.pid) {
+        // Check if process is alive
+        try {
+          process.kill(oldPid, 0);
+          log(`⚠️ An active daemon instance (PID: ${oldPid}) is already running. Exiting redundant instance.`);
+          process.exit(0);
+        } catch (e) {
+          log(`🧹 Cleaning up stale daemon PID lock (${oldPid}).`);
+        }
+      }
+    } catch (e) {}
+  }
+
+  fs.writeFileSync(PID_FILE, String(process.pid), 'utf-8');
+
+  const cleanup = () => {
+    try {
+      if (fs.existsSync(PID_FILE)) {
+        const recorded = parseInt(fs.readFileSync(PID_FILE, 'utf-8').trim(), 10);
+        if (recorded === process.pid) fs.unlinkSync(PID_FILE);
+      }
+    } catch (e) {}
+  };
+
+  process.on('exit', cleanup);
+  process.on('SIGINT', () => { cleanup(); process.exit(0); });
+  process.on('SIGTERM', () => { cleanup(); process.exit(0); });
+}
+
 async function startAutonomousDaemon() {
   log(`======================================================================`);
   log(`🤖 AI-BUILDER-BRAIN 24/7/365 LOCAL AUTONOMOUS LEARNING DAEMON STARTED`);
@@ -114,7 +152,21 @@ async function startAutonomousDaemon() {
   }
 }
 
-startAutonomousDaemon().catch((err) => {
-  log(`💥 Fatal Daemon Crash: ${err.stack || err.message}`);
+async function daemonSupervisor() {
+  acquireDaemonPidLock();
+  while (true) {
+    try {
+      await startAutonomousDaemon();
+    } catch (err) {
+      log(`💥 Daemon crashed unexpectedly: ${err.stack || err.message}`);
+      log(`🔄 Supervisor auto-restarting daemon in 10 seconds...`);
+      await sleep(10000);
+    }
+  }
+}
+
+daemonSupervisor().catch((err) => {
+  log(`💥 Fatal Supervisor Crash: ${err.stack || err.message}`);
   process.exit(1);
 });
+

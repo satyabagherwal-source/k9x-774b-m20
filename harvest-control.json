@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-01T16:26:09.986Z",
+  "lastUpdated": "2026-10-01T16:27:38.083Z",
   "updatedBy": "agent-antigravity",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T06:09:16.241Z",
+        "lastActiveAt": "2026-10-01T16:27:12.673Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": null
@@ -173,7 +173,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T06:09:08.921Z",
+        "lastActiveAt": "2026-10-01T16:27:12.783Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -183,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T06:09:09.748Z",
+        "lastActiveAt": "2026-10-01T16:27:12.801Z",
         "lastHarvestedAt": "2026-09-30T20:24:54.056Z",
         "totalHarvested": 3,
         "lastError": null
@@ -193,7 +193,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T06:08:18.010Z",
+        "lastActiveAt": "2026-10-01T16:27:12.821Z",
         "lastHarvestedAt": "2026-09-30T17:39:43.491Z",
         "totalHarvested": 3,
         "lastError": null
@@ -203,7 +203,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T06:09:02.234Z",
+        "lastActiveAt": "2026-10-01T16:27:12.848Z",
         "lastHarvestedAt": "2026-09-30T22:49:41.313Z",
         "totalHarvested": 7,
         "lastError": null
@@ -213,7 +213,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T06:09:06.346Z",
+        "lastActiveAt": "2026-10-01T16:27:12.871Z",
         "lastHarvestedAt": "2026-10-01T00:21:28.218Z",
         "totalHarvested": 5,
         "lastError": null
@@ -223,7 +223,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T06:09:01.964Z",
+        "lastActiveAt": "2026-10-01T16:27:12.892Z",
         "lastHarvestedAt": "2026-10-01T05:23:28.016Z",
         "totalHarvested": 13,
         "lastError": null
@@ -233,7 +233,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-01T06:09:07.048Z",
+        "lastActiveAt": "2026-10-01T16:27:12.910Z",
         "lastHarvestedAt": "2026-09-30T22:16:12.633Z",
         "totalHarvested": 7,
         "lastError": null
@@ -258,24 +258,29 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "HEALTHY",
-      "remaining": 5000,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "policy": "Never ping or query while remaining=0 or in cooldown. Auto-resumes exactly when reset timestamp arrives."
+      "status": "EXHAUSTED",
+      "remaining": 1,
+      "resetEpoch": 1790872075000,
+      "resetAt": "2026-10-01T16:27:55.000Z",
+      "trippedAt": "2026-10-01T16:27:14.503Z",
+      "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Astorage-engine%20language%3Ac%2B%2B%20OR%20language%3Arust%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=1)",
+      "consecutiveBlocks": 3
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
-      "status": "EXHAUSTED",
-      "resetEpoch": 1793491200000,
-      "resetAt": "2026-11-01T00:00:00.000Z",
-      "reason": "Private repository 2,000 monthly runner minutes quota exhausted."
+      "status": "HEALTHY",
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": null,
+      "reason": null
     },
     "HUGGINGFACE_API": {
       "service": "HUGGINGFACE_API",
       "status": "HEALTHY",
       "resetEpoch": 0,
-      "resetAt": null
+      "resetAt": null,
+      "trippedAt": null,
+      "reason": null
     }
   }
 }
