@@ -3020,3 +3020,11 @@ https://github.com/ivanvorobei/SwiftUI
 https://github.com/Jinxiansen/SwiftUI
 # [MOBILE-CROSS-PLATFORM] maziyarpanahi/openmed (3379 score) - Local-first healthcare AI: clinical NER & HIPAA PII de-identification that runs 
 https://github.com/maziyarpanahi/openmed
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T00:20:37.750Z] ---
+# [MOBILE-CROSS-PLATFORM] bernaferrari/FigmaToCode (3114 score) - Generate responsive pages and apps on HTML, Tailwind, Flutter and SwiftUI.
+https://github.com/bernaferrari/FigmaToCode
+# [MOBILE-CROSS-PLATFORM] productdevbook/port-killer (2790 score) - A powerful cross-platform port management tool for developers. Monitor ports, ma
+https://github.com/productdevbook/port-killer
+# [MOBILE-CROSS-PLATFORM] buresdv/Cork (2796 score) - [NO AI] Fast GUI for Homebrew written in SwiftUI
+https://github.com/buresdv/Cork

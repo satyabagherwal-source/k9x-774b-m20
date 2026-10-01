@@ -13771,5 +13771,50 @@
     "qualityScore": 3379,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-01T00:13:11.895Z"
+  },
+  {
+    "name": "FigmaToCode",
+    "fullName": "bernaferrari/FigmaToCode",
+    "url": "https://github.com/bernaferrari/FigmaToCode",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Generate responsive pages and apps on HTML, Tailwind, Flutter and SwiftUI.",
+    "stars": 5213,
+    "forks": 504,
+    "openIssues": 53,
+    "language": "TypeScript",
+    "qualityScore": 3114,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:20:37.747Z"
+  },
+  {
+    "name": "port-killer",
+    "fullName": "productdevbook/port-killer",
+    "url": "https://github.com/productdevbook/port-killer",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A powerful cross-platform port management tool for developers. Monitor ports, manage Kubernetes port forwards, integrate Cloudflare Tunnels, and kill processes with one click.",
+    "stars": 5090,
+    "forks": 203,
+    "openIssues": 17,
+    "language": "Swift",
+    "qualityScore": 2790,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:20:37.747Z"
+  },
+  {
+    "name": "Cork",
+    "fullName": "buresdv/Cork",
+    "url": "https://github.com/buresdv/Cork",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "[NO AI] Fast GUI for Homebrew written in SwiftUI",
+    "stars": 4702,
+    "forks": 276,
+    "openIssues": 56,
+    "language": "Swift",
+    "qualityScore": 2796,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:20:37.747Z"
   }
 ]

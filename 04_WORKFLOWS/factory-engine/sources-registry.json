@@ -13444,5 +13444,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "buresdv-cork": {
+    "name": "buresdv/Cork",
+    "officialUrl": "https://github.com/buresdv/Cork",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T00:21:16.494Z",
+    "lastVerified": "2026-10-01T00:21:16.494Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
