@@ -13392,5 +13392,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pan-chera-multi-agent-cad": {
+    "name": "Pan-Chera/Multi-Agent-CAD",
+    "officialUrl": "https://github.com/Pan-Chera/Multi-Agent-CAD",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-01T00:03:15.793Z",
+    "lastVerified": "2026-10-01T00:03:15.793Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
