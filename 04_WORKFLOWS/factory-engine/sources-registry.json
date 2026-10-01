@@ -13613,5 +13613,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "touchlab-xcode-kotlin": {
+    "name": "touchlab/xcode-kotlin",
+    "officialUrl": "https://github.com/touchlab/xcode-kotlin",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-01T02:08:56.510Z",
+    "lastVerified": "2026-10-01T02:08:56.510Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 24,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
