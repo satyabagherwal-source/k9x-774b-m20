@@ -13861,5 +13861,35 @@
     "qualityScore": 2453,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-01T00:45:41.785Z"
+  },
+  {
+    "name": "SwiftWebUI",
+    "fullName": "SwiftWebUI/SwiftWebUI",
+    "url": "https://github.com/SwiftWebUI/SwiftWebUI",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A demo implementation of SwiftUI for the Web",
+    "stars": 4275,
+    "forks": 160,
+    "openIssues": 39,
+    "language": "Swift",
+    "qualityScore": 2414,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T01:23:56.144Z"
+  },
+  {
+    "name": "cheetah",
+    "fullName": "leetcode-mafia/cheetah",
+    "url": "https://github.com/leetcode-mafia/cheetah",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Mac app for crushing tech interviews with AI",
+    "stars": 4260,
+    "forks": 300,
+    "openIssues": 20,
+    "language": "Swift",
+    "qualityScore": 2410,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T01:23:56.144Z"
   }
 ]

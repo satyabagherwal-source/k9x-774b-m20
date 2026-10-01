@@ -13522,5 +13522,18 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "swiftwebui-swiftwebui": {
+    "name": "SwiftWebUI/SwiftWebUI",
+    "officialUrl": "https://github.com/SwiftWebUI/SwiftWebUI",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T01:24:33.360Z",
+    "lastVerified": "2026-10-01T01:24:33.360Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

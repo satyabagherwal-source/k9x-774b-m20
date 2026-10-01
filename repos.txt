@@ -3036,3 +3036,9 @@ https://github.com/SvenTiigi/WhatsNewKit
 https://github.com/kudoleh/iOS-Clean-Architecture-MVVM
 # [MOBILE-CROSS-PLATFORM] EmergeTools/Pow (2453 score) - Delightful SwiftUI effects for your app
 https://github.com/EmergeTools/Pow
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T01:24:14.942Z] ---
+# [MOBILE-CROSS-PLATFORM] SwiftWebUI/SwiftWebUI (2414 score) - A demo implementation of SwiftUI for the Web
+https://github.com/SwiftWebUI/SwiftWebUI
+# [MOBILE-CROSS-PLATFORM] leetcode-mafia/cheetah (2410 score) - Mac app for crushing tech interviews with AI
+https://github.com/leetcode-mafia/cheetah
