@@ -13993,5 +13993,50 @@
     "downloads": 33259,
     "qualityScore": 3500,
     "discoveredAt": "2026-10-01T04:11:10.244Z"
+  },
+  {
+    "name": "RedditOS",
+    "fullName": "Dimillian/RedditOS",
+    "url": "https://github.com/Dimillian/RedditOS",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "The product name is Curiosity, a SwiftUI Reddit client for macOS Big Sur",
+    "stars": 4028,
+    "forks": 200,
+    "openIssues": 20,
+    "language": "Swift",
+    "qualityScore": 2364,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T05:22:44.231Z"
+  },
+  {
+    "name": "EhPanda",
+    "fullName": "EhPanda-Team/EhPanda",
+    "url": "https://github.com/EhPanda-Team/EhPanda",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "An unofficial E-Hentai App for iOS built with SwiftUI & TCA.",
+    "stars": 3986,
+    "forks": 258,
+    "openIssues": 33,
+    "language": "Swift",
+    "qualityScore": 2386,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T05:22:44.232Z"
+  },
+  {
+    "name": "codeapp",
+    "fullName": "thebaselab/codeapp",
+    "url": "https://github.com/thebaselab/codeapp",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Building a full-fledged code editor for iPad",
+    "stars": 3969,
+    "forks": 370,
+    "openIssues": 588,
+    "language": "Swift",
+    "qualityScore": 2446,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T05:22:44.232Z"
   }
 ]

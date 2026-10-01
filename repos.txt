@@ -3062,3 +3062,11 @@ https://github.com/touchlab/SKIE
 # --- Automatically Discovered by AI Scout Engine [2026-10-01T04:11:10.245Z] ---
 # [HUGGINGFACE-AI-MODELS] ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF (3500 score) - Verified Hugging Face Model: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF (
 https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T05:22:44.233Z] ---
+# [MOBILE-CROSS-PLATFORM] Dimillian/RedditOS (2364 score) - The product name is Curiosity, a SwiftUI Reddit client for macOS Big Sur
+https://github.com/Dimillian/RedditOS
+# [MOBILE-CROSS-PLATFORM] EhPanda-Team/EhPanda (2386 score) - An unofficial E-Hentai App for iOS built with SwiftUI & TCA.
+https://github.com/EhPanda-Team/EhPanda
+# [MOBILE-CROSS-PLATFORM] thebaselab/codeapp (2446 score) - Building a full-fledged code editor for iPad
+https://github.com/thebaselab/codeapp
