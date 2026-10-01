@@ -13691,5 +13691,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-unsloth-qwen3.8-27b-gguf": {
+    "name": "unsloth/Qwen3.8-27B-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-01T16:27:42.765Z",
+    "lastVerified": "2026-10-01T16:27:42.765Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
