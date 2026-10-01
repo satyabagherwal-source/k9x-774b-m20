@@ -13548,5 +13548,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jellyfin-swiftfin": {
+    "name": "jellyfin/Swiftfin",
+    "officialUrl": "https://github.com/jellyfin/Swiftfin",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T01:50:58.292Z",
+    "lastVerified": "2026-10-01T01:50:58.292Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 7,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -13891,5 +13891,50 @@
     "qualityScore": 2410,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-01T01:23:56.144Z"
+  },
+  {
+    "name": "Swiftfin",
+    "fullName": "jellyfin/Swiftfin",
+    "url": "https://github.com/jellyfin/Swiftfin",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Native Jellyfin Client for iOS and tvOS ",
+    "stars": 4191,
+    "forks": 601,
+    "openIssues": 109,
+    "language": "Swift",
+    "qualityScore": 2626,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T01:50:41.519Z"
+  },
+  {
+    "name": "ModernCleanArchitectureSwiftUI",
+    "fullName": "sergdort/ModernCleanArchitectureSwiftUI",
+    "url": "https://github.com/sergdort/ModernCleanArchitectureSwiftUI",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Example of Modern Domain Driven modularisation of iOS apps",
+    "stars": 4102,
+    "forks": 505,
+    "openIssues": 2,
+    "language": "Swift",
+    "qualityScore": 2307,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T01:50:41.519Z"
+  },
+  {
+    "name": "PopupView",
+    "fullName": "exyte/PopupView",
+    "url": "https://github.com/exyte/PopupView",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Toasts and popups library written with SwiftUI",
+    "stars": 4060,
+    "forks": 315,
+    "openIssues": 0,
+    "language": "Swift",
+    "qualityScore": 2375,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T01:50:41.520Z"
   }
 ]

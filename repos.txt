@@ -3042,3 +3042,11 @@ https://github.com/EmergeTools/Pow
 https://github.com/SwiftWebUI/SwiftWebUI
 # [MOBILE-CROSS-PLATFORM] leetcode-mafia/cheetah (2410 score) - Mac app for crushing tech interviews with AI
 https://github.com/leetcode-mafia/cheetah
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T01:50:41.520Z] ---
+# [MOBILE-CROSS-PLATFORM] jellyfin/Swiftfin (2626 score) - Native Jellyfin Client for iOS and tvOS 
+https://github.com/jellyfin/Swiftfin
+# [MOBILE-CROSS-PLATFORM] sergdort/ModernCleanArchitectureSwiftUI (2307 score) - Example of Modern Domain Driven modularisation of iOS apps
+https://github.com/sergdort/ModernCleanArchitectureSwiftUI
+# [MOBILE-CROSS-PLATFORM] exyte/PopupView (2375 score) - Toasts and popups library written with SwiftUI
+https://github.com/exyte/PopupView
