@@ -13509,5 +13509,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "emergetools-pow": {
+    "name": "EmergeTools/Pow",
+    "officialUrl": "https://github.com/EmergeTools/Pow",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T00:46:15.108Z",
+    "lastVerified": "2026-10-01T00:46:15.108Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 9,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
