@@ -13665,5 +13665,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dimillian-redditos": {
+    "name": "Dimillian/RedditOS",
+    "officialUrl": "https://github.com/Dimillian/RedditOS",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T05:23:04.233Z",
+    "lastVerified": "2026-10-01T05:23:04.233Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 27,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
