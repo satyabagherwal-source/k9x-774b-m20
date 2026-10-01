@@ -4,6 +4,12 @@ import { fork } from 'child_process';
 import { fileURLToPath } from 'url';
 import { DISCOVERY_DOMAINS, ensureQueueReplenished } from './auto-discovery-scout.mjs';
 import { pushWithRebaseRetry } from './concurrency-coordinator.mjs';
+import {
+  checkServiceAvailability,
+  tripMasterCircuit,
+  MASTER_SERVICES
+} from './master-circuit-breaker.mjs';
+import { runInternalKnowledgeSynthesis } from './internal-synthesizer.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -170,6 +176,21 @@ export function spawnWorkerAgent(agentConfig) {
       return resolve({ agent: agentConfig.id, status: 'COOLING_DOWN', waitSec, skipped: true });
     }
 
+    // 2. Master Circuit Breaker Check: Respect Central Dependency Switch
+    if (agentConfig.domain !== 'huggingface-ai-models') {
+      const ghAvail = checkServiceAvailability(MASTER_SERVICES.GITHUB_API);
+      if (!ghAvail.available) {
+        console.log(`${agentConfig.color}[${agentConfig.id}] ⏳ GITHUB MASTER SWITCH IS OFF until ${ghAvail.resetAt} (${ghAvail.waitSec}s left). Worker safely parked (will auto-wake on reset).${RESET}`);
+        return resolve({ agent: agentConfig.id, status: 'WAITING_FOR_GITHUB_RESET', waitSec: ghAvail.waitSec, skipped: true });
+      }
+    } else {
+      const hfAvail = checkServiceAvailability(MASTER_SERVICES.HUGGINGFACE_API);
+      if (!hfAvail.available) {
+        console.log(`${agentConfig.color}[${agentConfig.id}] ⏳ HF MASTER SWITCH IS OFF until ${hfAvail.resetAt}. Worker safely parked.${RESET}`);
+        return resolve({ agent: agentConfig.id, status: 'WAITING_FOR_HF_RESET', skipped: true });
+      }
+    }
+
     console.log(`${agentConfig.color}[LAUNCHING ${agentConfig.id}] Assigned Domain: ${agentConfig.domain.toUpperCase()}${RESET}`);
     updateWorkerState(agentConfig.id, { lastActiveAt: new Date().toISOString() });
 
@@ -201,7 +222,10 @@ export function spawnWorkerAgent(agentConfig) {
     scoutProc.on('close', (code) => {
       // Check if scout hit a rate limit
       if (scoutOutput.includes('RATE LIMIT EXCEEDED') || scoutOutput.includes('rate limit reached') || code === 42) {
-        console.warn(`${agentConfig.color}[${agentConfig.id}] ⚠️ Scout encountered rate-limit. Placing ONLY this agent on 10m isolated cooldown.${RESET}`);
+        console.warn(`${agentConfig.color}[${agentConfig.id}] ⚠️ Scout encountered rate-limit. Placing Master Circuit and agent on cooldown.${RESET}`);
+        if (agentConfig.domain !== 'huggingface-ai-models') {
+          tripMasterCircuit(MASTER_SERVICES.GITHUB_API, Date.now() + 600_000, 'GitHub Search Rate Limit in Scout');
+        }
         tripWorkerCooldown(agentConfig.id, 600_000, 'Scout domain rate limit');
         return resolve({ agent: agentConfig.id, status: 'TRIPPED_COOLDOWN', code });
       }
@@ -234,9 +258,12 @@ export function spawnWorkerAgent(agentConfig) {
       });
 
       harvestProc.on('close', (hCode) => {
-        // If harvester encountered rate limit, isolate this worker without affecting others
-        if (harvestOutput.includes('RATE LIMIT EXCEEDED') || harvestOutput.includes('secondary rate limit') || hCode === 42) {
-          console.warn(`${agentConfig.color}[${agentConfig.id}] ⚠️ Rate limit encountered. Placing ONLY ${agentConfig.id} on 15m cooldown. Other agents remain active!${RESET}`);
+        // If harvester encountered rate limit, trip Master Circuit Breaker so other agents also pause
+        if (harvestOutput.includes('RATE LIMIT EXCEEDED') || harvestOutput.includes('secondary rate limit') || harvestOutput.includes('MASTER CIRCUIT BREAKER ENGAGED') || hCode === 42) {
+          console.warn(`${agentConfig.color}[${agentConfig.id}] ⚠️ Rate limit encountered. Tripping Master Circuit Breaker.${RESET}`);
+          if (agentConfig.domain !== 'huggingface-ai-models') {
+            tripMasterCircuit(MASTER_SERVICES.GITHUB_API, Date.now() + 900_000, 'GitHub REST Rate Limit in Zero-Clone');
+          }
           tripWorkerCooldown(agentConfig.id, 900_000, 'GitHub/AI Rate Limit on Target');
           return resolve({ agent: agentConfig.id, status: 'RATE_LIMITED', code: hCode });
         }
@@ -283,11 +310,22 @@ export async function runMultiAgentFleet(options = {}) {
     console.log(`   ${i + 1}. ${agent.id} -> Domain: ${agent.domain} | Status: ${statusLabel} | Harvested: ${lifecycle.totalHarvested || 0}`);
   });
 
-  // Autonomous Self-Replenishing Guard: Ensure unharvested targets exist before launch
-  try {
-    await ensureQueueReplenished(15, 24);
-  } catch (err) {
-    console.warn(`[REPLENISH WARNING] Auto-replenish failed: ${err.message}. Proceeding with existing queue.`);
+  // Master Switch Dependency Gate & Internal Peer Laborer Activation
+  const ghAvail = checkServiceAvailability(MASTER_SERVICES.GITHUB_API);
+  if (ghAvail.available) {
+    try {
+      await ensureQueueReplenished(15, 24);
+    } catch (err) {
+      console.warn(`[REPLENISH WARNING] Auto-replenish failed: ${err.message}. Proceeding with existing queue.`);
+    }
+  } else {
+    console.log(`\n⏳ [GITHUB QUOTA SLEEP] GitHub API Master Switch is OFF until ${ghAvail.resetAt} (${ghAvail.waitSec}s remaining).`);
+    console.log(`👷 [INTERNAL PEER LEARNING ENGAGED] While external GitHub is resting, laborers are teaching each other: synthesizing cross-project intelligence from 229 harvested dossiers!`);
+    try {
+      await runInternalKnowledgeSynthesis();
+    } catch (synthErr) {
+      console.warn(`[INTERNAL SYNTHESIS WARNING] ${synthErr.message}`);
+    }
   }
 
   console.log(`\n⚡ Launching active agents simultaneously in parallel...\n`);

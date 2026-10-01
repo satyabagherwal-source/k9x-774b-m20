@@ -240,5 +240,42 @@
       }
     ],
     "orchestratorScript": "04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs"
+  },
+  "cloudActionsPolicy": {
+    "repositoryType": "PRIVATE",
+    "freeTierMinutesPerMonth": 2000,
+    "currentBillingStatus": "MONTHLY_FREE_MINUTES_EXHAUSTED",
+    "nextQuotaReset": "2026-11-01T00:00:00.000Z",
+    "primary24x7Worker": "LOCAL_DAEMON (start-24-7-daemon.bat / local-daemon-harvester.mjs - 0 GitHub Actions minutes used, 100% free)",
+    "cloudCronsStatus": "PAUSED_TO_PREVENT_FAILED_RUN_SPAM",
+    "autoBlockOverages": true
+  },
+  "internalPeerLearning": {
+    "enabled": true,
+    "philosophy": "Majdoor Ek Dusre Ko Sikha Rahe Hain: When external APIs are on cooldown, workers synthesize cross-project learnings from 07_PROJECT_LEARNING into 05_KNOWLEDGE without burning any GitHub quota.",
+    "script": "04_WORKFLOWS/factory-engine/internal-synthesizer.mjs"
+  },
+  "masterCircuitBreakers": {
+    "GITHUB_API": {
+      "service": "GITHUB_API",
+      "status": "HEALTHY",
+      "remaining": 5000,
+      "resetEpoch": 0,
+      "resetAt": null,
+      "policy": "Never ping or query while remaining=0 or in cooldown. Auto-resumes exactly when reset timestamp arrives."
+    },
+    "GITHUB_ACTIONS": {
+      "service": "GITHUB_ACTIONS",
+      "status": "EXHAUSTED",
+      "resetEpoch": 1793491200000,
+      "resetAt": "2026-11-01T00:00:00.000Z",
+      "reason": "Private repository 2,000 monthly runner minutes quota exhausted."
+    },
+    "HUGGINGFACE_API": {
+      "service": "HUGGINGFACE_API",
+      "status": "HEALTHY",
+      "resetEpoch": 0,
+      "resetAt": null
+    }
   }
 }

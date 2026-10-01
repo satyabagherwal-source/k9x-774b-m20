@@ -12,6 +12,7 @@ import {
 } from './multi-agent-fleet.mjs';
 import { getAllKeysCircuitReport } from './ai-provider-pool.mjs';
 import { runAutoDiscoveryScout } from './auto-discovery-scout.mjs';
+import { getMasterCircuitsReport } from './master-circuit-breaker.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -168,7 +169,36 @@ export function displayDashboard() {
     });
   }
   console.log(`----------------------------------------------------------------------------------------`);
-  console.log(`💡 Note: When one key or agent hits its limit, ONLY that item rests. Other agents continue uninterrupted!`);
+  console.log(`💡 Note: When one key or agent hits its limit, ONLY that item rests. Other agents continue uninterrupted!\n`);
+
+  // 3. Master Infrastructure Circuits Status (The Master Switch)
+  const masterCircuits = getMasterCircuitsReport();
+  console.log(`⚡ [MASTER INFRASTRUCTURE CIRCUITS: QUOTA & RESET GATES]`);
+  console.log(`----------------------------------------------------------------------------------------`);
+  console.log(
+    `#`.padEnd(4) +
+    `Service / Gate`.padEnd(22) +
+    `Status`.padEnd(20) +
+    `Remaining`.padEnd(16) +
+    `Reset / Cooldown`.padEnd(26)
+  );
+  console.log(`----------------------------------------------------------------------------------------`);
+  masterCircuits.forEach((c, i) => {
+    let statusStr = c.available ? '\x1b[32mHEALTHY\x1b[0m' : '\x1b[31mEXHAUSTED\x1b[0m';
+    let resetStr = c.available ? 'Ready / Active' : `Auto-Reset: ${c.resetAt?.slice(11, 19)} (${c.waitSec}s)`;
+    if (c.service === 'GITHUB_ACTIONS' && !c.available) {
+      resetStr = `Next Month (2026-11-01)`;
+    }
+    console.log(
+      `${i + 1}`.padEnd(4) +
+      `${c.service}`.padEnd(22) +
+      statusStr.padEnd(29) +
+      `${c.remaining}`.padEnd(16) +
+      resetStr.padEnd(26)
+    );
+  });
+  console.log(`----------------------------------------------------------------------------------------`);
+  console.log(`🛡️ Master Switch Invariant: If a service quota is dead, dependent tasks sleep until exact reset.`);
   console.log(`========================================================================================\n`);
 }
 

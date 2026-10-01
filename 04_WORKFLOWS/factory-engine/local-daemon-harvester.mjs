@@ -3,6 +3,11 @@ import path from 'path';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { runMultiAgentFleet } from './multi-agent-fleet.mjs';
+import {
+  checkServiceAvailability,
+  MASTER_SERVICES
+} from './master-circuit-breaker.mjs';
+import { runInternalKnowledgeSynthesis } from './internal-synthesizer.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -33,8 +38,8 @@ function runCmd(cmd) {
 async function startAutonomousDaemon() {
   log(`======================================================================`);
   log(`🤖 AI-BUILDER-BRAIN 24/7/365 LOCAL AUTONOMOUS LEARNING DAEMON STARTED`);
-  log(`   Mode       : Continuous Server-to-Server Learning Loop`);
-  log(`   Cadence    : Every 5 minutes`);
+  log(`   Mode       : Quota-Aware Server-to-Server Learning Loop`);
+  log(`   Cadence    : Every 5 minutes (Auto-Sleeps Until Reset on Quota Limits)`);
   log(`   Target Root: ${BRAIN_ROOT}`);
   log(`======================================================================`);
 
@@ -54,6 +59,26 @@ async function startAutonomousDaemon() {
             continue;
           }
         } catch (e) {}
+      }
+
+      // 2. Master Circuit Breaker Check: Never hammer external services when quota is dead!
+      const ghAvail = checkServiceAvailability(MASTER_SERVICES.GITHUB_API);
+      if (!ghAvail.available) {
+        log(`⏳ [MASTER SWITCH OFF] GitHub API quota is EXHAUSTED until ${ghAvail.resetAt} (${Math.round(ghAvail.waitSec / 60)}m left).`);
+        log(`   Reason: ${ghAvail.reason}`);
+        log(`👷 [INTERNAL PEER LABORER] While external GitHub is resting, running internal knowledge synthesis...`);
+        try {
+          await runInternalKnowledgeSynthesis();
+        } catch (sErr) {
+          log(`⚠️ Internal synthesis note: ${sErr.message}`);
+        }
+
+        // Sleep directly until the exact reset time instead of spin-looping!
+        const sleepTimeMs = Math.max(5000, ghAvail.waitSec * 1000);
+        log(`💤 [SAFE BACKOFF] Sleeping for ${Math.round(sleepTimeMs / 60000)} minutes until exact quota reset. Zero API requests will be sent.`);
+        await sleep(sleepTimeMs);
+        log(`🟢 [QUOTA RESTORED] Reset timestamp reached. Awakening daemon for fresh extraction cycle...`);
+        continue;
       }
 
       // 2. Sync latest remote cloud intelligence first

@@ -10,6 +10,11 @@ import {
   saveGeminiLearningRecord,
   promoteGeminiRulesToMasterBrain
 } from './gemini-brain-agent.mjs';
+import {
+  checkServiceAvailability,
+  inspectAndRecordHeaders,
+  MASTER_SERVICES
+} from './master-circuit-breaker.mjs';
 
 
 
@@ -82,6 +87,30 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * Polite HTTP Fetch with Rate-Limit & ToS Compliance
  */
 async function compliantFetch(url, customHeaders = {}) {
+  const isGithub = url.includes('api.github.com');
+  const isHf = url.includes('huggingface.co');
+
+  // 1. Master Switch Pre-flight Check: Never ping if circuit is currently tripped/cooling down
+  if (isGithub) {
+    const avail = checkServiceAvailability(MASTER_SERVICES.GITHUB_API);
+    if (!avail.available) {
+      console.warn(`[CIRCUIT BREAKER PRE-FLIGHT] GitHub API is on cooldown until ${avail.resetAt} (${avail.waitSec}s left). Blocking call to prevent IP/API ban.`);
+      const err = new Error(`GITHUB_API_CIRCUIT_TRIPPED_UNTIL_${avail.resetAt}`);
+      err.code = 'RATE_LIMIT_TRIPPED';
+      err.resetAt = avail.resetAt;
+      err.waitSec = avail.waitSec;
+      throw err;
+    }
+  } else if (isHf) {
+    const avail = checkServiceAvailability(MASTER_SERVICES.HUGGINGFACE_API);
+    if (!avail.available) {
+      console.warn(`[CIRCUIT BREAKER PRE-FLIGHT] Hugging Face API is on cooldown until ${avail.resetAt}. Blocking call.`);
+      const err = new Error(`HF_API_CIRCUIT_TRIPPED_UNTIL_${avail.resetAt}`);
+      err.code = 'RATE_LIMIT_TRIPPED';
+      throw err;
+    }
+  }
+
   // Proactive inter-request pacing sleep to prevent temporary secondary rate-limit blocks
   await sleep(400);
 
@@ -92,12 +121,29 @@ async function compliantFetch(url, customHeaders = {}) {
   };
 
   const token = process.env.GITHUB_TOKEN;
-  if (token && url.includes('api.github.com')) {
+  if (token && isGithub) {
     headers['Authorization'] = `token ${token}`;
   }
 
   try {
     const res = await fetch(url, { headers });
+
+    // 2. Master Circuit Breaker Header Inspection
+    if (isGithub) {
+      const isHealthy = inspectAndRecordHeaders(MASTER_SERVICES.GITHUB_API, res.headers, res.status, url);
+      if (!isHealthy) {
+        const err = new Error(`GITHUB_API_RATE_LIMIT_TRIPPED`);
+        err.code = 'RATE_LIMIT_TRIPPED';
+        throw err;
+      }
+    } else if (isHf) {
+      const isHealthy = inspectAndRecordHeaders(MASTER_SERVICES.HUGGINGFACE_API, res.headers, res.status, url);
+      if (!isHealthy) {
+        const err = new Error(`HF_API_RATE_LIMIT_TRIPPED`);
+        err.code = 'RATE_LIMIT_TRIPPED';
+        throw err;
+      }
+    }
 
     // Handle Retry-After header if server requests a temporary pause
     const retryAfter = res.headers.get('retry-after');
@@ -105,21 +151,6 @@ async function compliantFetch(url, customHeaders = {}) {
       const waitSec = parseInt(retryAfter, 10) || 5;
       console.warn(`[RETRY-AFTER DETECTED] Server requested backoff for ${waitSec} seconds. Sleeping...`);
       await sleep((waitSec + 1) * 1000);
-    }
-
-    // Inspect GitHub rate limit headers
-    const remaining = res.headers.get('x-ratelimit-remaining');
-    const resetTime = res.headers.get('x-ratelimit-reset');
-
-    if (remaining !== null && parseInt(remaining, 10) < 5) {
-      console.warn(`[RATE LIMIT WARNING] GitHub rate-limit remaining: ${remaining}. Reset at ${new Date(resetTime * 1000).toISOString()}`);
-      await sleep(3000);
-    }
-
-    if (res.status === 429 || (res.status === 403 && remaining === '0')) {
-      console.warn(`[RATE LIMIT EXCEEDED] Rate limit reached on ${url}. Sleeping 5000ms before backoff.`);
-      await sleep(5000);
-      return null;
     }
 
     if (!res.ok) {
@@ -132,6 +163,9 @@ async function compliantFetch(url, customHeaders = {}) {
     }
     return await res.text();
   } catch (err) {
+    if (err.code === 'RATE_LIMIT_TRIPPED') {
+      throw err; // Propagate circuit trip error immediately to stop batch loop
+    }
     console.warn(`[FETCH ERROR] ${url} - ${err.message}`);
     return null;
   }
@@ -624,6 +658,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
   queue.forEach((q, i) => console.log(`  ${i + 1}. [${q.type.toUpperCase()}] ${q.webUrl}`));
 
   const results = [];
+  let circuitTrippedInRun = false;
 
   for (let idx = 0; idx < queue.length; idx++) {
     const target = queue[idx];
@@ -691,6 +726,13 @@ export async function runZeroCloneHarvester(customUrls = null) {
         // Respectful delay between targets to ensure 100% free-tier compliance and avoid API blocks
         await sleep(2500);
     } catch (err) {
+      if (err.code === 'RATE_LIMIT_TRIPPED' || err.message?.includes('CIRCUIT_TRIPPED') || err.message?.includes('RATE_LIMIT')) {
+        console.warn(`\n🛑 [MASTER CIRCUIT BREAKER ENGAGED] Quota or Rate limit tripped on ${target.slug}. Halting batch loop immediately to protect API/account.`);
+        results.push({ target: target.slug, status: 'TRIPPED_CIRCUIT', error: err.message });
+        releaseTargetLock(target.slug);
+        circuitTrippedInRun = true;
+        break; // STOP IMMEDIATELY! Never query subsequent repos while quota is exhausted!
+      }
       console.error(`[ERROR] Zero-clone processing failed for ${target.slug}: ${err.message}`);
       results.push({ target: target.slug, status: 'FAILED', error: err.message });
     } finally {
@@ -705,6 +747,14 @@ export async function runZeroCloneHarvester(customUrls = null) {
   console.log(`Successful    : ${results.filter((r) => r.status === 'SUCCESS').length}`);
   console.log(`Failed        : ${results.filter((r) => r.status === 'FAILED').length}`);
   console.log(`======================================================================\n`);
+
+  if (circuitTrippedInRun) {
+    console.log(`⏸️ [CIRCUIT COOLDOWN] External quota exhausted. Scout and secondary passes deferred until reset.`);
+    if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename)) {
+      process.exit(42);
+    }
+    return { success: false, status: 'CIRCUIT_TRIPPED', count: 0, results };
+  }
 
   // Auto-Discovery: If all existing targets are up to date, scout fresh top repositories
   const successCount = results.filter((r) => r.status === 'SUCCESS').length;

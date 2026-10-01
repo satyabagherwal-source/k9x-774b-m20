@@ -1,19 +1,20 @@
 name: 24-7 Multi-Agent Parallel Autonomous Harvester with Google Gemini AI
 
+# Quota & Billing Protection Policy:
+# On private repositories, GitHub Actions provides a free tier quota of 2,000 runner minutes per month.
+# Continuous 24/7 harvesting runs locally at 0 cost via start-24-7-daemon.bat (consumes 0 GitHub runner minutes).
+# Cloud workflow triggers on-demand via workflow_dispatch, or when explicitly requested.
+
 on:
-  schedule:
-    # Multi-staggered cron triggers ensure that even if GitHub delays one schedule, another catches it
-    - cron: '15 * * * *'
-    - cron: '45 * * * *'
   workflow_dispatch:
     # Allows manual trigger anytime from GitHub Web UI or CLI
   repository_dispatch:
     # Allows external server-to-server triggers via REST API
     types: [trigger-harvester, 24-7-cloud-fleet]
-  push:
-    paths:
-      - 'repos.txt'
-      - 'harvest-control.json'
+  # schedule:
+  #   # Aggressive 30-min schedule disabled to protect private repository 2,000 min/mo free quota.
+  #   # Un-comment or adjust when quota resets on the 1st of the month:
+  #   - cron: '0 0 * * 0' # Weekly run option
 
 permissions:
   contents: write
@@ -92,19 +93,4 @@ jobs:
                 git pull --rebase origin main
               }
             done
-          fi
-
-      - name: Autonomous 24/7 Self-Relay Dispatcher
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.WORKFLOW_RELAY_TOKEN }}
-        run: |
-          echo "======================================================================"
-          echo "🔄 24/7 AUTONOMOUS CONTINUOUS LEARNING RELAY DISPATCHER"
-          echo "======================================================================"
-          if [ -n "$GH_TOKEN" ]; then
-            echo "🚀 Dispatching next server-to-server learning cycle via GitHub API..."
-            gh workflow run 24-7-cloud-harvester.yml --repo "${{ github.repository }}" || echo "⚠️ Self-relay trigger deferred to multi-cron"
-          else
-            echo "ℹ️ WORKFLOW_RELAY_TOKEN not detected. Multi-staggered cron will handle the next cycle."
           fi

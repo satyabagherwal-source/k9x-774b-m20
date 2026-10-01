@@ -4,6 +4,11 @@ import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { getSourcesRegistry } from './upgrade-checker.mjs';
 import { acquireTargetLock, releaseTargetLock } from './concurrency-coordinator.mjs';
+import {
+  checkServiceAvailability,
+  inspectAndRecordHeaders,
+  MASTER_SERVICES
+} from './master-circuit-breaker.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -154,6 +159,24 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
  * Polite HTTP Fetch with Rate-Limit & Backoff Handling
  */
 async function compliantFetch(url, customHeaders = {}) {
+  const isGithub = url.includes('api.github.com');
+  const isHf = url.includes('huggingface.co');
+
+  // Master Circuit Breaker Pre-flight: Never query if circuit is in cooldown
+  if (isGithub) {
+    const avail = checkServiceAvailability(MASTER_SERVICES.GITHUB_API);
+    if (!avail.available) {
+      console.warn(`[SCOUT PRE-FLIGHT BLOCKED] GitHub API is on cooldown until ${avail.resetAt} (${avail.waitSec}s left). Skipping query to prevent API ban.`);
+      return null;
+    }
+  } else if (isHf) {
+    const avail = checkServiceAvailability(MASTER_SERVICES.HUGGINGFACE_API);
+    if (!avail.available) {
+      console.warn(`[SCOUT PRE-FLIGHT BLOCKED] Hugging Face API is on cooldown until ${avail.resetAt}. Skipping.`);
+      return null;
+    }
+  }
+
   const headers = {
     'User-Agent': USER_AGENT,
     Accept: 'application/json',
@@ -161,29 +184,30 @@ async function compliantFetch(url, customHeaders = {}) {
   };
 
   const token = process.env.GITHUB_TOKEN;
-  if (token && url.includes('api.github.com')) {
+  if (token && isGithub) {
     headers['Authorization'] = `token ${token}`;
   }
 
   const hfToken = process.env.HF_TOKEN;
-  if (hfToken && url.includes('huggingface.co')) {
+  if (hfToken && isHf) {
     headers['Authorization'] = `Bearer ${hfToken}`;
   }
 
   try {
     const res = await fetch(url, { headers });
 
-    const remaining = res.headers.get('x-ratelimit-remaining');
-    const resetTime = res.headers.get('x-ratelimit-reset');
-
-    if (remaining !== null && parseInt(remaining, 10) < 5) {
-      console.warn(`[SCOUT RATE LIMIT] Remaining: ${remaining}. Pausing respectfully.`);
-      await sleep(3000);
-    }
-
-    if (res.status === 403 && remaining === '0') {
-      console.warn(`[SCOUT RATE LIMIT EXCEEDED] Pausing search queries.`);
-      return null;
+    // Inspect headers & trip circuit if limit reached
+    if (isGithub) {
+      const isHealthy = inspectAndRecordHeaders(MASTER_SERVICES.GITHUB_API, res.headers, res.status, url);
+      if (!isHealthy) {
+        console.warn(`[SCOUT CIRCUIT TRIPPED] GitHub API rate limit reached. All queries paused until reset.`);
+        return null;
+      }
+    } else if (isHf) {
+      const isHealthy = inspectAndRecordHeaders(MASTER_SERVICES.HUGGINGFACE_API, res.headers, res.status, url);
+      if (!isHealthy) {
+        return null;
+      }
     }
 
     if (!res.ok) return null;
