@@ -13600,5 +13600,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "touchlab-skie": {
+    "name": "touchlab/SKIE",
+    "officialUrl": "https://github.com/touchlab/SKIE",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-01T02:08:48.099Z",
+    "lastVerified": "2026-10-01T02:08:48.099Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

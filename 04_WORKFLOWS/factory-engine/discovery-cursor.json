@@ -17,11 +17,11 @@
       "page": 1
     },
     "mobile-cross-platform": {
-      "queryIndex": 2,
-      "page": 4
+      "queryIndex": 0,
+      "page": 3
     },
     "devops-cloud-infrastructure": {
-      "queryIndex": 4,
+      "queryIndex": 2,
       "page": 1
     },
     "cybersecurity-defenses": {
@@ -37,6 +37,6 @@
     "sortIndex": 0,
     "page": 1
   },
-  "totalAutoDiscovered": 83,
-  "lastReplenishedAt": "2026-10-01T02:08:13.070Z"
+  "totalAutoDiscovered": 80,
+  "lastReplenishedAt": "2026-10-01T02:08:44.612Z"
 }
