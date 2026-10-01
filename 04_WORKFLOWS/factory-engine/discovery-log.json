@@ -13726,5 +13726,50 @@
     "qualityScore": 787,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-01T00:02:47.503Z"
+  },
+  {
+    "name": "SwiftUI",
+    "fullName": "ivanvorobei/SwiftUI",
+    "url": "https://github.com/ivanvorobei/SwiftUI",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Examples projects using SwiftUI released by WWDC2019. Include Layout, UI, Animations, Gestures, Draw and Data.",
+    "stars": 5626,
+    "forks": 567,
+    "openIssues": 8,
+    "language": "Swift",
+    "qualityScore": 3149,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:13:11.895Z"
+  },
+  {
+    "name": "SwiftUI",
+    "fullName": "Jinxiansen/SwiftUI",
+    "url": "https://github.com/Jinxiansen/SwiftUI",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "`SwiftUI` Framework  Learning and Usage Guide. 🚀 ",
+    "stars": 5443,
+    "forks": 530,
+    "openIssues": 2,
+    "language": "Swift",
+    "qualityScore": 3135,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:13:11.895Z"
+  },
+  {
+    "name": "openmed",
+    "fullName": "maziyarpanahi/openmed",
+    "url": "https://github.com/maziyarpanahi/openmed",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Local-first healthcare AI: clinical NER & HIPAA PII de-identification that runs 100% on-device. 2,200+ medical models, 21 languages, Apple MLX + Python, no cloud, no patient data leaving your network. Apache-2.0",
+    "stars": 5441,
+    "forks": 696,
+    "openIssues": 287,
+    "language": "Python",
+    "qualityScore": 3379,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-01T00:13:11.895Z"
   }
 ]

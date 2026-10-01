@@ -13405,5 +13405,18 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ivanvorobei-swiftui": {
+    "name": "ivanvorobei/SwiftUI",
+    "officialUrl": "https://github.com/ivanvorobei/SwiftUI",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T00:13:23.778Z",
+    "lastVerified": "2026-10-01T00:13:23.778Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 6,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

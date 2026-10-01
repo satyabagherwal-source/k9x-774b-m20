@@ -3012,3 +3012,11 @@ https://github.com/ongridio/ongrid
 https://github.com/StreetLamb/tribe
 # [AI-AGENTS] Pan-Chera/Multi-Agent-CAD (787 score) - MAC (Multi-Agent CAD): A decoupled multi-agent framework for text-to-CAD generat
 https://github.com/Pan-Chera/Multi-Agent-CAD
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T00:13:11.896Z] ---
+# [MOBILE-CROSS-PLATFORM] ivanvorobei/SwiftUI (3149 score) - Examples projects using SwiftUI released by WWDC2019. Include Layout, UI, Animat
+https://github.com/ivanvorobei/SwiftUI
+# [MOBILE-CROSS-PLATFORM] Jinxiansen/SwiftUI (3135 score) - `SwiftUI` Framework  Learning and Usage Guide. 🚀 
+https://github.com/Jinxiansen/SwiftUI
+# [MOBILE-CROSS-PLATFORM] maziyarpanahi/openmed (3379 score) - Local-first healthcare AI: clinical NER & HIPAA PII de-identification that runs 
+https://github.com/maziyarpanahi/openmed
