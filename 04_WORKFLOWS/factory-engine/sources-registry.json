@@ -13496,5 +13496,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kudoleh-ios-clean-architecture-mvvm": {
+    "name": "kudoleh/iOS-Clean-Architecture-MVVM",
+    "officialUrl": "https://github.com/kudoleh/iOS-Clean-Architecture-MVVM",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T00:46:14.375Z",
+    "lastVerified": "2026-10-01T00:46:14.375Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
