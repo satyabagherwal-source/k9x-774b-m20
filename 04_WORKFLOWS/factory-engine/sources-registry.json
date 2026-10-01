@@ -13574,5 +13574,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "exyte-popupview": {
+    "name": "exyte/PopupView",
+    "officialUrl": "https://github.com/exyte/PopupView",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-01T01:51:22.016Z",
+    "lastVerified": "2026-10-01T01:51:22.016Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
