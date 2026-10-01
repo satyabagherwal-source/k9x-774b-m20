@@ -13981,5 +13981,17 @@
     "qualityScore": 961,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-01T02:08:13.069Z"
+  },
+  {
+    "name": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "fullName": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF (150 likes, 33259 downloads)",
+    "likes": 150,
+    "downloads": 33259,
+    "qualityScore": 3500,
+    "discoveredAt": "2026-10-01T04:11:10.244Z"
   }
 ]

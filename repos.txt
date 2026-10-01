@@ -3058,3 +3058,7 @@ https://github.com/sayaka-sh/spmp
 https://github.com/touchlab/xcode-kotlin
 # [MOBILE-CROSS-PLATFORM] touchlab/SKIE (961 score) - SKIE - Swift Kotlin Interface Enhancer
 https://github.com/touchlab/SKIE
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-01T04:11:10.245Z] ---
+# [HUGGINGFACE-AI-MODELS] ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF (3500 score) - Verified Hugging Face Model: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF (
+https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF
