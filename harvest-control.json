@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-02T07:28:53.494Z",
+  "lastUpdated": "2026-10-02T07:36:15.078Z",
   "updatedBy": "agent-antigravity",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -163,7 +163,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:31:03.179Z",
+        "lastActiveAt": "2026-10-02T07:37:04.455Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": null
@@ -173,7 +173,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:31:00.939Z",
+        "lastActiveAt": "2026-10-02T07:37:04.447Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -183,7 +183,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:31:02.198Z",
+        "lastActiveAt": "2026-10-02T07:37:08.128Z",
         "lastHarvestedAt": "2026-09-30T20:24:54.056Z",
         "totalHarvested": 3,
         "lastError": null
@@ -193,7 +193,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:30:53.937Z",
+        "lastActiveAt": "2026-10-02T07:37:02.131Z",
         "lastHarvestedAt": "2026-10-02T07:22:42.111Z",
         "totalHarvested": 4,
         "lastError": null
@@ -203,7 +203,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:31:00.944Z",
+        "lastActiveAt": "2026-10-02T07:37:04.460Z",
         "lastHarvestedAt": "2026-09-30T22:49:41.313Z",
         "totalHarvested": 7,
         "lastError": null
@@ -213,7 +213,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:31:02.204Z",
+        "lastActiveAt": "2026-10-02T07:37:08.936Z",
         "lastHarvestedAt": "2026-10-01T00:21:28.218Z",
         "totalHarvested": 5,
         "lastError": null
@@ -223,7 +223,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:31:02.191Z",
+        "lastActiveAt": "2026-10-02T07:37:04.775Z",
         "lastHarvestedAt": "2026-10-01T05:23:28.016Z",
         "totalHarvested": 13,
         "lastError": null
@@ -233,7 +233,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:30:53.945Z",
+        "lastActiveAt": "2026-10-02T07:37:02.123Z",
         "lastHarvestedAt": "2026-10-02T07:22:42.129Z",
         "totalHarvested": 8,
         "lastError": null
@@ -260,11 +260,11 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1790926195000,
-      "resetAt": "2026-10-02T07:29:55.000Z",
-      "trippedAt": "2026-10-02T07:28:53.491Z",
-      "reason": "Rate limit exceeded (HTTP 403 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Allm-agent%20stars%3A%3E1000%20sort%3Astars&per_page=15&page=1)",
-      "consecutiveBlocks": 12
+      "resetEpoch": 1790926647000,
+      "resetAt": "2026-10-02T07:37:27.000Z",
+      "trippedAt": "2026-10-02T07:36:15.075Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Ainfrastructure-as-code%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=3)",
+      "consecutiveBlocks": 2
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
