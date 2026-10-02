@@ -14074,5 +14074,29 @@
     "downloads": 1817224,
     "qualityScore": 15180,
     "discoveredAt": "2026-10-01T16:27:15.976Z"
+  },
+  {
+    "name": "Cloudflare/clef",
+    "fullName": "Cloudflare/clef",
+    "url": "https://huggingface.co/Cloudflare/clef",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Cloudflare/clef (436 likes, 18 downloads)",
+    "likes": 436,
+    "downloads": 18,
+    "qualityScore": 4378,
+    "discoveredAt": "2026-10-02T07:19:09.098Z"
+  },
+  {
+    "name": "Cloudflare/clef-flash",
+    "fullName": "Cloudflare/clef-flash",
+    "url": "https://huggingface.co/Cloudflare/clef-flash",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Cloudflare/clef-flash (148 likes, 18 downloads)",
+    "likes": 148,
+    "downloads": 18,
+    "qualityScore": 1498,
+    "discoveredAt": "2026-10-02T07:19:09.098Z"
   }
 ]

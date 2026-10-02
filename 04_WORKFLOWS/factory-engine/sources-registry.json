@@ -13717,5 +13717,31 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-cloudflare-clef-flash": {
+    "name": "Cloudflare/clef-flash",
+    "officialUrl": "https://huggingface.co/Cloudflare/clef-flash",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T07:19:23.876Z",
+    "lastVerified": "2026-10-02T07:19:23.876Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-cloudflare-clef": {
+    "name": "Cloudflare/clef",
+    "officialUrl": "https://huggingface.co/Cloudflare/clef",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T07:19:18.078Z",
+    "lastVerified": "2026-10-02T07:19:18.078Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
