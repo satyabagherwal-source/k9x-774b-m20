@@ -3190,3 +3190,7 @@ https://github.com/zoontek/react-native-bootsplash
 # --- Automatically Discovered by AI Scout Engine [2026-10-02T10:36:07.367Z] ---
 # [COGNITIVE-NEUROSCIENCE-SYSTEMS] NucleoidAI/Nucleoid (569 score) - Logic Language for World Models 🌱🐋🌍
 https://github.com/NucleoidAI/Nucleoid
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T19:27:35.168Z] ---
+# [AI-AGENTS] jordan-gibbs/hyperresearch (2283 score) - Convert Claude Code or Codex into the most intelligent Deep Research Agent. Coll
+https://github.com/jordan-gibbs/hyperresearch

@@ -14596,5 +14596,20 @@
     "qualityScore": 569,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-02T10:36:07.351Z"
+  },
+  {
+    "name": "hyperresearch",
+    "fullName": "jordan-gibbs/hyperresearch",
+    "url": "https://github.com/jordan-gibbs/hyperresearch",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Convert Claude Code or Codex into the most intelligent Deep Research Agent. Collect, search, and synthesize web research into a persistent, searchable wiki that builds on itself. Hosted API + MCP: hyperresearch.ai",
+    "stars": 3752,
+    "forks": 371,
+    "openIssues": 23,
+    "language": "Python",
+    "qualityScore": 2283,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T19:27:35.167Z"
   }
 ]
