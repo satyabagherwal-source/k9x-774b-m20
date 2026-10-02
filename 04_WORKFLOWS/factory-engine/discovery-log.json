@@ -14611,5 +14611,50 @@
     "qualityScore": 2283,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-02T19:27:35.167Z"
+  },
+  {
+    "name": "KMP-NativeCoroutines",
+    "fullName": "rickclephas/KMP-NativeCoroutines",
+    "url": "https://github.com/rickclephas/KMP-NativeCoroutines",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Library to use Kotlin Coroutines from Swift code in KMP apps",
+    "stars": 1325,
+    "forks": 49,
+    "openIssues": 11,
+    "language": "Kotlin",
+    "qualityScore": 849,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T21:45:46.899Z"
+  },
+  {
+    "name": "kotlin-multiplatform-samples",
+    "fullName": "android/kotlin-multiplatform-samples",
+    "url": "https://github.com/android/kotlin-multiplatform-samples",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Samples showcasing the Kotlin Multiplatform Jetpack libraries",
+    "stars": 1306,
+    "forks": 138,
+    "openIssues": 9,
+    "language": "Kotlin",
+    "qualityScore": 962,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T21:45:46.900Z"
+  },
+  {
+    "name": "charty",
+    "fullName": "hi-manshu/charty",
+    "url": "https://github.com/hi-manshu/charty",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Weave data into enchanting Jetpack Compose graphs—no potions required! 📜🔮",
+    "stars": 1288,
+    "forks": 59,
+    "openIssues": 0,
+    "language": "Kotlin",
+    "qualityScore": 762,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T21:45:46.900Z"
   }
 ]

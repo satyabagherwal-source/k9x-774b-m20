@@ -3194,3 +3194,11 @@ https://github.com/NucleoidAI/Nucleoid
 # --- Automatically Discovered by AI Scout Engine [2026-10-02T19:27:35.168Z] ---
 # [AI-AGENTS] jordan-gibbs/hyperresearch (2283 score) - Convert Claude Code or Codex into the most intelligent Deep Research Agent. Coll
 https://github.com/jordan-gibbs/hyperresearch
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T21:45:46.916Z] ---
+# [MOBILE-CROSS-PLATFORM] rickclephas/KMP-NativeCoroutines (849 score) - Library to use Kotlin Coroutines from Swift code in KMP apps
+https://github.com/rickclephas/KMP-NativeCoroutines
+# [MOBILE-CROSS-PLATFORM] android/kotlin-multiplatform-samples (962 score) - Samples showcasing the Kotlin Multiplatform Jetpack libraries
+https://github.com/android/kotlin-multiplatform-samples
+# [MOBILE-CROSS-PLATFORM] hi-manshu/charty (762 score) - Weave data into enchanting Jetpack Compose graphs—no potions required! 📜🔮
+https://github.com/hi-manshu/charty
