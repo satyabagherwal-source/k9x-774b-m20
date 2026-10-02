@@ -27,7 +27,8 @@ export const FLEET_ROSTER = [
   { id: 'Agent-Epsilon', name: 'Epsilon', domain: 'mobile-cross-platform', color: '\x1b[34m' }, // Blue
   { id: 'Agent-Zeta', name: 'Zeta', domain: 'devops-cloud-infrastructure', color: '\x1b[96m' }, // Bright Cyan
   { id: 'Agent-Eta', name: 'Eta', domain: 'cybersecurity-defenses', color: '\x1b[91m' }, // Bright Red
-  { id: 'Agent-Theta', name: 'Theta', domain: 'database-storage-engines', color: '\x1b[92m' } // Bright Green
+  { id: 'Agent-Theta', name: 'Theta', domain: 'database-storage-engines', color: '\x1b[92m' }, // Bright Green
+  { id: 'Agent-Iota', name: 'Iota', domain: 'cognitive-neuroscience-systems', color: '\x1b[95m' } // Bright Magenta
 ];
 
 const RESET = '\x1b[0m';

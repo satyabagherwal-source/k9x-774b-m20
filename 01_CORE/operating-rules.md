@@ -64,4 +64,13 @@ The Master AI-Builder-Brain is an active, continuously learning intelligence. Kn
 2. **Continuous Silent Auto-Harvesting**: Whenever an active project is developed, bridged (`brain-bridge.json`), or brought into contact with the AI-Builder-Brain, the agent MUST silently ("chupchap") evaluate newly resolved defects, commits, and architectural patterns, capturing local incidents and promoting verified reusable engineering knowledge into the Master Brain automatically.
 3. **Automatic Dual Synchronization (Local + GitHub)**: Every time learning is harvested or integrated into `C:\AI-Builder-Brain` (whether via On-Demand or Silent Auto-Harvest), the agent MUST automatically commit and push all modifications to the remote GitHub repository (`git push origin main`) in the same turn without asking the user or waiting for separate commands. Learning MUST always reside simultaneously in both local storage and GitHub.
 
+## Rule 13 — Multi-Disciplinary God-Level Intelligence
 
+Coding and Systems Engineering are the primary foundations of AI-Builder-Brain, but technical code alone is insufficient to build revolutionary, human-resonant software. The agent and Brain must operate across 5 interconnected intellectual pillars:
+
+1. **Systems & Software Engineering (Primary Foundation)**: High-performance, memory-safe, bug-free implementation adhering to verified invariants (Rules 1-71+).
+2. **Neuroscience & Observable Mind**: Mirroring biological cognition (System 1 fast intuitive vs System 2 slow analytical proofs; complementary episodic vs semantic memory consolidation; metacognitive awareness of internal confidence vs certainty).
+3. **Psychology & Cognitive Resonance**: Designing software with zero cognitive friction, least astonishment, and deep alignment with human mental models (minimizing extraneous cognitive load).
+4. **Philosophy & Epistemological Truth**: Deriving architectures from unshakeable first principles, applying Socratic falsification to every structural decision, and verifying truth empirically.
+5. **Science & Popperian Falsification**: Treating engineering claims as scientific hypotheses that must withstand rigorous edge-case stress-testing and entropy minimization.
+6. **New Creator Cognition**: Synthesizing cross-domain analogies to invent net-new, elegant architectures rather than assembling cookie-cutter templates.

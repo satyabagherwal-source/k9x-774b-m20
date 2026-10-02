@@ -150,6 +150,17 @@ export const DISCOVERY_DOMAINS = {
       'topic:storage-engine language:c++ OR language:rust stars:>1500 sort:stars',
       'topic:distributed-database stars:>2000 sort:stars'
     ]
+  },
+  'cognitive-neuroscience-systems': {
+    name: 'Cognitive Architectures, Neuroscience & Science Systems',
+    type: 'github',
+    queries: [
+      'topic:cognitive-architecture stars:>500 sort:stars',
+      'topic:neuroscience language:python OR language:rust stars:>800 sort:stars',
+      'topic:neuro-symbolic stars:>500 sort:stars',
+      'topic:computational-neuroscience OR topic:brain-computer-interface stars:>500 sort:stars',
+      'topic:formal-verification language:rust OR language:c++ stars:>800 sort:stars'
+    ]
   }
 };
 

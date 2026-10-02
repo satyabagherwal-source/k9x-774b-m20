@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-02T07:36:15.078Z",
+  "lastUpdated": "2026-10-02T07:42:21.030Z",
   "updatedBy": "agent-antigravity",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -148,7 +148,8 @@
       "mobile-cross-platform",
       "devops-cloud-infrastructure",
       "cybersecurity-defenses",
-      "database-storage-engines"
+      "database-storage-engines",
+      "cognitive-neuroscience-systems"
     ],
     "multiAgentDomainPartitioning": true,
     "cursorFile": "04_WORKFLOWS/factory-engine/discovery-cursor.json",
@@ -163,7 +164,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:37:04.455Z",
+        "lastActiveAt": "2026-10-02T07:43:05.221Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": null
@@ -173,7 +174,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:37:04.447Z",
+        "lastActiveAt": "2026-10-02T07:43:03.996Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": null
@@ -183,7 +184,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:37:08.128Z",
+        "lastActiveAt": "2026-10-02T07:43:04.003Z",
         "lastHarvestedAt": "2026-09-30T20:24:54.056Z",
         "totalHarvested": 3,
         "lastError": null
@@ -193,7 +194,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:37:02.131Z",
+        "lastActiveAt": "2026-10-02T07:43:03.563Z",
         "lastHarvestedAt": "2026-10-02T07:22:42.111Z",
         "totalHarvested": 4,
         "lastError": null
@@ -203,7 +204,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:37:04.460Z",
+        "lastActiveAt": "2026-10-02T07:43:04.588Z",
         "lastHarvestedAt": "2026-09-30T22:49:41.313Z",
         "totalHarvested": 7,
         "lastError": null
@@ -213,7 +214,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:37:08.936Z",
+        "lastActiveAt": "2026-10-02T07:43:04.901Z",
         "lastHarvestedAt": "2026-10-01T00:21:28.218Z",
         "totalHarvested": 5,
         "lastError": null
@@ -223,7 +224,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:37:04.775Z",
+        "lastActiveAt": "2026-10-02T07:43:01.356Z",
         "lastHarvestedAt": "2026-10-01T05:23:28.016Z",
         "totalHarvested": 13,
         "lastError": null
@@ -233,7 +234,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T07:37:02.123Z",
+        "lastActiveAt": "2026-10-02T07:43:04.009Z",
         "lastHarvestedAt": "2026-10-02T07:22:42.129Z",
         "totalHarvested": 8,
         "lastError": null
@@ -260,11 +261,11 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1790926647000,
-      "resetAt": "2026-10-02T07:37:27.000Z",
-      "trippedAt": "2026-10-02T07:36:15.075Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Ainfrastructure-as-code%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=3)",
-      "consecutiveBlocks": 2
+      "resetEpoch": 1790926967000,
+      "resetAt": "2026-10-02T07:42:47.000Z",
+      "trippedAt": "2026-10-02T07:42:21.027Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Acli%20language%3Arust%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=2)",
+      "consecutiveBlocks": 4
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
