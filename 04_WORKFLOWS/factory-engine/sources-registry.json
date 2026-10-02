@@ -13938,5 +13938,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-qwen-qwen3.8-flash-next": {
+    "name": "Qwen/Qwen3.8-Flash-Next",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:41:22.971Z",
+    "lastVerified": "2026-10-02T09:41:22.971Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -14278,5 +14278,41 @@
     "downloads": 3567030,
     "qualityScore": 60250,
     "discoveredAt": "2026-10-02T09:35:00.146Z"
+  },
+  {
+    "name": "Qwen/Qwen3.8-Flash-Next",
+    "fullName": "Qwen/Qwen3.8-Flash-Next",
+    "url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Qwen/Qwen3.8-Flash-Next (5822 likes, 1299909 downloads)",
+    "likes": 5822,
+    "downloads": 1299909,
+    "qualityScore": 60220,
+    "discoveredAt": "2026-10-02T09:41:14.734Z"
+  },
+  {
+    "name": "deepseek-ai/DeepSeek-V4-Pro",
+    "fullName": "deepseek-ai/DeepSeek-V4-Pro",
+    "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: deepseek-ai/DeepSeek-V4-Pro (5616 likes, 419335 downloads)",
+    "likes": 5616,
+    "downloads": 419335,
+    "qualityScore": 58160,
+    "discoveredAt": "2026-10-02T09:41:14.734Z"
+  },
+  {
+    "name": "Tongyi-MAI/Z-Image-Turbo",
+    "fullName": "Tongyi-MAI/Z-Image-Turbo",
+    "url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Tongyi-MAI/Z-Image-Turbo (5396 likes, 592245 downloads)",
+    "likes": 5396,
+    "downloads": 592245,
+    "qualityScore": 55960,
+    "discoveredAt": "2026-10-02T09:41:14.735Z"
   }
 ]

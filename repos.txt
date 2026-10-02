@@ -3124,3 +3124,11 @@ https://huggingface.co/openai/whisper-large-v3
 https://huggingface.co/black-forest-labs/FLUX.1-schnell
 # [HUGGINGFACE-AI-MODELS] MiniMaxAI/MiniMax-H3 (60250 score) - Verified Hugging Face Model: MiniMaxAI/MiniMax-H3 (5825 likes, 3567030 downloads
 https://huggingface.co/MiniMaxAI/MiniMax-H3
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T09:41:14.738Z] ---
+# [HUGGINGFACE-AI-MODELS] Qwen/Qwen3.8-Flash-Next (60220 score) - Verified Hugging Face Model: Qwen/Qwen3.8-Flash-Next (5822 likes, 1299909 downlo
+https://huggingface.co/Qwen/Qwen3.8-Flash-Next
+# [HUGGINGFACE-AI-MODELS] deepseek-ai/DeepSeek-V4-Pro (58160 score) - Verified Hugging Face Model: deepseek-ai/DeepSeek-V4-Pro (5616 likes, 419335 dow
+https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro
+# [HUGGINGFACE-AI-MODELS] Tongyi-MAI/Z-Image-Turbo (55960 score) - Verified Hugging Face Model: Tongyi-MAI/Z-Image-Turbo (5396 likes, 592245 downlo
+https://huggingface.co/Tongyi-MAI/Z-Image-Turbo
