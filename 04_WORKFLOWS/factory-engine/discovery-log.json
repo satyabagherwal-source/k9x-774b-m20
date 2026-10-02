@@ -14716,5 +14716,50 @@
     "qualityScore": 907,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-02T22:16:15.495Z"
+  },
+  {
+    "name": "feed-flow",
+    "fullName": "prof18/feed-flow",
+    "url": "https://github.com/prof18/feed-flow",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows and Linux. Built with Kotlin Multiplatform, Jetpack Compose and SwiftUI.",
+    "stars": 1241,
+    "forks": 67,
+    "openIssues": 100,
+    "language": "Kotlin",
+    "qualityScore": 1091,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T22:47:37.286Z"
+  },
+  {
+    "name": "BuildKonfig",
+    "fullName": "yshrsmz/BuildKonfig",
+    "url": "https://github.com/yshrsmz/BuildKonfig",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "BuildConfig for Kotlin Multiplatform Project",
+    "stars": 1217,
+    "forks": 48,
+    "openIssues": 7,
+    "language": "Kotlin",
+    "qualityScore": 887,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T22:47:37.286Z"
+  },
+  {
+    "name": "Reaktive",
+    "fullName": "badoo/Reaktive",
+    "url": "https://github.com/badoo/Reaktive",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Kotlin multi-platform implementation of Reactive Extensions",
+    "stars": 1214,
+    "forks": 63,
+    "openIssues": 8,
+    "language": "Kotlin",
+    "qualityScore": 892,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T22:47:37.286Z"
   }
 ]

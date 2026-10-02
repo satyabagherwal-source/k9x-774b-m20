@@ -3214,3 +3214,11 @@ https://github.com/ShiftHackZ/Stable-Diffusion-KMP
 https://github.com/SimonSchubert/Kai
 # [MOBILE-CROSS-PLATFORM] michaelbull/kotlin-result (907 score) - A multiplatform Result monad for modelling success or failure operations.
 https://github.com/michaelbull/kotlin-result
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T22:47:37.287Z] ---
+# [MOBILE-CROSS-PLATFORM] prof18/feed-flow (1091 score) - FeedFlow is a minimalistic RSS Reader available on Android, iOS, macOS, Windows 
+https://github.com/prof18/feed-flow
+# [MOBILE-CROSS-PLATFORM] yshrsmz/BuildKonfig (887 score) - BuildConfig for Kotlin Multiplatform Project
+https://github.com/yshrsmz/BuildKonfig
+# [MOBILE-CROSS-PLATFORM] badoo/Reaktive (892 score) - Kotlin multi-platform implementation of Reactive Extensions
+https://github.com/badoo/Reaktive
