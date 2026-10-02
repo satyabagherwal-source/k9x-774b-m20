@@ -179,6 +179,13 @@ This document records the empirical project learnings, forensic bug investigatio
 * **Actual**: `robots.txt` declared only `sitemap-index.xml`, while some legacy crawlers query `sitemap.xml`.
 * **Remediation**: Explicitly listed both `Sitemap: https://onlinefreeprotractor.com/sitemap-index.xml` and `Sitemap: https://onlinefreeprotractor.com/sitemap.xml` in `public/robots.txt`.
 
+### INC-16: Nested Sitemap Index Protocol Rejection
+* **Context**: In Google Search Console, `sitemap.xml` was flagged as failing or not recognizing referring sitemaps.
+* **Expected**: Sitemaps conform strictly to Sitemaps.org XML schema.
+* **Actual**: `public/sitemap.xml` defined a `<sitemapindex>` pointing to `sitemap-index.xml`, which in turn was another `<sitemapindex>` pointing to `sitemap-0.xml`. The official Sitemaps.org protocol prohibits nested sitemap indexes; a sitemap index can only reference XML sitemaps, not another sitemap index.
+* **Remediation**: Updated `public/sitemap.xml` to point directly to `https://onlinefreeprotractor.com/sitemap-0.xml`.
+* **Verification**: Verified with automated parser that both `sitemap.xml` and `sitemap-index.xml` cleanly resolve to `sitemap-0.xml`, containing exactly all 540 indexable canonical URLs.
+
 ---
 
 ## 4. Agent Evaluation & Self-Correction Meta-Rules
