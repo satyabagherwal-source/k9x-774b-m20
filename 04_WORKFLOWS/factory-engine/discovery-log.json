@@ -14671,5 +14671,50 @@
     "qualityScore": 2773,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-02T22:00:59.084Z"
+  },
+  {
+    "name": "Stable-Diffusion-KMP",
+    "fullName": "ShiftHackZ/Stable-Diffusion-KMP",
+    "url": "https://github.com/ShiftHackZ/Stable-Diffusion-KMP",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Stable Diffusion AI client app for Android and iOS",
+    "stars": 1275,
+    "forks": 149,
+    "openIssues": 123,
+    "language": "Kotlin",
+    "qualityScore": 1132,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T22:16:15.495Z"
+  },
+  {
+    "name": "Kai",
+    "fullName": "SimonSchubert/Kai",
+    "url": "https://github.com/SimonSchubert/Kai",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "OpenClaw alternative in your pocket",
+    "stars": 1270,
+    "forks": 191,
+    "openIssues": 112,
+    "language": "Kotlin",
+    "qualityScore": 1142,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T22:16:15.495Z"
+  },
+  {
+    "name": "kotlin-result",
+    "fullName": "michaelbull/kotlin-result",
+    "url": "https://github.com/michaelbull/kotlin-result",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A multiplatform Result monad for modelling success or failure operations.",
+    "stars": 1258,
+    "forks": 80,
+    "openIssues": 2,
+    "language": "Kotlin",
+    "qualityScore": 907,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T22:16:15.495Z"
   }
 ]

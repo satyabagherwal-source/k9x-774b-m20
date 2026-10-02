@@ -3206,3 +3206,11 @@ https://github.com/hi-manshu/charty
 # --- Automatically Discovered by AI Scout Engine [2026-10-02T22:00:59.085Z] ---
 # [AI-AGENTS] TarrySingh/Artificial-Intelligence-Deep-Learning-Machine-Learning-Tutorials (2773 score) - Synapsa Commons: free, hands-on AI courses that run anywhere (Colab, Kaggle, Bin
 https://github.com/TarrySingh/Artificial-Intelligence-Deep-Learning-Machine-Learning-Tutorials
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T22:16:15.496Z] ---
+# [MOBILE-CROSS-PLATFORM] ShiftHackZ/Stable-Diffusion-KMP (1132 score) - Stable Diffusion AI client app for Android and iOS
+https://github.com/ShiftHackZ/Stable-Diffusion-KMP
+# [MOBILE-CROSS-PLATFORM] SimonSchubert/Kai (1142 score) - OpenClaw alternative in your pocket
+https://github.com/SimonSchubert/Kai
+# [MOBILE-CROSS-PLATFORM] michaelbull/kotlin-result (907 score) - A multiplatform Result monad for modelling success or failure operations.
+https://github.com/michaelbull/kotlin-result
