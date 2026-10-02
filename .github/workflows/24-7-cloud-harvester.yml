@@ -11,10 +11,9 @@ on:
   repository_dispatch:
     # Allows external server-to-server triggers via REST API
     types: [trigger-harvester, 24-7-cloud-fleet]
-  # schedule:
-  #   # Aggressive 30-min schedule disabled to protect private repository 2,000 min/mo free quota.
-  #   # Un-comment or adjust when quota resets on the 1st of the month:
-  #   - cron: '0 0 * * 0' # Weekly run option
+  schedule:
+    # Enabled for 24/7 cloud execution (Public repo provides unlimited GitHub runner minutes)
+    - cron: '*/20 * * * *'
 
 permissions:
   contents: write
