@@ -3222,3 +3222,19 @@ https://github.com/prof18/feed-flow
 https://github.com/yshrsmz/BuildKonfig
 # [MOBILE-CROSS-PLATFORM] badoo/Reaktive (892 score) - Kotlin multi-platform implementation of Reactive Extensions
 https://github.com/badoo/Reaktive
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T23:02:52.312Z] ---
+# [AI-AGENTS] NotJoeMartinez/yt-fts (1211 score) - YouTube Full Text Search - Search all of YouTube from the command line
+https://github.com/NotJoeMartinez/yt-fts
+# [AI-AGENTS] xhluca/bm25s (1192 score) - Fast BM25 search in Python, powered by Numpy and Numba
+https://github.com/xhluca/bm25s
+# [AI-AGENTS] deepsense-ai/ragbits (1237 score) - Building blocks for rapid development of GenAI applications 
+https://github.com/deepsense-ai/ragbits
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T23:02:54.615Z] ---
+# [MOBILE-CROSS-PLATFORM] SEAbdulbasit/MusicApp-KMP (897 score) - This is a music player app built using Compose Multiplatform UI and KMP that wor
+https://github.com/SEAbdulbasit/MusicApp-KMP
+# [MOBILE-CROSS-PLATFORM] JuulLabs/kable (1025 score) - Kotlin Asynchronous Bluetooth Low-Energy
+https://github.com/JuulLabs/kable
+# [MOBILE-CROSS-PLATFORM] touchlab/DroidconKotlin (857 score) - Kotlin Multiplatfom app for Droidcon Events
+https://github.com/touchlab/DroidconKotlin
