@@ -14055,5 +14055,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-meta-llama-llama-2-7b-chat-hf": {
+    "name": "meta-llama/Llama-2-7b-chat-hf",
+    "officialUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T10:01:27.733Z",
+    "lastVerified": "2026-10-02T10:01:27.733Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

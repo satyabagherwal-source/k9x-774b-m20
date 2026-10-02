@@ -14386,5 +14386,41 @@
     "downloads": 2803,
     "qualityScore": 52570,
     "discoveredAt": "2026-10-02T09:54:35.006Z"
+  },
+  {
+    "name": "meta-llama/Llama-2-7b-chat-hf",
+    "fullName": "meta-llama/Llama-2-7b-chat-hf",
+    "url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: meta-llama/Llama-2-7b-chat-hf (4882 likes, 458751 downloads)",
+    "likes": 4882,
+    "downloads": 458751,
+    "qualityScore": 50820,
+    "discoveredAt": "2026-10-02T10:01:13.485Z"
+  },
+  {
+    "name": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "fullName": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "url": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: mistralai/Mixtral-8x7B-Instruct-v0.1 (4759 likes, 215593 downloads)",
+    "likes": 4759,
+    "downloads": 215593,
+    "qualityScore": 49590,
+    "discoveredAt": "2026-10-02T10:01:13.485Z"
+  },
+  {
+    "name": "meta-llama/Llama-2-7b",
+    "fullName": "meta-llama/Llama-2-7b",
+    "url": "https://huggingface.co/meta-llama/Llama-2-7b",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: meta-llama/Llama-2-7b (4563 likes, 122 downloads)",
+    "likes": 4563,
+    "downloads": 122,
+    "qualityScore": 45752,
+    "discoveredAt": "2026-10-02T10:01:13.485Z"
   }
 ]
