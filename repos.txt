@@ -3254,3 +3254,19 @@ https://github.com/realm/realm-kotlin
 https://github.com/mikepenz/multiplatform-markdown-renderer
 # [MOBILE-CROSS-PLATFORM] icerockdev/moko-mvvm (929 score) - Model-View-ViewModel architecture components for mobile (android & ios) Kotlin M
 https://github.com/icerockdev/moko-mvvm
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T23:34:03.353Z] ---
+# [AI-AGENTS] BAI-LAB/MemoryOS (1139 score) - [EMNLP 2025 Oral] MemoryOS is designed to provide a memory operating system for 
+https://github.com/BAI-LAB/MemoryOS
+# [AI-AGENTS] fim-ai/fim-one (983 score) - Open-source agent platform for Global × China enterprises — wire every system th
+https://github.com/fim-ai/fim-one
+# [AI-AGENTS] neural-maze/philoagents-course (1043 score) - When Philosophy meets AI
+https://github.com/neural-maze/philoagents-course
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T23:34:07.286Z] ---
+# [MOBILE-CROSS-PLATFORM] chrisbanes/skills (709 score) - Skills for Kotlin, Jetpack Compose, and Android development
+https://github.com/chrisbanes/skills
+# [MOBILE-CROSS-PLATFORM] kamgurgul/cpu-info (738 score) - CPU Info is a multiplatform application which provides information about device 
+https://github.com/kamgurgul/cpu-info
+# [MOBILE-CROSS-PLATFORM] joreilly/Confetti (895 score) - KMP/CMP GraphQL based conference project with Jetpack Compose Android, Compose f
+https://github.com/joreilly/Confetti
