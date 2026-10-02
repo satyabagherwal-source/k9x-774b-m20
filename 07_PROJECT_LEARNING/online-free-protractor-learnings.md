@@ -142,6 +142,43 @@ This document records the empirical project learnings, forensic bug investigatio
 * **Root Cause**: AdSense crawler evaluates text-to-code ratio and semantic EEAT depth. Pure canvas tools appear as empty pages to text crawlers.
 * **Remediation**: Architected the **Educational Masterclass Handbook Pattern**: comprehensive, authoritative technical content sections covering structural carpentry trigonometry, solar panel tilt physics, ADA ramp slope civil engineering, CNC drill bit point angles, and screen display pixel physics, complete with schema markup and editorial integrity disclosures.
 
+### INC-11: Missing Root `<title>` and `<meta name="description">` in Component Layout
+* **Context**: Organic search traffic dropped suddenly from 30/day to 3-5/day. Bing Webmaster Tools URL inspection flagged fatal errors: "Title tag missing (1 instance found)" and "Meta Description tag missing (1 instance found)".
+* **Expected**: Every HTML page must emit standard `<title>` and `<meta name="description">` elements inside `<head>`.
+* **Actual**: `Layout.astro` only emitted OpenGraph tags (`<meta property="og:title">` and `<meta property="og:description">`). Standard HTML `<title>` and `<meta name="description">` tags were missing from `<head>` entirely.
+* **Root Cause**: Developer assumed OpenGraph tags fulfilled search engine requirements. While social platforms parse `og:` tags, search engines (Google, Bing) strictly require standard `<title>` and `<meta name="description">` tags for indexing and SERP snippet generation.
+* **Remediation**: Added standard `<title>{title}</title>`, `<meta name="description" content={metaDescription} />`, and `<meta name="keywords" content={keywords} />` to `Layout.astro`.
+* **Verification**: Production build audit (`scripts/audit-bing.cjs`) confirmed 100% of pages (`/`, `/ruler/`, `/image-protractor/`, etc.) have exactly 1 Title tag and 1 Description tag inside `<head>`.
+
+### INC-12: Duplicate `<h1>` Heading Tag in Hidden Export/Print Template
+* **Context**: Bing Webmaster Tools reported "More than one h1 tag (2 instances found)".
+* **Expected**: Clean document outline with strictly ONE `<h1>` tag per page for unambiguous topic modeling.
+* **Actual**: Two `<h1>` tags were detected on every tool page: the visible hero heading (`<h1>Online Protractor Tool</h1>`) and an offscreen printable report header (`<h1 id="print-report-title">Precision Measurement Report</h1>`).
+* **Root Cause**: Reusable printable report header in `ProtractorApp.astro` used `<h1>` despite being hidden (`display: none`) until print/export. Search engine crawlers parse the full DOM tree and treat all `<h1>` tags as primary document titles regardless of CSS visibility.
+* **Remediation**: Changed `<h1 id="print-report-title">` to `<div id="print-report-title" role="heading" aria-level="2">`, preserving 100% of print layout CSS while restricting top-level `<h1>` to the semantic page title.
+* **Verification**: Multi-page audit verified `H1s=1` across all routes.
+
+### INC-13: Massive Static HTML Bloat (796 KB down to 453 KB) from Repetitive Preset Serialization
+* **Context**: Googlebot smartphone timed out on secondary asset fetching ("Page resources: 27/38 couldn't be loaded"), with font files and scripts dropping due to excessive DOM parse times.
+* **Expected**: Static HTML documents for single-page utility tools should remain lightweight (< 100-150 KB).
+* **Actual**: Each static HTML page weighed 796 KB (0.8 MB). Across 542 multilingual pages, the build artifact totaled over 430 MB.
+* **Root Cause**: `ProtractorApp.astro` statically rendered 695 `<option>` tags inside a hidden select container (`select-ruler-device-preset` with `style="display: none !important;"`) plus hundreds more options in `select-fs-ruler-device`. This injected ~343 KB of repetitive serialized markup into every single page across all 54 locales.
+* **Remediation**: Replaced static server-side option mapping with dynamic client-side hydration in `protractor-engine.js` using the already loaded in-memory `DEVICE_PRESETS` array.
+* **Verification**: HTML payload dropped from 796 KB to 453 KB (343,134 bytes saved per page, eliminating 186 MB of dead weight across 542 pages). 100% of device presets and calibration features preserved with 0 regressions.
+
+### INC-14: Tool Switcher Visual Disconnect on Direct Navigation
+* **Context**: Users clicking tool buttons in the top goal bar ("Angle on Screen", "Screen Ruler", etc.) landed at scroll position 0, seeing only the header, ad banner, and hero descriptions. The actual tool was pushed below the fold.
+* **Expected**: Clicking a tool button must immediately display the interactive tool front-and-center on screen.
+* **Actual**: Links navigated to `/ruler/` without hash anchors, requiring manual scrolling past large hero banners.
+* **Remediation**: Updated all switcher links in `TopToolSwitcher.astro` to append `#tool-section` (`${targetPath}#tool-section`) and added smooth scroll interception + `scroll-mt-4 sm:scroll-mt-8` clearance on `#tool-section`.
+* **Verification**: Verified seamless instant scrolling directly to the tool container across desktop and mobile.
+
+### INC-15: Dual XML Sitemap Discovery Discrepancy in Robots.txt
+* **Context**: Google Search Console URL inspection indicated "Sitemaps: No referring sitemaps detected".
+* **Expected**: Search engine bots discover and associate the master sitemap immediately via `robots.txt`.
+* **Actual**: `robots.txt` declared only `sitemap-index.xml`, while some legacy crawlers query `sitemap.xml`.
+* **Remediation**: Explicitly listed both `Sitemap: https://onlinefreeprotractor.com/sitemap-index.xml` and `Sitemap: https://onlinefreeprotractor.com/sitemap.xml` in `public/robots.txt`.
+
 ---
 
 ## 4. Agent Evaluation & Self-Correction Meta-Rules
