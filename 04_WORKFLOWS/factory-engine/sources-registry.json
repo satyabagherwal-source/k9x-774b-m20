@@ -13743,5 +13743,44 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
+    "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "officialUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:00:49.057Z",
+    "lastVerified": "2026-10-02T09:00:49.057Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-google-bert-bert-base-uncased": {
+    "name": "google-bert/bert-base-uncased",
+    "officialUrl": "https://huggingface.co/google-bert/bert-base-uncased",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:00:49.291Z",
+    "lastVerified": "2026-10-02T09:00:49.291Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-google-electra-base-discriminator": {
+    "name": "google/electra-base-discriminator",
+    "officialUrl": "https://huggingface.co/google/electra-base-discriminator",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:00:49.337Z",
+    "lastVerified": "2026-10-02T09:00:49.337Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

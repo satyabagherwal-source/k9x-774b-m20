@@ -3084,3 +3084,11 @@ https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heret
 https://huggingface.co/Cloudflare/clef
 # [HUGGINGFACE-AI-MODELS] Cloudflare/clef-flash (1498 score) - Verified Hugging Face Model: Cloudflare/clef-flash (148 likes, 18 downloads)
 https://huggingface.co/Cloudflare/clef-flash
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T09:00:35.290Z] ---
+# [HUGGINGFACE-AI-MODELS] sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 (16170 score) - Verified Hugging Face Model: sentence-transformers/paraphrase-multilingual-MiniL
+https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+# [HUGGINGFACE-AI-MODELS] google/electra-base-discriminator (3890 score) - Verified Hugging Face Model: google/electra-base-discriminator (189 likes, 46138
+https://huggingface.co/google/electra-base-discriminator
+# [HUGGINGFACE-AI-MODELS] google-bert/bert-base-uncased (35840 score) - Verified Hugging Face Model: google-bert/bert-base-uncased (3384 likes, 39963393
+https://huggingface.co/google-bert/bert-base-uncased

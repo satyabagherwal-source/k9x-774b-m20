@@ -14098,5 +14098,41 @@
     "downloads": 18,
     "qualityScore": 1498,
     "discoveredAt": "2026-10-02T07:19:09.098Z"
+  },
+  {
+    "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "fullName": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 (1417 likes, 50234270 downloads)",
+    "likes": 1417,
+    "downloads": 50234270,
+    "qualityScore": 16170,
+    "discoveredAt": "2026-10-02T09:00:35.287Z"
+  },
+  {
+    "name": "google/electra-base-discriminator",
+    "fullName": "google/electra-base-discriminator",
+    "url": "https://huggingface.co/google/electra-base-discriminator",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: google/electra-base-discriminator (189 likes, 46138086 downloads)",
+    "likes": 189,
+    "downloads": 46138086,
+    "qualityScore": 3890,
+    "discoveredAt": "2026-10-02T09:00:35.287Z"
+  },
+  {
+    "name": "google-bert/bert-base-uncased",
+    "fullName": "google-bert/bert-base-uncased",
+    "url": "https://huggingface.co/google-bert/bert-base-uncased",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: google-bert/bert-base-uncased (3384 likes, 39963393 downloads)",
+    "likes": 3384,
+    "downloads": 39963393,
+    "qualityScore": 35840,
+    "discoveredAt": "2026-10-02T09:00:35.287Z"
   }
 ]
