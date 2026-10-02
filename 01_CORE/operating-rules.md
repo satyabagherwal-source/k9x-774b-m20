@@ -74,3 +74,14 @@ Coding and Systems Engineering are the primary foundations of AI-Builder-Brain, 
 4. **Philosophy & Epistemological Truth**: Deriving architectures from unshakeable first principles, applying Socratic falsification to every structural decision, and verifying truth empirically.
 5. **Science & Popperian Falsification**: Treating engineering claims as scientific hypotheses that must withstand rigorous edge-case stress-testing and entropy minimization.
 6. **New Creator Cognition**: Synthesizing cross-domain analogies to invent net-new, elegant architectures rather than assembling cookie-cutter templates.
+
+## Rule 14 — Execution Boundary: Local Machine (Laptop) vs Cloud 24/7 Swarm
+
+1. **Local Machine (Laptop) is Strictly On-Demand**:
+   - Zero background or unprompted automatic mining runs on the user's laptop.
+   - The agent MUST NEVER launch automatic background harvesting loops on the local laptop without explicit user instruction.
+   - On the local machine, learning extraction executes ONLY when the user clones a repository and explicitly commands the agent to extract learning.
+2. **Cloud (GitHub Actions) Executes 24/7 Autonomous Learning**:
+   - 24/7 autonomous continuous mining runs exclusively on GitHub Cloud infrastructure via scheduled workflows (`.github/workflows/24-7-cloud-harvester.yml`).
+   - The cloud swarm operates completely independent of the user's laptop state (whether the laptop is on, sleeping, shut down, or disconnected from the internet).
+   - When the user starts their laptop and works, local git simply pulls the harvested intelligence from GitHub.

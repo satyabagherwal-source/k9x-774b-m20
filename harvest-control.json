@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-02T10:20:10.453Z",
+  "lastUpdated": "2026-10-02T10:31:40.754Z",
   "updatedBy": "agent-antigravity",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -29,8 +29,9 @@
     "localWorker": {
       "type": "PHYSICAL_ANTIGRAVITY",
       "interface": "Antigravity IDE",
-      "mode": "MANUAL_INTERACTIVE",
-      "role": "Pair programming, architectural design, verification"
+      "mode": "MANUAL_ON_DEMAND_ONLY",
+      "autoMining": false,
+      "role": "On-demand forensic learning extraction only when user clones repo and explicitly commands"
     },
     "cloudWorker": {
       "type": "CLOUD_ANTIGRAVITY",
@@ -194,7 +195,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T10:20:10.524Z",
+        "lastActiveAt": "2026-10-02T10:31:06.239Z",
         "lastHarvestedAt": "2026-10-02T09:42:39.815Z",
         "totalHarvested": 7,
         "lastError": null
@@ -269,13 +270,13 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
-      "remaining": 4996,
-      "resetEpoch": 1790937325453,
-      "resetAt": "2026-10-02T10:35:25.453Z",
-      "trippedAt": "2026-10-02T10:20:10.453Z",
-      "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 9
+      "status": "HEALTHY",
+      "remaining": 38,
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-02T10:23:40.002Z",
+      "reason": null,
+      "consecutiveBlocks": 10
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
