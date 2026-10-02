@@ -85,3 +85,17 @@ Coding and Systems Engineering are the primary foundations of AI-Builder-Brain, 
    - 24/7 autonomous continuous mining runs exclusively on GitHub Cloud infrastructure via scheduled workflows (`.github/workflows/24-7-cloud-harvester.yml`).
    - The cloud swarm operates completely independent of the user's laptop state (whether the laptop is on, sleeping, shut down, or disconnected from the internet).
    - When the user starts their laptop and works, local git simply pulls the harvested intelligence from GitHub.
+
+## Rule 15 — Microscopic Code-Level Squeezing Invariant ("Har Code Word, Syntax Aur Khatre Ko Nichodna")
+
+To ensure that any AI connected to AI-Builder-Brain builds 100% bug-free, zero-flaw software with absolute production accuracy on simple instruction, knowledge extraction must operate at the microscopic, token-by-token code level. Superficial summarization is strictly forbidden:
+
+1. **Full-Spectrum Microscopic Extraction**:
+   - **Syntax & Token-Level Precision**: Exact comparison rules, type coercion traps (`==` vs `===`), implicit falsy traps (`0` vs `null/undefined`), variable shadowing, operator precedence hazards, and deep immutability vs shallow copy mutation leaks.
+   - **Bug Detection & Defect Traps ("Galti Pakadna")**: Null/undefined dereferencing, off-by-one boundary checks (`<` vs `<=`), unhandled promise rejections, silent error swallowing, prototype pollution, and memory buffer overflows.
+   - **Infinite Loop & Resource Starvation Shields ("Infinite Loop Se Bachana")**: Recursion depth caps, loop termination invariant proofs, circular reference serialization crashes, React/UI infinite re-render loops (`useEffect` dependency instability), and event loop microtask starvation.
+   - **UI & UX Micro-Mechanics**: Layout reflow/thrashing (interleaved DOM read/writes), CSS stacking context & z-index traps, DOM event retargeting (Shadow DOM `composedPath()`), focus restoration loops, debouncing & throttling invariants, and touch vs pointer ambiguity.
+   - **Backend & Systems Concurrency**: Time-of-check to time-of-use (TOCTOU) race conditions, deadlocks, connection pool starvation, memory leaks from unbounded caches or listeners, and transaction rollbacks.
+2. **Surface Extraction Re-Harvesting Policy**:
+   - Any repository whose existing learning artifact is shallow or surface-level (size < 25,000 bytes or lacking microscopic code-level invariants) is classified as `SURFACE_EXTRACTION_REHARVEST_REQUIRED`.
+   - The engine automatically re-visits and upgrades all surface repositories to the full microscopic forensic depth, ensuring the entire global coding industry is completely squeezed into the Brain.

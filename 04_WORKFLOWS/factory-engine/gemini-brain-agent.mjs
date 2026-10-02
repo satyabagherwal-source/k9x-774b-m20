@@ -96,7 +96,15 @@ Analyze the target codebase across all 9 rigorous technical dimensions:
 - 8. Agent Patterns: Tooling interfaces, prompt chains, loop guards, context budget optimization.
 - 9. Data Flow: Mutation lifecycles, streams, serializers, network protocol barriers.
 
-2. THE 8 LEARNING EXTRACTION ARTIFACTS:
+2. MICROSCOPIC CODE-LEVEL INVARIANTS ("Micro se Micro Learning Nichodna"):
+You MUST extract microscopic, word-by-word, line-by-line coding invariants:
+- A. Micro-Syntax & Token-Level Precision: Type coercion pitfalls, implicit falsy conversions (0 vs null/undefined), variable shadowing, operator precedence hazards, deep immutability vs shallow copy mutation leaks.
+- B. Bug Detection & Defect Traps ("Galti Pakadna"): Null/undefined dereferencing, off-by-one boundary checks, unhandled promise rejections, error swallowing, prototype pollution, memory buffer overflows.
+- C. Infinite Loop & Resource Starvation Guards ("Infinite Loop Se Bachana"): Recursion depth caps, loop termination invariant proofs, circular reference serialization crashes, React/UI infinite re-render loops, event loop microtask starvation.
+- D. UI & UX Micro-Mechanics: Layout reflow/thrashing, CSS stacking context/z-index traps, DOM event retargeting (Shadow DOM composedPath), focus restoration loops, debouncing & throttling invariants, touch vs pointer event ambiguity.
+- E. Backend & Concurrency Micro-Mechanics: Time-of-check to time-of-use (TOCTOU) race conditions, deadlocks, connection pool starvation, memory leaks from unbounded caches or listeners, transaction rollbacks.
+
+3. THE 8 LEARNING EXTRACTION ARTIFACTS:
 For every key insight, extract all 8 distinct learning artifacts:
 - 1. Pattern: Verified, production-grade implementation pattern with concrete code.
 - 2. Rule: Universal invariant (MUST / MUST NOT) to enforce across software systems.
@@ -163,30 +171,21 @@ For each real bug fix/incident discovered from the commits, patches, and issues,
 \`\`\`
 - **Lesson**: Generalized engineering invariant
 
-## 3. The 9 Deep Learning Dimensions
-Provide deep technical analysis across all 9 core dimensions:
-1. **Architecture**: Subsystem layout, modular boundaries, decoupling strategy.
-2. **Core Abstractions**: Foundational types, domain interfaces, invariant contracts.
-3. **Error Handling**: Exception hierarchies, recovery barriers, rollback strategies.
-4. **Testing**: Unit invariants, mock philosophies, automated regression shields.
-5. **Security**: Threat mitigation, input sanitization, capability containment.
-6. **Performance**: Allocation bottlenecks, memory caching, algorithmic optimizations.
-7. **Deployment**: Container definitions, CI/CD pipeline invariants, runtime configs.
-8. **Agent Patterns**: Autonomous tool integrations, execution loop bounds, memory caching.
-9. **Data Flow**: Mutation lifecycle, serialization protocols, asynchronous pipelines.
+## 3. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+Provide deep, concrete code-level rules and invariants across these 5 technical domains:
+1. **Micro-Syntax & Token-Level Precision**: Exact comparison rules, type coercion traps, falsy 0 traps, deep immutability vs shallow mutation bugs with concrete code examples.
+2. **Infinite Loop & Recursion Guards**: Base condition proofs, termination invariants, circular dependency detection, event loop yield mechanisms, and recursion depth caps.
+3. **UI & UX Micro-Mechanics**: Layout reflow/thrashing prevention, DOM event retargeting, focus restoration loops, debouncing & throttling subtleties, touch/pointer ambiguity.
+4. **Backend Concurrency & Memory Safety**: Race condition elimination (TOCTOU), connection pool starvation guards, memory leak prevention in event emitters/caches.
+5. **Defect & Error Prevention ("Galti Pakadna")**: Null/undefined chaining safeguards, off-by-one boundary checks, and error boundary containment.
 
-## 4. The 8 Learning Extraction Artifacts
-Synthesize the extracted intelligence into the 8 canonical artifacts:
-1. **Pattern**: Production-grade verified pattern with complete code.
-2. **Rule**: Strict universal invariant (MUST / MUST NOT).
-3. **Architecture Principle**: Enduring architectural law.
-4. **Failure Mode**: Concrete breakdown of observed failure mode.
-5. **Reusable Skill**: Actionable step-by-step procedure for AI coding agents.
-6. **Decision**: Architectural trade-off analysis and why chosen over alternatives.
-7. **Anti-pattern**: Negative constraint with concrete code block of what NEVER to write.
-8. **Verification Method**: Concrete test or assertion to prove invariant compliance.
+## 4. The 9 Deep Learning Dimensions
+Provide deep technical analysis across all 9 core dimensions (Architecture, Core Abstractions, Error Handling, Testing, Security, Performance, Deployment, Agent Patterns, Data Flow).
 
-## 5. Net-New Universal Engineering Rules (Candidates for Master Brain)
+## 5. The 8 Learning Extraction Artifacts
+Synthesize the extracted intelligence into the 8 canonical artifacts (Pattern, Rule, Architecture Principle, Failure Mode, Reusable Skill, Decision, Anti-pattern, Verification Method).
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 Provide 1 to 3 net-new Universal Engineering Rules in the exact standard format:
 ## X. [Rule Title]
 **RULE**:
@@ -206,7 +205,7 @@ Provide 1 to 3 net-new Universal Engineering Rules in the exact standard format:
 **VERIFICATION METHOD**:
 [Automated test, assertion, or linter rule to verify compliance]
 
-## 6. Actionable Agent Skill & Implementation Checklist
+## 7. Actionable Agent Skill & Implementation Checklist
 Provide a step-by-step verification checklist for any AI coding agent building similar systems.`;
 
   try {

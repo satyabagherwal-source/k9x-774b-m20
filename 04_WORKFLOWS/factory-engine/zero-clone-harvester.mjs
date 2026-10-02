@@ -249,15 +249,15 @@ async function harvestGitHubZeroClone(target) {
   }));
 
   const candidateFixCommits = commits.filter((c) =>
-    /(fix|bug|leak|race|crash|deadlock|regression|memory|security|revert|gotcha|workaround)/i.test(c.message)
+    /(fix|bug|leak|race|crash|deadlock|regression|memory|security|revert|gotcha|workaround|infinite|loop|overflow|null|panic|timeout|ui|ux|css|render|debounce|throttle)/i.test(c.message)
   );
 
   const targetFixCommits = candidateFixCommits.length > 0
-    ? candidateFixCommits.slice(0, 10)
-    : commits.slice(0, 6);
+    ? candidateFixCommits.slice(0, 15)
+    : commits.slice(0, 8);
 
   // FORENSIC DIFF EXTRACTION: Fetch the exact changed files and code patches
-  console.log(`[DEEP FORENSIC EXTRACTION] Fetching complete code patches for ${targetFixCommits.length} critical fix commits...`);
+  console.log(`[MICROSCOPIC FORENSIC EXTRACTION] Fetching complete code patches for ${targetFixCommits.length} critical fix commits...`);
   const deepFixPatches = [];
   for (const fix of targetFixCommits) {
     if (!fix.fullSha) continue;
@@ -265,13 +265,13 @@ async function harvestGitHubZeroClone(target) {
     if (commitDetail && Array.isArray(commitDetail.files)) {
       const filesWithPatches = commitDetail.files
         .filter((f) => f.patch)
-        .slice(0, 5)
+        .slice(0, 8)
         .map((f) => ({
           filename: f.filename,
           status: f.status,
           additions: f.additions,
           deletions: f.deletions,
-          patchSnippet: f.patch.slice(0, 4000) // Deep empirical code diff
+          patchSnippet: f.patch.slice(0, 5000) // Deep empirical code diff
         }));
 
       deepFixPatches.push({
@@ -327,9 +327,15 @@ async function harvestGitHubZeroClone(target) {
       coreSourceCandidates = allBlobs
         .filter((p) => {
           if (/test|spec|dist|build|\.min\.|vendor|node_modules|\.git|docs/i.test(p)) return false;
-          return /\.(ts|js|mjs|py|rs|go|cpp|c|h|tsx|jsx)$/i.test(p);
+          return /\.(ts|js|mjs|py|rs|go|cpp|c|h|tsx|jsx|swift|kt)$/i.test(p);
         })
-        .slice(0, 8);
+        .sort((a, b) => {
+          // Prioritize architectural core, state, concurrency, render, and utility files
+          const aPriority = /(core|state|hook|concurren|queue|render|util|worker|engine|lifecycle|loop)/i.test(a) ? 1 : 0;
+          const bPriority = /(core|state|hook|concurren|queue|render|util|worker|engine|lifecycle|loop)/i.test(b) ? 1 : 0;
+          return bPriority - aPriority;
+        })
+        .slice(0, 12);
     }
   } catch (e) {}
 
@@ -340,7 +346,7 @@ async function harvestGitHubZeroClone(target) {
     const rawUrl = `https://raw.githubusercontent.com/${target.owner}/${target.repo}/${defaultBranch}/${filePath}`;
     const rawCode = await compliantFetch(rawUrl);
     if (rawCode && typeof rawCode === 'string') {
-      discoveredSourceSnippets[filePath] = rawCode.slice(0, 8000);
+      discoveredSourceSnippets[filePath] = rawCode.slice(0, 10000);
     }
   }
 
