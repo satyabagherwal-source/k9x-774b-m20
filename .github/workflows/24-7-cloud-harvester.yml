@@ -1,9 +1,8 @@
 name: 24-7 Multi-Agent Parallel Autonomous Harvester with Google Gemini AI
 
 # Quota & Billing Protection Policy:
-# On private repositories, GitHub Actions provides a free tier quota of 2,000 runner minutes per month.
-# Continuous 24/7 harvesting runs locally at 0 cost via start-24-7-daemon.bat (consumes 0 GitHub runner minutes).
-# Cloud workflow triggers on-demand via workflow_dispatch, or when explicitly requested.
+# - PUBLIC MODE : Unlimited free runner minutes. Self-Relay Dispatcher + Schedule Cron operate 24/7 continuously.
+# - PRIVATE MODE: Capped at 2,000 monthly runner minutes. Self-Relay is blocked and schedule is paused to guarantee ₹0/$0 cost.
 
 on:
   workflow_dispatch:
@@ -12,7 +11,7 @@ on:
     # Allows external server-to-server triggers via REST API
     types: [trigger-harvester, 24-7-cloud-fleet]
   schedule:
-    # Enabled for 24/7 cloud execution (Public repo provides unlimited GitHub runner minutes)
+    # 24/7 Continuous harvesting enabled in Public Mode (Zero-cost unlimited runner minutes)
     - cron: '*/20 * * * *'
 
 permissions:
@@ -92,4 +91,27 @@ jobs:
                 git pull --rebase origin main
               }
             done
+          fi
+
+      - name: Autonomous 24/7 Self-Relay Dispatcher
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_RELAY_TOKEN }}
+        run: |
+          echo "======================================================================"
+          echo "🔄 24/7 AUTONOMOUS CONTINUOUS LEARNING RELAY DISPATCHER"
+          echo "======================================================================"
+          VISIBILITY=$(gh repo view ${{ github.repository }} --json visibility -q .visibility 2>/dev/null || echo "UNKNOWN")
+          echo "Current Repository Visibility: $VISIBILITY"
+
+          if [ "$VISIBILITY" = "PUBLIC" ]; then
+            if [ -n "$GH_TOKEN" ]; then
+              echo "🚀 Repository is PUBLIC. Dispatching next server-to-server learning cycle..."
+              sleep 30
+              gh workflow run 24-7-cloud-harvester.yml --repo "${{ github.repository }}" || echo "⚠️ Self-relay trigger deferred to cron"
+            else
+              echo "ℹ️ WORKFLOW_RELAY_TOKEN not set in secrets. Falling back to cron schedule."
+            fi
+          else
+            echo "🛡️ PRIVATE MODE DETECTED: Self-Relay blocked to safeguard 2,000 monthly runner minutes quota."
           fi

@@ -99,3 +99,23 @@ To ensure that any AI connected to AI-Builder-Brain builds 100% bug-free, zero-f
 2. **Surface Extraction Re-Harvesting Policy**:
    - Any repository whose existing learning artifact is shallow or surface-level (size < 25,000 bytes or lacking microscopic code-level invariants) is classified as `SURFACE_EXTRACTION_REHARVEST_REQUIRED`.
    - The engine automatically re-visits and upgrades all surface repositories to the full microscopic forensic depth, ensuring the entire global coding industry is completely squeezed into the Brain.
+
+## Rule 16 — Dual-Mode Repository Governance: Instant Public/Private Reversible Toggle ("Ek Baar Me Sahi Switch")
+
+The Master AI-Builder-Brain must support instant, single-command transitions between **PUBLIC Mode** (unlimited cloud harvesting) and **PRIVATE Mode** (zero-dollar safeguard protection) with absolute architectural integrity:
+
+1. **Public Mode Operation**:
+   - **Cloud 24/7 Swarm**: Enabled with unlimited free GitHub Actions runner minutes.
+   - **Perpetual Self-Relay Dispatcher**: Active via `WORKFLOW_RELAY_TOKEN` to ensure unbroken 24/7 server-to-server learning loops without waiting for GitHub's delayed cron scheduler.
+   - **Local Laptop State**: 100% idle (Rule 14 preserved, zero local battery/IP burn).
+
+2. **Private Mode Safeguard**:
+   - **Hard Quota Shield**: When switched to private, the cloud self-relay dispatcher and aggressive cron schedules are atomically disabled in `.github/workflows/24-7-cloud-harvester.yml` and `harvest-control.json`.
+   - **Zero-Cost Guarantee**: 0 GitHub runner overage minutes, 0 accidental payment failures, 0 billing charges.
+   - **On-Demand Local Learning**: Learning extraction switches strictly to on-demand manual commands.
+
+3. **Single-Action Reversibility ("Aayojan")**:
+   - Switching between modes must never require manual file surgery.
+   - The agent and user execute `node 04_WORKFLOWS/factory-engine/repo-mode-switcher.mjs to-private` (or `switch-to-private.bat` / "repo private kar do") and `to-public` (or `switch-to-public.bat` / "repo public kar do").
+   - The switcher atomically aligns GitHub repository visibility, GitHub Actions workflow definitions, billing guardrails, and circuit breakers in a single verified commit.
+

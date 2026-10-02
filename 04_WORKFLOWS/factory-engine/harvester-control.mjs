@@ -247,6 +247,19 @@ if (process.argv[1] && path.resolve(process.argv[1]) === path.resolve(__filename
     import('./multi-agent-fleet.mjs').then((m) => m.runMultiAgentFleet());
   } else if (action === 'monitor' || action === 'live' || action === 'check' || action === 'dekh') {
     import('./monitor.mjs').then((m) => m.displayLiveMonitor());
+  } else if (action === 'mode') {
+    const sub = (targetParam || 'status').toLowerCase();
+    if (sub === 'public' || sub === 'pub') {
+      import('./repo-mode-switcher.mjs').then((m) => m.switchToPublic());
+    } else if (sub === 'private' || sub === 'priv') {
+      import('./repo-mode-switcher.mjs').then((m) => m.switchToPrivate());
+    } else {
+      import('./repo-mode-switcher.mjs').then((m) => m.displayStatus());
+    }
+  } else if (action === 'public') {
+    import('./repo-mode-switcher.mjs').then((m) => m.switchToPublic());
+  } else if (action === 'private') {
+    import('./repo-mode-switcher.mjs').then((m) => m.switchToPrivate());
   } else {
     displayDashboard();
   }
