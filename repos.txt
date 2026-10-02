@@ -3178,3 +3178,15 @@ https://github.com/Bitterbot-AI/bitterbot-desktop
 https://github.com/dathere/qsv
 # [COGNITIVE-NEUROSCIENCE-SYSTEMS] SynaLinks/synalinks-skills (731 score) - Coding Agents skills for Synalinks OSS
 https://github.com/SynaLinks/synalinks-skills
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T10:36:04.453Z] ---
+# [MOBILE-CROSS-PLATFORM] obytes/react-native-template-obytes (2649 score) - 📱 A template for your next React Native project: Expo, PNPM, TypeScript, Tailwi
+https://github.com/obytes/react-native-template-obytes
+# [MOBILE-CROSS-PLATFORM] kdchang/reactjs101 (2889 score) - 從零開始學 ReactJS（ReactJS 101）是一本希望讓初學者一看就懂的 React 中文入門教學書，由淺入深學習 React.js 生態系 (Flux
+https://github.com/kdchang/reactjs101
+# [MOBILE-CROSS-PLATFORM] zoontek/react-native-bootsplash (2406 score) - 🚀 Show a splash screen during app startup. Hide it when you are ready.
+https://github.com/zoontek/react-native-bootsplash
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T10:36:07.367Z] ---
+# [COGNITIVE-NEUROSCIENCE-SYSTEMS] NucleoidAI/Nucleoid (569 score) - Logic Language for World Models 🌱🐋🌍
+https://github.com/NucleoidAI/Nucleoid
