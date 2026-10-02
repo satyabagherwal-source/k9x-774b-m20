@@ -13860,5 +13860,44 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-compvis-stable-diffusion-v1-4": {
+    "name": "CompVis/stable-diffusion-v1-4",
+    "officialUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:28:18.359Z",
+    "lastVerified": "2026-10-02T09:28:18.359Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-meta-llama-meta-llama-3-8b": {
+    "name": "meta-llama/Meta-Llama-3-8B",
+    "officialUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:28:20.096Z",
+    "lastVerified": "2026-10-02T09:28:20.096Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-hexgrad-kokoro-82m": {
+    "name": "hexgrad/Kokoro-82M",
+    "officialUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:28:20.419Z",
+    "lastVerified": "2026-10-02T09:28:20.419Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -3108,3 +3108,11 @@ https://huggingface.co/amazon/chronos-2
 https://huggingface.co/Comfy-Org/MiniMax-H3
 # [HUGGINGFACE-AI-MODELS] timm/mobilenetv3_small_100.lamb_in1k (3240 score) - Verified Hugging Face Model: timm/mobilenetv3_small_100.lamb_in1k (124 likes, 21
 https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T09:28:11.943Z] ---
+# [HUGGINGFACE-AI-MODELS] CompVis/stable-diffusion-v1-4 (73030 score) - Verified Hugging Face Model: CompVis/stable-diffusion-v1-4 (7103 likes, 673901 d
+https://huggingface.co/CompVis/stable-diffusion-v1-4
+# [HUGGINGFACE-AI-MODELS] hexgrad/Kokoro-82M (72970 score) - Verified Hugging Face Model: hexgrad/Kokoro-82M (7097 likes, 11426444 downloads)
+https://huggingface.co/hexgrad/Kokoro-82M
+# [HUGGINGFACE-AI-MODELS] meta-llama/Meta-Llama-3-8B (69210 score) - Verified Hugging Face Model: meta-llama/Meta-Llama-3-8B (6721 likes, 216558 down
+https://huggingface.co/meta-llama/Meta-Llama-3-8B

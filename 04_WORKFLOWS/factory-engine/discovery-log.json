@@ -14206,5 +14206,41 @@
     "downloads": 21610288,
     "qualityScore": 3240,
     "discoveredAt": "2026-10-02T09:14:13.188Z"
+  },
+  {
+    "name": "CompVis/stable-diffusion-v1-4",
+    "fullName": "CompVis/stable-diffusion-v1-4",
+    "url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: CompVis/stable-diffusion-v1-4 (7103 likes, 673901 downloads)",
+    "likes": 7103,
+    "downloads": 673901,
+    "qualityScore": 73030,
+    "discoveredAt": "2026-10-02T09:28:11.941Z"
+  },
+  {
+    "name": "hexgrad/Kokoro-82M",
+    "fullName": "hexgrad/Kokoro-82M",
+    "url": "https://huggingface.co/hexgrad/Kokoro-82M",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: hexgrad/Kokoro-82M (7097 likes, 11426444 downloads)",
+    "likes": 7097,
+    "downloads": 11426444,
+    "qualityScore": 72970,
+    "discoveredAt": "2026-10-02T09:28:11.941Z"
+  },
+  {
+    "name": "meta-llama/Meta-Llama-3-8B",
+    "fullName": "meta-llama/Meta-Llama-3-8B",
+    "url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: meta-llama/Meta-Llama-3-8B (6721 likes, 216558 downloads)",
+    "likes": 6721,
+    "downloads": 216558,
+    "qualityScore": 69210,
+    "discoveredAt": "2026-10-02T09:28:11.941Z"
   }
 ]
