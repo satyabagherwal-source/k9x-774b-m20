@@ -14042,5 +14042,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-openai-gpt-oss-20b": {
+    "name": "openai/gpt-oss-20b",
+    "officialUrl": "https://huggingface.co/openai/gpt-oss-20b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:54:50.982Z",
+    "lastVerified": "2026-10-02T09:54:50.982Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
