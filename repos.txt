@@ -3116,3 +3116,11 @@ https://huggingface.co/CompVis/stable-diffusion-v1-4
 https://huggingface.co/hexgrad/Kokoro-82M
 # [HUGGINGFACE-AI-MODELS] meta-llama/Meta-Llama-3-8B (69210 score) - Verified Hugging Face Model: meta-llama/Meta-Llama-3-8B (6721 likes, 216558 down
 https://huggingface.co/meta-llama/Meta-Llama-3-8B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T09:35:00.150Z] ---
+# [HUGGINGFACE-AI-MODELS] openai/whisper-large-v3 (67310 score) - Verified Hugging Face Model: openai/whisper-large-v3 (6531 likes, 4213626 downlo
+https://huggingface.co/openai/whisper-large-v3
+# [HUGGINGFACE-AI-MODELS] black-forest-labs/FLUX.1-schnell (62870 score) - Verified Hugging Face Model: black-forest-labs/FLUX.1-schnell (6087 likes, 61585
+https://huggingface.co/black-forest-labs/FLUX.1-schnell
+# [HUGGINGFACE-AI-MODELS] MiniMaxAI/MiniMax-H3 (60250 score) - Verified Hugging Face Model: MiniMaxAI/MiniMax-H3 (5825 likes, 3567030 downloads
+https://huggingface.co/MiniMaxAI/MiniMax-H3

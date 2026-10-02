@@ -14242,5 +14242,41 @@
     "downloads": 216558,
     "qualityScore": 69210,
     "discoveredAt": "2026-10-02T09:28:11.941Z"
+  },
+  {
+    "name": "openai/whisper-large-v3",
+    "fullName": "openai/whisper-large-v3",
+    "url": "https://huggingface.co/openai/whisper-large-v3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: openai/whisper-large-v3 (6531 likes, 4213626 downloads)",
+    "likes": 6531,
+    "downloads": 4213626,
+    "qualityScore": 67310,
+    "discoveredAt": "2026-10-02T09:35:00.143Z"
+  },
+  {
+    "name": "black-forest-labs/FLUX.1-schnell",
+    "fullName": "black-forest-labs/FLUX.1-schnell",
+    "url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: black-forest-labs/FLUX.1-schnell (6087 likes, 615859 downloads)",
+    "likes": 6087,
+    "downloads": 615859,
+    "qualityScore": 62870,
+    "discoveredAt": "2026-10-02T09:35:00.145Z"
+  },
+  {
+    "name": "MiniMaxAI/MiniMax-H3",
+    "fullName": "MiniMaxAI/MiniMax-H3",
+    "url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: MiniMaxAI/MiniMax-H3 (5825 likes, 3567030 downloads)",
+    "likes": 5825,
+    "downloads": 3567030,
+    "qualityScore": 60250,
+    "discoveredAt": "2026-10-02T09:35:00.146Z"
   }
 ]

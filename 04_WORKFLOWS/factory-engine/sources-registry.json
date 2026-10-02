@@ -13899,5 +13899,44 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-openai-whisper-large-v3": {
+    "name": "openai/whisper-large-v3",
+    "officialUrl": "https://huggingface.co/openai/whisper-large-v3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:35:07.397Z",
+    "lastVerified": "2026-10-02T09:35:07.397Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-black-forest-labs-flux.1-schnell": {
+    "name": "black-forest-labs/FLUX.1-schnell",
+    "officialUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:35:07.774Z",
+    "lastVerified": "2026-10-02T09:35:07.774Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-minimaxai-minimax-h3": {
+    "name": "MiniMaxAI/MiniMax-H3",
+    "officialUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:35:08.442Z",
+    "lastVerified": "2026-10-02T09:35:08.442Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-02T09:28:20.335Z",
+  "lastUpdated": "2026-10-02T09:35:08.441Z",
   "updatedBy": "agent-antigravity",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -164,7 +164,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:29:24.612Z",
+        "lastActiveAt": "2026-10-02T09:34:57.061Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": null
@@ -174,7 +174,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:29:24.595Z",
+        "lastActiveAt": "2026-10-02T09:34:57.118Z",
         "lastHarvestedAt": "2026-10-02T09:08:08.002Z",
         "totalHarvested": 2,
         "lastError": null
@@ -184,7 +184,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:29:24.604Z",
+        "lastActiveAt": "2026-10-02T09:34:57.130Z",
         "lastHarvestedAt": "2026-10-02T09:22:50.999Z",
         "totalHarvested": 4,
         "lastError": null
@@ -194,7 +194,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:29:39.042Z",
+        "lastActiveAt": "2026-10-02T09:34:57.142Z",
         "lastHarvestedAt": "2026-10-02T09:29:39.042Z",
         "totalHarvested": 6,
         "lastError": null
@@ -204,7 +204,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:29:41.430Z",
+        "lastActiveAt": "2026-10-02T09:34:57.160Z",
         "lastHarvestedAt": "2026-10-02T09:29:41.430Z",
         "totalHarvested": 8,
         "lastError": null
@@ -214,7 +214,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:29:48.666Z",
+        "lastActiveAt": "2026-10-02T09:34:57.192Z",
         "lastHarvestedAt": "2026-10-01T00:21:28.218Z",
         "totalHarvested": 5,
         "lastError": null
@@ -224,7 +224,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:29:17.016Z",
+        "lastActiveAt": "2026-10-02T09:34:57.209Z",
         "lastHarvestedAt": "2026-10-01T05:23:28.016Z",
         "totalHarvested": 13,
         "lastError": null
@@ -234,7 +234,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:29:36.412Z",
+        "lastActiveAt": "2026-10-02T09:34:57.229Z",
         "lastHarvestedAt": "2026-10-02T09:22:48.583Z",
         "totalHarvested": 10,
         "lastError": null
@@ -270,12 +270,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 3,
-      "resetEpoch": 1790933350000,
-      "resetAt": "2026-10-02T09:29:10.000Z",
-      "trippedAt": "2026-10-02T09:28:11.885Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Areact-native%20stars%3A%3E2500%20sort%3Astars&per_page=15&page=7)",
-      "consecutiveBlocks": 1
+      "remaining": 0,
+      "resetEpoch": 1790933724000,
+      "resetAt": "2026-10-02T09:35:24.000Z",
+      "trippedAt": "2026-10-02T09:34:58.918Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Ainfrastructure-as-code%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=3)",
+      "consecutiveBlocks": 3
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
