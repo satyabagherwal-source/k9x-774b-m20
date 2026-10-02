@@ -3092,3 +3092,11 @@ https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-
 https://huggingface.co/google/electra-base-discriminator
 # [HUGGINGFACE-AI-MODELS] google-bert/bert-base-uncased (35840 score) - Verified Hugging Face Model: google-bert/bert-base-uncased (3384 likes, 39963393
 https://huggingface.co/google-bert/bert-base-uncased
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T09:06:56.645Z] ---
+# [HUGGINGFACE-AI-MODELS] BAAI/bge-m3 (39850 score) - Verified Hugging Face Model: BAAI/bge-m3 (3785 likes, 35073646 downloads)
+https://huggingface.co/BAAI/bge-m3
+# [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-0.6B (19160 score) - Verified Hugging Face Model: Qwen/Qwen3-0.6B (1716 likes, 29565215 downloads)
+https://huggingface.co/Qwen/Qwen3-0.6B
+# [HUGGINGFACE-AI-MODELS] google-t5/t5-small (8460 score) - Verified Hugging Face Model: google-t5/t5-small (646 likes, 24474682 downloads)
+https://huggingface.co/google-t5/t5-small

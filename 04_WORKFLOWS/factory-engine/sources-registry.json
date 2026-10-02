@@ -13782,5 +13782,31 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-baai-bge-m3": {
+    "name": "BAAI/bge-m3",
+    "officialUrl": "https://huggingface.co/BAAI/bge-m3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:07:02.138Z",
+    "lastVerified": "2026-10-02T09:07:02.138Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-qwen-qwen3-0.6b": {
+    "name": "Qwen/Qwen3-0.6B",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:07:03.396Z",
+    "lastVerified": "2026-10-02T09:07:03.396Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

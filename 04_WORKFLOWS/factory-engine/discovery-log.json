@@ -14134,5 +14134,41 @@
     "downloads": 39963393,
     "qualityScore": 35840,
     "discoveredAt": "2026-10-02T09:00:35.287Z"
+  },
+  {
+    "name": "BAAI/bge-m3",
+    "fullName": "BAAI/bge-m3",
+    "url": "https://huggingface.co/BAAI/bge-m3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: BAAI/bge-m3 (3785 likes, 35073646 downloads)",
+    "likes": 3785,
+    "downloads": 35073646,
+    "qualityScore": 39850,
+    "discoveredAt": "2026-10-02T09:06:56.643Z"
+  },
+  {
+    "name": "Qwen/Qwen3-0.6B",
+    "fullName": "Qwen/Qwen3-0.6B",
+    "url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Qwen/Qwen3-0.6B (1716 likes, 29565215 downloads)",
+    "likes": 1716,
+    "downloads": 29565215,
+    "qualityScore": 19160,
+    "discoveredAt": "2026-10-02T09:06:56.643Z"
+  },
+  {
+    "name": "google-t5/t5-small",
+    "fullName": "google-t5/t5-small",
+    "url": "https://huggingface.co/google-t5/t5-small",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: google-t5/t5-small (646 likes, 24474682 downloads)",
+    "likes": 646,
+    "downloads": 24474682,
+    "qualityScore": 8460,
+    "discoveredAt": "2026-10-02T09:06:56.643Z"
   }
 ]
