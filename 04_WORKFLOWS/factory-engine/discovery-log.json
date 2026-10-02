@@ -15031,5 +15031,50 @@
     "qualityScore": 895,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-02T23:34:07.267Z"
+  },
+  {
+    "name": "Director",
+    "fullName": "video-db/Director",
+    "url": "https://github.com/video-db/Director",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AI video agents framework for next-gen video interactions and workflows.",
+    "stars": 1542,
+    "forks": 254,
+    "openIssues": 22,
+    "language": "Python",
+    "qualityScore": 1141,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T23:49:15.934Z"
+  },
+  {
+    "name": "ragbuilder",
+    "fullName": "KruxAI/ragbuilder",
+    "url": "https://github.com/KruxAI/ragbuilder",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A toolkit to create optimal Production-readyRetrieval Augmented Generation(RAG) setup for your data",
+    "stars": 1540,
+    "forks": 127,
+    "openIssues": 19,
+    "language": "Python",
+    "qualityScore": 1096,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T23:49:15.934Z"
+  },
+  {
+    "name": "omnibox",
+    "fullName": "import-ai/omnibox",
+    "url": "https://github.com/import-ai/omnibox",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Anywhere, anything to memory, memory to anything.",
+    "stars": 1513,
+    "forks": 164,
+    "openIssues": 3,
+    "language": "Python",
+    "qualityScore": 962,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T23:49:15.935Z"
   }
 ]

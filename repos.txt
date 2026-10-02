@@ -3270,3 +3270,11 @@ https://github.com/chrisbanes/skills
 https://github.com/kamgurgul/cpu-info
 # [MOBILE-CROSS-PLATFORM] joreilly/Confetti (895 score) - KMP/CMP GraphQL based conference project with Jetpack Compose Android, Compose f
 https://github.com/joreilly/Confetti
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T23:49:15.943Z] ---
+# [AI-AGENTS] video-db/Director (1141 score) - AI video agents framework for next-gen video interactions and workflows.
+https://github.com/video-db/Director
+# [AI-AGENTS] KruxAI/ragbuilder (1096 score) - A toolkit to create optimal Production-readyRetrieval Augmented Generation(RAG) 
+https://github.com/KruxAI/ragbuilder
+# [AI-AGENTS] import-ai/omnibox (962 score) - Anywhere, anything to memory, memory to anything.
+https://github.com/import-ai/omnibox
