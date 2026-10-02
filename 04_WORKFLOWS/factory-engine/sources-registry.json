@@ -13848,3 +13848,17 @@
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
   },
+  "hf-amazon-chronos-2": {
+    "name": "amazon/chronos-2",
+    "officialUrl": "https://huggingface.co/amazon/chronos-2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:14:23.982Z",
+    "lastVerified": "2026-10-02T09:14:23.982Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  }
+}
