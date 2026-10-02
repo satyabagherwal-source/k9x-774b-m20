@@ -3156,3 +3156,9 @@ https://huggingface.co/meta-llama/Llama-2-7b-chat-hf
 https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1
 # [HUGGINGFACE-AI-MODELS] meta-llama/Llama-2-7b (45752 score) - Verified Hugging Face Model: meta-llama/Llama-2-7b (4563 likes, 122 downloads)
 https://huggingface.co/meta-llama/Llama-2-7b
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T10:09:34.715Z] ---
+# [HUGGINGFACE-AI-MODELS] deepseek-ai/DeepSeek-V3 (45890 score) - Verified Hugging Face Model: deepseek-ai/DeepSeek-V3 (4389 likes, 1278172 downlo
+https://huggingface.co/deepseek-ai/DeepSeek-V3
+# [HUGGINGFACE-AI-MODELS] baidu/Unlimited-OCR (45200 score) - Verified Hugging Face Model: baidu/Unlimited-OCR (4320 likes, 1477146 downloads)
+https://huggingface.co/baidu/Unlimited-OCR

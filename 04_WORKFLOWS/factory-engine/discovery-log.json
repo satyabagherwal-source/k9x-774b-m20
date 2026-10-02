@@ -14422,5 +14422,29 @@
     "downloads": 122,
     "qualityScore": 45752,
     "discoveredAt": "2026-10-02T10:01:13.485Z"
+  },
+  {
+    "name": "deepseek-ai/DeepSeek-V3",
+    "fullName": "deepseek-ai/DeepSeek-V3",
+    "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: deepseek-ai/DeepSeek-V3 (4389 likes, 1278172 downloads)",
+    "likes": 4389,
+    "downloads": 1278172,
+    "qualityScore": 45890,
+    "discoveredAt": "2026-10-02T10:09:34.530Z"
+  },
+  {
+    "name": "baidu/Unlimited-OCR",
+    "fullName": "baidu/Unlimited-OCR",
+    "url": "https://huggingface.co/baidu/Unlimited-OCR",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: baidu/Unlimited-OCR (4320 likes, 1477146 downloads)",
+    "likes": 4320,
+    "downloads": 1477146,
+    "qualityScore": 45200,
+    "discoveredAt": "2026-10-02T10:09:34.530Z"
   }
 ]
