@@ -14314,5 +14314,41 @@
     "downloads": 592245,
     "qualityScore": 55960,
     "discoveredAt": "2026-10-02T09:41:14.735Z"
+  },
+  {
+    "name": "openai/gpt-oss-120b",
+    "fullName": "openai/gpt-oss-120b",
+    "url": "https://huggingface.co/openai/gpt-oss-120b",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: openai/gpt-oss-120b (5340 likes, 4494743 downloads)",
+    "likes": 5340,
+    "downloads": 4494743,
+    "qualityScore": 55400,
+    "discoveredAt": "2026-10-02T09:48:00.101Z"
+  },
+  {
+    "name": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "fullName": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: meta-llama/Meta-Llama-3-8B-Instruct (5175 likes, 1007600 downloads)",
+    "likes": 5175,
+    "downloads": 1007600,
+    "qualityScore": 53750,
+    "discoveredAt": "2026-10-02T09:48:00.101Z"
+  },
+  {
+    "name": "zai-org/GLM-5.2",
+    "fullName": "zai-org/GLM-5.2",
+    "url": "https://huggingface.co/zai-org/GLM-5.2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: zai-org/GLM-5.2 (5141 likes, 710355 downloads)",
+    "likes": 5141,
+    "downloads": 710355,
+    "qualityScore": 53410,
+    "discoveredAt": "2026-10-02T09:48:00.101Z"
   }
 ]

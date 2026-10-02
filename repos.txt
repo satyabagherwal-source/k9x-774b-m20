@@ -3132,3 +3132,11 @@ https://huggingface.co/Qwen/Qwen3.8-Flash-Next
 https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro
 # [HUGGINGFACE-AI-MODELS] Tongyi-MAI/Z-Image-Turbo (55960 score) - Verified Hugging Face Model: Tongyi-MAI/Z-Image-Turbo (5396 likes, 592245 downlo
 https://huggingface.co/Tongyi-MAI/Z-Image-Turbo
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T09:48:00.210Z] ---
+# [HUGGINGFACE-AI-MODELS] openai/gpt-oss-120b (55400 score) - Verified Hugging Face Model: openai/gpt-oss-120b (5340 likes, 4494743 downloads)
+https://huggingface.co/openai/gpt-oss-120b
+# [HUGGINGFACE-AI-MODELS] meta-llama/Meta-Llama-3-8B-Instruct (53750 score) - Verified Hugging Face Model: meta-llama/Meta-Llama-3-8B-Instruct (5175 likes, 10
+https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct
+# [HUGGINGFACE-AI-MODELS] zai-org/GLM-5.2 (53410 score) - Verified Hugging Face Model: zai-org/GLM-5.2 (5141 likes, 710355 downloads)
+https://huggingface.co/zai-org/GLM-5.2
