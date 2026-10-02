@@ -14170,5 +14170,41 @@
     "downloads": 24474682,
     "qualityScore": 8460,
     "discoveredAt": "2026-10-02T09:06:56.643Z"
+  },
+  {
+    "name": "amazon/chronos-2",
+    "fullName": "amazon/chronos-2",
+    "url": "https://huggingface.co/amazon/chronos-2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: amazon/chronos-2 (502 likes, 22865413 downloads)",
+    "likes": 502,
+    "downloads": 22865413,
+    "qualityScore": 7020,
+    "discoveredAt": "2026-10-02T09:14:13.187Z"
+  },
+  {
+    "name": "Comfy-Org/MiniMax-H3",
+    "fullName": "Comfy-Org/MiniMax-H3",
+    "url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Comfy-Org/MiniMax-H3 (2089 likes, 22813102 downloads)",
+    "likes": 2089,
+    "downloads": 22813102,
+    "qualityScore": 22890,
+    "discoveredAt": "2026-10-02T09:14:13.188Z"
+  },
+  {
+    "name": "timm/mobilenetv3_small_100.lamb_in1k",
+    "fullName": "timm/mobilenetv3_small_100.lamb_in1k",
+    "url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: timm/mobilenetv3_small_100.lamb_in1k (124 likes, 21610288 downloads)",
+    "likes": 124,
+    "downloads": 21610288,
+    "qualityScore": 3240,
+    "discoveredAt": "2026-10-02T09:14:13.188Z"
   }
 ]

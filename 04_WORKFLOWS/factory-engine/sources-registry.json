@@ -13821,5 +13821,30 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
-  }
-}
+  },
+  "hf-comfy-org-minimax-h3": {
+    "name": "Comfy-Org/MiniMax-H3",
+    "officialUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:14:23.697Z",
+    "lastVerified": "2026-10-02T09:14:23.697Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-timm-mobilenetv3_small_100.lamb_in1k": {
+    "name": "timm/mobilenetv3_small_100.lamb_in1k",
+    "officialUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:14:23.743Z",
+    "lastVerified": "2026-10-02T09:14:23.743Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },

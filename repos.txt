@@ -3100,3 +3100,11 @@ https://huggingface.co/BAAI/bge-m3
 https://huggingface.co/Qwen/Qwen3-0.6B
 # [HUGGINGFACE-AI-MODELS] google-t5/t5-small (8460 score) - Verified Hugging Face Model: google-t5/t5-small (646 likes, 24474682 downloads)
 https://huggingface.co/google-t5/t5-small
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T09:14:13.190Z] ---
+# [HUGGINGFACE-AI-MODELS] amazon/chronos-2 (7020 score) - Verified Hugging Face Model: amazon/chronos-2 (502 likes, 22865413 downloads)
+https://huggingface.co/amazon/chronos-2
+# [HUGGINGFACE-AI-MODELS] Comfy-Org/MiniMax-H3 (22890 score) - Verified Hugging Face Model: Comfy-Org/MiniMax-H3 (2089 likes, 22813102 download
+https://huggingface.co/Comfy-Org/MiniMax-H3
+# [HUGGINGFACE-AI-MODELS] timm/mobilenetv3_small_100.lamb_in1k (3240 score) - Verified Hugging Face Model: timm/mobilenetv3_small_100.lamb_in1k (124 likes, 21
+https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k

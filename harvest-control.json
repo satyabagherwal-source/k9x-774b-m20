@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-02T09:07:04.062Z",
+  "lastUpdated": "2026-10-02T09:14:23.978Z",
   "updatedBy": "agent-antigravity",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -164,7 +164,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:08:11.308Z",
+        "lastActiveAt": "2026-10-02T09:14:10.319Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": null
@@ -174,7 +174,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:08:08.002Z",
+        "lastActiveAt": "2026-10-02T09:14:10.335Z",
         "lastHarvestedAt": "2026-10-02T09:08:08.002Z",
         "totalHarvested": 2,
         "lastError": null
@@ -184,7 +184,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:08:12.259Z",
+        "lastActiveAt": "2026-10-02T09:14:10.357Z",
         "lastHarvestedAt": "2026-09-30T20:24:54.056Z",
         "totalHarvested": 3,
         "lastError": null
@@ -194,7 +194,7 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:08:11.958Z",
+        "lastActiveAt": "2026-10-02T09:14:10.370Z",
         "lastHarvestedAt": "2026-10-02T09:08:11.958Z",
         "totalHarvested": 5,
         "lastError": null
@@ -204,7 +204,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:08:10.780Z",
+        "lastActiveAt": "2026-10-02T09:14:10.388Z",
         "lastHarvestedAt": "2026-09-30T22:49:41.313Z",
         "totalHarvested": 7,
         "lastError": null
@@ -214,7 +214,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:07:58.630Z",
+        "lastActiveAt": "2026-10-02T09:14:10.401Z",
         "lastHarvestedAt": "2026-10-01T00:21:28.218Z",
         "totalHarvested": 5,
         "lastError": null
@@ -224,7 +224,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:08:50.001Z",
+        "lastActiveAt": "2026-10-02T09:14:10.418Z",
         "lastHarvestedAt": "2026-10-01T05:23:28.016Z",
         "totalHarvested": 13,
         "lastError": null
@@ -234,7 +234,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-02T09:08:06.258Z",
+        "lastActiveAt": "2026-10-02T09:14:10.442Z",
         "lastHarvestedAt": "2026-10-02T09:01:34.800Z",
         "totalHarvested": 9,
         "lastError": null
@@ -269,13 +269,13 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1790932033000,
-      "resetAt": "2026-10-02T09:07:13.000Z",
-      "trippedAt": "2026-10-02T09:06:55.572Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Avector-database%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=1)",
-      "consecutiveBlocks": 2
+      "status": "HEALTHY",
+      "remaining": 5000,
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": null,
+      "reason": null,
+      "consecutiveBlocks": 0
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
