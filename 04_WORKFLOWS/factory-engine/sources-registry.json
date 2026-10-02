@@ -14016,5 +14016,31 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-stabilityai-stable-diffusion-3-medium": {
+    "name": "stabilityai/stable-diffusion-3-medium",
+    "officialUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:54:50.266Z",
+    "lastVerified": "2026-10-02T09:54:50.266Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-bigscience-bloom": {
+    "name": "bigscience/bloom",
+    "officialUrl": "https://huggingface.co/bigscience/bloom",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:54:50.568Z",
+    "lastVerified": "2026-10-02T09:54:50.568Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

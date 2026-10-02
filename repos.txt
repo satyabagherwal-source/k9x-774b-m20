@@ -3140,3 +3140,11 @@ https://huggingface.co/openai/gpt-oss-120b
 https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct
 # [HUGGINGFACE-AI-MODELS] zai-org/GLM-5.2 (53410 score) - Verified Hugging Face Model: zai-org/GLM-5.2 (5141 likes, 710355 downloads)
 https://huggingface.co/zai-org/GLM-5.2
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T09:54:35.008Z] ---
+# [HUGGINGFACE-AI-MODELS] openai/gpt-oss-20b (53130 score) - Verified Hugging Face Model: openai/gpt-oss-20b (5113 likes, 6656501 downloads)
+https://huggingface.co/openai/gpt-oss-20b
+# [HUGGINGFACE-AI-MODELS] bigscience/bloom (52710 score) - Verified Hugging Face Model: bigscience/bloom (5071 likes, 14362 downloads)
+https://huggingface.co/bigscience/bloom
+# [HUGGINGFACE-AI-MODELS] stabilityai/stable-diffusion-3-medium (52570 score) - Verified Hugging Face Model: stabilityai/stable-diffusion-3-medium (5057 likes, 
+https://huggingface.co/stabilityai/stable-diffusion-3-medium

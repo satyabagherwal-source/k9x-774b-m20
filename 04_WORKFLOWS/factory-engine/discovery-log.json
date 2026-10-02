@@ -14350,5 +14350,41 @@
     "downloads": 710355,
     "qualityScore": 53410,
     "discoveredAt": "2026-10-02T09:48:00.101Z"
+  },
+  {
+    "name": "openai/gpt-oss-20b",
+    "fullName": "openai/gpt-oss-20b",
+    "url": "https://huggingface.co/openai/gpt-oss-20b",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: openai/gpt-oss-20b (5113 likes, 6656501 downloads)",
+    "likes": 5113,
+    "downloads": 6656501,
+    "qualityScore": 53130,
+    "discoveredAt": "2026-10-02T09:54:35.005Z"
+  },
+  {
+    "name": "bigscience/bloom",
+    "fullName": "bigscience/bloom",
+    "url": "https://huggingface.co/bigscience/bloom",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: bigscience/bloom (5071 likes, 14362 downloads)",
+    "likes": 5071,
+    "downloads": 14362,
+    "qualityScore": 52710,
+    "discoveredAt": "2026-10-02T09:54:35.005Z"
+  },
+  {
+    "name": "stabilityai/stable-diffusion-3-medium",
+    "fullName": "stabilityai/stable-diffusion-3-medium",
+    "url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: stabilityai/stable-diffusion-3-medium (5057 likes, 2803 downloads)",
+    "likes": 5057,
+    "downloads": 2803,
+    "qualityScore": 52570,
+    "discoveredAt": "2026-10-02T09:54:35.006Z"
   }
 ]
