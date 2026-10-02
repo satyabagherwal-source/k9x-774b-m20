@@ -3238,3 +3238,19 @@ https://github.com/SEAbdulbasit/MusicApp-KMP
 https://github.com/JuulLabs/kable
 # [MOBILE-CROSS-PLATFORM] touchlab/DroidconKotlin (857 score) - Kotlin Multiplatfom app for Droidcon Events
 https://github.com/touchlab/DroidconKotlin
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T23:18:39.992Z] ---
+# [AI-AGENTS] lucasastorian/llmwiki (1115 score) - Open Source Implementation of Karpathy's LLM Wiki. Upload documents, connect you
+https://github.com/lucasastorian/llmwiki
+# [AI-AGENTS] stanford-oval/WikiChat (1023 score) - WikiChat is an improved RAG. It stops the hallucination of large language models
+https://github.com/stanford-oval/WikiChat
+# [AI-AGENTS] hhhuang/CAG (1136 score) - Cache-Augmented Generation: A Simple, Efficient Alternative to RAG
+https://github.com/hhhuang/CAG
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T23:18:42.145Z] ---
+# [MOBILE-CROSS-PLATFORM] realm/realm-kotlin (1030 score) - Kotlin Multiplatform and Android SDK for the Realm Mobile Database: Build Better
+https://github.com/realm/realm-kotlin
+# [MOBILE-CROSS-PLATFORM] mikepenz/multiplatform-markdown-renderer (842 score) - Markdown renderer for Kotlin Multiplatform Projects (Android, iOS, Desktop), usi
+https://github.com/mikepenz/multiplatform-markdown-renderer
+# [MOBILE-CROSS-PLATFORM] icerockdev/moko-mvvm (929 score) - Model-View-ViewModel architecture components for mobile (android & ios) Kotlin M
+https://github.com/icerockdev/moko-mvvm
