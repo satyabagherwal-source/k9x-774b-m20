@@ -3202,3 +3202,7 @@ https://github.com/rickclephas/KMP-NativeCoroutines
 https://github.com/android/kotlin-multiplatform-samples
 # [MOBILE-CROSS-PLATFORM] hi-manshu/charty (762 score) - Weave data into enchanting Jetpack Compose graphs—no potions required! 📜🔮
 https://github.com/hi-manshu/charty
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-02T22:00:59.085Z] ---
+# [AI-AGENTS] TarrySingh/Artificial-Intelligence-Deep-Learning-Machine-Learning-Tutorials (2773 score) - Synapsa Commons: free, hands-on AI courses that run anywhere (Colab, Kaggle, Bin
+https://github.com/TarrySingh/Artificial-Intelligence-Deep-Learning-Machine-Learning-Tutorials

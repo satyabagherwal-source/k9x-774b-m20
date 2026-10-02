@@ -14656,5 +14656,20 @@
     "qualityScore": 762,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-02T21:45:46.900Z"
+  },
+  {
+    "name": "Artificial-Intelligence-Deep-Learning-Machine-Learning-Tutorials",
+    "fullName": "TarrySingh/Artificial-Intelligence-Deep-Learning-Machine-Learning-Tutorials",
+    "url": "https://github.com/TarrySingh/Artificial-Intelligence-Deep-Learning-Machine-Learning-Tutorials",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Synapsa Commons: free, hands-on AI courses that run anywhere (Colab, Kaggle, Binder, Codespaces, Jupyter). EU AI Act conformity evidence, model validation, predictive maintenance, document extraction, retrieval and RAG, AI agents and MCP, a simulated humanoid. Every lesson autograded. From the team building Synapsa.",
+    "stars": 4012,
+    "forks": 1623,
+    "openIssues": 15,
+    "language": "Python",
+    "qualityScore": 2773,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-02T22:00:59.084Z"
   }
 ]
