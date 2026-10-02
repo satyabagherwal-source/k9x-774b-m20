@@ -13990,5 +13990,31 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-openai-gpt-oss-120b": {
+    "name": "openai/gpt-oss-120b",
+    "officialUrl": "https://huggingface.co/openai/gpt-oss-120b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:48:06.098Z",
+    "lastVerified": "2026-10-02T09:48:06.098Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-zai-org-glm-5.2": {
+    "name": "zai-org/GLM-5.2",
+    "officialUrl": "https://huggingface.co/zai-org/GLM-5.2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:48:20.455Z",
+    "lastVerified": "2026-10-02T09:48:20.455Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
