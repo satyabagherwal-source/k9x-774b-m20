@@ -13951,5 +13951,31 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-deepseek-ai-deepseek-v4-pro": {
+    "name": "deepseek-ai/DeepSeek-V4-Pro",
+    "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:41:24.087Z",
+    "lastVerified": "2026-10-02T09:41:24.087Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-tongyi-mai-z-image-turbo": {
+    "name": "Tongyi-MAI/Z-Image-Turbo",
+    "officialUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-02T09:41:34.723Z",
+    "lastVerified": "2026-10-02T09:41:34.723Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
