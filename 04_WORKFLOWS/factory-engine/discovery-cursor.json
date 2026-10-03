@@ -1,25 +1,16 @@
 {
   "domains": {
     "ai-agents": {
-<<<<<<< HEAD
-      "queryIndex": 7,
-      "page": 5
-=======
       "queryIndex": 1,
       "page": 2
->>>>>>> c79113ebae89a8c562cb20f52dd1260889f4d001
     },
     "fullstack-ui": {
-      "queryIndex": 0,
-      "page": 3
+      "queryIndex": 6,
+      "page": 1
     },
     "high-perf-systems": {
-<<<<<<< HEAD
-      "queryIndex": 4,
-=======
-      "queryIndex": 0,
->>>>>>> c79113ebae89a8c562cb20f52dd1260889f4d001
-      "page": 2
+      "queryIndex": 1,
+      "page": 3
     },
     "huggingface-ai-models": {
       "queryIndex": 0,
@@ -30,16 +21,11 @@
       "page": 8
     },
     "devops-cloud-infrastructure": {
-<<<<<<< HEAD
-      "queryIndex": 1,
-      "page": 2
-=======
       "queryIndex": 2,
       "page": 3
->>>>>>> c79113ebae89a8c562cb20f52dd1260889f4d001
     },
     "cybersecurity-defenses": {
-      "queryIndex": 3,
+      "queryIndex": 0,
       "page": 1
     },
     "database-storage-engines": {
@@ -52,9 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 84,
-<<<<<<< HEAD
-  "lastReplenishedAt": "2026-10-03T20:25:11.274Z"
-=======
-  "lastReplenishedAt": "2026-10-03T20:13:40.534Z"
->>>>>>> c79113ebae89a8c562cb20f52dd1260889f4d001
+  "lastReplenishedAt": "2026-10-03T20:28:58.539Z"
 }
