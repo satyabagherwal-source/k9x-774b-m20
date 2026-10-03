@@ -15121,5 +15121,50 @@
     "qualityScore": 827,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T00:04:30.521Z"
+  },
+  {
+    "name": "reminders-menubar",
+    "fullName": "DamascenoRafael/reminders-menubar",
+    "url": "https://github.com/DamascenoRafael/reminders-menubar",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Simple macOS menu bar application to view and interact with reminders. Developed with SwiftUI and using Apple Reminders as a source.",
+    "stars": 3955,
+    "forks": 169,
+    "openIssues": 41,
+    "language": "Swift",
+    "qualityScore": 2260,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T00:35:26.105Z"
+  },
+  {
+    "name": "swift-markdown-ui",
+    "fullName": "gonzalezreal/swift-markdown-ui",
+    "url": "https://github.com/gonzalezreal/swift-markdown-ui",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Maintenance mode — new development in Textual: https://github.com/gonzalezreal/textual",
+    "stars": 3930,
+    "forks": 553,
+    "openIssues": 62,
+    "language": "Swift",
+    "qualityScore": 2505,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T00:35:26.105Z"
+  },
+  {
+    "name": "yattee",
+    "fullName": "yattee/yattee",
+    "url": "https://github.com/yattee/yattee",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Privacy oriented video player for iOS, tvOS and macOS",
+    "stars": 3727,
+    "forks": 173,
+    "openIssues": 228,
+    "language": "Swift",
+    "qualityScore": 2365,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T00:35:26.105Z"
   }
 ]

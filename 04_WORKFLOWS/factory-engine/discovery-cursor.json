@@ -29,7 +29,7 @@
       "page": 1
     },
     "database-storage-engines": {
-      "queryIndex": 5,
+      "queryIndex": 0,
       "page": 1
     }
   },
@@ -38,5 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 83,
-  "lastReplenishedAt": "2026-10-03T00:20:08.488Z"
+  "lastReplenishedAt": "2026-10-03T00:35:29.876Z"
 }

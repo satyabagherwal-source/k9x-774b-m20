@@ -3286,3 +3286,11 @@ https://github.com/touchlab/Kermit
 https://github.com/KevinnZou/compose-webview-multiplatform
 # [MOBILE-CROSS-PLATFORM] AAkira/Napier (827 score) - Logging library for Kotlin Multiplatform
 https://github.com/AAkira/Napier
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T00:35:26.106Z] ---
+# [MOBILE-CROSS-PLATFORM] DamascenoRafael/reminders-menubar (2260 score) - Simple macOS menu bar application to view and interact with reminders. Developed
+https://github.com/DamascenoRafael/reminders-menubar
+# [MOBILE-CROSS-PLATFORM] gonzalezreal/swift-markdown-ui (2505 score) - Maintenance mode — new development in Textual: https://github.com/gonzalezreal/t
+https://github.com/gonzalezreal/swift-markdown-ui
+# [MOBILE-CROSS-PLATFORM] yattee/yattee (2365 score) - Privacy oriented video player for iOS, tvOS and macOS
+https://github.com/yattee/yattee
