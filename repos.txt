@@ -3592,3 +3592,9 @@ https://huggingface.co/google/vit-base-patch16-224
 https://huggingface.co/BAAI/bge-base-en-v1.5
 # [HUGGINGFACE-AI-MODELS] google/gemma-4-31B-it (42100 score) - Verified Hugging Face Model: google/gemma-4-31B-it (4010 likes, 9875118 download
 https://huggingface.co/google/gemma-4-31B-it
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T23:43:21.973Z] ---
+# [HUGGINGFACE-AI-MODELS] sentence-transformers/paraphrase-multilingual-mpnet-base-v2 (7250 score) - Verified Hugging Face Model: sentence-transformers/paraphrase-multilingual-mpnet
+https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2
+# [HUGGINGFACE-AI-MODELS] Bingsu/adetailer (9950 score) - Verified Hugging Face Model: Bingsu/adetailer (795 likes, 9842651 downloads)
+https://huggingface.co/Bingsu/adetailer

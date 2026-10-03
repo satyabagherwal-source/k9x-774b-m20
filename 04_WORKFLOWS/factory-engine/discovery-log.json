@@ -16738,5 +16738,29 @@
     "downloads": 9875118,
     "qualityScore": 42100,
     "discoveredAt": "2026-10-03T23:42:31.557Z"
+  },
+  {
+    "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "fullName": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: sentence-transformers/paraphrase-multilingual-mpnet-base-v2 (525 likes, 9871387 downloads)",
+    "likes": 525,
+    "downloads": 9871387,
+    "qualityScore": 7250,
+    "discoveredAt": "2026-10-03T23:43:21.971Z"
+  },
+  {
+    "name": "Bingsu/adetailer",
+    "fullName": "Bingsu/adetailer",
+    "url": "https://huggingface.co/Bingsu/adetailer",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Bingsu/adetailer (795 likes, 9842651 downloads)",
+    "likes": 795,
+    "downloads": 9842651,
+    "qualityScore": 9950,
+    "discoveredAt": "2026-10-03T23:43:21.971Z"
   }
 ]
