@@ -16186,5 +16186,50 @@
     "qualityScore": 1426,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T05:57:06.299Z"
+  },
+  {
+    "name": "Render",
+    "fullName": "alexdrone/Render",
+    "url": "https://github.com/alexdrone/Render",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "UIKit a-là SwiftUI.framework [min deployment target iOS10]",
+    "stars": 2148,
+    "forks": 98,
+    "openIssues": 6,
+    "language": "Swift",
+    "qualityScore": 1215,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T06:12:29.319Z"
+  },
+  {
+    "name": "AppPorts",
+    "fullName": "wzh4869/AppPorts",
+    "url": "https://github.com/wzh4869/AppPorts",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "📦 A macOS utility to seamlessly migrate applications to external storage and reclaim local disk space.【一款 macOS 工具，无缝迁移应用到外部存储并自动建立链接，释放宝贵的本地空间】",
+    "stars": 2101,
+    "forks": 97,
+    "openIssues": 6,
+    "language": "Swift",
+    "qualityScore": 1242,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T06:12:29.319Z"
+  },
+  {
+    "name": "SwiftUI-experiments",
+    "fullName": "mikelikesdesign/SwiftUI-experiments",
+    "url": "https://github.com/mikelikesdesign/SwiftUI-experiments",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Examples with SwiftUI and other Apple frameworks that showcase various interactions, animations and more",
+    "stars": 2064,
+    "forks": 113,
+    "openIssues": 0,
+    "language": "Swift",
+    "qualityScore": 1216,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T06:12:29.319Z"
   }
 ]

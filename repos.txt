@@ -3480,3 +3480,11 @@ https://github.com/KartikLabhshetwar/better-shot
 https://github.com/sozercan/kaset
 # [MOBILE-CROSS-PLATFORM] aheze/Popovers (1426 score) - A library to present popovers. Simple, modern, and highly customizable. Not bori
 https://github.com/aheze/Popovers
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T06:12:29.320Z] ---
+# [MOBILE-CROSS-PLATFORM] alexdrone/Render (1215 score) - UIKit a-là SwiftUI.framework [min deployment target iOS10]
+https://github.com/alexdrone/Render
+# [MOBILE-CROSS-PLATFORM] wzh4869/AppPorts (1242 score) - 📦 A macOS utility to seamlessly migrate applications to external storage and re
+https://github.com/wzh4869/AppPorts
+# [MOBILE-CROSS-PLATFORM] mikelikesdesign/SwiftUI-experiments (1216 score) - Examples with SwiftUI and other Apple frameworks that showcase various interacti
+https://github.com/mikelikesdesign/SwiftUI-experiments
