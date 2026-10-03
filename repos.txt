@@ -3330,3 +3330,19 @@ https://github.com/duongductrong/Snapzy
 https://github.com/signerlabs/ShipSwift
 # [MOBILE-CROSS-PLATFORM] yannickl/DynamicColor (1870 score) - Yet another extension to manipulate colors easily in Swift and SwiftUI
 https://github.com/yannickl/DynamicColor
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T01:52:31.486Z] ---
+# [AI-AGENTS] dohooo/helmor (927 score) - Open-source local workbench for multi-agent software development.
+https://github.com/dohooo/helmor
+# [AI-AGENTS] SmythOS/sre (1031 score) - The SmythOS Runtime Environment (SRE) is an open-source, cloud-native runtime fo
+https://github.com/SmythOS/sre
+# [AI-AGENTS] codefuse-ai/codefuse-chatbot (857 score) - An intelligent assistant serving the entire software development lifecycle, powe
+https://github.com/codefuse-ai/codefuse-chatbot
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T01:52:33.746Z] ---
+# [MOBILE-CROSS-PLATFORM] RevenueCat/purchases-ios (2020 score) - In-app purchases and subscriptions made easy. Support for iOS, watchOS, tvOS, ma
+https://github.com/RevenueCat/purchases-ios
+# [MOBILE-CROSS-PLATFORM] Kruszoneq/macUSB (1826 score) - The all-in-one bootable USB creator for Mac
+https://github.com/Kruszoneq/macUSB
+# [MOBILE-CROSS-PLATFORM] pointfreeco/isowords (1748 score) - Open source game built in SwiftUI and the Composable Architecture.
+https://github.com/pointfreeco/isowords
