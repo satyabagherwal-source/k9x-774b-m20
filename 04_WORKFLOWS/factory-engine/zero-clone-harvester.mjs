@@ -15,6 +15,7 @@ import {
   inspectAndRecordHeaders,
   MASTER_SERVICES
 } from './master-circuit-breaker.mjs';
+import { captureHarvestFailureIncident } from './learning-manager.mjs';
 
 
 
@@ -739,12 +740,14 @@ export async function runZeroCloneHarvester(customUrls = null) {
     } catch (err) {
       if (err.code === 'RATE_LIMIT_TRIPPED' || err.message?.includes('CIRCUIT_TRIPPED') || err.message?.includes('RATE_LIMIT')) {
         console.warn(`\n🛑 [MASTER CIRCUIT BREAKER ENGAGED] Quota or Rate limit tripped on ${target.slug}. Halting batch loop immediately to protect API/account.`);
+        captureHarvestFailureIncident(BRAIN_ROOT, target, err);
         results.push({ target: target.slug, status: 'TRIPPED_CIRCUIT', error: err.message });
         releaseTargetLock(target.slug);
         circuitTrippedInRun = true;
         break; // STOP IMMEDIATELY! Never query subsequent repos while quota is exhausted!
       }
       console.error(`[ERROR] Zero-clone processing failed for ${target.slug}: ${err.message}`);
+      captureHarvestFailureIncident(BRAIN_ROOT, target, err);
       results.push({ target: target.slug, status: 'FAILED', error: err.message });
     } finally {
       releaseTargetLock(target.slug);
