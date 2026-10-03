@@ -16411,5 +16411,50 @@
     "qualityScore": 1354,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T07:28:44.832Z"
+  },
+  {
+    "name": "Popups",
+    "fullName": "Mijick/Popups",
+    "url": "https://github.com/Mijick/Popups",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Popups, popovers, sheets, alerts, toasts, banners, (...) presentation made simple. Written with and for SwiftUI.",
+    "stars": 1811,
+    "forks": 93,
+    "openIssues": 31,
+    "language": "Swift",
+    "qualityScore": 1245,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T07:43:57.187Z"
+  },
+  {
+    "name": "Planet",
+    "fullName": "Planetable/Planet",
+    "url": "https://github.com/Planetable/Planet",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Build and host decentralized blogs and websites on your Mac",
+    "stars": 1809,
+    "forks": 77,
+    "openIssues": 80,
+    "language": "Swift",
+    "qualityScore": 1338,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T07:43:57.187Z"
+  },
+  {
+    "name": "later",
+    "fullName": "alyssaxuu/later",
+    "url": "https://github.com/alyssaxuu/later",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Save all your Mac apps for later with one click 🖱️",
+    "stars": 1791,
+    "forks": 80,
+    "openIssues": 21,
+    "language": "Swift",
+    "qualityScore": 1112,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T07:43:57.187Z"
   }
 ]

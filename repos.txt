@@ -3520,3 +3520,11 @@ https://github.com/exyte/Chat
 https://github.com/apple/sample-food-truck
 # [MOBILE-CROSS-PLATFORM] TypeWhisper/typewhisper-mac (1354 score) - Local speech-to-text for macOS  on-device AI, fully private, optional cloud
 https://github.com/TypeWhisper/typewhisper-mac
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T07:43:57.188Z] ---
+# [MOBILE-CROSS-PLATFORM] Mijick/Popups (1245 score) - Popups, popovers, sheets, alerts, toasts, banners, (...) presentation made simpl
+https://github.com/Mijick/Popups
+# [MOBILE-CROSS-PLATFORM] Planetable/Planet (1338 score) - Build and host decentralized blogs and websites on your Mac
+https://github.com/Planetable/Planet
+# [MOBILE-CROSS-PLATFORM] alyssaxuu/later (1112 score) - Save all your Mac apps for later with one click 🖱️
+https://github.com/alyssaxuu/later
