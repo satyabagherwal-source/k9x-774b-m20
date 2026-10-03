@@ -16231,5 +16231,50 @@
     "qualityScore": 1216,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T06:12:29.319Z"
+  },
+  {
+    "name": "DevHub",
+    "fullName": "jaywcjlove/DevHub",
+    "url": "https://github.com/jaywcjlove/DevHub",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A feature-rich offline application, is meticulously crafted to support developers in their daily tasks while ensuring the utmost security of their data",
+    "stars": 2033,
+    "forks": 82,
+    "openIssues": 19,
+    "language": "Swift",
+    "qualityScore": 1179,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T06:42:48.839Z"
+  },
+  {
+    "name": "hermes-desktop",
+    "fullName": "dodo-reach/hermes-desktop",
+    "url": "https://github.com/dodo-reach/hermes-desktop",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "The safest, simplest way to manage Hermes from your Mac. Pure SSH. No gateways, no exposed ports, no browser layer.",
+    "stars": 2023,
+    "forks": 154,
+    "openIssues": 19,
+    "language": "Swift",
+    "qualityScore": 1346,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T06:42:48.839Z"
+  },
+  {
+    "name": "swiftui-notes",
+    "fullName": "heckj/swiftui-notes",
+    "url": "https://github.com/heckj/swiftui-notes",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "content for Using Combine - notes on learning Combine with UIKit and SwiftUI",
+    "stars": 2021,
+    "forks": 203,
+    "openIssues": 24,
+    "language": "Swift",
+    "qualityScore": 1369,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T06:42:50.862Z"
   }
 ]

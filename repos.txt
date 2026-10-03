@@ -3488,3 +3488,11 @@ https://github.com/alexdrone/Render
 https://github.com/wzh4869/AppPorts
 # [MOBILE-CROSS-PLATFORM] mikelikesdesign/SwiftUI-experiments (1216 score) - Examples with SwiftUI and other Apple frameworks that showcase various interacti
 https://github.com/mikelikesdesign/SwiftUI-experiments
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T06:42:51.021Z] ---
+# [MOBILE-CROSS-PLATFORM] jaywcjlove/DevHub (1179 score) - A feature-rich offline application, is meticulously crafted to support developer
+https://github.com/jaywcjlove/DevHub
+# [MOBILE-CROSS-PLATFORM] dodo-reach/hermes-desktop (1346 score) - The safest, simplest way to manage Hermes from your Mac. Pure SSH. No gateways, 
+https://github.com/dodo-reach/hermes-desktop
+# [MOBILE-CROSS-PLATFORM] heckj/swiftui-notes (1369 score) - content for Using Combine - notes on learning Combine with UIKit and SwiftUI
+https://github.com/heckj/swiftui-notes
