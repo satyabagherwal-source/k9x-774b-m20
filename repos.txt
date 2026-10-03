@@ -3438,3 +3438,15 @@ https://github.com/nalexn/ViewInspector
 https://github.com/Blackjacx/WWDC
 # [MOBILE-CROSS-PLATFORM] StikDebug/StikDebug (1639 score) - An on-device debugger/JIT enabler for iOS versions 17.4+, powered by idevice.
 https://github.com/StikDebug/StikDebug
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T04:40:49.148Z] ---
+# [MOBILE-CROSS-PLATFORM] superhighfives/pika (1585 score) - An open-source colour picker app for macOS
+https://github.com/superhighfives/pika
+# [MOBILE-CROSS-PLATFORM] ming1016/SwiftPamphletApp (1670 score) - 戴铭的小册子，一本活的知识手册。使用 SwiftUI + SwiftData + Swift Concurrency Aysnc/Await Actor + G
+https://github.com/ming1016/SwiftPamphletApp
+# [MOBILE-CROSS-PLATFORM] SDWebImage/SDWebImageSwiftUI (1773 score) - SwiftUI Image loading and Animation framework powered by SDWebImage
+https://github.com/SDWebImage/SDWebImageSwiftUI
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T04:40:55.106Z] ---
+# [AI-AGENTS] Rath-Team/OpenRath (659 score) - An open-source, PyTorch-like runtime for dynamic multi-agent and multi-session w
+https://github.com/Rath-Team/OpenRath
