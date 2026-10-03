@@ -3278,3 +3278,11 @@ https://github.com/video-db/Director
 https://github.com/KruxAI/ragbuilder
 # [AI-AGENTS] import-ai/omnibox (962 score) - Anywhere, anything to memory, memory to anything.
 https://github.com/import-ai/omnibox
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T00:04:30.521Z] ---
+# [MOBILE-CROSS-PLATFORM] touchlab/Kermit (797 score) - Kermit by Touchlab is a Kotlin Multiplatform centralized logging utility. 
+https://github.com/touchlab/Kermit
+# [MOBILE-CROSS-PLATFORM] KevinnZou/compose-webview-multiplatform (997 score) - WebView for JetBrains Compose Multiplatform
+https://github.com/KevinnZou/compose-webview-multiplatform
+# [MOBILE-CROSS-PLATFORM] AAkira/Napier (827 score) - Logging library for Kotlin Multiplatform
+https://github.com/AAkira/Napier

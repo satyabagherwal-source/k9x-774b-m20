@@ -15076,5 +15076,50 @@
     "qualityScore": 962,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-02T23:49:15.935Z"
+  },
+  {
+    "name": "Kermit",
+    "fullName": "touchlab/Kermit",
+    "url": "https://github.com/touchlab/Kermit",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Kermit by Touchlab is a Kotlin Multiplatform centralized logging utility. ",
+    "stars": 1039,
+    "forks": 52,
+    "openIssues": 6,
+    "language": "Kotlin",
+    "qualityScore": 797,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T00:04:30.520Z"
+  },
+  {
+    "name": "compose-webview-multiplatform",
+    "fullName": "KevinnZou/compose-webview-multiplatform",
+    "url": "https://github.com/KevinnZou/compose-webview-multiplatform",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "WebView for JetBrains Compose Multiplatform",
+    "stars": 1013,
+    "forks": 134,
+    "openIssues": 142,
+    "language": "Kotlin",
+    "qualityScore": 997,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T00:04:30.520Z"
+  },
+  {
+    "name": "Napier",
+    "fullName": "AAkira/Napier",
+    "url": "https://github.com/AAkira/Napier",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Logging library for Kotlin Multiplatform",
+    "stars": 1005,
+    "forks": 42,
+    "openIssues": 31,
+    "language": "Kotlin",
+    "qualityScore": 827,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T00:04:30.521Z"
   }
 ]
