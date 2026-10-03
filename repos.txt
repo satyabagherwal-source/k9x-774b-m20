@@ -3386,3 +3386,7 @@ https://github.com/oceanbase/powercontext
 https://github.com/LodyAI/Lody
 # [AI-AGENTS] Ricky-7-Yan/intelligent-audit-system (726 score) - AuditPilot: auditable enterprise AI agents for evidence-grounded workflows, gove
 https://github.com/Ricky-7-Yan/intelligent-audit-system
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T02:53:30.038Z] ---
+# [AI-AGENTS] mateaix/mateclaw (1125 score) - 🤖 MateClaw — Your second brain with Multi-Agent Orchestration, MCP Protocol, Sk
+https://github.com/mateaix/mateclaw

@@ -15676,5 +15676,20 @@
     "qualityScore": 726,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T02:38:19.149Z"
+  },
+  {
+    "name": "mateclaw",
+    "fullName": "mateaix/mateclaw",
+    "url": "https://github.com/mateaix/mateclaw",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🤖 MateClaw — Your second brain with Multi-Agent Orchestration, MCP Protocol, Skills & Memory, Dream, and Multi-Channel Support. Built on Spring AI Alibaba.",
+    "stars": 1147,
+    "forks": 337,
+    "openIssues": 180,
+    "language": "Java",
+    "qualityScore": 1125,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T02:53:30.036Z"
   }
 ]
