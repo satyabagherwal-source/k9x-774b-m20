@@ -15736,5 +15736,50 @@
     "qualityScore": 1106,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T03:08:43.945Z"
+  },
+  {
+    "name": "skrl",
+    "fullName": "Toni-SM/skrl",
+    "url": "https://github.com/Toni-SM/skrl",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Modular Reinforcement Learning (RL) library (implemented in PyTorch, JAX, and NVIDIA Warp) with support for Gymnasium/Gym, NVIDIA Isaac Lab, MuJoCo Playground and other environments",
+    "stars": 1098,
+    "forks": 157,
+    "openIssues": 31,
+    "language": "Python",
+    "qualityScore": 808,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T03:39:36.648Z"
+  },
+  {
+    "name": "loki-mode",
+    "fullName": "asklokesh/loki-mode",
+    "url": "https://github.com/asklokesh/loki-mode",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Autonomous software factory. Give it a GitHub issue, a spec or a one-line task; get back a pull request with a signed receipt anyone can re-check offline. Runs on your machine with your own keys: Claude, Codex, OpenCode.",
+    "stars": 1080,
+    "forks": 208,
+    "openIssues": 15,
+    "language": "Shell",
+    "qualityScore": 882,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T03:39:36.648Z"
+  },
+  {
+    "name": "GPTSwarm",
+    "fullName": "metauto-ai/GPTSwarm",
+    "url": "https://github.com/metauto-ai/GPTSwarm",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🐝  The First Self-Improving agents with RL / Prompting Optimization",
+    "stars": 1051,
+    "forks": 109,
+    "openIssues": 4,
+    "language": "Python",
+    "qualityScore": 816,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T03:39:36.649Z"
   }
 ]

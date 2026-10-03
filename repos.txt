@@ -3398,3 +3398,11 @@ https://github.com/hanruihua/ir-sim
 https://github.com/massgen/MassGen
 # [AI-AGENTS] cognizant-ai-lab/neuro-san-studio (1106 score) - A playground for neuro-san
 https://github.com/cognizant-ai-lab/neuro-san-studio
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T03:39:36.654Z] ---
+# [AI-AGENTS] Toni-SM/skrl (808 score) - Modular Reinforcement Learning (RL) library (implemented in PyTorch, JAX, and NV
+https://github.com/Toni-SM/skrl
+# [AI-AGENTS] asklokesh/loki-mode (882 score) - Autonomous software factory. Give it a GitHub issue, a spec or a one-line task; 
+https://github.com/asklokesh/loki-mode
+# [AI-AGENTS] metauto-ai/GPTSwarm (816 score) - 🐝  The First Self-Improving agents with RL / Prompting Optimization
+https://github.com/metauto-ai/GPTSwarm
