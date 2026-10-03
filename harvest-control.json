@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-03T19:27:15.925Z",
+  "lastUpdated": "2026-10-03T19:27:31.519Z",
   "updatedBy": "repo-mode-switcher:public",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -164,8 +164,8 @@
         "id": "Agent-Alpha",
         "domain": "ai-agents",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:27:07.699Z",
-        "lastActiveAt": "2026-10-03T19:11:57.323Z",
+        "cooldownUntil": "2026-10-03T19:42:31.484Z",
+        "lastActiveAt": "2026-10-03T19:27:28.898Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -174,8 +174,8 @@
         "id": "Agent-Beta",
         "domain": "fullstack-ui",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:27:06.950Z",
-        "lastActiveAt": "2026-10-03T19:11:57.327Z",
+        "cooldownUntil": "2026-10-03T19:42:31.520Z",
+        "lastActiveAt": "2026-10-03T19:27:28.907Z",
         "lastHarvestedAt": "2026-10-02T09:08:08.002Z",
         "totalHarvested": 2,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -204,8 +204,8 @@
         "id": "Agent-Epsilon",
         "domain": "mobile-cross-platform",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:27:07.485Z",
-        "lastActiveAt": "2026-10-03T19:11:57.333Z",
+        "cooldownUntil": "2026-10-03T19:42:31.507Z",
+        "lastActiveAt": "2026-10-03T19:27:28.910Z",
         "lastHarvestedAt": "2026-10-02T09:49:15.558Z",
         "totalHarvested": 9,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -214,8 +214,8 @@
         "id": "Agent-Zeta",
         "domain": "devops-cloud-infrastructure",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:27:07.111Z",
-        "lastActiveAt": "2026-10-03T19:11:57.338Z",
+        "cooldownUntil": "2026-10-03T19:42:31.490Z",
+        "lastActiveAt": "2026-10-03T19:27:28.913Z",
         "lastHarvestedAt": "2026-10-02T09:49:14.838Z",
         "totalHarvested": 6,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 4961,
-      "resetEpoch": 1791056550925,
-      "resetAt": "2026-10-03T19:42:30.925Z",
-      "trippedAt": "2026-10-03T19:27:15.925Z",
+      "remaining": 0,
+      "resetEpoch": 1791056566519,
+      "resetAt": "2026-10-03T19:42:46.519Z",
+      "trippedAt": "2026-10-03T19:27:31.519Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 3
+      "consecutiveBlocks": 5
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
