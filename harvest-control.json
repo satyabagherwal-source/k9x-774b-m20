@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-03T18:27:13.535Z",
+  "lastUpdated": "2026-10-03T18:41:43.171Z",
   "updatedBy": "repo-mode-switcher:public",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -164,8 +164,8 @@
         "id": "Agent-Alpha",
         "domain": "ai-agents",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T18:41:31.437Z",
-        "lastActiveAt": "2026-10-03T18:26:22.661Z",
+        "cooldownUntil": "2026-10-03T18:56:43.163Z",
+        "lastActiveAt": "2026-10-03T18:41:40.854Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -174,8 +174,8 @@
         "id": "Agent-Beta",
         "domain": "fullstack-ui",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T18:41:31.081Z",
-        "lastActiveAt": "2026-10-03T18:26:22.666Z",
+        "cooldownUntil": "2026-10-03T18:56:43.033Z",
+        "lastActiveAt": "2026-10-03T18:41:40.858Z",
         "lastHarvestedAt": "2026-10-02T09:08:08.002Z",
         "totalHarvested": 2,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -184,8 +184,8 @@
         "id": "Agent-Gamma",
         "domain": "high-perf-systems",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T18:41:30.716Z",
-        "lastActiveAt": "2026-10-03T18:26:22.668Z",
+        "cooldownUntil": "2026-10-03T18:56:42.965Z",
+        "lastActiveAt": "2026-10-03T18:41:40.860Z",
         "lastHarvestedAt": "2026-10-02T09:22:50.999Z",
         "totalHarvested": 4,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -194,8 +194,8 @@
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T18:41:30.191Z",
-        "lastActiveAt": "2026-10-03T18:26:22.672Z",
+        "cooldownUntil": "2026-10-03T18:56:42.761Z",
+        "lastActiveAt": "2026-10-03T18:41:40.862Z",
         "lastHarvestedAt": "2026-10-02T09:42:39.815Z",
         "totalHarvested": 7,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -204,8 +204,8 @@
         "id": "Agent-Epsilon",
         "domain": "mobile-cross-platform",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T18:41:31.261Z",
-        "lastActiveAt": "2026-10-03T18:26:22.675Z",
+        "cooldownUntil": "2026-10-03T18:56:43.097Z",
+        "lastActiveAt": "2026-10-03T18:41:40.864Z",
         "lastHarvestedAt": "2026-10-02T09:49:15.558Z",
         "totalHarvested": 9,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -214,8 +214,8 @@
         "id": "Agent-Zeta",
         "domain": "devops-cloud-infrastructure",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T18:41:31.193Z",
-        "lastActiveAt": "2026-10-03T18:26:22.684Z",
+        "cooldownUntil": "2026-10-03T18:56:43.172Z",
+        "lastActiveAt": "2026-10-03T18:41:40.871Z",
         "lastHarvestedAt": "2026-10-02T09:49:14.838Z",
         "totalHarvested": 6,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -244,8 +244,8 @@
         "id": "Agent-Iota",
         "domain": "cognitive-neuroscience-systems",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T18:41:30.813Z",
-        "lastActiveAt": "2026-10-03T18:26:22.690Z",
+        "cooldownUntil": "2026-10-03T18:56:43.017Z",
+        "lastActiveAt": "2026-10-03T18:41:40.878Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -272,11 +272,11 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791052948535,
-      "resetAt": "2026-10-03T18:42:28.535Z",
-      "trippedAt": "2026-10-03T18:27:13.535Z",
+      "resetEpoch": 1791053818171,
+      "resetAt": "2026-10-03T18:56:58.171Z",
+      "trippedAt": "2026-10-03T18:41:43.171Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 4
+      "consecutiveBlocks": 7
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
