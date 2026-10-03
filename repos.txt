@@ -3544,3 +3544,11 @@ https://huggingface.co/Aleph-Alpha/Kolibri-1
 https://huggingface.co/FermionResearch/Phonon-2
 # [HUGGINGFACE-AI-MODELS] Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw (2270 score) - Verified Hugging Face Model: Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw (175 likes
 https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T21:16:35.115Z] ---
+# [HUGGINGFACE-AI-MODELS] pablodawson/MiniMax-H3-360-Orbit-LoRA (3600 score) - Verified Hugging Face Model: pablodawson/MiniMax-H3-360-Orbit-LoRA (160 likes, 4
+https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA
+# [HUGGINGFACE-AI-MODELS] Venastine-Research/Xing4.0-29B-A4B-GGUF (3590 score) - Verified Hugging Face Model: Venastine-Research/Xing4.0-29B-A4B-GGUF (159 likes,
+https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF
+# [HUGGINGFACE-AI-MODELS] NaiveAI/Naive-N0.5-Flash (2947 score) - Verified Hugging Face Model: NaiveAI/Naive-N0.5-Flash (145 likes, 1497 downloads
+https://huggingface.co/NaiveAI/Naive-N0.5-Flash

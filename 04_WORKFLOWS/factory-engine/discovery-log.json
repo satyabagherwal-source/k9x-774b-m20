@@ -16522,5 +16522,41 @@
     "downloads": 520,
     "qualityScore": 2270,
     "discoveredAt": "2026-10-03T21:16:21.749Z"
+  },
+  {
+    "name": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "fullName": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: pablodawson/MiniMax-H3-360-Orbit-LoRA (160 likes, 4924 downloads)",
+    "likes": 160,
+    "downloads": 4924,
+    "qualityScore": 3600,
+    "discoveredAt": "2026-10-03T21:16:35.114Z"
+  },
+  {
+    "name": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "fullName": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Venastine-Research/Xing4.0-29B-A4B-GGUF (159 likes, 11013 downloads)",
+    "likes": 159,
+    "downloads": 11013,
+    "qualityScore": 3590,
+    "discoveredAt": "2026-10-03T21:16:35.114Z"
+  },
+  {
+    "name": "NaiveAI/Naive-N0.5-Flash",
+    "fullName": "NaiveAI/Naive-N0.5-Flash",
+    "url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: NaiveAI/Naive-N0.5-Flash (145 likes, 1497 downloads)",
+    "likes": 145,
+    "downloads": 1497,
+    "qualityScore": 2947,
+    "discoveredAt": "2026-10-03T21:16:35.114Z"
   }
 ]
