@@ -6,7 +6,7 @@
     },
     "fullstack-ui": {
       "queryIndex": 6,
-      "page": 1
+      "page": 2
     },
     "high-perf-systems": {
       "queryIndex": 3,
@@ -38,5 +38,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 84,
-  "lastReplenishedAt": "2026-10-03T18:12:48.555Z"
+  "lastReplenishedAt": "2026-10-03T18:28:13.217Z"
 }
