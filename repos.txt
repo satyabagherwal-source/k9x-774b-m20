@@ -3346,3 +3346,19 @@ https://github.com/RevenueCat/purchases-ios
 https://github.com/Kruszoneq/macUSB
 # [MOBILE-CROSS-PLATFORM] pointfreeco/isowords (1748 score) - Open source game built in SwiftUI and the Composable Architecture.
 https://github.com/pointfreeco/isowords
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T02:07:50.447Z] ---
+# [AI-AGENTS] ChesterRa/cccc (948 score) - Coordinate your coding agents like a group chat — read receipts, delivery tracki
+https://github.com/ChesterRa/cccc
+# [AI-AGENTS] wanxingai/LightAgent (921 score) - LightAgent: Lightweight Python framework for OpenAI-compatible agents with tools
+https://github.com/wanxingai/LightAgent
+# [AI-AGENTS] modu-ai/moai-adk (957 score) - Agentic development harness for Claude Code — SPEC-driven plan/run/sync, TRUST 5
+https://github.com/modu-ai/moai-adk
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T02:07:52.503Z] ---
+# [MOBILE-CROSS-PLATFORM] 0xCUB3/wBlock (1773 score) - The next-generation ad blocker for Safari. Free and open source on macOS, iOS, i
+https://github.com/0xCUB3/wBlock
+# [MOBILE-CROSS-PLATFORM] Louis-CFM/coucou (2084 score) - A tiny friend that lives in your notch (macOS) or at the top of your screen (Win
+https://github.com/Louis-CFM/coucou
+# [MOBILE-CROSS-PLATFORM] mazzzystar/Queryable (1807 score) - Run OpenAI's CLIP and Apple's MobileCLIP model on iOS to search photos.
+https://github.com/mazzzystar/Queryable
