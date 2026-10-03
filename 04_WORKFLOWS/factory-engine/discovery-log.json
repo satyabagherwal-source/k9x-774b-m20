@@ -16141,5 +16141,50 @@
     "qualityScore": 1586,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T05:26:38.480Z"
+  },
+  {
+    "name": "better-shot",
+    "fullName": "KartikLabhshetwar/better-shot",
+    "url": "https://github.com/KartikLabhshetwar/better-shot",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Screenshot, screen recording, and video editor for macOS. Native SwiftUI app with capture deck, 75+ customizable shortcuts, URL scheme automation, and self-hosted cloud sharing. Open-source alternative to CleanShot X and Loom.",
+    "stars": 2358,
+    "forks": 141,
+    "openIssues": 14,
+    "language": "Swift",
+    "qualityScore": 1499,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T05:57:06.299Z"
+  },
+  {
+    "name": "kaset",
+    "fullName": "sozercan/kaset",
+    "url": "https://github.com/sozercan/kaset",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "📼 The missing YouTube and YouTube Music macOS app",
+    "stars": 2333,
+    "forks": 172,
+    "openIssues": 122,
+    "language": "Swift",
+    "qualityScore": 1668,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T05:57:06.299Z"
+  },
+  {
+    "name": "Popovers",
+    "fullName": "aheze/Popovers",
+    "url": "https://github.com/aheze/Popovers",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A library to present popovers. Simple, modern, and highly customizable. Not boring!",
+    "stars": 2212,
+    "forks": 134,
+    "openIssues": 65,
+    "language": "Swift",
+    "qualityScore": 1426,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T05:57:06.299Z"
   }
 ]

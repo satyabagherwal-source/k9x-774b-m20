@@ -3472,3 +3472,11 @@ https://github.com/iPlug2/iPlug2
 https://github.com/jtrivedi/Wave
 # [MOBILE-CROSS-PLATFORM] iziz/libPhoneNumber-iOS (1586 score) - iOS port of Google's libphonenumber with Objective-C core, Swift facade, SwiftUI
 https://github.com/iziz/libPhoneNumber-iOS
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T05:57:06.300Z] ---
+# [MOBILE-CROSS-PLATFORM] KartikLabhshetwar/better-shot (1499 score) - Screenshot, screen recording, and video editor for macOS. Native SwiftUI app wit
+https://github.com/KartikLabhshetwar/better-shot
+# [MOBILE-CROSS-PLATFORM] sozercan/kaset (1668 score) - 📼 The missing YouTube and YouTube Music macOS app
+https://github.com/sozercan/kaset
+# [MOBILE-CROSS-PLATFORM] aheze/Popovers (1426 score) - A library to present popovers. Simple, modern, and highly customizable. Not bori
+https://github.com/aheze/Popovers
