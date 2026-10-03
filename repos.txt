@@ -3406,3 +3406,11 @@ https://github.com/Toni-SM/skrl
 https://github.com/asklokesh/loki-mode
 # [AI-AGENTS] metauto-ai/GPTSwarm (816 score) - 🐝  The First Self-Improving agents with RL / Prompting Optimization
 https://github.com/metauto-ai/GPTSwarm
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T03:54:55.730Z] ---
+# [AI-AGENTS] Human-Agent-Society/CORAL (857 score) - Open-source autoresearch powered by autonomous coding agents. Run Claude Code, O
+https://github.com/Human-Agent-Society/CORAL
+# [AI-AGENTS] Agent-Field/SWE-AF (830 score) - Autonomous software engineering fleet of AI agents for production-grade PRs on A
+https://github.com/Agent-Field/SWE-AF
+# [AI-AGENTS] pzqpzq/Principia (773 score) - Principia extracts reusable principles, composes those principles into traceable
+https://github.com/pzqpzq/Principia

@@ -15781,5 +15781,50 @@
     "qualityScore": 816,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T03:39:36.649Z"
+  },
+  {
+    "name": "CORAL",
+    "fullName": "Human-Agent-Society/CORAL",
+    "url": "https://github.com/Human-Agent-Society/CORAL",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source autoresearch powered by autonomous coding agents. Run Claude Code, OpenCode, and Codex with grading, shared knowledge, and multi-agent evolution. Accepted at COLM 2026.",
+    "stars": 1044,
+    "forks": 131,
+    "openIssues": 23,
+    "language": "Python",
+    "qualityScore": 857,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T03:54:55.729Z"
+  },
+  {
+    "name": "SWE-AF",
+    "fullName": "Agent-Field/SWE-AF",
+    "url": "https://github.com/Agent-Field/SWE-AF",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Autonomous software engineering fleet of AI agents for production-grade PRs on AgentField: plan, code, test, and ship.",
+    "stars": 1026,
+    "forks": 178,
+    "openIssues": 7,
+    "language": "Go",
+    "qualityScore": 830,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T03:54:55.729Z"
+  },
+  {
+    "name": "Principia",
+    "fullName": "pzqpzq/Principia",
+    "url": "https://github.com/pzqpzq/Principia",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Principia extracts reusable principles, composes those principles into traceable research ideas, and helps researchers inspect why an idea may be worth testing.",
+    "stars": 995,
+    "forks": 51,
+    "openIssues": 5,
+    "language": "Rich Text Format",
+    "qualityScore": 773,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T03:54:55.729Z"
   }
 ]
