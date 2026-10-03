@@ -3584,3 +3584,11 @@ https://huggingface.co/intfloat/multilingual-e5-small
 https://huggingface.co/argmaxinc/whisperkit-coreml
 # [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-8B (22700 score) - Verified Hugging Face Model: Qwen/Qwen3-8B (2070 likes, 10703016 downloads)
 https://huggingface.co/Qwen/Qwen3-8B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T23:42:31.558Z] ---
+# [HUGGINGFACE-AI-MODELS] google/vit-base-patch16-224 (12070 score) - Verified Hugging Face Model: google/vit-base-patch16-224 (1007 likes, 10638107 d
+https://huggingface.co/google/vit-base-patch16-224
+# [HUGGINGFACE-AI-MODELS] BAAI/bge-base-en-v1.5 (7050 score) - Verified Hugging Face Model: BAAI/bge-base-en-v1.5 (505 likes, 10078737 download
+https://huggingface.co/BAAI/bge-base-en-v1.5
+# [HUGGINGFACE-AI-MODELS] google/gemma-4-31B-it (42100 score) - Verified Hugging Face Model: google/gemma-4-31B-it (4010 likes, 9875118 download
+https://huggingface.co/google/gemma-4-31B-it
