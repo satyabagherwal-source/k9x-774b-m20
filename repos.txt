@@ -3414,3 +3414,19 @@ https://github.com/Human-Agent-Society/CORAL
 https://github.com/Agent-Field/SWE-AF
 # [AI-AGENTS] pzqpzq/Principia (773 score) - Principia extracts reusable principles, composes those principles into traceable
 https://github.com/pzqpzq/Principia
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T04:10:02.711Z] ---
+# [MOBILE-CROSS-PLATFORM] sindresorhus/KeyboardShortcuts (1686 score) - ⌨️ Add user-customizable global keyboard shortcuts (hotkeys) to your macOS app i
+https://github.com/sindresorhus/KeyboardShortcuts
+# [MOBILE-CROSS-PLATFORM] paololeonardi/WaterfallGrid (1654 score) - A waterfall grid layout view for SwiftUI.
+https://github.com/paololeonardi/WaterfallGrid
+# [MOBILE-CROSS-PLATFORM] sparrowcode/AlertKit (1525 score) - Native alert from Apple Music & Feedback. Contains Done, Heart & Message and oth
+https://github.com/sparrowcode/AlertKit
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T04:10:06.805Z] ---
+# [AI-AGENTS] xvirobotics/metabot (823 score) - 构建受监督的、自我进化的 Agent 组织的基础设施 | Infrastructure for supervised, self-improving agent
+https://github.com/xvirobotics/metabot
+# [AI-AGENTS] edenfunf/reelmimic (817 score) - Show it a video you love. Get a new video in the same style. An AI crew (Claude 
+https://github.com/edenfunf/reelmimic
+# [AI-AGENTS] androoAGI/starnet (725 score) - A living pixel-art station where real AI agents do real work. Local-first deskto
+https://github.com/androoAGI/starnet
