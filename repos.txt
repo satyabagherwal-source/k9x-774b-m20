@@ -3390,3 +3390,11 @@ https://github.com/Ricky-7-Yan/intelligent-audit-system
 # --- Automatically Discovered by AI Scout Engine [2026-10-03T02:53:30.038Z] ---
 # [AI-AGENTS] mateaix/mateclaw (1125 score) - 🤖 MateClaw — Your second brain with Multi-Agent Orchestration, MCP Protocol, Sk
 https://github.com/mateaix/mateclaw
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T03:08:43.946Z] ---
+# [AI-AGENTS] hanruihua/ir-sim (866 score) - A  Python-based lightweight robot simulator designed for navigation, control, an
+https://github.com/hanruihua/ir-sim
+# [AI-AGENTS] massgen/MassGen (775 score) - 🚀 MassGen is an open-source multi-agent scaling system that runs in your termin
+https://github.com/massgen/MassGen
+# [AI-AGENTS] cognizant-ai-lab/neuro-san-studio (1106 score) - A playground for neuro-san
+https://github.com/cognizant-ai-lab/neuro-san-studio

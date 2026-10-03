@@ -15691,5 +15691,50 @@
     "qualityScore": 1125,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T02:53:30.036Z"
+  },
+  {
+    "name": "ir-sim",
+    "fullName": "hanruihua/ir-sim",
+    "url": "https://github.com/hanruihua/ir-sim",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A  Python-based lightweight robot simulator designed for navigation, control, and learning",
+    "stars": 1140,
+    "forks": 147,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 866,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T03:08:43.945Z"
+  },
+  {
+    "name": "MassGen",
+    "fullName": "massgen/MassGen",
+    "url": "https://github.com/massgen/MassGen",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "🚀 MassGen is an open-source multi-agent scaling system that runs in your terminal, autonomously orchestrating frontier models and agents to collaborate, reason, and produce high-quality results. | Join us on Discord: discord.massgen.ai",
+    "stars": 1135,
+    "forks": 178,
+    "openIssues": 2,
+    "language": "Python",
+    "qualityScore": 775,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T03:08:43.945Z"
+  },
+  {
+    "name": "neuro-san-studio",
+    "fullName": "cognizant-ai-lab/neuro-san-studio",
+    "url": "https://github.com/cognizant-ai-lab/neuro-san-studio",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A playground for neuro-san",
+    "stars": 1128,
+    "forks": 305,
+    "openIssues": 129,
+    "language": "Python",
+    "qualityScore": 1106,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T03:08:43.945Z"
   }
 ]
