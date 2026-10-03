@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-03T20:13:40.885Z",
+  "lastUpdated": "2026-10-03T20:28:15.089Z",
   "updatedBy": "repo-mode-switcher:public",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -184,8 +184,8 @@
         "id": "Agent-Gamma",
         "domain": "high-perf-systems",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T20:27:56.444Z",
-        "lastActiveAt": "2026-10-03T20:12:53.224Z",
+        "cooldownUntil": "2026-10-03T20:43:15.090Z",
+        "lastActiveAt": "2026-10-03T20:28:03.007Z",
         "lastHarvestedAt": "2026-10-02T09:22:50.999Z",
         "totalHarvested": 4,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -194,8 +194,8 @@
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T20:27:56.140Z",
-        "lastActiveAt": "2026-10-03T20:12:53.230Z",
+        "cooldownUntil": "2026-10-03T20:43:13.826Z",
+        "lastActiveAt": "2026-10-03T20:28:03.012Z",
         "lastHarvestedAt": "2026-10-02T09:42:39.815Z",
         "totalHarvested": 7,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -244,8 +244,8 @@
         "id": "Agent-Iota",
         "domain": "cognitive-neuroscience-systems",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T20:27:57.348Z",
-        "lastActiveAt": "2026-10-03T20:12:53.233Z",
+        "cooldownUntil": "2026-10-03T20:43:14.000Z",
+        "lastActiveAt": "2026-10-03T20:28:03.015Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791059335884,
-      "resetAt": "2026-10-03T20:28:55.884Z",
-      "trippedAt": "2026-10-03T20:13:40.884Z",
+      "remaining": 3022,
+      "resetEpoch": 1791060210089,
+      "resetAt": "2026-10-03T20:43:30.089Z",
+      "trippedAt": "2026-10-03T20:28:15.089Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 4
+      "consecutiveBlocks": 3
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
