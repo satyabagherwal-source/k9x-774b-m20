@@ -16276,5 +16276,50 @@
     "qualityScore": 1369,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T06:42:50.862Z"
+  },
+  {
+    "name": "sqlite-data",
+    "fullName": "pointfreeco/sqlite-data",
+    "url": "https://github.com/pointfreeco/sqlite-data",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A fast, lightweight replacement for SwiftData, powered by SQL and supporting CloudKit synchronization.",
+    "stars": 1936,
+    "forks": 152,
+    "openIssues": 33,
+    "language": "Swift",
+    "qualityScore": 1230,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T06:58:04.399Z"
+  },
+  {
+    "name": "chops",
+    "fullName": "Shpigford/chops",
+    "url": "https://github.com/Shpigford/chops",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Your AI agent skills, finally organized. A macOS app to browse, edit, and manage skills across Claude Code, Cursor, Codex, Windsurf, and Amp.",
+    "stars": 1931,
+    "forks": 124,
+    "openIssues": 11,
+    "language": "Swift",
+    "qualityScore": 1175,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T06:58:04.400Z"
+  },
+  {
+    "name": "TTGTagCollectionView",
+    "fullName": "zekunyan/TTGTagCollectionView",
+    "url": "https://github.com/zekunyan/TTGTagCollectionView",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Useful for showing text or custom view tags in a vertical or horizontal scrollable view and support Autolayout at the same time. It is highly customizable that most features of the text tag can be configured. 标签流显示控件，同时支持文字或自定义View",
+    "stars": 1895,
+    "forks": 263,
+    "openIssues": 0,
+    "language": "Swift",
+    "qualityScore": 1276,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T06:58:04.400Z"
   }
 ]

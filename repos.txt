@@ -3496,3 +3496,11 @@ https://github.com/jaywcjlove/DevHub
 https://github.com/dodo-reach/hermes-desktop
 # [MOBILE-CROSS-PLATFORM] heckj/swiftui-notes (1369 score) - content for Using Combine - notes on learning Combine with UIKit and SwiftUI
 https://github.com/heckj/swiftui-notes
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T06:58:04.401Z] ---
+# [MOBILE-CROSS-PLATFORM] pointfreeco/sqlite-data (1230 score) - A fast, lightweight replacement for SwiftData, powered by SQL and supporting Clo
+https://github.com/pointfreeco/sqlite-data
+# [MOBILE-CROSS-PLATFORM] Shpigford/chops (1175 score) - Your AI agent skills, finally organized. A macOS app to browse, edit, and manage
+https://github.com/Shpigford/chops
+# [MOBILE-CROSS-PLATFORM] zekunyan/TTGTagCollectionView (1276 score) - Useful for showing text or custom view tags in a vertical or horizontal scrollab
+https://github.com/zekunyan/TTGTagCollectionView
