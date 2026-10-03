@@ -16630,5 +16630,41 @@
     "downloads": 15637691,
     "qualityScore": 43960,
     "discoveredAt": "2026-10-03T22:34:26.533Z"
+  },
+  {
+    "name": "Qwen/Qwen3-VL-8B-Instruct",
+    "fullName": "Qwen/Qwen3-VL-8B-Instruct",
+    "url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Qwen/Qwen3-VL-8B-Instruct (1163 likes, 14599193 downloads)",
+    "likes": 1163,
+    "downloads": 14599193,
+    "qualityScore": 13630,
+    "discoveredAt": "2026-10-03T22:35:11.017Z"
+  },
+  {
+    "name": "nomic-ai/nomic-embed-text-v1.5",
+    "fullName": "nomic-ai/nomic-embed-text-v1.5",
+    "url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: nomic-ai/nomic-embed-text-v1.5 (943 likes, 13102668 downloads)",
+    "likes": 943,
+    "downloads": 13102668,
+    "qualityScore": 11430,
+    "discoveredAt": "2026-10-03T22:35:11.017Z"
+  },
+  {
+    "name": "google/gemma-4-26B-A4B-it",
+    "fullName": "google/gemma-4-26B-A4B-it",
+    "url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: google/gemma-4-26B-A4B-it (1588 likes, 12963043 downloads)",
+    "likes": 1588,
+    "downloads": 12963043,
+    "qualityScore": 17880,
+    "discoveredAt": "2026-10-03T22:35:11.018Z"
   }
 ]

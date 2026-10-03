@@ -3568,3 +3568,11 @@ https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese
 https://huggingface.co/FacebookAI/xlm-roberta-base
 # [HUGGINGFACE-AI-MODELS] openai-community/gpt2 (43960 score) - Verified Hugging Face Model: openai-community/gpt2 (4196 likes, 15637691 downloa
 https://huggingface.co/openai-community/gpt2
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T22:35:11.018Z] ---
+# [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-VL-8B-Instruct (13630 score) - Verified Hugging Face Model: Qwen/Qwen3-VL-8B-Instruct (1163 likes, 14599193 dow
+https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct
+# [HUGGINGFACE-AI-MODELS] nomic-ai/nomic-embed-text-v1.5 (11430 score) - Verified Hugging Face Model: nomic-ai/nomic-embed-text-v1.5 (943 likes, 13102668
+https://huggingface.co/nomic-ai/nomic-embed-text-v1.5
+# [HUGGINGFACE-AI-MODELS] google/gemma-4-26B-A4B-it (17880 score) - Verified Hugging Face Model: google/gemma-4-26B-A4B-it (1588 likes, 12963043 dow
+https://huggingface.co/google/gemma-4-26B-A4B-it
