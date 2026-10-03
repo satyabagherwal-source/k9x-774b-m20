@@ -15631,5 +15631,50 @@
     "qualityScore": 1869,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T02:23:09.570Z"
+  },
+  {
+    "name": "powercontext",
+    "fullName": "oceanbase/powercontext",
+    "url": "https://github.com/oceanbase/powercontext",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Not only memory but a full story.",
+    "stars": 1185,
+    "forks": 239,
+    "openIssues": 113,
+    "language": "Python",
+    "qualityScore": 1114,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T02:38:19.149Z"
+  },
+  {
+    "name": "Lody",
+    "fullName": "LodyAI/Lody",
+    "url": "https://github.com/LodyAI/Lody",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Share coding agents with your team on phone and desktop",
+    "stars": 1176,
+    "forks": 135,
+    "openIssues": 152,
+    "language": "TypeScript",
+    "qualityScore": 979,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T02:38:19.149Z"
+  },
+  {
+    "name": "intelligent-audit-system",
+    "fullName": "Ricky-7-Yan/intelligent-audit-system",
+    "url": "https://github.com/Ricky-7-Yan/intelligent-audit-system",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "AuditPilot: auditable enterprise AI agents for evidence-grounded workflows, governed tools, evaluation harnesses, human review, and remediation delivery.",
+    "stars": 1172,
+    "forks": 112,
+    "openIssues": 3,
+    "language": "Python",
+    "qualityScore": 726,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T02:38:19.149Z"
   }
 ]

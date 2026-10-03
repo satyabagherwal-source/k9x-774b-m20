@@ -3378,3 +3378,11 @@ https://github.com/relatedcode/ProgressHUD
 https://github.com/hmlongco/Factory
 # [MOBILE-CROSS-PLATFORM] kitlangton/Hex (1869 score) - Legacy Swift Hex app. Try the Rust rewrite at hex.kitlangton.com; new source at 
 https://github.com/kitlangton/Hex
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T02:38:19.149Z] ---
+# [AI-AGENTS] oceanbase/powercontext (1114 score) - Not only memory but a full story.
+https://github.com/oceanbase/powercontext
+# [AI-AGENTS] LodyAI/Lody (979 score) - Share coding agents with your team on phone and desktop
+https://github.com/LodyAI/Lody
+# [AI-AGENTS] Ricky-7-Yan/intelligent-audit-system (726 score) - AuditPilot: auditable enterprise AI agents for evidence-grounded workflows, gove
+https://github.com/Ricky-7-Yan/intelligent-audit-system
