@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-03T18:59:19.121Z",
+  "lastUpdated": "2026-10-03T19:14:45.134Z",
   "updatedBy": "repo-mode-switcher:public",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -164,8 +164,8 @@
         "id": "Agent-Alpha",
         "domain": "ai-agents",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:14:19.115Z",
-        "lastActiveAt": "2026-10-03T18:59:08.506Z",
+        "cooldownUntil": "2026-10-03T19:29:43.300Z",
+        "lastActiveAt": "2026-10-03T19:14:37.808Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -174,8 +174,8 @@
         "id": "Agent-Beta",
         "domain": "fullstack-ui",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:14:19.091Z",
-        "lastActiveAt": "2026-10-03T18:59:08.517Z",
+        "cooldownUntil": "2026-10-03T19:29:43.322Z",
+        "lastActiveAt": "2026-10-03T19:14:37.831Z",
         "lastHarvestedAt": "2026-10-02T09:08:08.002Z",
         "totalHarvested": 2,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -184,8 +184,8 @@
         "id": "Agent-Gamma",
         "domain": "high-perf-systems",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:14:16.494Z",
-        "lastActiveAt": "2026-10-03T18:59:08.530Z",
+        "cooldownUntil": "2026-10-03T19:29:44.864Z",
+        "lastActiveAt": "2026-10-03T19:14:37.855Z",
         "lastHarvestedAt": "2026-10-02T09:22:50.999Z",
         "totalHarvested": 4,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -194,8 +194,8 @@
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:14:16.218Z",
-        "lastActiveAt": "2026-10-03T18:59:08.543Z",
+        "cooldownUntil": "2026-10-03T19:29:42.993Z",
+        "lastActiveAt": "2026-10-03T19:14:37.890Z",
         "lastHarvestedAt": "2026-10-02T09:42:39.815Z",
         "totalHarvested": 7,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -204,8 +204,8 @@
         "id": "Agent-Epsilon",
         "domain": "mobile-cross-platform",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:14:17.578Z",
-        "lastActiveAt": "2026-10-03T18:59:08.557Z",
+        "cooldownUntil": "2026-10-03T19:29:43.054Z",
+        "lastActiveAt": "2026-10-03T19:14:37.907Z",
         "lastHarvestedAt": "2026-10-02T09:49:15.558Z",
         "totalHarvested": 9,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -214,8 +214,8 @@
         "id": "Agent-Zeta",
         "domain": "devops-cloud-infrastructure",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:14:19.122Z",
-        "lastActiveAt": "2026-10-03T18:59:08.572Z",
+        "cooldownUntil": "2026-10-03T19:29:45.135Z",
+        "lastActiveAt": "2026-10-03T19:14:37.929Z",
         "lastHarvestedAt": "2026-10-02T09:49:14.838Z",
         "totalHarvested": 6,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -224,8 +224,8 @@
         "id": "Agent-Eta",
         "domain": "cybersecurity-defenses",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:14:18.980Z",
-        "lastActiveAt": "2026-10-03T18:59:08.587Z",
+        "cooldownUntil": "2026-10-03T19:29:45.066Z",
+        "lastActiveAt": "2026-10-03T19:14:37.949Z",
         "lastHarvestedAt": "2026-10-02T10:03:44.092Z",
         "totalHarvested": 14,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -234,8 +234,8 @@
         "id": "Agent-Theta",
         "domain": "database-storage-engines",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:14:19.097Z",
-        "lastActiveAt": "2026-10-03T18:59:08.605Z",
+        "cooldownUntil": "2026-10-03T19:29:44.970Z",
+        "lastActiveAt": "2026-10-03T19:14:37.965Z",
         "lastHarvestedAt": "2026-10-02T09:22:48.583Z",
         "totalHarvested": 10,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -244,8 +244,8 @@
         "id": "Agent-Iota",
         "domain": "cognitive-neuroscience-systems",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T19:14:17.233Z",
-        "lastActiveAt": "2026-10-03T18:59:08.624Z",
+        "cooldownUntil": "2026-10-03T19:29:44.945Z",
+        "lastActiveAt": "2026-10-03T19:14:37.992Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791054874117,
-      "resetAt": "2026-10-03T19:14:34.117Z",
-      "trippedAt": "2026-10-03T18:59:19.119Z",
+      "remaining": 1,
+      "resetEpoch": 1791055800131,
+      "resetAt": "2026-10-03T19:30:00.131Z",
+      "trippedAt": "2026-10-03T19:14:45.132Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 25
+      "consecutiveBlocks": 37
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
