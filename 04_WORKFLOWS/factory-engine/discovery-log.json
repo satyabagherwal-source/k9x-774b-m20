@@ -15166,5 +15166,50 @@
     "qualityScore": 2365,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T00:35:26.105Z"
+  },
+  {
+    "name": "hush",
+    "fullName": "oblador/hush",
+    "url": "https://github.com/oblador/hush",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "🤫 Noiseless Browsing – Content Blocker for Safari",
+    "stars": 3708,
+    "forks": 114,
+    "openIssues": 151,
+    "language": "Swift",
+    "qualityScore": 2338,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T00:50:55.650Z"
+  },
+  {
+    "name": "TrollFools",
+    "fullName": "Lessica/TrollFools",
+    "url": "https://github.com/Lessica/TrollFools",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "In-place tweak injection with insert_dylib and ChOma.",
+    "stars": 3630,
+    "forks": 350,
+    "openIssues": 0,
+    "language": "Swift",
+    "qualityScore": 2070,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T00:50:55.650Z"
+  },
+  {
+    "name": "SwiftUI-Animations",
+    "fullName": "Shubham0812/SwiftUI-Animations",
+    "url": "https://github.com/Shubham0812/SwiftUI-Animations",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A repository containing a variety of animations and Animated components created in SwiftUI that you can use in your own projects.",
+    "stars": 3523,
+    "forks": 316,
+    "openIssues": 3,
+    "language": "Swift",
+    "qualityScore": 2112,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T00:50:55.650Z"
   }
 ]

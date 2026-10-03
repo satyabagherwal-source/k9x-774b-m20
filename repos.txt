@@ -3294,3 +3294,11 @@ https://github.com/DamascenoRafael/reminders-menubar
 https://github.com/gonzalezreal/swift-markdown-ui
 # [MOBILE-CROSS-PLATFORM] yattee/yattee (2365 score) - Privacy oriented video player for iOS, tvOS and macOS
 https://github.com/yattee/yattee
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T00:50:55.652Z] ---
+# [MOBILE-CROSS-PLATFORM] oblador/hush (2338 score) - 🤫 Noiseless Browsing – Content Blocker for Safari
+https://github.com/oblador/hush
+# [MOBILE-CROSS-PLATFORM] Lessica/TrollFools (2070 score) - In-place tweak injection with insert_dylib and ChOma.
+https://github.com/Lessica/TrollFools
+# [MOBILE-CROSS-PLATFORM] Shubham0812/SwiftUI-Animations (2112 score) - A repository containing a variety of animations and Animated components created 
+https://github.com/Shubham0812/SwiftUI-Animations
