@@ -15916,5 +15916,50 @@
     "qualityScore": 725,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T04:10:06.805Z"
+  },
+  {
+    "name": "ViewInspector",
+    "fullName": "nalexn/ViewInspector",
+    "url": "https://github.com/nalexn/ViewInspector",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Runtime introspection and unit testing of SwiftUI views",
+    "stars": 2634,
+    "forks": 196,
+    "openIssues": 42,
+    "language": "Swift",
+    "qualityScore": 1710,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T04:25:31.925Z"
+  },
+  {
+    "name": "WWDC",
+    "fullName": "Blackjacx/WWDC",
+    "url": "https://github.com/Blackjacx/WWDC",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "You don't have the time to watch all the WWDC session videos yourself? No problem me and many contributors extracted the gist for you 🥳",
+    "stars": 2595,
+    "forks": 136,
+    "openIssues": 1,
+    "language": "Shell",
+    "qualityScore": 1590,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T04:25:31.926Z"
+  },
+  {
+    "name": "StikDebug",
+    "fullName": "StikDebug/StikDebug",
+    "url": "https://github.com/StikDebug/StikDebug",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "An on-device debugger/JIT enabler for iOS versions 17.4+, powered by idevice.",
+    "stars": 2590,
+    "forks": 266,
+    "openIssues": 7,
+    "language": "Swift",
+    "qualityScore": 1639,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T04:25:31.926Z"
   }
 ]

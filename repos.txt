@@ -3430,3 +3430,11 @@ https://github.com/xvirobotics/metabot
 https://github.com/edenfunf/reelmimic
 # [AI-AGENTS] androoAGI/starnet (725 score) - A living pixel-art station where real AI agents do real work. Local-first deskto
 https://github.com/androoAGI/starnet
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T04:25:31.927Z] ---
+# [MOBILE-CROSS-PLATFORM] nalexn/ViewInspector (1710 score) - Runtime introspection and unit testing of SwiftUI views
+https://github.com/nalexn/ViewInspector
+# [MOBILE-CROSS-PLATFORM] Blackjacx/WWDC (1590 score) - You don't have the time to watch all the WWDC session videos yourself? No proble
+https://github.com/Blackjacx/WWDC
+# [MOBILE-CROSS-PLATFORM] StikDebug/StikDebug (1639 score) - An on-device debugger/JIT enabler for iOS versions 17.4+, powered by idevice.
+https://github.com/StikDebug/StikDebug
