@@ -3536,3 +3536,11 @@ https://github.com/signerlabs/Klee
 # --- Automatically Discovered by AI Scout Engine [2026-10-03T21:00:09.517Z] ---
 # [AI-AGENTS] feder-cr/dots (1569 score) - Open-source dots for the web: an AI agent with its own browser, one that does no
 https://github.com/feder-cr/dots
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T21:16:21.749Z] ---
+# [HUGGINGFACE-AI-MODELS] Aleph-Alpha/Kolibri-1 (2210 score) - Verified Hugging Face Model: Aleph-Alpha/Kolibri-1 (221 likes, 0 downloads)
+https://huggingface.co/Aleph-Alpha/Kolibri-1
+# [HUGGINGFACE-AI-MODELS] FermionResearch/Phonon-2 (3720 score) - Verified Hugging Face Model: FermionResearch/Phonon-2 (172 likes, 2361 downloads
+https://huggingface.co/FermionResearch/Phonon-2
+# [HUGGINGFACE-AI-MODELS] Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw (2270 score) - Verified Hugging Face Model: Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw (175 likes
+https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw

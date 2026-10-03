@@ -16486,5 +16486,41 @@
     "qualityScore": 1569,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T21:00:01.692Z"
+  },
+  {
+    "name": "Aleph-Alpha/Kolibri-1",
+    "fullName": "Aleph-Alpha/Kolibri-1",
+    "url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Aleph-Alpha/Kolibri-1 (221 likes, 0 downloads)",
+    "likes": 221,
+    "downloads": 0,
+    "qualityScore": 2210,
+    "discoveredAt": "2026-10-03T21:16:21.748Z"
+  },
+  {
+    "name": "FermionResearch/Phonon-2",
+    "fullName": "FermionResearch/Phonon-2",
+    "url": "https://huggingface.co/FermionResearch/Phonon-2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: FermionResearch/Phonon-2 (172 likes, 2361 downloads)",
+    "likes": 172,
+    "downloads": 2361,
+    "qualityScore": 3720,
+    "discoveredAt": "2026-10-03T21:16:21.749Z"
+  },
+  {
+    "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "fullName": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw (175 likes, 520 downloads)",
+    "likes": 175,
+    "downloads": 520,
+    "qualityScore": 2270,
+    "discoveredAt": "2026-10-03T21:16:21.749Z"
   }
 ]
