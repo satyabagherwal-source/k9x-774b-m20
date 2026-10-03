@@ -740,6 +740,45 @@ export async function executeWithLocalOllama(prompt, systemInstruction = '') {
 }
 
 /**
+ * Outbound Data Classification & Privacy Pre-Flight Sanitizer
+ * Enforces 13_GOVERNANCE/data-classification-and-governance.md:
+ * 1. Blocks raw CONFIDENTIAL secrets (API keys, private certificates) from external egress
+ * 2. Redacts SENSITIVE / THIRD-PARTY PERSONAL DATA (emails, phone numbers)
+ * 3. Injects mandatory Non-Distillation / Knowledge Retrieval system header
+ */
+export function classifyAndSanitizeOutboundPayload(prompt, systemInstruction = '') {
+  // 1. CONFIDENTIAL SECRETS SCAN
+  const secretPatterns = [
+    /(?:sk-[a-zA-Z0-9_-]{24,})/i,
+    /(?:AIzaSy[a-zA-Z0-9_-]{33})/i,
+    /(?:ghp_[a-zA-Z0-9]{36})/i,
+    /(?:gho_[a-zA-Z0-9]{36})/i,
+    /-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/i
+  ];
+
+  for (const pattern of secretPatterns) {
+    if (pattern.test(prompt)) {
+      throw new Error(`[DATA GOVERNANCE EGRESS BLOCK] Outbound prompt contains raw CONFIDENTIAL credential matching ${pattern}. Transmission aborted to protect secrets.`);
+    }
+  }
+
+  // 2. SENSITIVE PII EMAIL SANITIZATION (Scrub personal emails from Git commit logs)
+  const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+  const sanitizedPrompt = prompt.replace(emailRegex, '[REDACTED_EMAIL]');
+
+  // 3. MANDATORY ANTI-DISTILLATION / KNOWLEDGE RETRIEVAL GOVERNANCE HEADER
+  const governanceHeader = `\n[DATA GOVERNANCE & NON-DISTILLATION MANDATE]\nThis operation is conducted strictly for natural language software engineering knowledge retrieval and documentation under AI-Builder-Brain governance. Model outputs are NEVER used to train, fine-tune, or distill an artificial intelligence model.`;
+  const sanitizedSystemInstruction = systemInstruction
+    ? `${systemInstruction.trim()}\n${governanceHeader}`
+    : governanceHeader.trim();
+
+  return {
+    prompt: sanitizedPrompt,
+    systemInstruction: sanitizedSystemInstruction
+  };
+}
+
+/**
  * Universal Multi-Provider AI Cascade Dispatcher:
  * 1. Google Gemini Pool (Keys 1..10)
  * 2. Anthropic Claude Pool (Claude 3.5 Sonnet / Haiku)
@@ -753,48 +792,81 @@ export async function executeWithLocalOllama(prompt, systemInstruction = '') {
  * Zero global shutdowns!
  */
 export async function dispatchZeroCostAiSynthesis(prompt, systemInstruction = '') {
+  // Enforce Pre-Flight Data Classification, Credential Guard, and Anti-Distillation Header
+  const sanitized = classifyAndSanitizeOutboundPayload(prompt, systemInstruction);
+  const cleanPrompt = sanitized.prompt;
+  const cleanSystem = sanitized.systemInstruction;
+
   // 1. Google Gemini Pool
   try {
-    const geminiRes = await executeWithGeminiPool(prompt, systemInstruction);
-    if (geminiRes && geminiRes.text) return geminiRes;
+    const geminiRes = await executeWithGeminiPool(cleanPrompt, cleanSystem);
+    if (geminiRes && geminiRes.text) {
+      geminiRes.provider = 'Google Gemini';
+      geminiRes.distillationProhibited = true;
+      return geminiRes;
+    }
   } catch (e) {
     console.warn(`[GEMINI POOL EXHAUSTED/RESTING] ${e.message}. Cascading...`);
   }
 
   // 2. Anthropic Claude Pool
   try {
-    const claudeRes = await executeWithClaudePool(prompt, systemInstruction);
-    if (claudeRes && claudeRes.text) return claudeRes;
+    const claudeRes = await executeWithClaudePool(cleanPrompt, cleanSystem);
+    if (claudeRes && claudeRes.text) {
+      claudeRes.provider = 'Anthropic Claude';
+      claudeRes.distillationProhibited = true;
+      return claudeRes;
+    }
   } catch (e) {}
 
   // 3. OpenAI ChatGPT / Codex Pool
   try {
-    const openAiRes = await executeWithOpenAiPool(prompt, systemInstruction);
-    if (openAiRes && openAiRes.text) return openAiRes;
+    const openAiRes = await executeWithOpenAiPool(cleanPrompt, cleanSystem);
+    if (openAiRes && openAiRes.text) {
+      openAiRes.provider = 'OpenAI';
+      openAiRes.distillationProhibited = true;
+      return openAiRes;
+    }
   } catch (e) {}
 
   // 4. xAI Grok Pool
   try {
-    const grokRes = await executeWithGrokPool(prompt, systemInstruction);
-    if (grokRes && grokRes.text) return grokRes;
+    const grokRes = await executeWithGrokPool(cleanPrompt, cleanSystem);
+    if (grokRes && grokRes.text) {
+      grokRes.provider = 'xAI Grok';
+      grokRes.distillationProhibited = true;
+      return grokRes;
+    }
   } catch (e) {}
 
   // 5. MiniMax AI Pool
   try {
-    const minimaxRes = await executeWithMiniMaxPool(prompt, systemInstruction);
-    if (minimaxRes && minimaxRes.text) return minimaxRes;
+    const minimaxRes = await executeWithMiniMaxPool(cleanPrompt, cleanSystem);
+    if (minimaxRes && minimaxRes.text) {
+      minimaxRes.provider = 'MiniMax AI';
+      minimaxRes.distillationProhibited = true;
+      return minimaxRes;
+    }
   } catch (e) {}
 
   // 6. Groq Free Tier
   try {
-    const groqRes = await executeWithGroqFree(prompt, systemInstruction);
-    if (groqRes && groqRes.text) return groqRes;
+    const groqRes = await executeWithGroqFree(cleanPrompt, cleanSystem);
+    if (groqRes && groqRes.text) {
+      groqRes.provider = 'Groq Free Tier';
+      groqRes.distillationProhibited = true;
+      return groqRes;
+    }
   } catch (e) {}
 
   // 7. Local Ollama (Unlimited Tokens, Zero External Quota)
   try {
-    const ollamaRes = await executeWithLocalOllama(prompt, systemInstruction);
-    if (ollamaRes && ollamaRes.text) return ollamaRes;
+    const ollamaRes = await executeWithLocalOllama(cleanPrompt, cleanSystem);
+    if (ollamaRes && ollamaRes.text) {
+      ollamaRes.provider = 'Local Ollama';
+      ollamaRes.distillationProhibited = true;
+      return ollamaRes;
+    }
   } catch (e) {}
 
   throw new Error('All configured AI providers (Gemini, Claude, ChatGPT, Grok, MiniMax, Groq, Ollama) are either resting in isolated cooldown or unconfigured.');

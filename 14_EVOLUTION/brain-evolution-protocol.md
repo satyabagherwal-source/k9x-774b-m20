@@ -57,8 +57,23 @@ AI must not treat its own generated statement as sufficient evidence.
 
 For consequential or uncertain promotion decisions, human review is required.
 
+## Protected Core & Controlled Self-Upgrade Boundaries
+
+The AI-Builder-Brain may autonomously propose improvements to its own:
+- workflows and execution scripts (`04_WORKFLOWS/`),
+- harvesting and bootstrap prompts (`10_PROMPTS/`),
+- verification and test strategies (`08_VERIFICATION/`),
+- source-selection and discovery algorithms (`09_SOURCES/`),
+- engineering patterns and checklists (`05_KNOWLEDGE/`, `03_SKILLS/`).
+
+**Unrestricted Self-Modification is Strictly Prohibited**:
+- Core operating principles and governance invariants in [`01_CORE/`](file:///c:/AI-Builder-Brain/01_CORE), provider usage rules in [`13_GOVERNANCE/`](file:///c:/AI-Builder-Brain/13_GOVERNANCE), and CI/CD security workflows in [`.github/workflows/`](file:///c:/AI-Builder-Brain/.github/workflows) are **IMMUTABLE CORE BOUNDARIES**.
+- No automated script, subagent, or external AI synthesis may silently modify or relax governance rules, security safeguards, or provider compliance invariants without explicit human verification and approval.
+- Stored knowledge and evolution archives must NEVER be compiled or repurposed as an ML model training or distillation dataset.
+
 ## Goal
 
 The goal is not maximum growth.
 
 The goal is a smaller body of increasingly reliable, reusable knowledge.
+

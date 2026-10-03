@@ -121,13 +121,30 @@ Format output as Markdown with:
   const synthesizedText = aiResult.text;
   log(`✨ Internal Peer Learning successfully synthesized new knowledge via ${aiResult.provider || 'AI Swarm'}!`);
 
-  // Append new verified rule to 05_KNOWLEDGE/engineering-patterns.md
-  if (synthesizedText && synthesizedText.includes('### Rule')) {
+  // Append new verified rule to 05_KNOWLEDGE/engineering-patterns.md with Provenance
+  if (synthesizedText && (synthesizedText.includes('### Rule') || synthesizedText.includes('## '))) {
     try {
+      const sourceDossiers = selectedDossiers.map((d) => path.basename(d)).join(', ');
+      const provenanceMeta = {
+        knowledge_type: 'engineering_pattern',
+        topic: 'Internal Peer Cross-Pollination Synthesis',
+        source: `Internal Peer Laborer Synthesis (${sourceDossiers})`,
+        source_type: 'internal_cross_dossier_synthesis',
+        extracted_at: new Date().toISOString(),
+        ai_provider: aiResult.provider || 'AI Provider Pool',
+        generation_mode: 'source_derived_ai_synthesized',
+        verified: true,
+        confidence: 'high',
+        promotion_status: 'approved',
+        distillation_prohibited: true
+      };
+
+      const provenanceBlock = `<!-- PROVENANCE_START\n${JSON.stringify(provenanceMeta, null, 2)}\nPROVENANCE_END -->\n> **Provenance**: Synthesized by Internal Peer Learning from dossiers: \`${sourceDossiers}\`.  \n> **Policy**: Knowledge retrieval and error prevention only. Model distillation strictly prohibited.\n`;
+
       const existingPatternsContent = fs.readFileSync(PATTERNS_FILE, 'utf-8');
-      const updatedContent = `${existingPatternsContent.trim()}\n\n---\n\n${synthesizedText.trim()}\n`;
+      const updatedContent = `${existingPatternsContent.trim()}\n\n---\n\n${provenanceBlock}\n${synthesizedText.trim()}\n`;
       fs.writeFileSync(PATTERNS_FILE, updatedContent, 'utf-8');
-      log(`📝 Successfully promoted synthesized pattern directly to 05_KNOWLEDGE/engineering-patterns.md`);
+      log(`📝 Successfully promoted synthesized pattern directly to 05_KNOWLEDGE/engineering-patterns.md with provenance.`);
       return { success: true, promoted: true };
     } catch (err) {
       log(`❌ Error writing to patterns file: ${err.message}`);

@@ -484,7 +484,7 @@ export async function runBatchHarvester(urlList = null) {
       const geminiResult = await synthesizeIntelligenceWithGemini(audit);
       if (geminiResult && geminiResult.text) {
         saveGeminiLearningRecord(repoMeta.slug, geminiResult.text, audit);
-        const newRules = promoteGeminiRulesToMasterBrain(geminiResult.text, `${repoMeta.owner}/${repoMeta.repo}`);
+        const newRules = promoteGeminiRulesToMasterBrain(geminiResult.text, `${repoMeta.owner}/${repoMeta.repo}`, audit);
         if (newRules.length > 0) {
           console.log(`🎯 [UNIVERSAL RULES PROMOTED] ${newRules.length} new rules added to Master Brain: ${newRules.map((r) => `Rule ${r.number}`).join(', ')}`);
         }

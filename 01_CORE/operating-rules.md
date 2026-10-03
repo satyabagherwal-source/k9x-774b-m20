@@ -119,3 +119,42 @@ The Master AI-Builder-Brain must support instant, single-command transitions bet
    - The agent and user execute `node 04_WORKFLOWS/factory-engine/repo-mode-switcher.mjs to-private` (or `switch-to-private.bat` / "repo private kar do") and `to-public` (or `switch-to-public.bat` / "repo public kar do").
    - The switcher atomically aligns GitHub repository visibility, GitHub Actions workflow definitions, billing guardrails, and circuit breakers in a single verified commit.
 
+## Rule 17 — Knowledge Learning vs ML Model Distillation Invariant
+
+The Master AI-Builder-Brain is an active, continuously learning engineering intelligence system. Its "learning" means the systematic acquisition, empirical verification, and retrieval of:
+- verified facts,
+- documentation knowledge,
+- engineering and architecture patterns,
+- failure mode autopsies and lessons,
+- project incidents and fixes,
+- universal rules and workflows,
+- decisions and source references.
+
+**It does NOT mean model weights, automatic model fine-tuning, provider-output distillation, provider imitation, or automatic competing-model training.**
+
+1. **Prohibition of Synthetic Model Distillation**:
+   - The system strictly prohibits designing or operating pipelines where Gemini or other AI provider outputs are automatically collected, compiled, or formatted as a training dataset to train, fine-tune, distill, or create a competing AI/ML model.
+   - The Brain must not attempt to reverse engineer Gemini, extract model weights, bypass provider safety mechanisms, imitate a provider's model, or turn raw AI conversations into an automatic ML training corpus.
+2. **Verification Pipeline**:
+   - AI-generated information must pass through a strict source/evidence/verification pipeline before becoming Brain knowledge:
+     `AI OUTPUT -> DO NOT TREAT AS AUTOMATIC TRUTH -> TRACE TO SOURCE/EVIDENCE WHERE POSSIBLE -> VERIFY -> STORE AS KNOWLEDGE WITH PROVENANCE`.
+
+## Rule 18 — Data Classification & Outbound Privacy Boundary
+
+All data processed, stored, or transmitted by the Brain and child projects must be classified into one of 5 canonical tiers (`PUBLIC`, `PRIVATE`, `SENSITIVE`, `CONFIDENTIAL`, `THIRD-PARTY PERSONAL DATA`):
+
+1. **Outbound External AI Safeguard**:
+   - The system must NOT automatically send sensitive, private, or third-party personal data to an external AI provider without an appropriate authorization and policy check.
+   - `CONFIDENTIAL` data (API keys, private tokens, passwords, secrets) is hard-blocked at the egress boundary and must NEVER be transmitted to external AI endpoints.
+2. **Connected Data & Gmail Governance**:
+   - If Gmail or other private-data connectors are utilized:
+     - Use the minimum necessary data (least privilege principle).
+     - Never blindly forward entire mailboxes or unfiltered thread streams.
+     - Classify data before external AI processing.
+     - Maintain provider/data-flow records.
+     - Make external transmission explicit in the workflow.
+     - Never assume that because an API technically allows access, all data is automatically safe to send.
+3. **PII Sanitization at Ingestion**:
+   - Third-party personal developer emails and signatures extracted from public Git commit histories must be sanitized (`[REDACTED_EMAIL]`) prior to AI analysis and knowledge storage.
+
+

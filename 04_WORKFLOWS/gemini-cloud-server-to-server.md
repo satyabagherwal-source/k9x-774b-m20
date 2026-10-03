@@ -103,3 +103,17 @@ Or set the key in PowerShell:
 $env:GEMINI_API_KEY = "your_gemini_api_key_here"
 node 04_WORKFLOWS/factory-engine/test-gemini-connection.mjs
 ```
+
+---
+
+## 5. Policy Compliance & Data Governance Mandate
+
+All server-to-server operations between GitHub Actions and Google Gemini must strictly comply with [`13_GOVERNANCE/PROVIDER_USAGE_RULES/gemini.md`](file:///c:/AI-Builder-Brain/13_GOVERNANCE/PROVIDER_USAGE_RULES/gemini.md):
+
+1. **Anti-Distillation / No ML Model Training**:
+   Gemini outputs are utilized exclusively for natural language software architecture documentation, failure mode root-cause analysis, and engineering rule generation. Gemini outputs must **NEVER** be collected, compiled, or processed as a machine learning training dataset.
+2. **Public Data Scope Only**:
+   The cloud server-to-server pipeline processes ONLY public open-source software code, diffs, and issue autopsies. Confidential credentials and private user data are strictly excluded.
+3. **Evidence Verification Gate**:
+   Synthesized patterns must cite real repository code diffs or commit SHAs. Unverifiable synthetic claims are rejected prior to Master Brain promotion.
+

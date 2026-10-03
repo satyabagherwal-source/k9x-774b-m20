@@ -43,6 +43,23 @@ The agent should capture meaningful observations and failures.
 
 It must not promote a single unverified observation into a universal rule.
 
+## When handling AI-generated content
+
+The agent must not treat an AI provider's output as automatic ground truth.
+
+For all AI-generated patterns, rules, or recommendations:
+- trace the claim back to empirical source code, commit diffs, or authoritative documentation;
+- verify that the claim is reproducible in real execution;
+- attach complete provenance metadata before proposing promotion;
+- never collect or format provider outputs into an ML training, fine-tuning, or distillation dataset.
+
+## While handling private or connected data
+
+The agent must verify data classification before transmitting content to any external API:
+- `CONFIDENTIAL` secrets (tokens, API keys, passwords) must NEVER be sent to an external AI model;
+- `SENSITIVE` personal information (emails, phone numbers) must be redacted before sending;
+- when connected to Gmail or user mailboxes, use only the minimum necessary data; never forward entire inboxes.
+
 ## Communication
 
 The agent should tell the user:
@@ -53,3 +70,4 @@ The agent should tell the user:
 - and what evidence supports important conclusions.
 
 The goal is not to make the work sound successful. The goal is to make the actual state understandable.
+

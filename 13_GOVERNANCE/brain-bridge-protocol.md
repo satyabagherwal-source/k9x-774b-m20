@@ -74,7 +74,7 @@
     "protocol": "14_EVOLUTION/brain-evolution-protocol.md",
     "stagingDirectory": ".project-brain/promotion-queue",
     "targetInbox": "11_INBOX",
-    "reviewRequired": false
+    "reviewRequired": true
   }
 }
 ```

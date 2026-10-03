@@ -120,6 +120,13 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 - Never produce shallow summaries, promotional fluff, or generic bullet points.
 - Every harvested codebase must be mined for real commit diffs (`- Buggy Code`, `+ Safe Invariant`), root-cause autopsies of closed bug issues, subsystem contracts, and substantive universal engineering rules.
 
+### Step 19: Data Governance, Provenance & Anti-Distillation Compliance
+- **Data Classification Boundary**: Every agent action must respect data classification tiers (`PUBLIC`, `PRIVATE`, `SENSITIVE`, `CONFIDENTIAL`, `THIRD-PARTY PERSONAL DATA`). Secrets (`CONFIDENTIAL`) are never transmitted to external APIs; personal developer emails (`SENSITIVE`) are redacted.
+- **Strict Separation of Knowledge Learning vs ML Training**: Brain "learning" strictly denotes human-readable engineering patterns, architecture invariants, incident post-mortems, and skills retrieval. It is strictly prohibited to collect, export, or format Brain outputs into an automated dataset for training, fine-tuning, or distilling an artificial intelligence model.
+- **Provenance Integrity**: Promoted rules must carry verified provenance metadata (`13_GOVERNANCE/knowledge-provenance-schema.md`).
+- **Provider Compliance**: All AI model calls must adhere to [`13_GOVERNANCE/PROVIDER_USAGE_RULES/gemini.md`](file:///c:/AI-Builder-Brain/13_GOVERNANCE/PROVIDER_USAGE_RULES/gemini.md) and [`multi_provider_rules.md`](file:///c:/AI-Builder-Brain/13_GOVERNANCE/PROVIDER_USAGE_RULES/multi_provider_rules.md).
+
+
 
 
 

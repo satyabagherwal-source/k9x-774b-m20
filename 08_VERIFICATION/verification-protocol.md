@@ -51,3 +51,17 @@ The question is important, but current evidence is insufficient.
 ## Important rule
 
 Verification does not mean proving an idea absolutely true. It means establishing what the available evidence justifies saying, with the correct scope and uncertainty.
+
+## AI Synthesis & Provenance Verification Gate
+
+When a candidate rule or pattern is produced via an AI provider (e.g. Gemini, Claude, OpenAI):
+
+1. **Empirical Evidence Citation Required**:
+   The candidate MUST explicitly cite verifiable source artifacts (e.g. commit SHA, line range in a specific file, reproducible test suite, or authoritative documentation link). If an AI-generated claim lacks verifiable empirical citations, it is classified as `REJECTED_UNVERIFIED_SYNTHESIS` and cannot be promoted to `05_KNOWLEDGE/engineering-patterns.md`.
+
+2. **Provenance Schema Compliance**:
+   Every promoted knowledge item must include a complete provenance record (`source`, `source_url`, `source_version`, `ai_provider`, `generation_mode`, `verified: true`, `distillation_prohibited: true`).
+
+3. **No Synthetic Training Dataset Generation**:
+   Verification outputs and stored knowledge must never be compiled or exported as an automated model training, fine-tuning, or distillation corpus.
+

@@ -229,7 +229,7 @@ export function loadSourcesQueue(sourcePath = path.join(BRAIN_ROOT, 'repos.txt')
 async function harvestGitHubZeroClone(target) {
   console.log(`\n[DEEP FORENSIC GITHUB HARVEST] Harvesting: ${target.owner}/${target.repo}`);
 
-  // 1. Repo Metadata
+  // 1. Repo Metadata & License / Terms Check
   const repoMeta = await compliantFetch(target.apiUrl);
   if (!repoMeta) {
     console.warn(`[WARN] Could not retrieve metadata for ${target.owner}/${target.repo}`);
@@ -237,6 +237,10 @@ async function harvestGitHubZeroClone(target) {
   }
 
   const defaultBranch = repoMeta.default_branch || 'main';
+  const license = repoMeta.license?.spdx_id || repoMeta.license?.name || 'PERMISSIVE_OPEN_SOURCE';
+
+  // Helper to strip third-party personal developer emails from commit diffs & issues
+  const stripPii = (text) => (typeof text === 'string' ? text.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[REDACTED_EMAIL]') : '');
 
   // 2. Recent Commits & Deep Patch Extraction (Exhaustive Forensic Sweep)
   const commitsRaw = await compliantFetch(`${target.apiUrl}/commits?per_page=100`) || [];
@@ -244,8 +248,8 @@ async function harvestGitHubZeroClone(target) {
     sha: c.sha?.slice(0, 8),
     fullSha: c.sha,
     date: c.commit?.author?.date?.slice(0, 10),
-    message: c.commit?.message?.split('\n')[0] || '',
-    fullMessage: c.commit?.message || ''
+    message: stripPii(c.commit?.message?.split('\n')[0] || ''),
+    fullMessage: stripPii(c.commit?.message || '')
   }));
 
   const candidateFixCommits = commits.filter((c) =>
@@ -369,6 +373,7 @@ async function harvestGitHubZeroClone(target) {
     description: repoMeta.description || '',
     stars: repoMeta.stargazers_count,
     language: repoMeta.language || 'Multi-language',
+    license,
     defaultBranch,
     topics: repoMeta.topics || [],
     commits,
@@ -708,7 +713,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
         const geminiResult = await synthesizeIntelligenceWithGemini(audit);
         if (geminiResult && geminiResult.text) {
           saveGeminiLearningRecord(target.slug, geminiResult.text, audit);
-          const newRules = promoteGeminiRulesToMasterBrain(geminiResult.text, audit.name);
+          const newRules = promoteGeminiRulesToMasterBrain(geminiResult.text, audit.name, audit);
           if (newRules.length > 0) {
             console.log(`🎯 [UNIVERSAL RULES PROMOTED] ${newRules.length} new rules added to Master Brain: ${newRules.map((r) => `Rule ${r.number}`).join(', ')}`);
           }

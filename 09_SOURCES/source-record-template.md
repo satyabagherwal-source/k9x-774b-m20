@@ -2,13 +2,35 @@
 
 Use this structure when an external source materially contributes to Brain knowledge.
 
-## Source
+## Source & Terms Check
 
 - Title:
 - Author / organization:
 - URL:
+- License / Terms: (e.g. MIT, Apache-2.0, BSD-3, Official Public Docs)
+- Terms of Service Compliance Verified: [YES / NO]
 - Publication / update date:
 - Date accessed:
+
+## Provenance Metadata
+
+```json
+{
+  "source": "",
+  "source_url": "",
+  "source_version": "",
+  "source_type": "github_repo | official_docs | project_incident",
+  "license": "",
+  "extracted_at": "",
+  "ai_provider": "",
+  "generation_mode": "source_derived_ai_synthesized | human_curated",
+  "evidence": [],
+  "verified": true,
+  "confidence": "high | medium",
+  "promotion_status": "candidate | approved",
+  "distillation_prohibited": true
+}
+```
 
 ## Relevant claim
 
@@ -16,7 +38,7 @@ State only the claim relevant to the Brain.
 
 ## What the source actually supports
 
-Explain the supported point in your own words.
+Explain the supported point in your own words, citing exact commit SHAs, file paths, or section numbers.
 
 ## What it does not establish
 
@@ -37,4 +59,5 @@ State whether the source:
 - Verified
 - Rejected
 
-Do not treat the source itself as a permanent Brain rule.
+> **Invariant**: Do not treat the source itself as a permanent Brain rule without evidence verification. Brain records must never be compiled as an ML model training corpus.
+
