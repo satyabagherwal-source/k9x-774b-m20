@@ -119,24 +119,37 @@ async function startAutonomousDaemon() {
         continue;
       }
 
-      // 2. Sync latest remote cloud intelligence first
+      // 2. Sync latest remote cloud intelligence first (autostash protects uncommitted local edits)
       log(`📥 Pulling latest cloud updates from origin/main...`);
-      const pullRes = runCmd('git pull --rebase origin main');
+      const pullRes = runCmd('git pull --rebase --autostash origin main');
       log(`Git Pull: ${pullRes}`);
 
       // 3. Execute Multi-Agent Learning Fleet
       log(`🚀 Executing Multi-Agent Learning Fleet Swarm...`);
       await runMultiAgentFleet();
 
-      // 4. Push verified learnings to GitHub
+      // 4. Push verified learnings to GitHub with atomic retry and autostash rebase
       log(`📤 Synchronizing live verified intelligence to remote repository...`);
       runCmd('git add .');
       const diff = runCmd('git diff --staged --quiet');
       if (diff.includes('ERR')) {
         // Staged changes exist
         runCmd('git commit -m "feat(daemon): 24/7 autonomous learning harvest cycle [skip ci]"');
-        const pushRes = runCmd('git push origin main');
-        log(`Git Push Result: ${pushRes}`);
+        let pushed = false;
+        for (let attempt = 1; attempt <= 5; attempt++) {
+          const pushRes = runCmd('git push origin main');
+          if (!pushRes.includes('ERR') && !pushRes.includes('rejected') && !pushRes.includes('fatal')) {
+            log(`Git Push Result: Success (${pushRes || 'OK'})`);
+            pushed = true;
+            break;
+          }
+          log(`⚠️ [PUSH RETRY] Remote has newer commits. Rebasing and retrying (${attempt}/5)...`);
+          runCmd('git pull --rebase --autostash origin main');
+          await sleep(1000 + Math.random() * 2000);
+        }
+        if (!pushed) {
+          log(`⚠️ Push deferred to next cycle after 5 attempts.`);
+        }
       } else {
         log(`Working tree clean, all learnings already synced.`);
       }

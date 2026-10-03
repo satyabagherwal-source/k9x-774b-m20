@@ -183,7 +183,7 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
       console.log(`   Running git pull --rebase to merge concurrent agent updates...`);
 
       try {
-        run('git pull --rebase origin main', cwd);
+        run('git pull --rebase --autostash origin main', cwd);
       } catch (pullErr) {
         console.warn(`   Rebase encounter: ${pullErr.message}. Aborting rebase to keep clean tree.`);
         try { run('git rebase --abort', cwd); } catch (e) {}

@@ -627,7 +627,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
 
   // 2. Pre-sync Git remote if possible
   try {
-    run('git pull --rebase origin main', BRAIN_ROOT);
+    run('git pull --rebase --autostash origin main', BRAIN_ROOT);
   } catch (e) {}
 
   // 3. Autonomous Queue Pre-flight & Replenishment

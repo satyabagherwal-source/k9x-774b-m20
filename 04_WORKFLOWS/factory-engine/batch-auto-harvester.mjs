@@ -67,7 +67,7 @@ function safeRemoveDir(dirPath) {
 export function syncBrainWithGitHub() {
   console.log('\n[SYNC] Checking Master Brain sync with GitHub remote (git pull --rebase)...');
   try {
-    const pullOut = run('git pull --rebase origin main', BRAIN_ROOT);
+    const pullOut = run('git pull --rebase --autostash origin main', BRAIN_ROOT);
     console.log(`[SYNC SUCCESS] ${pullOut}`);
     return true;
   } catch (err) {
