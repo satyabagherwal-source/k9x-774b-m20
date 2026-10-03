@@ -13,7 +13,11 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
+<<<<<<< Updated upstream
   "lastUpdated": "2026-10-03T20:59:50.831Z",
+=======
+  "lastUpdated": "2026-10-03T21:00:08.014Z",
+>>>>>>> Stashed changes
   "updatedBy": "repo-mode-switcher:public",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -163,22 +167,34 @@
       {
         "id": "Agent-Alpha",
         "domain": "ai-agents",
+<<<<<<< Updated upstream
         "status": "COOLING_DOWN",
         "cooldownUntil": "2026-10-03T21:14:50.831Z",
         "lastActiveAt": "2026-10-03T20:59:48.358Z",
+=======
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-03T20:59:59.346Z",
+>>>>>>> Stashed changes
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Beta",
         "domain": "fullstack-ui",
+<<<<<<< Updated upstream
         "status": "COOLING_DOWN",
         "cooldownUntil": "2026-10-03T21:14:50.825Z",
         "lastActiveAt": "2026-10-03T20:59:48.363Z",
+=======
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-03T20:59:59.351Z",
+>>>>>>> Stashed changes
         "lastHarvestedAt": "2026-10-02T09:08:08.002Z",
         "totalHarvested": 2,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Gamma",
@@ -203,42 +219,66 @@
       {
         "id": "Agent-Epsilon",
         "domain": "mobile-cross-platform",
+<<<<<<< Updated upstream
         "status": "COOLING_DOWN",
         "cooldownUntil": "2026-10-03T21:14:50.795Z",
         "lastActiveAt": "2026-10-03T20:59:48.366Z",
+=======
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-03T20:59:59.353Z",
+>>>>>>> Stashed changes
         "lastHarvestedAt": "2026-10-02T09:49:15.558Z",
         "totalHarvested": 9,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Zeta",
         "domain": "devops-cloud-infrastructure",
+<<<<<<< Updated upstream
         "status": "COOLING_DOWN",
         "cooldownUntil": "2026-10-03T21:14:50.820Z",
         "lastActiveAt": "2026-10-03T20:59:48.370Z",
+=======
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-03T20:59:59.357Z",
+>>>>>>> Stashed changes
         "lastHarvestedAt": "2026-10-02T09:49:14.838Z",
         "totalHarvested": 6,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Eta",
         "domain": "cybersecurity-defenses",
+<<<<<<< Updated upstream
         "status": "COOLING_DOWN",
         "cooldownUntil": "2026-10-03T21:14:50.753Z",
         "lastActiveAt": "2026-10-03T20:59:48.375Z",
+=======
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-03T20:59:59.360Z",
+>>>>>>> Stashed changes
         "lastHarvestedAt": "2026-10-02T10:03:44.092Z",
         "totalHarvested": 14,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Theta",
         "domain": "database-storage-engines",
+<<<<<<< Updated upstream
         "status": "COOLING_DOWN",
         "cooldownUntil": "2026-10-03T21:14:50.827Z",
         "lastActiveAt": "2026-10-03T20:59:48.382Z",
+=======
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-03T20:59:59.367Z",
+>>>>>>> Stashed changes
         "lastHarvestedAt": "2026-10-02T09:22:48.583Z",
         "totalHarvested": 10,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Iota",
@@ -272,11 +312,19 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
+<<<<<<< Updated upstream
       "resetEpoch": 1791062105831,
       "resetAt": "2026-10-03T21:15:05.831Z",
       "trippedAt": "2026-10-03T20:59:50.831Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
       "consecutiveBlocks": 8
+=======
+      "resetEpoch": 1791061274000,
+      "resetAt": "2026-10-03T21:01:14.000Z",
+      "trippedAt": "2026-10-03T21:00:08.014Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Amcp-server%20stars%3A%3E300%20sort%3Astars&per_page=15&page=1)",
+      "consecutiveBlocks": 1
+>>>>>>> Stashed changes
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",

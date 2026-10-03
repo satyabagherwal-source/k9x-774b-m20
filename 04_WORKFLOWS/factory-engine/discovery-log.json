@@ -16471,5 +16471,20 @@
     "qualityScore": 1066,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T07:59:29.588Z"
+  },
+  {
+    "name": "dots",
+    "fullName": "feder-cr/dots",
+    "url": "https://github.com/feder-cr/dots",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source dots for the web: an AI agent with its own browser, one that does not get blocked.",
+    "stars": 2573,
+    "forks": 435,
+    "openIssues": 1,
+    "language": "Python",
+    "qualityScore": 1569,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T21:00:01.692Z"
   }
 ]
