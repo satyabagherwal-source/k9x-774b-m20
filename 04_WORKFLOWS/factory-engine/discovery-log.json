@@ -16366,5 +16366,50 @@
     "qualityScore": 1335,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T07:13:27.555Z"
+  },
+  {
+    "name": "Chat",
+    "fullName": "exyte/Chat",
+    "url": "https://github.com/exyte/Chat",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A SwiftUI Chat UI framework with fully customizable message cells and a built-in media picker",
+    "stars": 1881,
+    "forks": 339,
+    "openIssues": 0,
+    "language": "Swift",
+    "qualityScore": 1292,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T07:28:44.832Z"
+  },
+  {
+    "name": "sample-food-truck",
+    "fullName": "apple/sample-food-truck",
+    "url": "https://github.com/apple/sample-food-truck",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "SwiftUI sample code from WWDC22",
+    "stars": 1851,
+    "forks": 178,
+    "openIssues": 2,
+    "language": "Swift",
+    "qualityScore": 2133,
+    "verifiedOrg": true,
+    "discoveredAt": "2026-10-03T07:28:44.832Z"
+  },
+  {
+    "name": "typewhisper-mac",
+    "fullName": "TypeWhisper/typewhisper-mac",
+    "url": "https://github.com/TypeWhisper/typewhisper-mac",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Local speech-to-text for macOS  on-device AI, fully private, optional cloud",
+    "stars": 1819,
+    "forks": 141,
+    "openIssues": 76,
+    "language": "Swift",
+    "qualityScore": 1354,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T07:28:44.832Z"
   }
 ]

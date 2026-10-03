@@ -3512,3 +3512,11 @@ https://github.com/mikeroyal/Apple-Silicon-Guide
 https://github.com/rafsoh/dimeApp
 # [MOBILE-CROSS-PLATFORM] KeyboardKit/KeyboardKit (1335 score) - Create amazing custom iOS keyboards with Swift & SwiftUI.
 https://github.com/KeyboardKit/KeyboardKit
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T07:28:44.833Z] ---
+# [MOBILE-CROSS-PLATFORM] exyte/Chat (1292 score) - A SwiftUI Chat UI framework with fully customizable message cells and a built-in
+https://github.com/exyte/Chat
+# [MOBILE-CROSS-PLATFORM] apple/sample-food-truck (2133 score [VERIFIED ORG]) - SwiftUI sample code from WWDC22
+https://github.com/apple/sample-food-truck
+# [MOBILE-CROSS-PLATFORM] TypeWhisper/typewhisper-mac (1354 score) - Local speech-to-text for macOS  on-device AI, fully private, optional cloud
+https://github.com/TypeWhisper/typewhisper-mac
