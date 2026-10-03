@@ -16321,5 +16321,50 @@
     "qualityScore": 1276,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T06:58:04.400Z"
+  },
+  {
+    "name": "Apple-Silicon-Guide",
+    "fullName": "mikeroyal/Apple-Silicon-Guide",
+    "url": "https://github.com/mikeroyal/Apple-Silicon-Guide",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Apple Silicon Guide. Learn all about the A17 Pro, A16 Bionic, R1, M1-series,  M2-series, and M3-series chips. Along with all the Devices, Operating Systems, Tools, Gaming, and Software that Apple Silicon powers.",
+    "stars": 1893,
+    "forks": 110,
+    "openIssues": 3,
+    "language": "Swift",
+    "qualityScore": 1086,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T07:13:27.555Z"
+  },
+  {
+    "name": "dimeApp",
+    "fullName": "rafsoh/dimeApp",
+    "url": "https://github.com/rafsoh/dimeApp",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Dime is a beautiful expense tracker built with iOS design guidelines in mind.",
+    "stars": 1889,
+    "forks": 282,
+    "openIssues": 66,
+    "language": "Swift",
+    "qualityScore": 1411,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T07:13:27.555Z"
+  },
+  {
+    "name": "KeyboardKit",
+    "fullName": "KeyboardKit/KeyboardKit",
+    "url": "https://github.com/KeyboardKit/KeyboardKit",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Create amazing custom iOS keyboards with Swift & SwiftUI.",
+    "stars": 1886,
+    "forks": 300,
+    "openIssues": 26,
+    "language": "Swift",
+    "qualityScore": 1335,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T07:13:27.555Z"
   }
 ]

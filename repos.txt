@@ -3504,3 +3504,11 @@ https://github.com/pointfreeco/sqlite-data
 https://github.com/Shpigford/chops
 # [MOBILE-CROSS-PLATFORM] zekunyan/TTGTagCollectionView (1276 score) - Useful for showing text or custom view tags in a vertical or horizontal scrollab
 https://github.com/zekunyan/TTGTagCollectionView
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T07:13:27.557Z] ---
+# [MOBILE-CROSS-PLATFORM] mikeroyal/Apple-Silicon-Guide (1086 score) - Apple Silicon Guide. Learn all about the A17 Pro, A16 Bionic, R1, M1-series,  M2
+https://github.com/mikeroyal/Apple-Silicon-Guide
+# [MOBILE-CROSS-PLATFORM] rafsoh/dimeApp (1411 score) - Dime is a beautiful expense tracker built with iOS design guidelines in mind.
+https://github.com/rafsoh/dimeApp
+# [MOBILE-CROSS-PLATFORM] KeyboardKit/KeyboardKit (1335 score) - Create amazing custom iOS keyboards with Swift & SwiftUI.
+https://github.com/KeyboardKit/KeyboardKit
