@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-03T13:06:46.740Z",
+  "lastUpdated": "2026-10-03T13:21:29.318Z",
   "updatedBy": "repo-mode-switcher:public",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -164,8 +164,8 @@
         "id": "Agent-Alpha",
         "domain": "ai-agents",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T13:21:04.473Z",
-        "lastActiveAt": "2026-10-03T13:05:56.100Z",
+        "cooldownUntil": "2026-10-03T13:36:29.024Z",
+        "lastActiveAt": "2026-10-03T13:21:24.901Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -174,8 +174,8 @@
         "id": "Agent-Beta",
         "domain": "fullstack-ui",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T13:21:03.524Z",
-        "lastActiveAt": "2026-10-03T13:05:56.112Z",
+        "cooldownUntil": "2026-10-03T13:36:28.908Z",
+        "lastActiveAt": "2026-10-03T13:21:24.910Z",
         "lastHarvestedAt": "2026-10-02T09:08:08.002Z",
         "totalHarvested": 2,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -184,8 +184,8 @@
         "id": "Agent-Gamma",
         "domain": "high-perf-systems",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T13:21:04.396Z",
-        "lastActiveAt": "2026-10-03T13:05:56.115Z",
+        "cooldownUntil": "2026-10-03T13:36:29.319Z",
+        "lastActiveAt": "2026-10-03T13:21:24.913Z",
         "lastHarvestedAt": "2026-10-02T09:22:50.999Z",
         "totalHarvested": 4,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -194,8 +194,8 @@
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T13:21:03.167Z",
-        "lastActiveAt": "2026-10-03T13:05:56.118Z",
+        "cooldownUntil": "2026-10-03T13:36:27.800Z",
+        "lastActiveAt": "2026-10-03T13:21:24.916Z",
         "lastHarvestedAt": "2026-10-02T09:42:39.815Z",
         "totalHarvested": 7,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -204,8 +204,8 @@
         "id": "Agent-Epsilon",
         "domain": "mobile-cross-platform",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T13:21:04.254Z",
-        "lastActiveAt": "2026-10-03T13:05:56.122Z",
+        "cooldownUntil": "2026-10-03T13:36:29.316Z",
+        "lastActiveAt": "2026-10-03T13:21:24.918Z",
         "lastHarvestedAt": "2026-10-02T09:49:15.558Z",
         "totalHarvested": 9,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -214,8 +214,8 @@
         "id": "Agent-Zeta",
         "domain": "devops-cloud-infrastructure",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T13:21:03.771Z",
-        "lastActiveAt": "2026-10-03T13:05:56.125Z",
+        "cooldownUntil": "2026-10-03T13:36:28.858Z",
+        "lastActiveAt": "2026-10-03T13:21:24.922Z",
         "lastHarvestedAt": "2026-10-02T09:49:14.838Z",
         "totalHarvested": 6,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -244,8 +244,8 @@
         "id": "Agent-Iota",
         "domain": "cognitive-neuroscience-systems",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T13:21:03.802Z",
-        "lastActiveAt": "2026-10-03T13:05:56.131Z",
+        "cooldownUntil": "2026-10-03T13:36:29.058Z",
+        "lastActiveAt": "2026-10-03T13:21:24.925Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791033721740,
-      "resetAt": "2026-10-03T13:22:01.740Z",
-      "trippedAt": "2026-10-03T13:06:46.740Z",
+      "remaining": 4974,
+      "resetEpoch": 1791034604318,
+      "resetAt": "2026-10-03T13:36:44.318Z",
+      "trippedAt": "2026-10-03T13:21:29.318Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 4
+      "consecutiveBlocks": 7
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
