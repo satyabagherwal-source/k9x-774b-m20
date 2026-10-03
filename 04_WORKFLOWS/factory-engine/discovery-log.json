@@ -16051,5 +16051,50 @@
     "qualityScore": 1581,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T04:56:12.582Z"
+  },
+  {
+    "name": "ConfettiSwiftUI",
+    "fullName": "simibac/ConfettiSwiftUI",
+    "url": "https://github.com/simibac/ConfettiSwiftUI",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "SwiftUI Package for Configurable Confetti Animation 🎉",
+    "stars": 2463,
+    "forks": 174,
+    "openIssues": 9,
+    "language": "Swift",
+    "qualityScore": 1552,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T05:11:30.119Z"
+  },
+  {
+    "name": "SwiftUI-Tutorials",
+    "fullName": "WillieWangWei/SwiftUI-Tutorials",
+    "url": "https://github.com/WillieWangWei/SwiftUI-Tutorials",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A code example and translation project of SwiftUI. / 一个 SwiftUI 的示例、翻译的教程项目。",
+    "stars": 2451,
+    "forks": 314,
+    "openIssues": 4,
+    "language": "Swift",
+    "qualityScore": 1578,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T05:11:30.119Z"
+  },
+  {
+    "name": "AlertToast",
+    "fullName": "elai950/AlertToast",
+    "url": "https://github.com/elai950/AlertToast",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Create Apple-like alerts & toasts using SwiftUI",
+    "stars": 2444,
+    "forks": 220,
+    "openIssues": 32,
+    "language": "Swift",
+    "qualityScore": 1602,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T05:11:30.119Z"
   }
 ]

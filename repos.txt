@@ -3456,3 +3456,11 @@ https://github.com/Rath-Team/OpenRath
 https://github.com/jordansinger/SwiftUI-Kit
 # [MOBILE-CROSS-PLATFORM] jasonjmcghee/rem (1581 score) - An open source approach to locally record and enable searching everything you vi
 https://github.com/jasonjmcghee/rem
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T05:11:30.120Z] ---
+# [MOBILE-CROSS-PLATFORM] simibac/ConfettiSwiftUI (1552 score) - SwiftUI Package for Configurable Confetti Animation 🎉
+https://github.com/simibac/ConfettiSwiftUI
+# [MOBILE-CROSS-PLATFORM] WillieWangWei/SwiftUI-Tutorials (1578 score) - A code example and translation project of SwiftUI. / 一个 SwiftUI 的示例、翻译的教程项目。
+https://github.com/WillieWangWei/SwiftUI-Tutorials
+# [MOBILE-CROSS-PLATFORM] elai950/AlertToast (1602 score) - Create Apple-like alerts & toasts using SwiftUI
+https://github.com/elai950/AlertToast
