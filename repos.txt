@@ -3528,3 +3528,7 @@ https://github.com/Mijick/Popups
 https://github.com/Planetable/Planet
 # [MOBILE-CROSS-PLATFORM] alyssaxuu/later (1112 score) - Save all your Mac apps for later with one click 🖱️
 https://github.com/alyssaxuu/later
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T07:59:31.253Z] ---
+# [MOBILE-CROSS-PLATFORM] signerlabs/Klee (1066 score) - A native macOS AI chat app powered by MLX. 100% local inference on Apple Silicon
+https://github.com/signerlabs/Klee

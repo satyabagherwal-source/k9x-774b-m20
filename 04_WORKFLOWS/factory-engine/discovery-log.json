@@ -16456,5 +16456,20 @@
     "qualityScore": 1112,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T07:43:57.187Z"
+  },
+  {
+    "name": "Klee",
+    "fullName": "signerlabs/Klee",
+    "url": "https://github.com/signerlabs/Klee",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A native macOS AI chat app powered by MLX. 100% local inference on Apple Silicon, no cloud required. Built with ShipSwift.",
+    "stars": 1765,
+    "forks": 137,
+    "openIssues": 21,
+    "language": "Swift",
+    "qualityScore": 1066,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T07:59:29.588Z"
   }
 ]
