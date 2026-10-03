@@ -16666,5 +16666,41 @@
     "downloads": 12963043,
     "qualityScore": 17880,
     "discoveredAt": "2026-10-03T22:35:11.018Z"
+  },
+  {
+    "name": "intfloat/multilingual-e5-small",
+    "fullName": "intfloat/multilingual-e5-small",
+    "url": "https://huggingface.co/intfloat/multilingual-e5-small",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: intfloat/multilingual-e5-small (435 likes, 11504237 downloads)",
+    "likes": 435,
+    "downloads": 11504237,
+    "qualityScore": 6350,
+    "discoveredAt": "2026-10-03T22:36:00.441Z"
+  },
+  {
+    "name": "argmaxinc/whisperkit-coreml",
+    "fullName": "argmaxinc/whisperkit-coreml",
+    "url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: argmaxinc/whisperkit-coreml (235 likes, 10798712 downloads)",
+    "likes": 235,
+    "downloads": 10798712,
+    "qualityScore": 4350,
+    "discoveredAt": "2026-10-03T22:36:00.441Z"
+  },
+  {
+    "name": "Qwen/Qwen3-8B",
+    "fullName": "Qwen/Qwen3-8B",
+    "url": "https://huggingface.co/Qwen/Qwen3-8B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Qwen/Qwen3-8B (2070 likes, 10703016 downloads)",
+    "likes": 2070,
+    "downloads": 10703016,
+    "qualityScore": 22700,
+    "discoveredAt": "2026-10-03T22:36:00.441Z"
   }
 ]

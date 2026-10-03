@@ -3576,3 +3576,11 @@ https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct
 https://huggingface.co/nomic-ai/nomic-embed-text-v1.5
 # [HUGGINGFACE-AI-MODELS] google/gemma-4-26B-A4B-it (17880 score) - Verified Hugging Face Model: google/gemma-4-26B-A4B-it (1588 likes, 12963043 dow
 https://huggingface.co/google/gemma-4-26B-A4B-it
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T22:36:00.444Z] ---
+# [HUGGINGFACE-AI-MODELS] intfloat/multilingual-e5-small (6350 score) - Verified Hugging Face Model: intfloat/multilingual-e5-small (435 likes, 11504237
+https://huggingface.co/intfloat/multilingual-e5-small
+# [HUGGINGFACE-AI-MODELS] argmaxinc/whisperkit-coreml (4350 score) - Verified Hugging Face Model: argmaxinc/whisperkit-coreml (235 likes, 10798712 do
+https://huggingface.co/argmaxinc/whisperkit-coreml
+# [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-8B (22700 score) - Verified Hugging Face Model: Qwen/Qwen3-8B (2070 likes, 10703016 downloads)
+https://huggingface.co/Qwen/Qwen3-8B
