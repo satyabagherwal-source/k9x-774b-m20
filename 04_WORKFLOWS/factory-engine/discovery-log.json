@@ -16021,5 +16021,35 @@
     "qualityScore": 659,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T04:40:49.131Z"
+  },
+  {
+    "name": "SwiftUI-Kit",
+    "fullName": "jordansinger/SwiftUI-Kit",
+    "url": "https://github.com/jordansinger/SwiftUI-Kit",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "A SwiftUI system components and interactions demo app",
+    "stars": 2532,
+    "forks": 177,
+    "openIssues": 6,
+    "language": "Swift",
+    "qualityScore": 1581,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T04:56:12.582Z"
+  },
+  {
+    "name": "rem",
+    "fullName": "jasonjmcghee/rem",
+    "url": "https://github.com/jasonjmcghee/rem",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "An open source approach to locally record and enable searching everything you view on your Mac.",
+    "stars": 2487,
+    "forks": 77,
+    "openIssues": 32,
+    "language": "Swift",
+    "qualityScore": 1581,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T04:56:12.582Z"
   }
 ]

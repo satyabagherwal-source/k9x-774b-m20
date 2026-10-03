@@ -3450,3 +3450,9 @@ https://github.com/SDWebImage/SDWebImageSwiftUI
 # --- Automatically Discovered by AI Scout Engine [2026-10-03T04:40:55.106Z] ---
 # [AI-AGENTS] Rath-Team/OpenRath (659 score) - An open-source, PyTorch-like runtime for dynamic multi-agent and multi-session w
 https://github.com/Rath-Team/OpenRath
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T04:56:14.208Z] ---
+# [MOBILE-CROSS-PLATFORM] jordansinger/SwiftUI-Kit (1581 score) - A SwiftUI system components and interactions demo app
+https://github.com/jordansinger/SwiftUI-Kit
+# [MOBILE-CROSS-PLATFORM] jasonjmcghee/rem (1581 score) - An open source approach to locally record and enable searching everything you vi
+https://github.com/jasonjmcghee/rem
