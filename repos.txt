@@ -3314,3 +3314,19 @@ https://github.com/johnbean393/Sidekick
 # --- Automatically Discovered by AI Scout Engine [2026-10-03T01:06:13.072Z] ---
 # [AI-AGENTS] HarnessMD/munder-difflin (4945 score) - an open-source alternative to the dots, bots and muses of the world, run an offi
 https://github.com/HarnessMD/munder-difflin
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T01:21:50.181Z] ---
+# [AI-AGENTS] Team-Commonly/commonly (1085 score) - Open-source room for humans + cross-vendor AI agents. Every agent gets its own n
+https://github.com/Team-Commonly/commonly
+# [AI-AGENTS] first-fluke/oh-my-agent (962 score) - Mechanical verification for AI coding agents — skills pack or full harness (stop
+https://github.com/first-fluke/oh-my-agent
+# [AI-AGENTS] study8677/repobrain (1005 score) - 🧠 RepoBrain (formerly Antigravity) — Give your repo a brain. ChatGPT for your c
+https://github.com/study8677/repobrain
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T01:21:50.285Z] ---
+# [MOBILE-CROSS-PLATFORM] duongductrong/Snapzy (2097 score) - An open-source native macOS screenshot and screen recording app. A CleanShot X a
+https://github.com/duongductrong/Snapzy
+# [MOBILE-CROSS-PLATFORM] signerlabs/ShipSwift (1832 score) - AI-native SwiftUI component library with full-stack recipes — connect via MCP fo
+https://github.com/signerlabs/ShipSwift
+# [MOBILE-CROSS-PLATFORM] yannickl/DynamicColor (1870 score) - Yet another extension to manipulate colors easily in Swift and SwiftUI
+https://github.com/yannickl/DynamicColor
