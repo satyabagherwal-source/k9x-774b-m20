@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-03T10:02:30.987Z",
+  "lastUpdated": "2026-10-03T10:03:17.313Z",
   "updatedBy": "repo-mode-switcher:public",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -224,8 +224,8 @@
         "id": "Agent-Eta",
         "domain": "cybersecurity-defenses",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T10:03:00.375Z",
-        "lastActiveAt": "2026-10-03T09:47:58.347Z",
+        "cooldownUntil": "2026-10-03T10:18:17.313Z",
+        "lastActiveAt": "2026-10-03T10:03:15.146Z",
         "lastHarvestedAt": "2026-10-02T10:03:44.092Z",
         "totalHarvested": 14,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -234,8 +234,8 @@
         "id": "Agent-Theta",
         "domain": "database-storage-engines",
         "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-03T10:03:00.377Z",
-        "lastActiveAt": "2026-10-03T09:47:58.356Z",
+        "cooldownUntil": "2026-10-03T10:18:17.312Z",
+        "lastActiveAt": "2026-10-03T10:03:15.154Z",
         "lastHarvestedAt": "2026-10-02T09:22:48.583Z",
         "totalHarvested": 10,
         "lastError": "GitHub/AI Rate Limit on Target"
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 4986,
-      "resetEpoch": 1791022665987,
-      "resetAt": "2026-10-03T10:17:45.987Z",
-      "trippedAt": "2026-10-03T10:02:30.987Z",
+      "remaining": 0,
+      "resetEpoch": 1791022712313,
+      "resetAt": "2026-10-03T10:18:32.313Z",
+      "trippedAt": "2026-10-03T10:03:17.313Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 7
+      "consecutiveBlocks": 4
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
