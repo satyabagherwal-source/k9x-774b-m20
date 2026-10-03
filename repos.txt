@@ -3302,3 +3302,15 @@ https://github.com/oblador/hush
 https://github.com/Lessica/TrollFools
 # [MOBILE-CROSS-PLATFORM] Shubham0812/SwiftUI-Animations (2112 score) - A repository containing a variety of animations and Animated components created 
 https://github.com/Shubham0812/SwiftUI-Animations
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T01:06:11.431Z] ---
+# [MOBILE-CROSS-PLATFORM] krzysztofzablocki/Inject (2036 score) - Hot Reloading for Swift applications! 
+https://github.com/krzysztofzablocki/Inject
+# [MOBILE-CROSS-PLATFORM] rechsteiner/Parchment (2069 score) - A paging view with a highly customizable menu ✨
+https://github.com/rechsteiner/Parchment
+# [MOBILE-CROSS-PLATFORM] johnbean393/Sidekick (2023 score) - A native macOS app that allows users to chat with a local LLM that can respond w
+https://github.com/johnbean393/Sidekick
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T01:06:13.072Z] ---
+# [AI-AGENTS] HarnessMD/munder-difflin (4945 score) - an open-source alternative to the dots, bots and muses of the world, run an offi
+https://github.com/HarnessMD/munder-difflin
