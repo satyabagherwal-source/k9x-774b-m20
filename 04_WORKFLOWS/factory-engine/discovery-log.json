@@ -16558,5 +16558,41 @@
     "downloads": 1497,
     "qualityScore": 2947,
     "discoveredAt": "2026-10-03T21:16:35.114Z"
+  },
+  {
+    "name": "openai/clip-vit-base-patch32",
+    "fullName": "openai/clip-vit-base-patch32",
+    "url": "https://huggingface.co/openai/clip-vit-base-patch32",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: openai/clip-vit-base-patch32 (1577 likes, 21028939 downloads)",
+    "likes": 1577,
+    "downloads": 21028939,
+    "qualityScore": 17770,
+    "discoveredAt": "2026-10-03T22:33:35.296Z"
+  },
+  {
+    "name": "sentence-transformers/all-mpnet-base-v2",
+    "fullName": "sentence-transformers/all-mpnet-base-v2",
+    "url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: sentence-transformers/all-mpnet-base-v2 (1381 likes, 19694562 downloads)",
+    "likes": 1381,
+    "downloads": 19694562,
+    "qualityScore": 15810,
+    "discoveredAt": "2026-10-03T22:33:35.296Z"
+  },
+  {
+    "name": "BAAI/bge-reranker-v2-m3",
+    "fullName": "BAAI/bge-reranker-v2-m3",
+    "url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: BAAI/bge-reranker-v2-m3 (1224 likes, 17098942 downloads)",
+    "likes": 1224,
+    "downloads": 17098942,
+    "qualityScore": 14240,
+    "discoveredAt": "2026-10-03T22:33:35.296Z"
   }
 ]
