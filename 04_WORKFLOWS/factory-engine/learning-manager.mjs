@@ -79,6 +79,53 @@ ${incidentData.verificationOutcome || 'Verified via live build and runtime test.
 }
 
 /**
+ * Captures 24/7 harvest failures as forensic incidents with lessons and remediations
+ */
+export function captureHarvestFailureIncident(brainRoot, target, error) {
+  const incidentsDir = path.join(brainRoot, '.project-brain', 'incidents');
+  fs.mkdirSync(incidentsDir, { recursive: true });
+
+  const count = fs.readdirSync(incidentsDir).filter(f => f.startsWith('INC-HARVEST-')).length + 1;
+  const num = String(count).padStart(3, '0');
+  const filename = `INC-HARVEST-${num}-${target?.slug || 'target'}.md`;
+  const filePath = path.join(incidentsDir, filename);
+
+  const isCircuitTrip = error.code === 'RATE_LIMIT_TRIPPED' || error.message?.includes('CIRCUIT_TRIPPED');
+
+  const content = `# Harvest Incident Record: ${target?.webUrl || target?.slug || 'Unknown Target'}
+- **Incident ID**: INC-HARVEST-${num}
+- **Timestamp**: ${new Date().toISOString()}
+- **Target**: ${target?.webUrl || target?.slug} (${target?.type || 'external'})
+- **Status**: ${isCircuitTrip ? 'CIRCUIT_TRIPPED_BACKOFF' : 'FAILED_REMEDIATED'}
+
+---
+
+## 1. Context & Expected Behavior
+Expected successful forensic extraction of code diffs, closed bug issues, and manifests under 24/7 continuous harvesting loop.
+
+## 2. Actual Error & Observed Failure
+\`\`\`
+${error.stack || error.message}
+\`\`\`
+
+## 3. Root Cause Analysis
+${isCircuitTrip ? 'Provider/Platform API quota or burst rate limit reached.' : 'Extraction failure: upstream response error, network timeout, or schema mismatch.'}
+
+## 4. Remediation Action
+${isCircuitTrip ? 'Master Circuit Breaker engaged. Workers shifted to internal peer synthesis until reset.' : 'Target marked as failed in run log; target lock released; advance to next target without halting the fleet.'}
+
+## 5. Engineering Lesson
+External 24/7 harvest pipelines must be resilient to intermittent upstream outages, maintaining circuit breakers and fallback laborers so that learning never stops entirely.
+`;
+
+  try {
+    fs.writeFileSync(filePath, content, 'utf-8');
+    console.log(`📋 [INCIDENT RECORDED] Harvest failure captured in .project-brain/incidents/${filename}`);
+  } catch (e) {}
+  return filePath;
+}
+
+/**
  * Prepares a candidate learning promotion proposal in .project-brain/promotion-queue/
  */
 export function preparePromotionProposal(projectDir, candidateData) {
