@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-03T20:28:58.658Z",
+  "lastUpdated": "2026-10-03T20:40:33.133Z",
   "updatedBy": "repo-mode-switcher:public",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -270,13 +270,13 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
+      "status": "HEALTHY",
       "remaining": 0,
-      "resetEpoch": 1791060253655,
-      "resetAt": "2026-10-03T20:44:13.655Z",
-      "trippedAt": "2026-10-03T20:28:58.655Z",
-      "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 4
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-03T20:25:15.400Z",
+      "reason": null,
+      "consecutiveBlocks": 22
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
