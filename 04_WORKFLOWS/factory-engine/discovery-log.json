@@ -16096,5 +16096,50 @@
     "qualityScore": 1602,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-03T05:11:30.119Z"
+  },
+  {
+    "name": "iPlug2",
+    "fullName": "iPlug2/iPlug2",
+    "url": "https://github.com/iPlug2/iPlug2",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "C++ Audio Plug-in Framework for desktop, mobile, xr and web",
+    "stars": 2419,
+    "forks": 375,
+    "openIssues": 249,
+    "language": "C",
+    "qualityScore": 1772,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T05:26:38.480Z"
+  },
+  {
+    "name": "Wave",
+    "fullName": "jtrivedi/Wave",
+    "url": "https://github.com/jtrivedi/Wave",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Wave is a spring-based animation engine for iOS and macOS that makes it easy to create fluid, interruptible animations that feel great.",
+    "stars": 2398,
+    "forks": 72,
+    "openIssues": 11,
+    "language": "Swift",
+    "qualityScore": 1493,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T05:26:38.480Z"
+  },
+  {
+    "name": "libPhoneNumber-iOS",
+    "fullName": "iziz/libPhoneNumber-iOS",
+    "url": "https://github.com/iziz/libPhoneNumber-iOS",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "iOS port of Google's libphonenumber with Objective-C core, Swift facade, SwiftUI input, and CocoaPods/SPM support",
+    "stars": 2382,
+    "forks": 483,
+    "openIssues": 0,
+    "language": "Objective-C",
+    "qualityScore": 1586,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-03T05:26:38.480Z"
   }
 ]

@@ -3464,3 +3464,11 @@ https://github.com/simibac/ConfettiSwiftUI
 https://github.com/WillieWangWei/SwiftUI-Tutorials
 # [MOBILE-CROSS-PLATFORM] elai950/AlertToast (1602 score) - Create Apple-like alerts & toasts using SwiftUI
 https://github.com/elai950/AlertToast
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-03T05:26:38.502Z] ---
+# [MOBILE-CROSS-PLATFORM] iPlug2/iPlug2 (1772 score) - C++ Audio Plug-in Framework for desktop, mobile, xr and web
+https://github.com/iPlug2/iPlug2
+# [MOBILE-CROSS-PLATFORM] jtrivedi/Wave (1493 score) - Wave is a spring-based animation engine for iOS and macOS that makes it easy to 
+https://github.com/jtrivedi/Wave
+# [MOBILE-CROSS-PLATFORM] iziz/libPhoneNumber-iOS (1586 score) - iOS port of Google's libphonenumber with Objective-C core, Swift facade, SwiftUI
+https://github.com/iziz/libPhoneNumber-iOS
