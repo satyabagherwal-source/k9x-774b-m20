@@ -1,16 +1,16 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 1,
+      "queryIndex": 0,
       "page": 4
     },
     "fullstack-ui": {
-      "queryIndex": 3,
-      "page": 2
+      "queryIndex": 0,
+      "page": 1
     },
     "high-perf-systems": {
-      "queryIndex": 1,
-      "page": 3
+      "queryIndex": 0,
+      "page": 1
     },
     "huggingface-ai-models": {
       "queryIndex": 0,
@@ -18,22 +18,22 @@
     },
     "mobile-cross-platform": {
       "queryIndex": 0,
-      "page": 5
+      "page": 1
     },
     "devops-cloud-infrastructure": {
       "queryIndex": 0,
       "page": 1
     },
     "cybersecurity-defenses": {
-      "queryIndex": 3,
+      "queryIndex": 0,
       "page": 1
     },
     "database-storage-engines": {
       "queryIndex": 0,
-      "page": 3
+      "page": 1
     },
     "cognitive-neuroscience-systems": {
-      "queryIndex": 4,
+      "queryIndex": 0,
       "page": 1
     }
   },
@@ -42,9 +42,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 0,
-<<<<<<< Updated upstream
-  "lastReplenishedAt": "2026-10-03T21:37:01.788Z"
-=======
-  "lastReplenishedAt": "2026-10-03T21:37:10.969Z"
->>>>>>> Stashed changes
+  "lastReplenishedAt": "2026-10-03T21:37:31.557Z"
 }
