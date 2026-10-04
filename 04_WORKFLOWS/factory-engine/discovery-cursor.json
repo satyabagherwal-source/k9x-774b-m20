@@ -18,7 +18,7 @@
     },
     "mobile-cross-platform": {
       "queryIndex": 0,
-      "page": 5
+      "page": 2
     },
     "devops-cloud-infrastructure": {
       "queryIndex": 2,
@@ -30,7 +30,7 @@
     },
     "database-storage-engines": {
       "queryIndex": 1,
-      "page": 3
+      "page": 4
     },
     "cognitive-neuroscience-systems": {
       "queryIndex": 2,
@@ -42,5 +42,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 1,
-  "lastReplenishedAt": "2026-10-04T13:52:18.842Z"
+  "lastReplenishedAt": "2026-10-04T13:52:33.716Z"
 }
