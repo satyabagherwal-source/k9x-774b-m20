@@ -16822,5 +16822,17 @@
     "qualityScore": 1087,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-04T21:36:46.145Z"
+  },
+  {
+    "name": "lilylilith/QI_2.1_AnyAngle",
+    "fullName": "lilylilith/QI_2.1_AnyAngle",
+    "url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: lilylilith/QI_2.1_AnyAngle (126 likes, 0 downloads)",
+    "likes": 126,
+    "downloads": 0,
+    "qualityScore": 1260,
+    "discoveredAt": "2026-10-04T23:16:11.258Z"
   }
 ]

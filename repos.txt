@@ -3614,3 +3614,7 @@ https://github.com/sweetpad-dev/sweetpad
 # --- Automatically Discovered by AI Scout Engine [2026-10-04T21:36:59.600Z] ---
 # [AI-AGENTS] TIGER-AI-Lab/TheoremExplainAgent (1087 score) - Official Repo for "TheoremExplainAgent: Towards Video-based Multimodal Explanati
 https://github.com/TIGER-AI-Lab/TheoremExplainAgent
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-04T23:16:11.259Z] ---
+# [HUGGINGFACE-AI-MODELS] lilylilith/QI_2.1_AnyAngle (1260 score) - Verified Hugging Face Model: lilylilith/QI_2.1_AnyAngle (126 likes, 0 downloads)
+https://huggingface.co/lilylilith/QI_2.1_AnyAngle

@@ -16239,5 +16239,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-lilylilith-qi_2.1_anyangle": {
+    "name": "lilylilith/QI_2.1_AnyAngle",
+    "officialUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-04T23:16:13.524Z",
+    "lastVerified": "2026-10-04T23:16:13.524Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
