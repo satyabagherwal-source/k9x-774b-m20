@@ -236,4 +236,36 @@ A strict, non-negotiable operational boundary must be maintained between **Inten
    - While tool and command execution is fully autonomous (Always Proceed), code changes in child product workspaces remain uncommitted in the local working tree so the user can inspect diffs and discard mistakes at their discretion.
    - Auto-commit and git push remains restricted exclusively to `C:\AI-Builder-Brain`.
 
+## Rule 23 — Adaptive Depth Invariant: Surface vs. Deep Execution Governance ("Jab Jiski Jarurat Ho: Surface vs. Deep Auto-Detection")
+
+To eliminate superficial passes and ensure the AI Builder Brain's collective intelligence is deployed with the exact necessary depth:
+
+1. **The Dynamic Depth Dilemma**:
+   - Operating at the "Surface Level" (e.g., merely checking HTTP 200, verifying syntax, or testing a raw algorithm in isolation) while ignoring visual layout, responsive ergonomics, and theme controls is an **EXECUTION FAILURE**.
+   - Conversely, over-engineering an isolated one-line config fix with a multi-page redesign is wasteful.
+   - The AI MUST automatically classify every task into **Surface** or **Deep** and execute with the appropriate depth.
+
+2. **Classification Matrix: Surface vs. Deep Execution**:
+   - **SURFACE MODE (Lightweight & Rapid)**:
+     - *Triggers*: Querying file paths, reading documentation, isolated single-line regex/math corrections, lint fixes that don't affect layout, or ad-hoc diagnostic lookups.
+     - *Execution*: Fast direct edits, surgical verification, no architectural scaffolding required.
+   - **DEEP MODE (MANDATORY for all User-Facing Surfaces)**:
+     - *Triggers*: Any task involving UI/UX, page layout, components, visual styling, responsive design, audits, feature additions, or pre-publication reviews.
+     - *Mandatory Invariants in Deep Mode*:
+       1. **Dual-Theme Completeness (Dark & Light Mode)**:
+          - A user-visible Theme Toggle (Sun/Moon icon button) MUST be present in the header navigation and mobile drawer.
+          - Pre-hydration anti-flash script in `<head>` to prevent blinding flashes of the wrong theme on reload.
+          - Both modes must have handcrafted, high-contrast aesthetics (e.g., Obsidian Dark vs. Antique Parchment Light for gothic/calligraphic tools; high readability and brand harmony in both).
+          - Theme state must persist across sessions via `localStorage`.
+       2. **Full Responsive Ergonomics (Zero Desktop-Only Assumptions)**:
+          - Every viewport below desktop (`< 1024px` or `< 1280px`) MUST feature a dedicated mobile hamburger toggle and animated navigation drawer/modal.
+          - Multi-page navigation must never disappear on mobile or leave mobile users trapped without links.
+          - Headroom protection: Logos and decorative headings with large ascenders must have explicit line-height and `shrink-0` to prevent top clipping or banner bleed.
+       3. **Multi-Viewport Visual & Runtime Verification**:
+          - Verification MUST test at least two distinct viewport widths: Desktop (`1280px+`) and Mobile (`375px` or `390px`).
+          - Never claim "everything is verified" based solely on API/terminal output; actual DOM layout, bounding client rects, and visual rendering must be verified.
+       4. **Auto-Escalation**:
+          - If the user asks for a feature or audit, the AI must NEVER wait for the user to prompt: *"where is mobile menu?"* or *"where is light mode?"*. The AI must proactively escalate to Deep Mode and build complete, production-grade interfaces.
+
+
 

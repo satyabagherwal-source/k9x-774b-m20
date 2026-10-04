@@ -103,4 +103,16 @@ Never confuse **Interactive Requirement Elicitation** with **Tool Execution Appr
    - The agent MUST NEVER prompt the user with execution modals (e.g. "Allow rebuild...", "Allow node -e...", "Yes, allow this time").
    - Builds, scripts, scratch test runners, file reads, and edits proceed automatically.
 3. **Child Workspace Git Rule**: In child product repositories, changes remain uncommitted in the working tree so the user can discard misalignments if needed. Auto-commit & auto-push is permitted exclusively in `C:\AI-Builder-Brain`.
+ 
++## 7. Adaptive Depth Engine: Surface vs. Deep Execution
++
++Every AI connecting to AI-Builder-Brain must evaluate the execution depth required for each task:
++
++| Mode | Criteria / Scope | Operational Standard |
++| :--- | :--- | :--- |
++| **Surface** | Internal scripts, pure API queries, regex typo fixes, localized math helpers | Direct, zero overhead, single-pass unit check |
++| **Deep** | Any user-facing web page, UI component, design system, audit, or release | Auto-escalates to mandate: <br>• Dual-theme toggle (Dark + Light) with anti-flash script<br>• Mobile hamburger drawer for viewports `< 1024px`<br>• Headroom padding preventing text clipping on large fonts<br>• Multi-breakpoint headless CDP verification (Desktop + Mobile) |
++
++**The Golden Invariant**: The agent must NEVER wait for the user to point out missing mobile navigation or dark/light modes. If a task touches the front-end, Deep Mode is mandatory by default.
+
 
