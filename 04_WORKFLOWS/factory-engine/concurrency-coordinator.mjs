@@ -151,12 +151,30 @@ export function releaseTargetLock(targetKey) {
 }
 
 /**
+ * Safely removes stale .git/index.lock if orphaned
+ */
+export function cleanStaleIndexLock(cwd = BRAIN_ROOT) {
+  try {
+    const lockFile = path.join(cwd, '.git', 'index.lock');
+    if (fs.existsSync(lockFile)) {
+      const stats = fs.statSync(lockFile);
+      if (Date.now() - stats.mtimeMs > 3000) {
+        fs.unlinkSync(lockFile);
+        console.log(`[GIT RECOVERY] Removed stale .git/index.lock file.`);
+      }
+    }
+  } catch (e) {}
+}
+
+/**
  * Atomic Git Rebase-Retry Push Barrier:
  * When multiple agents push concurrently to GitHub origin main,
  * handles non-fast-forward rejections with auto-rebase and jittered retry.
  */
 export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN_ROOT) {
   console.log(`\n[CONCURRENCY SYNC] Staging and pushing with atomic rebase retry...`);
+
+  cleanStaleIndexLock(cwd);
 
   try {
     run('git add .', cwd);
@@ -174,6 +192,7 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
   let attempt = 0;
   while (attempt < maxRetries) {
     attempt++;
+    cleanStaleIndexLock(cwd);
     try {
       run('git push origin main', cwd);
       console.log(`[CONCURRENCY PUSH SUCCESS] Push confirmed on attempt ${attempt}.`);
@@ -182,6 +201,7 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
       console.warn(`[CONCURRENCY RETRY] Push rejected on attempt ${attempt}/${maxRetries} (concurrent remote change detected).`);
       console.log(`   Running git pull --rebase to merge concurrent agent updates...`);
 
+      cleanStaleIndexLock(cwd);
       try {
         run('git pull --rebase --autostash origin main', cwd);
       } catch (pullErr) {

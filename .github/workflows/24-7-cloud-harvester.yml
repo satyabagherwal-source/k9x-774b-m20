@@ -14,6 +14,10 @@ on:
     # 24/7 Continuous harvesting enabled in Public Mode (Zero-cost unlimited runner minutes)
     - cron: '*/20 * * * *'
 
+concurrency:
+  group: cloud-harvester-fleet
+  cancel-in-progress: false
+
 permissions:
   contents: write
   actions: write
@@ -78,40 +82,30 @@ jobs:
           node 04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs
 
       - name: Commit & Push Harvested Multi-Agent Intelligence to GitHub
+        if: always()
         run: |
+          rm -f .git/index.lock
           git add .
           if git diff --staged --quiet; then
             echo "Working tree is clean. Multi-Agent Fleet intelligence is fully synced."
           else
             git commit -m "feat(fleet): 8-agent parallel fleet harvested multi-domain learnings [skip ci]"
             for i in {1..5}; do
+              rm -f .git/index.lock
               git push origin main && break || {
                 echo "Concurrent push detected. Rebasing and retrying ($i/5)..."
-                sleep $((1 + RANDOM % 3))
+                sleep $((2 + RANDOM % 4))
+                rm -f .git/index.lock
                 git pull --rebase origin main
               }
             done
           fi
 
-      - name: Autonomous 24/7 Self-Relay Dispatcher
+      - name: 24/7 Fleet Health & Status Monitor
         if: always()
-        env:
-          GH_TOKEN: ${{ secrets.WORKFLOW_RELAY_TOKEN }}
         run: |
           echo "======================================================================"
-          echo "🔄 24/7 AUTONOMOUS CONTINUOUS LEARNING RELAY DISPATCHER"
+          echo "✅ 24/7 CONTINUOUS LEARNING FLEET CYCLE COMPLETED"
           echo "======================================================================"
-          VISIBILITY=$(gh repo view ${{ github.repository }} --json visibility -q .visibility 2>/dev/null || echo "UNKNOWN")
-          echo "Current Repository Visibility: $VISIBILITY"
-
-          if [ "$VISIBILITY" = "PUBLIC" ]; then
-            if [ -n "$GH_TOKEN" ]; then
-              echo "🚀 Repository is PUBLIC. Dispatching next server-to-server learning cycle..."
-              sleep 30
-              gh workflow run 24-7-cloud-harvester.yml --repo "${{ github.repository }}" || echo "⚠️ Self-relay trigger deferred to cron"
-            else
-              echo "ℹ️ WORKFLOW_RELAY_TOKEN not set in secrets. Falling back to cron schedule."
-            fi
-          else
-            echo "🛡️ PRIVATE MODE DETECTED: Self-Relay blocked to safeguard 2,000 monthly runner minutes quota."
-          fi
+          echo "Continuous learning loop governed by GitHub Cron schedule (every 20 mins)."
+          echo "Next cycle will automatically execute via cron. Zero-loop storm protection active."

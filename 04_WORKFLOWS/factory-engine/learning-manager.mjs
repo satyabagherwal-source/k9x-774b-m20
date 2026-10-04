@@ -82,21 +82,34 @@ ${incidentData.verificationOutcome || 'Verified via live build and runtime test.
  * Captures 24/7 harvest failures as forensic incidents with lessons and remediations
  */
 export function captureHarvestFailureIncident(brainRoot, target, error) {
+  const isCircuitTrip = error.code === 'RATE_LIMIT_TRIPPED' || error.message?.includes('CIRCUIT_TRIPPED') || error.message?.includes('RATE_LIMIT');
+  if (isCircuitTrip) {
+    // Circuit trips and rate limits are expected backoff conditions, not repository defect incidents.
+    return null;
+  }
+
   const incidentsDir = path.join(brainRoot, '.project-brain', 'incidents');
   fs.mkdirSync(incidentsDir, { recursive: true });
 
-  const count = fs.readdirSync(incidentsDir).filter(f => f.startsWith('INC-HARVEST-')).length + 1;
+  // Cap incidents to maximum 50 files to prevent repository bloat and readdir slowdown
+  const existingFiles = fs.readdirSync(incidentsDir).filter(f => f.startsWith('INC-HARVEST-'));
+  if (existingFiles.length >= 50) {
+    try {
+      // Remove oldest 10 to keep repository healthy
+      existingFiles.slice(0, 10).forEach(f => fs.unlinkSync(path.join(incidentsDir, f)));
+    } catch (e) {}
+  }
+
+  const count = existingFiles.length + 1;
   const num = String(count).padStart(3, '0');
   const filename = `INC-HARVEST-${num}-${target?.slug || 'target'}.md`;
   const filePath = path.join(incidentsDir, filename);
-
-  const isCircuitTrip = error.code === 'RATE_LIMIT_TRIPPED' || error.message?.includes('CIRCUIT_TRIPPED');
 
   const content = `# Harvest Incident Record: ${target?.webUrl || target?.slug || 'Unknown Target'}
 - **Incident ID**: INC-HARVEST-${num}
 - **Timestamp**: ${new Date().toISOString()}
 - **Target**: ${target?.webUrl || target?.slug} (${target?.type || 'external'})
-- **Status**: ${isCircuitTrip ? 'CIRCUIT_TRIPPED_BACKOFF' : 'FAILED_REMEDIATED'}
+- **Status**: FAILED_REMEDIATED
 
 ---
 
@@ -109,10 +122,10 @@ ${error.stack || error.message}
 \`\`\`
 
 ## 3. Root Cause Analysis
-${isCircuitTrip ? 'Provider/Platform API quota or burst rate limit reached.' : 'Extraction failure: upstream response error, network timeout, or schema mismatch.'}
+Extraction failure: upstream response error, network timeout, or schema mismatch.
 
 ## 4. Remediation Action
-${isCircuitTrip ? 'Master Circuit Breaker engaged. Workers shifted to internal peer synthesis until reset.' : 'Target marked as failed in run log; target lock released; advance to next target without halting the fleet.'}
+Target marked as failed in run log; target lock released; advance to next target without halting the fleet.
 
 ## 5. Engineering Lesson
 External 24/7 harvest pipelines must be resilient to intermittent upstream outages, maintaining circuit breakers and fallback laborers so that learning never stops entirely.

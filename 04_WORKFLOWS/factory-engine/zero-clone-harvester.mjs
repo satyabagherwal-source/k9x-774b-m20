@@ -600,6 +600,11 @@ export function updateSourcesRegistryZeroClone(audit) {
  * Git Auto Commit & Push
  */
 export async function autoCommitAndPushZeroClone(audit) {
+  if (process.env.AGENT_NAME) {
+    // When running inside the multi-agent parallel fleet, child workers must NOT
+    // execute git commit/push concurrently. The fleet orchestrator commits at batch completion.
+    return true;
+  }
   console.log(`\n[GIT AUTO-PUSH] Synchronizing Master Brain (atomic rebase retry)...`);
   const commitMsg = `feat(harvest): Zero-Clone 24/7 harvest from ${audit.name} [skip ci]`;
   const res = await pushWithRebaseRetry(commitMsg, 5, BRAIN_ROOT);
@@ -625,10 +630,12 @@ export async function runZeroCloneHarvester(customUrls = null) {
     return { success: true, status: 'PAUSED', processed: 0 };
   }
 
-  // 2. Pre-sync Git remote if possible
-  try {
-    run('git pull --rebase --autostash origin main', BRAIN_ROOT);
-  } catch (e) {}
+  // 2. Pre-sync Git remote if possible (only standalone, not child workers)
+  if (!process.env.AGENT_NAME) {
+    try {
+      run('git pull --rebase --autostash origin main', BRAIN_ROOT);
+    } catch (e) {}
+  }
 
   // 3. Autonomous Queue Pre-flight & Replenishment
   const isCustomRun = Boolean(Array.isArray(customUrls) && customUrls.length > 0);
@@ -740,7 +747,6 @@ export async function runZeroCloneHarvester(customUrls = null) {
     } catch (err) {
       if (err.code === 'RATE_LIMIT_TRIPPED' || err.message?.includes('CIRCUIT_TRIPPED') || err.message?.includes('RATE_LIMIT')) {
         console.warn(`\n🛑 [MASTER CIRCUIT BREAKER ENGAGED] Quota or Rate limit tripped on ${target.slug}. Halting batch loop immediately to protect API/account.`);
-        captureHarvestFailureIncident(BRAIN_ROOT, target, err);
         results.push({ target: target.slug, status: 'TRIPPED_CIRCUIT', error: err.message });
         releaseTargetLock(target.slug);
         circuitTrippedInRun = true;
