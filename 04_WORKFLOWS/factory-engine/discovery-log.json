@@ -16792,5 +16792,20 @@
     "qualityScore": 667,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-04T13:09:34.497Z"
+  },
+  {
+    "name": "sweetpad",
+    "fullName": "sweetpad-dev/sweetpad",
+    "url": "https://github.com/sweetpad-dev/sweetpad",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, watchOS, and visionOS apps from your terminal.",
+    "stars": 1886,
+    "forks": 97,
+    "openIssues": 5,
+    "language": "Rust",
+    "qualityScore": 1132,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-04T21:13:59.849Z"
   }
 ]

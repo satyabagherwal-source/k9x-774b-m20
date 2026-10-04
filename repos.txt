@@ -3606,3 +3606,7 @@ https://github.com/tt-a1i/archify
 # --- Automatically Discovered by AI Scout Engine [2026-10-04T13:09:38.583Z] ---
 # [AI-AGENTS] ant-research/AntOmniEvo (667 score) - An auto-evolution framework that optimizes anything — your 7×24 team of algorith
 https://github.com/ant-research/AntOmniEvo
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-04T21:14:03.580Z] ---
+# [MOBILE-CROSS-PLATFORM] sweetpad-dev/sweetpad (1132 score) - xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, 
+https://github.com/sweetpad-dev/sweetpad
