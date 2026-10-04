@@ -16213,5 +16213,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sweetpad-dev-sweetpad": {
+    "name": "sweetpad-dev/sweetpad",
+    "officialUrl": "https://github.com/sweetpad-dev/sweetpad",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-04T21:15:57.334Z",
+    "lastVerified": "2026-10-04T21:15:57.334Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
