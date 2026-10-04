@@ -3610,3 +3610,7 @@ https://github.com/ant-research/AntOmniEvo
 # --- Automatically Discovered by AI Scout Engine [2026-10-04T21:14:03.580Z] ---
 # [MOBILE-CROSS-PLATFORM] sweetpad-dev/sweetpad (1132 score) - xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, 
 https://github.com/sweetpad-dev/sweetpad
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-04T21:36:59.600Z] ---
+# [AI-AGENTS] TIGER-AI-Lab/TheoremExplainAgent (1087 score) - Official Repo for "TheoremExplainAgent: Towards Video-based Multimodal Explanati
+https://github.com/TIGER-AI-Lab/TheoremExplainAgent
