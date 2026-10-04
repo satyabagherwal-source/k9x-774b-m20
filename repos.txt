@@ -3602,3 +3602,7 @@ https://huggingface.co/Bingsu/adetailer
 # --- Automatically Discovered by AI Scout Engine [2026-10-04T07:23:18.706Z] ---
 # [AI-AGENTS] tt-a1i/archify (40432 score) - Turn any idea, plan, or codebase into a beautiful interactive diagram. An agent 
 https://github.com/tt-a1i/archify
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-04T13:09:38.583Z] ---
+# [AI-AGENTS] ant-research/AntOmniEvo (667 score) - An auto-evolution framework that optimizes anything — your 7×24 team of algorith
+https://github.com/ant-research/AntOmniEvo

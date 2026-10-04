@@ -16777,5 +16777,20 @@
     "qualityScore": 40432,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-04T07:23:16.744Z"
+  },
+  {
+    "name": "AntOmniEvo",
+    "fullName": "ant-research/AntOmniEvo",
+    "url": "https://github.com/ant-research/AntOmniEvo",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An auto-evolution framework that optimizes anything — your 7×24 team of algorithm engineers.",
+    "stars": 959,
+    "forks": 93,
+    "openIssues": 5,
+    "language": "Python",
+    "qualityScore": 667,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-04T13:09:34.497Z"
   }
 ]
