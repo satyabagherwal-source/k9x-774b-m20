@@ -62,3 +62,10 @@ A lesson should be generalized only when its evidence and scope justify reuse.
 ## Rule 10 — Stop when the requested outcome is complete
 
 Do not create additional work merely because more work is possible.
+
+## Rule 11 — Zero-Assumption Intent Discovery: Deep-Dive with Structured Multi-Select Before Synthesis
+
+When a user asks to build, clone, adapt, or improve a website or software:
+- Never conflate "inspiration" with "shallow cloning".
+- When requirements have multiple viable paths (e.g. original brand vs inspiration clone, specific feature subset), treat the user's intent as an unknown hypothesis.
+- Formulate precise, multi-select options in an interactive modal to let the user disambiguate before committing to an architectural path.

@@ -71,3 +71,19 @@ The agent should tell the user:
 
 The goal is not to make the work sound successful. The goal is to make the actual state understandable.
 
+## When initiating product or website building: Deep-Diving Multi-Select Discovery
+
+Whenever a user asks the agent to build, redesign, or enhance a website or product:
+- The agent must NEVER guess or assume requirements.
+- The agent MUST use the interactive multi-selector modal (`ask_question` tool with multi-select checkboxes) to deep-dive into branding, feature priorities, visual design, and scope.
+- The agent may ask as many structured multi-select questions as needed to eliminate all ambiguity before writing code.
+- Coding begins only after the user has selected their choices in the modal.
+
+## Git Commit Policy: Strictly Manual on Child Repositories
+
+When working on any child project, website, or product repository:
+- The agent MUST NEVER run automatic `git commit` or `git push`.
+- All changes must remain uncommitted in the working tree so the user can review them and easily discard mistakes or misalignments.
+- Commit in child repos ONLY when the user explicitly requests a commit.
+- Automatic commit and push is permitted EXCLUSIVELY inside `C:\AI-Builder-Brain`.
+

@@ -48,7 +48,7 @@ Choose your path based on what the user asked:
 
 ---
 
-## 3. 🚫 The 4 Golden Anti-Wandering Rules (Token Invariants)
+## 3. 🚫 The 6 Golden Execution Invariants
 
 1. **NEVER Read `07_PROJECT_LEARNING/` During Coding Tasks**:
    - `07_PROJECT_LEARNING/` contains 130+ exhaustive forensic extraction files (over 2 MB of text).
@@ -63,3 +63,9 @@ Choose your path based on what the user asked:
 4. **ALWAYS Protect Working Code (Anti-Regression Guarantee)**:
    - When fixing Bug X, you must NOT break Feature Y.
    - Use surgical diffs (`replace_file_content`). Never overwrite entire files unless creating from scratch.
+5. **ALWAYS Deep-Dive with Multi-Select Modal (`ask_question`) Before Building**:
+   - When a user asks to build, redesign, or enhance any website or application, NEVER assume or guess blindly.
+   - Invoke the interactive multi-selector modal (`ask_question` tool with multi-select checkboxes) to nail down core branding, feature priorities, design tokens, and scope before writing code.
+6. **NEVER Auto-Commit on Child Project Repositories (Strictly Manual Commits)**:
+   - Changes in child projects must remain uncommitted in the local working tree so the user can inspect diffs and discard mistakes easily.
+   - Auto-commit & auto-push is permitted EXCLUSIVELY inside `C:\AI-Builder-Brain`.

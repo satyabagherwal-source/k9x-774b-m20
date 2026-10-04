@@ -3498,3 +3498,69 @@ document.addEventListener('DOMContentLoaded', () => {
 **VERIFICATION METHOD**:
 Audit static HTML build output sizes; ensure page HTML payload stays well below 500 KB and dynamic selects correctly contain all expected catalog options post-mount.
 
+---
+
+## 223. Interactive Requirement Discovery via Deep-Diving Multi-Select Modals ("Pehle Multi-Selector Se Deep Diving Pucho, Fir Banao")
+
+**RULE**:
+Whenever a user asks an AI connected to AI-Builder-Brain to build, redesign, or expand a website, web app, or software project:
+1. The AI must NEVER assume user intent, guess branding identity, or write implementation code based on ambiguous or underspecified prompts.
+2. The AI MUST invoke the interactive modal (`ask_question` tool) with structured choices (`is_multi_select: true` or single-select) formatted as direct user responses.
+3. The AI may ask as many multi-select questions as needed ("kitna bhi puchh sakta hai") to deep-dive into:
+   - Core Identity & Branding (original brand vs inspiration reference vs clone avoidance).
+   - Exact Feature Suite (which specific components, tools, calculators, visualizers to build).
+   - Aesthetic & Design System (dark obsidian, luxury gold, modern tech, typography).
+   - Data & Licensing Boundaries (commercial verification, local JSON vs API, export formats).
+4. Coding begins strictly AFTER the user selects their choices in the modal.
+
+**WHY**:
+Blind guessing leads to catastrophic misalignment, discarded work, wrong branding, and user frustration. Interactive multi-selector modals force structural clarity, eliminate ambiguity, and guarantee that the AI builds exactly what the user wants.
+
+**WHEN TO APPLY**:
+Every website, web app, or software feature request where the user mentions a reference site, asks for an improvement, or provides high-level requirements.
+
+**VERIFIED PATTERN**:
+```json
+{
+  "questions": [
+    {
+      "question": "Website ki core identity aur direction kya honi chahiye?",
+      "is_multi_select": false,
+      "options": [
+        "(Recommended) Apni website ki unique identity rakho, lekin reference site ke best modern features se improve karo",
+        "Ek broad general platform banao with unique brand and custom UI",
+        "Existing niche focus hi rakho aur UI ko clean modern cards ke sath enhance karo"
+      ]
+    },
+    {
+      "question": "Reference site se inspire hokar kaun-kaun se features add karne hain?",
+      "is_multi_select": true,
+      "options": [
+        "Live Specimen Customizer (real-time text preview & font size slider)",
+        "Verified 100% Commercial Free library expansion",
+        "Interactive Pairing Assistant Studio",
+        "Clean Modern UI & Direct 1-Click ZIP Downloads",
+        "Interactive Glyph / Character Map Inspector"
+      ]
+    }
+  ]
+}
+```
+
+---
+
+## 224. Child Project Working-Tree Preservation (Strictly Manual Git Commits on Child Repos, Auto-Commit ONLY on Brain)
+
+**RULE**:
+When building, updating, or fixing ANY child project or product repository (e.g. `c:\Old english font` or any other project directory):
+1. The AI MUST NEVER run automatic `git commit` or `git push` commands.
+2. All code edits MUST remain uncommitted in the local working tree (`git status` shows modified and untracked files).
+3. The AI may commit changes in a child repository ONLY when the user explicitly instructs to commit (e.g. *"commit kar do"* / *"git commit karo"*).
+4. Auto-commit & auto-push (`git add . ; git commit -m "..." ; git push origin main`) is permitted EXCLUSIVELY inside `C:\AI-Builder-Brain`.
+
+**WHY**:
+If the AI auto-commits every turn in a project repo, any mistaken assumption or unwanted change gets baked into git history, making rollbacks difficult and polluting git history. Keeping changes uncommitted allows the user to review diffs in the IDE ("Review Changes"), test locally, and cleanly discard mistakes with a single click or `git checkout` / `git reset`.
+
+**WHEN TO APPLY**:
+Every development turn across all child projects and user product repositories.
+

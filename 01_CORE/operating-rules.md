@@ -157,4 +157,34 @@ All data processed, stored, or transmitted by the Brain and child projects must 
 3. **PII Sanitization at Ingestion**:
    - Third-party personal developer emails and signatures extracted from public Git commit histories must be sanitized (`[REDACTED_EMAIL]`) prior to AI analysis and knowledge storage.
 
+## Rule 19 — Interactive Requirement Discovery via Deep-Diving Multi-Select Modals ("Pehle Multi-Selector Se Deep Diving Pucho, Fir Banao")
+
+When any user asks an AI connected to AI-Builder-Brain to build, redesign, or enhance a website, web app, or software project:
+
+1. **Zero Guesswork / Anti-Assumption Invariant**:
+   - The AI must NEVER guess, assume user intent, or immediately jump into writing code based on ambiguous or underspecified prompts.
+   - Blind guessing inevitably leads to creating shallow clones, wrong branding, discarded work, or features the user never asked for.
+2. **Mandatory Deep-Diving Interactive Multi-Select Modal (`ask_question`)**:
+   - Before writing any implementation code or scaffolding new architecture, the AI MUST invoke the interactive modal (`ask_question` tool) with structured choices (`is_multi_select: true` or single-select) formatted as direct user responses.
+   - The AI is empowered and required to ask as many multi-select questions as needed ("kitna bhi puchh sakta hai") to deep-dive into:
+     - **Core Identity & Branding**: Original custom brand vs. existing project expansion vs. reference inspiration.
+     - **Feature Selection & Scope**: Exact tools, generators, visual customizers, filters, or APIs needed.
+     - **Aesthetic & Design Direction**: Obsidian dark, sleek luxury, minimal brutalist, typography choices, and color tokens.
+     - **Data & Licensing Boundaries**: Commercial verification standards, local JSON vs. live database, export formats.
+3. **Execution Condition**:
+   - Implementation begins ONLY after the user responds to the structured choices, ensuring the AI is 100% aligned with the user's vision with zero confusion.
+
+## Rule 20 — Git Commit Invariant: Strictly Manual on Child Projects, Auto-Commit ONLY on AI-Builder-Brain ("Child Projects Me Auto-Commit Ban, Sirf Brain Me Auto-Commit")
+
+To ensure the user maintains complete ownership and risk-free control over their code:
+
+1. **Child / Product Repositories (Strictly Manual Git Commits)**:
+   - When building, updating, or debugging ANY child project or product repository (e.g. `c:\Old english font` or any other project directory):
+   - The AI MUST NEVER run automatic `git commit` or `git push` commands.
+   - All code edits MUST remain uncommitted in the local working tree (`git status` shows modified/untracked files).
+   - **Rationale**: Keeping changes uncommitted allows the user to inspect the diff in the IDE ("Review Changes"), test functionality, and easily discard changes (`git checkout` / `git reset` / IDE discard) if there is any mistake or misalignment, without polluting git history.
+   - The AI may commit changes in a child repository ONLY when the user explicitly instructs to commit (e.g. *"commit kar do"* / *"git commit karo"*).
+2. **AI-Builder-Brain Exception (Auto-Commit & Auto-Push Permitted ONLY Here)**:
+   - Autonomous `git add`, `git commit`, and `git push origin main` is permitted EXCLUSIVELY inside `C:\AI-Builder-Brain` (for autonomous learning harvesting, rule additions, and intelligence synchronization across the fleet).
+   - Under no circumstances may an AI auto-commit in child repositories.
 
