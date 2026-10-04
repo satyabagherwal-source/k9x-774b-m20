@@ -3598,3 +3598,7 @@ https://huggingface.co/google/gemma-4-31B-it
 https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2
 # [HUGGINGFACE-AI-MODELS] Bingsu/adetailer (9950 score) - Verified Hugging Face Model: Bingsu/adetailer (795 likes, 9842651 downloads)
 https://huggingface.co/Bingsu/adetailer
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-04T07:23:18.706Z] ---
+# [AI-AGENTS] tt-a1i/archify (40432 score) - Turn any idea, plan, or codebase into a beautiful interactive diagram. An agent 
+https://github.com/tt-a1i/archify

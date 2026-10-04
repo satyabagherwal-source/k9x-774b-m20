@@ -16762,5 +16762,20 @@
     "downloads": 9842651,
     "qualityScore": 9950,
     "discoveredAt": "2026-10-03T23:43:21.971Z"
+  },
+  {
+    "name": "archify",
+    "fullName": "tt-a1i/archify",
+    "url": "https://github.com/tt-a1i/archify",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Turn any idea, plan, or codebase into a beautiful interactive diagram. An agent skill for Claude Code, Codex, and more.",
+    "stars": 76850,
+    "forks": 5190,
+    "openIssues": 197,
+    "language": "JavaScript",
+    "qualityScore": 40432,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-04T07:23:16.744Z"
   }
 ]
