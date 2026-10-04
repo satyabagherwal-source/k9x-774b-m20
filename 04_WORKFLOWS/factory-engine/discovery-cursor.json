@@ -33,7 +33,7 @@
       "page": 1
     },
     "cognitive-neuroscience-systems": {
-      "queryIndex": 1,
+      "queryIndex": 4,
       "page": 1
     }
   },
@@ -42,5 +42,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 0,
-  "lastReplenishedAt": "2026-10-04T05:57:40.591Z"
+  "lastReplenishedAt": "2026-10-04T05:58:31.907Z"
 }
