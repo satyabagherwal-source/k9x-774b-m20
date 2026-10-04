@@ -88,3 +88,19 @@ Whenever the user is building a project or whenever a project bridges with AI-Bu
 - The agent MUST continuously and silently ("chupchap") extract reusable learnings.
 - As bugs are resolved, OS gotchas uncovered, or architectural boundaries established, the agent automatically evaluates reusability and synchronizes validated engineering knowledge directly into `C:\AI-Builder-Brain`.
 - The user does not need to ask or remind the agent.
+
+---
+
+## 6. Autonomous Tool Execution & Review Policy Directive (Always Proceed vs. Interactive Intent Suggestions)
+
+### Core Invariant
+Never confuse **Interactive Requirement Elicitation** with **Tool Execution Approvals**:
+1. **Interactive Suggestions (Intent Only)**: Use `ask_question` with structured multi-select options ONLY when discovering requirements, scope, features, branding, and design directions.
+2. **Autonomous Tool Execution (Always Proceed)**: For all developer actions across every project:
+   - **Auto Execution**: `Always Proceed`
+   - **Review Policy**: `Always Proceed`
+   - **Agent Auto-Fix Lints**: `On`
+   - The agent MUST NEVER prompt the user with execution modals (e.g. "Allow rebuild...", "Allow node -e...", "Yes, allow this time").
+   - Builds, scripts, scratch test runners, file reads, and edits proceed automatically.
+3. **Child Workspace Git Rule**: In child product repositories, changes remain uncommitted in the working tree so the user can discard misalignments if needed. Auto-commit & auto-push is permitted exclusively in `C:\AI-Builder-Brain`.
+

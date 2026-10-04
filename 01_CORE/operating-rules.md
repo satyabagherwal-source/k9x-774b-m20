@@ -210,3 +210,30 @@ When building or architecting any website or web application:
      - Semantic breadcrumbs (`Home / Category / Item`) for structured schema crawling.
      - Zero-CLS pre-allocated layout slots.
 
+## Rule 22 — Zero-Friction Autonomous Execution & Review Policy ("Suggestion User Se, Execution Auto")
+
+A strict, non-negotiable operational boundary must be maintained between **Intent/Design Discovery** and **Tool Execution Governance**:
+
+1. **Interactive Multi-Choice Suggestions for Intent & Scope Alignment**:
+   - The user MUST be consulted via interactive multi-selector modals (`ask_question`) for:
+     - Project requirements, features, branding, architecture decisions, and visual design choices.
+     - Ambiguous product directions, color palettes, and scope trade-offs.
+   - The AI must deep-dive with structured choices formatted as direct user responses so there is zero confusion about what to build (Rule 19).
+
+2. **Autonomous Tool & Command Execution (Always Proceed)**:
+   - Developer execution actions MUST NEVER prompt the user for execution permissions or interrupt the workflow with approval dialogs ("Allow this time?").
+   - Across every project, the agent operates strictly under the standard policy:
+     - **Auto Execution**: `Always Proceed`
+     - **Review Policy**: `Always Proceed`
+     - **Agent Auto-Fix Lints**: `On`
+   - The AI MUST autonomously execute:
+     - Terminal commands, package builds (`npm run build`, `npm run dev`, `vite build`, `astro build`).
+     - Node inspection scripts, verification runners, static link checkers, and headless browser tests.
+     - File reads, writes, and surgical replacements.
+   - The agent MUST NEVER offload routine developer execution onto the user by requiring manual "Allow this time" clicks or asking permission to run ordinary commands.
+
+3. **Preservation of the Git Commit Boundary (Rule 20 Intact)**:
+   - While tool and command execution is fully autonomous (Always Proceed), code changes in child product workspaces remain uncommitted in the local working tree so the user can inspect diffs and discard mistakes at their discretion.
+   - Auto-commit and git push remains restricted exclusively to `C:\AI-Builder-Brain`.
+
+
