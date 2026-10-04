@@ -188,3 +188,25 @@ To ensure the user maintains complete ownership and risk-free control over their
    - Autonomous `git add`, `git commit`, and `git push origin main` is permitted EXCLUSIVELY inside `C:\AI-Builder-Brain` (for autonomous learning harvesting, rule additions, and intelligence synchronization across the fleet).
    - Under no circumstances may an AI auto-commit in child repositories.
 
+## Rule 21 — Multi-Page Architecture Invariant ("Jab Tak Na Bola Jaye, Hamesha Multi-Page Website Hi Banani Hai")
+
+When building or architecting any website or web application:
+
+1. **Strict Prohibition on Unrequested Single-Page Collapse**:
+   - Unless the user explicitly requests a single-page landing page (e.g. *"single page banao"* or *"one-page portfolio"*), the AI MUST NEVER cram an entire project or platform into a single long-scroll page.
+   - Collapsing complex tools, catalogs, documentation, generators, and categories into one page leads to massive DOM bloat, high bounce rates, poor SEO crawlability, and weak user experience.
+2. **Mandatory Multi-Page Architecture (MPA)**:
+   - Every website built by an AI connected to AI-Builder-Brain must be structured with dedicated, distinct static routes and pages:
+     - **Homepage (`/`)**: High-impact portal overview, hero spotlight, category directory, and teasers pointing to dedicated tool pages.
+     - **Dedicated Tool Pages**: Separate sub-apps with their own URLs (e.g. `/generator/`, `/translator/`, `/stencil-studio/`, `/font-pairing/`, `/frames/`).
+     - **Individual Item / Specimen Pages**: Dynamic static routes for every entity (e.g. `/fonts/[slug]/`, `/items/[id]/`) featuring technical specifications, character maps, direct downloads, and copyable snippets.
+     - **Taxonomy / Category Archives**: Dedicated archive pages (e.g. `/category/[category]/` or `/styles/[style]/`) targeting specific search intents.
+     - **Knowledge / Educational Pages**: Deep-dive handbooks, guides, and documentation on dedicated URLs (e.g. `/handbook/`, `/docs/`).
+     - **Licensing & Legal Pages**: Clear, dedicated trust pages (e.g. `/license/`, `/privacy/`, `/terms/`).
+3. **SEO & Navigation Invariants**:
+   - Every page must feature:
+     - Unique, intent-specific `<title>` tags and `<meta name="description">`.
+     - Consistent header navigation and footer linking across all pages.
+     - Semantic breadcrumbs (`Home / Category / Item`) for structured schema crawling.
+     - Zero-CLS pre-allocated layout slots.
+

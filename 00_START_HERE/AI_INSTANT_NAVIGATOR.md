@@ -48,7 +48,7 @@ Choose your path based on what the user asked:
 
 ---
 
-## 3. 🚫 The 6 Golden Execution Invariants
+## 3. 🚫 The 7 Golden Execution Invariants
 
 1. **NEVER Read `07_PROJECT_LEARNING/` During Coding Tasks**:
    - `07_PROJECT_LEARNING/` contains 130+ exhaustive forensic extraction files (over 2 MB of text).
@@ -69,3 +69,5 @@ Choose your path based on what the user asked:
 6. **NEVER Auto-Commit on Child Project Repositories (Strictly Manual Commits)**:
    - Changes in child projects must remain uncommitted in the local working tree so the user can inspect diffs and discard mistakes easily.
    - Auto-commit & auto-push is permitted EXCLUSIVELY inside `C:\AI-Builder-Brain`.
+7. **ALWAYS Build Multi-Page Websites (MPA) by Default**:
+   - Unless the user explicitly instructs to make a single-page site, all websites MUST be built as multi-page applications with dedicated static routes for tools, individual specs, categories, handbooks, and licenses. Never cram an entire platform into a single page.

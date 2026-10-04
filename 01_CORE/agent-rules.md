@@ -87,3 +87,10 @@ When working on any child project, website, or product repository:
 - Commit in child repos ONLY when the user explicitly requests a commit.
 - Automatic commit and push is permitted EXCLUSIVELY inside `C:\AI-Builder-Brain`.
 
+## Website Architecture: Mandatory Multi-Page by Default
+
+Unless the user explicitly specifies a single-page layout:
+- The agent MUST ALWAYS architect and build websites as multi-page applications (MPA).
+- Create dedicated static routes for tools, individual items/specs, categories, handbooks, and licensing.
+- Never collapse an entire platform into a single long-scroll page.
+

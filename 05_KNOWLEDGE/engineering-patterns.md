@@ -3564,3 +3564,25 @@ If the AI auto-commits every turn in a project repo, any mistaken assumption or 
 **WHEN TO APPLY**:
 Every development turn across all child projects and user product repositories.
 
+---
+
+## 225. Mandatory Multi-Page Architecture (MPA) by Default ("Single Page Me Kabhi Nahi Sametna — Hamesha Multi-Page Banani Hai")
+
+**RULE**:
+When building, designing, or scaffolding any website or web application:
+1. Unless the user explicitly instructs to create a single-page landing page (e.g. *"single page landing banao"*), the AI MUST ALWAYS architect and build the project as a comprehensive Multi-Page Application (MPA).
+2. Never collapse an entire platform, directory, or tool suite into a single long-scroll page.
+3. Every website must deliver dedicated, distinct static routes for:
+   - **Portal / Hub Homepage (`/`)**: High-impact overview, hero spotlight, categorized directory cards, and quick tool teasers.
+   - **Individual Entity Detail Pages (e.g. `/fonts/[slug]/`, `/tools/[slug]/`, `/docs/[slug]/`)**: Deep-dive technical specs, interactive specimen canvases, character glyph maps, copyable integration snippets, and direct downloads.
+   - **Category / Taxonomy Archives (e.g. `/category/[category]/`, `/styles/[style]/`)**: Filterable collections dedicated to specific user search intents.
+   - **Dedicated Sub-App / Tool Routes (e.g. `/generator/`, `/translator/`, `/stencil-studio/`, `/font-pairing/`, `/frames/`)**: Fully functional standalone workspaces with zero clutter.
+   - **Educational Handbook & Guides (e.g. `/handbook/`, `/guides/`)**: Long-form structured guides (> 2,000 words) serving as AdSense thin-content shields.
+   - **Licensing, Trust & Legal (e.g. `/license/`, `/privacy/`, `/terms/`)**: Full legal transparency, EULA/OFL verification disclosures, and zero-copyright guarantees.
+
+**WHY**:
+Single-page long-scroll sites suffer from massive DOM payload bloat, slower mobile parsing, poor Google crawler indexation (inability to rank for secondary high-intent keywords), high bounce rates, and limited AdSense monetization real estate. Multi-page architecture maximizes crawl budget, provides granular keyword ranking surfaces, boosts user session duration, and feels like a 10x premium digital product.
+
+**WHEN TO APPLY**:
+Every website, web application, portal, or tool directory built by any AI connected to AI-Builder-Brain.
+
