@@ -1,8 +1,8 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 3,
-      "page": 1
+      "queryIndex": 2,
+      "page": 7
     },
     "fullstack-ui": {
       "queryIndex": 1,
@@ -34,7 +34,7 @@
     },
     "cognitive-neuroscience-systems": {
       "queryIndex": 0,
-      "page": 1
+      "page": 2
     }
   },
   "huggingFace": {
@@ -42,5 +42,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 0,
-  "lastReplenishedAt": "2026-10-04T11:53:45.730Z"
+  "lastReplenishedAt": "2026-10-04T11:54:01.093Z"
 }
