@@ -16226,5 +16226,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tiger-ai-lab-theoremexplainagent": {
+    "name": "TIGER-AI-Lab/TheoremExplainAgent",
+    "officialUrl": "https://github.com/TIGER-AI-Lab/TheoremExplainAgent",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-04T21:38:40.297Z",
+    "lastVerified": "2026-10-04T21:38:40.297Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 1,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
