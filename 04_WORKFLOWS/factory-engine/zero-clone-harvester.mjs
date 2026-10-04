@@ -100,6 +100,7 @@ async function compliantFetch(url, customHeaders = {}) {
       err.code = 'RATE_LIMIT_TRIPPED';
       err.resetAt = avail.resetAt;
       err.waitSec = avail.waitSec;
+      err.isPreflightCooldown = true;
       throw err;
     }
   } else if (isHf) {
@@ -108,6 +109,7 @@ async function compliantFetch(url, customHeaders = {}) {
       console.warn(`[CIRCUIT BREAKER PRE-FLIGHT] Hugging Face API is on cooldown until ${avail.resetAt}. Blocking call.`);
       const err = new Error(`HF_API_CIRCUIT_TRIPPED_UNTIL_${avail.resetAt}`);
       err.code = 'RATE_LIMIT_TRIPPED';
+      err.isPreflightCooldown = true;
       throw err;
     }
   }
@@ -746,7 +748,11 @@ export async function runZeroCloneHarvester(customUrls = null) {
         await sleep(2500);
     } catch (err) {
       if (err.code === 'RATE_LIMIT_TRIPPED' || err.message?.includes('CIRCUIT_TRIPPED') || err.message?.includes('RATE_LIMIT')) {
-        console.warn(`\n🛑 [MASTER CIRCUIT BREAKER ENGAGED] Quota or Rate limit tripped on ${target.slug}. Halting batch loop immediately to protect API/account.`);
+        if (err.isPreflightCooldown || err.message?.includes('CIRCUIT_TRIPPED_UNTIL')) {
+          console.warn(`\n⏳ [CIRCUIT COOLDOWN ACTIVE] ${target.slug} deferred. Waiting for existing cooldown until ${err.resetAt || 'expiry'}.`);
+        } else {
+          console.warn(`\n🛑 [MASTER CIRCUIT BREAKER ENGAGED] Quota or Rate limit tripped on ${target.slug}. Halting batch loop immediately to protect API/account.`);
+        }
         results.push({ target: target.slug, status: 'TRIPPED_CIRCUIT', error: err.message });
         releaseTargetLock(target.slug);
         circuitTrippedInRun = true;

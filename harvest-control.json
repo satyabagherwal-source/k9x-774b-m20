@@ -163,92 +163,92 @@
       {
         "id": "Agent-Alpha",
         "domain": "ai-agents",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-04T18:35:24.058Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
         "lastActiveAt": "2026-10-04T18:20:17.128Z",
         "lastHarvestedAt": "2026-10-01T00:03:22.754Z",
         "totalHarvested": 11,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Beta",
         "domain": "fullstack-ui",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-04T18:35:24.737Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
         "lastActiveAt": "2026-10-04T18:20:17.134Z",
         "lastHarvestedAt": "2026-10-02T09:08:08.002Z",
         "totalHarvested": 2,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Gamma",
         "domain": "high-perf-systems",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-04T18:35:25.213Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
         "lastActiveAt": "2026-10-04T18:20:17.137Z",
         "lastHarvestedAt": "2026-10-02T09:22:50.999Z",
         "totalHarvested": 4,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-04T18:35:23.657Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
         "lastActiveAt": "2026-10-04T18:20:17.139Z",
         "lastHarvestedAt": "2026-10-02T09:42:39.815Z",
         "totalHarvested": 7,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Epsilon",
         "domain": "mobile-cross-platform",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-04T18:35:24.199Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
         "lastActiveAt": "2026-10-04T18:20:17.142Z",
         "lastHarvestedAt": "2026-10-02T09:49:15.558Z",
         "totalHarvested": 9,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Zeta",
         "domain": "devops-cloud-infrastructure",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-04T18:35:24.989Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
         "lastActiveAt": "2026-10-04T18:20:17.148Z",
         "lastHarvestedAt": "2026-10-02T09:49:14.838Z",
         "totalHarvested": 6,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Eta",
         "domain": "cybersecurity-defenses",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-04T18:35:24.497Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
         "lastActiveAt": "2026-10-04T18:20:17.153Z",
         "lastHarvestedAt": "2026-10-02T10:03:44.092Z",
         "totalHarvested": 14,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Theta",
         "domain": "database-storage-engines",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-04T18:35:24.509Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
         "lastActiveAt": "2026-10-04T18:20:17.158Z",
         "lastHarvestedAt": "2026-10-02T09:22:48.583Z",
         "totalHarvested": 10,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       },
       {
         "id": "Agent-Iota",
         "domain": "cognitive-neuroscience-systems",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-04T18:35:24.688Z",
+        "status": "ACTIVE",
+        "cooldownUntil": null,
         "lastActiveAt": "2026-10-04T18:20:17.162Z",
         "lastHarvestedAt": null,
         "totalHarvested": 0,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "lastError": null
       }
     ],
     "orchestratorScript": "04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs"

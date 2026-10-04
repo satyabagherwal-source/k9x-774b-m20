@@ -10,6 +10,7 @@ import {
   MASTER_SERVICES
 } from './master-circuit-breaker.mjs';
 import { runInternalKnowledgeSynthesis } from './internal-synthesizer.mjs';
+import { parseSourceUrl } from './zero-clone-harvester.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -169,10 +170,59 @@ export function resumeAllWorkers() {
 }
 
 /**
- * Spawns an autonomous worker agent for a specific domain.
+ * Resolves a dedicated, non-overlapping target for a worker agent.
+ * Checks unharvested targets matching the agent's domain first,
+ * then falls back to general unharvested backlog if domain is 100% harvested.
+ */
+export function getTargetForWorker(agentConfig, assignedSlugs = new Set()) {
+  const queuePath = path.join(BRAIN_ROOT, 'repos.txt');
+  if (!fs.existsSync(queuePath)) return null;
+
+  const raw = fs.readFileSync(queuePath, 'utf-8');
+  const lines = raw.split(/\r?\n/);
+
+  let currentDomain = 'general';
+  const domainTargets = [];
+  const generalBacklog = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const domainMatch = trimmed.match(/^#\s*\[([A-Z0-9_-]+)\]/i);
+    if (domainMatch) {
+      currentDomain = domainMatch[1].toLowerCase();
+      continue;
+    }
+
+    if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+      const parsed = parseSourceUrl(trimmed);
+      if (!parsed) continue;
+
+      if (assignedSlugs.has(parsed.slug)) continue;
+
+      // Check if already harvested
+      const learningFile = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${parsed.slug}-learnings.md`);
+      if (!fs.existsSync(learningFile)) {
+        if (currentDomain === agentConfig.domain.toLowerCase()) {
+          domainTargets.push(parsed);
+        } else {
+          generalBacklog.push(parsed);
+        }
+      }
+    }
+  }
+
+  const chosen = domainTargets[0] || generalBacklog[0] || null;
+  if (chosen) {
+    assignedSlugs.add(chosen.slug);
+  }
+  return chosen;
+}
+
+/**
+ * Spawns an autonomous worker agent for a specific domain with dedicated target isolation.
  * Evaluates isolated cooldown and status: does NOT stop or wait if another agent is resting!
  */
-export function spawnWorkerAgent(agentConfig) {
+export function spawnWorkerAgent(agentConfig, assignedSlugs = new Set()) {
   return new Promise((resolve) => {
     // 1. Check isolated lifecycle of this specific worker
     const lifecycle = getWorkerLifecycle(agentConfig.id);
@@ -204,49 +254,58 @@ export function spawnWorkerAgent(agentConfig) {
       }
     }
 
-    console.log(`${agentConfig.color}[LAUNCHING ${agentConfig.id}] Assigned Domain: ${agentConfig.domain.toUpperCase()}${RESET}`);
-    updateWorkerState(agentConfig.id, { lastActiveAt: new Date().toISOString() });
+    // 3. Resolve Dedicated Target for this Worker
+    let target = getTargetForWorker(agentConfig, assignedSlugs);
 
-    const env = {
-      ...process.env,
-      AGENT_NAME: agentConfig.id,
-      TARGET_DOMAIN: agentConfig.domain
-    };
+    // If no unharvested target found anywhere, check if we should scout
+    if (!target) {
+      console.log(`${agentConfig.color}[${agentConfig.id}] Domain ${agentConfig.domain} and queue fully harvested. Scouting fresh repos...${RESET}`);
+      const scoutProc = fork(SCOUT_SCRIPT, [agentConfig.domain], {
+        cwd: BRAIN_ROOT,
+        env: { ...process.env, AGENT_NAME: agentConfig.id, TARGET_DOMAIN: agentConfig.domain },
+        stdio: ['pipe', 'pipe', 'pipe', 'ipc']
+      });
 
-    // First scout domain for fresh top targets
-    const scoutProc = fork(SCOUT_SCRIPT, [agentConfig.domain], {
-      cwd: BRAIN_ROOT,
-      env,
-      stdio: ['pipe', 'pipe', 'pipe', 'ipc']
-    });
+      let scoutOutput = '';
+      scoutProc.stdout?.on('data', (data) => {
+        scoutOutput += data.toString();
+        process.stdout.write(`${agentConfig.color}[${agentConfig.id}:SCOUT] ${RESET}${data.toString()}`);
+      });
+      scoutProc.stderr?.on('data', (data) => {
+        process.stderr.write(`${agentConfig.color}[${agentConfig.id}:SCOUT_ERR] ${RESET}${data.toString()}`);
+      });
 
-    let scoutOutput = '';
-
-    scoutProc.stdout?.on('data', (data) => {
-      const line = data.toString();
-      scoutOutput += line;
-      process.stdout.write(`${agentConfig.color}[${agentConfig.id}:SCOUT] ${RESET}${line}`);
-    });
-
-    scoutProc.stderr?.on('data', (data) => {
-      process.stderr.write(`${agentConfig.color}[${agentConfig.id}:SCOUT_ERR] ${RESET}${data.toString()}`);
-    });
-
-    scoutProc.on('close', (code) => {
-      // Check if scout hit a rate limit
-      if (scoutOutput.includes('RATE LIMIT EXCEEDED') || scoutOutput.includes('rate limit reached') || code === 42) {
-        console.warn(`${agentConfig.color}[${agentConfig.id}] ⚠️ Scout encountered rate-limit. Placing Master Circuit and agent on cooldown.${RESET}`);
-        if (agentConfig.domain !== 'huggingface-ai-models') {
-          tripMasterCircuit(MASTER_SERVICES.GITHUB_API, Date.now() + 600_000, 'GitHub Search Rate Limit in Scout');
+      scoutProc.on('close', (code) => {
+        if (scoutOutput.includes('RATE LIMIT EXCEEDED') || scoutOutput.includes('rate limit reached') || code === 42) {
+          if (agentConfig.domain !== 'huggingface-ai-models') {
+            tripMasterCircuit(MASTER_SERVICES.GITHUB_API, Date.now() + 600_000, 'GitHub Search Rate Limit in Scout');
+          }
+          tripWorkerCooldown(agentConfig.id, 600_000, 'Scout domain rate limit');
+          return resolve({ agent: agentConfig.id, status: 'TRIPPED_COOLDOWN', code });
         }
-        tripWorkerCooldown(agentConfig.id, 600_000, 'Scout domain rate limit');
-        return resolve({ agent: agentConfig.id, status: 'TRIPPED_COOLDOWN', code });
-      }
+        target = getTargetForWorker(agentConfig, assignedSlugs);
+        if (!target) {
+          return resolve({ agent: agentConfig.id, status: 'NO_TARGETS_AVAILABLE', harvested: 0 });
+        }
+        executeHarvest(target);
+      });
+      return;
+    }
 
-      console.log(`${agentConfig.color}[${agentConfig.id}] Scout cycle complete (Code: ${code}). Proceeding to zero-clone extraction...${RESET}`);
+    executeHarvest(target);
 
-      // Now run zero-clone harvester for this domain
-      const harvestProc = fork(ZERO_CLONE_SCRIPT, [], {
+    function executeHarvest(targetObj) {
+      console.log(`${agentConfig.color}[LAUNCHING ${agentConfig.id}] Domain: ${agentConfig.domain.toUpperCase()} -> Harvesting Target: ${targetObj.webUrl}${RESET}`);
+      updateWorkerState(agentConfig.id, { lastActiveAt: new Date().toISOString() });
+
+      const env = {
+        ...process.env,
+        AGENT_NAME: agentConfig.id,
+        TARGET_DOMAIN: agentConfig.domain
+      };
+
+      // Run zero-clone harvester directly on the dedicated target URL
+      const harvestProc = fork(ZERO_CLONE_SCRIPT, [targetObj.webUrl], {
         cwd: BRAIN_ROOT,
         env,
         stdio: ['pipe', 'pipe', 'pipe', 'ipc']
@@ -258,10 +317,8 @@ export function spawnWorkerAgent(agentConfig) {
       harvestProc.stdout?.on('data', (data) => {
         const line = data.toString();
         harvestOutput += line;
-        if (line.includes('UNIVERSAL RULES PROMOTED') || line.includes('SUCCESSFUL') || line.includes('ZERO-CLONE BATCH COMPLETE')) {
-          if (line.includes('Successful    : 1') || line.includes('Successful    : 2') || line.includes('UNIVERSAL RULES PROMOTED')) {
-            harvestSuccessCount++;
-          }
+        if (line.includes('UNIVERSAL RULES PROMOTED') || line.includes('SUCCESSFUL') || line.includes('ZERO-CLONE RECORD SAVED')) {
+          harvestSuccessCount++;
         }
         process.stdout.write(`${agentConfig.color}[${agentConfig.id}:HARVEST] ${RESET}${line}`);
       });
@@ -271,14 +328,14 @@ export function spawnWorkerAgent(agentConfig) {
       });
 
       harvestProc.on('close', (hCode) => {
-        // If harvester encountered rate limit, trip Master Circuit Breaker so other agents also pause
+        // If harvester encountered genuine API rate limit, trip Master Circuit Breaker
         if (harvestOutput.includes('RATE LIMIT EXCEEDED') || harvestOutput.includes('secondary rate limit') || harvestOutput.includes('MASTER CIRCUIT BREAKER ENGAGED') || hCode === 42) {
           console.warn(`${agentConfig.color}[${agentConfig.id}] ⚠️ Rate limit encountered. Tripping Master Circuit Breaker.${RESET}`);
           if (agentConfig.domain !== 'huggingface-ai-models') {
             tripMasterCircuit(MASTER_SERVICES.GITHUB_API, Date.now() + 900_000, 'GitHub REST Rate Limit in Zero-Clone');
           }
           tripWorkerCooldown(agentConfig.id, 900_000, 'GitHub/AI Rate Limit on Target');
-          return resolve({ agent: agentConfig.id, status: 'RATE_LIMITED', code: hCode });
+          return resolve({ agent: agentConfig.id, target: targetObj.slug, status: 'RATE_LIMITED', code: hCode });
         }
 
         const currentWorker = getWorkerLifecycle(agentConfig.id);
@@ -291,10 +348,10 @@ export function spawnWorkerAgent(agentConfig) {
           lastError: null
         });
 
-        console.log(`${agentConfig.color}[${agentConfig.id}] Learning cycle finished (Code: ${hCode}, Harvested: ${harvestSuccessCount}).${RESET}`);
-        resolve({ agent: agentConfig.id, code: hCode, harvested: harvestSuccessCount });
+        console.log(`${agentConfig.color}[${agentConfig.id}] Learning cycle finished for ${targetObj.slug} (Code: ${hCode}, Harvested: ${harvestSuccessCount}).${RESET}`);
+        resolve({ agent: agentConfig.id, target: targetObj.slug, code: hCode, harvested: harvestSuccessCount });
       });
-    });
+    }
   });
 }
 
@@ -333,7 +390,7 @@ export async function runMultiAgentFleet(options = {}) {
     }
   } else {
     console.log(`\n⏳ [GITHUB QUOTA SLEEP] GitHub API Master Switch is OFF until ${ghAvail.resetAt} (${ghAvail.waitSec}s remaining).`);
-    console.log(`👷 [INTERNAL PEER LEARNING ENGAGED] While external GitHub is resting, laborers are teaching each other: synthesizing cross-project intelligence from 229 harvested dossiers!`);
+    console.log(`👷 [INTERNAL PEER LEARNING ENGAGED] While external GitHub is resting, laborers are teaching each other: synthesizing cross-project intelligence from harvested dossiers!`);
     try {
       await runInternalKnowledgeSynthesis();
     } catch (synthErr) {
@@ -341,10 +398,19 @@ export async function runMultiAgentFleet(options = {}) {
     }
   }
 
-  console.log(`\n⚡ Launching active agents simultaneously in parallel...\n`);
+  console.log(`\n⚡ Launching active agents with respectful inter-agent stagger...\n`);
 
   const startTime = Date.now();
-  const workerPromises = FLEET_ROSTER.map((agent) => spawnWorkerAgent(agent));
+  const assignedSlugs = new Set();
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  // Stagger worker launches by 2500ms to avoid concurrent burst spikes
+  const workerPromises = FLEET_ROSTER.map(async (agent, i) => {
+    if (i > 0) {
+      await sleep(i * 2500);
+    }
+    return spawnWorkerAgent(agent, assignedSlugs);
+  });
 
   const results = await Promise.allSettled(workerPromises);
   const elapsedSec = Math.round((Date.now() - startTime) / 1000);
@@ -364,6 +430,10 @@ export async function runMultiAgentFleet(options = {}) {
         statusText = `SKIPPED (${val.status})`;
       } else if (val.status === 'RATE_LIMITED' || val.status === 'TRIPPED_COOLDOWN') {
         statusText = `COOLDOWN_TRIPPED (Isolated - others unaffected)`;
+      } else if (val.harvested > 0) {
+        statusText = `HARVESTED (${val.target})`;
+      } else {
+        statusText = `COMPLETED (${val.target || 'idle'})`;
       }
     }
     console.log(`   - ${agent.id} [${agent.domain}]: ${statusText}`);
@@ -372,7 +442,7 @@ export async function runMultiAgentFleet(options = {}) {
 
   // Synchronize Master Brain with atomic rebase retry
   try {
-    await pushWithRebaseRetry('feat(fleet): 8-agent parallel fleet synchronized state [skip ci]', 5, BRAIN_ROOT);
+    await pushWithRebaseRetry('feat(fleet): multi-agent parallel fleet harvested intelligence [skip ci]', 5, BRAIN_ROOT);
   } catch (err) {
     console.warn(`[FLEET SYNC WARNING] ${err.message}`);
   }

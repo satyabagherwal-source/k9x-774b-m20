@@ -105,11 +105,35 @@ jobs:
             done
           fi
 
+      - name: Autonomous 24/7 Self-Relay Dispatcher
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.WORKFLOW_RELAY_TOKEN }}
+        run: |
+          echo "======================================================================"
+          echo "🔄 24/7 AUTONOMOUS CONTINUOUS LEARNING RELAY DISPATCHER"
+          echo "======================================================================"
+          VISIBILITY=$(gh repo view ${{ github.repository }} --json visibility -q .visibility 2>/dev/null || echo "PUBLIC")
+          echo "Current Repository Visibility: $VISIBILITY"
+
+          if [ "$VISIBILITY" = "PUBLIC" ]; then
+            if [ -n "$GH_TOKEN" ]; then
+              echo "🚀 Repository is PUBLIC. Dispatching next server-to-server learning cycle..."
+              # Respectful 60-second cooldown between fleet cycles to clear locks, avoid rate limits & maintain continuous 24/7 operation
+              sleep 60
+              gh workflow run 24-7-cloud-harvester.yml --repo "${{ github.repository }}" && echo "✅ Next 24/7 cycle dispatched successfully!" || echo "⚠️ Self-relay trigger deferred to cron schedule."
+            else
+              echo "ℹ️ WORKFLOW_RELAY_TOKEN not set in secrets. Falling back to cron schedule."
+            fi
+          else
+            echo "🛡️ PRIVATE MODE DETECTED: Self-Relay blocked to safeguard 2,000 monthly runner minutes quota."
+          fi
+
       - name: 24/7 Fleet Health & Status Monitor
         if: always()
         run: |
           echo "======================================================================"
           echo "✅ 24/7 CONTINUOUS LEARNING FLEET CYCLE COMPLETED"
           echo "======================================================================"
-          echo "Continuous learning loop governed by GitHub Cron schedule (every 20 mins)."
-          echo "Next cycle will automatically execute via cron. Zero-loop storm protection active."
+          echo "Continuous learning loop governed by Self-Relay Dispatcher & GitHub Cron schedule."
+          echo "Running 24/7 autonomously in the cloud even when laptop / IDE are closed."
