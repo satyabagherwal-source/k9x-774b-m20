@@ -29,7 +29,7 @@
       "page": 2
     },
     "database-storage-engines": {
-      "queryIndex": 2,
+      "queryIndex": 3,
       "page": 1
     },
     "cognitive-neuroscience-systems": {
@@ -42,5 +42,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 0,
-  "lastReplenishedAt": "2026-10-04T08:36:27.834Z"
+  "lastReplenishedAt": "2026-10-04T08:36:49.254Z"
 }
