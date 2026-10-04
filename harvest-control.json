@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-04T20:52:23.728Z",
+  "lastUpdated": "2026-10-04T20:54:29.276Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -165,9 +165,9 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-04T20:52:17.296Z",
-        "lastHarvestedAt": "2026-10-04T20:52:17.296Z",
-        "totalHarvested": 27,
+        "lastActiveAt": "2026-10-04T20:54:17.458Z",
+        "lastHarvestedAt": "2026-10-04T20:54:17.458Z",
+        "totalHarvested": 28,
         "lastError": null
       },
       {
@@ -175,9 +175,9 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-04T20:52:13.266Z",
-        "lastHarvestedAt": "2026-10-04T20:52:13.266Z",
-        "totalHarvested": 18,
+        "lastActiveAt": "2026-10-04T20:53:58.278Z",
+        "lastHarvestedAt": "2026-10-04T20:53:58.278Z",
+        "totalHarvested": 19,
         "lastError": null
       },
       {
@@ -185,9 +185,9 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-04T20:52:18.819Z",
-        "lastHarvestedAt": "2026-10-04T20:52:18.819Z",
-        "totalHarvested": 21,
+        "lastActiveAt": "2026-10-04T20:54:00.650Z",
+        "lastHarvestedAt": "2026-10-04T20:54:00.650Z",
+        "totalHarvested": 22,
         "lastError": null
       },
       {
@@ -195,9 +195,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-04T20:52:00.963Z",
-        "lastHarvestedAt": "2026-10-04T20:52:00.963Z",
-        "totalHarvested": 22,
+        "lastActiveAt": "2026-10-04T20:54:06.290Z",
+        "lastHarvestedAt": "2026-10-04T20:54:06.290Z",
+        "totalHarvested": 23,
         "lastError": null
       },
       {
@@ -205,9 +205,9 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-04T20:52:19.487Z",
-        "lastHarvestedAt": "2026-10-04T20:52:19.487Z",
-        "totalHarvested": 26,
+        "lastActiveAt": "2026-10-04T20:54:05.586Z",
+        "lastHarvestedAt": "2026-10-04T20:54:05.586Z",
+        "totalHarvested": 27,
         "lastError": null
       },
       {
@@ -215,9 +215,9 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-04T20:52:30.453Z",
-        "lastHarvestedAt": "2026-10-04T20:52:30.453Z",
-        "totalHarvested": 22,
+        "lastActiveAt": "2026-10-04T20:54:08.375Z",
+        "lastHarvestedAt": "2026-10-04T20:54:08.375Z",
+        "totalHarvested": 23,
         "lastError": null
       },
       {
@@ -225,9 +225,9 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-04T20:52:31.419Z",
-        "lastHarvestedAt": "2026-10-04T20:52:31.419Z",
-        "totalHarvested": 30,
+        "lastActiveAt": "2026-10-04T20:54:10.733Z",
+        "lastHarvestedAt": "2026-10-04T20:54:10.733Z",
+        "totalHarvested": 31,
         "lastError": null
       },
       {
@@ -271,7 +271,7 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 1561,
+      "remaining": 8,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,
