@@ -14120,5 +14120,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oliviertassinari-react-swipeable-views": {
+    "name": "oliviertassinari/react-swipeable-views",
+    "officialUrl": "https://github.com/oliviertassinari/react-swipeable-views",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-04T20:11:37.099Z",
+    "lastVerified": "2026-10-04T20:11:37.099Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
