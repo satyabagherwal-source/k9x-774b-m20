@@ -2,11 +2,11 @@
   "domains": {
     "ai-agents": {
       "queryIndex": 4,
-      "page": 6
+      "page": 4
     },
     "fullstack-ui": {
-      "queryIndex": 3,
-      "page": 3
+      "queryIndex": 4,
+      "page": 2
     },
     "high-perf-systems": {
       "queryIndex": 1,
@@ -18,7 +18,7 @@
     },
     "mobile-cross-platform": {
       "queryIndex": 2,
-      "page": 5
+      "page": 6
     },
     "devops-cloud-infrastructure": {
       "queryIndex": 1,
@@ -42,5 +42,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 0,
-  "lastReplenishedAt": "2026-10-04T12:02:14.257Z"
+  "lastReplenishedAt": "2026-10-04T12:02:24.233Z"
 }
