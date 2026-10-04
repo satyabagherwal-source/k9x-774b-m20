@@ -3586,3 +3586,24 @@ Single-page long-scroll sites suffer from massive DOM payload bloat, slower mobi
 **WHEN TO APPLY**:
 Every website, web application, portal, or tool directory built by any AI connected to AI-Builder-Brain.
 
+---
+
+## 226. Dual-Theme High-Contrast Invariant & Instant Contrast Snapping (Zero-Muddy Transitions & WCAG AAA Ergonomics Across Theme Switches)
+
+**RULE**:
+When implementing Dark/Light themes across any website or application:
+1. **Symmetric Theme Specificity**: Never rely solely on `:root` vs `html.light`. Always declare symmetric tokens explicitly for both `:root, html.dark` and `html.light`. Every card, surface, input, and specimen container must have equal-specificity rules in both modes.
+2. **Instant Contrast Snapping (No Color Transitions on Typography/Specimens)**: Never use `transition: all` or transition `color`/`background-color` on specimen test cards, preview inputs, or primary typography. Color and background MUST snap instantaneously (0ms) on theme toggle. Slow color interpolation causes muddy gray-on-gray fog (`rgb(58,58,58)` on `rgb(58,58,58)`) where text becomes invisible to the human eye for hundreds of milliseconds. Reserve transitions exclusively for mechanical properties: `transition-[transform,box-shadow,border-color]`.
+3. **Explicit Semantic Custom Properties Over Utility Class Overrides**: Do NOT apply hardcoded Tailwind slash-notation utility classes (e.g. `bg-slate-900/90`, `bg-slate-950/95`) to elements that must flip in light mode. Utility classes compile into CSS layers (`oklab(color-mix(...))`) that conflict with global theme rules. Instead, bind surface backgrounds directly to CSS variables (`var(--card-bg)`, `var(--specimen-bg)`, `var(--specimen-text)`).
+4. **Deterministic Attribute Cleanup**: When clearing user preview modes on theme change, never rely on `delete element.dataset.prop`. Always invoke `element.removeAttribute('data-preview')` to guarantee that CSS `:not([data-preview])` attribute selectors re-engage instantly without DOM state desynchronization.
+5. **Human Ergonomics & WCAG AAA Standard**:
+   - **Dark Mode**: High-contrast obsidian slate (`rgba(15, 23, 42, 0.95)`) with crisp luminous white text (`#f8fafc`) -> $\ge 18:1$ contrast.
+   - **Light Mode**: Anti-glare illuminated warm ivory/linen (`#faf8f5`), crisp white cards (`#ffffff`), and deep charcoal/midnight ink text (`#090d16`) -> $\ge 18:1$ contrast.
+   - Under zero circumstances may text and background color share similar luminance or chromatic values.
+
+**WHY**:
+Users toggle themes to adapt to varying ambient lighting (bright sunlight vs dark rooms). If font specimens, inputs, or descriptions wash out or become gray-on-gray, the interface completely loses usability. Instant, symmetric high-contrast snapping ensures flawless readability and extreme visual comfort for human eyes.
+
+**WHEN TO APPLY**:
+Every Astro, Vite, Next.js, or HTML/CSS application featuring theme toggles or user-customizable color schemes.
+
