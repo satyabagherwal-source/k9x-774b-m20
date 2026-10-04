@@ -25,14 +25,11 @@
 
 ### Core Architecture Module: `OCR/image_to_structured_data/app.py`
 ```
-<<<<<<< HEAD
-=======
 """
 Image-to-Structured-Data Extractor Streamlit app: upload an image and extract
 validated, structured JSON from it using Mistral Large 3 and Instructor.
 """
 
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
 import streamlit as st
 from processor import extract_structured_data
 from schemas import ProductCollection, InvoiceCollection 
@@ -46,21 +43,12 @@ st.set_page_config(page_title="Mistral Vision Extractor", layout="wide")
 st.title("📸 Image-to-Structured-Data")
 st.write("Using **Mistral Large 3** for high-fidelity visual OCR and structured extraction.")
 
-<<<<<<< HEAD
-with st.sidebar:
-    # Use the MISTRAL_API_KEY from .env if available
-    api_key = st.text_input("Mistral API Key", value=os.getenv("MISTRAL_API_KEY", ""), type="password")
-    schema_choice = st.selectbox("Select Extraction Schema", ["Product", "Invoice"])
-    
-=======
 api_key = os.getenv("MISTRAL_API_KEY", "")
 
 with st.sidebar:
     if not api_key:
-        st.warning("MISTRAL_API_KEY is not set in your .env file.")
+        api_key = st.text_input("Mistral API Key", value="", type="password")
     schema_choice = st.selectbox("Select Extraction Schema", ["Product", "Invoice"])
-
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
     # These names now match the updated import above
     schema_map = {
         "Product": ProductCollection,
@@ -90,11 +78,7 @@ if uploaded_file and api_key:
 ```
 import base64
 import instructor
-<<<<<<< HEAD
 from mistralai import Mistral
-=======
-from mistralai.client import Mistral
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
 from PIL import Image
 import io
 
@@ -111,10 +95,7 @@ def process_and_encode_image(image_file, max_size=(2048, 2048)):
     return base64.b64encode(buffered.getvalue()).decode('utf-8')
 
 def extract_structured_data(image_file, schema_model, api_key: str):
-<<<<<<< HEAD
-=======
     """Send the image to Mistral Large 3 and return data validated against the given schema."""
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
     client = instructor.from_mistral(Mistral(api_key=api_key))
     base64_image = process_and_encode_image(image_file)
 
@@ -140,18 +121,12 @@ from pydantic import BaseModel, Field
 from typing import List, Optional
 
 class ProductAttribute(BaseModel):
-<<<<<<< HEAD
-=======
     """A single key-value attribute describing a product."""
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
     key: str
     value: str
 
 class StructuredProduct(BaseModel):
-<<<<<<< HEAD
-=======
     """A single product extracted from an image, with pricing and attributes."""
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
     name: str
     brand: Optional[str]
     price: Optional[float]
@@ -165,10 +140,7 @@ class ProductCollection(BaseModel):
     products: List[StructuredProduct]
 
 class InvoiceData(BaseModel):
-<<<<<<< HEAD
-=======
     """A single invoice extracted from an image, with vendor, total, and line items."""
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
     vendor_name: str
     date: str
     total_amount: float
@@ -413,10 +385,7 @@ def build_katex_html(formulas: list) -> str:
 
 ### Core Architecture Module: `OCR/medical_prescription_digitizer/app.py`
 ```
-<<<<<<< HEAD
-=======
 """Streamlit app that extracts and validates structured prescription data from uploaded images using Mistral Large 3 and RxNorm."""
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
 import os
 import io
 
@@ -462,23 +431,12 @@ st.caption("Upload a prescription image — handwritten or printed — to extrac
 st.divider()
 
 
-<<<<<<< HEAD
-# ── Sidebar: API key ──────────────────────────────────────────────────────────
-with st.sidebar:
-    st.header("⚙️ Configuration")
-    api_key = st.text_input(
-        "Mistral API Key",
-        value=os.getenv("MISTRAL_API_KEY", ""),
-        type="password",
-        help="Your Mistral API key. Store it in .env as MISTRAL_API_KEY to avoid re-entering.",
-    )
-    st.markdown("---")
-=======
-api_key = os.getenv("MISTRAL_API_KEY")
+api_key = os.getenv("MISTRAL_API_KEY", "")
 
 # ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
+    if not api_key:
+        api_key = st.text_input("Mistral API Key", value="", type="password")
     st.markdown("**How it works**")
     st.markdown(
         "1. Upload a prescription image\n"
@@ -510,11 +468,7 @@ if uploaded_file:
         st.subheader("Extraction & Validation")
 
         if not api_key:
-<<<<<<< HEAD
-            st.error("Please enter your Mistral API key in the sidebar to proceed.")
-=======
-            st.error("MISTRAL_API_KEY not found. Add it to your .env file and restart the app.")
->>>>>>> 1d1e9f137cfd1123edbae5d8e955ce0b9c7fcf4a
+            st.error("Please enter your Mistral API key or set MISTRAL_API_KEY in .env.")
             st.stop()
 
         if st.button("🔍 Digitize Prescription", type="primary", use_container_width=True):

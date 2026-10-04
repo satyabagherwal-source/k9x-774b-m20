@@ -3,7 +3,7 @@ import path from 'path';
 import { fork } from 'child_process';
 import { fileURLToPath } from 'url';
 import { DISCOVERY_DOMAINS, ensureQueueReplenished } from './auto-discovery-scout.mjs';
-import { pushWithRebaseRetry } from './concurrency-coordinator.mjs';
+import { pushWithRebaseRetry, sanitizeHarvestControl } from './concurrency-coordinator.mjs';
 import {
   checkServiceAvailability,
   tripMasterCircuit,
@@ -42,7 +42,13 @@ export function getFleetWorkers() {
     const data = JSON.parse(fs.readFileSync(CONTROL_PATH, 'utf-8'));
     return data.multiAgentFleet?.workers || [];
   } catch (e) {
-    return [];
+    try {
+      sanitizeHarvestControl(BRAIN_ROOT);
+      const data = JSON.parse(fs.readFileSync(CONTROL_PATH, 'utf-8'));
+      return data.multiAgentFleet?.workers || [];
+    } catch (e2) {
+      return [];
+    }
   }
 }
 
@@ -83,7 +89,13 @@ export function getWorkerLifecycle(workerId) {
 export function updateWorkerState(workerId, updates = {}) {
   if (!fs.existsSync(CONTROL_PATH)) return false;
   try {
-    const data = JSON.parse(fs.readFileSync(CONTROL_PATH, 'utf-8'));
+    let data;
+    try {
+      data = JSON.parse(fs.readFileSync(CONTROL_PATH, 'utf-8'));
+    } catch (parseErr) {
+      sanitizeHarvestControl(BRAIN_ROOT);
+      data = JSON.parse(fs.readFileSync(CONTROL_PATH, 'utf-8'));
+    }
     if (!data.multiAgentFleet) data.multiAgentFleet = {};
     if (!data.multiAgentFleet.workers) data.multiAgentFleet.workers = [];
 

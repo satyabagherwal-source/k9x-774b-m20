@@ -167,6 +167,30 @@ export function cleanStaleIndexLock(cwd = BRAIN_ROOT) {
 }
 
 /**
+/**
+ * Auto-heals harvest-control.json if conflict markers ever appear
+ */
+export function sanitizeHarvestControl(cwd = BRAIN_ROOT) {
+  const controlPath = path.join(cwd, 'harvest-control.json');
+  if (!fs.existsSync(controlPath)) return;
+  try {
+    const raw = fs.readFileSync(controlPath, 'utf-8');
+    if (raw.includes('<<<<<<<') || raw.includes('=======')) {
+      console.warn(`[AUTO-HEAL] Conflict markers detected in harvest-control.json. Auto-healing...`);
+      const cleaned = raw.replace(/<<<<<<<[\s\S]*?=======/g, '').replace(/>>>>>>>.*?\n/g, '');
+      try {
+        const parsed = JSON.parse(cleaned);
+        fs.writeFileSync(controlPath, JSON.stringify(parsed, null, 2), 'utf-8');
+        console.log(`[AUTO-HEAL] Successfully repaired harvest-control.json schema.`);
+      } catch (err) {
+        console.warn(`[AUTO-HEAL] Resetting harvest-control.json to clean HEAD state.`);
+        try { execSync('git checkout HEAD -- harvest-control.json', { cwd, stdio: 'pipe' }); } catch (e) {}
+      }
+    }
+  } catch (e) {}
+}
+
+/**
  * Atomic Git Rebase-Retry Push Barrier:
  * When multiple agents push concurrently to GitHub origin main,
  * handles non-fast-forward rejections with auto-rebase and jittered retry.
@@ -175,6 +199,7 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
   console.log(`\n[CONCURRENCY SYNC] Staging and pushing with atomic rebase retry...`);
 
   cleanStaleIndexLock(cwd);
+  sanitizeHarvestControl(cwd);
 
   try {
     run('git add .', cwd);
@@ -203,11 +228,14 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
 
       cleanStaleIndexLock(cwd);
       try {
-        run('git pull --rebase --autostash origin main', cwd);
+        run('git pull --rebase origin main', cwd);
       } catch (pullErr) {
         console.warn(`   Rebase encounter: ${pullErr.message}. Aborting rebase to keep clean tree.`);
         try { run('git rebase --abort', cwd); } catch (e) {}
+        sanitizeHarvestControl(cwd);
       }
+
+      sanitizeHarvestControl(cwd);
 
       // Exponential random jitter to prevent concurrent agents from colliding again
       const jitterMs = 800 + Math.floor(Math.random() * 1500) * attempt;

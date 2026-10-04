@@ -85,6 +85,10 @@ jobs:
         if: always()
         run: |
           rm -f .git/index.lock
+          if grep -q "<<<<<<<" harvest-control.json 2>/dev/null; then
+            echo "⚠️ Conflict markers detected in harvest-control.json, restoring clean HEAD state..."
+            git checkout HEAD -- harvest-control.json || true
+          fi
           git add .
           if git diff --staged --quiet; then
             echo "Working tree is clean. Multi-Agent Fleet intelligence is fully synced."
@@ -96,7 +100,7 @@ jobs:
                 echo "Concurrent push detected. Rebasing and retrying ($i/5)..."
                 sleep $((2 + RANDOM % 4))
                 rm -f .git/index.lock
-                git pull --rebase origin main
+                git pull --rebase origin main || git rebase --abort
               }
             done
           fi
