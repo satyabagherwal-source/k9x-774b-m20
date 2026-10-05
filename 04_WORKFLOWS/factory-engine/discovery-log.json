@@ -16915,5 +16915,17 @@
     "downloads": 10341632,
     "qualityScore": 2200,
     "discoveredAt": "2026-10-05T09:30:35.106Z"
+  },
+  {
+    "name": "jialinyyzz/humanizer",
+    "fullName": "jialinyyzz/humanizer",
+    "url": "https://huggingface.co/jialinyyzz/humanizer",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: jialinyyzz/humanizer (129 likes, 7999 downloads)",
+    "likes": 129,
+    "downloads": 7999,
+    "qualityScore": 3290,
+    "discoveredAt": "2026-10-05T09:38:16.529Z"
   }
 ]
