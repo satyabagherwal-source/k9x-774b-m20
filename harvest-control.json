@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T03:36:15.251Z",
+  "lastUpdated": "2026-10-05T03:37:52.184Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -163,12 +163,12 @@
       {
         "id": "Agent-Alpha",
         "domain": "ai-agents",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T00:12:06.750Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-05T03:52:52.184Z",
+        "lastActiveAt": "2026-10-05T03:37:52.131Z",
         "lastHarvestedAt": "2026-10-04T21:16:00.053Z",
         "totalHarvested": 29,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Beta",
@@ -272,11 +272,11 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791171433000,
-      "resetAt": "2026-10-05T03:37:13.000Z",
-      "trippedAt": "2026-10-05T03:36:15.251Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Areact-native%20stars%3A%3E2500%20sort%3Astars&per_page=15&page=5)",
-      "consecutiveBlocks": 2
+      "resetEpoch": 1791172387183,
+      "resetAt": "2026-10-05T03:53:07.183Z",
+      "trippedAt": "2026-10-05T03:37:52.183Z",
+      "reason": "GitHub REST Rate Limit in Zero-Clone",
+      "consecutiveBlocks": 3
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",

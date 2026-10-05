@@ -16849,5 +16849,20 @@
     "qualityScore": 22040,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-05T00:09:18.009Z"
+  },
+  {
+    "name": "agent-orchestrator",
+    "fullName": "OrchestratorInc/agent-orchestrator",
+    "url": "https://github.com/OrchestratorInc/agent-orchestrator",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Run and supervise teams of coding agents from planning to merge. Any harness (Claude code, codex, +25 more). Desktop, web, mobile, and cloud agents.",
+    "stars": 12745,
+    "forks": 1760,
+    "openIssues": 762,
+    "language": "Go",
+    "qualityScore": 7351,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-05T03:37:36.335Z"
   }
 ]
