@@ -16927,5 +16927,17 @@
     "downloads": 7999,
     "qualityScore": 3290,
     "discoveredAt": "2026-10-05T09:38:16.529Z"
+  },
+  {
+    "name": "autotrust/JEV-27B-VL",
+    "fullName": "autotrust/JEV-27B-VL",
+    "url": "https://huggingface.co/autotrust/JEV-27B-VL",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: autotrust/JEV-27B-VL (167 likes, 1278569 downloads)",
+    "likes": 167,
+    "downloads": 1278569,
+    "qualityScore": 3670,
+    "discoveredAt": "2026-10-05T12:30:56.974Z"
   }
 ]

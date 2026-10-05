@@ -3646,3 +3646,7 @@ https://huggingface.co/mudler/locate-anything.cpp-gguf
 # --- Automatically Discovered by AI Scout Engine [2026-10-05T09:38:16.530Z] ---
 # [HUGGINGFACE-AI-MODELS] jialinyyzz/humanizer (3290 score) - Verified Hugging Face Model: jialinyyzz/humanizer (129 likes, 7999 downloads)
 https://huggingface.co/jialinyyzz/humanizer
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-05T12:30:56.975Z] ---
+# [HUGGINGFACE-AI-MODELS] autotrust/JEV-27B-VL (3670 score) - Verified Hugging Face Model: autotrust/JEV-27B-VL (167 likes, 1278569 downloads)
+https://huggingface.co/autotrust/JEV-27B-VL
