@@ -1,7 +1,7 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 0,
+      "queryIndex": 1,
       "page": 5
     },
     "fullstack-ui": {
@@ -42,5 +42,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 4,
-  "lastReplenishedAt": "2026-10-05T10:40:04.359Z"
+  "lastReplenishedAt": "2026-10-05T10:41:41.422Z"
 }
