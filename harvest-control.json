@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T02:36:16.436Z",
+  "lastUpdated": "2026-10-05T02:37:54.132Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -272,11 +272,11 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791167835000,
-      "resetAt": "2026-10-05T02:37:15.000Z",
-      "trippedAt": "2026-10-05T02:36:16.436Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Amcp-server%20stars%3A%3E300%20sort%3Astars&per_page=15&page=7)",
-      "consecutiveBlocks": 1
+      "resetEpoch": 1791167932000,
+      "resetAt": "2026-10-05T02:38:52.000Z",
+      "trippedAt": "2026-10-05T02:37:54.132Z",
+      "reason": "Rate limit exceeded (HTTP 403 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Acloud-native%20language%3Ago%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=3)",
+      "consecutiveBlocks": 3
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
