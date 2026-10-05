@@ -16939,5 +16939,20 @@
     "downloads": 1278569,
     "qualityScore": 3670,
     "discoveredAt": "2026-10-05T12:30:56.974Z"
+  },
+  {
+    "name": "react-native-skia",
+    "fullName": "wcandillon/react-native-skia",
+    "url": "https://github.com/wcandillon/react-native-skia",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "High-performance React Native Graphics using Skia",
+    "stars": 8650,
+    "forks": 659,
+    "openIssues": 106,
+    "language": "TypeScript",
+    "qualityScore": 4973,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-05T13:42:55.703Z"
   }
 ]
