@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T08:49:13.375Z",
+  "lastUpdated": "2026-10-05T08:50:49.586Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791190211000,
-      "resetAt": "2026-10-05T08:50:11.000Z",
-      "trippedAt": "2026-10-05T08:49:13.375Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aai-agents%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=6)",
-      "consecutiveBlocks": 2
+      "remaining": 1,
+      "resetEpoch": 1791190308000,
+      "resetAt": "2026-10-05T08:51:48.000Z",
+      "trippedAt": "2026-10-05T08:50:49.480Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Akotlin-multiplatform%20stars%3A%3E1000%20sort%3Astars&per_page=15&page=6)",
+      "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
