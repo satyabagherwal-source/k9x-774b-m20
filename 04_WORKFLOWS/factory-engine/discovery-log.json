@@ -16954,5 +16954,17 @@
     "qualityScore": 4973,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-05T13:42:55.703Z"
+  },
+  {
+    "name": "autotrust/GEV-26B-Decide",
+    "fullName": "autotrust/GEV-26B-Decide",
+    "url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: autotrust/GEV-26B-Decide (193 likes, 446527 downloads)",
+    "likes": 193,
+    "downloads": 446527,
+    "qualityScore": 3930,
+    "discoveredAt": "2026-10-05T14:09:05.747Z"
   }
 ]

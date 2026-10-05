@@ -3654,3 +3654,7 @@ https://huggingface.co/autotrust/JEV-27B-VL
 # --- Automatically Discovered by AI Scout Engine [2026-10-05T13:43:00.126Z] ---
 # [MOBILE-CROSS-PLATFORM] wcandillon/react-native-skia (4973 score) - High-performance React Native Graphics using Skia
 https://github.com/wcandillon/react-native-skia
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-05T14:09:05.748Z] ---
+# [HUGGINGFACE-AI-MODELS] autotrust/GEV-26B-Decide (3930 score) - Verified Hugging Face Model: autotrust/GEV-26B-Decide (193 likes, 446527 downloa
+https://huggingface.co/autotrust/GEV-26B-Decide

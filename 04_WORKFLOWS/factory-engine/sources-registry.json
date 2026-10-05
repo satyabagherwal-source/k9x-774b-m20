@@ -16369,5 +16369,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-autotrust-gev-26b-decide": {
+    "name": "autotrust/GEV-26B-Decide",
+    "officialUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-05T14:09:08.034Z",
+    "lastVerified": "2026-10-05T14:09:08.034Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
