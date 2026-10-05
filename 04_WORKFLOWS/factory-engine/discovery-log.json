@@ -16891,5 +16891,17 @@
     "downloads": 9784655,
     "qualityScore": 9450,
     "discoveredAt": "2026-10-05T07:12:35.826Z"
+  },
+  {
+    "name": "zai-org/GLM-5.3",
+    "fullName": "zai-org/GLM-5.3",
+    "url": "https://huggingface.co/zai-org/GLM-5.3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: zai-org/GLM-5.3 (2095 likes, 1424746 downloads)",
+    "likes": 2095,
+    "downloads": 1424746,
+    "qualityScore": 22950,
+    "discoveredAt": "2026-10-05T08:04:19.724Z"
   }
 ]

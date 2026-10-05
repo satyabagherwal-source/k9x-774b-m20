@@ -3634,3 +3634,7 @@ https://github.com/morluto/rea
 # --- Automatically Discovered by AI Scout Engine [2026-10-05T07:12:35.827Z] ---
 # [HUGGINGFACE-AI-MODELS] BAAI/bge-large-en-v1.5 (9450 score) - Verified Hugging Face Model: BAAI/bge-large-en-v1.5 (745 likes, 9784655 download
 https://huggingface.co/BAAI/bge-large-en-v1.5
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-05T08:04:19.725Z] ---
+# [HUGGINGFACE-AI-MODELS] zai-org/GLM-5.3 (22950 score) - Verified Hugging Face Model: zai-org/GLM-5.3 (2095 likes, 1424746 downloads)
+https://huggingface.co/zai-org/GLM-5.3
