@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T07:07:49.695Z",
+  "lastUpdated": "2026-10-05T07:09:24.973Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -272,10 +272,10 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791184128000,
-      "resetAt": "2026-10-05T07:08:48.000Z",
-      "trippedAt": "2026-10-05T07:07:49.695Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Arag%20language%3Apython%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=4)",
+      "resetEpoch": 1791184223000,
+      "resetAt": "2026-10-05T07:10:23.000Z",
+      "trippedAt": "2026-10-05T07:09:24.971Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aswiftui%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=6)",
       "consecutiveBlocks": 2
     },
     "GITHUB_ACTIONS": {
