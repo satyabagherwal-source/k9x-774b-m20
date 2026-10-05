@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T13:29:49.595Z",
+  "lastUpdated": "2026-10-05T13:31:32.272Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 1,
-      "resetEpoch": 1791207048000,
-      "resetAt": "2026-10-05T13:30:48.000Z",
-      "trippedAt": "2026-10-05T13:29:49.583Z",
-      "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Amobile%20language%3Adart%20OR%20language%3Akotlin%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=1)",
-      "consecutiveBlocks": 1
+      "remaining": 0,
+      "resetEpoch": 1791207150000,
+      "resetAt": "2026-10-05T13:32:30.000Z",
+      "trippedAt": "2026-10-05T13:31:32.236Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Acloud-native%20language%3Ago%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=2)",
+      "consecutiveBlocks": 2
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
