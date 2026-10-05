@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T06:09:57.347Z",
+  "lastUpdated": "2026-10-05T06:11:35.102Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -272,10 +272,10 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791180656000,
-      "resetAt": "2026-10-05T06:10:56.000Z",
-      "trippedAt": "2026-10-05T06:09:57.346Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Acli%20language%3Arust%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=1)",
+      "resetEpoch": 1791180753000,
+      "resetAt": "2026-10-05T06:12:33.000Z",
+      "trippedAt": "2026-10-05T06:11:35.102Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aai-agents%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=4)",
       "consecutiveBlocks": 2
     },
     "GITHUB_ACTIONS": {
