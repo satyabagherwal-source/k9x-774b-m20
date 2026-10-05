@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T16:59:07.535Z",
+  "lastUpdated": "2026-10-05T17:00:47.436Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -272,11 +272,11 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791219605000,
-      "resetAt": "2026-10-05T17:00:05.000Z",
-      "trippedAt": "2026-10-05T16:59:07.535Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aflutter%20%22architecture%22%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=1)",
-      "consecutiveBlocks": 3
+      "resetEpoch": 1791219706000,
+      "resetAt": "2026-10-05T17:01:46.000Z",
+      "trippedAt": "2026-10-05T17:00:47.436Z",
+      "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aservice-mesh%20OR%20topic%3Aproxy%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=1)",
+      "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
