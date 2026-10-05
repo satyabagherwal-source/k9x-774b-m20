@@ -16252,5 +16252,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "codewhale-hq-codewhale": {
+    "name": "codewhale-hq/Codewhale",
+    "officialUrl": "https://github.com/codewhale-hq/Codewhale",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-05T00:11:11.758Z",
+    "lastVerified": "2026-10-05T00:11:11.758Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 73,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
