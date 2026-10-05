@@ -17,8 +17,8 @@
       "page": 1
     },
     "mobile-cross-platform": {
-      "queryIndex": 3,
-      "page": 6
+      "queryIndex": 4,
+      "page": 1
     },
     "devops-cloud-infrastructure": {
       "queryIndex": 5,
@@ -38,9 +38,9 @@
     }
   },
   "huggingFace": {
-    "sortIndex": 1,
+    "sortIndex": 2,
     "page": 1
   },
   "totalAutoDiscovered": 3,
-  "lastReplenishedAt": "2026-10-05T07:59:42.101Z"
+  "lastReplenishedAt": "2026-10-05T08:01:18.953Z"
 }
