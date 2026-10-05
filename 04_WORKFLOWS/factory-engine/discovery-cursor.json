@@ -9,8 +9,8 @@
       "page": 4
     },
     "high-perf-systems": {
-      "queryIndex": 4,
-      "page": 2
+      "queryIndex": 0,
+      "page": 4
     },
     "huggingface-ai-models": {
       "queryIndex": 0,
@@ -42,5 +42,5 @@
     "page": 1
   },
   "totalAutoDiscovered": 6,
-  "lastReplenishedAt": "2026-10-05T16:29:16.246Z"
+  "lastReplenishedAt": "2026-10-05T16:30:56.085Z"
 }
