@@ -3607,3 +3607,98 @@ Users toggle themes to adapt to varying ambient lighting (bright sunlight vs dar
 **WHEN TO APPLY**:
 Every Astro, Vite, Next.js, or HTML/CSS application featuring theme toggles or user-customizable color schemes.
 
+---
+
+## 227. Universal 53-Phase Final Production Audit & Auto-Correction Protocol ("Code Looks Correct ≠ PASS")
+
+**RULE**:
+Before declaring any website, web application, or digital platform production-ready:
+1. **Empirical Verification Over Source Inspection**: "Code looks correct" is never sufficient for a PASS. Every critical feature MUST be tested against actual rendered output, live HTTP response codes (`200 OK`), browser DOM elements, and viewport edge cases.
+2. **The 53-Phase Comprehensive Sweep**:
+   - **Health & Routing (Phases 0–3)**: Zero 404/500 errors, zero broken assets, zero missing scripts/fonts, zero console runtime exceptions.
+   - **Dual-Theme Contrast (Phases 4–6)**: Full audit of light and dark modes. Zero white-on-white, zero dark-on-dark, $\ge 7:1$ WCAG AA contrast.
+   - **Navigation & Icons (Phases 7–8)**: Every icon individually audited with accessible names (`aria-label`). Zero dead links or broken anchors.
+   - **Interactive User Journeys (Phases 9–14)**: Primary tools (generators, translators, studios, comparators) tested through complete lifecycle (input -> process -> output -> copy/download -> reset).
+   - **Edge Cases & Stress (Phases 15–19)**: Tested with empty inputs, 10,000+ characters, numbers, Unicode runes, emojis, 300 DPI exports, and clipboard copy toasts.
+   - **Keyboard & Accessibility (Phases 20–22)**: Complete mouse-free navigation (Tab, Enter, Escape), visible focus rings, polite screen reader announcers (`aria-live="polite"`), and 200% zoom stability.
+   - **Performance & Vitals (Phases 23–25)**: Core Web Vitals compliance, non-blocking font preloads, requestAnimationFrame canvas debouncing.
+   - **Technical & Content SEO (Phases 26–30)**: 100% unique titles, single `<h1>` per page, canonical links on indexable pages, valid XML sitemaps, and Schema.org JSON-LD.
+   - **Security, Privacy & AdSense (Phases 31–34)**: 100% client-side privacy, zero server leaks, fixed-height reserved ad slots (CLS < 0.05).
+   - **Automated Fix & Re-Audit (Phases 47–49)**: Any discovered defect must be safely patched, re-compiled (`npm run build`), and re-verified.
+   - **Official Release Certificate (Phases 50–53)**: Generation of `FINAL_RELEASE_CERTIFICATE.md` with composite scores and explicit release gate (`🟢 RELEASE READY` vs `🔴 NOT READY`).
+
+**WHY**:
+Prevents premature releases where code compiles successfully but real users experience broken UI elements, clipped text, invisible dark mode buttons, dead links, or missing SEO tags.
+
+**WHEN TO APPLY**:
+Every software release, website launch, major refactoring, or pre-deployment QA cycle.
+
+---
+
+## 228. Responsive Navbar Spatial Budgeting & Horizontal Pill Invariant ("Never Wrap Single-Line Badges")
+
+**RULE**:
+When architecting top headers and navigation bars:
+1. **Spatial Budgeting Across Viewports**: On desktop screens between 1280px and 1440px (`xl` breakpoint), the available horizontal width cannot accommodate more than 6–7 primary links alongside search, filter CTAs, and theme switches without cramped spacing.
+2. **Hierarchical Tool Partitioning**: Primary high-intent actions (top 5–6 core tools) must be visible on the main bar; secondary guides, documentation, and licensing pages must be grouped into an accessible "More Tools ▾" dropdown (`aria-haspopup="true"`, `aria-expanded`).
+3. **Horizontal Pill Invariant**: High-trust trust badges (e.g. `100% Free OFL`) and action pills MUST be protected with `whitespace-nowrap flex items-center gap-1.5 shrink-0`. They must NEVER wrap vertically into multi-line broken blocks.
+4. **Click-Outside Dismiss & Keyboard Trap Prevention**: Any navigation dropdown must support smooth hover display, keyboard accessibility, and outside-click dismiss listeners.
+
+**WHY**:
+Header cramming destroys first impressions, pushes critical theme and menu controls against window scrollbars, and breaks trust when guarantee badges wrap into fragmented boxes.
+
+**WHEN TO APPLY**:
+All responsive desktop navigation bars, top headers, and persistent utility ribbons.
+
+---
+
+## 229. Cross-Route Global Intent Action Bar (Seamless Redirection + Deep Link Anchor Auto-Focus)
+
+**RULE**:
+When placing a global action (such as a Search pill or Filter button) in a multi-page site header:
+1. **Interactive Semantic Element**: The pill must NEVER be a passive `<div>`. It must be a semantic `<button type="button">` or `<a>` with visible hover affordance and accessible name.
+2. **Global Keyboard Binding**: Bind universal keyboard shortcuts (e.g. <kbd>Ctrl+K</kbd> / <kbd>Cmd+K</kbd>) globally across all pages.
+3. **Contextual Execution**:
+   - If the user is on the target page where the input/tool exists: Smoothly scroll to the element and focus it immediately (`element.focus()`, `scrollIntoView({ behavior: 'smooth', block: 'center' })`).
+   - If the user is on any other subpage: Seamlessly redirect to the target page with a query flag (e.g. `/?search=true#fontSearchInput`). On arrival, client scripts must detect the flag, focus the input, and clean up the URL state.
+
+**WHY**:
+Eliminates user friction ("User ko khud sochna na pade"). A user clicking "Search" from a subpage should never be greeted with a dead element or forced to manually navigate back to find the search bar.
+
+**WHEN TO APPLY**:
+Search bars, filter triggers, quick-action ribbons, and tool shortcuts in multi-page web applications.
+
+---
+
+## 230. HTML Entity Preservation in URL Query Links & Canonical SEO Integrity
+
+**RULE**:
+1. **HTML Entity Decoding in Automated Link Parsers**: When building automated crawl, link-integrity, or internal anchor test suites, NEVER split raw `href` strings on `#` directly without first decoding HTML entities. In valid HTML attributes, ampersands in query parameters are encoded as `&amp;` or `&#38;` (e.g. `/compare/?fontA=foo&#38;fontB=bar`). Splitting on raw `#` splits the entity (`#38;`), falsely flagging a dead anchor. Always decode entities before decomposing URL paths and hashes.
+2. **Canonical Exclusivity on Indexable Pages**: Enforce strict single-H1 rules across every static page. Ensure that utility redirect routes and error pages (`404.html`) explicitly omit canonical tags and declare `<meta name="robots" content="noindex, nofollow" />`, preventing duplicate content penalties in search engine indexes.
+
+**WHY**:
+Prevents false-positive build failures in CI/CD link checkers and prevents Google indexing thin redirect stubs or 404 pages as duplicate canonical targets.
+
+**WHEN TO APPLY**:
+All automated site audit scripts, crawler engines, and production Astro/Vite static site generators.
+
+---
+
+## 231. Continuous Chat & Human Comment Auto-Harvest Engine ("User Comment & Chat Se Learning Apne Aap Brain Me Extract Hoti Rahe")
+
+**RULE**:
+1. **Human Chat & Comment as Tier-1 Ground Truth**: Whenever the user expresses a design preference, architectural directive, UX principle, critique, or philosophical standard in the chat (e.g. *"User ko khud sochna na pade"*, *"Scroll par ribbon lock na ho"*, *"Har project se learning khud b khud extract hoti rahe"*):
+   - The AI agent MUST immediately treat these user words as first-class primary learning material.
+   - The agent MUST NOT treat them as ephemeral single-turn instructions.
+   - The agent MUST distill and formulate the underlying rule into `C:\AI-Builder-Brain` (`01_CORE/`, `05_KNOWLEDGE/engineering-patterns.md`, `08_VERIFICATION/`, or `03_SKILLS/`).
+2. **Universal Project Auto-Bridge**: Every child project workspace MUST be connected to `C:\AI-Builder-Brain` via `.project-brain/brain-bridge.json`. If missing, the bridge must be created automatically.
+3. **Build-Time Continuous Extraction**: As projects are built, refactored, audited, or debugged, the agent must silently extract forensic learnings (commit fixes, design pattern resolutions, performance optimizations, accessibility patches) into `07_PROJECT_LEARNING/[project]-learnings.md`.
+4. **Autonomous Git Ingestion & Cloud Sync**: All newly harvested learnings in `C:\AI-Builder-Brain` must be automatically staged, committed, and pushed to GitHub (`git push origin main`) without requiring user intervention, while keeping child project changes uncommitted for user review.
+
+**WHY**:
+Guarantees that human knowledge and hard-won project lessons are never lost between chat turns, context window resets, or different project workspaces. The AI-Builder-Brain grows continuously and cumulatively into an ever-more-intelligent engineering core.
+
+**WHEN TO APPLY**:
+Every conversation turn, every user prompt containing guidance or critiques, and every active project development session.
+
+
