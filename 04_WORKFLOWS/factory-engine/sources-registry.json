@@ -16356,5 +16356,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wcandillon-react-native-skia": {
+    "name": "wcandillon/react-native-skia",
+    "officialUrl": "https://github.com/wcandillon/react-native-skia",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-05T13:44:51.126Z",
+    "lastVerified": "2026-10-05T13:44:51.126Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 42,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
