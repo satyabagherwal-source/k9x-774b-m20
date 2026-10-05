@@ -16834,5 +16834,20 @@
     "downloads": 0,
     "qualityScore": 1260,
     "discoveredAt": "2026-10-04T23:16:11.258Z"
+  },
+  {
+    "name": "Codewhale",
+    "fullName": "codewhale-hq/Codewhale",
+    "url": "https://github.com/codewhale-hq/Codewhale",
+    "type": "github",
+    "domain": "high-perf-systems",
+    "description": "Open-source coding agent for your terminal, built in Rust and on a journey of continuous community improvement. Issues and PRs welcome.",
+    "stars": 41040,
+    "forks": 3567,
+    "openIssues": 202,
+    "language": "Rust",
+    "qualityScore": 22040,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-05T00:09:18.009Z"
   }
 ]
