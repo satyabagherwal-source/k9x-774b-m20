@@ -16903,5 +16903,17 @@
     "downloads": 1424746,
     "qualityScore": 22950,
     "discoveredAt": "2026-10-05T08:04:19.724Z"
+  },
+  {
+    "name": "mudler/locate-anything.cpp-gguf",
+    "fullName": "mudler/locate-anything.cpp-gguf",
+    "url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: mudler/locate-anything.cpp-gguf (20 likes, 10341632 downloads)",
+    "likes": 20,
+    "downloads": 10341632,
+    "qualityScore": 2200,
+    "discoveredAt": "2026-10-05T09:30:35.106Z"
   }
 ]
