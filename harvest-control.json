@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T10:05:17.512Z",
+  "lastUpdated": "2026-10-05T10:06:53.718Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -272,10 +272,10 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791194776000,
-      "resetAt": "2026-10-05T10:06:16.000Z",
-      "trippedAt": "2026-10-05T10:05:17.511Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Ainfrastructure-as-code%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=1)",
+      "resetEpoch": 1791194872000,
+      "resetAt": "2026-10-05T10:07:52.000Z",
+      "trippedAt": "2026-10-05T10:06:53.718Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Amulti-agent%20stars%3A%3E800%20sort%3Astars&per_page=15&page=8)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
