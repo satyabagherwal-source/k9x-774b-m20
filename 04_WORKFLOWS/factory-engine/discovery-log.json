@@ -16879,5 +16879,17 @@
     "qualityScore": 1643,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-05T04:07:24.337Z"
+  },
+  {
+    "name": "BAAI/bge-large-en-v1.5",
+    "fullName": "BAAI/bge-large-en-v1.5",
+    "url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: BAAI/bge-large-en-v1.5 (745 likes, 9784655 downloads)",
+    "likes": 745,
+    "downloads": 9784655,
+    "qualityScore": 9450,
+    "discoveredAt": "2026-10-05T07:12:35.826Z"
   }
 ]

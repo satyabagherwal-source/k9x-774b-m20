@@ -3630,3 +3630,7 @@ https://github.com/OrchestratorInc/agent-orchestrator
 # --- Automatically Discovered by AI Scout Engine [2026-10-05T04:07:35.761Z] ---
 # [AI-AGENTS] morluto/rea (1643 score) - Reverse engineer anything with agents, from app behavior down to native binaries
 https://github.com/morluto/rea
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-05T07:12:35.827Z] ---
+# [HUGGINGFACE-AI-MODELS] BAAI/bge-large-en-v1.5 (9450 score) - Verified Hugging Face Model: BAAI/bge-large-en-v1.5 (745 likes, 9784655 download
+https://huggingface.co/BAAI/bge-large-en-v1.5
