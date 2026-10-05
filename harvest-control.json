@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T05:32:31.072Z",
+  "lastUpdated": "2026-10-05T05:34:06.631Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791178410000,
-      "resetAt": "2026-10-05T05:33:30.000Z",
-      "trippedAt": "2026-10-05T05:32:31.072Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Akotlin-multiplatform%20stars%3A%3E1000%20sort%3Astars&per_page=15&page=6)",
-      "consecutiveBlocks": 1
+      "remaining": 1,
+      "resetEpoch": 1791178505000,
+      "resetAt": "2026-10-05T05:35:05.000Z",
+      "trippedAt": "2026-10-05T05:34:06.434Z",
+      "reason": "Rate limit exceeded (HTTP 403 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Allm-agent%20stars%3A%3E1000%20sort%3Astars&per_page=15&page=4)",
+      "consecutiveBlocks": 2
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
