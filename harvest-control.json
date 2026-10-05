@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T05:03:16.636Z",
+  "lastUpdated": "2026-10-05T05:04:55.603Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 1,
-      "resetEpoch": 1791176655000,
-      "resetAt": "2026-10-05T05:04:15.000Z",
-      "trippedAt": "2026-10-05T05:03:16.370Z",
-      "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Acompiler%20language%3Arust%20OR%20language%3Ac%2B%2B%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=1)",
-      "consecutiveBlocks": 1
+      "remaining": 0,
+      "resetEpoch": 1791176754000,
+      "resetAt": "2026-10-05T05:05:54.000Z",
+      "trippedAt": "2026-10-05T05:04:55.602Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Areact-native%20stars%3A%3E2500%20sort%3Astars&per_page=15&page=6)",
+      "consecutiveBlocks": 3
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
