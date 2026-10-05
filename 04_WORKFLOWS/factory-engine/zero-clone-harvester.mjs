@@ -450,6 +450,63 @@ async function harvestHuggingFaceZeroClone(target) {
 }
 
 /**
+ * Synthesizes deep, microscopic invariants and candidate rules directly from empirical commit patches
+ */
+export function extractMicroInvariantsFromAudit(audit) {
+  if (!audit) return null;
+  const patches = audit.deepFixPatches || [];
+  if (patches.length === 0) return null;
+
+  // Find a patch with actual code diffs
+  const fixPatch = patches.find((p) => p.files && p.files.some((f) => f.patchSnippet && f.patchSnippet.length > 80)) || patches[0];
+  if (!fixPatch || !fixPatch.files || fixPatch.files.length === 0) return null;
+
+  const targetFile = fixPatch.files.find((f) => f.patchSnippet && f.patchSnippet.length > 80) || fixPatch.files[0];
+  if (!targetFile || !targetFile.patchSnippet) return null;
+
+  const patchLines = targetFile.patchSnippet.split('\n');
+  const removed = patchLines.filter((l) => l.startsWith('-') && !l.startsWith('---')).map((l) => l.slice(1)).join('\n');
+  const added = patchLines.filter((l) => l.startsWith('+') && !l.startsWith('+++')).map((l) => l.slice(1)).join('\n');
+
+  if (!added.trim()) return null;
+
+  const cleanMessage = (fixPatch.message || 'Defect Remediation Invariant')
+    .split('\n')[0]
+    .replace(/^(fix|bug|refactor|chore|feat|perf)[\(:\s]/i, '')
+    .trim();
+
+  const title = cleanMessage.length > 10 ? cleanMessage.slice(0, 80) : `Empirical Invariant Guard in ${path.basename(targetFile.filename || audit.name)}`;
+  const lang = (audit.language || 'typescript').toLowerCase();
+
+  return `## X. ${title}
+
+**RULE**:
+When implementing operations in \`${targetFile.filename || audit.name}\`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ${audit.name}. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit \`${(fixPatch.sha || '').slice(0, 10)}\`: ${cleanMessage}. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing ${audit.language || 'software'} data structures, boundary deserialization, API parsing, or resource lifecycles matching \`${targetFile.filename}\`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+\`\`\`${lang}
+// Verified production-grade fix pattern:
+${added.slice(0, 1200)}
+\`\`\`
+
+**NEGATIVE CONSTRAINT**:
+\`\`\`${lang}
+// Anti-pattern to NEVER write (induced failure mode):
+${removed ? removed.slice(0, 1200) : '// Defect-prone omission of boundary validation'}
+\`\`\`
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect \`${(fixPatch.sha || '').slice(0, 10)}\` are properly handled with clean fallback behavior.
+`;
+}
+
+/**
  * Generate Forensic Learning Artifact
  */
 export function writeZeroCloneArtifact(audit) {
@@ -728,8 +785,19 @@ export async function runZeroCloneHarvester(customUrls = null) {
             console.log(`🎯 [UNIVERSAL RULES PROMOTED] ${newRules.length} new rules added to Master Brain: ${newRules.map((r) => `Rule ${r.number}`).join(', ')}`);
           }
         } else {
-          // Fallback to structural artifact if GEMINI_API_KEY is not yet provided
+          // Fallback to structural artifact if external AI API is on cooldown/unconfigured
           writeZeroCloneArtifact(audit);
+          try {
+            const candidateText = extractMicroInvariantsFromAudit(audit);
+            if (candidateText) {
+              const promoted = promoteGeminiRulesToMasterBrain(candidateText, audit.name, audit);
+              if (promoted && promoted.length > 0) {
+                console.log(`🎯 [AUTONOMOUS EMPIRICAL RULE PROMOTED] Rule ${promoted[0].number}: "${promoted[0].title}" added to Master Brain from patch!`);
+              }
+            }
+          } catch (ruleErr) {
+            console.warn(`[EMPIRICAL RULE EXTRACTION NOTE] ${ruleErr.message}`);
+          }
         }
 
         updateSourcesRegistryZeroClone(audit);

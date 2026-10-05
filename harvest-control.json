@@ -165,9 +165,9 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T17:48:35.294Z",
-        "lastHarvestedAt": "2026-10-05T17:48:35.294Z",
-        "totalHarvested": 32,
+        "lastActiveAt": null,
+        "lastHarvestedAt": null,
+        "totalHarvested": 0,
         "lastError": null
       },
       {
@@ -175,9 +175,9 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T17:48:39.216Z",
-        "lastHarvestedAt": "2026-10-05T17:48:39.216Z",
-        "totalHarvested": 23,
+        "lastActiveAt": null,
+        "lastHarvestedAt": null,
+        "totalHarvested": 0,
         "lastError": null
       },
       {
@@ -185,9 +185,9 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T17:48:35.710Z",
-        "lastHarvestedAt": "2026-10-05T17:48:35.710Z",
-        "totalHarvested": 25,
+        "lastActiveAt": null,
+        "lastHarvestedAt": null,
+        "totalHarvested": 0,
         "lastError": null
       },
       {
@@ -195,9 +195,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T17:48:41.242Z",
-        "lastHarvestedAt": "2026-10-05T17:48:41.243Z",
-        "totalHarvested": 27,
+        "lastActiveAt": null,
+        "lastHarvestedAt": null,
+        "totalHarvested": 0,
         "lastError": null
       },
       {
@@ -205,9 +205,9 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T17:46:31.689Z",
-        "lastHarvestedAt": "2026-10-05T17:46:31.689Z",
-        "totalHarvested": 29,
+        "lastActiveAt": null,
+        "lastHarvestedAt": null,
+        "totalHarvested": 0,
         "lastError": null
       },
       {
@@ -215,9 +215,9 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T17:46:34.119Z",
-        "lastHarvestedAt": "2026-10-05T17:46:34.119Z",
-        "totalHarvested": 25,
+        "lastActiveAt": null,
+        "lastHarvestedAt": null,
+        "totalHarvested": 0,
         "lastError": null
       },
       {
@@ -225,9 +225,9 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T17:46:38.284Z",
-        "lastHarvestedAt": "2026-10-05T17:46:38.284Z",
-        "totalHarvested": 33,
+        "lastActiveAt": null,
+        "lastHarvestedAt": null,
+        "totalHarvested": 0,
         "lastError": null
       },
       {
@@ -235,9 +235,9 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T17:46:38.516Z",
-        "lastHarvestedAt": "2026-10-05T17:46:38.516Z",
-        "totalHarvested": 29,
+        "lastActiveAt": null,
+        "lastHarvestedAt": null,
+        "totalHarvested": 0,
         "lastError": null
       },
       {
@@ -245,9 +245,9 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-05T17:46:41.843Z",
-        "lastHarvestedAt": "2026-10-05T17:46:41.843Z",
-        "totalHarvested": 19,
+        "lastActiveAt": null,
+        "lastHarvestedAt": null,
+        "totalHarvested": 0,
         "lastError": null
       }
     ],

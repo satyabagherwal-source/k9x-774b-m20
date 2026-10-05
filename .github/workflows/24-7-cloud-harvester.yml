@@ -38,8 +38,8 @@ jobs:
 
       - name: Configure Git Identity
         run: |
-          git config --global user.name "AI-Builder-Brain-Cloud-Agent"
-          git config --global user.email "cloud-agent@ai-builder-brain.local"
+          git config --global user.name "satyabgherval-source"
+          git config --global user.email "315064083+satyabgherval-source@users.noreply.github.com"
 
       - name: Verify Server-to-Server Gemini AI Swarm Pool
         env:
@@ -93,7 +93,7 @@ jobs:
           if git diff --staged --quiet; then
             echo "Working tree is clean. Multi-Agent Fleet intelligence is fully synced."
           else
-            git commit -m "feat(fleet): 8-agent parallel fleet harvested multi-domain learnings [skip ci]"
+            git commit -m "feat(harvest): micro-forensic learning harvested from sources [skip ci]"
             for i in {1..5}; do
               rm -f .git/index.lock
               git push origin main && break || {
