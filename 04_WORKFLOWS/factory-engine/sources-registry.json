@@ -16616,5 +16616,57 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "envoyproxy-envoy": {
+    "name": "envoyproxy/envoy",
+    "officialUrl": "https://github.com/envoyproxy/envoy",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-05T17:48:32.218Z",
+    "lastVerified": "2026-10-05T17:48:32.218Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "projectdiscovery-nuclei": {
+    "name": "projectdiscovery/nuclei",
+    "officialUrl": "https://github.com/projectdiscovery/nuclei",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-05T17:48:32.697Z",
+    "lastVerified": "2026-10-05T17:48:32.697Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 31,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "k3s-io-k3s": {
+    "name": "k3s-io/k3s",
+    "officialUrl": "https://github.com/k3s-io/k3s",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-05T17:48:36.226Z",
+    "lastVerified": "2026-10-05T17:48:36.226Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "trufflesecurity-trufflehog": {
+    "name": "trufflesecurity/trufflehog",
+    "officialUrl": "https://github.com/trufflesecurity/trufflehog",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-05T17:48:38.195Z",
+    "lastVerified": "2026-10-05T17:48:38.195Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
