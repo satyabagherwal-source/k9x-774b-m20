@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T00:30:00.384Z",
+  "lastUpdated": "2026-10-05T00:31:38.577Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -272,11 +272,11 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791160259000,
-      "resetAt": "2026-10-05T00:30:59.000Z",
-      "trippedAt": "2026-10-05T00:30:00.383Z",
-      "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aservice-mesh%20OR%20topic%3Aproxy%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=1)",
-      "consecutiveBlocks": 1
+      "resetEpoch": 1791160356000,
+      "resetAt": "2026-10-05T00:32:36.000Z",
+      "trippedAt": "2026-10-05T00:31:38.577Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aai-agents%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=6)",
+      "consecutiveBlocks": 2
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
