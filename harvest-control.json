@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T01:18:46.950Z",
+  "lastUpdated": "2026-10-05T01:20:22.482Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -272,11 +272,11 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791163185000,
-      "resetAt": "2026-10-05T01:19:45.000Z",
-      "trippedAt": "2026-10-05T01:18:46.800Z",
-      "reason": "Rate limit exceeded (HTTP 403 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Acli%20language%3Arust%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=4)",
-      "consecutiveBlocks": 1
+      "resetEpoch": 1791163280000,
+      "resetAt": "2026-10-05T01:21:20.000Z",
+      "trippedAt": "2026-10-05T01:20:22.480Z",
+      "reason": "Rate limit exceeded (HTTP 403 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Amulti-agent%20stars%3A%3E800%20sort%3Astars&per_page=15&page=5)",
+      "consecutiveBlocks": 2
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
