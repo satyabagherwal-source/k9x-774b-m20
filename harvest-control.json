@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T17:07:29.854Z",
+  "lastUpdated": "2026-10-05T17:09:05.904Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -271,11 +271,11 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791220108000,
-      "resetAt": "2026-10-05T17:08:28.000Z",
-      "trippedAt": "2026-10-05T17:07:29.854Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Akotlin-multiplatform%20stars%3A%3E1000%20sort%3Astars&per_page=15&page=6)",
+      "remaining": 1,
+      "resetEpoch": 1791220204000,
+      "resetAt": "2026-10-05T17:10:04.000Z",
+      "trippedAt": "2026-10-05T17:09:05.562Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Adocker%20%22developer-tool%22%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=2)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
