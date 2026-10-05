@@ -9,13 +9,12 @@ const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
 const SECRETS_PATH = path.join(BRAIN_ROOT, '.brain-secrets.json');
 const CIRCUIT_FILE = path.join(BRAIN_ROOT, '.harvest-locks', 'ai-key-circuit.json');
 
-// Supported Gemini Models (Active 3.x stack)
+// Supported Gemini Models (Official Google AI Studio API IDs)
 export const GEMINI_MODELS = [
-  'gemini-3.6-flash',
-  'gemini-3.5-flash',
-  'gemini-3.1-flash-lite-preview',
-  'gemini-3.7-flash',
-  'gemini-3.8-flash',
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-1.5-flash',
+  'gemini-1.5-pro',
   'gemini-flash-latest'
 ];
 
@@ -292,7 +291,15 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
     activeKeysTried++;
 
     for (const model of GEMINI_MODELS) {
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const isBearer = apiKey.startsWith('ya29.') || apiKey.startsWith('AQ.');
+      const url = isBearer
+        ? `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
+        : `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+      const requestHeaders = { 'Content-Type': 'application/json' };
+      if (isBearer) {
+        requestHeaders['Authorization'] = `Bearer ${apiKey}`;
+      }
 
       const requestBody = {
         contents: [{ role: 'user', parts: [{ text: prompt }] }],
@@ -311,7 +318,7 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
         console.log(`🤖 [GEMINI POOL] Sending request via ${keyLabel} to ${model}...`);
         const response = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: requestHeaders,
           body: JSON.stringify(requestBody)
         });
 
@@ -333,6 +340,7 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
 
         if (!response.ok) {
           const errText = await response.text();
+          console.warn(`[GEMINI ERROR ${response.status}] ${model}: ${errText.slice(0, 150)}`);
           lastError = new Error(`Gemini Error (${response.status}): ${errText.slice(0, 100)}`);
           continue;
         }

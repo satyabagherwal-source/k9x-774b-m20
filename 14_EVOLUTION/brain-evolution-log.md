@@ -294,4 +294,33 @@ This file records canonical promotion events, knowledge integration milestones, 
 * **Repository Dossiers Created**:
   * `07_PROJECT_LEARNING/old-english-font-free-learnings.md` (Full 8-dimensional forensic dossier).
 
+---
+
+### [2026-10-05] Cloud Harvester Autopsy, Queue Replenishment & Multi-Domain Intelligence Codification
+
+* **Trigger**: User inspection: "mene dekha ki ai builder active h but usme koi learning nahi aa rahi h . engineering rule m koi incease nahi huye, knowled , skill jesi koi cheez nahi badi"
+* **Forensic Diagnosis**:
+  * **Queue Depletion**: 1,260+ out of 1,366 repos in `repos.txt` were fully harvested into `07_PROJECT_LEARNING/`. All 9 domain sub-queues were completely dry.
+  * **Scout Rate-Limit Deadlock**: 9 parallel workers simultaneously launched `auto-discovery-scout.mjs`, firing ~32 requests in seconds and tripping GitHub Search API's 30 req/min rate limit (`403 Rate Limit Exceeded`).
+  * **Structural Fallback Disconnect**: 1,118 dossiers in `07_PROJECT_LEARNING/` were saved as REST API structural fallbacks because AI synthesis failed (fictitious model names `gemini-3.6-flash` returning 404, invalid token credentials). Structural fallbacks did not automatically promote to `05_KNOWLEDGE/` or `03_SKILLS/`.
+* **Fixes Applied**:
+  * **Single-Flight Scout Mutex**: In `multi-agent-fleet.mjs`, added `isFleetScoutingActive` single-flight mutex to prevent concurrent GitHub Search rate limits.
+  * **Gemini Official Model Alignment**: Updated `ai-provider-pool.mjs` to official Google AI Studio model names (`gemini-2.5-flash`, `gemini-2.0-flash`, `gemini-1.5-flash`, `gemini-1.5-pro`) and added Bearer token support.
+  * **Queue Replenishment**: Injected 22 unharvested top-tier repositories into `repos.txt` across all domains (`modelcontextprotocol/servers`, `anthropics/anthropic-quickstarts`, `elizaos/eliza`, `biomejs/biome`, `oxc-project/oxc`, `zed-industries/zed`, `dragonflydb/dragonfly`, `surrealdb/surrealdb`, `opentofu/opentofu`, `sigstore/cosign`, `cilium/cilium`, etc.).
+  * **Autonomous Dossier Distiller**: Created `04_WORKFLOWS/factory-engine/dossier-distiller.mjs` to autonomously mine the 1,263 dossiers in `07_PROJECT_LEARNING/`.
+* **Promoted Rules Codified in `05_KNOWLEDGE/engineering-patterns.md`**:
+  * **Rule 232**: SPEC-Driven Agentic Hook Matrix & Coverage Table Invariant (`modu-ai/moai-adk`).
+  * **Rule 233**: Zero-Dependency Headless Chromium Native Rendering & IHDR Header Verification (`modu-ai/moai-adk`).
+  * **Rule 234**: Tiered Multi-LLM Effort Routing & Cost Envelope Enforcement (`modu-ai/moai-adk`).
+  * **Rule 235**: Cross-Process Unix Domain Socket RPC with Heartbeat Guard & Orphan Child Process Reaper (`typewhisper-mac`, `appports`).
+  * **Rule 236**: Audio Stream Circular Ring Buffer with Atomic Overflow Protection (`typewhisper-mac`).
+* **New Reusable Skills Codified**:
+  * `03_SKILLS/agentic-doctor-coverage-audit.md` (Self-diagnosing hook tables & resolution matrices).
+  * `03_SKILLS/zero-dependency-headless-renderer.md` (Zero-dependency headless browser rendering & PNG IHDR binary verification).
+  * `.agents/skills/claude-glm-effort-router/SKILL.md` (Tiered multi-LLM routing & token budget envelopes).
+* **New Domain Knowledge Codified in `05_KNOWLEDGE/`**:
+  * `05_KNOWLEDGE/agentic-development-harness-architecture.md` (SPEC-driven harnesses, hook coverage tables, multi-LLM routing).
+  * `05_KNOWLEDGE/high-performance-desktop-ipc-and-audio.md` (Low-latency IPC, ring buffers, parent-death reapers).
+
+
 

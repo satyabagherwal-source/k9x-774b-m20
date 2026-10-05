@@ -3658,3 +3658,58 @@ https://github.com/wcandillon/react-native-skia
 # --- Automatically Discovered by AI Scout Engine [2026-10-05T14:09:05.748Z] ---
 # [HUGGINGFACE-AI-MODELS] autotrust/GEV-26B-Decide (3930 score) - Verified Hugging Face Model: autotrust/GEV-26B-Decide (193 likes, 446527 downloa
 https://huggingface.co/autotrust/GEV-26B-Decide
+
+# --- Verified Replenishment Batch [2026-10-05T17:35:00.000Z] ---
+# [AI-AGENTS] Model Context Protocol official reference servers & implementations
+https://github.com/modelcontextprotocol/servers
+# [AI-AGENTS] Anthropic official production agent recipes and quickstarts
+https://github.com/anthropics/anthropic-quickstarts
+# [AI-AGENTS] Eliza multi-agent conversational autonomy framework
+https://github.com/elizaos/eliza
+
+# [FULLSTACK-UI] Shadcn Next.js 14 taxonomy and enterprise fullstack application architecture
+https://github.com/shadcn-ui/taxonomy
+# [FULLSTACK-UI] Fast, unstyled command menu React component
+https://github.com/pacocoursey/cmdk
+# [FULLSTACK-UI] Unstyled, drawer component for React with fluid gestures
+https://github.com/emilkowalski/vaul
+# [FULLSTACK-UI] Tremor open-source component library for building modern dashboards
+https://github.com/tremorlabs/tremor
+
+# [HIGH-PERF-SYSTEMS] Biome - Toolchain of the web (formatter, linter, analyzer in Rust)
+https://github.com/biomejs/biome
+# [HIGH-PERF-SYSTEMS] Oxc - Suite of high-performance JavaScript tools written in Rust
+https://github.com/oxc-project/oxc
+# [HIGH-PERF-SYSTEMS] Zed - High-performance, multiplayer code editor from the creators of Atom and Tree-sitter
+https://github.com/zed-industries/zed
+# [HIGH-PERF-SYSTEMS] Astral Ruff - Extremely fast Python linter and code formatter written in Rust
+https://github.com/astral-sh/ruff
+
+# [MOBILE-CROSS-PLATFORM] React Native Builder Bob - CLI to scaffold and package React Native native modules
+https://github.com/callstack/react-native-builder-bob
+# [MOBILE-CROSS-PLATFORM] React Native Screens - Native navigation primitives for React Native
+https://github.com/software-mansion/react-native-screens
+
+# [DATABASE-STORAGE-ENGINES] Dragonfly - Highly concurrent Redis replacement in C++ with multi-threaded architecture
+https://github.com/dragonflydb/dragonfly
+# [DATABASE-STORAGE-ENGINES] SurrealDB - Multi-model cloud database written in Rust
+https://github.com/surrealdb/surrealdb
+
+# [DEVOPS-CLOUD-INFRASTRUCTURE] OpenTofu - Declarative open-source infrastructure as code engine
+https://github.com/opentofu/opentofu
+# [DEVOPS-CLOUD-INFRASTRUCTURE] Temporal - Resilient microservice workflow orchestration runtime
+https://github.com/temporalio/temporal
+# [DEVOPS-CLOUD-INFRASTRUCTURE] Envoy - Cloud-native high-performance edge/service proxy in C++
+https://github.com/envoyproxy/envoy
+# [DEVOPS-CLOUD-INFRASTRUCTURE] K3s - Lightweight production-grade Kubernetes distribution
+https://github.com/k3s-io/k3s
+
+# [CYBERSECURITY-DEFENSES] Sigstore Cosign - Container signing and software supply chain verification
+https://github.com/sigstore/cosign
+# [CYBERSECURITY-DEFENSES] Cilium - eBPF-based networking, security, and observability in Linux kernel
+https://github.com/cilium/cilium
+# [CYBERSECURITY-DEFENSES] Nuclei - Fast and customizable vulnerability scanner based on simple YAML DSL
+https://github.com/projectdiscovery/nuclei
+# [CYBERSECURITY-DEFENSES] TruffleHog - High-entropy credential and secret scanner
+https://github.com/trufflesecurity/trufflehog
+

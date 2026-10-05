@@ -218,6 +218,8 @@ export function getTargetForWorker(agentConfig, assignedSlugs = new Set()) {
   return chosen;
 }
 
+let isFleetScoutingActive = false;
+
 /**
  * Spawns an autonomous worker agent for a specific domain with dedicated target isolation.
  * Evaluates isolated cooldown and status: does NOT stop or wait if another agent is resting!
@@ -259,7 +261,12 @@ export function spawnWorkerAgent(agentConfig, assignedSlugs = new Set()) {
 
     // If no unharvested target found anywhere, check if we should scout
     if (!target) {
-      console.log(`${agentConfig.color}[${agentConfig.id}] Domain ${agentConfig.domain} and queue fully harvested. Scouting fresh repos...${RESET}`);
+      if (isFleetScoutingActive) {
+        console.log(`${agentConfig.color}[${agentConfig.id}] Scouting already underway by another agent. Passing to avoid concurrent GitHub search rate limits.${RESET}`);
+        return resolve({ agent: agentConfig.id, status: 'SCOUT_ALREADY_ACTIVE', skipped: true });
+      }
+      isFleetScoutingActive = true;
+      console.log(`${agentConfig.color}[${agentConfig.id}] Domain ${agentConfig.domain} and queue fully harvested. Single-flight scouting fresh repos...${RESET}`);
       const scoutProc = fork(SCOUT_SCRIPT, [agentConfig.domain], {
         cwd: BRAIN_ROOT,
         env: { ...process.env, AGENT_NAME: agentConfig.id, TARGET_DOMAIN: agentConfig.domain },
@@ -276,6 +283,7 @@ export function spawnWorkerAgent(agentConfig, assignedSlugs = new Set()) {
       });
 
       scoutProc.on('close', (code) => {
+        isFleetScoutingActive = false;
         if (scoutOutput.includes('RATE LIMIT EXCEEDED') || scoutOutput.includes('rate limit reached') || code === 42) {
           if (agentConfig.domain !== 'huggingface-ai-models') {
             tripMasterCircuit(MASTER_SERVICES.GITHUB_API, Date.now() + 600_000, 'GitHub Search Rate Limit in Scout');
