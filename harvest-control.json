@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-05T15:26:06.268Z",
+  "lastUpdated": "2026-10-05T15:27:49.435Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -271,10 +271,10 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
-      "remaining": 1,
-      "resetEpoch": 1791214025000,
-      "resetAt": "2026-10-05T15:27:05.000Z",
-      "trippedAt": "2026-10-05T15:26:06.241Z",
+      "remaining": 0,
+      "resetEpoch": 1791214128000,
+      "resetAt": "2026-10-05T15:28:48.000Z",
+      "trippedAt": "2026-10-05T15:27:49.434Z",
       "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Awasm%20OR%20topic%3Awebassembly%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=1)",
       "consecutiveBlocks": 1
     },
