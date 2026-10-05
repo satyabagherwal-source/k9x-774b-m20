@@ -25,7 +25,7 @@
       "page": 6
     },
     "cybersecurity-defenses": {
-      "queryIndex": 2,
+      "queryIndex": 3,
       "page": 1
     },
     "database-storage-engines": {
@@ -38,9 +38,9 @@
     }
   },
   "huggingFace": {
-    "sortIndex": 0,
+    "sortIndex": 1,
     "page": 1
   },
   "totalAutoDiscovered": 5,
-  "lastReplenishedAt": "2026-10-05T14:01:05.686Z"
+  "lastReplenishedAt": "2026-10-05T14:02:45.690Z"
 }
