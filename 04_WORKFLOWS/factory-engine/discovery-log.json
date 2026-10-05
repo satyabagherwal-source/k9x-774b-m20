@@ -16864,5 +16864,20 @@
     "qualityScore": 7351,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-05T03:37:36.335Z"
+  },
+  {
+    "name": "rea",
+    "fullName": "morluto/rea",
+    "url": "https://github.com/morluto/rea",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Reverse engineer anything with agents, from app behavior down to native binaries.",
+    "stars": 2568,
+    "forks": 275,
+    "openIssues": 63,
+    "language": "TypeScript",
+    "qualityScore": 1643,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-05T04:07:24.337Z"
   }
 ]

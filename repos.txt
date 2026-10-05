@@ -3626,3 +3626,7 @@ https://github.com/codewhale-hq/Codewhale
 # --- Automatically Discovered by AI Scout Engine [2026-10-05T03:37:52.109Z] ---
 # [AI-AGENTS] OrchestratorInc/agent-orchestrator (7351 score) - Run and supervise teams of coding agents from planning to merge. Any harness (Cl
 https://github.com/OrchestratorInc/agent-orchestrator
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-05T04:07:35.761Z] ---
+# [AI-AGENTS] morluto/rea (1643 score) - Reverse engineer anything with agents, from app behavior down to native binaries
+https://github.com/morluto/rea
