@@ -16265,5 +16265,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "orchestratorinc-agent-orchestrator": {
+    "name": "OrchestratorInc/agent-orchestrator",
+    "officialUrl": "https://github.com/OrchestratorInc/agent-orchestrator",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-05T03:39:45.403Z",
+    "lastVerified": "2026-10-05T03:39:45.403Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 70,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
