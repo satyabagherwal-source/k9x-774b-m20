@@ -186,7 +186,16 @@ This document records the empirical project learnings, forensic bug investigatio
 * **Remediation**: Updated `public/sitemap.xml` to point directly to `https://onlinefreeprotractor.com/sitemap-0.xml`.
 * **Verification**: Verified with automated parser that both `sitemap.xml` and `sitemap-index.xml` cleanly resolve to `sitemap-0.xml`, containing exactly all 540 indexable canonical URLs.
 
+### INC-17: Cloudflare Edge Redirect Masking Physical XML Sitemap Resulting in GSC Sitemap Disconnect
+* **Context**: Google Search Console URL Inspection consistently displayed "Discovery > Sitemaps: No referring sitemaps detected" despite valid sitemap files existing in `public/` and `dist/`.
+* **Expected**: Request to `https://onlinefreeprotractor.com/sitemap.xml` returns `HTTP 200 OK` with `Content-Type: application/xml`.
+* **Actual**: Request returned `HTTP 301 Moved Permanently` to `/sitemap-index.xml`. Google Search Console flagged the redirect and failed to attribute child URLs to the submitted `sitemap.xml`.
+* **Root Cause**: `public/_redirects` contained an obsolete rule `/sitemap.xml /sitemap-index.xml 301`. Cloudflare Pages edge rules execute before static asset serving, masking the physical `sitemap.xml` document.
+* **Remediation**: Surgically deleted `/sitemap.xml /sitemap-index.xml 301` from `public/_redirects`. Re-built and deployed to Cloudflare Pages (`online-protractor`).
+* **Verification**: Live curl confirmed `https://onlinefreeprotractor.com/sitemap.xml` returns direct `HTTP 200 OK` with `Content-Type: application/xml` and zero redirects. Full canonical and trailing-slash parity across all 540 indexable routes confirmed.
+
 ---
+
 
 ## 4. Agent Evaluation & Self-Correction Meta-Rules
 
