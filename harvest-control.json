@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-06T02:34:15.099Z",
+  "lastUpdated": "2026-10-06T02:36:22.602Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -195,9 +195,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T02:34:09.851Z",
-        "lastHarvestedAt": "2026-10-06T02:34:09.851Z",
-        "totalHarvested": 61,
+        "lastActiveAt": "2026-10-06T02:35:57.268Z",
+        "lastHarvestedAt": "2026-10-06T02:35:57.268Z",
+        "totalHarvested": 62,
         "lastError": null
       },
       {
@@ -245,9 +245,9 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T02:24:12.320Z",
-        "lastHarvestedAt": "2026-10-06T02:24:12.320Z",
-        "totalHarvested": 55,
+        "lastActiveAt": "2026-10-06T02:36:35.321Z",
+        "lastHarvestedAt": "2026-10-06T02:36:35.321Z",
+        "totalHarvested": 56,
         "lastError": null
       }
     ],
@@ -270,13 +270,13 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791254970099,
-      "resetAt": "2026-10-06T02:49:30.099Z",
-      "trippedAt": "2026-10-06T02:34:15.099Z",
-      "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 2
+      "status": "HEALTHY",
+      "remaining": 4971,
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": null,
+      "reason": null,
+      "consecutiveBlocks": 0
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
