@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-06T05:44:22.865Z",
+  "lastUpdated": "2026-10-06T05:46:01.186Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -243,12 +243,12 @@
       {
         "id": "Agent-Iota",
         "domain": "cognitive-neuroscience-systems",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T05:34:25.623Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-06T06:01:01.186Z",
+        "lastActiveAt": "2026-10-06T05:46:00.506Z",
         "lastHarvestedAt": "2026-10-06T05:34:25.623Z",
         "totalHarvested": 122,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       }
     ],
     "orchestratorScript": "04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs"
@@ -272,9 +272,9 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791266377865,
-      "resetAt": "2026-10-06T05:59:37.865Z",
-      "trippedAt": "2026-10-06T05:44:22.865Z",
+      "resetEpoch": 1791266476186,
+      "resetAt": "2026-10-06T06:01:16.186Z",
+      "trippedAt": "2026-10-06T05:46:01.186Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
       "consecutiveBlocks": 2
     },
