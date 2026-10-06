@@ -9332,5 +9332,57 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-qwen-qwen3-8b": {
+    "name": "Qwen/Qwen3-8B",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3-8B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T03:41:05.979Z",
+    "lastVerified": "2026-10-06T03:41:05.979Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "startrail-org-pixelrag": {
+    "name": "StarTrail-org/PixelRAG",
+    "officialUrl": "https://github.com/StarTrail-org/PixelRAG",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T03:41:29.452Z",
+    "lastVerified": "2026-10-06T03:41:29.452Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 57,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "topgrade-rs-topgrade": {
+    "name": "topgrade-rs/topgrade",
+    "officialUrl": "https://github.com/topgrade-rs/topgrade",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-06T03:41:30.843Z",
+    "lastVerified": "2026-10-06T03:41:30.843Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 34,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lysine-dev-okio": {
+    "name": "lysine-dev/okio",
+    "officialUrl": "https://github.com/lysine-dev/okio",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-06T03:41:35.026Z",
+    "lastVerified": "2026-10-06T03:41:35.026Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 26,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
