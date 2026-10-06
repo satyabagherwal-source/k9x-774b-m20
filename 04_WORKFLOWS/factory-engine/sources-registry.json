@@ -14324,5 +14324,70 @@
     "closedIssuesCount": 5,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ongridio-ongrid": {
+    "name": "ongridio/ongrid",
+    "officialUrl": "https://github.com/ongridio/ongrid",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-06T05:54:45.517Z",
+    "lastVerified": "2026-10-06T05:54:45.517Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 53,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ivanvorobei-swiftui": {
+    "name": "ivanvorobei/SwiftUI",
+    "officialUrl": "https://github.com/ivanvorobei/SwiftUI",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-06T05:54:45.793Z",
+    "lastVerified": "2026-10-06T05:54:45.793Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "streetlamb-tribe": {
+    "name": "StreetLamb/tribe",
+    "officialUrl": "https://github.com/StreetLamb/tribe",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T05:54:47.337Z",
+    "lastVerified": "2026-10-06T05:54:47.337Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pan-chera-multi-agent-cad": {
+    "name": "Pan-Chera/Multi-Agent-CAD",
+    "officialUrl": "https://github.com/Pan-Chera/Multi-Agent-CAD",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T05:54:50.166Z",
+    "lastVerified": "2026-10-06T05:54:50.166Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 25,
+    "closedIssuesCount": 7,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jinxiansen-swiftui": {
+    "name": "Jinxiansen/SwiftUI",
+    "officialUrl": "https://github.com/Jinxiansen/SwiftUI",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-06T05:54:52.222Z",
+    "lastVerified": "2026-10-06T05:54:52.222Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 10,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
