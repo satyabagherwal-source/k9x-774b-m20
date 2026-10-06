@@ -9150,5 +9150,70 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nomic-ai-nomic-embed-text-v1.5": {
+    "name": "nomic-ai/nomic-embed-text-v1.5",
+    "officialUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T03:33:15.143Z",
+    "lastVerified": "2026-10-06T03:33:15.143Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "modsetter-surfsense": {
+    "name": "MODSetter/SurfSense",
+    "officialUrl": "https://github.com/MODSetter/SurfSense",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T03:33:32.097Z",
+    "lastVerified": "2026-10-06T03:33:32.097Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "resocoder-flutter-tdd-clean-architecture-course": {
+    "name": "ResoCoder/flutter-tdd-clean-architecture-course",
+    "officialUrl": "https://github.com/ResoCoder/flutter-tdd-clean-architecture-course",
+    "sourceType": "github",
+    "technology": "Dart",
+    "lastChecked": "2026-10-06T03:33:33.466Z",
+    "lastVerified": "2026-10-06T03:33:33.466Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "evermind-ai-everos": {
+    "name": "EverMind-AI/EverOS",
+    "officialUrl": "https://github.com/EverMind-AI/EverOS",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T03:33:34.316Z",
+    "lastVerified": "2026-10-06T03:33:34.316Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pauljuliusmartinez-jless": {
+    "name": "PaulJuliusMartinez/jless",
+    "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-06T03:33:34.977Z",
+    "lastVerified": "2026-10-06T03:33:34.977Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 22,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
