@@ -9384,5 +9384,57 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-google-vit-base-patch16-224": {
+    "name": "google/vit-base-patch16-224",
+    "officialUrl": "https://huggingface.co/google/vit-base-patch16-224",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T03:43:04.360Z",
+    "lastVerified": "2026-10-06T03:43:04.360Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "future-house-paper-qa": {
+    "name": "Future-House/paper-qa",
+    "officialUrl": "https://github.com/Future-House/paper-qa",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T03:43:25.039Z",
+    "lastVerified": "2026-10-06T03:43:25.039Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "medialab-xan": {
+    "name": "medialab/xan",
+    "officialUrl": "https://github.com/medialab/xan",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-06T03:43:27.507Z",
+    "lastVerified": "2026-10-06T03:43:27.507Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sqldelight-sqldelight": {
+    "name": "sqldelight/sqldelight",
+    "officialUrl": "https://github.com/sqldelight/sqldelight",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-06T03:43:32.822Z",
+    "lastVerified": "2026-10-06T03:43:32.822Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
