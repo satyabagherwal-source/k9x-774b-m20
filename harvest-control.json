@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-06T04:36:04.189Z",
+  "lastUpdated": "2026-10-06T04:46:32.104Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -203,52 +203,52 @@
       {
         "id": "Agent-Epsilon",
         "domain": "mobile-cross-platform",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-06T04:46:04.447Z",
-        "lastActiveAt": "2026-10-06T04:30:48.107Z",
-        "lastHarvestedAt": "2026-10-06T04:29:02.604Z",
-        "totalHarvested": 103,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-06T04:46:33.762Z",
+        "lastHarvestedAt": "2026-10-06T04:46:33.762Z",
+        "totalHarvested": 104,
+        "lastError": null
       },
       {
         "id": "Agent-Zeta",
         "domain": "devops-cloud-infrastructure",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-06T04:46:04.581Z",
-        "lastActiveAt": "2026-10-06T04:30:50.607Z",
-        "lastHarvestedAt": "2026-10-06T04:29:07.566Z",
-        "totalHarvested": 95,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-06T04:46:37.045Z",
+        "lastHarvestedAt": "2026-10-06T04:46:37.045Z",
+        "totalHarvested": 96,
+        "lastError": null
       },
       {
         "id": "Agent-Eta",
         "domain": "cybersecurity-defenses",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-06T04:46:04.400Z",
-        "lastActiveAt": "2026-10-06T04:30:53.108Z",
-        "lastHarvestedAt": "2026-10-06T04:29:07.630Z",
-        "totalHarvested": 94,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-06T04:46:38.605Z",
+        "lastHarvestedAt": "2026-10-06T04:46:38.605Z",
+        "totalHarvested": 95,
+        "lastError": null
       },
       {
         "id": "Agent-Theta",
         "domain": "database-storage-engines",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-06T04:46:04.751Z",
-        "lastActiveAt": "2026-10-06T04:30:55.613Z",
-        "lastHarvestedAt": "2026-10-06T04:29:11.688Z",
-        "totalHarvested": 93,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-06T04:46:38.565Z",
+        "lastHarvestedAt": "2026-10-06T04:46:38.565Z",
+        "totalHarvested": 94,
+        "lastError": null
       },
       {
         "id": "Agent-Iota",
         "domain": "cognitive-neuroscience-systems",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-06T04:46:04.599Z",
-        "lastActiveAt": "2026-10-06T04:30:58.106Z",
-        "lastHarvestedAt": "2026-10-06T04:29:14.371Z",
-        "totalHarvested": 100,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-06T04:46:43.424Z",
+        "lastHarvestedAt": "2026-10-06T04:46:43.424Z",
+        "totalHarvested": 101,
+        "lastError": null
       }
     ],
     "orchestratorScript": "04_WORKFLOWS/factory-engine/multi-agent-fleet.mjs"
@@ -270,13 +270,13 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791262279189,
-      "resetAt": "2026-10-06T04:51:19.189Z",
-      "trippedAt": "2026-10-06T04:36:04.189Z",
-      "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 2
+      "status": "HEALTHY",
+      "remaining": 4864,
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": null,
+      "reason": null,
+      "consecutiveBlocks": 0
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",

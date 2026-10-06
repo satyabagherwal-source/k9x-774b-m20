@@ -11802,5 +11802,70 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oblador-react-native-vector-icons": {
+    "name": "oblador/react-native-vector-icons",
+    "officialUrl": "https://github.com/oblador/react-native-vector-icons",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T04:46:30.833Z",
+    "lastVerified": "2026-10-06T04:46:30.833Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 36,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "aipoch-open-science": {
+    "name": "aipoch/open-science",
+    "officialUrl": "https://github.com/aipoch/open-science",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T04:46:33.928Z",
+    "lastVerified": "2026-10-06T04:46:33.928Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 67,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fellouai-eko": {
+    "name": "FellouAI/eko",
+    "officialUrl": "https://github.com/FellouAI/eko",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T04:46:35.551Z",
+    "lastVerified": "2026-10-06T04:46:35.551Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 11,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dtyq-magic": {
+    "name": "dtyq/magic",
+    "officialUrl": "https://github.com/dtyq/magic",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T04:46:35.518Z",
+    "lastVerified": "2026-10-06T04:46:35.518Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openai-openai-agents-js": {
+    "name": "openai/openai-agents-js",
+    "officialUrl": "https://github.com/openai/openai-agents-js",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T04:46:40.397Z",
+    "lastVerified": "2026-10-06T04:46:40.397Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 84,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
