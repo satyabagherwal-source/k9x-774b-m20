@@ -6472,5 +6472,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-black-forest-labs-flux.1-schnell": {
+    "name": "black-forest-labs/FLUX.1-schnell",
+    "officialUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T02:30:44.154Z",
+    "lastVerified": "2026-10-06T02:30:44.154Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
