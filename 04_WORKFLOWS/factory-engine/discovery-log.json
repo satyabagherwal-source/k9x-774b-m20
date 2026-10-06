@@ -16966,5 +16966,20 @@
     "downloads": 446527,
     "qualityScore": 3930,
     "discoveredAt": "2026-10-05T14:09:05.747Z"
+  },
+  {
+    "name": "moli",
+    "fullName": "lexmount/moli",
+    "url": "https://github.com/lexmount/moli",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Best headless browser for AI agents. Lite, Fast, High-Compatibility. Built in Rust",
+    "stars": 10748,
+    "forks": 298,
+    "openIssues": 235,
+    "language": "Rust",
+    "qualityScore": 5913,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-06T15:37:14.036Z"
   }
 ]

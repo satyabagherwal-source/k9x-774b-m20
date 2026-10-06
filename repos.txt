@@ -3713,3 +3713,7 @@ https://github.com/projectdiscovery/nuclei
 # [CYBERSECURITY-DEFENSES] TruffleHog - High-entropy credential and secret scanner
 https://github.com/trufflesecurity/trufflehog
 
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-06T15:37:32.438Z] ---
+# [AI-AGENTS] lexmount/moli (5913 score) - Best headless browser for AI agents. Lite, Fast, High-Compatibility. Built in Ru
+https://github.com/lexmount/moli

@@ -16482,5 +16482,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lexmount-moli": {
+    "name": "lexmount/moli",
+    "officialUrl": "https://github.com/lexmount/moli",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-06T15:38:02.642Z",
+    "lastVerified": "2026-10-06T15:38:02.642Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 41,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
