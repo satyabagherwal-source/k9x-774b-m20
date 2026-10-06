@@ -9436,5 +9436,57 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-baai-bge-base-en-v1.5": {
+    "name": "BAAI/bge-base-en-v1.5",
+    "officialUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T03:45:05.105Z",
+    "lastVerified": "2026-10-06T03:45:05.105Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zilliztech-deep-searcher": {
+    "name": "zilliztech/deep-searcher",
+    "officialUrl": "https://github.com/zilliztech/deep-searcher",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T03:45:27.928Z",
+    "lastVerified": "2026-10-06T03:45:27.928Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "restatedev-restate": {
+    "name": "restatedev/restate",
+    "officialUrl": "https://github.com/restatedev/restate",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-06T03:45:29.538Z",
+    "lastVerified": "2026-10-06T03:45:29.538Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kizitonwose-calendar": {
+    "name": "kizitonwose/Calendar",
+    "officialUrl": "https://github.com/kizitonwose/Calendar",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-06T03:45:29.633Z",
+    "lastVerified": "2026-10-06T03:45:29.633Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
