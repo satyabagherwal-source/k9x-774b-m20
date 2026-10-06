@@ -6537,5 +6537,31 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-tongyi-mai-z-image-turbo": {
+    "name": "Tongyi-MAI/Z-Image-Turbo",
+    "officialUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T02:38:06.746Z",
+    "lastVerified": "2026-10-06T02:38:06.746Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tokio-rs-console": {
+    "name": "tokio-rs/console",
+    "officialUrl": "https://github.com/tokio-rs/console",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-06T02:38:46.112Z",
+    "lastVerified": "2026-10-06T02:38:46.112Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
