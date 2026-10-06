@@ -14389,5 +14389,83 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jordan-gibbs-hyperresearch": {
+    "name": "jordan-gibbs/hyperresearch",
+    "officialUrl": "https://github.com/jordan-gibbs/hyperresearch",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T05:56:44.882Z",
+    "lastVerified": "2026-10-06T05:56:44.882Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "buresdv-cork": {
+    "name": "buresdv/Cork",
+    "officialUrl": "https://github.com/buresdv/Cork",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-06T05:56:46.227Z",
+    "lastVerified": "2026-10-06T05:56:46.227Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 3,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "maziyarpanahi-openmed": {
+    "name": "maziyarpanahi/openmed",
+    "officialUrl": "https://github.com/maziyarpanahi/openmed",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T05:56:48.642Z",
+    "lastVerified": "2026-10-06T05:56:48.642Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bernaferrari-figmatocode": {
+    "name": "bernaferrari/FigmaToCode",
+    "officialUrl": "https://github.com/bernaferrari/FigmaToCode",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T05:56:48.905Z",
+    "lastVerified": "2026-10-06T05:56:48.905Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 44,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "productdevbook-port-killer": {
+    "name": "productdevbook/port-killer",
+    "officialUrl": "https://github.com/productdevbook/port-killer",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-06T05:56:52.063Z",
+    "lastVerified": "2026-10-06T05:56:52.063Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sventiigi-whatsnewkit": {
+    "name": "SvenTiigi/WhatsNewKit",
+    "officialUrl": "https://github.com/SvenTiigi/WhatsNewKit",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-10-06T05:56:54.549Z",
+    "lastVerified": "2026-10-06T05:56:54.549Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 12,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
