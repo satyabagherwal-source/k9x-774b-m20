@@ -14285,5 +14285,44 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "saladday-pi-from-scratch": {
+    "name": "SaladDay/pi-from-scratch",
+    "officialUrl": "https://github.com/SaladDay/pi-from-scratch",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T05:52:47.866Z",
+    "lastVerified": "2026-10-06T05:52:47.866Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 6,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hhyqhh-inno-agent": {
+    "name": "hhyqhh/inno-agent",
+    "officialUrl": "https://github.com/hhyqhh/inno-agent",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T05:52:52.329Z",
+    "lastVerified": "2026-10-06T05:52:52.329Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 47,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jundizhou-easy-stock": {
+    "name": "jundizhou/easy-stock",
+    "officialUrl": "https://github.com/jundizhou/easy-stock",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-06T05:52:57.873Z",
+    "lastVerified": "2026-10-06T05:52:57.873Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 42,
+    "closedIssuesCount": 5,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
