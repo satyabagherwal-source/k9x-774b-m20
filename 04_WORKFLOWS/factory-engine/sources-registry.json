@@ -9280,5 +9280,57 @@
     "closedIssuesCount": 7,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-argmaxinc-whisperkit-coreml": {
+    "name": "argmaxinc/whisperkit-coreml",
+    "officialUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T03:39:09.459Z",
+    "lastVerified": "2026-10-06T03:39:09.459Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "datawhalechina-all-in-rag": {
+    "name": "datawhalechina/all-in-rag",
+    "officialUrl": "https://github.com/datawhalechina/all-in-rag",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T03:39:22.082Z",
+    "lastVerified": "2026-10-06T03:39:22.082Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 5,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "domcyrus-rustnet": {
+    "name": "domcyrus/rustnet",
+    "officialUrl": "https://github.com/domcyrus/rustnet",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-06T03:39:28.896Z",
+    "lastVerified": "2026-10-06T03:39:28.896Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 45,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "insertkoinio-koin": {
+    "name": "InsertKoinIO/koin",
+    "officialUrl": "https://github.com/InsertKoinIO/koin",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-06T03:39:37.068Z",
+    "lastVerified": "2026-10-06T03:39:37.068Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 37,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
