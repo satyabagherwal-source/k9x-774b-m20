@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-06T02:32:30.775Z",
+  "lastUpdated": "2026-10-06T02:34:15.099Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -195,9 +195,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T02:32:28.272Z",
-        "lastHarvestedAt": "2026-10-06T02:32:28.272Z",
-        "totalHarvested": 60,
+        "lastActiveAt": "2026-10-06T02:34:09.851Z",
+        "lastHarvestedAt": "2026-10-06T02:34:09.851Z",
+        "totalHarvested": 61,
         "lastError": null
       },
       {
@@ -233,12 +233,12 @@
       {
         "id": "Agent-Theta",
         "domain": "database-storage-engines",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T02:24:02.771Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-06T02:49:15.100Z",
+        "lastActiveAt": "2026-10-06T02:34:14.375Z",
         "lastHarvestedAt": "2026-10-06T02:24:02.771Z",
         "totalHarvested": 55,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Iota",
@@ -272,9 +272,9 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791254865774,
-      "resetAt": "2026-10-06T02:47:45.774Z",
-      "trippedAt": "2026-10-06T02:32:30.775Z",
+      "resetEpoch": 1791254970099,
+      "resetAt": "2026-10-06T02:49:30.099Z",
+      "trippedAt": "2026-10-06T02:34:15.099Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
       "consecutiveBlocks": 2
     },
