@@ -9488,5 +9488,57 @@
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-google-gemma-4-31b-it": {
+    "name": "google/gemma-4-31B-it",
+    "officialUrl": "https://huggingface.co/google/gemma-4-31B-it",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T03:47:00.742Z",
+    "lastVerified": "2026-10-06T03:47:00.742Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sciphi-ai-r2r": {
+    "name": "SciPhi-AI/R2R",
+    "officialUrl": "https://github.com/SciPhi-AI/R2R",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-06T03:47:19.094Z",
+    "lastVerified": "2026-10-06T03:47:19.094Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jhspetersson-fselect": {
+    "name": "jhspetersson/fselect",
+    "officialUrl": "https://github.com/jhspetersson/fselect",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-06T03:47:26.434Z",
+    "lastVerified": "2026-10-06T03:47:26.434Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 32,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kotest-kotest": {
+    "name": "kotest/kotest",
+    "officialUrl": "https://github.com/kotest/kotest",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-10-06T03:47:27.939Z",
+    "lastVerified": "2026-10-06T03:47:27.939Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 39,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
