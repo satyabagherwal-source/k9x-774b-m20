@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-06T02:40:48.236Z",
+  "lastUpdated": "2026-10-06T02:42:57.770Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -163,41 +163,41 @@
       {
         "id": "Agent-Alpha",
         "domain": "ai-agents",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-06T02:40:37.272Z",
-        "lastActiveAt": "2026-10-06T02:25:32.366Z",
-        "lastHarvestedAt": "2026-10-06T02:23:50.106Z",
-        "totalHarvested": 55,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-06T02:42:52.543Z",
+        "lastHarvestedAt": "2026-10-06T02:42:52.543Z",
+        "totalHarvested": 56,
+        "lastError": null
       },
       {
         "id": "Agent-Beta",
         "domain": "fullstack-ui",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-06T02:40:37.175Z",
-        "lastActiveAt": "2026-10-06T02:25:34.879Z",
-        "lastHarvestedAt": "2026-10-06T02:23:54.023Z",
-        "totalHarvested": 55,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-06T02:42:55.194Z",
+        "lastHarvestedAt": "2026-10-06T02:42:55.194Z",
+        "totalHarvested": 56,
+        "lastError": null
       },
       {
         "id": "Agent-Gamma",
         "domain": "high-perf-systems",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-06T02:42:17.798Z",
-        "lastActiveAt": "2026-10-06T02:27:17.092Z",
-        "lastHarvestedAt": "2026-10-06T02:23:57.000Z",
-        "totalHarvested": 55,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-06T02:42:50.004Z",
+        "lastHarvestedAt": "2026-10-06T02:42:50.004Z",
+        "totalHarvested": 56,
+        "lastError": null
       },
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T02:40:21.915Z",
-        "lastHarvestedAt": "2026-10-06T02:40:21.915Z",
-        "totalHarvested": 64,
+        "lastActiveAt": "2026-10-06T02:42:29.669Z",
+        "lastHarvestedAt": "2026-10-06T02:42:29.669Z",
+        "totalHarvested": 65,
         "lastError": null
       },
       {
@@ -245,9 +245,9 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T02:40:59.972Z",
-        "lastHarvestedAt": "2026-10-06T02:40:59.972Z",
-        "totalHarvested": 58,
+        "lastActiveAt": "2026-10-06T02:43:10.593Z",
+        "lastHarvestedAt": "2026-10-06T02:43:10.593Z",
+        "totalHarvested": 59,
         "lastError": null
       }
     ],
@@ -271,7 +271,7 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 4914,
+      "remaining": 4808,
       "resetEpoch": 0,
       "resetAt": null,
       "trippedAt": null,
