@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-06T05:39:17.099Z",
+  "lastUpdated": "2026-10-06T05:40:58.495Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -213,12 +213,12 @@
       {
         "id": "Agent-Zeta",
         "domain": "devops-cloud-infrastructure",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T05:34:18.355Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-06T05:55:58.495Z",
+        "lastActiveAt": "2026-10-06T05:40:57.799Z",
         "lastHarvestedAt": "2026-10-06T05:34:18.355Z",
         "totalHarvested": 117,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Eta",
@@ -272,9 +272,9 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791266072098,
-      "resetAt": "2026-10-06T05:54:32.098Z",
-      "trippedAt": "2026-10-06T05:39:17.098Z",
+      "resetEpoch": 1791266173494,
+      "resetAt": "2026-10-06T05:56:13.494Z",
+      "trippedAt": "2026-10-06T05:40:58.494Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
       "consecutiveBlocks": 2
     },
