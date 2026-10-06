@@ -6433,5 +6433,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-hexgrad-kokoro-82m": {
+    "name": "hexgrad/Kokoro-82M",
+    "officialUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T02:25:42.335Z",
+    "lastVerified": "2026-10-06T02:25:42.335Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
