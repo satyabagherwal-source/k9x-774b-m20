@@ -6654,5 +6654,83 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-zai-org-glm-5.2": {
+    "name": "zai-org/GLM-5.2",
+    "officialUrl": "https://huggingface.co/zai-org/GLM-5.2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T02:44:41.295Z",
+    "lastVerified": "2026-10-06T02:44:41.295Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hbai-ltd-toonflow-app": {
+    "name": "HBAI-Ltd/Toonflow-app",
+    "officialUrl": "https://github.com/HBAI-Ltd/Toonflow-app",
+    "sourceType": "github",
+    "technology": "Vue",
+    "lastChecked": "2026-10-06T02:44:51.834Z",
+    "lastVerified": "2026-10-06T02:44:51.834Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 2,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "bergside-typeui": {
+    "name": "bergside/typeui",
+    "officialUrl": "https://github.com/bergside/typeui",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T02:45:00.124Z",
+    "lastVerified": "2026-10-06T02:45:00.124Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 23,
+    "closedIssuesCount": 3,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ekzhang-rustpad": {
+    "name": "ekzhang/rustpad",
+    "officialUrl": "https://github.com/ekzhang/rustpad",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-06T02:45:04.258Z",
+    "lastVerified": "2026-10-06T02:45:04.258Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "software-mansion-react-native-gesture-handler": {
+    "name": "software-mansion/react-native-gesture-handler",
+    "officialUrl": "https://github.com/software-mansion/react-native-gesture-handler",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T02:45:11.816Z",
+    "lastVerified": "2026-10-06T02:45:11.816Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 15,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vinceanalytics-vince": {
+    "name": "vinceanalytics/vince",
+    "officialUrl": "https://github.com/vinceanalytics/vince",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-06T02:45:21.673Z",
+    "lastVerified": "2026-10-06T02:45:21.673Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
