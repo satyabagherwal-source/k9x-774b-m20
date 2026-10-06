@@ -4364,3 +4364,78 @@ fn apply_delete(buffer: &mut Vec<char>, local_index: usize) {
 **VERIFICATION METHOD**:
 Fuzz test simulating 10,000 randomized concurrent operations across 3 distributed replicas with simulated network latency, asserting 100% convergence to identical buffer contents.
 
+---
+
+## 241. Astro Static Multi-Language (i18n) Architecture with Hreflang Parity, Trailing Slash Strictness, and RTL Directionality
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Astro Static Multi-Language (i18n) Architecture with Hreflang Parity, Trailing Slash Strictness, and RTL Directionality",
+  "source": "withastro/docs/recipes/i18n",
+  "source_url": "https://docs.astro.build/en/recipes/i18n/",
+  "source_version": "v5.4.0",
+  "license": "MIT",
+  "extracted_at": "2026-10-06T18:25:00.000Z",
+  "ai_provider": "antigravity-deepmind",
+  "generation_mode": "source_derived_ai_synthesized",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": false
+}
+PROVENANCE_END -->
+> **Provenance**: Synthesized from Astro official i18n recipes (`https://docs.astro.build/en/recipes/i18n/`) and validated in production multi-language blackletter portal (`c:\Old english font`).
+
+**RULE**:
+When implementing internationalization (i18n) across static Astro applications (`output: 'static'`):
+1. **Dynamic Locale Routes (`[lang]/`)**: Non-default locales MUST be served through parameterized `src/pages/[lang]/` dynamic routes using `getStaticPaths()` over non-default locale codes (`locales.filter(l => l !== defaultLocale)`). Default locale pages MUST reside at the canonical root paths when `prefixDefaultLocale: false` is configured.
+2. **Strict Hreflang Alternate Links**: Every rendered page (root and localized variants alike) MUST output complete `<link rel="alternate" hreflang="..." href="..." />` tags in `<head>` for:
+   - `x-default`: Pointing to the primary canonical default language URL.
+   - Every supported language code (e.g. `en`, `es`, `ja`, `de`, `fr`, etc.).
+   - All URLs MUST maintain 100% trailing slash consistency matching the project's canonical URL policy (`trailingSlash: 'always'`).
+3. **Bi-Directional Text (RTL) Support**: The root layout MUST dynamically compute text direction (`dir="rtl"` vs `dir="ltr"`) and assign `<html lang={currentLang} dir={dir}>` for RTL languages (such as Arabic `ar` and Hebrew `he`).
+4. **State-Preserving Route Switching**: Language picker components in header and footer MUST extract the clean path (`getCleanPath(pathname)`) and preserve the active slug/route parameters when switching locales (e.g., transitioning `/generator/` to `/ja/generator/` or `/fonts/pirata-one/` to `/es/fonts/pirata-one/`).
+5. **Multilingual XML Sitemap Alternate Entries**: The production sitemap (`public/sitemap.xml`) MUST explicitly declare `<xhtml:link rel="alternate" hreflang="..." href="..." />` for every language alternative on each indexable URL to prevent crawl fragmentation in search engines.
+
+**WHY**:
+Prevents Google international search index penalties, duplicate content flags, broken locale navigation routes, text layout clipping in RTL writing systems, and trailing-slash redirect loops.
+
+**WHEN TO APPLY**:
+Any static Astro web project extending localization to multiple international markets, SEO keyword expansion, or cross-lingual user bases.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// src/i18n/utils.ts
+export function getHreflangLinks(currentPath: string, siteUrl: string = 'https://example.com') {
+  const cleanPath = getCleanPath(currentPath);
+  const baseUrl = siteUrl.replace(/\/+$/, '');
+  const links = [];
+
+  const defaultUrl = cleanPath === '/' ? `${baseUrl}/` : `${baseUrl}${cleanPath}`;
+  links.push({ lang: 'x-default', url: defaultUrl });
+
+  for (const l of Object.keys(languages)) {
+    if (l === defaultLang) {
+      links.push({ lang: l, url: defaultUrl });
+    } else {
+      const locUrl = cleanPath === '/' ? `${baseUrl}/${l}/` : `${baseUrl}/${l}${cleanPath}`;
+      links.push({ lang: l, url: locUrl });
+    }
+  }
+  return links;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```astro
+<!-- ANTI-PATTERN: Forgetting trailing slashes or omitting x-default -->
+<link rel="alternate" hreflang="es" href="https://example.com/es" /> <!-- Causes 301 redirect if trailingSlash: 'always' -->
+<!-- Missing x-default leaves Google uncertain which page to display for unlisted regions -->
+```
+
+**VERIFICATION METHOD**:
+1. Execute `npm run build` asserting 100% static page generation without missing parameter errors.
+2. Inspect rendered HTML for presence of `x-default`, all language `hreflang` tags, `<html lang="..." dir="...">`, and canonical trailing slash parity.
+
+
