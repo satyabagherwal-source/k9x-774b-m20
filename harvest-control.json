@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-06T03:33:35.370Z",
+  "lastUpdated": "2026-10-06T03:35:08.301Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -163,12 +163,12 @@
       {
         "id": "Agent-Alpha",
         "domain": "ai-agents",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T03:33:35.193Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-06T03:49:58.789Z",
+        "lastActiveAt": "2026-10-06T03:34:58.050Z",
         "lastHarvestedAt": "2026-10-06T03:33:35.193Z",
         "totalHarvested": 79,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Beta",
@@ -195,9 +195,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T03:33:19.061Z",
-        "lastHarvestedAt": "2026-10-06T03:33:19.061Z",
-        "totalHarvested": 88,
+        "lastActiveAt": "2026-10-06T03:35:11.150Z",
+        "lastHarvestedAt": "2026-10-06T03:35:11.150Z",
+        "totalHarvested": 89,
         "lastError": null
       },
       {
@@ -272,11 +272,11 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791258530370,
-      "resetAt": "2026-10-06T03:48:50.370Z",
-      "trippedAt": "2026-10-06T03:33:35.370Z",
+      "resetEpoch": 1791258613789,
+      "resetAt": "2026-10-06T03:50:13.789Z",
+      "trippedAt": "2026-10-06T03:34:58.789Z",
       "reason": "GitHub REST Rate Limit in Zero-Clone",
-      "consecutiveBlocks": 7
+      "consecutiveBlocks": 2
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",

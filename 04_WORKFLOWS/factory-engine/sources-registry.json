@@ -9215,5 +9215,18 @@
     "closedIssuesCount": 3,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-google-gemma-4-26b-a4b-it": {
+    "name": "google/gemma-4-26B-A4B-it",
+    "officialUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T03:35:08.303Z",
+    "lastVerified": "2026-10-06T03:35:08.303Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
