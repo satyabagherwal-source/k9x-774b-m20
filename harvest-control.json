@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-06T05:34:12.033Z",
+  "lastUpdated": "2026-10-06T05:35:54.141Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -163,22 +163,22 @@
       {
         "id": "Agent-Alpha",
         "domain": "ai-agents",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T05:34:01.810Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-06T05:50:54.141Z",
+        "lastActiveAt": "2026-10-06T05:35:50.266Z",
         "lastHarvestedAt": "2026-10-06T05:34:01.810Z",
         "totalHarvested": 119,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Beta",
         "domain": "fullstack-ui",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T05:34:09.611Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-06T05:50:54.052Z",
+        "lastActiveAt": "2026-10-06T05:35:52.783Z",
         "lastHarvestedAt": "2026-10-06T05:34:09.611Z",
         "totalHarvested": 125,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Gamma",
@@ -193,12 +193,12 @@
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-06T05:34:12.758Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-06T05:50:57.835Z",
+        "lastActiveAt": "2026-10-06T05:35:57.783Z",
         "lastHarvestedAt": "2026-10-06T05:34:12.758Z",
         "totalHarvested": 136,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Epsilon",
@@ -270,13 +270,13 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "HEALTHY",
-      "remaining": 6,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": null,
-      "reason": null,
-      "consecutiveBlocks": 0
+      "status": "EXHAUSTED",
+      "remaining": 0,
+      "resetEpoch": 1791265869140,
+      "resetAt": "2026-10-06T05:51:09.140Z",
+      "trippedAt": "2026-10-06T05:35:54.141Z",
+      "reason": "GitHub REST Rate Limit in Zero-Clone",
+      "consecutiveBlocks": 4
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
