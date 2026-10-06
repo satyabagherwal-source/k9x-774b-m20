@@ -6459,5 +6459,18 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-openai-whisper-large-v3": {
+    "name": "openai/whisper-large-v3",
+    "officialUrl": "https://huggingface.co/openai/whisper-large-v3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T02:29:04.934Z",
+    "lastVerified": "2026-10-06T02:29:04.934Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
