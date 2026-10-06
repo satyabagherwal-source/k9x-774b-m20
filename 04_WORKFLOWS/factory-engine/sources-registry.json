@@ -16404,5 +16404,83 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "modelcontextprotocol-servers": {
+    "name": "modelcontextprotocol/servers",
+    "officialUrl": "https://github.com/modelcontextprotocol/servers",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T06:36:05.725Z",
+    "lastVerified": "2026-10-06T06:36:05.725Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 54,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wcandillon-react-native-skia": {
+    "name": "wcandillon/react-native-skia",
+    "officialUrl": "https://github.com/wcandillon/react-native-skia",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T06:36:08.068Z",
+    "lastVerified": "2026-10-06T06:36:08.068Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "anthropics-anthropic-quickstarts": {
+    "name": "anthropics/claude-quickstarts",
+    "officialUrl": "https://github.com/anthropics/anthropic-quickstarts",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T06:36:11.265Z",
+    "lastVerified": "2026-10-06T06:36:11.265Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 44,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "elizaos-eliza": {
+    "name": "elizaOS/eliza",
+    "officialUrl": "https://github.com/elizaos/eliza",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T06:36:13.010Z",
+    "lastVerified": "2026-10-06T06:36:13.010Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 49,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "callstack-react-native-builder-bob": {
+    "name": "callstack/react-native-builder-bob",
+    "officialUrl": "https://github.com/callstack/react-native-builder-bob",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-06T06:36:15.485Z",
+    "lastVerified": "2026-10-06T06:36:15.485Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 28,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "software-mansion-react-native-screens": {
+    "name": "software-mansion/react-native-screens",
+    "officialUrl": "https://github.com/software-mansion/react-native-screens",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-06T06:36:20.372Z",
+    "lastVerified": "2026-10-06T06:36:20.372Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 42,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
