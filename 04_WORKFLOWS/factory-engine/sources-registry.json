@@ -6563,5 +6563,31 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-openai-gpt-oss-120b": {
+    "name": "openai/gpt-oss-120b",
+    "officialUrl": "https://huggingface.co/openai/gpt-oss-120b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-06T02:40:18.855Z",
+    "lastVerified": "2026-10-06T02:40:18.855Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "clastix-kamaji": {
+    "name": "clastix/kamaji",
+    "officialUrl": "https://github.com/clastix/kamaji",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-10-06T02:40:56.709Z",
+    "lastVerified": "2026-10-06T02:40:56.709Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 40,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
