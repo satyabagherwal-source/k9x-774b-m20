@@ -3,7 +3,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/epicweb-dev-advanced-react-patterns-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/epicweb-dev/advanced-react-patterns](https://github.com/epicweb-dev/advanced-react-patterns))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T01:50:49.481Z  
+> **Harvest Timestamp**: 2026-10-07T21:37:30.103Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +13,7 @@
 - **Description**: This is the latest advanced react patterns workshop
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3517 stars
+- **Stars / Engagement**: 3518 stars
 
 ---
 
