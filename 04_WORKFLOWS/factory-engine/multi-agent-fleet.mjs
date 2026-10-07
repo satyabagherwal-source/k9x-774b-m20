@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { fork } from 'child_process';
 import { fileURLToPath } from 'url';
-import { DISCOVERY_DOMAINS, ensureQueueReplenished } from './auto-discovery-scout.mjs';
+import { DISCOVERY_DOMAINS, ensureQueueReplenished, isDeeplyHarvested } from './auto-discovery-scout.mjs';
 import { pushWithRebaseRetry, sanitizeHarvestControl } from './concurrency-coordinator.mjs';
 import {
   checkServiceAvailability,
@@ -199,9 +199,10 @@ export function getTargetForWorker(agentConfig, assignedSlugs = new Set()) {
 
       if (assignedSlugs.has(parsed.slug)) continue;
 
-      // Check if already harvested
-      const learningFile = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${parsed.slug}-learnings.md`);
-      if (!fs.existsSync(learningFile)) {
+      // Check if already deeply harvested:
+      // If deeply harvested (>25KB with code diffs/architecture), skip ("unko nahi chhedana h").
+      // If completely missing OR only surface/shallow (<25KB), queue for deep restart!
+      if (!isDeeplyHarvested(parsed.slug, BRAIN_ROOT)) {
         if (currentDomain === agentConfig.domain.toLowerCase()) {
           domainTargets.push(parsed);
         } else {

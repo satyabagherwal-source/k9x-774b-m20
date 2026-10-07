@@ -4,7 +4,7 @@ import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { shouldHarvestSource } from './upgrade-checker.mjs';
 import { acquireTargetLock, releaseTargetLock, pushWithRebaseRetry } from './concurrency-coordinator.mjs';
-import { runAutoDiscoveryScout, ensureQueueReplenished, getUnharvestedQueueCount } from './auto-discovery-scout.mjs';
+import { runAutoDiscoveryScout, ensureQueueReplenished, getUnharvestedQueueCount, isDeeplyHarvested } from './auto-discovery-scout.mjs';
 import {
   synthesizeIntelligenceWithGemini,
   saveGeminiLearningRecord,
@@ -718,12 +718,14 @@ export async function runZeroCloneHarvester(customUrls = null) {
     queue = loadSourcesQueue();
   }
 
-  // Unharvested-First Prioritization: Unharvested targets are evaluated first to maximize learning efficiency
+  // Deep-Forensic Prioritization:
+  // Repos that are missing OR only surface-level (<25KB) are processed first.
+  // Deeply harvested repos (>25KB with code diffs) are skipped/placed last.
   queue.sort((a, b) => {
-    const aDoc = fs.existsSync(path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${a.slug}-learnings.md`));
-    const bDoc = fs.existsSync(path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${b.slug}-learnings.md`));
-    if (!aDoc && bDoc) return -1;
-    if (aDoc && !bDoc) return 1;
+    const aDeep = isDeeplyHarvested(a.slug, BRAIN_ROOT);
+    const bDeep = isDeeplyHarvested(b.slug, BRAIN_ROOT);
+    if (!aDeep && bDeep) return -1;
+    if (aDeep && !bDeep) return 1;
     return 0;
   });
 

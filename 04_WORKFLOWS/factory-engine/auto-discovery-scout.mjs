@@ -676,23 +676,36 @@ export function parseSourceUrl(rawUrl) {
   return null;
 }
 
+export function isDeeplyHarvested(slug, brainRoot = BRAIN_ROOT) {
+  if (!slug) return false;
+  const learningFile = path.join(brainRoot, '07_PROJECT_LEARNING', `${slug}-learnings.md`);
+  if (!fs.existsSync(learningFile)) return false;
+  try {
+    const stats = fs.statSync(learningFile);
+    if (stats.size < 25000) return false; // Surface/shallow extraction requiring deep re-harvest
+    const content = fs.readFileSync(learningFile, 'utf-8');
+    return content.includes('```diff') || content.includes('### Core Architecture Module:');
+  } catch (e) {
+    return false;
+  }
+}
+
 /**
- * Counts unharvested repositories currently pending in repos.txt
+ * Counts repositories in repos.txt that need harvesting
+ * (Both completely unharvested repos and surface-only extractions < 25KB needing deep restart)
  */
 export function getUnharvestedQueueCount() {
   if (!fs.existsSync(QUEUE_PATH)) return 0;
   const rawText = fs.readFileSync(QUEUE_PATH, 'utf-8');
   const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'));
 
-  const registry = getSourcesRegistry();
   let unharvested = 0;
 
   for (const url of lines) {
     const parsed = parseSourceUrl(url);
     if (!parsed) continue;
-    const docPath = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${parsed.slug}-learnings.md`);
 
-    if (!fs.existsSync(docPath) && !registry[parsed.slug] && !registry[parsed.repo.toLowerCase()]) {
+    if (!isDeeplyHarvested(parsed.slug, BRAIN_ROOT)) {
       unharvested++;
     }
   }
