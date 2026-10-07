@@ -297,6 +297,19 @@ This document records the empirical project learnings, forensic bug investigatio
 * **Actual**: In Cloudflare Pages, `_redirects` ONLY supports relative path sources starting with `/`. Previous AI agents added full-URL rules like `https://www.onlinefreeprotractor.com/*` which are invalid in Cloudflare Pages and silently ignored. Domain-level redirects (www -> apex, http -> https) must be configured in Cloudflare Dashboard (Redirect Rules / Edge Rules).
 * **Remediation**: Sanitized `public/_redirects` to 100% valid relative paths with wildcards (`/angle-calculator* / 301`), eliminating all invalid domain rules and documented Cloudflare Edge rule requirements.
 
+### INC-30: Destructive Global Typography Overrides (`!important`) Hijacking Hero Alignment
+* **Context**: User reported "taxt centre me nahi h" with screenshot showing Hero H1 ("Online Screen Ruler") and subtitle paragraph shoved to the left edge while badge and tool switcher were centered.
+* **Expected**: Hero H1 and lead subtitle centered symmetrically across all devices and tool routes.
+* **Actual**: An earlier agent had injected global CSS in `src/styles/global.css`:
+  - `p { text-align: justify !important; }`
+  - `h1, h2, h3, h4, h5, h6 { text-align: initial !important; }`
+  This aggressive `!important` rule on base HTML tags completely broke CSS inheritance and overrode all Tailwind `.text-center` utility classes on headings and paragraphs across the entire website.
+* **Remediation**:
+  1. Confined text justification strictly to long-form reading prose (`.prose p, article p, .editorial-text p, .legal-content p`) without `!important`.
+  2. Deleted `text-align: initial !important` on headings completely.
+  3. Added explicit high-priority rule `.text-center, .text-center h1, .text-center p { text-align: center !important; }` to guarantee centering.
+  4. Added explicit `text-center` utility classes to `h1` and `p` across all 6 Hero components (`RulerHero.astro`, `Hero.astro`, `CameraHero.astro`, `CompassHero.astro`, `ImageHero.astro`, `PracticeHero.astro`).
+
 
 ---
 
