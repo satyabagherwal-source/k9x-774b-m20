@@ -3779,3 +3779,11 @@ https://github.com/google/tcmalloc
 # --- Automatically Discovered by AI Scout Engine [2026-10-07T21:22:18.379Z] ---
 # [FULLSTACK-UI] carbon-design-system/carbon (5899 score) - A design system built by IBM
 https://github.com/carbon-design-system/carbon
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-07T21:28:51.540Z] ---
+# [HUGGINGFACE-AI-MODELS] google/embeddinggemma-2 (11170 score) - Verified Hugging Face Model: google/embeddinggemma-2 (917 likes, 7562 downloads)
+https://huggingface.co/google/embeddinggemma-2
+# [HUGGINGFACE-AI-MODELS] canberkkkkkk/ema-lightning (4580 score) - Verified Hugging Face Model: canberkkkkkk/ema-lightning (258 likes, 2724 downloa
+https://huggingface.co/canberkkkkkk/ema-lightning
+# [HUGGINGFACE-AI-MODELS] unsloth/embeddinggemma-2-GGUF (3600 score) - Verified Hugging Face Model: unsloth/embeddinggemma-2-GGUF (160 likes, 11470 dow
+https://huggingface.co/unsloth/embeddinggemma-2-GGUF

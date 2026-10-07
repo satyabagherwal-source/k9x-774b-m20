@@ -16742,5 +16742,44 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pola-rs-polars": {
+    "name": "pola-rs/polars",
+    "officialUrl": "https://github.com/pola-rs/polars",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-07T21:29:38.816Z",
+    "lastVerified": "2026-10-07T21:29:38.816Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 48,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "geekan-metagpt": {
+    "name": "FoundationAgents/MetaGPT",
+    "officialUrl": "https://github.com/geekan/MetaGPT",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-07T21:29:41.020Z",
+    "lastVerified": "2026-10-07T21:29:41.020Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 16,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apache-arrow": {
+    "name": "apache/arrow",
+    "officialUrl": "https://github.com/apache/arrow",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-07T21:29:41.726Z",
+    "lastVerified": "2026-10-07T21:29:41.726Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

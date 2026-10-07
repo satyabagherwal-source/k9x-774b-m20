@@ -17056,5 +17056,41 @@
     "qualityScore": 5899,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-07T21:22:11.036Z"
+  },
+  {
+    "name": "google/embeddinggemma-2",
+    "fullName": "google/embeddinggemma-2",
+    "url": "https://huggingface.co/google/embeddinggemma-2",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: google/embeddinggemma-2 (917 likes, 7562 downloads)",
+    "likes": 917,
+    "downloads": 7562,
+    "qualityScore": 11170,
+    "discoveredAt": "2026-10-07T21:28:51.538Z"
+  },
+  {
+    "name": "canberkkkkkk/ema-lightning",
+    "fullName": "canberkkkkkk/ema-lightning",
+    "url": "https://huggingface.co/canberkkkkkk/ema-lightning",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: canberkkkkkk/ema-lightning (258 likes, 2724 downloads)",
+    "likes": 258,
+    "downloads": 2724,
+    "qualityScore": 4580,
+    "discoveredAt": "2026-10-07T21:28:51.538Z"
+  },
+  {
+    "name": "unsloth/embeddinggemma-2-GGUF",
+    "fullName": "unsloth/embeddinggemma-2-GGUF",
+    "url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: unsloth/embeddinggemma-2-GGUF (160 likes, 11470 downloads)",
+    "likes": 160,
+    "downloads": 11470,
+    "qualityScore": 3600,
+    "discoveredAt": "2026-10-07T21:28:51.538Z"
   }
 ]
