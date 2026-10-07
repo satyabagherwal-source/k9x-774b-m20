@@ -4543,4 +4543,57 @@ export function assertLanguageCompleteness(entities: Array<{ id: string; variant
    - Reciprocal hreflang graph is complete and includes `x-default`.
    - Every hreflang URL exists in `sitemap.xml` with HTTP 200 response (zero 301 redirects, zero 404s).
 
+---
+
+## 243. Structural Schema JSON-LD Canonical Suffix Parity
+
+**RULE**:
+When generating structured data (`BreadcrumbList`, `WebSite`, `WebApplication`, `SoftwareApplication`, `Article`), all URL values in `itemListElement.item`, `@id`, and `url` MUST strictly match the site's canonical URL formatting policy (e.g., exact trailing slash). If the site canonicalizes `https://example.com/`, the schema `@id` and root breadcrumb `item` MUST NOT emit `https://example.com`.
+
+**WHY**:
+Search engine crawlers (Googlebot) parse JSON-LD microdata and follow all embedded URLs. Emitting a non-canonical URL without trailing slash triggers a 308/301 redirect hop, generating hundreds of "Page with redirect" coverage exclusions in Google Search Console and diluting crawl budget.
+
+**WHEN TO APPLY**:
+All static or dynamic page generators producing schema.org structured data.
+
+---
+
+## 244. Scoped Typography Formatting vs Utility Class Precedence
+
+**RULE**:
+NEVER apply global formatting rules with `!important` to naked HTML tag selectors (such as `p { text-align: justify !important; }` or `h1, h2 { text-align: initial !important; }`). Typography justification and text alignments MUST be scoped strictly to long-form editorial containers (e.g., `.prose p`, `article p`), and MUST NOT use `!important` so that atomic utility classes (e.g., `.text-center`, `text-left`) retain natural cascade priority.
+
+**WHY**:
+Applying `!important` to base tags like `h1` and `p` completely breaks CSS inheritance and overrides utility classes across all hero sections, cards, modals, alerts, and toolbars, resulting in jarringly misaligned, off-center UI layouts.
+
+**WHEN TO APPLY**:
+All global CSS, design systems, and typography resets across web applications.
+
+---
+
+## 245. Edge Host-Level vs Path-Level Redirect Boundary Architecture
+
+**RULE**:
+Static hosting edge redirect files (such as Cloudflare Pages `_redirects`) only accept relative path sources (e.g., `/old-path /new-path 301`). Hostname-level routing (such as `www` to apex, apex to `www`, or `http` to `https`) MUST be configured at the edge DNS or dashboard Redirect Rules layer, NOT inside static path redirect files.
+
+**WHY**:
+Edge static parsers ignore or reject lines starting with `http://` or `https://`. Placing full domain names in static redirect files gives developers false confidence while leaving external domain traffic unredirected, causing duplicate content indexation and 5xx origin mismatch errors in search consoles.
+
+**WHEN TO APPLY**:
+Static site deployments on Cloudflare Pages, Netlify, Vercel, or AWS S3/CloudFront.
+
+---
+
+## 246. Error Route Internationalization Self-Containment
+
+**RULE**:
+On error routes (`404.html`, `500.html`), multi-locale navigation elements (such as language pickers and footer locale directories) MUST NOT dynamically append the error route (`/${lang}/404/`, `/${lang}/500/`). They MUST route users to the target locale's home page (`/${lang}/`).
+
+**WHY**:
+Static and multi-locale web applications typically generate a single root 404/500 handler, not 50+ localized variations. Dynamically concatenating the error pathname generates thousands of broken internal links (`/${lang}/404/`) that crawlers discover and report as coverage errors.
+
+**WHEN TO APPLY**:
+All multilingual web apps rendering 404, 500, or maintenance pages.
+
+
 
