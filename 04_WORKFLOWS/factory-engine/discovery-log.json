@@ -16996,5 +16996,20 @@
     "qualityScore": 3207,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-07T02:23:28.797Z"
+  },
+  {
+    "name": "codeg",
+    "fullName": "spacering-net/codeg",
+    "url": "https://github.com/spacering-net/codeg",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Collaborative multi-agent AI coding workspace: aggregate sessions from Claude Code, Codex, OpenCode, Pi, Grok Build, etc. Desktop app, self-hosted server, or Docker.",
+    "stars": 3833,
+    "forks": 490,
+    "openIssues": 290,
+    "language": "Rust",
+    "qualityScore": 2514,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-07T05:38:53.349Z"
   }
 ]

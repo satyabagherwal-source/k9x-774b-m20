@@ -3721,3 +3721,7 @@ https://github.com/lexmount/moli
 # --- Automatically Discovered by AI Scout Engine [2026-10-07T02:23:50.510Z] ---
 # [AI-AGENTS] 54yyyu/zotero-mcp (3207 score) - Zotero MCP: Connects your Zotero research library with Claude and other AI assis
 https://github.com/54yyyu/zotero-mcp
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-07T05:38:57.609Z] ---
+# [AI-AGENTS] spacering-net/codeg (2514 score) - Collaborative multi-agent AI coding workspace: aggregate sessions from Claude Co
+https://github.com/spacering-net/codeg
