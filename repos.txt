@@ -3717,3 +3717,7 @@ https://github.com/trufflesecurity/trufflehog
 # --- Automatically Discovered by AI Scout Engine [2026-10-06T15:37:32.438Z] ---
 # [AI-AGENTS] lexmount/moli (5913 score) - Best headless browser for AI agents. Lite, Fast, High-Compatibility. Built in Ru
 https://github.com/lexmount/moli
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-07T02:23:50.510Z] ---
+# [AI-AGENTS] 54yyyu/zotero-mcp (3207 score) - Zotero MCP: Connects your Zotero research library with Claude and other AI assis
+https://github.com/54yyyu/zotero-mcp

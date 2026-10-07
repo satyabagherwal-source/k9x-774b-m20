@@ -16495,5 +16495,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "54yyyu-zotero-mcp": {
+    "name": "54yyyu/zotero-mcp",
+    "officialUrl": "https://github.com/54yyyu/zotero-mcp",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-07T02:24:17.547Z",
+    "lastVerified": "2026-10-07T02:24:17.547Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

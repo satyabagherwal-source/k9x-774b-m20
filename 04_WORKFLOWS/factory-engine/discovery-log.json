@@ -16981,5 +16981,20 @@
     "qualityScore": 5913,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-06T15:37:14.036Z"
+  },
+  {
+    "name": "zotero-mcp",
+    "fullName": "54yyyu/zotero-mcp",
+    "url": "https://github.com/54yyyu/zotero-mcp",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Zotero MCP: Connects your Zotero research library with Claude and other AI assistants via the Model Context Protocol to discuss papers, get summaries, analyze citations, and more.",
+    "stars": 5264,
+    "forks": 416,
+    "openIssues": 101,
+    "language": "Python",
+    "qualityScore": 3207,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-07T02:23:28.797Z"
   }
 ]
