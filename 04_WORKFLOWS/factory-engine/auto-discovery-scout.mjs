@@ -640,6 +640,42 @@ export function appendDiscoveredToQueue(candidates) {
   return candidates.length;
 }
 
+export function parseSourceUrl(rawUrl) {
+  if (!rawUrl || typeof rawUrl !== 'string') return null;
+  const cleaned = rawUrl.trim();
+  if (!cleaned || cleaned.startsWith('#')) return null;
+
+  const ghMatch = cleaned.match(/https?:\/\/github\.com\/([^\/\s]+)\/([^\/\s#?]+)/i);
+  if (ghMatch) {
+    const owner = ghMatch[1];
+    const repo = ghMatch[2].replace(/\.git$/i, '').replace(/\/+$/, '');
+    return {
+      type: 'github',
+      owner,
+      repo,
+      slug: `${owner}-${repo}`.toLowerCase(),
+      apiUrl: `https://api.github.com/repos/${owner}/${repo}`,
+      webUrl: `https://github.com/${owner}/${repo}`
+    };
+  }
+
+  const hfMatch = cleaned.match(/https?:\/\/huggingface\.co\/([^\/\s]+)\/([^\/\s#?]+)/i);
+  if (hfMatch) {
+    const owner = hfMatch[1];
+    const model = hfMatch[2].replace(/\/+$/, '');
+    return {
+      type: 'huggingface',
+      owner,
+      repo: model,
+      slug: `hf-${owner}-${model}`.toLowerCase(),
+      apiUrl: `https://huggingface.co/api/models/${owner}/${model}`,
+      webUrl: `https://huggingface.co/${owner}/${model}`
+    };
+  }
+
+  return null;
+}
+
 /**
  * Counts unharvested repositories currently pending in repos.txt
  */
@@ -652,14 +688,11 @@ export function getUnharvestedQueueCount() {
   let unharvested = 0;
 
   for (const url of lines) {
-    const parts = url.split('/');
-    if (parts.length < 2) continue;
-    const repo = parts[parts.length - 1].replace(/\.git$/i, '');
-    const owner = parts[parts.length - 2];
-    const slug = `${owner}-${repo}`.toLowerCase();
-    const docPath = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${slug}-learnings.md`);
+    const parsed = parseSourceUrl(url);
+    if (!parsed) continue;
+    const docPath = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${parsed.slug}-learnings.md`);
 
-    if (!fs.existsSync(docPath) && !registry[slug] && !registry[repo.toLowerCase()]) {
+    if (!fs.existsSync(docPath) && !registry[parsed.slug] && !registry[parsed.repo.toLowerCase()]) {
       unharvested++;
     }
   }

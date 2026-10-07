@@ -203,9 +203,16 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
 
   try {
     run('git add .', cwd);
-    const status = run('git status --porcelain', cwd);
-    if (!status) {
+    const staged = run('git diff --staged --name-only', cwd);
+    if (!staged) {
       console.log(`[CONCURRENCY SYNC] Working tree clean. No changes to commit.`);
+      return { success: true, pushed: false };
+    }
+
+    const hasKnowledge = /^(07_PROJECT_LEARNING\/|05_KNOWLEDGE\/|03_SKILLS\/|repos\.txt)/m.test(staged);
+    if (!hasKnowledge && !commitMsg.includes('feat(patterns)') && !commitMsg.includes('fix(') && !commitMsg.includes('docs(')) {
+      console.log(`[CONCURRENCY SYNC] Only timestamps/cursors staged. Skipping empty knowledge commit.`);
+      try { run('git checkout HEAD -- harvest-control.json 04_WORKFLOWS/factory-engine/discovery-cursor.json', cwd); } catch (e) {}
       return { success: true, pushed: false };
     }
 

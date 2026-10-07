@@ -90,9 +90,8 @@ jobs:
             git checkout HEAD -- harvest-control.json || true
           fi
           git add .
-          if git diff --staged --quiet; then
-            echo "Working tree is clean. Multi-Agent Fleet intelligence is fully synced."
-          else
+          # Only commit if actual knowledge artifacts, rules, skills, or queue targets were modified:
+          if git diff --staged --name-only | grep -E '^(07_PROJECT_LEARNING/|05_KNOWLEDGE/|03_SKILLS/|repos\.txt)'; then
             git commit -m "feat(harvest): micro-forensic learning harvested from sources [skip ci]"
             for i in {1..5}; do
               rm -f .git/index.lock
@@ -103,6 +102,9 @@ jobs:
                 git pull --rebase origin main || git rebase --abort
               }
             done
+          else
+            echo "ℹ️ No new knowledge files, rules, or queue targets were modified in this run (only timestamps/cursors). Skipping empty commit."
+            git checkout HEAD -- harvest-control.json 04_WORKFLOWS/factory-engine/discovery-cursor.json 2>/dev/null || true
           fi
 
       - name: Autonomous 24/7 Self-Relay Dispatcher
