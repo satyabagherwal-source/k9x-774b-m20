@@ -256,6 +256,48 @@ This document records the empirical project learnings, forensic bug investigatio
   3. Removed unused default template components (`Welcome.astro`).
   4. Maintained 100% clean root directory while keeping all build-essential scripts in `scripts/`.
 
+### INC-24: JSON-LD BreadcrumbList Slash-less Root URL 308 Redirect Loop
+* **Context**: GSC reported 451 "Page with redirect" errors across all indexed URLs.
+* **Expected**: Schema structured data URLs point directly to canonical destination without triggering redirects.
+* **Actual**: Forensic inspection of `dist/` HTML revealed that every single one of the 542 generated pages had `"item": "https://onlinefreeprotractor.com"` (missing trailing slash) on ListItem 1 in JSON-LD `BreadcrumbList`. Every crawler reading the structured data received a 308 redirect, polluting GSC coverage with 451 redirect warnings.
+* **Remediation**: Updated `src/layouts/Layout.astro` lines 184–215 to enforce canonical trailing slashes (`"item": "https://onlinefreeprotractor.com/"`) and distinct `@id: `${computedCanonical}#app``. Verified `audit-dist-micro.cjs` returned **0 bad schema URLs**.
+
+### INC-25: Screen Ruler Description Overwrite Contamination Across 52 Locales
+* **Context**: GSC reported dozens of non-English tool pages (`/hi/compass/`, `/ja/compass/`, `/ko/image-protractor/`) as "Discovered - currently not indexed" or "Crawled - currently not indexed".
+* **Expected**: Every tool page has authentic, distinct titles and descriptions describing that specific tool.
+* **Actual**: In `src/i18n/tool-metadata.ts`, only 15 languages were explicitly mapped. The other 39 languages fell back to `getFallbackMetadata()`, which read `dict['hero.lead']`. Forensic investigation revealed that in earlier "correction loops", `hero.lead` in 52 non-English translation files had been overwritten with the Screen Ruler description! As a result, Protractor, Compass, Camera, Image, and Quiz pages across 39 languages shared identical ruler descriptions and generic English titles, causing Googlebot's automated spam/thin-content classifiers to deprioritize them.
+* **Remediation**: Overhauled `getFallbackMetadata()` in `src/i18n/tool-metadata.ts` to dynamically assemble localized titles and descriptions from `about.tool*Desc` and `features.card*Desc`. Audited all 542 dist pages: 0 duplicate intra-language titles, 0 duplicate descriptions.
+
+### INC-26: Asymmetric Hreflang Tagging & Noindex Legal Loops
+* **Context**: English utility pages (`/terms/`, `/privacy/`, `/about/`, `/contact/`) were emitting 53 `<link rel="alternate" hreflang="...">` tags pointing to localized legal pages.
+* **Expected**: Reciprocal hreflang tags between indexable pages only.
+* **Actual**: Localized legal pages had `noindex, follow` and emitted NO return hreflang tags, causing Googlebot "No return tags" warnings and crawl budget waste. Furthermore, the footer was linking directly to noindexed localized legal pages.
+* **Remediation**:
+  1. Gated hreflang emission in `src/layouts/Layout.astro` using `isUtilityRoute` to only emit English alternates.
+  2. Updated `src/components/Footer.astro` to route legal links directly to canonical `/about/`, `/contact/`, `/privacy/`, `/terms/`.
+
+### INC-27: Backslash Bloat Explosion & Escape Syntax Failures (`\\\\\\\\`)
+* **Context**: Build failed with syntax error in Hebrew `he.ts` (`Unterminated string`).
+* **Expected**: Clean UTF-8 JavaScript source strings.
+* **Actual**: 52 translation files contained up to 30–60 consecutive backslashes (`59\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\'dan`) before apostrophes due to repeated un-sanitized stringification across previous AI loops. In `he.ts`, Hebrew word for inch `אינץ'` (ending in apostrophe) was corrupted to `אינץ\'',`, leaving dangling unescaped single quotes that broke compilation.
+* **Remediation**:
+  1. Cleaned all 52 files using `scripts/clean-backslash-bloat.cjs` to normalize backslashes.
+  2. Fixed all trailing apostrophe word boundaries in `he.ts` to `אינץ\'.'`.
+  3. Confirmed 100% clean Astro compilation across all 542 pages.
+
+### INC-28: Error Route (404/500) Multi-Locale Language Picker 404 Cascade
+* **Context**: Deep link audit of `dist/` revealed 216 broken internal links on `404.html` and `500.html`.
+* **Expected**: Error pages have 0 broken links.
+* **Actual**: When rendering `404.astro` and `500.astro`, `Header.astro` and `Footer.astro` language pickers read `currentRoute` as `'404'`/`'500'` and translated them to `/${l.code}/404/` and `/${l.code}/500/` across 54 languages. Since localized error pages do not exist, this created 216 broken internal links that search crawlers could discover upon hitting any error page.
+* **Remediation**: Updated `LanguagePicker.astro` and `Footer.astro` to detect `isErrorRoute` and point language links to the localized home `translatePath('/', l.code)`. Full audit of `dist/` verified **0 broken internal links** across 83,683 checked links.
+
+### INC-29: Cloudflare Pages `_redirects` Domain-Prefix Incompatibility
+* **Context**: GSC reported `http://www.onlinefreeprotractor.com/` as "Server error (5xx)" and crawled `www` URLs.
+* **Expected**: `_redirects` handles apex/www and http/https redirects.
+* **Actual**: In Cloudflare Pages, `_redirects` ONLY supports relative path sources starting with `/`. Previous AI agents added full-URL rules like `https://www.onlinefreeprotractor.com/*` which are invalid in Cloudflare Pages and silently ignored. Domain-level redirects (www -> apex, http -> https) must be configured in Cloudflare Dashboard (Redirect Rules / Edge Rules).
+* **Remediation**: Sanitized `public/_redirects` to 100% valid relative paths with wildcards (`/angle-calculator* / 301`), eliminating all invalid domain rules and documented Cloudflare Edge rule requirements.
+
+
 ---
 
 
