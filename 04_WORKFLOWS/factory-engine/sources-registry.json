@@ -16781,5 +16781,44 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "facebook-folly": {
+    "name": "facebook/folly",
+    "officialUrl": "https://github.com/facebook/folly",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-07T21:32:48.205Z",
+    "lastVerified": "2026-10-07T21:32:48.205Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 29,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "google-tcmalloc": {
+    "name": "google/tcmalloc",
+    "officialUrl": "https://github.com/google/tcmalloc",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-07T21:32:50.735Z",
+    "lastVerified": "2026-10-07T21:32:50.735Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 8,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "carbon-design-system-carbon": {
+    "name": "carbon-design-system/carbon",
+    "officialUrl": "https://github.com/carbon-design-system/carbon",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-07T21:32:58.542Z",
+    "lastVerified": "2026-10-07T21:32:58.542Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 52,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
