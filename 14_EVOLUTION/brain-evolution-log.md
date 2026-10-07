@@ -24,6 +24,12 @@ This file records canonical promotion events, knowledge integration milestones, 
   * **Rule 250**: Conversion Intent Hierarchy & Non-Obtrusive CTA Budgets (`coreyhaines31/marketingskills`).
   * **Rule 251**: Self-Hosted Agent Privacy Shield & Loopback Egress Gating (`feder-cr/invisible_dots`).
   * **Rule 252**: Asynchronous Directory Streaming & Backpressure in High-Throughput Tree Navigators (`sxyazi/yazi`, `rtk-ai/rtk`).
+  * **Rule 253**: Stream Codec Bounded Buffering & Discarding State Machine (`tokio-rs/tokio`).
+  * **Rule 254**: Compensated Summation (Kahan Algorithm) in High-Volume Reductions (`duckdb/duckdb`).
+  * **Rule 255**: Fast Agentic Hook Post-Edit Verification & Non-Blocking Zero Exit (`oven-sh/bun`).
+  * **Rule 256**: Deterministic Virtual Environment Lockfile Parsing & Platform Wheel Priority (`astral-sh/uv`).
+  * **Rule 257**: WireGuard Mesh Session Rekeying & Ephemeral Key Rotation (`tailscale/tailscale`).
+  * **Rule 258**: IPC Webview Isolation & Explicit Command Allowlisting (`tauri-apps/tauri`).
 * **Files Updated**:
   * `05_KNOWLEDGE/engineering-patterns.md` (Rules 247–252 added).
   * `04_WORKFLOWS/factory-engine/auto-discovery-scout.mjs` (Slug detection & unharvested count fixed).
