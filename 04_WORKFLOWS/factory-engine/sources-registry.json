@@ -16703,5 +16703,44 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "clickhouse-clickhouse": {
+    "name": "ClickHouse/ClickHouse",
+    "officialUrl": "https://github.com/ClickHouse/ClickHouse",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-07T21:26:16.909Z",
+    "lastVerified": "2026-10-07T21:26:16.909Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 30,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "electron-electron": {
+    "name": "electron/electron",
+    "officialUrl": "https://github.com/electron/electron",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-10-07T21:26:21.640Z",
+    "lastVerified": "2026-10-07T21:26:21.640Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 58,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mantinedev-mantine": {
+    "name": "mantinedev/mantine",
+    "officialUrl": "https://github.com/mantinedev/mantine",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-07T21:26:22.943Z",
+    "lastVerified": "2026-10-07T21:26:22.943Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 59,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
