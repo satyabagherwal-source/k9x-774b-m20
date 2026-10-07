@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-10-07T23:35:00.000Z",
+  "directives": [
+    {
+      "id": "CD-001",
+      "directive_title": "Every Website = Language-Aware by Design (Multilingual-First Architecture & Language Completeness Gate)",
+      "source_type": "chat_master_prompt",
+      "author": "User (Tier-1 Human Directive)",
+      "date_staged": "2026-10-07",
+      "trigger_tags": [
+        "multilingual",
+        "i18n",
+        "seo",
+        "traffic_drop",
+        "gsc_451",
+        "gsc_404",
+        "gsc_254",
+        "gsc_48",
+        "hreflang",
+        "sitemap",
+        "canonical",
+        "language_completeness_gate",
+        "thin_content"
+      ],
+      "status": "PROMOTED_CANONICAL_ACTIVE",
+      "staged_file": "11_INBOX/candidate-directives/CD-001-multilingual-first-architecture.md",
+      "promoted_date": "2026-10-07",
+      "canonical_locations": [
+        "01_CORE/operating-rules.md#Rule 24",
+        "05_KNOWLEDGE/engineering-patterns.md#Rule 242",
+        "03_SKILLS/multilingual-first-architecture.md",
+        "08_VERIFICATION/project-ready-certification-protocol.md#Pillar 11",
+        "08_VERIFICATION/universal-production-audit-protocol.md#Phases 26-30 & 50-53",
+        "13_GOVERNANCE/chat-directive-lifecycle-protocol.md"
+      ],
+      "verification_criteria": [
+        "All expected language routes built with deterministic URLs",
+        "100% self-canonical tags across all localized pages",
+        "Full reciprocal hreflang alternate links with x-default",
+        "Zero mismatch across Canonical, Sitemap, Hreflang, and Internal Links",
+        "Anti-thin content gate: natural queries and deep body localization verified",
+        "Language Completeness Gate: Expected languages === Generated languages"
+      ]
+    }
+  ]
+}

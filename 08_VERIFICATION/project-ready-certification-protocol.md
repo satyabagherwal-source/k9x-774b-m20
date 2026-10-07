@@ -46,3 +46,17 @@
   Fatal blocker detected:
   - Toolchain missing or failed build / runtime server crash.
   - **FACTORY BOUNDARY VIOLATION**: Product code or business logic detected during environment bootstrap.
+
+---
+
+## 3. Dynamic Pillars Audit Table (Phase B — Product Ready)
+
+| Pillar | Verification Gate | Pass Criteria |
+|---|---|---|
+| **11. Feature & Domain Logic** | Functional component & tool test suite | All interactive tools, transformations, and user workflows execute with zero errors |
+| **12. Dual-Theme & Viewports** | Mobile (320px) + Desktop (1280px+) | Dark & Light modes maintain $\ge 7:1$ contrast; zero horizontal scroll or badge clipping |
+| **13. Language Completeness Gate** | `verify-language-completeness` assertion | **MANDATORY**: Expected languages $N \equiv$ Generated languages $M$. Zero missing language variants. Translation, SEO, URL, Hreflang, Sitemap, UI, and Error completeness all pass 100%. If $M < N$, `PRODUCT READY = FAIL` |
+| **14. Multilingual SEO Quadrant** | Zero-Contradiction Graph audit | $\text{Canonical} \equiv \text{Sitemap} \equiv \text{Hreflang} \equiv \text{Internal Links}$. 100% self-canonicals, full reciprocal hreflang + x-default. Zero 451 redirects, zero 404s, zero 254 thin content |
+| **15. A11y & Structured Data** | WCAG AA/AAA + Schema validator | Valid JSON-LD Schema per locale; semantic HTML; localized aria-labels and alt text |
+| **16. Production Build & Probe** | Static production bundle & HTTP probe | `npm run build` exits 0 with zero runtime exceptions; all localized routes return HTTP 200 OK |
+

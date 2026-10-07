@@ -4,6 +4,26 @@ This file records canonical promotion events, knowledge integration milestones, 
 
 ---
 
+## Evolution Event: 2026-10-07 — Tier-1 Human Directive: Multilingual-First Architecture & Chat-Directive Lifecycle
+
+* **Trigger**: Tier-1 Human Architectural Directive & Incident Root-Cause Analysis (Candidate `CD-001`)
+* **Incident Autopsy**: Catastrophic 0-organic search traffic drop and >50% page de-indexing caused by superficial post-production translation scripts, thin content flags (GSC 254), trailing slash redirect cascades (GSC 451), and broken alternates (GSC 404/48).
+* **Architectural Breakthrough**:
+  * **Master Principle**: *Every Website = Language-Aware by Design* (Multilingualization is an architectural concern from Day 0, not a post-production translation task).
+  * **12 Multilingual Engineering Layers**: Language Registry, Deterministic URL, Strict Self-Canonical, Reciprocal Hreflang Graph + x-default, Zero-Contradiction Sitemap, Intent-Driven SEO Content, Decoupled Tool Engine, Localized Errors, Localized Accessibility, Structured Data Schema, Open Graph Social, and Live HTTP Indexing Verification.
+  * **Language Completeness Gate**: Mandatory barrier before issuing `PRODUCT_READY_CERTIFICATE.md` asserting Expected Locales $N \equiv$ Generated Locales $M$.
+  * **Chat-Directive Learning Lifecycle Protocol**: Formalized 4-stage pipeline (Candidate Staging $\to$ Cross-Project Auto-Trigger $\to$ Empirical Verification $\to$ Canonical Promotion & Staging De-Duplication) resolving tension between sovereign chat instructions and the verification invariant.
+* **Core Laws & Rules Added**:
+  * `01_CORE/operating-rules.md`: **Rule 24** — Every Website = Language-Aware by Design.
+  * `05_KNOWLEDGE/engineering-patterns.md`: **Rule 242** — Multilingual-First Website Architecture: 12-Layer System, Anti-Thin Content Quality Gate, and Language Completeness Gate.
+  * `03_SKILLS/multilingual-first-architecture.md`: Cross-Cutting Engineering Capability.
+  * `08_VERIFICATION/project-ready-certification-protocol.md`: Dynamic Pillar 13 (Language Completeness Gate) & Pillar 14 (Zero-Contradiction Quadrant).
+  * `08_VERIFICATION/universal-production-audit-protocol.md`: Phases 26–30 & 50–53 enhanced with GSC Failure Prevention Matrix (451/21/4/254/1/48).
+  * `13_GOVERNANCE/chat-directive-lifecycle-protocol.md`: Chat prompt to verified canon governance standard.
+  * `11_INBOX/candidate-directives/CD-001-multilingual-first-architecture.md` & `11_INBOX/candidate-directives-registry.json`: Machine-readable tracking registry.
+
+---
+
 ## Evolution Event: 2026-09-27 — Full-Spectrum Harvest: `openai-agents-python`
 
 * **Source Repository**: `openai-agents-python` (`c:\Users\Admin\open ai SDK\openai-agents-python`)
