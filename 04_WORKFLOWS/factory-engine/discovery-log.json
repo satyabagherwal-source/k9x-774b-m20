@@ -17026,5 +17026,20 @@
     "qualityScore": 17451,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-07T14:57:30.818Z"
+  },
+  {
+    "name": "marketingskills",
+    "fullName": "coreyhaines31/marketingskills",
+    "url": "https://github.com/coreyhaines31/marketingskills",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Marketing skills for Claude Code and AI agents. CRO, copywriting, SEO, analytics, and growth engineering.",
+    "stars": 53569,
+    "forks": 7967,
+    "openIssues": 154,
+    "language": "JavaScript",
+    "qualityScore": 29625,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-07T19:29:54.084Z"
   }
 ]

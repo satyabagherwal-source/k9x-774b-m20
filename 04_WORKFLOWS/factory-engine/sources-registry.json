@@ -16534,5 +16534,18 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "coreyhaines31-marketingskills": {
+    "name": "coreyhaines31/marketingskills",
+    "officialUrl": "https://github.com/coreyhaines31/marketingskills",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-07T19:30:19.261Z",
+    "lastVerified": "2026-10-07T19:30:19.261Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 18,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -3729,3 +3729,7 @@ https://github.com/spacering-net/codeg
 # --- Automatically Discovered by AI Scout Engine [2026-10-07T14:57:37.562Z] ---
 # [AI-AGENTS] feder-cr/invisible_dots (17451 score) - Open-source, self-hosted alternative to OpenAI Dots, Meta Muse, Grok Bot, Manus 
 https://github.com/feder-cr/invisible_dots
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-07T19:29:54.086Z] ---
+# [AI-AGENTS] coreyhaines31/marketingskills (29625 score) - Marketing skills for Claude Code and AI agents. CRO, copywriting, SEO, analytics
+https://github.com/coreyhaines31/marketingskills
