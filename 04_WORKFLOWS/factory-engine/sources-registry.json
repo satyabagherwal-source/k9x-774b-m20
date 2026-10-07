@@ -16820,5 +16820,44 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-google-embeddinggemma-2": {
+    "name": "google/embeddinggemma-2",
+    "officialUrl": "https://huggingface.co/google/embeddinggemma-2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-07T21:35:39.160Z",
+    "lastVerified": "2026-10-07T21:35:39.160Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-canberkkkkkk-ema-lightning": {
+    "name": "canberkkkkkk/ema-lightning",
+    "officialUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-07T21:35:41.671Z",
+    "lastVerified": "2026-10-07T21:35:41.671Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-unsloth-embeddinggemma-2-gguf": {
+    "name": "unsloth/embeddinggemma-2-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-07T21:35:44.124Z",
+    "lastVerified": "2026-10-07T21:35:44.124Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
