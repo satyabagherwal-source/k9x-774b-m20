@@ -89,6 +89,13 @@ Mobile filter drawers and sidebars must never cause horizontal blowout (`overflo
 >
 ```
 
+### Pattern 5: Deep Nested Layer & Font Metadata Localization (`getLocalizedFont`)
+When catalogs load technical font metadata from a canonical database (`fonts.json`), inner font card pills (e.g. `substyleName`), cover art taglines (`tagline`), descriptions, and modal titles must not remain in raw English:
+1. **Dynamic Font Localization Engine (`src/i18n/font-translations.ts`):** Implements `getLocalizedFont(font, lang)` mapping all 20 typefaces across 14 languages for substyle badges, artistic taglines, and descriptions.
+2. **Elimination of Half-Translated Parentheticals:** Stripping redundant transliterations like `(Fraktur)` or `(Textura)` in non-Latin locales gives a 100% native presentation (`古典フラクトゥール`, `修道院テクスチュラ`).
+3. **Client-Side Modal Dynamic Titles:** DOM manipulation in script tags must read localized labels via `dataset.charMapLabel` rather than hardcoding `${name} — Character Map`.
+4. **Nested Studio Presets & Controls:** Inner tabs (aesthetic presets, background modes, curve sliders, alignment options) are mapped through `t(...)` dictionaries.
+
 ---
 
 ## 3. Supported Locales (14 Languages Verified)
