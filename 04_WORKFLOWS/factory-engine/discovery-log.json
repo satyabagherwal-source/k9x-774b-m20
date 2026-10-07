@@ -17041,5 +17041,20 @@
     "qualityScore": 29625,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-07T19:29:54.084Z"
+  },
+  {
+    "name": "carbon",
+    "fullName": "carbon-design-system/carbon",
+    "url": "https://github.com/carbon-design-system/carbon",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "A design system built by IBM",
+    "stars": 9529,
+    "forks": 2283,
+    "openIssues": 1103,
+    "language": "TypeScript",
+    "qualityScore": 5899,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-07T21:22:11.036Z"
   }
 ]

@@ -3775,3 +3775,7 @@ https://github.com/facebook/folly
 # [HIGH-PERF-SYSTEMS] google/tcmalloc - Fast, multi-threaded malloc implementation from Google
 https://github.com/google/tcmalloc
 
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-07T21:22:18.379Z] ---
+# [FULLSTACK-UI] carbon-design-system/carbon (5899 score) - A design system built by IBM
+https://github.com/carbon-design-system/carbon

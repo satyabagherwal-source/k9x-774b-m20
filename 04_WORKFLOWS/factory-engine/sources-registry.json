@@ -16664,5 +16664,44 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mitmproxy-mitmproxy": {
+    "name": "mitmproxy/mitmproxy",
+    "officialUrl": "https://github.com/mitmproxy/mitmproxy",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-07T21:23:02.252Z",
+    "lastVerified": "2026-10-07T21:23:02.252Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 62,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "libsql-libsql": {
+    "name": "tursodatabase/libsql",
+    "officialUrl": "https://github.com/libsql/libsql",
+    "sourceType": "github",
+    "technology": "C",
+    "lastChecked": "2026-10-07T21:23:07.339Z",
+    "lastVerified": "2026-10-07T21:23:07.339Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 33,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tursodatabase-limbo": {
+    "name": "tursodatabase/turso",
+    "officialUrl": "https://github.com/tursodatabase/limbo",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-10-07T21:23:11.207Z",
+    "lastVerified": "2026-10-07T21:23:11.207Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 19,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

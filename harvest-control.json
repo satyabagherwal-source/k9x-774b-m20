@@ -13,7 +13,7 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-07T21:19:45.074Z",
+  "lastUpdated": "2026-10-07T21:23:02.534Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -193,12 +193,12 @@
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-07T21:19:44.984Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-07T21:37:25.955Z",
+        "lastActiveAt": "2026-10-07T21:22:25.909Z",
         "lastHarvestedAt": "2026-10-07T21:19:44.984Z",
         "totalHarvested": 158,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Epsilon",
@@ -225,9 +225,9 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-07T21:19:54.110Z",
-        "lastHarvestedAt": "2026-10-07T21:19:54.110Z",
-        "totalHarvested": 134,
+        "lastActiveAt": "2026-10-07T21:23:05.329Z",
+        "lastHarvestedAt": "2026-10-07T21:23:05.329Z",
+        "totalHarvested": 135,
         "lastError": null
       },
       {
@@ -235,9 +235,9 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-07T21:19:55.252Z",
-        "lastHarvestedAt": "2026-10-07T21:19:55.252Z",
-        "totalHarvested": 132,
+        "lastActiveAt": "2026-10-07T21:23:10.332Z",
+        "lastHarvestedAt": "2026-10-07T21:23:10.332Z",
+        "totalHarvested": 133,
         "lastError": null
       },
       {
@@ -245,9 +245,9 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-07T21:19:57.238Z",
-        "lastHarvestedAt": "2026-10-07T21:19:57.238Z",
-        "totalHarvested": 138,
+        "lastActiveAt": "2026-10-07T21:23:14.284Z",
+        "lastHarvestedAt": "2026-10-07T21:23:14.284Z",
+        "totalHarvested": 139,
         "lastError": null
       }
     ],
@@ -271,12 +271,12 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 4754,
+      "remaining": 4611,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": null,
+      "trippedAt": "2026-10-07T21:22:15.228Z",
       "reason": null,
-      "consecutiveBlocks": 0
+      "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
