@@ -3,7 +3,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-07T22:49:13.634Z  
+> **Harvest Timestamp**: 2026-10-07T22:50:59.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
