@@ -17011,5 +17011,20 @@
     "qualityScore": 2514,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-07T05:38:53.349Z"
+  },
+  {
+    "name": "invisible_dots",
+    "fullName": "feder-cr/invisible_dots",
+    "url": "https://github.com/feder-cr/invisible_dots",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source, self-hosted alternative to OpenAI Dots, Meta Muse, Grok Bot, Manus Cue and Claude Cowork. AI agents that each own a computer on your PC and browse on a stealth Firefox undetected by anti-bots. Any model on OpenRouter.",
+    "stars": 31788,
+    "forks": 4690,
+    "openIssues": 0,
+    "language": "TypeScript",
+    "qualityScore": 17451,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-07T14:57:30.818Z"
   }
 ]

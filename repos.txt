@@ -3725,3 +3725,7 @@ https://github.com/54yyyu/zotero-mcp
 # --- Automatically Discovered by AI Scout Engine [2026-10-07T05:38:57.609Z] ---
 # [AI-AGENTS] spacering-net/codeg (2514 score) - Collaborative multi-agent AI coding workspace: aggregate sessions from Claude Co
 https://github.com/spacering-net/codeg
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-07T14:57:37.562Z] ---
+# [AI-AGENTS] feder-cr/invisible_dots (17451 score) - Open-source, self-hosted alternative to OpenAI Dots, Meta Muse, Grok Bot, Manus 
+https://github.com/feder-cr/invisible_dots

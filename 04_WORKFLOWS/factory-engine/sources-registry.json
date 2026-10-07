@@ -16521,5 +16521,18 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "feder-cr-invisible_dots": {
+    "name": "feder-cr/invisible_dots",
+    "officialUrl": "https://github.com/feder-cr/invisible_dots",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-07T14:58:08.035Z",
+    "lastVerified": "2026-10-07T14:58:08.035Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "recentFixesCount": 17,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
