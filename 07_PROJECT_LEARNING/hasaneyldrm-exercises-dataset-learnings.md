@@ -3,8 +3,8 @@
 > **Source Version**: `7455efae`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-08T21:23:25.845Z  
-> **Learning ID**: `learn-github-hasaneyldrm-exercises-dataset-mv01msr9`  
+> **Timestamp**: 2026-10-08T21:25:13.013Z  
+> **Learning ID**: `learn-github-hasaneyldrm-exercises-dataset-mv01p3g5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hasaneyldrm-exercises-dataset-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hasaneyldrm/exercises-dataset](https://github.com/hasaneyldrm/exercises-dataset))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T21:23:25.520Z  
+> **Harvest Timestamp**: 2026-10-08T21:25:12.800Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
