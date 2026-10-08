@@ -3,7 +3,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T00:42:03.364Z  
+> **Harvest Timestamp**: 2026-10-08T00:43:48.434Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
