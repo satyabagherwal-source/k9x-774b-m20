@@ -5177,6 +5177,88 @@ window.ipc.send('exec_shell_command', 'rm -rf /'); // Defect: Trivial RCE via XS
 **VERIFICATION METHOD**:
 Invoke the IPC bridge with a payload containing `../../etc/passwd`; assert that the IPC security gate rejects the request with a traversal violation and that zero unauthorized file reads occur.
 
+---
 
+## 259. Transactional Knowledge Gateway & Mandatory Read-Back Persistence Barrier
 
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Transactional Knowledge Gateway & Mandatory Read-Back Persistence Barrier",
+  "source": "AI-Builder-Brain-Core-Governance",
+  "source_url": "13_GOVERNANCE/brain-learning-gateway-protocol.md",
+  "source_version": "v1.0.0",
+  "license": "Internal-Architecture",
+  "extracted_at": "2026-10-08T15:40:00.000Z",
+  "ai_provider": "human-directive-antigravity",
+  "generation_mode": "human_curated_architectural_invariant",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Crystallized from Tier-1 Human Directive & Brain Architecture Governance.  
+> **Evidence**: Verified against 24/7 cloud harvesting persistence failures and false completion signals.
 
+**RULE**:
+Autonomous learning pipelines, knowledge ingestion workers, and cache synchronization daemons MUST NEVER signal completion (`status = "SUCCESS"` or `"COMPLETED"`) based solely on payload generation, memory analysis, or asynchronous write dispatch. Knowledge persistence MUST pass through a dedicated transactional gateway with an explicit 5-state lifecycle (`DISCOVERED` -> `EXTRACTED` -> `VALIDATED` -> `PROMOTED` -> `VERIFIED`). Storage writes MUST be followed by an immediate physical read-back barrier comparing the cryptographic checksum (SHA-256) of bytes read from durable storage against the candidate package hash. If read-back fails or secondary indexes fail to record the entry, status MUST evaluate to `FAILED_PERSISTENCE` with stage-specific fault codes (`FAILED_READBACK`). Checkpoint tracking MUST record the exact verified stage to enable clean crash recovery.
+
+**WHY**:
+Prevents phantom completion bugs where API analysis succeeds and UI logs report "Learning Complete", but storage I/O dropped data, crashed mid-write, or left secondary query indexes pointing to nonexistent or corrupted records.
+
+**WHEN TO APPLY**:
+Continuous AI harvesting workers, ETL pipelines, event log persistence, database change-data-capture (CDC), agent memory stores, and distributed cache warming engines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified 5-state transactional gateway pattern with read-back verification
+import crypto from 'crypto';
+import fs from 'fs';
+
+export async function submitToGateway(pkg) {
+  // 1. Validation Gate
+  if (!pkg.dossier || pkg.dossier.length < 100) {
+    return { success: false, status: 'FAILED_VALIDATION' };
+  }
+  
+  // 2. Cryptographic Content Hashing
+  const expectedHash = crypto.createHash('sha256').update(pkg.dossier, 'utf-8').digest('hex');
+  
+  // 3. Durable Storage Write
+  fs.writeFileSync(pkg.targetPath, pkg.dossier, 'utf-8');
+  
+  // 4. Mandatory Physical Read-Back Verification Barrier
+  const diskBytes = fs.readFileSync(pkg.targetPath, 'utf-8');
+  const readBackHash = crypto.createHash('sha256').update(diskBytes, 'utf-8').digest('hex');
+  
+  if (readBackHash !== expectedHash) {
+    // Immediate failure on corruption or partial write
+    return { success: false, status: 'FAILED_READBACK' };
+  }
+  
+  // 5. Canonical Index Update with Secondary Read-Back
+  const index = JSON.parse(fs.readFileSync(pkg.indexPath, 'utf-8'));
+  index.items[pkg.id] = { id: pkg.id, hash: expectedHash, status: 'VERIFIED' };
+  fs.writeFileSync(pkg.indexPath, JSON.stringify(index, null, 2), 'utf-8');
+  
+  const verifiedIndex = JSON.parse(fs.readFileSync(pkg.indexPath, 'utf-8'));
+  if (!verifiedIndex.items[pkg.id]) {
+    return { success: false, status: 'FAILED_PERSISTENCE' };
+  }
+  
+  // Hard Invariant Confirmed: Only now mark VERIFIED
+  return { success: true, status: 'VERIFIED', hash: expectedHash };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern: Loose unverified completion signaling (Never write this!)
+const learning = await extractLearning(repo);
+console.log("Learning complete"); // Defect: Assumes success before durable write & readback!
+return { success: true, learning }; // Defect: Data may never exist on disk!
+```
+
+**VERIFICATION METHOD**:
+Simulate write corruption or disk fault; assert that the gateway catches the hash mismatch, refuses `SUCCESS` status, emits `FAILED_READBACK`, and preserves `checkpoint = last_verified_stage`.

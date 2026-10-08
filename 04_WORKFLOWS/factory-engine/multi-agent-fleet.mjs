@@ -326,7 +326,7 @@ export function spawnWorkerAgent(agentConfig, assignedSlugs = new Set()) {
       harvestProc.stdout?.on('data', (data) => {
         const line = data.toString();
         harvestOutput += line;
-        if (line.includes('UNIVERSAL RULES PROMOTED') || line.includes('SUCCESSFUL') || line.includes('ZERO-CLONE RECORD SAVED')) {
+        if (line.includes('LEARNING FULLY VERIFIED') || line.includes('GATEWAY STAGE 5: INDEX UPDATED') || line.includes('GATEWAY PROMOTION VERIFIED')) {
           harvestSuccessCount++;
         }
         process.stdout.write(`${agentConfig.color}[${agentConfig.id}:HARVEST] ${RESET}${line}`);

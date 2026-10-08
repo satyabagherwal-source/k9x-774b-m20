@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-10-08T15:41:47.940Z",
+  "checkpoints": {
+    "test-org/gateway-verifier": {
+      "repository": "test-org/gateway-verifier",
+      "learning_id": "learn-github-test-org-gateway-verifier-muzpfgey",
+      "stage": "VERIFIED",
+      "status": "VERIFIED",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-08T15:41:47.905Z"
+    },
+    "test-org/tampered-repo": {
+      "repository": "test-org/tampered-repo",
+      "learning_id": "learn-github-test-org-tampered-repo-muzpfggt",
+      "stage": "VALIDATED",
+      "status": "FAILED_READBACK",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": false,
+      "knowledge_index_updated": false,
+      "last_updated": "2026-10-08T15:41:47.940Z"
+    }
+  }
+}

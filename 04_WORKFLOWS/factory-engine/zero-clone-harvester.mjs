@@ -11,6 +11,13 @@ import {
   promoteGeminiRulesToMasterBrain
 } from './gemini-brain-agent.mjs';
 import {
+  createLearningPackage,
+  submitToBrainGateway,
+  extractCandidateRulesFromText,
+  LEARNING_STATUS,
+  LEARNING_STAGES
+} from './brain-learning-gateway.mjs';
+import {
   checkServiceAvailability,
   inspectAndRecordHeaders,
   MASTER_SERVICES
@@ -507,15 +514,9 @@ Automated regression test asserting that input states reproducing defect \`${(fi
 }
 
 /**
- * Generate Forensic Learning Artifact
+ * Formats the complete markdown text for a Zero-Clone Forensic Learning Artifact
  */
-export function writeZeroCloneArtifact(audit) {
-  const destDir = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING');
-  fs.mkdirSync(destDir, { recursive: true });
-
-  const filename = `${audit.target.slug}-learnings.md`;
-  const targetPath = path.join(destDir, filename);
-
+export function formatZeroCloneArtifactContent(audit) {
   // Format Deep Code Patches
   let patchesMarkdown = '';
   if (Array.isArray(audit.deepFixPatches) && audit.deepFixPatches.length > 0) {
@@ -552,9 +553,9 @@ export function writeZeroCloneArtifact(audit) {
     ? audit.closedPRs.map((p) => `- **PR #${p.number}** (${p.mergedAt || 'closed'}): ${p.title} (@${p.author})`).join('\n')
     : '- *No recent PR discussions fetched.*';
 
-  const content = `# Forensic Learning Record (Deep Inspection): ${audit.name}
+  return `# Forensic Learning Record (Deep Inspection): ${audit.name}
 
-> **Canonical Artifact**: \`07_PROJECT_LEARNING/${filename}\`  
+> **Canonical Artifact**: \`07_PROJECT_LEARNING/${audit.target.slug}-learnings.md\`  
 > **Source Platform**: ${audit.platform} ([${audit.target.webUrl}](${audit.target.webUrl}))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
 > **Harvest Timestamp**: ${audit.timestamp}  
@@ -618,6 +619,18 @@ ${prsMarkdown}
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
 `;
+}
+
+/**
+ * Generate Forensic Learning Artifact (Legacy compatibility wrapper)
+ */
+export function writeZeroCloneArtifact(audit) {
+  const destDir = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING');
+  fs.mkdirSync(destDir, { recursive: true });
+
+  const filename = `${audit.target.slug}-learnings.md`;
+  const targetPath = path.join(destDir, filename);
+  const content = formatZeroCloneArtifactContent(audit);
 
   fs.writeFileSync(targetPath, content, 'utf-8');
   console.log(`[ZERO-CLONE RECORD SAVED] ${targetPath}`);
@@ -625,9 +638,9 @@ ${prsMarkdown}
 }
 
 /**
- * Update sources-registry.json
+ * Update sources-registry.json with gateway verification metadata
  */
-export function updateSourcesRegistryZeroClone(audit) {
+export function updateSourcesRegistryZeroClone(audit, gatewayResult = null) {
   const regPath = path.join(BRAIN_ROOT, '04_WORKFLOWS', 'factory-engine', 'sources-registry.json');
   let registry = {};
   if (fs.existsSync(regPath)) {
@@ -645,6 +658,10 @@ export function updateSourcesRegistryZeroClone(audit) {
     lastChecked: audit.timestamp,
     lastVerified: audit.timestamp,
     harvestMode: 'ZERO_CLONE_API',
+    learningStatus: gatewayResult ? gatewayResult.status : 'VERIFIED',
+    learningId: gatewayResult?.learning_id || null,
+    contentHash: gatewayResult?.content_hash || null,
+    promotedRulesCount: gatewayResult?.promoted_rules ? gatewayResult.promoted_rules.length : 0,
     recentFixesCount: audit.fixCommits.length,
     closedIssuesCount: audit.closedIssues.length,
     verificationMethod: 'public-api-audit',
@@ -778,37 +795,73 @@ export async function runZeroCloneHarvester(customUrls = null) {
       }
 
       if (audit) {
-        console.log(`🧠 [AI SYNTHESIS] Calling Server-to-Server Google Gemini for deep intelligence extraction...`);
+        console.log(`🧠 [GATEWAY PIPELINE] Formulating Intelligence Package for ${target.owner}/${target.repo}...`);
         const geminiResult = await synthesizeIntelligenceWithGemini(audit);
+
+        let dossierText = '';
+        let aiProvider = '';
+        let candidateRules = [];
+
         if (geminiResult && geminiResult.text) {
-          saveGeminiLearningRecord(target.slug, geminiResult.text, audit);
-          const newRules = promoteGeminiRulesToMasterBrain(geminiResult.text, audit.name, audit);
-          if (newRules.length > 0) {
-            console.log(`🎯 [UNIVERSAL RULES PROMOTED] ${newRules.length} new rules added to Master Brain: ${newRules.map((r) => `Rule ${r.number}`).join(', ')}`);
-          }
+          dossierText = geminiResult.text;
+          aiProvider = 'google-gemini-cloud-agent';
+          candidateRules = extractCandidateRulesFromText(geminiResult.text);
         } else {
           // Fallback to structural artifact if external AI API is on cooldown/unconfigured
-          writeZeroCloneArtifact(audit);
-          try {
-            const candidateText = extractMicroInvariantsFromAudit(audit);
-            if (candidateText) {
-              const promoted = promoteGeminiRulesToMasterBrain(candidateText, audit.name, audit);
-              if (promoted && promoted.length > 0) {
-                console.log(`🎯 [AUTONOMOUS EMPIRICAL RULE PROMOTED] Rule ${promoted[0].number}: "${promoted[0].title}" added to Master Brain from patch!`);
-              }
-            }
-          } catch (ruleErr) {
-            console.warn(`[EMPIRICAL RULE EXTRACTION NOTE] ${ruleErr.message}`);
+          dossierText = formatZeroCloneArtifactContent(audit);
+          aiProvider = 'zero-clone-structural-synthesizer';
+          const candidateText = extractMicroInvariantsFromAudit(audit);
+          if (candidateText) {
+            candidateRules = extractCandidateRulesFromText(candidateText);
           }
         }
 
-        updateSourcesRegistryZeroClone(audit);
+        // 1. Create Immutable Learning Package with SHA-256 Content Hash
+        const learningPkg = createLearningPackage({
+          repository: audit.name || `${target.owner}/${target.repo}`,
+          platform: target.type,
+          slug: target.slug,
+          sourceUrl: target.webUrl,
+          sourceVersion: audit.commits?.[0]?.sha || audit.target?.slug || 'HEAD',
+          license: audit.license,
+          aiProvider,
+          dossierText,
+          candidateRules,
+          auditEvidence: {
+            fixCommitsCount: audit.fixCommits?.length || 0,
+            closedIssuesCount: audit.closedIssues?.length || 0,
+            commitsSample: audit.commits?.slice(0, 5)
+          }
+        });
+
+        // 2. Submit to Brain Learning Gateway:
+        // Enforces: Validate -> Write -> Read-back Dossier -> Promote Rules -> Read-back Rules -> Update Index -> Read-back Index
+        const gatewayResult = await submitToBrainGateway(learningPkg);
+
+        // 3. HARD INVARIANT ASSERTION:
+        // LEARNING_SUCCESS = extraction_success AND validation_success AND brain_write_success AND brain_readback_success AND index_update_success
+        if (!gatewayResult.success || gatewayResult.status !== LEARNING_STATUS.VERIFIED) {
+          console.error(`❌ [PERSISTENCE GATE FAILURE] ${target.slug} status: ${gatewayResult.status}. NOT marking as completed.`);
+          results.push({
+            target: target.slug,
+            platform: target.type,
+            status: gatewayResult.status || LEARNING_STATUS.FAILED_PERSISTENCE,
+            learningId: learningPkg.learning_id,
+            errors: gatewayResult.errors
+          });
+          continue;
+        }
+
+        // 4. Update Sources Registry with Gateway Verification Proof
+        updateSourcesRegistryZeroClone(audit, gatewayResult);
         await autoCommitAndPushZeroClone(audit);
 
         results.push({
           target: target.slug,
           platform: target.type,
-          status: 'SUCCESS',
+          status: 'VERIFIED',
+          learningId: gatewayResult.learning_id,
+          promotedRules: gatewayResult.promoted_rules ? gatewayResult.promoted_rules.length : 0,
           fixes: audit.fixCommits.length,
           issues: audit.closedIssues.length
         });
@@ -840,8 +893,8 @@ export async function runZeroCloneHarvester(customUrls = null) {
   console.log(`\n======================================================================`);
   console.log(`🏁 ZERO-CLONE BATCH COMPLETE (0 Bytes Cloned to Disk)`);
   console.log(`Total Targets : ${queue.length}`);
-  console.log(`Successful    : ${results.filter((r) => r.status === 'SUCCESS').length}`);
-  console.log(`Failed        : ${results.filter((r) => r.status === 'FAILED').length}`);
+  console.log(`Verified into Brain : ${results.filter((r) => r.status === 'VERIFIED' || r.status === 'SUCCESS').length}`);
+  console.log(`Failed / Incomplete : ${results.filter((r) => r.status !== 'VERIFIED' && r.status !== 'SUCCESS' && r.status !== 'SKIPPED_UP_TO_DATE' && r.status !== 'SKIPPED_LOCKED_BY_ANOTHER_AGENT').length}`);
   console.log(`======================================================================\n`);
 
   if (circuitTrippedInRun) {
@@ -853,7 +906,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
   }
 
   // Auto-Discovery: If all existing targets are up to date, scout fresh top repositories
-  const successCount = results.filter((r) => r.status === 'SUCCESS').length;
+  const successCount = results.filter((r) => r.status === 'VERIFIED' || r.status === 'SUCCESS').length;
   const skipScout = process.argv.includes('--no-scout');
 
   if (successCount === 0 && !isCustomRun && !skipScout) {

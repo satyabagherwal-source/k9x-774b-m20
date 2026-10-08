@@ -54,7 +54,23 @@
     "executionPolicy": "STATIC_REST_INSPECTION_ONLY",
     "masterBrainWriteAccess": "GATED_VALIDATION_ONLY",
     "stagingDirectory": "07_PROJECT_LEARNING",
-    "masterBrainPatternsFile": "05_KNOWLEDGE/engineering-patterns.md"
+    "masterBrainPatternsFile": "05_KNOWLEDGE/engineering-patterns.md",
+    "brainLearningGateway": {
+      "status": "ENFORCED",
+      "gatewayScript": "04_WORKFLOWS/factory-engine/brain-learning-gateway.mjs",
+      "lifecycleStates": [
+        "DISCOVERED",
+        "EXTRACTED",
+        "VALIDATED",
+        "PROMOTED",
+        "VERIFIED"
+      ],
+      "hardInvariant": "LEARNING_SUCCESS = extraction_success AND validation_success AND brain_write_success AND brain_readback_success AND index_update_success",
+      "readbackVerification": "MANDATORY_SHA256_HASH_MATCH",
+      "canonicalIndex": "05_KNOWLEDGE/knowledge-index.json",
+      "checkpointsFile": ".project-brain/harvest-checkpoints.json",
+      "unverifiedPolicy": "REJECT_AND_FLAG_EXTRACTED_ONLY"
+    }
   },
   "learningDepthPolicy": {
     "mode": "EXHAUSTIVE_DEEP_FORENSIC_ONLY",

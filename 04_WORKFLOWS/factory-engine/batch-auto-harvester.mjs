@@ -10,6 +10,13 @@ import {
   saveGeminiLearningRecord,
   promoteGeminiRulesToMasterBrain
 } from './gemini-brain-agent.mjs';
+import {
+  createLearningPackage,
+  submitToBrainGateway,
+  extractCandidateRulesFromText,
+  LEARNING_STATUS,
+  LEARNING_STAGES
+} from './brain-learning-gateway.mjs';
 
 
 
@@ -271,13 +278,10 @@ export function inspectCodebase(cloneDir, repoMeta) {
 /**
  * Formulates and writes the forensic project learning artifact into 07_PROJECT_LEARNING/
  */
-export function writeProjectLearningArtifact(audit) {
-  const destDir = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING');
-  fs.mkdirSync(destDir, { recursive: true });
-
-  const filename = `${audit.repo.slug}-learnings.md`;
-  const targetPath = path.join(destDir, filename);
-
+/**
+ * Formats the complete markdown text for a Batch Project Learning Record
+ */
+export function formatBatchLearningArtifactContent(audit) {
   let topFixesMarkdown = '';
   if (Array.isArray(audit.deepFixPatches) && audit.deepFixPatches.length > 0) {
     topFixesMarkdown = audit.deepFixPatches.map((p, idx) => {
@@ -292,9 +296,9 @@ export function writeProjectLearningArtifact(audit) {
   const languagesList = audit.languages.join(', ') || 'Multi-language';
   const keyFilesList = audit.keyFiles.map(k => `\`${k}\``).join(', ') || 'Standard structure';
 
-  const content = `# Forensic Learning Record: ${audit.repo.owner}/${audit.repo.repo}
+  return `# Forensic Learning Record: ${audit.repo.owner}/${audit.repo.repo}
 
-> **Canonical Artifact**: \`07_PROJECT_LEARNING/${filename}\`  
+> **Canonical Artifact**: \`07_PROJECT_LEARNING/${audit.repo.slug}-learnings.md\`  
 > **Source Repository**: [${audit.repo.cleanUrl}](${audit.repo.webUrl})  
 > **Harvest Date**: ${audit.timestamp}  
 > **Harvest Engine**: Batch Auto-Harvester (Full Clone - Complete History Extraction)  
@@ -307,7 +311,6 @@ export function writeProjectLearningArtifact(audit) {
 - **Detected Languages**: ${languagesList}
 - **Discovered Configurations / Tooling**: ${keyFilesList}
 - **Complete Commit History Inspected**: ${audit.commitCount}+ recent commits, ${audit.fixCommits.length} deep historical fixes, and release tags: ${audit.tags.slice(0, 5).join(', ') || 'N/A'}.
-
 
 ---
 
@@ -359,6 +362,18 @@ ${topFixesMarkdown}
 - **Status**: HARVESTED_AND_INTEGRATED
 - **Master Brain Sync**: Auto-committed and pushed to remote GitHub repository.
 `;
+}
+
+/**
+ * Formulates and writes the forensic project learning artifact into 07_PROJECT_LEARNING/ (legacy wrapper)
+ */
+export function writeProjectLearningArtifact(audit) {
+  const destDir = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING');
+  fs.mkdirSync(destDir, { recursive: true });
+
+  const filename = `${audit.repo.slug}-learnings.md`;
+  const targetPath = path.join(destDir, filename);
+  const content = formatBatchLearningArtifactContent(audit);
 
   fs.writeFileSync(targetPath, content, 'utf-8');
   console.log(`[RECORD CREATED] ${targetPath}`);
@@ -366,9 +381,9 @@ ${topFixesMarkdown}
 }
 
 /**
- * Updates sources-registry.json with newly harvested repository details.
+ * Updates sources-registry.json with newly harvested repository details and gateway metadata.
  */
-export function updateSourcesRegistry(audit) {
+export function updateSourcesRegistry(audit, gatewayResult = null) {
   const regPath = path.join(BRAIN_ROOT, '04_WORKFLOWS', 'factory-engine', 'sources-registry.json');
   let registry = {};
   if (fs.existsSync(regPath)) {
@@ -385,6 +400,10 @@ export function updateSourcesRegistry(audit) {
     technology: key,
     lastChecked: audit.timestamp,
     lastVerified: audit.timestamp,
+    learningStatus: gatewayResult ? gatewayResult.status : 'VERIFIED',
+    learningId: gatewayResult?.learning_id || null,
+    contentHash: gatewayResult?.content_hash || null,
+    promotedRulesCount: gatewayResult?.promoted_rules ? gatewayResult.promoted_rules.length : 0,
     revisionIdentifier: audit.commits[0]?.hash || 'shallow-50',
     recentFixesCount: audit.fixCommits.length,
     verificationMethod: 'shallow-clone-audit',
@@ -479,30 +498,71 @@ export async function runBatchHarvester(urlList = null) {
       // Step B: 8-Dimensional Empirical Codebase Audit
       const audit = inspectCodebase(cloneDir, repoMeta);
 
-      // Step C: Deep Intelligence Synthesis with Gemini
-      console.log(`🧠 [AI SYNTHESIS] Calling Deep Forensic Extraction for ${repoMeta.owner}/${repoMeta.repo}...`);
+      // Step C: Deep Intelligence Synthesis & Gateway Persistence
+      console.log(`🧠 [GATEWAY PIPELINE] Formulating Intelligence Package for ${repoMeta.owner}/${repoMeta.repo}...`);
       const geminiResult = await synthesizeIntelligenceWithGemini(audit);
+
+      let dossierText = '';
+      let aiProvider = '';
+      let candidateRules = [];
+
       if (geminiResult && geminiResult.text) {
-        saveGeminiLearningRecord(repoMeta.slug, geminiResult.text, audit);
-        const newRules = promoteGeminiRulesToMasterBrain(geminiResult.text, `${repoMeta.owner}/${repoMeta.repo}`, audit);
-        if (newRules.length > 0) {
-          console.log(`🎯 [UNIVERSAL RULES PROMOTED] ${newRules.length} new rules added to Master Brain: ${newRules.map((r) => `Rule ${r.number}`).join(', ')}`);
-        }
+        dossierText = geminiResult.text;
+        aiProvider = 'google-gemini-cloud-agent';
+        candidateRules = extractCandidateRulesFromText(geminiResult.text);
       } else {
-        writeProjectLearningArtifact(audit);
+        dossierText = formatBatchLearningArtifactContent(audit);
+        aiProvider = 'batch-forensic-synthesizer';
       }
-      updateSourcesRegistry(audit);
+
+      // 1. Create Immutable Learning Package
+      const learningPkg = createLearningPackage({
+        repository: `${repoMeta.owner}/${repoMeta.repo}`,
+        platform: 'github',
+        slug: repoMeta.slug,
+        sourceUrl: repoMeta.webUrl,
+        sourceVersion: audit.commits[0]?.hash || 'HEAD',
+        license: 'Open-Source',
+        aiProvider,
+        dossierText,
+        candidateRules,
+        auditEvidence: {
+          commitsAnalyzed: audit.commitCount,
+          fixesFound: audit.fixCommits.length,
+          tagsSample: audit.tags.slice(0, 5)
+        }
+      });
+
+      // 2. Submit to Brain Learning Gateway (Validate -> Write -> Readback -> Promote -> Readback -> Index)
+      const gatewayResult = await submitToBrainGateway(learningPkg);
+
+      // 3. Hard Invariant Assertion
+      if (!gatewayResult.success || gatewayResult.status !== LEARNING_STATUS.VERIFIED) {
+        console.error(`❌ [PERSISTENCE GATE FAILURE] ${repoMeta.slug} status: ${gatewayResult.status}. NOT marking as completed.`);
+        results.push({
+          repo: repoMeta.slug,
+          status: gatewayResult.status || LEARNING_STATUS.FAILED_PERSISTENCE,
+          learningId: learningPkg.learning_id,
+          errors: gatewayResult.errors
+        });
+        continue;
+      }
+
+      // 4. Update Sources Registry with Gateway Verification Proof
+      updateSourcesRegistry(audit, gatewayResult);
 
       // Step D: Git Add, Commit & Push to GitHub Remote (Atomic Rebase Retry)
       await autoCommitAndPushBrain(repoMeta);
 
       results.push({
         repo: repoMeta.slug,
-        status: 'SUCCESS',
+        status: 'VERIFIED',
+        learningId: gatewayResult.learning_id,
+        promotedRules: gatewayResult.promoted_rules ? gatewayResult.promoted_rules.length : 0,
         commitsAnalyzed: audit.commitCount,
         fixesFound: audit.fixCommits.length
       });
-      console.log(`[SUCCESS] Completed harvest for ${repoMeta.owner}/${repoMeta.repo}`);
+      console.log(`[VERIFIED & PERSISTED] Completed harvest for ${repoMeta.owner}/${repoMeta.repo}`);
     } catch (err) {
       console.error(`[ERROR] Failed processing ${repoMeta.slug}: ${err.message}`);
       results.push({
