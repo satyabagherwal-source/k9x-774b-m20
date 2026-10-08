@@ -3,8 +3,8 @@
 > **Source Version**: `hf-edge0-aud`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-08T15:50:33.643Z  
-> **Learning ID**: `learn-huggingface-hf-edge0-audio8-asr-infinite-muzpqq3v`  
+> **Timestamp**: 2026-10-08T15:52:26.127Z  
+> **Learning ID**: `learn-huggingface-hf-edge0-audio8-asr-infinite-muzpt4wf`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
 > **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
@@ -16,7 +16,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Edge0/Audio8-ASR-Infinite](https://huggingface.co/Edge0/Audio8-ASR-Infinite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T15:50:33.393Z  
+> **Harvest Timestamp**: 2026-10-08T15:52:25.753Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
