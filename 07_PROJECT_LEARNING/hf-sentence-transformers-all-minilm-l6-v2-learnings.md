@@ -3,8 +3,8 @@
 > **Source Version**: `hf-sentence-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-08T15:46:37.416Z  
-> **Learning ID**: `learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-muzplnu0`  
+> **Timestamp**: 2026-10-08T15:48:34.246Z  
+> **Learning ID**: `learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-muzpo5za`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
 > **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
@@ -16,7 +16,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T15:46:37.193Z  
+> **Harvest Timestamp**: 2026-10-08T15:48:34.046Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
