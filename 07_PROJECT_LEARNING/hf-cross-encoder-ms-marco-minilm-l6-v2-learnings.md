@@ -3,8 +3,8 @@
 > **Source Version**: `hf-cross-enc`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-08T19:37:56.195Z  
-> **Learning ID**: `learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-muzxv4rn`  
+> **Timestamp**: 2026-10-08T19:39:46.543Z  
+> **Learning ID**: `learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-muzxxhwv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T19:37:55.895Z  
+> **Harvest Timestamp**: 2026-10-08T19:39:45.925Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
