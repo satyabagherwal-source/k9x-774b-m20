@@ -1,9 +1,22 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/epicweb-dev-advanced-react-patterns-learnings.md`  
+> **Source**: github ([https://github.com/epicweb-dev/advanced-react-patterns](https://github.com/epicweb-dev/advanced-react-patterns))  
+> **Source Version**: `8f9992a4`  
+> **License**: NOASSERTION  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-08T15:44:49.805Z  
+> **Learning ID**: `learn-github-epicweb-dev-advanced-react-patterns-muzpjcst`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): epicweb-dev/advanced-react-patterns
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/epicweb-dev-advanced-react-patterns-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/epicweb-dev/advanced-react-patterns](https://github.com/epicweb-dev/advanced-react-patterns))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T15:42:57.959Z  
+> **Harvest Timestamp**: 2026-10-08T15:44:49.491Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
