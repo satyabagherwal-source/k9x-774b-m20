@@ -3,8 +3,8 @@
 > **Source Version**: `hf-convaiinn`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-08T16:37:25.936Z  
-> **Learning ID**: `learn-huggingface-hf-convaiinnovations-laya-muzrf034`  
+> **Timestamp**: 2026-10-08T16:39:18.856Z  
+> **Learning ID**: `learn-huggingface-hf-convaiinnovations-laya-muzrhf7s`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
 > **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
@@ -16,7 +16,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T16:37:25.538Z  
+> **Harvest Timestamp**: 2026-10-08T16:39:18.470Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
