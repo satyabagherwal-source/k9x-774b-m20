@@ -3,7 +3,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T00:54:53.717Z  
+> **Harvest Timestamp**: 2026-10-08T00:56:40.871Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +13,7 @@
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 28497 downloads | 5331 likes
+- **Stars / Engagement**: 28497 downloads | 5332 likes
 
 ---
 
