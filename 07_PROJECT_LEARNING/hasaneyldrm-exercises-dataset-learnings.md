@@ -3,7 +3,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hasaneyldrm-exercises-dataset-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hasaneyldrm/exercises-dataset](https://github.com/hasaneyldrm/exercises-dataset))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T00:56:56.057Z  
+> **Harvest Timestamp**: 2026-10-08T00:58:45.201Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -70,7 +70,113 @@
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-- *No direct fix commits observed in recent API window.*
+### Incident Patch 1: `7455efae` (2026-07-16)
+**Commit Message**: Merge pull request #56 from hasaneyldrm/readme-fix-merged
+
+Fix TypeScript interface and Python example in README (rebased)
+
+**File**: `README.md` (modified, +17/-3)
+```diff
+@@ -335,6 +335,8 @@ print(ex["instructions"]["tr"])  # Turkish
+ print(ex["instructions"]["ru"])  # Russian
+ print(ex["instructions"]["zh"])  # Chinese
+ print(ex["instructions"]["hi"])  # Hindi
++print(ex["instructions"]["pl"])  # Polish
++print(ex["instructions"]["ko"])  # Korean
+ print(ex["instructions"]["fr"])  # French
+ ```
+ 
+@@ -411,12 +413,24 @@ interface Exercise {
+     ko: string;
+     fr: string;
+   };
++  instruction_steps: {
++    en: string[];
++    es: string[];
++    it: string[];
++    tr: string[];
++    ru: string[];
++    zh: string[];
++    hi: string[];
++    pl: string[];
++    ko: string[];
++    fr: string[];
++  };
+   muscle_group: string;
+   secondary_muscles: string[];
+   target: string;
+-  media_id: string | null;
+-  image: string | null;
+-  gif_url: string | null;
++  media_id: string;
++  image: string;
++  gif_url: string;
+   attribution: string;
+   created_at: string;
+ }
+```
+
+---
+
+### Incident Patch 2: `e4579fad` (2026-07-10)
+**Commit Message**: Fix TypeScript interface and Python example in README
+
+Three documentation inaccuracies, all independent of each other.
+
+1. `media_id`, `image` and `gif_url` were typed `string | null`, but no
+   record has a null in any of them (0/1324 each) and the JSON Schema
+   declares all three as required, non-nullable strings — `image` and
+   `gif_url` even carry path patterns. The optional type pushed needless
+   null-handling onto every consumer. Narrowed to `string`.
+
+2. `instruction_steps` was missing from the interface entirely, even
+   though every record carries it and the field table documents it.
+   Added, typed `string[]` per language.
+
+3. The Python example stopped at Hindi, skipping Polish and Korean; the
+   JavaScript example right below it lists both. Added the two lines.
+
+Docs only — no data or schema changes.
+
+**File**: `README.md` (modified, +16/-3)
+```diff
+@@ -333,6 +333,8 @@ print(ex["instructions"]["tr"])  # Turkish
+ print(ex["instructions"]["ru"])  # Russian
+ print(ex["instructions"]["zh"])  # Chinese
+ print(ex["instructions"]["hi"])  # Hindi
++print(ex["instructions"]["pl"])  # Polish
++print(ex["instructions"]["ko"])  # Korean
+ ```
+ 
+ ### Python — Load with Pandas
+@@ -406,12 +408,23 @@ interface Exercise {
+     pl: string;
+     ko: string;
+   };
++  instruction_steps: {
++    en: string[];
++    es: string[];
++    it: string[];
++    tr: string[];
++    ru: string[];
++    zh: string[];
++    hi: string[];
++    pl: string[];
++    ko: string[];
++  };
+   muscle_group: string;
+   secondary_muscles: string[];
+   target: string;
+-  media_id: string | null;
+-  image: string | null;
+-  gif_url: string | null;
++  media_id: string;
++  image: string;
++  gif_url: string;
+   attribution: string;
+   created_at: string;
+ }
+```
 
 #### Recent Merged Pull Requests:
 - **PR #87** (closed): Update exercises.json (@jutholia)
