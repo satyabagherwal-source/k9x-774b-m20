@@ -3,7 +3,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Edge0/Audio8-ASR-Infinite](https://huggingface.co/Edge0/Audio8-ASR-Infinite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-08T10:00:16.214Z  
+> **Harvest Timestamp**: 2026-10-08T10:02:05.877Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +13,7 @@
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 40496 downloads | 2431 likes
+- **Stars / Engagement**: 40580 downloads | 2431 likes
 
 ---
 
