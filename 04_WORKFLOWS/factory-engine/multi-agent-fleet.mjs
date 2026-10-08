@@ -322,13 +322,30 @@ export function spawnWorkerAgent(agentConfig, assignedSlugs = new Set()) {
 
       let harvestOutput = '';
       let harvestSuccessCount = 0;
+      let verifiedResult = null;
+
+      // Listen for structured machine-readable result payload over IPC channel
+      harvestProc.on('message', (msg) => {
+        if (msg && msg.type === 'HARVEST_RESULT' && msg.result) {
+          const res = msg.result;
+          if (
+            res.status === 'VERIFIED_LEARNING' &&
+            res.verification?.storage === true &&
+            res.verification?.readBack === true &&
+            res.verification?.index === true
+          ) {
+            verifiedResult = res;
+            harvestSuccessCount++;
+            console.log(`${agentConfig.color}[${agentConfig.id}:IPC VERIFIED] Machine-readable learning verified: ${res.learningId} (SHA-256: ${res.contentHash?.slice(0, 16)}...)${RESET}`);
+          } else {
+            console.warn(`${agentConfig.color}[${agentConfig.id}:IPC REJECTED] Machine-readable learning rejected with status: ${res.status}${RESET}`);
+          }
+        }
+      });
 
       harvestProc.stdout?.on('data', (data) => {
         const line = data.toString();
         harvestOutput += line;
-        if (line.includes('LEARNING FULLY VERIFIED') || line.includes('GATEWAY STAGE 5: INDEX UPDATED') || line.includes('GATEWAY PROMOTION VERIFIED')) {
-          harvestSuccessCount++;
-        }
         process.stdout.write(`${agentConfig.color}[${agentConfig.id}:HARVEST] ${RESET}${line}`);
       });
 
@@ -347,18 +364,30 @@ export function spawnWorkerAgent(agentConfig, assignedSlugs = new Set()) {
           return resolve({ agent: agentConfig.id, target: targetObj.slug, status: 'RATE_LIMITED', code: hCode });
         }
 
+        const isVerified = harvestSuccessCount > 0 && verifiedResult !== null;
         const currentWorker = getWorkerLifecycle(agentConfig.id);
-        const updatedTotal = (currentWorker.totalHarvested || 0) + (harvestSuccessCount > 0 ? 1 : 0);
+        const updatedTotal = (currentWorker.totalHarvested || 0) + (isVerified ? 1 : 0);
 
         updateWorkerState(agentConfig.id, {
           lastActiveAt: new Date().toISOString(),
-          lastHarvestedAt: harvestSuccessCount > 0 ? new Date().toISOString() : currentWorker.lastHarvestedAt,
+          lastHarvestedAt: isVerified ? new Date().toISOString() : currentWorker.lastHarvestedAt,
           totalHarvested: updatedTotal,
-          lastError: null
+          lastError: isVerified ? null : (hCode === 0 ? null : `Process exited with code ${hCode}`)
         });
 
-        console.log(`${agentConfig.color}[${agentConfig.id}] Learning cycle finished for ${targetObj.slug} (Code: ${hCode}, Harvested: ${harvestSuccessCount}).${RESET}`);
-        resolve({ agent: agentConfig.id, target: targetObj.slug, code: hCode, harvested: harvestSuccessCount });
+        const statusLabel = isVerified
+          ? 'VERIFIED_LEARNING'
+          : (harvestOutput.includes('SKIP: NO UPGRADE DETECTED') ? 'SKIPPED_UP_TO_DATE' : 'FAILED_PERSISTENCE');
+
+        console.log(`${agentConfig.color}[${agentConfig.id}] Learning cycle finished for ${targetObj.slug} (Status: ${statusLabel}, Code: ${hCode}, Verified: ${harvestSuccessCount}).${RESET}`);
+        resolve({
+          agent: agentConfig.id,
+          target: targetObj.slug,
+          code: hCode,
+          harvested: isVerified ? 1 : 0,
+          status: statusLabel,
+          verifiedResult
+        });
       });
     }
   });
@@ -439,10 +468,12 @@ export async function runMultiAgentFleet(options = {}) {
         statusText = `SKIPPED (${val.status})`;
       } else if (val.status === 'RATE_LIMITED' || val.status === 'TRIPPED_COOLDOWN') {
         statusText = `COOLDOWN_TRIPPED (Isolated - others unaffected)`;
-      } else if (val.harvested > 0) {
-        statusText = `HARVESTED (${val.target})`;
+      } else if (val.status === 'VERIFIED_LEARNING' || val.harvested > 0) {
+        statusText = `VERIFIED_LEARNING (${val.target})`;
+      } else if (val.status === 'SKIPPED_UP_TO_DATE') {
+        statusText = `SKIPPED_UP_TO_DATE (${val.target})`;
       } else {
-        statusText = `COMPLETED (${val.target || 'idle'})`;
+        statusText = `FAILED_PERSISTENCE (${val.target || 'idle'})`;
       }
     }
     console.log(`   - ${agent.id} [${agent.domain}]: ${statusText}`);
@@ -451,9 +482,14 @@ export async function runMultiAgentFleet(options = {}) {
 
   // Synchronize Master Brain with atomic rebase retry
   try {
-    await pushWithRebaseRetry('feat(fleet): multi-agent parallel fleet harvested intelligence [skip ci]', 5, BRAIN_ROOT);
+    const pushRes = await pushWithRebaseRetry('feat(fleet): multi-agent parallel fleet harvested intelligence [skip ci]', 5, BRAIN_ROOT);
+    if (!pushRes.success) {
+      console.error(`❌ [FAILED_PERSISTENCE] Remote git push failed after maximum retries! Ephemeral runner state would be lost.`);
+      process.exit(1);
+    }
   } catch (err) {
-    console.warn(`[FLEET SYNC WARNING] ${err.message}`);
+    console.error(`❌ [FAILED_PERSISTENCE] Remote git push error: ${err.message}`);
+    process.exit(1);
   }
 }
 

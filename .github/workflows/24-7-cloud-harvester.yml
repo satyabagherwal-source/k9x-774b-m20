@@ -93,15 +93,33 @@ jobs:
           # Only commit if actual knowledge artifacts, rules, skills, or queue targets were modified:
           if git diff --staged --name-only | grep -E '^(07_PROJECT_LEARNING/|05_KNOWLEDGE/|03_SKILLS/|repos\.txt)'; then
             git commit -m "feat(harvest): micro-forensic learning harvested from sources [skip ci]"
+            PUSH_SUCCESS=false
             for i in {1..5}; do
               rm -f .git/index.lock
-              git push origin main && break || {
+              if git push origin main; then
+                PUSH_SUCCESS=true
+                echo "✅ [REMOTE PUSH CONFIRMED] Successfully pushed to origin/main on attempt $i."
+                break
+              else
                 echo "Concurrent push detected. Rebasing and retrying ($i/5)..."
                 sleep $((2 + RANDOM % 4))
                 rm -f .git/index.lock
                 git pull --rebase origin main || git rebase --abort
-              }
+              fi
             done
+
+            if [ "$PUSH_SUCCESS" = false ]; then
+              echo "❌ [FAILED_PERSISTENCE] Remote git push failed after 5 retries! Ephemeral runner knowledge would be lost."
+              exit 1
+            fi
+
+            # Remote Verification Barrier: Confirm origin/main genuinely contains HEAD
+            git fetch origin main
+            if ! git branch -r --contains HEAD | grep -q 'origin/main'; then
+              echo "❌ [FAILED_PERSISTENCE] Remote branch verification barrier breached! HEAD not confirmed on origin/main."
+              exit 1
+            fi
+            echo "🏆 [REMOTE VERIFICATION SUCCESS] Verified commit on remote origin/main ledger."
           else
             echo "ℹ️ No new knowledge files, rules, or queue targets were modified in this run (only timestamps/cursors). Skipping empty commit."
             git checkout HEAD -- harvest-control.json 04_WORKFLOWS/factory-engine/discovery-cursor.json 2>/dev/null || true

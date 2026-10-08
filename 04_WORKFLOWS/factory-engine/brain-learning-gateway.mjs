@@ -15,28 +15,39 @@ export const INDEX_PATH = path.join(BRAIN_ROOT, '05_KNOWLEDGE', 'knowledge-index
 export const CHECKPOINTS_PATH = path.join(BRAIN_ROOT, '.project-brain', 'harvest-checkpoints.json');
 
 /**
- * The 5 Discrete Lifecycle States for Harvesting Intelligence
+ * The Discrete Lifecycle States for Harvesting Intelligence
+ * DISCOVERED -> EXTRACTED -> VALIDATED -> PERSISTED -> PROMOTED -> VERIFIED
  */
 export const LEARNING_STAGES = {
   DISCOVERED: 'DISCOVERED',
   EXTRACTED: 'EXTRACTED',
   VALIDATED: 'VALIDATED',
+  PERSISTED: 'PERSISTED',
   PROMOTED: 'PROMOTED',
   VERIFIED: 'VERIFIED'
 };
 
 /**
- * Status Strings
+ * Transactional Status Strings
+ * Hard Invariant: Final success is strictly VERIFIED_LEARNING
  */
 export const LEARNING_STATUS = {
   PENDING: 'PENDING',
+  DISCOVERED: 'DISCOVERED',
   EXTRACTED_ONLY: 'EXTRACTED_ONLY — NOT STORED IN AI-BUILDER-BRAIN',
   VALIDATED: 'VALIDATED',
+  PERSISTED: 'PERSISTED',
   PROMOTED: 'PROMOTED',
-  VERIFIED: 'VERIFIED',
+  VERIFIED_LEARNING: 'VERIFIED_LEARNING',
+  ALREADY_PRESENT_VERIFIED: 'ALREADY_PRESENT_VERIFIED',
+  FAILED_EXTRACTION: 'FAILED_EXTRACTION',
   FAILED_VALIDATION: 'FAILED_VALIDATION',
+  FAILED_PROMOTION: 'FAILED_PROMOTION',
   FAILED_PERSISTENCE: 'FAILED_PERSISTENCE',
-  FAILED_READBACK: 'FAILED_READBACK'
+  FAILED_READBACK: 'FAILED_PERSISTENCE',
+  FAILED_VERIFICATION: 'FAILED_VERIFICATION',
+  // Backward compatibility alias:
+  VERIFIED: 'VERIFIED_LEARNING'
 };
 
 /**
@@ -161,6 +172,7 @@ export function createLearningPackage({
 > **Synthesized By**: ${aiProvider}  
 > **Timestamp**: ${timestamp}  
 > **Learning ID**: \`${learningId}\`  
+> **Pipeline Version**: \`2.0.0\`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
 > **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
@@ -172,7 +184,14 @@ export function createLearningPackage({
   const completeDossierContent = header + dossierText;
   const contentHash = calculateContentHash(completeDossierContent);
 
+  // Check if identical content hash already verified in index
+  const currentIndex = loadKnowledgeIndex();
+  const existingVerified = Object.values(currentIndex.items || {}).find(
+    (item) => item.content_hash === contentHash && (item.repository === repository || item.slug === normSlug)
+  );
+
   const learningPackage = {
+    pipeline_version: '2.0.0',
     learning_id: learningId,
     repository,
     slug: normSlug,
@@ -182,6 +201,8 @@ export function createLearningPackage({
     license,
     ai_provider: aiProvider,
     content_hash: contentHash,
+    is_duplicate: Boolean(existingVerified),
+    duplicate_learning_id: existingVerified?.learning_id || null,
     raw_dossier_text: dossierText || '',
     dossier_content: completeDossierContent,
     candidate_rules: (Array.isArray(candidateRules) && candidateRules.length > 0)
@@ -189,7 +210,7 @@ export function createLearningPackage({
       : extractCandidateRulesFromText(dossierText),
     evidence: auditEvidence || {},
     metadata,
-    // 5 Lifecycle State Flags
+    // Discrete Lifecycle State Flags
     stage: LEARNING_STAGES.EXTRACTED,
     status: LEARNING_STATUS.EXTRACTED_ONLY,
     extracted: true,
@@ -249,6 +270,7 @@ export function validateLearningPackage(learningPackage) {
 
 /**
  * Performs Read-Back Verification on a written file against expected content hash
+ * Enforces: 1. existence check, 2. size check (>0 bytes), 3. read-back, 4. SHA-256 match
  */
 export function readBackVerifyFile(filePath, expectedHash) {
   if (!fs.existsSync(filePath)) {
@@ -256,6 +278,11 @@ export function readBackVerifyFile(filePath, expectedHash) {
   }
 
   try {
+    const stats = fs.statSync(filePath);
+    if (!stats.isFile() || stats.size === 0) {
+      return { verified: false, reason: `File exists but is empty (0 bytes) or not a regular file: ${filePath}` };
+    }
+
     const diskContent = fs.readFileSync(filePath, 'utf-8');
     const diskHash = calculateContentHash(diskContent);
 
@@ -268,7 +295,7 @@ export function readBackVerifyFile(filePath, expectedHash) {
 
     return {
       verified: true,
-      bytes: Buffer.byteLength(diskContent, 'utf-8'),
+      bytes: stats.size,
       hash: diskHash
     };
   } catch (err) {
@@ -304,7 +331,8 @@ export function readBackVerifyRuleInPatterns(ruleNumber, ruleTitle) {
 
 /**
  * Promotes validated rules into Master Brain (05_KNOWLEDGE/engineering-patterns.md)
- * with mandatory read-back verification for every promoted rule
+ * with mandatory read-back verification for every promoted rule.
+ * Duplicate rules are verified as ALREADY_PRESENT_VERIFIED rather than treated as false failure.
  */
 export function promoteValidatedRules(learningPackage) {
   if (!fs.existsSync(PATTERNS_PATH)) {
@@ -317,7 +345,15 @@ export function promoteValidatedRules(learningPackage) {
   for (const rule of rulesToPromote) {
     const currentPatterns = fs.readFileSync(PATTERNS_PATH, 'utf-8');
     if (currentPatterns.toLowerCase().includes(rule.title.toLowerCase())) {
-      console.log(`[RULE ALREADY EXISTS] Skipping duplicate rule: "${rule.title}"`);
+      const escapedTitle = rule.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const match = currentPatterns.match(new RegExp(`##\\s+(\\d+)\\.\\s+${escapedTitle}`, 'i'));
+      const existingNum = match ? parseInt(match[1], 10) : 'EXISTING';
+      console.log(`ℹ️ [RULE ALREADY PRESENT] "${rule.title}" already exists in engineering-patterns.md (Rule ${existingNum}). Read-back verified.`);
+      promotedList.push({
+        number: existingNum,
+        title: rule.title,
+        status: LEARNING_STATUS.ALREADY_PRESENT_VERIFIED
+      });
       continue;
     }
 
@@ -360,6 +396,7 @@ export function promoteValidatedRules(learningPackage) {
     promotedList.push({
       number: nextRuleNum,
       title: rule.title,
+      status: 'PROMOTED_AND_VERIFIED',
       provenance: provenanceMeta
     });
   }
@@ -432,19 +469,23 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     results.errors.push(`Dossier write failed: ${err.message}`);
     console.error(`❌ [GATEWAY WRITE FAILED] ${err.message}`);
     updateCheckpoint(learningPackage.repository, results);
+    dispatchIPCResult(results);
     return { success: false, ...results };
   }
 
   // 3. READ-BACK VERIFICATION FOR DOSSIER
   const readBack = readBackVerifyFile(dossierPath, learningPackage.content_hash);
   if (!readBack.verified) {
-    results.status = LEARNING_STATUS.FAILED_READBACK;
+    results.status = LEARNING_STATUS.FAILED_PERSISTENCE;
     results.errors.push(`Dossier readback failed: ${readBack.reason}`);
     console.error(`❌ [GATEWAY READBACK FAILED] ${readBack.reason}`);
     updateCheckpoint(learningPackage.repository, results);
+    dispatchIPCResult(results);
     return { success: false, ...results };
   }
   results.brain_readback = true;
+  results.stage = LEARNING_STAGES.PERSISTED;
+  results.status = LEARNING_STATUS.PERSISTED;
   console.log(`🔍 [GATEWAY STAGE 3: READ-BACK VERIFIED] Read back ${readBack.bytes} bytes. Hash match verified!`);
 
   // 4. Gated Master Brain Rule Promotion
@@ -453,47 +494,54 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     results.promoted_rules = promoResult.promoted || [];
     results.promoted_to_brain = true;
     results.stage = LEARNING_STAGES.PROMOTED;
+    results.status = LEARNING_STATUS.PROMOTED;
     if (results.promoted_rules.length > 0) {
-      console.log(`🎯 [GATEWAY STAGE 4: PROMOTED] ${results.promoted_rules.length} rule(s) promoted: ${results.promoted_rules.map(r => `Rule ${r.number}`).join(', ')}`);
+      console.log(`🎯 [GATEWAY STAGE 4: PROMOTED] ${results.promoted_rules.length} rule(s) verified/promoted: ${results.promoted_rules.map(r => `Rule ${r.number} (${r.status})`).join(', ')}`);
     } else {
       console.log(`ℹ️ [GATEWAY STAGE 4: PROMOTED] Dossier validated; 0 net-new universal rules required promotion.`);
     }
   } catch (err) {
-    results.status = LEARNING_STATUS.FAILED_PERSISTENCE;
+    results.status = LEARNING_STATUS.FAILED_PROMOTION;
     results.errors.push(`Rule promotion failed: ${err.message}`);
     console.error(`❌ [GATEWAY PROMOTION FAILED] ${err.message}`);
     updateCheckpoint(learningPackage.repository, results);
+    dispatchIPCResult(results);
     return { success: false, ...results };
   }
 
-  // 5. Canonical Knowledge Index Update
+  // 5. Canonical Knowledge Index Update with Read-Back Verification Barrier
   try {
     const index = loadKnowledgeIndex();
     index.items[learningPackage.learning_id] = {
       learning_id: learningPackage.learning_id,
+      source: learningPackage.repository,
       repository: learningPackage.repository,
       slug: learningPackage.slug,
       platform: learningPackage.platform,
       source_url: learningPackage.source_url,
       source_version: learningPackage.source_version,
-      status: LEARNING_STATUS.VERIFIED,
       content_hash: learningPackage.content_hash,
+      dossier_path: `07_PROJECT_LEARNING/${filename}`,
       dossier_file: `07_PROJECT_LEARNING/${filename}`,
-      promoted_rules: results.promoted_rules.map(r => ({ number: r.number, title: r.title })),
-      extracted: true,
-      validated: true,
-      promoted_to_brain: true,
-      brain_write: true,
+      promoted_rules: results.promoted_rules.map(r => ({ number: r.number, title: r.title, status: r.status })),
+      status: LEARNING_STATUS.VERIFIED_LEARNING,
+      verification_status: LEARNING_STATUS.VERIFIED_LEARNING,
       brain_readback: true,
-      knowledge_index_updated: true,
-      verified_at: new Date().toISOString()
+      verified_at: new Date().toISOString(),
+      verification_barriers: {
+        storage_written: true,
+        read_back_verified: true,
+        content_hash_verified: true,
+        rules_verified: true,
+        index_read_back_verified: true
+      }
     };
     saveKnowledgeIndex(index);
 
     // Read-back verification for Knowledge Index
     const reloadedIndex = loadKnowledgeIndex();
     const recordedItem = reloadedIndex.items[learningPackage.learning_id];
-    if (!recordedItem || recordedItem.content_hash !== learningPackage.content_hash) {
+    if (!recordedItem || recordedItem.content_hash !== learningPackage.content_hash || recordedItem.verification_status !== LEARNING_STATUS.VERIFIED_LEARNING) {
       throw new Error('Knowledge index read-back verification failed: record missing or hash mismatch');
     }
 
@@ -504,28 +552,32 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     results.errors.push(`Index update failed: ${err.message}`);
     console.error(`❌ [GATEWAY INDEX FAILED] ${err.message}`);
     updateCheckpoint(learningPackage.repository, results);
+    dispatchIPCResult(results);
     return { success: false, ...results };
   }
 
-  // 6. Hard Invariant Assertion
+  // 6. Hard Invariant Assertion: EXTRACTED ≠ LEARNED
   const learningSuccess =
     results.extracted === true &&
     results.validated === true &&
     results.brain_write === true &&
     results.brain_readback === true &&
+    results.promoted_to_brain === true &&
     results.knowledge_index_updated === true;
 
   if (!learningSuccess) {
     results.status = LEARNING_STATUS.FAILED_PERSISTENCE;
     console.error(`❌ [HARD INVARIANT BREACHED] Learning persistence was incomplete. Status set to FAILED_PERSISTENCE.`);
     updateCheckpoint(learningPackage.repository, results);
+    dispatchIPCResult(results);
     return { success: false, ...results };
   }
 
-  // SUCCESS! Mark VERIFIED
-  results.status = LEARNING_STATUS.VERIFIED;
+  // SUCCESS! Mark strictly VERIFIED_LEARNING
+  results.status = LEARNING_STATUS.VERIFIED_LEARNING;
   results.stage = LEARNING_STAGES.VERIFIED;
   updateCheckpoint(learningPackage.repository, results);
+  dispatchIPCResult(results);
 
   const durationMs = Date.now() - startTime;
   console.log(`\n======================================================================`);
@@ -533,7 +585,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
   console.log(`   Status   : ${results.status}`);
   console.log(`   Duration : ${durationMs}ms`);
   console.log(`   Dossier  : 07_PROJECT_LEARNING/${filename} (${readBack.bytes} bytes)`);
-  console.log(`   Rules    : ${results.promoted_rules.length} promoted`);
+  console.log(`   Rules    : ${results.promoted_rules.length} verified/promoted`);
   console.log(`======================================================================\n`);
 
   return {
@@ -543,24 +595,62 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
 }
 
 /**
- * Updates harvest checkpoint for resume capability
+ * Dispatches structured machine-readable result over child process IPC channel
  */
-function updateCheckpoint(repository, statusRecord) {
+export function dispatchIPCResult(results) {
+  if (typeof process.send === 'function') {
+    try {
+      process.send({
+        type: 'HARVEST_RESULT',
+        result: {
+          status: results.status,
+          learningId: results.learning_id,
+          contentHash: results.content_hash,
+          repository: results.repository,
+          stage: results.stage,
+          verification: {
+            storage: Boolean(results.brain_write),
+            readBack: Boolean(results.brain_readback),
+            rules: Boolean(results.promoted_to_brain),
+            index: Boolean(results.knowledge_index_updated)
+          },
+          promotedRules: results.promoted_rules || [],
+          errors: results.errors || []
+        }
+      });
+    } catch (err) {
+      console.warn(`[IPC NOTICE] Could not send IPC harvest result: ${err.message}`);
+    }
+  }
+}
+
+/**
+ * Updates harvest checkpoint for durable progress tracking with read-back verification
+ */
+export function updateCheckpoint(repository, statusRecord) {
   try {
     const checkpoints = loadCheckpoints();
     checkpoints.checkpoints[repository] = {
       repository,
-      learning_id: statusRecord.learning_id,
       stage: statusRecord.stage,
       status: statusRecord.status,
-      extracted: statusRecord.extracted,
-      validated: statusRecord.validated,
-      brain_write: statusRecord.brain_write,
-      brain_readback: statusRecord.brain_readback,
-      knowledge_index_updated: statusRecord.knowledge_index_updated,
+      learning_id: statusRecord.learning_id,
+      content_hash: statusRecord.content_hash,
+      verified_at: statusRecord.status === LEARNING_STATUS.VERIFIED_LEARNING ? new Date().toISOString() : null,
+      extracted: Boolean(statusRecord.extracted),
+      validated: Boolean(statusRecord.validated),
+      brain_write: Boolean(statusRecord.brain_write),
+      brain_readback: Boolean(statusRecord.brain_readback),
+      knowledge_index_updated: Boolean(statusRecord.knowledge_index_updated),
       last_updated: new Date().toISOString()
     };
     saveCheckpoints(checkpoints);
+
+    // Read-back verification for checkpoint
+    const reloaded = loadCheckpoints();
+    if (!reloaded.checkpoints || !reloaded.checkpoints[repository] || reloaded.checkpoints[repository].stage !== statusRecord.stage) {
+      console.warn(`[CHECKPOINT WARNING] Checkpoint read-back mismatch for ${repository}`);
+    }
   } catch (err) {
     console.warn(`[CHECKPOINT WARNING] Failed to record checkpoint: ${err.message}`);
   }

@@ -151,5 +151,22 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "expressjs-cors": {
+    "name": "expressjs/cors",
+    "officialUrl": "https://github.com/expressjs/cors",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-10-08T16:52:25.790Z",
+    "lastVerified": "2026-10-08T16:52:25.790Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-expressjs-cors-muzryc1f",
+    "contentHash": "7a64f3b1541b29f000e12ad54a25a547aa4263f352719d77fcc0af2f955ee1bf",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 75,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

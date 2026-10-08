@@ -90,7 +90,7 @@ Substance threshold is met with extensive technical details and real patch diffs
   const gatewayResult = await submitToBrainGateway(testPkg);
 
   assert(gatewayResult.success === true, `Gateway submission succeeded`);
-  assert(gatewayResult.status === LEARNING_STATUS.VERIFIED, `Status is VERIFIED`);
+  assert(gatewayResult.status === LEARNING_STATUS.VERIFIED_LEARNING, `Status is VERIFIED_LEARNING`);
   assert(gatewayResult.stage === LEARNING_STAGES.VERIFIED, `Stage is VERIFIED`);
   assert(gatewayResult.brain_write === true, `brain_write verified`);
   assert(gatewayResult.brain_readback === true, `brain_readback verified via SHA-256`);
@@ -114,12 +114,12 @@ Substance threshold is met with extensive technical details and real patch diffs
   const indexedRecord = index.items[testPkg.learning_id];
 
   assert(Boolean(indexedRecord), `Index contains learning_id ${testPkg.learning_id}`);
-  assert(indexedRecord?.status === LEARNING_STATUS.VERIFIED, `Index record status is VERIFIED`);
+  assert(indexedRecord?.verification_status === LEARNING_STATUS.VERIFIED_LEARNING, `Index record verification_status is VERIFIED_LEARNING`);
   assert(indexedRecord?.content_hash === testPkg.content_hash, `Index content_hash matches`);
   assert(indexedRecord?.brain_readback === true, `Index brain_readback is true`);
 
   const lookupStatus = getLearningStatus(testPkg.repository);
-  assert(lookupStatus.status === LEARNING_STATUS.VERIFIED, `getLearningStatus() reports VERIFIED`);
+  assert(lookupStatus.status === LEARNING_STATUS.VERIFIED_LEARNING, `getLearningStatus() reports VERIFIED_LEARNING`);
 
   // -------------------------------------------------------------------------
   // TEST 6: Hard Invariant Negative Test (Tampered Content Read-back Failure)
@@ -139,7 +139,74 @@ Substance threshold is met with extensive technical details and real patch diffs
 
   const failedResult = await submitToBrainGateway(fakePkg);
   assert(failedResult.success === false, `Gateway rejects tampered package with hash mismatch`);
-  assert(failedResult.status === LEARNING_STATUS.FAILED_READBACK, `Status is FAILED_READBACK, not COMPLETED or SUCCESS`);
+  assert(failedResult.status === LEARNING_STATUS.FAILED_PERSISTENCE, `Status is FAILED_PERSISTENCE, not COMPLETED or SUCCESS`);
+
+  // -------------------------------------------------------------------------
+  // TEST 7: Checkpoint Verification (Only VERIFIED is Durable Progress)
+  // -------------------------------------------------------------------------
+  console.log(`\n[TEST 7] Testing Harvest Checkpoint Persistence...`);
+  const checkpointsPath = path.join(BRAIN_ROOT, '.project-brain', 'harvest-checkpoints.json');
+  assert(fs.existsSync(checkpointsPath), `harvest-checkpoints.json exists`);
+  const checkpoints = JSON.parse(fs.readFileSync(checkpointsPath, 'utf-8'));
+  const testCheckpoint = checkpoints.checkpoints?.[testPkg.repository];
+  assert(Boolean(testCheckpoint), `Checkpoint exists for ${testPkg.repository}`);
+  assert(testCheckpoint?.stage === LEARNING_STAGES.VERIFIED, `Checkpoint stage is VERIFIED`);
+  assert(testCheckpoint?.status === LEARNING_STATUS.VERIFIED_LEARNING, `Checkpoint status is VERIFIED_LEARNING`);
+  assert(testCheckpoint?.content_hash === testPkg.content_hash, `Checkpoint records exact SHA-256 content hash`);
+  assert(Boolean(testCheckpoint?.verified_at), `Checkpoint has valid verified_at timestamp`);
+
+  // -------------------------------------------------------------------------
+  // TEST 8: Rule Promotion Verification & ALREADY_PRESENT_VERIFIED Check
+  // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // TEST 8: Rule Promotion Verification & ALREADY_PRESENT_VERIFIED Check
+  // -------------------------------------------------------------------------
+  console.log(`\n[TEST 8] Testing Rule Promotion & ALREADY_PRESENT_VERIFIED Handling...`);
+  const candidateRuleBody = `### Transactional Verification Barrier Protocol
+**RULE**: Never mark a candidate learning artifact as COMPLETED or SUCCESS until physical write-back and cryptographic SHA-256 validation succeed.
+**WHY**: Ephemeral execution environments such as cloud CI runners lose state if data is not durably pushed.
+**WHEN TO APPLY**: Every harvesting session across GitHub, Hugging Face, or local pipelines.
+**VERIFIED IMPLEMENTATION PATTERN**:
+\`\`\`javascript
+const readBack = readBackVerifyFile(path, hash);
+if (!readBack.verified) throw new Error('FAILED_PERSISTENCE');
+\`\`\`
+**NEGATIVE CONSTRAINT**: Do not trust stdout console strings like SUCCESS or ZERO-CLONE SAVED as proof of storage.`;
+
+  const rulePkg = createLearningPackage({
+    repository: 'test-org/rule-verifier',
+    platform: 'github',
+    slug: 'test-org-rule-verifier',
+    dossierText: 'Deep structural analysis of error boundary lifecycles with extensive code diffs and real bug autopsies to meet the substance threshold easily.',
+    candidateRules: [
+      {
+        title: 'Transactional Knowledge Gateway & Mandatory Read-Back Persistence Barrier',
+        body: candidateRuleBody
+      }
+    ]
+  });
+
+  const ruleVal = validateLearningPackage(rulePkg);
+  assert(ruleVal.valid === true, `Rule package validates successfully`);
+  assert(rulePkg.validated_rules.length === 1, `Candidate rule is attached and validated`);
+
+  // Test submitting rule package to gateway: Rule 259 already exists, so it must return ALREADY_PRESENT_VERIFIED!
+  const ruleGatewayRes = await submitToBrainGateway(rulePkg);
+  assert(ruleGatewayRes.success === true, `Gateway submission succeeded for rule package`);
+  assert(ruleGatewayRes.status === LEARNING_STATUS.VERIFIED_LEARNING, `Gateway status is VERIFIED_LEARNING`);
+  assert(ruleGatewayRes.promoted_rules.length === 1, `Rule was evaluated`);
+  assert(ruleGatewayRes.promoted_rules[0].status === LEARNING_STATUS.ALREADY_PRESENT_VERIFIED, `Rule was correctly classified as ALREADY_PRESENT_VERIFIED (Rule 259)`);
+
+  // -------------------------------------------------------------------------
+  // TEST 9: Empty File (0 Bytes) Rejection in Read-Back Verification
+  // -------------------------------------------------------------------------
+  console.log(`\n[TEST 9] Testing Empty File (0 Bytes) Rejection in Read-Back...`);
+  const emptyFilePath = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', 'temp-empty-test.md');
+  fs.writeFileSync(emptyFilePath, '', 'utf-8');
+  const emptyVerify = readBackVerifyFile(emptyFilePath, 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855');
+  assert(emptyVerify.verified === false, `Empty file (0 bytes) is rejected by readBackVerifyFile`);
+  assert(emptyVerify.reason.includes('0 bytes'), `Reason explains 0 bytes rejection`);
+  if (fs.existsSync(emptyFilePath)) fs.unlinkSync(emptyFilePath);
 
   // -------------------------------------------------------------------------
   // Cleanup Test Artifacts
@@ -153,8 +220,15 @@ Substance threshold is met with extensive technical details and real patch diffs
     const cleanIndex = loadKnowledgeIndex();
     delete cleanIndex.items[testPkg.learning_id];
     delete cleanIndex.items[fakePkg.learning_id];
+    delete cleanIndex.items[rulePkg.learning_id];
     cleanIndex.total_verified_learnings = Object.keys(cleanIndex.items).length;
     fs.writeFileSync(INDEX_PATH, JSON.stringify(cleanIndex, null, 2), 'utf-8');
+
+    // Clean test checkpoint
+    delete checkpoints.checkpoints[testPkg.repository];
+    delete checkpoints.checkpoints[fakePkg.repository];
+    delete checkpoints.checkpoints[rulePkg.repository];
+    fs.writeFileSync(checkpointsPath, JSON.stringify(checkpoints, null, 2), 'utf-8');
   } catch (cleanErr) {
     console.warn(`Cleanup note: ${cleanErr.message}`);
   }

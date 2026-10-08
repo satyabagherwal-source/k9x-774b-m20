@@ -679,12 +679,15 @@ export async function autoCommitAndPushZeroClone(audit) {
   if (process.env.AGENT_NAME) {
     // When running inside the multi-agent parallel fleet, child workers must NOT
     // execute git commit/push concurrently. The fleet orchestrator commits at batch completion.
-    return true;
+    return { success: true, deferredToFleet: true };
   }
   console.log(`\n[GIT AUTO-PUSH] Synchronizing Master Brain (atomic rebase retry)...`);
   const commitMsg = `feat(harvest): Zero-Clone 24/7 harvest from ${audit.name} [skip ci]`;
   const res = await pushWithRebaseRetry(commitMsg, 5, BRAIN_ROOT);
-  return res.success;
+  if (!res.success) {
+    throw new Error('FAILED_PERSISTENCE: Remote git push failed to synchronize Master Brain');
+  }
+  return res;
 }
 
 
@@ -840,7 +843,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
 
         // 3. HARD INVARIANT ASSERTION:
         // LEARNING_SUCCESS = extraction_success AND validation_success AND brain_write_success AND brain_readback_success AND index_update_success
-        if (!gatewayResult.success || gatewayResult.status !== LEARNING_STATUS.VERIFIED) {
+        if (!gatewayResult.success || gatewayResult.status !== LEARNING_STATUS.VERIFIED_LEARNING) {
           console.error(`❌ [PERSISTENCE GATE FAILURE] ${target.slug} status: ${gatewayResult.status}. NOT marking as completed.`);
           results.push({
             target: target.slug,
@@ -859,7 +862,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
         results.push({
           target: target.slug,
           platform: target.type,
-          status: 'VERIFIED',
+          status: LEARNING_STATUS.VERIFIED_LEARNING,
           learningId: gatewayResult.learning_id,
           promotedRules: gatewayResult.promoted_rules ? gatewayResult.promoted_rules.length : 0,
           fixes: audit.fixCommits.length,
@@ -883,7 +886,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
       }
       console.error(`[ERROR] Zero-clone processing failed for ${target.slug}: ${err.message}`);
       captureHarvestFailureIncident(BRAIN_ROOT, target, err);
-      results.push({ target: target.slug, status: 'FAILED', error: err.message });
+      results.push({ target: target.slug, status: LEARNING_STATUS.FAILED_PERSISTENCE, error: err.message });
     } finally {
       releaseTargetLock(target.slug);
     }
@@ -893,8 +896,8 @@ export async function runZeroCloneHarvester(customUrls = null) {
   console.log(`\n======================================================================`);
   console.log(`🏁 ZERO-CLONE BATCH COMPLETE (0 Bytes Cloned to Disk)`);
   console.log(`Total Targets : ${queue.length}`);
-  console.log(`Verified into Brain : ${results.filter((r) => r.status === 'VERIFIED' || r.status === 'SUCCESS').length}`);
-  console.log(`Failed / Incomplete : ${results.filter((r) => r.status !== 'VERIFIED' && r.status !== 'SUCCESS' && r.status !== 'SKIPPED_UP_TO_DATE' && r.status !== 'SKIPPED_LOCKED_BY_ANOTHER_AGENT').length}`);
+  console.log(`Verified into Brain : ${results.filter((r) => r.status === LEARNING_STATUS.VERIFIED_LEARNING).length}`);
+  console.log(`Failed / Incomplete : ${results.filter((r) => r.status !== LEARNING_STATUS.VERIFIED_LEARNING && r.status !== 'SKIPPED_UP_TO_DATE' && r.status !== 'SKIPPED_LOCKED_BY_ANOTHER_AGENT').length}`);
   console.log(`======================================================================\n`);
 
   if (circuitTrippedInRun) {
@@ -906,7 +909,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
   }
 
   // Auto-Discovery: If all existing targets are up to date, scout fresh top repositories
-  const successCount = results.filter((r) => r.status === 'VERIFIED' || r.status === 'SUCCESS').length;
+  const successCount = results.filter((r) => r.status === LEARNING_STATUS.VERIFIED_LEARNING).length;
   const skipScout = process.argv.includes('--no-scout');
 
   if (successCount === 0 && !isCustomRun && !skipScout) {

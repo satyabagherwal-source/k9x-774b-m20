@@ -421,6 +421,9 @@ export async function autoCommitAndPushBrain(repoMeta) {
   console.log(`\n[GIT AUTO-PUSH] Synchronizing Master Brain with GitHub remote (atomic rebase retry)...`);
   const commitMsg = `feat(brain): Batch Auto-Harvest learning from ${repoMeta.owner}/${repoMeta.repo}`;
   const res = await pushWithRebaseRetry(commitMsg, 5, BRAIN_ROOT);
+  if (!res.success) {
+    throw new Error('FAILED_PERSISTENCE: Remote git push failed to synchronize Master Brain');
+  }
   return res.success;
 }
 
@@ -536,8 +539,8 @@ export async function runBatchHarvester(urlList = null) {
       // 2. Submit to Brain Learning Gateway (Validate -> Write -> Readback -> Promote -> Readback -> Index)
       const gatewayResult = await submitToBrainGateway(learningPkg);
 
-      // 3. Hard Invariant Assertion
-      if (!gatewayResult.success || gatewayResult.status !== LEARNING_STATUS.VERIFIED) {
+      // 3. Hard Invariant Assertion: EXTRACTED ≠ LEARNED
+      if (!gatewayResult.success || gatewayResult.status !== LEARNING_STATUS.VERIFIED_LEARNING) {
         console.error(`❌ [PERSISTENCE GATE FAILURE] ${repoMeta.slug} status: ${gatewayResult.status}. NOT marking as completed.`);
         results.push({
           repo: repoMeta.slug,
@@ -556,7 +559,7 @@ export async function runBatchHarvester(urlList = null) {
 
       results.push({
         repo: repoMeta.slug,
-        status: 'VERIFIED',
+        status: LEARNING_STATUS.VERIFIED_LEARNING,
         learningId: gatewayResult.learning_id,
         promotedRules: gatewayResult.promoted_rules ? gatewayResult.promoted_rules.length : 0,
         commitsAnalyzed: audit.commitCount,
@@ -567,7 +570,7 @@ export async function runBatchHarvester(urlList = null) {
       console.error(`[ERROR] Failed processing ${repoMeta.slug}: ${err.message}`);
       results.push({
         repo: repoMeta.slug,
-        status: 'FAILED',
+        status: LEARNING_STATUS.FAILED_PERSISTENCE,
         error: err.message
       });
     } finally {
@@ -595,8 +598,8 @@ export async function runBatchHarvester(urlList = null) {
   console.log(`🏁 BATCH AUTO-HARVEST COMPLETE`);
   console.log(`======================================================================`);
   console.log(`Total Targets : ${targets.length}`);
-  console.log(`Successful    : ${results.filter(r => r.status === 'SUCCESS').length}`);
-  console.log(`Failed        : ${results.filter(r => r.status === 'FAILED').length}`);
+  console.log(`Verified into Brain : ${results.filter(r => r.status === LEARNING_STATUS.VERIFIED_LEARNING).length}`);
+  console.log(`Failed / Incomplete : ${results.filter(r => r.status !== LEARNING_STATUS.VERIFIED_LEARNING).length}`);
   results.forEach(r => {
     console.log(` - ${r.repo}: ${r.status} ${r.commitsAnalyzed ? `(${r.commitsAnalyzed} commits, ${r.fixesFound} fixes)` : `(${r.error || ''})`}`);
   });
