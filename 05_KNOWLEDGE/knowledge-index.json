@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T05:43:06.619Z",
-  "total_verified_learnings": 2952,
+  "last_updated": "2026-10-09T05:45:48.336Z",
+  "total_verified_learnings": 2953,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -70844,6 +70844,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T05:43:06.619Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-baai-bge-m3-mv0jkuu1": {
+      "learning_id": "learn-huggingface-hf-baai-bge-m3-mv0jkuu1",
+      "source": "BAAI/bge-m3",
+      "repository": "BAAI/bge-m3",
+      "slug": "hf-baai-bge-m3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/BAAI/bge-m3",
+      "source_version": "hf-baai-bge-m3",
+      "content_hash": "44e022c9b9287d8acae911428495d401bd74327be358c051402369904b067359",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T05:45:48.336Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
