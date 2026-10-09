@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:31:40.040Z",
+  "last_updated": "2026-10-09T06:34:23.147Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1037,6 +1037,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:31:40.040Z"
+    },
+    "MiniMaxAI/MiniMax-H3": {
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-minimaxai-minimax-h3-mv0lbbw8",
+      "content_hash": "d32ba76f49edc9360957871bf57efae934b1bb5a8a6c260d3780dbd6d21fe5ea",
+      "verified_at": "2026-10-09T06:34:23.147Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:34:23.147Z"
     }
   }
 }
