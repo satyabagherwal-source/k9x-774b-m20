@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T13:25:40.028Z",
-  "total_verified_learnings": 3106,
+  "last_updated": "2026-10-09T13:28:43.865Z",
+  "total_verified_learnings": 3107,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -74540,6 +74540,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T13:25:40.028Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv1046ka": {
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv1046ka",
+      "source": "Qwen/Qwen3-VL-8B-Instruct",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "slug": "hf-qwen-qwen3-vl-8b-instruct",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
+      "source_version": "hf-qwen-qwen3-vl-8b-instruct",
+      "content_hash": "74663747718ec1420583d4542535f45f0b3e5e3c451fead00b19b440037b1ccd",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T13:28:43.865Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
