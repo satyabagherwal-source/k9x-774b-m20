@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T18:18:24.865Z",
+  "last_updated": "2026-10-09T18:21:08.052Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1140,15 +1140,15 @@
       "repository": "stabilityai/stable-diffusion-3-medium",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv0xvp5x",
-      "content_hash": "0a1c5741dd4359622df69a62be64ad36c98c2c4804fb80380ea88eaa4f35cbea",
-      "verified_at": "2026-10-09T12:26:08.860Z",
+      "learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv1ak7qo",
+      "content_hash": "cfdd1494c7da4d1b9933fe1e790e6bfb4e2402d48dd0a591d4906817c00ca548",
+      "verified_at": "2026-10-09T18:21:08.052Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T12:26:08.860Z"
+      "last_updated": "2026-10-09T18:21:08.052Z"
     },
     "bigscience/bloom": {
       "repository": "bigscience/bloom",

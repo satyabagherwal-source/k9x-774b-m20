@@ -3,8 +3,8 @@
 > **Source Version**: `hf-stability`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T12:26:08.805Z  
-> **Learning ID**: `learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv0xvp5x`  
+> **Timestamp**: 2026-10-09T18:21:08.016Z  
+> **Learning ID**: `learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv1ak7qo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/stabilityai/stable-diffusion-3-medium](https://huggingface.co/stabilityai/stable-diffusion-3-medium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T12:26:08.438Z  
+> **Harvest Timestamp**: 2026-10-09T18:21:07.798Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
