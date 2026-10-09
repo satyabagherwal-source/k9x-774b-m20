@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-09T19:16:44.018Z",
+  "lastUpdated": "2026-10-09T19:19:27.810Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-09T19:16:20.517Z",
-        "lastHarvestedAt": "2026-10-09T19:16:20.517Z",
-        "totalHarvested": 1426,
+        "lastActiveAt": "2026-10-09T19:19:30.639Z",
+        "lastHarvestedAt": "2026-10-09T19:19:30.639Z",
+        "totalHarvested": 1427,
         "lastError": null
       },
       {
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "HEALTHY",
-      "remaining": 20,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": "2026-10-09T19:16:03.352Z",
-      "reason": null,
+      "status": "EXHAUSTED",
+      "remaining": 0,
+      "resetEpoch": 1791577168483,
+      "resetAt": "2026-10-09T20:19:28.483Z",
+      "trippedAt": "2026-10-09T19:19:13.483Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Areact-components%20language%3Atypescript%20stars%3A%3E2500%20sort%3Astars&per_page=15&page=1)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
