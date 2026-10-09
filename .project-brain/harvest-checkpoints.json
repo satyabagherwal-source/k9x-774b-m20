@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:34:23.147Z",
+  "last_updated": "2026-10-09T06:37:01.163Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1051,6 +1051,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:34:23.147Z"
+    },
+    "Qwen/Qwen3.8-Flash-Next": {
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv0lepu8",
+      "content_hash": "d19b880ff6941e993cbdfc49cf7d5ec75688d800b7e9b610db1563739f1d0525",
+      "verified_at": "2026-10-09T06:37:01.163Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:37:01.163Z"
     }
   }
 }
