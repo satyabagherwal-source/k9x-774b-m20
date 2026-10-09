@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T12:43:35.503Z",
+  "last_updated": "2026-10-09T12:46:30.467Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1238,15 +1238,15 @@
       "repository": "baidu/Unlimited-OCR",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-baidu-unlimited-ocr-mv0mszmy",
-      "content_hash": "523282a3c649ab0c529a7529ab823abd8fdb8a1bf2ddd64ecb75d2b3a7ea52b5",
-      "verified_at": "2026-10-09T07:16:06.680Z",
+      "learning_id": "learn-huggingface-hf-baidu-unlimited-ocr-mv0ylvrj",
+      "content_hash": "d06822a957efb95f3b1bffb29b8ba1b15627cbe064ad7ef799c19cde9de4d741",
+      "verified_at": "2026-10-09T12:46:30.467Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T07:16:06.680Z"
+      "last_updated": "2026-10-09T12:46:30.467Z"
     },
     "Aleph-Alpha/Kolibri-1": {
       "repository": "Aleph-Alpha/Kolibri-1",
