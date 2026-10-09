@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T04:07:38.976Z",
+  "last_updated": "2026-10-09T04:10:23.448Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -393,6 +393,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T04:07:38.976Z"
+    },
+    "prism-ml/Ternary-Bonsai-2-27B-gguf": {
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv0g65gl",
+      "content_hash": "5cd4fe7229b3679998bb33c9631456c3994c9b8faadc92ce9042de89bc38ec56",
+      "verified_at": "2026-10-09T04:10:23.448Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T04:10:23.448Z"
     }
   }
 }
