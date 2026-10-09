@@ -3812,3 +3812,7 @@ https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF
 # --- Automatically Discovered by AI Scout Engine [2026-10-09T05:55:11.854Z] ---
 # [MOBILE-CROSS-PLATFORM] maxrave-dev/kotlin-footguns (793 score) - Battle-tested agent skills mapping the footguns of Kotlin, Compose Multiplatform
 https://github.com/maxrave-dev/kotlin-footguns
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-09T07:21:44.528Z] ---
+# [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-4B (9280 score) - Verified Hugging Face Model: Qwen/Qwen3-4B (728 likes, 9603998 downloads)
+https://huggingface.co/Qwen/Qwen3-4B

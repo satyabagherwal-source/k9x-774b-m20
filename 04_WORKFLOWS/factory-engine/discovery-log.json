@@ -17194,5 +17194,17 @@
     "qualityScore": 793,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-09T05:54:51.793Z"
+  },
+  {
+    "name": "Qwen/Qwen3-4B",
+    "fullName": "Qwen/Qwen3-4B",
+    "url": "https://huggingface.co/Qwen/Qwen3-4B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Qwen/Qwen3-4B (728 likes, 9603998 downloads)",
+    "likes": 728,
+    "downloads": 9603998,
+    "qualityScore": 9280,
+    "discoveredAt": "2026-10-09T07:21:44.527Z"
   }
 ]
