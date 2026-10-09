@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T12:31:51.930Z",
+  "last_updated": "2026-10-09T12:34:43.532Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1182,15 +1182,15 @@
       "repository": "meta-llama/Llama-2-7b-chat-hf",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv0mek3x",
-      "content_hash": "bbfaf5fd0e5b00ae87298e04f2d4997b807f25b2b11b43ef2c61a7a2ef113bce",
-      "verified_at": "2026-10-09T07:04:53.372Z",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv0y6qac",
+      "content_hash": "8cc9b940d25daaf987f2afca3abb67829ffe98fdeca45cc2f1f30c7bf8419159",
+      "verified_at": "2026-10-09T12:34:43.532Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T07:04:53.372Z"
+      "last_updated": "2026-10-09T12:34:43.532Z"
     },
     "meta-llama/Llama-2-7b": {
       "repository": "meta-llama/Llama-2-7b",
