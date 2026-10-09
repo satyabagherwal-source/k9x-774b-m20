@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T04:35:38.719Z",
+  "last_updated": "2026-10-09T04:38:17.416Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -533,6 +533,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T04:35:38.719Z"
+    },
+    "Comfy-Org/Qwen-Image-2.1": {
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv0h6149",
+      "content_hash": "1ff13fa64f34414c34ccc492f412338217eca48dc791984c8318794fbdc6c3f5",
+      "verified_at": "2026-10-09T04:38:17.416Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T04:38:17.416Z"
     }
   }
 }

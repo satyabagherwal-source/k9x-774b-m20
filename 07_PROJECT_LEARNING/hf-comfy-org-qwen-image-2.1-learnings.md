@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1))  
+> **Source Version**: `hf-comfy-org`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T04:38:17.385Z  
+> **Learning ID**: `learn-huggingface-hf-comfy-org-qwen-image-2-1-mv0h6149`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Comfy-Org/Qwen-Image-2.1
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:07:55.615Z  
+> **Harvest Timestamp**: 2026-10-09T04:38:17.116Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6612052 downloads | 961 likes
+- **Stars / Engagement**: 7472445 downloads | 989 likes
 
 ---
 
