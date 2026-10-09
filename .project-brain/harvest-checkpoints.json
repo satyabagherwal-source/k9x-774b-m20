@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T08:32:45.117Z",
+  "last_updated": "2026-10-09T08:35:34.845Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1625,6 +1625,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T08:32:45.117Z"
+    },
+    "mudler/locate-anything.cpp-gguf": {
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv0pn6rq",
+      "content_hash": "7ec3464d623f880c81572b5280020f5d748f6e64f38110211b019b3e682a8722",
+      "verified_at": "2026-10-09T08:35:34.845Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T08:35:34.845Z"
     }
   }
 }
