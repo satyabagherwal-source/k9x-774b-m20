@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T15:14:23.082Z",
+  "last_updated": "2026-10-09T15:17:15.897Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -314,15 +314,15 @@
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv0ru6sj",
-      "content_hash": "b8c3c3453bc461731d3f39b3775713e8e3f26e86f1055420b5940cb1ee3aaef8",
-      "verified_at": "2026-10-09T09:37:00.682Z",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv13zr9a",
+      "content_hash": "864bd83baeaa099a3c1085f8c08f65489b6c64b1b01fa72d207e7ee1e7cbd6d4",
+      "verified_at": "2026-10-09T15:17:15.897Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T09:37:00.682Z"
+      "last_updated": "2026-10-09T15:17:15.897Z"
     },
     "XingChen-AGI/TeleOCR": {
       "repository": "XingChen-AGI/TeleOCR",
