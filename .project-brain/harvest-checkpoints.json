@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T07:16:06.680Z",
+  "last_updated": "2026-10-09T07:18:51.980Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1247,6 +1247,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T07:16:06.680Z"
+    },
+    "Aleph-Alpha/Kolibri-1": {
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv0mwj6l",
+      "content_hash": "3b83dcda8463564a6553bcd64acf668022b6829986fbf1525f0bf8da988dbe64",
+      "verified_at": "2026-10-09T07:18:51.980Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T07:18:51.980Z"
     }
   }
 }
