@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T15:32:09.515Z",
+  "last_updated": "2026-10-09T15:34:57.136Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -398,15 +398,15 @@
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv0sfvar",
-      "content_hash": "4e1f271ab83ecd1bf6eae933cdbaa1f49b80ba56f003d244eda7d9c1dc62b79d",
-      "verified_at": "2026-10-09T09:53:52.233Z",
+      "learning_id": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv14mi43",
+      "content_hash": "f299318a3bf73df85a9fb6110ba8ee05f703a1f5d0e5ed20a34bf187e67e0735",
+      "verified_at": "2026-10-09T15:34:57.136Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T09:53:52.233Z"
+      "last_updated": "2026-10-09T15:34:57.136Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
