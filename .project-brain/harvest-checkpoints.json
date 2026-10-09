@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T03:37:12.969Z",
+  "last_updated": "2026-10-09T03:39:53.888Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -211,6 +211,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T03:37:12.969Z"
+    },
+    "black-forest-labs/FLUX.1-dev": {
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv0f2xrx",
+      "content_hash": "ef5d51e315f8eb010c736bd85dff869199ceda07a950fce2ce38e47605b59173",
+      "verified_at": "2026-10-09T03:39:53.888Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T03:39:53.888Z"
     }
   }
 }
