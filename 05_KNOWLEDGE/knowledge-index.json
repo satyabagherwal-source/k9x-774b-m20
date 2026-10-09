@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T03:39:53.871Z",
-  "total_verified_learnings": 2906,
+  "last_updated": "2026-10-09T03:42:42.165Z",
+  "total_verified_learnings": 2909,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -69740,6 +69740,78 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T03:39:53.871Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv0f6bv5": {
+      "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv0f6bv5",
+      "source": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "slug": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "content_hash": "d18349a4284695ccf5ae697bcba387b02bcc0fc35fcb0810bab6938cecf66bd5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T03:42:32.098Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv0f6hqc": {
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv0f6hqc",
+      "source": "autotrust/GEV-26B-Decide-NVFP4",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "slug": "hf-autotrust-gev-26b-decide-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+      "content_hash": "ae904f077f5ff5557f573f7192c1c5fea1d1714674e3b2547e74265ad84b9eb2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T03:42:39.701Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv0f6jmr": {
+      "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv0f6jmr",
+      "source": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "slug": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "content_hash": "43ca96c4141253df4c89132f882176a9d30e9b1ede64ef1315cda575524dc707",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T03:42:42.165Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T03:39:53.888Z",
+  "last_updated": "2026-10-09T03:42:42.179Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -225,6 +225,48 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T03:39:53.888Z"
+    },
+    "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv0f6bv5",
+      "content_hash": "d18349a4284695ccf5ae697bcba387b02bcc0fc35fcb0810bab6938cecf66bd5",
+      "verified_at": "2026-10-09T03:42:32.112Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T03:42:32.112Z"
+    },
+    "autotrust/GEV-26B-Decide-NVFP4": {
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv0f6hqc",
+      "content_hash": "ae904f077f5ff5557f573f7192c1c5fea1d1714674e3b2547e74265ad84b9eb2",
+      "verified_at": "2026-10-09T03:42:39.714Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T03:42:39.714Z"
+    },
+    "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF": {
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv0f6jmr",
+      "content_hash": "43ca96c4141253df4c89132f882176a9d30e9b1ede64ef1315cda575524dc707",
+      "verified_at": "2026-10-09T03:42:42.178Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T03:42:42.179Z"
     }
   }
 }

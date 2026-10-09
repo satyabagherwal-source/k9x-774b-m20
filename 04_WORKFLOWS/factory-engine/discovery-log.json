@@ -17143,5 +17143,41 @@
     "qualityScore": 1102,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-09T03:02:38.009Z"
+  },
+  {
+    "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "fullName": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF (681 likes, 492022 downloads)",
+    "likes": 681,
+    "downloads": 492022,
+    "qualityScore": 8810,
+    "discoveredAt": "2026-10-09T03:42:21.331Z"
+  },
+  {
+    "name": "autotrust/GEV-26B-Decide-NVFP4",
+    "fullName": "autotrust/GEV-26B-Decide-NVFP4",
+    "url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: autotrust/GEV-26B-Decide-NVFP4 (165 likes, 19655 downloads)",
+    "likes": 165,
+    "downloads": 19655,
+    "qualityScore": 3650,
+    "discoveredAt": "2026-10-09T03:42:21.331Z"
+  },
+  {
+    "name": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "fullName": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF (157 likes, 612411 downloads)",
+    "likes": 157,
+    "downloads": 612411,
+    "qualityScore": 3570,
+    "discoveredAt": "2026-10-09T03:42:21.331Z"
   }
 ]

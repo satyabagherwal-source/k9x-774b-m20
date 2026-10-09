@@ -3800,3 +3800,11 @@ https://huggingface.co/Cactus-Compute/whistle
 # --- Automatically Discovered by AI Scout Engine [2026-10-09T03:02:52.319Z] ---
 # [DATABASE-STORAGE-ENGINES] Open-Source-Legal/OpenContracts (1102 score) - The open document intelligence platform for builders and hackers - DMS for the a
 https://github.com/Open-Source-Legal/OpenContracts
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-09T03:42:21.332Z] ---
+# [HUGGINGFACE-AI-MODELS] orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF (8810 score) - Verified Hugging Face Model: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF (681 
+https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF
+# [HUGGINGFACE-AI-MODELS] autotrust/GEV-26B-Decide-NVFP4 (3650 score) - Verified Hugging Face Model: autotrust/GEV-26B-Decide-NVFP4 (165 likes, 19655 do
+https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4
+# [HUGGINGFACE-AI-MODELS] SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF (3570 score) - Verified Hugging Face Model: SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF (
+https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF
