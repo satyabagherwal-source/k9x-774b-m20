@@ -43,4 +43,7 @@ Desktop.ini
 # Local Brain Secrets
 .brain-secrets.json
 
+# Local Runtime Cache
+.project-brain/cache/
+
 
