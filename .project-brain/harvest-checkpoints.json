@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T05:20:34.350Z",
+  "last_updated": "2026-10-09T05:23:34.220Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -757,6 +757,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T05:20:34.350Z"
+    },
+    "canberkkkkkk/ema-lightning": {
+      "repository": "canberkkkkkk/ema-lightning",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv0is9ep",
+      "content_hash": "955eb6d9d6027771865011995cd91ef921578971c259d06570cac406026e31fd",
+      "verified_at": "2026-10-09T05:23:34.220Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T05:23:34.220Z"
     }
   }
 }
