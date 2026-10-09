@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T23:28:49.792Z",
+  "last_updated": "2026-10-09T23:31:53.594Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1728,15 +1728,15 @@
       "repository": "microsoft/FrogNano-4B-2609",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv19dchs",
-      "content_hash": "d35f3183ccdc16840bc6ae9f48c582fbe4e7bdc15c92421925b69ee68371ae54",
-      "verified_at": "2026-10-09T17:47:48.017Z",
+      "learning_id": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv1lnupp",
+      "content_hash": "d3534931201e1b997117644452e1c582b6dcc0e425bdc864ee73234e8807093b",
+      "verified_at": "2026-10-09T23:31:53.594Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T17:47:48.017Z"
+      "last_updated": "2026-10-09T23:31:53.594Z"
     }
   }
 }
