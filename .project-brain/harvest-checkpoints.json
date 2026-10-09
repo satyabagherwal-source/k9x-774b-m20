@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T08:55:23.918Z",
+  "last_updated": "2026-10-09T08:58:12.399Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -90,15 +90,15 @@
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv0dkiap",
-      "content_hash": "f9b3f723588b9a9fbdcceefce605e50f8dd1c19be8a9d4f88fc51a9bf7d90e75",
-      "verified_at": "2026-10-09T02:57:34.429Z",
+      "learning_id": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv0qga9m",
+      "content_hash": "48c6578a7bc00e78f27a88a3d3a6e91bd4c67cce3a74e428041690006dd6761f",
+      "verified_at": "2026-10-09T08:58:12.399Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T02:57:34.429Z"
+      "last_updated": "2026-10-09T08:58:12.399Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
