@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T05:58:22.141Z",
+  "last_updated": "2026-10-09T06:11:54.993Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -925,6 +925,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T05:58:22.141Z"
+    },
+    "Comfy-Org/MiniMax-H3": {
+      "repository": "Comfy-Org/MiniMax-H3",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv0kifni",
+      "content_hash": "c128ae3b848e0770fbdf6ce11f7c4461ef8215a4f9dc0a51c3f7f873a8df86f0",
+      "verified_at": "2026-10-09T06:11:54.993Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:11:54.993Z"
     }
   }
 }
