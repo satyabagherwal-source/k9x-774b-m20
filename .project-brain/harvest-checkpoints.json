@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T17:47:48.017Z",
+  "last_updated": "2026-10-09T17:50:52.536Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1000,15 +1000,15 @@
       "repository": "hexgrad/Kokoro-82M",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-hexgrad-kokoro-82m-mv0wurm9",
-      "content_hash": "f6c02553bcbd0b5edf7a4d99d11615fc2a10b0d483ccec7682426569b2c8f73f",
-      "verified_at": "2026-10-09T11:57:25.758Z",
+      "learning_id": "learn-huggingface-hf-hexgrad-kokoro-82m-mv19hav3",
+      "content_hash": "2be8bdaab62f945f099bbd4040ebef25ebb28a56116753bc8a7287ea002e7c89",
+      "verified_at": "2026-10-09T17:50:52.536Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T11:57:25.758Z"
+      "last_updated": "2026-10-09T17:50:52.536Z"
     },
     "openai/whisper-large-v3": {
       "repository": "openai/whisper-large-v3",
