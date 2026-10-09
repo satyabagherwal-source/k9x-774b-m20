@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T01:22:38.607Z",
+  "last_updated": "2026-10-09T01:24:31.052Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -20,127 +20,127 @@
       "repository": "meta-llama/Llama-3.2-1B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-meta-llama-llama-3-2-1b-mv0a5zd8",
-      "content_hash": "019b9af213faaef0f1c6821639c6ad61292a0220022316a99e4f0a019defff17",
-      "verified_at": "2026-10-09T01:22:17.855Z",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-3-2-1b-mv0a8d5j",
+      "content_hash": "5c8148e210f9c03b7165f244858c217fdc0ebbe3af6c185b92db99d723f5587c",
+      "verified_at": "2026-10-09T01:24:09.032Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T01:22:17.855Z"
+      "last_updated": "2026-10-09T01:24:09.032Z"
     },
     "convaiinnovations/laya": {
       "repository": "convaiinnovations/laya",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv0a63uk",
-      "content_hash": "9f04975426c899043050081fc8c0f3deb3f2e6cda79f2ba13a60bb4f84fee962",
-      "verified_at": "2026-10-09T01:22:23.662Z",
+      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv0a8hi4",
+      "content_hash": "44a04653fc0081edfac39df5d7bc5aa5c086d35356f175229e1dd26c493c8349",
+      "verified_at": "2026-10-09T01:24:14.668Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T01:22:23.662Z"
+      "last_updated": "2026-10-09T01:24:14.668Z"
     },
     "Edge0/Audio8-ASR-Infinite": {
       "repository": "Edge0/Audio8-ASR-Infinite",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv0a65pz",
-      "content_hash": "9f9809a5bf343a6e7ca04b4745fb476098ff8131ac1ae6b91fbd6616c2c9faf5",
-      "verified_at": "2026-10-09T01:22:26.105Z",
+      "learning_id": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv0a8jen",
+      "content_hash": "a3907a28f96b9c9a7b532d182f8cddefe80c1859e523e804d8d563486eb6e0b4",
+      "verified_at": "2026-10-09T01:24:17.133Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T01:22:26.105Z"
+      "last_updated": "2026-10-09T01:24:17.133Z"
     },
     "abenzerps/Qwen-Image-2.1-Uncensored-GGUF": {
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv0a69kw",
-      "content_hash": "7e1981f90893cdf1283dc59e03f3dab93c2b3958f10d19fd87775305cd61cd58",
-      "verified_at": "2026-10-09T01:22:31.090Z",
+      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv0a8nb9",
+      "content_hash": "260bfe542c01181c3665c13bb284f2261f348d4e8cd167d30b9cad464a8fe52b",
+      "verified_at": "2026-10-09T01:24:22.196Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T01:22:31.090Z"
+      "last_updated": "2026-10-09T01:24:22.196Z"
     },
     "sentence-transformers/all-MiniLM-L6-v2": {
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv0a6bi0",
-      "content_hash": "7f4636b52c22e6d573c03794b76ee78c5e69fbd88065204d59967913c7cf2f0d",
-      "verified_at": "2026-10-09T01:22:33.578Z",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv0a8pdy",
+      "content_hash": "a810bafeb48f7329698537d28081ba82d74b1aec47723ffb2ec39a7bd5a7eb79",
+      "verified_at": "2026-10-09T01:24:24.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T01:22:33.578Z"
+      "last_updated": "2026-10-09T01:24:24.902Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv0a6dg6",
-      "content_hash": "dabf659136e4221417f138a7946788fad0c4b886c54669a9fd22063b315dd31e",
-      "verified_at": "2026-10-09T01:22:36.106Z",
+      "learning_id": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv0a8r7q",
+      "content_hash": "61fd21508d2bcde209b692cd460f54388ca2a50453f220ccc5e34a531ccc4948",
+      "verified_at": "2026-10-09T01:24:27.253Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T01:22:36.107Z"
+      "last_updated": "2026-10-09T01:24:27.253Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-epicweb-dev-advanced-react-patterns-mv0a6der",
-      "content_hash": "f63154f25fe3ac6d6a2c8908a29185e975c63b0a402e04ef902674d2d0fdceaf",
-      "verified_at": "2026-10-09T01:22:36.054Z",
+      "learning_id": "learn-github-epicweb-dev-advanced-react-patterns-mv0a8t0x",
+      "content_hash": "3c356b063bb833df2122974c0667638fefabe3c1e5630c18c749909cc15ac764",
+      "verified_at": "2026-10-09T01:24:29.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T01:22:36.054Z"
+      "last_updated": "2026-10-09T01:24:29.602Z"
     },
     "BAAI/bge-small-en-v1.5": {
       "repository": "BAAI/bge-small-en-v1.5",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv0a6fdn",
-      "content_hash": "98b9cf92da01a5f6d1179bfed279738136d11adea0d41681ba19529fc5688dd2",
-      "verified_at": "2026-10-09T01:22:38.607Z",
+      "learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv0a8t4o",
+      "content_hash": "7eb0f4948bba76d17f67073e6e18693d6a4b17e383425d35f9eb33364ce3af80",
+      "verified_at": "2026-10-09T01:24:29.730Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T01:22:38.607Z"
+      "last_updated": "2026-10-09T01:24:29.730Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-hasaneyldrm-exercises-dataset-mv0a6fci",
-      "content_hash": "8ee93765c2da122ff686f1c267ba215428b18a72966f5b8f5e062092ad1199bb",
-      "verified_at": "2026-10-09T01:22:38.576Z",
+      "learning_id": "learn-github-hasaneyldrm-exercises-dataset-mv0a8u52",
+      "content_hash": "248881d08f59233f022c58cdfc8017a928487d044e31f2fee25f7ab915aa33c3",
+      "verified_at": "2026-10-09T01:24:31.052Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T01:22:38.576Z"
+      "last_updated": "2026-10-09T01:24:31.052Z"
     }
   }
 }
