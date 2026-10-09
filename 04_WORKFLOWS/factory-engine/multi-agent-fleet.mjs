@@ -11,6 +11,7 @@ import {
 } from './master-circuit-breaker.mjs';
 import { runInternalKnowledgeSynthesis } from './internal-synthesizer.mjs';
 import { parseSourceUrl } from './zero-clone-harvester.mjs';
+import { getSourcesRegistry } from './upgrade-checker.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -184,6 +185,10 @@ export function getTargetForWorker(agentConfig, assignedSlugs = new Set()) {
   let currentDomain = 'general';
   const domainTargets = [];
   const generalBacklog = [];
+  const domainNextPass = [];
+  const generalNextPass = [];
+
+  const registry = getSourcesRegistry();
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -199,20 +204,47 @@ export function getTargetForWorker(agentConfig, assignedSlugs = new Set()) {
 
       if (assignedSlugs.has(parsed.slug)) continue;
 
-      // Check if already deeply harvested:
-      // If deeply harvested (>25KB with code diffs/architecture), skip ("unko nahi chhedana h").
-      // If completely missing OR only surface/shallow (<25KB), queue for deep restart!
+      // 1. Unharvested repos (Priority 1: First Pass)
       if (!isDeeplyHarvested(parsed.slug, BRAIN_ROOT)) {
         if (currentDomain === agentConfig.domain.toLowerCase()) {
           domainTargets.push(parsed);
         } else {
           generalBacklog.push(parsed);
         }
+      } else {
+        // 2. Harvested repos: Enqueued for Round-Robin Next Learning Pass
+        const key = (parsed.slug || parsed.repo || '').toLowerCase();
+        const entry = registry[key] || registry[parsed.slug] || null;
+        const lastCheckedEpoch = entry?.lastChecked ? new Date(entry.lastChecked).getTime() : 0;
+        const item = { ...parsed, lastCheckedEpoch };
+
+        if (currentDomain === agentConfig.domain.toLowerCase()) {
+          domainNextPass.push(item);
+        } else {
+          generalNextPass.push(item);
+        }
       }
     }
   }
 
-  const chosen = domainTargets[0] || generalBacklog[0] || null;
+  // Priority 1: Pick brand-new unharvested targets first
+  let chosen = domainTargets[0] || generalBacklog[0] || null;
+
+  // Priority 2: Next Learning Line (All harvested repos queued in FIFO rotation)
+  if (!chosen) {
+    domainNextPass.sort((a, b) => a.lastCheckedEpoch - b.lastCheckedEpoch);
+    generalNextPass.sort((a, b) => a.lastCheckedEpoch - b.lastCheckedEpoch);
+
+    // Cooldown window between re-probing the same repo (15 minutes)
+    const RECHECK_COOLDOWN_MS = 15 * 60 * 1000;
+    const now = Date.now();
+
+    const candidate = domainNextPass[0] || generalNextPass[0] || null;
+    if (candidate && (now - candidate.lastCheckedEpoch >= RECHECK_COOLDOWN_MS)) {
+      chosen = candidate;
+    }
+  }
+
   if (chosen) {
     assignedSlugs.add(chosen.slug);
   }

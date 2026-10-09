@@ -13,7 +13,14 @@
     "gitPushRetryLimit": 5,
     "currentActiveLocks": 0
   },
-  "lastUpdated": "2026-10-09T03:03:25.906Z",
+  "continuousLearningQueue": {
+    "status": "ACTIVE_ROUND_ROBIN",
+    "pass": 2,
+    "totalQueued": 1423,
+    "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
+    "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
+  },
+  "lastUpdated": "2026-10-09T03:30:00.000Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",

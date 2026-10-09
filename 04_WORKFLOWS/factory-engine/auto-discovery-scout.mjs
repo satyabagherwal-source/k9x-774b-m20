@@ -676,6 +676,30 @@ export function parseSourceUrl(rawUrl) {
   return null;
 }
 
+let cachedIndexedSlugs = null;
+let cachedIndexedMtime = 0;
+
+function getIndexedSlugsSet(brainRoot) {
+  const indexPath = path.join(brainRoot, '05_KNOWLEDGE', 'knowledge-index.json');
+  if (!fs.existsSync(indexPath)) return new Set();
+  try {
+    const stats = fs.statSync(indexPath);
+    if (cachedIndexedSlugs && cachedIndexedMtime === stats.mtimeMs) {
+      return cachedIndexedSlugs;
+    }
+    const index = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+    cachedIndexedSlugs = new Set();
+    for (const item of Object.values(index.items || {})) {
+      if (item.slug) cachedIndexedSlugs.add(item.slug.toLowerCase());
+      if (item.repository) cachedIndexedSlugs.add(item.repository.replace('/', '-').toLowerCase());
+    }
+    cachedIndexedMtime = stats.mtimeMs;
+    return cachedIndexedSlugs;
+  } catch (e) {
+    return new Set();
+  }
+}
+
 export function isDeeplyHarvested(slug, brainRoot = BRAIN_ROOT) {
   if (!slug) return false;
   const learningFile = path.join(brainRoot, '07_PROJECT_LEARNING', `${slug}-learnings.md`);
@@ -685,16 +709,8 @@ export function isDeeplyHarvested(slug, brainRoot = BRAIN_ROOT) {
     if (stats.size < 200) return false; // Corrupt/empty file requires harvest
 
     // 1. If recorded and verified in knowledge-index.json, it is verified empirical intelligence
-    const indexPath = path.join(brainRoot, '05_KNOWLEDGE', 'knowledge-index.json');
-    if (fs.existsSync(indexPath)) {
-      try {
-        const index = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
-        const isIndexed = Object.values(index.items || {}).some(
-          item => item.slug === slug || item.repository?.replace('/', '-').toLowerCase() === slug
-        );
-        if (isIndexed) return true;
-      } catch (e) {}
-    }
+    const indexedSlugs = getIndexedSlugsSet(brainRoot);
+    if (indexedSlugs.has(slug.toLowerCase())) return true;
 
     // 2. Hugging Face models/datasets: 2KB+ card with architecture/weights is complete
     if (slug.startsWith('hf-') && stats.size >= 1500) return true;

@@ -14,6 +14,7 @@
 #    - Chat: "Cloud harvester chalu karo" / "Cloud harvester stop karo"
 
 https://github.com/shadcn-ui/ui
+https://github.com/expressjs/cors
 https://github.com/tailwindlabs/tailwindcss
 https://github.com/vllm-project/vllm
 https://huggingface.co/meta-llama/Llama-3.2-1B

@@ -118,7 +118,18 @@ export async function shouldHarvestSource(targetMeta, options = { force: false }
     } catch (e) {}
   }
 
-  const recordedRevision = entry?.revisionIdentifier || entry?.lastCommitSha || null;
+  let recordedRevision = entry?.revisionIdentifier || entry?.lastCommitSha || null;
+
+  // Fallback: Extract recorded revision directly from dossier header if not in registry
+  if (!recordedRevision && hasLearningDoc) {
+    try {
+      const doc = fs.readFileSync(learningFile, 'utf-8');
+      const match = doc.match(/> \*\*Source Version\*\*: `?([a-zA-Z0-9_\-\.]+)`?/);
+      if (match && match[1] && match[1] !== 'HEAD') {
+        recordedRevision = match[1];
+      }
+    } catch (e) {}
+  }
 
   // If never harvested before, harvest is required
   if (!recordedRevision && !hasLearningDoc) {
@@ -139,6 +150,13 @@ export async function shouldHarvestSource(targetMeta, options = { force: false }
   } else if (targetMeta.isLocal && targetMeta.path) {
     currentRevision = fetchLocalProjectHead(targetMeta.path);
   }
+
+  // Record this check in sources-registry so FIFO rotation queue advances
+  recordSourceHarvest(targetMeta.slug || key, recordedRevision || currentRevision, {
+    name: targetMeta.name || targetMeta.repo,
+    officialUrl: targetMeta.webUrl || targetMeta.cleanUrl,
+    lastChecked: new Date().toISOString()
+  });
 
   // If we could not fetch current revision (offline or API down), fall back to safe check
   if (!currentRevision) {
