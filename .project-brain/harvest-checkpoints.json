@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:52:56.383Z",
+  "last_updated": "2026-10-09T06:56:19.414Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1135,6 +1135,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:52:56.383Z"
+    },
+    "stabilityai/stable-diffusion-3-medium": {
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv0m3jj5",
+      "content_hash": "2bf3f9eb2c1ec11cf15ae2c2c41dc53a09270ef0284e261656aece50b4b85126",
+      "verified_at": "2026-10-09T06:56:19.414Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:56:19.414Z"
     }
   }
 }

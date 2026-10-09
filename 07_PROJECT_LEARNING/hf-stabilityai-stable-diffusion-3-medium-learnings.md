@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/stabilityai/stable-diffusion-3-medium](https://huggingface.co/stabilityai/stable-diffusion-3-medium))  
+> **Source Version**: `hf-stability`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T06:56:19.361Z  
+> **Learning ID**: `learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv0m3jj5`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): stabilityai/stable-diffusion-3-medium
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/stabilityai/stable-diffusion-3-medium](https://huggingface.co/stabilityai/stable-diffusion-3-medium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:51:13.422Z  
+> **Harvest Timestamp**: 2026-10-09T06:56:19.053Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2653 downloads | 5059 likes
+- **Stars / Engagement**: 2697 downloads | 5060 likes
 
 ---
 
