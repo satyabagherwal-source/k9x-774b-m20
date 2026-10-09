@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T09:53:52.207Z",
-  "total_verified_learnings": 3034,
+  "last_updated": "2026-10-09T09:56:40.836Z",
+  "total_verified_learnings": 3035,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -72812,6 +72812,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T09:53:52.207Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv0sjhey": {
+      "learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv0sjhey",
+      "source": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "slug": "hf-viggle-qwen-image-2.1-viggle-turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+      "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
+      "content_hash": "4eecfa87e89f7652c3cd28e10b1228794d6f0a19524c5604fe6b9459fadbed0d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T09:56:40.836Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
