@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T08:04:05.222Z",
+  "last_updated": "2026-10-09T08:06:44.868Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1485,6 +1485,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T08:04:05.222Z"
+    },
+    "argmaxinc/whisperkit-coreml": {
+      "repository": "argmaxinc/whisperkit-coreml",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv0om3xg",
+      "content_hash": "08b6781a20d89f24f72b4e26315664f39f4c4d67f312f20912324153c5818a06",
+      "verified_at": "2026-10-09T08:06:44.868Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T08:06:44.868Z"
     }
   }
 }
