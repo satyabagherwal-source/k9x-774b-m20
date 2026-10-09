@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T11:16:07.666Z",
+  "last_updated": "2026-10-09T11:19:05.531Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -818,15 +818,15 @@
       "repository": "Cloudflare/clef-flash",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv0j6kjw",
-      "content_hash": "84f53cb6b57ad710594b89f48069231032efec62bf2da85ae0f8473ccd72bb5c",
-      "verified_at": "2026-10-09T05:34:41.852Z",
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv0vhgrb",
+      "content_hash": "168ccc98db51981e79e8d7e63beb3fa897310286172d837d2a8b14d34fde0c88",
+      "verified_at": "2026-10-09T11:19:05.531Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T05:34:41.852Z"
+      "last_updated": "2026-10-09T11:19:05.531Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
