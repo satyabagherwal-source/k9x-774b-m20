@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T21:31:03.636Z",
+  "last_updated": "2026-10-09T21:33:50.278Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -426,15 +426,15 @@
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv152ixl",
-      "content_hash": "2880c77dd906d5560a712948e9fbec697849479d7b30c1116514a801bd93a9b9",
-      "verified_at": "2026-10-09T15:47:24.690Z",
+      "learning_id": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv1hg170",
+      "content_hash": "81695b564ce5ea2c5db3754141480cdf7fe5116248c29419593779bf9bd3f5d2",
+      "verified_at": "2026-10-09T21:33:50.278Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T15:47:24.690Z"
+      "last_updated": "2026-10-09T21:33:50.278Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
