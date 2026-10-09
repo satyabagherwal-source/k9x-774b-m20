@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:50:12.246Z",
+  "last_updated": "2026-10-09T06:52:56.383Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1121,6 +1121,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:50:12.246Z"
+    },
+    "zai-org/GLM-5.2": {
+      "repository": "zai-org/GLM-5.2",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-zai-org-glm-5-2-mv0lz6vd",
+      "content_hash": "df0fc717b0dd2002c590a0bb43f8ff0082bb784e0cd576dcfbd5539173251f5c",
+      "verified_at": "2026-10-09T06:52:56.383Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:52:56.383Z"
     }
   }
 }
