@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T08:26:39.864Z",
+  "last_updated": "2026-10-09T08:29:41.905Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1597,6 +1597,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T08:26:39.864Z"
+    },
+    "BAAI/bge-large-en-v1.5": {
+      "repository": "BAAI/bge-large-en-v1.5",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv0pfmg8",
+      "content_hash": "768ea91c4a18950fb28858f21dd1560fa61d28389f15d97aa5aa129d1ca172b5",
+      "verified_at": "2026-10-09T08:29:41.905Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T08:29:41.905Z"
     }
   }
 }
