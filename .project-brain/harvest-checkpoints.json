@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T07:07:37.091Z",
+  "last_updated": "2026-10-09T07:10:22.795Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1205,6 +1205,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T07:07:37.091Z"
+    },
+    "mistralai/Mixtral-8x7B-Instruct-v0.1": {
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv0mlmab",
+      "content_hash": "b9ef6b16534e9dab233065f23c58ac31f9a19269b116da3726b9a02df23d1dc3",
+      "verified_at": "2026-10-09T07:10:22.795Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T07:10:22.795Z"
     }
   }
 }
