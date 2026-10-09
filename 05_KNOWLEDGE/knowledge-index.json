@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T05:06:32.276Z",
-  "total_verified_learnings": 2939,
+  "last_updated": "2026-10-09T05:09:13.649Z",
+  "total_verified_learnings": 2940,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -70532,6 +70532,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T05:06:32.276Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-psrben-visionhope-mv0i9tec": {
+      "learning_id": "learn-huggingface-hf-psrben-visionhope-mv0i9tec",
+      "source": "PSRben/VisionHOPE",
+      "repository": "PSRben/VisionHOPE",
+      "slug": "hf-psrben-visionhope",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "content_hash": "23dae87f83eb369dc32cb4a19f8fb41a03b82690237e1cef9130f3619dbd1fc4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T05:09:13.649Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
