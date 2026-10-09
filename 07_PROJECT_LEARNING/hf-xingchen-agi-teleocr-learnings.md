@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/XingChen-AGI/TeleOCR](https://huggingface.co/XingChen-AGI/TeleOCR))  
+> **Source Version**: `hf-xingchen-`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T03:56:22.233Z  
+> **Learning ID**: `learn-huggingface-hf-xingchen-agi-teleocr-mv0fo4ex`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): XingChen-AGI/TeleOCR
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XingChen-AGI/TeleOCR](https://huggingface.co/XingChen-AGI/TeleOCR))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:33:50.695Z  
+> **Harvest Timestamp**: 2026-10-09T03:56:22.051Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 40735 downloads | 1277 likes
+- **Stars / Engagement**: 43962 downloads | 1287 likes
 
 ---
 
