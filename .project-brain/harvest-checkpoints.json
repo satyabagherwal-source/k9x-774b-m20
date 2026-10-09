@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T07:55:52.740Z",
+  "last_updated": "2026-10-09T07:58:41.013Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1443,6 +1443,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T07:55:52.740Z"
+    },
+    "nomic-ai/nomic-embed-text-v1.5": {
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv0obqki",
+      "content_hash": "497496a99304b1874ff2946b8c95311105ea0058e35825e6c6b8542423bf3bfa",
+      "verified_at": "2026-10-09T07:58:41.013Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T07:58:41.013Z"
     }
   }
 }
