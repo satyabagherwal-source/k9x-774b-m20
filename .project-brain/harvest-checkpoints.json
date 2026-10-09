@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:23:08.703Z",
+  "last_updated": "2026-10-09T06:25:51.312Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -995,6 +995,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:23:08.703Z"
+    },
+    "hexgrad/Kokoro-82M": {
+      "repository": "hexgrad/Kokoro-82M",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-hexgrad-kokoro-82m-mv0l0cz3",
+      "content_hash": "39c9edf9c361013b951a25679e1150dcded41e66bf6f1eb00bb638e0f1319a01",
+      "verified_at": "2026-10-09T06:25:51.312Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:25:51.312Z"
     }
   }
 }
