@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k](https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k))  
+> **Source Version**: `hf-timm-mobi`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T06:14:42.444Z  
+> **Learning ID**: `learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv0km0wc`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): timm/mobilenetv3_small_100.lamb_in1k
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k](https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:21:16.341Z  
+> **Harvest Timestamp**: 2026-10-09T06:14:42.204Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 22211923 downloads | 124 likes
+- **Stars / Engagement**: 21734048 downloads | 127 likes
 
 ---
 
