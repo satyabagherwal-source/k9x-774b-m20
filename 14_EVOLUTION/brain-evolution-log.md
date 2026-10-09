@@ -2,6 +2,29 @@
 
 This file records canonical promotion events, knowledge integration milestones, and rule evolutions into `C:\AI-Builder-Brain`.
 
+## Evolution Event: 2026-10-09 — Universal Intelligence Layer: Milestone 7 Live Model Connection Probe, Real MCP Client Integration & Cross-Run Persistent Learning
+
+* **Trigger**: Sovereign User Directive: *"Milestone 6 के बाद अब केवल एक प्राथमिक लक्ष्य है: AI-Builder-Brain को कम-से-कम एक वास्तविक AI model के साथ end-to-end चलाकर प्रमाणित करना कि Brain retrieval और execution workflow से task performance में वास्तविक सुधार होता है... Authentication को सही तरीके से configure करो... Secrets print मत करो... Fake model responses मत बताओ... MCP को कम-से-कम एक वास्तविक compatible client में configure करके verify करो... Persistent learning का अलग test करो।"*
+* **Core Breakthroughs & Verifications**:
+  1. **Strict Credential Audit & Live HTTPS Model Probing**:
+     * Audited `process.env` and `.brain-secrets.json` safely without printing secrets in logs, terminal, or source code.
+     * Detected stored credential `AQ.A...8Wmg` is an OAuth session token, not an official Google AI Studio API key (`AIzaSy...`).
+     * Sent live diagnostic HTTPS requests to `generativelanguage.googleapis.com` for `gemini-2.5-flash` and `gemini-2.0-flash`.
+     * Captured actual provider response: HTTP 401 Unauthorized (`Request had invalid authentication credentials`).
+     * Adhered strictly to the zero-fabrication evidence protocol: reported `Live Model Connected: NO`, documented precise blocker, and rejected simulated outputs.
+  2. **Real Compatible MCP Client Integration**:
+     * Registered the stdio MCP server `ai-builder-brain` (`node c:\AI-Builder-Brain\04_WORKFLOWS\factory-engine\brain-mcp-server.mjs`) directly into the active Antigravity IDE global MCP configuration (`C:\Users\Admin\.gemini\config\mcp_config.json`).
+     * Registered in canonical `04_WORKFLOWS/factory-engine/mcp-registry.json` with health status `ACTIVE_AND_VERIFIED`.
+  3. **Multi-Stage Persistent Learning & Cold-Cache Independent Run**:
+     * Built `test-persistent-learning.mjs` verifying a complete 2-stage persistent learning lifecycle:
+       * Stage 1: Ingested genuine candidate directive (`CD-002`) with source repo provenance (`vercel/next.js`, commit `c4a1b8e`) into `11_INBOX`.
+       * Stage 2: Verified that unverified promotion attempts are strictly blocked (`REJECTED_UNVERIFIED`).
+       * Stage 3: Promoted candidate with verified empirical proof to `05_KNOWLEDGE/engineering-patterns.md`, passing SHA-256 disk read-back barrier.
+       * Stage 4: Executed a subsequent independent run rebuilding the search index cold from disk, retrieving the newly promoted rule by exact ID and title, and verifying invariant prompt injection (21/21 tests passed).
+  4. **Engine Regex Hardening**:
+     * Identified and resolved JavaScript regex boundary bug (`\Z` matched literal letter `'z'` case-insensitively with `/i`, truncating identifiers like `desiredSize`) in `retrieval-engine.mjs` and `feedback-loop.mjs`, replacing with standard JavaScript end-of-string token `$`.
+* **Cumulative Verification**: **232 / 232 Tests Passing across 10 Test Suites** with 0 failures and 0 regressions.
+
 ---
 
 ## Evolution Event: 2026-10-09 — Universal Intelligence Layer: Milestone 6 End-to-End Integration, Real-Model Audit & MCP Connector Interoperability

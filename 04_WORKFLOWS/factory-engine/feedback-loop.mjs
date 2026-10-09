@@ -200,10 +200,10 @@ export function promoteCandidateToKnowledge(candidateId, verificationEvidence = 
   const ruleId = `Rule ${nextRuleNum}`;
 
   // 2. Extract invariant and format canonical rule block
-  const invariantMatch = candidateContent.match(/## 3\. Universal Reusability Invariant\s*([\s\S]*?)(?=\n##|\Z)/i);
+  const invariantMatch = candidateContent.match(/## 3\. Universal Reusability Invariant\s*([\s\S]*?)(?=\n##|$)/i);
   const invariantText = invariantMatch ? invariantMatch[1].trim() : 'Enforce non-destructive invariant.';
 
-  const rootCauseMatch = candidateContent.match(/## 1\. Discovered Failure Mode & Root Cause\s*([\s\S]*?)(?=\n##|\Z)/i);
+  const rootCauseMatch = candidateContent.match(/## 1\. Discovered Failure Mode & Root Cause\s*([\s\S]*?)(?=\n##|$)/i);
   const rootCauseText = rootCauseMatch ? rootCauseMatch[1].trim() : 'Prevents recurring production failure.';
 
   const ruleBlock = `\n\n---\n\n## ${nextRuleNum}. ${ruleTitle}\n\n` +

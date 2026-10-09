@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T18:05:54.067Z",
+  "last_updated": "2026-10-09T18:20:08.860Z",
   "memories": [
     {
       "memory_id": "mem-1791568984337-695191",
@@ -22,6 +22,23 @@
     {
       "memory_id": "mem-1791569153649-44ea77",
       "timestamp": "2026-10-09T18:05:53.649Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791570004455-4880e0",
+      "timestamp": "2026-10-09T18:20:04.455Z",
       "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
       "defect_observed": "Build failed or missing: exit code was 1",
       "user_critique": null,

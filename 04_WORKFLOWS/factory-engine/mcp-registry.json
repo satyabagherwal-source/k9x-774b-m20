@@ -1,4 +1,20 @@
 {
+  "ai-builder-brain": {
+    "name": "AI-Builder-Brain Universal Intelligence MCP",
+    "purpose": "Precision BM25 knowledge search, task contracts, DAG planning, and verification barriers",
+    "supportedProjectTypes": ["*"],
+    "installationMethod": "local-node-stdio",
+    "package": "ai-builder-brain",
+    "version": "2.0.0",
+    "configuration": {
+      "command": "node",
+      "args": ["c:\\AI-Builder-Brain\\04_WORKFLOWS\\factory-engine\\brain-mcp-server.mjs"]
+    },
+    "requiredCredentials": [],
+    "securityImplications": "Read-only knowledge access; zero unauthorized file mutation outside scoped project",
+    "verificationMethod": "mcp-jsonrpc-ping-and-tools-probe",
+    "fallback": "Direct local Node.js module import from 04_WORKFLOWS/factory-engine/brain-connector.mjs"
+  },
   "astro-docs": {
     "name": "Astro Documentation MCP",
     "purpose": "Authoritative documentation search and schema verification for Astro.js v5+",

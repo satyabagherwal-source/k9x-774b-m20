@@ -110,9 +110,9 @@ export function parseEngineeringPatterns() {
 }
 
 function finalizeRuleDoc(meta, rawBody, startLine, endLine) {
-  const ruleMatch = rawBody.match(/\*\*RULE\*\*:\s*([\s\S]*?)(?=\n\s*\*\*(?:WHY|WHEN TO APPLY|VERIFIED|NEGATIVE)|\Z)/i);
-  const whyMatch = rawBody.match(/\*\*WHY\*\*:\s*([\s\S]*?)(?=\n\s*\*\*(?:RULE|WHEN TO APPLY|VERIFIED|NEGATIVE)|\Z)/i);
-  const whenMatch = rawBody.match(/\*\*WHEN TO APPLY\*\*:\s*([\s\S]*?)(?=\n\s*\*\*(?:RULE|WHY|VERIFIED|NEGATIVE)|\Z)/i);
+  const ruleMatch = rawBody.match(/\*\*RULE\*\*:\s*([\s\S]*?)(?=\n\s*\*\*(?:WHY|WHEN TO APPLY|VERIFIED|NEGATIVE)|$)/i);
+  const whyMatch = rawBody.match(/\*\*WHY\*\*:\s*([\s\S]*?)(?=\n\s*\*\*(?:RULE|WHEN TO APPLY|VERIFIED|NEGATIVE)|$)/i);
+  const whenMatch = rawBody.match(/\*\*WHEN TO APPLY\*\*:\s*([\s\S]*?)(?=\n\s*\*\*(?:RULE|WHY|VERIFIED|NEGATIVE)|$)/i);
 
   const ruleText = ruleMatch ? ruleMatch[1].trim() : '';
   const whyText = whyMatch ? whyMatch[1].trim() : '';
