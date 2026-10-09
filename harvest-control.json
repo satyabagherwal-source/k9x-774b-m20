@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-09T10:19:28.864Z",
+  "lastUpdated": "2026-10-09T10:22:17.065Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-09T10:19:31.712Z",
-        "lastHarvestedAt": "2026-10-09T10:19:31.712Z",
-        "totalHarvested": 1246,
+        "lastActiveAt": "2026-10-09T10:22:17.939Z",
+        "lastHarvestedAt": "2026-10-09T10:22:17.939Z",
+        "totalHarvested": 1247,
         "lastError": null
       },
       {
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-09T10:13:47.579Z",
+        "lastActiveAt": "2026-10-09T10:22:17.817Z",
         "lastHarvestedAt": "2026-10-09T05:58:24.660Z",
         "totalHarvested": 1091,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-09T10:13:50.057Z",
+        "lastActiveAt": "2026-10-09T10:22:20.284Z",
         "lastHarvestedAt": "2026-10-09T03:42:42.225Z",
         "totalHarvested": 1091,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-09T10:13:52.585Z",
+        "lastActiveAt": "2026-10-09T10:22:22.787Z",
         "lastHarvestedAt": "2026-10-09T03:42:44.689Z",
         "totalHarvested": 1093,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-09T10:13:55.055Z",
+        "lastActiveAt": "2026-10-09T10:22:25.290Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
+      "status": "HEALTHY",
       "remaining": 0,
-      "resetEpoch": 1791544769476,
-      "resetAt": "2026-10-09T11:19:29.476Z",
-      "trippedAt": "2026-10-09T10:19:14.476Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Atailwind%20topic%3Acomponents%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=1)",
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-09T10:22:00.770Z",
+      "reason": null,
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
