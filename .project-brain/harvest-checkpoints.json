@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T08:01:25.659Z",
+  "last_updated": "2026-10-09T08:04:05.222Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1471,6 +1471,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T08:01:25.659Z"
+    },
+    "intfloat/multilingual-e5-small": {
+      "repository": "intfloat/multilingual-e5-small",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv0oioqy",
+      "content_hash": "79499f7596fb86b8a154b4334e8e1b4e6fb23632deca6d2576e62d763f0bda1a",
+      "verified_at": "2026-10-09T08:04:05.222Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T08:04:05.222Z"
     }
   }
 }
