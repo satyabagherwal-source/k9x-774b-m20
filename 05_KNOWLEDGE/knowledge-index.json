@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T09:56:40.836Z",
-  "total_verified_learnings": 3035,
+  "last_updated": "2026-10-09T09:59:24.654Z",
+  "total_verified_learnings": 3036,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -72836,6 +72836,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T09:56:40.836Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv0smzte": {
+      "learning_id": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv0smzte",
+      "source": "XingChen-AGI/Xing4.0-29B-A4B",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "slug": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "content_hash": "9114edd4a12b5c6f0e8be8906fa3b5c760bf87f07c0901a307e3fd073a169fc8",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T09:59:24.654Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
