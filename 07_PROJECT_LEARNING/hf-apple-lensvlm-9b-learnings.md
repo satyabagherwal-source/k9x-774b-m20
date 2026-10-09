@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B))  
+> **Source Version**: `hf-apple-len`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T04:21:14.349Z  
+> **Learning ID**: `learn-huggingface-hf-apple-lensvlm-9b-mv0gk3ql`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): apple/LensVLM-9B
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:53:44.637Z  
+> **Harvest Timestamp**: 2026-10-09T04:21:14.075Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2489 downloads | 285 likes
+- **Stars / Engagement**: 2574 downloads | 290 likes
 
 ---
 

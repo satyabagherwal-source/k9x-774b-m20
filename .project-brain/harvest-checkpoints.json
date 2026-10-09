@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T04:18:32.583Z",
+  "last_updated": "2026-10-09T04:21:14.379Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -449,6 +449,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T04:18:32.583Z"
+    },
+    "apple/LensVLM-9B": {
+      "repository": "apple/LensVLM-9B",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv0gk3ql",
+      "content_hash": "144c323346525e1473173a7b9c4685d31112f4238ba7529007f148fe96a31375",
+      "verified_at": "2026-10-09T04:21:14.379Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T04:21:14.379Z"
     }
   }
 }
