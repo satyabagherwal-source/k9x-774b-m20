@@ -3,8 +3,8 @@
 > **Source Version**: `7455efae`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T01:09:30.556Z  
-> **Learning ID**: `learn-github-hasaneyldrm-exercises-dataset-mv09pjcs`  
+> **Timestamp**: 2026-10-09T01:11:19.516Z  
+> **Learning ID**: `learn-github-hasaneyldrm-exercises-dataset-mv09rvfg`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hasaneyldrm-exercises-dataset-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/hasaneyldrm/exercises-dataset](https://github.com/hasaneyldrm/exercises-dataset))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T01:09:29.888Z  
+> **Harvest Timestamp**: 2026-10-09T01:11:19.118Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 1,324-exercise fitness dataset — animation GIFs, 180×180 thumbnails, muscle-group & equipment data, and step-by-step instructions in 6 languages. The exercise data layer behind the LogPress app.
 - **Primary Language / Ecosystem**: HTML
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 22618 stars
+- **Stars / Engagement**: 22619 stars
 
 ---
 
