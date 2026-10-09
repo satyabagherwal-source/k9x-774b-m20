@@ -3,8 +3,8 @@
 > **Source Version**: `hf-altworld-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T10:08:03.209Z  
-> **Learning ID**: `learn-huggingface-hf-altworld-hemmingway-1-mv0sy3yh`  
+> **Timestamp**: 2026-10-09T15:55:53.180Z  
+> **Learning ID**: `learn-huggingface-hf-altworld-hemmingway-1-mv15dfbw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T10:08:02.612Z  
+> **Harvest Timestamp**: 2026-10-09T15:55:52.600Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
