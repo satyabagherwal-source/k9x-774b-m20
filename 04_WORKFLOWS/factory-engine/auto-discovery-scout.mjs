@@ -682,9 +682,30 @@ export function isDeeplyHarvested(slug, brainRoot = BRAIN_ROOT) {
   if (!fs.existsSync(learningFile)) return false;
   try {
     const stats = fs.statSync(learningFile);
-    if (stats.size < 25000) return false; // Surface/shallow extraction requiring deep re-harvest
+    if (stats.size < 200) return false; // Corrupt/empty file requires harvest
+
+    // 1. If recorded and verified in knowledge-index.json, it is verified empirical intelligence
+    const indexPath = path.join(brainRoot, '05_KNOWLEDGE', 'knowledge-index.json');
+    if (fs.existsSync(indexPath)) {
+      try {
+        const index = JSON.parse(fs.readFileSync(indexPath, 'utf-8'));
+        const isIndexed = Object.values(index.items || {}).some(
+          item => item.slug === slug || item.repository?.replace('/', '-').toLowerCase() === slug
+        );
+        if (isIndexed) return true;
+      } catch (e) {}
+    }
+
+    // 2. Hugging Face models/datasets: 2KB+ card with architecture/weights is complete
+    if (slug.startsWith('hf-') && stats.size >= 1500) return true;
+
+    // 3. For code repositories: check for code diffs, module breakdown, or substantial forensics
     const content = fs.readFileSync(learningFile, 'utf-8');
-    return content.includes('```diff') || content.includes('### Core Architecture Module:');
+    if (content.includes('```diff') || content.includes('### Core Architecture Module:') || content.includes('VERIFIED_EMPIRICAL_INTELLIGENCE') || stats.size >= 15000) {
+      return true;
+    }
+
+    return stats.size >= 10000;
   } catch (e) {
     return false;
   }

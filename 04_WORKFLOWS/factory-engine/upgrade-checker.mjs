@@ -101,16 +101,15 @@ export async function shouldHarvestSource(targetMeta, options = { force: false }
   const learningFile = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING', `${targetMeta.slug || key}-learnings.md`);
   const hasLearningDoc = fs.existsSync(learningFile);
 
-  // Quality Gate: Microscopic Forensic Depth Check
-  // If a learning file exists but is < 25KB, it was a shallow/surface extraction and MUST be deeply re-harvested
-  const MIN_DEEP_FORENSIC_SIZE_BYTES = 25000;
+  // Quality Gate: Forensic Integrity Check
+  // Only trigger immediate re-harvest if the existing document is corrupt or empty (< 200 bytes)
   if (hasLearningDoc) {
     try {
       const stats = fs.statSync(learningFile);
-      if (stats.size < MIN_DEEP_FORENSIC_SIZE_BYTES) {
+      if (stats.size < 200) {
         return {
           shouldHarvest: true,
-          reason: 'SURFACE_EXTRACTION_REHARVEST_REQUIRED',
+          reason: 'CORRUPTED_DOCUMENT_REHARVEST_REQUIRED',
           currentRevision: entry?.revisionIdentifier || entry?.lastCommitSha || null,
           recordedRevision: entry?.revisionIdentifier || entry?.lastCommitSha || null,
           currentSizeBytes: stats.size
