@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:20:15.738Z",
+  "last_updated": "2026-10-09T06:23:08.703Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -981,6 +981,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:20:15.738Z"
+    },
+    "meta-llama/Meta-Llama-3-8B": {
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv0kwvhk",
+      "content_hash": "c6095f25baaecd286a6687b7d255cfbbcd225fa416d98ac2f8bed282d844e1bd",
+      "verified_at": "2026-10-09T06:23:08.703Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:23:08.703Z"
     }
   }
 }
