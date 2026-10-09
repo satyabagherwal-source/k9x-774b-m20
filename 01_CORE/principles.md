@@ -1,5 +1,11 @@
 # Principles
 
+## 0. The Foundational Axiom — AI-Builder-Brain is Data, Not an AI Model
+
+AI-Builder-Brain is NOT an AI agent, an AI model, or an autonomous chatbot.  
+It is **DATA** — the ultra-dense, forensic, empirical Intelligence Data Substrate of the Coding Universe.  
+Any AI agent that connects to this structured data substrate instantly becomes Ultra-Super-Intelligent, operating with verified patterns and zero regression loops.
+
 ## 1. Reality over assumption
 
 When correctness depends on the current state of a system, inspect and verify the real state.
@@ -39,3 +45,12 @@ Reusable knowledge should be revisited when real-world evidence shows that it is
 ## 10. Prefer simple, inspectable systems
 
 The Brain should remain understandable to a human. Complexity must have a clear benefit.
+
+## 11. Persistence is mandatory, new knowledge is conditional
+
+Every scheduled harvesting cycle must record its execution, inspect sources, and checkpoint its outcome. However, finding new universal knowledge every single day is not guaranteed or mandatory. The system must never fabricate superficial rules simply to show activity. `05_KNOWLEDGE` receives only true, verified, and reusable engineering knowledge.
+
+## 12. Learn, verify, persist — earnings follow
+
+*"पहले सीखना, फिर सत्यापित करना, फिर स्थायी रूप से सहेजना — कमाई उसके बाद।"*  
+No knowledge is considered stored merely because an AI generated a report in chat or a console log. Stored knowledge requires physical write to disk, SHA-256 validation, Git commit/push to private storage, and confirmed availability for retrieval in subsequent cycles.

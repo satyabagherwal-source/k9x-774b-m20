@@ -4,6 +4,37 @@ This file records canonical promotion events, knowledge integration milestones, 
 
 ---
 
+## Evolution Event: 2026-10-09 — Foundational Architecture: AI-Builder-Brain as Coding Universe Intelligence Data & Codification of Rule 25 (Selective Folder Routing & Daily Persistence Protocol)
+
+* **Trigger**: Sovereign User Directive: *"AI-Builder-Brain ek AI nahi hai, ye Coding Universe ka intelligent data hai. Har din learning ke liye sabhi folders ko target nahi banana chahiye... Persistence is mandatory; new knowledge is conditional."*
+* **Core Paradigm Shift**:
+  * **Ontological Shift**: Formally defined that AI-Builder-Brain is **DATA**, not an AI agent or model. It is the structured, empirical intelligence substrate of the global coding universe. Any AI agent (Antigravity, Claude, Cursor, Copilot, ChatGPT, Gemini) connects to this data substrate to achieve Ultra-Super-Intelligence.
+  * **Dual Operating Manual Architecture**: Formulated two distinct operating manuals in root `README.md` and `00_START_HERE/`:
+    1. **Part I: The Builder's Manual**: How human engineers and harvester engines build, harvest, stage in `11_INBOX`, verify in `08_VERIFICATION`, track in `09_SOURCES`, distill into `05_KNOWLEDGE`, record incident autopsies in `07_PROJECT_LEARNING`, and log self-assessments in `14_EVOLUTION`.
+    2. **Part II: The Consumer AI's Manual**: How connecting AI agents navigate via `00_START_HERE/AI_INSTANT_NAVIGATOR.md` (< 300 tokens, zero wandering), enforce the Surgical Fix Regression Shield, and build zero-defect software.
+* **Daily Harvesting vs Conditional Updating Architecture**:
+  * **Designated Daily Targets**: `11_INBOX` (Staging), `05_KNOWLEDGE` (Promoted Canon), `08_VERIFICATION` (Proof/Rejections), `09_SOURCES` (Provenance), `07_PROJECT_LEARNING` (Post-mortems when applicable), `14_EVOLUTION` (Yield metrics), `.project-brain/` (Runtime queues/checkpoints).
+  * **Conditional Folders**: `01_CORE`, `02_AGENT_INTELLIGENCE`, `03_SKILLS`, `04_WORKFLOWS`, `06_PROJECT_CONTEXT`, `10_PROMPTS`, `12_DECISIONS`, `13_GOVERNANCE`, `15_METADATA`, `00_START_HERE` updated strictly upon genuine category shifts.
+* **New Rules & Governance Promoted**:
+  * `01_CORE/operating-rules.md`: **Rule 25** — AI-BUILDER-BRAIN Daily Auto-Harvesting Persistence & Selective Folder Routing Rule ("Persistence is Mandatory; New Knowledge is Conditional; Folder-Targeting Integrity").
+  * `01_CORE/principles.md`: Principle 0 (Brain is Data, Not AI), Principle 11 (Persistence Mandatory, New Knowledge Conditional), Principle 12 ("Pehle seekhna, fir satyapit karna, fir sthayi roop se sahejna — kamai uske baad").
+  * `13_GOVERNANCE/daily-auto-harvesting-persistence-protocol.md`: Formal governance standard.
+  * `08_VERIFICATION/harvest-verification-matrix.md`: Standardized inspection, verification, and rejection matrix.
+  * `09_SOURCES/harvest-provenance-ledger.md`: Cryptographic commit and line-level provenance ledger.
+  * `11_INBOX/README.md` & `11_INBOX/CANDIDATE_LEARNING_TEMPLATE.md`: Pre-promotion staging specification.
+* **Files Updated**:
+  * `README.md` (Complete Master Architecture & Dual Operating Manual written)
+  * `00_START_HERE/README.md` & `00_START_HERE/HOW_TO_USE.md` (Builder vs Consumer duality enshrined)
+  * `01_CORE/operating-rules.md` (Rule 25 added)
+  * `01_CORE/principles.md` (Principles 0, 11, 12 added)
+  * `13_GOVERNANCE/daily-auto-harvesting-persistence-protocol.md` (Created)
+  * `08_VERIFICATION/harvest-verification-matrix.md` (Created)
+  * `09_SOURCES/harvest-provenance-ledger.md` (Created)
+  * `11_INBOX/README.md` & `11_INBOX/CANDIDATE_LEARNING_TEMPLATE.md` (Created)
+  * `14_EVOLUTION/brain-evolution-log.md` (Logged)
+
+---
+
 ## Evolution Event: 2026-10-08 — Learning Pipeline Forensic Autopsy, Ghost-Commit Loop Elimination & Promotion of Rules 247-252
 
 * **Trigger**: User directive: *"ai builder learning me learning kyo nahi store ho rahi h . wahi purani same data h. aage collect karke store kyo nahi hua . 100 se jyada baara ai builder brain ko repair and upgrade kiya to bhi ye fail hi ho raha h"*

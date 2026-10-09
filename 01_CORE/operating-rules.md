@@ -308,3 +308,57 @@ Multilingualization is an architectural foundation from Day 0, NOT a post-produc
      - **254 (Crawled – currently not indexed)**: Thin content penalty from raw literal machine-translation dictionaries (`translation-cache.json`) without localized explanatory content or depth.
      - **1 (Server error 5xx)**: Unhandled locale parameter exceptions in SSR/SSG route generation.
      - **48 (Discovered – currently not indexed)**: Orphan alternate URLs or crawl budget exhaustion caused by conflicting sitemap signals.
+
+## Rule 25 — AI-BUILDER-BRAIN Daily Auto-Harvesting Persistence & Selective Folder Routing Rule ("Persistence is Mandatory; New Knowledge is Conditional; Folder-Targeting Integrity")
+
+AI-Builder-Brain is NOT an AI agent, model, or chatbot. It is **DATA** — the ultra-dense, empirical Intelligence Data Substrate of the Coding Universe designed to elevate any connecting AI agent to Ultra-Super-Intelligence.
+
+To ensure the Brain never degrades into an undisciplined data dump or shallow scraper, all automated harvesting and manual knowledge expansion must strictly comply with selective folder routing and the mandatory persistence protocol:
+
+1. **Selective Folder Routing for Daily / Regular Harvesting**:
+   - Automatic harvesting MUST NOT target all folders in every cycle.
+   - Daily scheduled harvesting runs operate on **fixed pipeline targets only**:
+     - **`11_INBOX` (Candidate Learning Staging)**: Every harvesting cycle must stage newly discovered findings, potential engineering rules, and unresolved discoveries here first (`candidate-directives/`). Weak, unvetted, or duplicate knowledge must NEVER bypass `11_INBOX` into master knowledge.
+     - **`05_KNOWLEDGE` (Verified Reusable Knowledge — Primary Destination)**: Universal engineering principles, architectural patterns, debugging solutions, security shields, performance techniques, and verified implementation patterns belong here. Only verified, cross-project reusable knowledge is promoted.
+     - **`08_VERIFICATION` (Evidence & Verification Ledger)**: Every cycle must record what was inspected, tests executed, empirical evidence uncovered, candidates **REJECTED**, and findings marked **UNCERTAIN**. AI assertions are never accepted without proof.
+     - **`09_SOURCES` (Source Provenance Ledger)**: Every cycle must record complete cryptographic source provenance: Repository URL, commit SHA or release tag, inspected file paths, and exact code lines.
+     - **`07_PROJECT_LEARNING` (Project-Specific Learning Dossiers)**: When a harvest analyzes a specific repository or local debugging incident, store the granular autopsy here. Do not turn one repo's idiosyncrasies into universal rules.
+     - **`14_EVOLUTION` (Harvesting System Self-Assessment)**: Every cycle must evaluate: Sources inspected, learnings verified, rules promoted, failure autopsies, and extraction tuning metrics.
+     - **`.project-brain/` (Runtime State)**: Persist queues (`repos.txt`), worker locks (`.harvest-locks`), and checkpoints (`harvest-checkpoints.json`). Runtime state must be cleanly persisted and recovered, but **runtime state is never a substitute for canonical Brain knowledge**.
+
+2. **Conditional Folders (Updated ONLY Upon Genuine Category Shift)**:
+   - The remaining canonical folders are updated strictly conditionally when genuine, approved domain learning emerges:
+     - **`01_CORE`**: Only upon approved changes to foundational principles, mission, or operating rules.
+     - **`02_AGENT_INTELLIGENCE`**: Only upon developing reusable patterns for agent reasoning, planning, or swarm coordination.
+     - **`03_SKILLS`**: Only upon developing or refining a distinct, reusable technical capability or technology skill manual.
+     - **`04_WORKFLOWS`**: Only upon refining verified project blueprints, factory engines, or verification workflows.
+     - **`06_PROJECT_CONTEXT`**: Only upon changes to active project environments, runtime constraints, or system boundaries.
+     - **`10_PROMPTS`**: Only upon tested, reusable prompt improvements and master prompt templates.
+     - **`12_DECISIONS`**: Only upon formally ratifying significant architectural or governance decisions (ADRs).
+     - **`13_GOVERNANCE`**: Only upon approved changes to policies, permissions, circuit breakers, or safety rules.
+     - **`15_METADATA`**: Only upon changes to global registries, indexing schemas, or taxonomy tagging.
+     - **`00_START_HERE`**: Only upon updating onboarding guides or entry-point navigator structures.
+
+3. **The Invariant: Persistence is Mandatory; New Knowledge is Conditional**:
+   - Running daily harvesting and discovering new knowledge are two distinct realities.
+   - The system is NOT required to invent synthetic rules every day just to show activity.
+   - However, **proof of execution, source inspection, checkpointing, and cycle outcome MUST be recorded and persisted on every scheduled run**.
+   - `05_KNOWLEDGE` receives only true, verified, and reusable engineering knowledge.
+
+4. **Physical Storage vs Chat / Console Delusions**:
+   - Console logs, AI responses in chat, temporary memory objects, or success messages do NOT constitute stored learning.
+   - A learning is considered stored ONLY when:
+     - It is physically written to its destination file in the repository.
+     - It passes SHA-256 read-back validation.
+     - It is committed and pushed to the private `AI-Builder-Brain` Git repository.
+     - It is confirmed retrievable in subsequent harvesting runs.
+
+5. **Metadata, Deduplication & Fault Recovery**:
+   - Every learning must bear a stable unique ID (`learn-<source>-<hash>`), ISO 8601 timestamp, source commit SHA, empirical evidence citations, and verification status.
+   - Harvesters must enforce duplicate detection, atomic file writes, retry mechanisms, and checkpoint recovery.
+   - A failure in fetching external sources must never corrupt or wipe existing verified knowledge.
+
+6. **The Cardinal Philosophy**:
+   - *"पहले सीखना, फिर सत्यापित करना, फिर स्थायी रूप से सहेजना — कमाई उसके बाद।"*
+   - First Learn, Then Verify, Then Permanently Persist — Earnings Follow.
+
