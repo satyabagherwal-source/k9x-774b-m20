@@ -3,8 +3,8 @@
 > **Source Version**: `hf-supersoni`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T15:50:11.528Z  
-> **Learning ID**: `learn-huggingface-hf-supersoniclabs-julia-1-mv1563pk`  
+> **Timestamp**: 2026-10-09T21:36:38.097Z  
+> **Learning ID**: `learn-huggingface-hf-supersoniclabs-julia-1-mv1hjmq9`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/SupersonicLabs/Julia-1](https://huggingface.co/SupersonicLabs/Julia-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T15:50:10.985Z  
+> **Harvest Timestamp**: 2026-10-09T21:36:37.802Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
