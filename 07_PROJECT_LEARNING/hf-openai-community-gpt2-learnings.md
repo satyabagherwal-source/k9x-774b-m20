@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/openai-community/gpt2](https://huggingface.co/openai-community/gpt2))  
+> **Source Version**: `hf-openai-co`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T07:53:03.478Z  
+> **Learning ID**: `learn-huggingface-hf-openai-community-gpt2-mv0o4i5y`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): openai-community/gpt2
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openai-community/gpt2](https://huggingface.co/openai-community/gpt2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:28:54.358Z  
+> **Harvest Timestamp**: 2026-10-09T07:53:03.228Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 15271127 downloads | 4201 likes
+- **Stars / Engagement**: 15373431 downloads | 4217 likes
 
 ---
 
