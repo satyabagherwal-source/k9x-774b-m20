@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T07:24:41.159Z",
-  "total_verified_learnings": 2982,
+  "last_updated": "2026-10-09T07:27:28.995Z",
+  "total_verified_learnings": 2983,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -71564,6 +71564,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T07:24:41.159Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv0n7m4n": {
+      "learning_id": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv0n7m4n",
+      "source": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "slug": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+      "content_hash": "7707b8ecee9809bcfa4c2e8eda25bae5198541a9a0347e0dfd6b40ae54903d69",
+      "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T07:27:28.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
