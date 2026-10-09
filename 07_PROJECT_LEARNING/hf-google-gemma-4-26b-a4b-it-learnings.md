@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/google/gemma-4-26B-A4B-it](https://huggingface.co/google/gemma-4-26B-A4B-it))  
+> **Source Version**: `hf-google-ge`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T08:01:25.610Z  
+> **Learning ID**: `learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv0of9m2`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): google/gemma-4-26B-A4B-it
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google/gemma-4-26B-A4B-it](https://huggingface.co/google/gemma-4-26B-A4B-it))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:35:08.303Z  
+> **Harvest Timestamp**: 2026-10-09T08:01:25.153Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 12724590 downloads | 1599 likes
+- **Stars / Engagement**: 12265732 downloads | 1613 likes
 
 ---
 
