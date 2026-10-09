@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b))  
+> **Source Version**: `hf-openai-gp`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T06:50:12.191Z  
+> **Learning ID**: `learn-huggingface-hf-openai-gpt-oss-120b-mv0lvo7z`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): openai/gpt-oss-120b
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openai/gpt-oss-120b](https://huggingface.co/openai/gpt-oss-120b))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:40:18.855Z  
+> **Harvest Timestamp**: 2026-10-09T06:50:11.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4406535 downloads | 5359 likes
+- **Stars / Engagement**: 4094755 downloads | 5373 likes
 
 ---
 

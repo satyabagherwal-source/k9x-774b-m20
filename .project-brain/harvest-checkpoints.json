@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:47:28.607Z",
+  "last_updated": "2026-10-09T06:50:12.246Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1107,6 +1107,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:47:28.607Z"
+    },
+    "openai/gpt-oss-120b": {
+      "repository": "openai/gpt-oss-120b",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-openai-gpt-oss-120b-mv0lvo7z",
+      "content_hash": "1387e14fedd7845568b5959fa3f94600cbc4aaee9ca2910ef30968f8886abd17",
+      "verified_at": "2026-10-09T06:50:12.246Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:50:12.246Z"
     }
   }
 }
