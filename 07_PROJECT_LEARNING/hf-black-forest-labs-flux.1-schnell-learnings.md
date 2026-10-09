@@ -3,8 +3,8 @@
 > **Source Version**: `hf-black-for`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T06:31:39.987Z  
-> **Learning ID**: `learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv0l7u1f`  
+> **Timestamp**: 2026-10-09T12:02:58.499Z  
+> **Learning ID**: `learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv0x1web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T06:31:39.638Z  
+> **Harvest Timestamp**: 2026-10-09T12:02:57.897Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 657202 downloads | 6172 likes
+- **Stars / Engagement**: 650951 downloads | 6173 likes
 
 ---
 
