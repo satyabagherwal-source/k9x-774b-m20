@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T04:15:50.600Z",
-  "total_verified_learnings": 2921,
+  "last_updated": "2026-10-09T04:18:32.562Z",
+  "total_verified_learnings": 2922,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -70100,6 +70100,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T04:15:50.600Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-supersoniclabs-julia-1-mv0ggmvs": {
+      "learning_id": "learn-huggingface-hf-supersoniclabs-julia-1-mv0ggmvs",
+      "source": "SupersonicLabs/Julia-1",
+      "repository": "SupersonicLabs/Julia-1",
+      "slug": "hf-supersoniclabs-julia-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "content_hash": "a556a2fea690b43d7aaf7c546993e8e25e30b271e6474d62394a5325bec862d2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T04:18:32.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
