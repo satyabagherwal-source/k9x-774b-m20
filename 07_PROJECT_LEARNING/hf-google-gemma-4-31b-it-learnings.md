@@ -3,8 +3,8 @@
 > **Source Version**: `hf-google-ge`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T08:15:35.709Z  
-> **Learning ID**: `learn-huggingface-hf-google-gemma-4-31b-it-mv0oxhjx`  
+> **Timestamp**: 2026-10-09T13:53:25.554Z  
+> **Learning ID**: `learn-huggingface-hf-google-gemma-4-31b-it-mv10zxv6`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google/gemma-4-31B-it](https://huggingface.co/google/gemma-4-31B-it))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T08:15:35.270Z  
+> **Harvest Timestamp**: 2026-10-09T13:53:25.057Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9565805 downloads | 4058 likes
+- **Stars / Engagement**: 9588358 downloads | 4059 likes
 
 ---
 
