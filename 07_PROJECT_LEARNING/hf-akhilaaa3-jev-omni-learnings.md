@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/akhilaaa3/Jev-Omni](https://huggingface.co/akhilaaa3/Jev-Omni))  
+> **Source Version**: `hf-akhilaaa3`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T04:40:58.003Z  
+> **Learning ID**: `learn-huggingface-hf-akhilaaa3-jev-omni-mv0h9h1v`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): akhilaaa3/Jev-Omni
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/akhilaaa3/Jev-Omni](https://huggingface.co/akhilaaa3/Jev-Omni))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T19:10:13.255Z  
+> **Harvest Timestamp**: 2026-10-09T04:40:57.777Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3734 downloads | 369 likes
+- **Stars / Engagement**: 4148 downloads | 389 likes
 
 ---
 
