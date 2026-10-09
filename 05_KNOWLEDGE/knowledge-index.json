@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T15:17:15.868Z",
-  "total_verified_learnings": 3143,
+  "last_updated": "2026-10-09T15:20:20.060Z",
+  "total_verified_learnings": 3144,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -75428,6 +75428,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T15:17:15.868Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-xingchen-agi-teleocr-mv143pdn": {
+      "learning_id": "learn-huggingface-hf-xingchen-agi-teleocr-mv143pdn",
+      "source": "XingChen-AGI/TeleOCR",
+      "repository": "XingChen-AGI/TeleOCR",
+      "slug": "hf-xingchen-agi-teleocr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
+      "source_version": "hf-xingchen-agi-teleocr",
+      "content_hash": "54f0af6d848ddcff1a7471dffe602891345e12b3a921c912d66b470f946a1d8c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T15:20:20.060Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
