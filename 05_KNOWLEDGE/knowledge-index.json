@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T04:55:04.278Z",
-  "total_verified_learnings": 2935,
+  "last_updated": "2026-10-09T04:57:48.000Z",
+  "total_verified_learnings": 2936,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -70436,6 +70436,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T04:55:04.277Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv0hv4cj": {
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv0hv4cj",
+      "source": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "slug": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "content_hash": "c0a14049381dd154cf1b52eba2a06e6d81ea78fd4e2295aad256fdabea158b9d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T04:57:48.000Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
