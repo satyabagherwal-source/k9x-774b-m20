@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash))  
+> **Source Version**: `hf-cloudflar`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T05:34:41.804Z  
+> **Learning ID**: `learn-huggingface-hf-cloudflare-clef-flash-mv0j6kjw`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Cloudflare/clef-flash
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:01:26.194Z  
+> **Harvest Timestamp**: 2026-10-09T05:34:41.289Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 8075 downloads | 536 likes
+- **Stars / Engagement**: 17587 downloads | 698 likes
 
 ---
 
