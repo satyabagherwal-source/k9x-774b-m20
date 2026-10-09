@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T09:25:41.915Z",
+  "last_updated": "2026-10-09T09:28:47.799Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -272,15 +272,15 @@
       "repository": "deepseek-ai/DeepSeek-R1",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv0f9xfv",
-      "content_hash": "21a183fccacf0eec9a63fc2d74e21f1f6afa1275035738c903142964ff7a2acd",
-      "verified_at": "2026-10-09T03:45:20.062Z",
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv0rjmgt",
+      "content_hash": "8be50e6c124fdb2316f59e97277959a9a0c903a01f07241347cfc0f5a4b0f6c3",
+      "verified_at": "2026-10-09T09:28:47.799Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T03:45:20.062Z"
+      "last_updated": "2026-10-09T09:28:47.799Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
