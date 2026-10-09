@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T12:11:42.413Z",
+  "last_updated": "2026-10-09T12:14:26.304Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1084,15 +1084,15 @@
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv0lm4nq",
-      "content_hash": "8a8bcc36252d6268fa09ff69b65627590a3637b8e5ef799a9f3e139b6c07222f",
-      "verified_at": "2026-10-09T06:42:46.986Z",
+      "learning_id": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv0xgn2g",
+      "content_hash": "b3d5fc48785da6f8c2b123a2d9a1d8f106e4cc8b205f2d2d0098d805885fb1f8",
+      "verified_at": "2026-10-09T12:14:26.304Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T06:42:46.986Z"
+      "last_updated": "2026-10-09T12:14:26.304Z"
     },
     "meta-llama/Meta-Llama-3-8B-Instruct": {
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
