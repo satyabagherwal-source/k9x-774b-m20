@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T14:16:07.273Z",
+  "last_updated": "2026-10-09T14:18:56.173Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1658,15 +1658,15 @@
       "repository": "autotrust/JEV-27B-VL",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv0pufx2",
-      "content_hash": "fdad15d0000a5bfc18323d1d31e1f7d8577da42b6c1e4cb567faaf48c98d6c4e",
-      "verified_at": "2026-10-09T08:41:13.290Z",
+      "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv11wqur",
+      "content_hash": "297ef31ff071533fdd5ffffc35946482534d9a29f6c01c8c7884192c69467c92",
+      "verified_at": "2026-10-09T14:18:56.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T08:41:13.290Z"
+      "last_updated": "2026-10-09T14:18:56.173Z"
     },
     "autotrust/GEV-26B-Decide": {
       "repository": "autotrust/GEV-26B-Decide",
