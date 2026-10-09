@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/google/embeddinggemma-2](https://huggingface.co/google/embeddinggemma-2))  
+> **Source Version**: `hf-google-em`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T05:26:15.825Z  
+> **Learning ID**: `learn-huggingface-hf-google-embeddinggemma-2-mv0ivq4x`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): google/embeddinggemma-2
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google/embeddinggemma-2](https://huggingface.co/google/embeddinggemma-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-07T21:35:39.160Z  
+> **Harvest Timestamp**: 2026-10-09T05:26:15.364Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: feature-extraction
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 7562 downloads | 918 likes
+- **Stars / Engagement**: 21148 downloads | 1221 likes
 
 ---
 
