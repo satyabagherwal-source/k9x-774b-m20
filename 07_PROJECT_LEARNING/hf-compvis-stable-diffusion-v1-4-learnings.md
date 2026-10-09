@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4))  
+> **Source Version**: `hf-compvis-s`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T06:20:15.686Z  
+> **Learning ID**: `learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv0kt612`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): CompVis/stable-diffusion-v1-4
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:23:29.923Z  
+> **Harvest Timestamp**: 2026-10-09T06:20:15.291Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 628102 downloads | 7107 likes
+- **Stars / Engagement**: 590101 downloads | 7107 likes
 
 ---
 
