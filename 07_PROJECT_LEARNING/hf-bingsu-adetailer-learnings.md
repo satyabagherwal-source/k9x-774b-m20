@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer))  
+> **Source Version**: `hf-bingsu-ad`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T08:23:55.941Z  
+> **Learning ID**: `learn-huggingface-hf-bingsu-adetailer-mv0p87j9`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Bingsu/adetailer
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T03:51:09.491Z  
+> **Harvest Timestamp**: 2026-10-09T08:23:55.771Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9754229 downloads | 797 likes
+- **Stars / Engagement**: 9463091 downloads | 799 likes
 
 ---
 
