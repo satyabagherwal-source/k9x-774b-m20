@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:56:19.414Z",
+  "last_updated": "2026-10-09T06:59:04.934Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1149,6 +1149,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:56:19.414Z"
+    },
+    "bigscience/bloom": {
+      "repository": "bigscience/bloom",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-bigscience-bloom-mv0m7397",
+      "content_hash": "4f820b7bdabb1c7f0c9a18b227875c6a1c4003f82e37ad3a8313f898c2c22d6d",
+      "verified_at": "2026-10-09T06:59:04.934Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:59:04.934Z"
     }
   }
 }
