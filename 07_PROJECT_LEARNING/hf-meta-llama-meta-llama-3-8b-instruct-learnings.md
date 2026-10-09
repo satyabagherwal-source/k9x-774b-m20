@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct))  
+> **Source Version**: `hf-meta-llam`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T06:47:28.563Z  
+> **Learning ID**: `learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv0ls5yr`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): meta-llama/Meta-Llama-3-8B-Instruct
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct](https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-06T02:42:26.874Z  
+> **Harvest Timestamp**: 2026-10-09T06:47:28.291Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 927792 downloads | 5216 likes
+- **Stars / Engagement**: 850749 downloads | 5267 likes
 
 ---
 
