@@ -17179,5 +17179,20 @@
     "downloads": 612411,
     "qualityScore": 3570,
     "discoveredAt": "2026-10-09T03:42:21.331Z"
+  },
+  {
+    "name": "kotlin-footguns",
+    "fullName": "maxrave-dev/kotlin-footguns",
+    "url": "https://github.com/maxrave-dev/kotlin-footguns",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Battle-tested agent skills mapping the footguns of Kotlin, Compose Multiplatform and the desktop JVM — mined from a production music app, not from documentation.",
+    "stars": 1082,
+    "forks": 6,
+    "openIssues": 0,
+    "language": "Python",
+    "qualityScore": 793,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-09T05:54:51.793Z"
   }
 ]

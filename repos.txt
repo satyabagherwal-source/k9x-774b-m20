@@ -3808,3 +3808,7 @@ https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF
 https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4
 # [HUGGINGFACE-AI-MODELS] SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF (3570 score) - Verified Hugging Face Model: SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF (
 https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-09T05:55:11.854Z] ---
+# [MOBILE-CROSS-PLATFORM] maxrave-dev/kotlin-footguns (793 score) - Battle-tested agent skills mapping the footguns of Kotlin, Compose Multiplatform
+https://github.com/maxrave-dev/kotlin-footguns
