@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T20:59:39.279Z",
+  "last_updated": "2026-10-09T21:02:26.158Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -286,15 +286,15 @@
       "repository": "moonshotai/Kimi-K3",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-moonshotai-kimi-k3-mv13sfq4",
-      "content_hash": "cb15990e8397226b50b89d47487b585a7cd1ebc15ccd8dc1ed1a716cf7669e81",
-      "verified_at": "2026-10-09T15:11:34.368Z",
+      "learning_id": "learn-huggingface-hf-moonshotai-kimi-k3-mv1gbnee",
+      "content_hash": "4378664923a886b3625106c2261766355883837fb17848c21f46502da753954e",
+      "verified_at": "2026-10-09T21:02:26.158Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T15:11:34.368Z"
+      "last_updated": "2026-10-09T21:02:26.158Z"
     },
     "stabilityai/stable-diffusion-xl-base-1.0": {
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
