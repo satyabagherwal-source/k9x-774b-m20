@@ -3,8 +3,8 @@
 > **Source Version**: `hf-meta-llam`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T03:53:42.430Z  
-> **Learning ID**: `learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv0fkp3y`  
+> **Timestamp**: 2026-10-09T09:37:00.643Z  
+> **Learning ID**: `learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv0ru6sj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct](https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T03:53:42.007Z  
+> **Harvest Timestamp**: 2026-10-09T09:37:00.353Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6191157 downloads | 8302 likes
+- **Stars / Engagement**: 6065265 downloads | 8304 likes
 
 ---
 
