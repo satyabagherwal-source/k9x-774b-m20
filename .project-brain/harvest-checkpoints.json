@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T20:31:05.619Z",
+  "last_updated": "2026-10-09T20:35:49.456Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -146,15 +146,15 @@
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv12v7uj",
-      "content_hash": "97105f2de20cc7f11835f8ea0f1012fe77f91b49dcbb5bb03569791fef07ba7e",
-      "verified_at": "2026-10-09T14:45:44.502Z",
+      "learning_id": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv1fdfdg",
+      "content_hash": "9f7bc30db4c9815466409a15f2fc1445c7195fb8dc5933c735a219f74535f9da",
+      "verified_at": "2026-10-09T20:35:49.456Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T14:45:44.502Z"
+      "last_updated": "2026-10-09T20:35:49.456Z"
     },
     "LiquidAI/d1-3B": {
       "repository": "LiquidAI/d1-3B",

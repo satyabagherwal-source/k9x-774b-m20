@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T20:31:05.605Z",
-  "total_verified_learnings": 3249,
+  "last_updated": "2026-10-09T20:35:49.430Z",
+  "total_verified_learnings": 3250,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -77972,6 +77972,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T20:31:05.605Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv1fdfdg": {
+      "learning_id": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv1fdfdg",
+      "source": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "slug": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+      "content_hash": "9f7bc30db4c9815466409a15f2fc1445c7195fb8dc5933c735a219f74535f9da",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T20:35:49.429Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
