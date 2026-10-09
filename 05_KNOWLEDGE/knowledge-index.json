@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T23:40:15.569Z",
-  "total_verified_learnings": 3314,
+  "last_updated": "2026-10-09T23:43:11.815Z",
+  "total_verified_learnings": 3315,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -79532,6 +79532,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T23:40:15.569Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-minimaxai-minimax-h3-mv1m2e28": {
+      "learning_id": "learn-huggingface-hf-minimaxai-minimax-h3-mv1m2e28",
+      "source": "MiniMaxAI/MiniMax-H3",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "slug": "hf-minimaxai-minimax-h3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+      "source_version": "hf-minimaxai-minimax-h3",
+      "content_hash": "2efc04f8b542827fe8f1c458ebc09f41a9d5304ffbd990dcbfe7fc577bd9a93f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T23:43:11.815Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
