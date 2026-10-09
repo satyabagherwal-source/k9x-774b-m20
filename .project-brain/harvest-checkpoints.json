@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T05:28:57.921Z",
+  "last_updated": "2026-10-09T05:31:40.229Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -799,6 +799,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T05:28:57.920Z"
+    },
+    "Cloudflare/clef": {
+      "repository": "Cloudflare/clef",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv0j2oek",
+      "content_hash": "8dc5db3b119462c48ad54c8d2d65fd862846aeab8469e1267c6db2cf308b8c5d",
+      "verified_at": "2026-10-09T05:31:40.229Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T05:31:40.229Z"
     }
   }
 }
