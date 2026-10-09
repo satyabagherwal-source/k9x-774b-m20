@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5))  
+> **Source Version**: `hf-lightrick`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T04:07:38.932Z  
+> **Learning ID**: `learn-huggingface-hf-lightricks-ltx-2-5-mv0g2mk4`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Lightricks/LTX-2.5
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:42:46.062Z  
+> **Harvest Timestamp**: 2026-10-09T04:07:38.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: image-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1645444 downloads | 6449 likes
+- **Stars / Engagement**: 1688807 downloads | 6958 likes
 
 ---
 
