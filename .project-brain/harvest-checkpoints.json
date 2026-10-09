@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T16:07:03.370Z",
+  "last_updated": "2026-10-09T16:09:49.857Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1709,6 +1709,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T15:44:35.301Z"
+    },
+    "Phocinae/Phocinae-Largha-150M-v1": {
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv15vcvd",
+      "content_hash": "1f7130b9c9d260f8d3e97dd823aacaebd57fd3df1250b569253e27e0f026a1c9",
+      "verified_at": "2026-10-09T16:09:49.857Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T16:09:49.857Z"
     }
   }
 }

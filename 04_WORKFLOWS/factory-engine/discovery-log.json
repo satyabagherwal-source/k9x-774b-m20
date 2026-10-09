@@ -17230,5 +17230,17 @@
     "downloads": 0,
     "qualityScore": 1520,
     "discoveredAt": "2026-10-09T15:42:56.397Z"
+  },
+  {
+    "name": "Phocinae/Phocinae-Largha-150M-v1",
+    "fullName": "Phocinae/Phocinae-Largha-150M-v1",
+    "url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Phocinae/Phocinae-Largha-150M-v1 (164 likes, 89 downloads)",
+    "likes": 164,
+    "downloads": 89,
+    "qualityScore": 1729,
+    "discoveredAt": "2026-10-09T16:09:38.188Z"
   }
 ]

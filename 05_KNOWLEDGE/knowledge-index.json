@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T16:07:03.345Z",
-  "total_verified_learnings": 3159,
+  "last_updated": "2026-10-09T16:09:49.832Z",
+  "total_verified_learnings": 3160,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -75812,6 +75812,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T16:07:03.345Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv15vcvd": {
+      "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv15vcvd",
+      "source": "Phocinae/Phocinae-Largha-150M-v1",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "slug": "hf-phocinae-phocinae-largha-150m-v1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+      "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+      "content_hash": "1f7130b9c9d260f8d3e97dd823aacaebd57fd3df1250b569253e27e0f026a1c9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T16:09:49.832Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

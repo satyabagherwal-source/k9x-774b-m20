@@ -3824,3 +3824,7 @@ https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0
 # --- Automatically Discovered by AI Scout Engine [2026-10-09T15:44:24.004Z] ---
 # [HUGGINGFACE-AI-MODELS] Qwen/Qwen-Image-2.1-Turbo (1520 score) - Verified Hugging Face Model: Qwen/Qwen-Image-2.1-Turbo (152 likes, 0 downloads)
 https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-09T16:09:38.190Z] ---
+# [HUGGINGFACE-AI-MODELS] Phocinae/Phocinae-Largha-150M-v1 (1729 score) - Verified Hugging Face Model: Phocinae/Phocinae-Largha-150M-v1 (164 likes, 89 dow
+https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1
