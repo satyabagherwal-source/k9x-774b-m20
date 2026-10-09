@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:39:42.674Z",
+  "last_updated": "2026-10-09T06:42:46.986Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1079,6 +1079,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:39:42.674Z"
+    },
+    "Tongyi-MAI/Z-Image-Turbo": {
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv0lm4nq",
+      "content_hash": "8a8bcc36252d6268fa09ff69b65627590a3637b8e5ef799a9f3e139b6c07222f",
+      "verified_at": "2026-10-09T06:42:46.986Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:42:46.986Z"
     }
   }
 }
