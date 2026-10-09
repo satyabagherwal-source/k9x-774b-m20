@@ -3,8 +3,8 @@
 > **Source Version**: `hf-taichuai-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T04:35:38.659Z  
-> **Learning ID**: `learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv0h2mn7`  
+> **Timestamp**: 2026-10-09T10:19:29.143Z  
+> **Learning ID**: `learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv0tct87`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T04:35:38.245Z  
+> **Harvest Timestamp**: 2026-10-09T10:19:28.864Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 13076 downloads | 2918 likes
+- **Stars / Engagement**: 13137 downloads | 2918 likes
 
 ---
 
