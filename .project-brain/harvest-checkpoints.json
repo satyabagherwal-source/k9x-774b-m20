@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T05:14:41.639Z",
+  "last_updated": "2026-10-09T05:17:39.586Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -729,6 +729,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T05:14:41.639Z"
+    },
+    "unsloth/Qwen3.8-27B-GGUF": {
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv0iknrh",
+      "content_hash": "e21587526d6f04077917946c622d4441764344832811f50a1a6d10e491318109",
+      "verified_at": "2026-10-09T05:17:39.586Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T05:17:39.586Z"
     }
   }
 }
