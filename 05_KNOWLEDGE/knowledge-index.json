@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T07:04:53.349Z",
-  "total_verified_learnings": 2975,
+  "last_updated": "2026-10-09T07:07:37.063Z",
+  "total_verified_learnings": 2976,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -71396,6 +71396,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T07:04:53.349Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-meta-llama-llama-2-7b-mv0mi2fe": {
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-mv0mi2fe",
+      "source": "meta-llama/Llama-2-7b",
+      "repository": "meta-llama/Llama-2-7b",
+      "slug": "hf-meta-llama-llama-2-7b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "content_hash": "8c2df52aac93370f9ac84b2830e51fef5e97eb32c0ed728a0b4c05530ef38734",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T07:07:37.063Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
