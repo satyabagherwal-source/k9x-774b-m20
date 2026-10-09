@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T04:43:54.000Z",
+  "last_updated": "2026-10-09T04:46:43.891Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -575,6 +575,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T04:43:54.000Z"
+    },
+    "inclusionAI/Ming-Image-0.1-Design": {
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv0hgvwh",
+      "content_hash": "05f1df782da159e49e3e14af383ea1f327c45c31a872df08c5784616a6c96167",
+      "verified_at": "2026-10-09T04:46:43.891Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T04:46:43.891Z"
     }
   }
 }
