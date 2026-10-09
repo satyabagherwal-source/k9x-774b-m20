@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T08:12:33.209Z",
+  "last_updated": "2026-10-09T08:15:35.764Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1527,6 +1527,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T08:12:33.209Z"
+    },
+    "google/gemma-4-31B-it": {
+      "repository": "google/gemma-4-31B-it",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-google-gemma-4-31b-it-mv0oxhjx",
+      "content_hash": "422105efddc8d3fae25d1025a098a38c3cd958758bab5efd3d732fb938c3a09e",
+      "verified_at": "2026-10-09T08:15:35.764Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T08:15:35.764Z"
     }
   }
 }
