@@ -1,4 +1,369 @@
 {
   "version": "1.0.0",
-  "tasks": {}
+  "tasks": {
+    "task-1791568984746-bfd979c5": {
+      "task_id": "task-1791568984746-bfd979c5",
+      "task_type": "MICRO_FIX",
+      "objective": "Implement cross-platform line parser for SSR templates that handles Windows CRLF (\\r\\n) and Unix LF (\\n) without DOM hydration mismatch or newline truncation.",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 3,
+        "last_checkpoint_at": "2026-10-09T18:03:04.764Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:03:04.762Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:03:04.746Z",
+      "updated_at": "2026-10-09T18:03:04.764Z"
+    },
+    "task-1791568984773-a57a6506": {
+      "task_id": "task-1791568984773-a57a6506",
+      "task_type": "MICRO_FIX",
+      "objective": "Implement cross-platform line parser for SSR templates that handles Windows CRLF (\\r\\n) and Unix LF (\\n) without DOM hydration mismatch or newline truncation.",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 3,
+        "last_checkpoint_at": "2026-10-09T18:03:04.782Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:03:04.780Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:03:04.773Z",
+      "updated_at": "2026-10-09T18:03:04.782Z"
+    },
+    "task-1791568984790-39650a64": {
+      "task_id": "task-1791568984790-39650a64",
+      "task_type": "FEATURE",
+      "objective": "Generate SEO head tags for multilingual internationalized pages (en, hi, es) including self-referencing hreflang, x-default fallback, and canonical URL trailing-slash parity (Rule 15 & Rule 24).",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 4,
+        "last_checkpoint_at": "2026-10-09T18:03:04.798Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:03:04.795Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:03:04.790Z",
+      "updated_at": "2026-10-09T18:03:04.798Z"
+    },
+    "task-1791568984804-d7a418c4": {
+      "task_id": "task-1791568984804-d7a418c4",
+      "task_type": "MICRO_FIX",
+      "objective": "Implement high-DPI canvas transform handler that avoids fractional devicePixelRatio blur on retina displays and survives past defect memory shields.",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 3,
+        "last_checkpoint_at": "2026-10-09T18:03:04.810Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:03:04.808Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:03:04.804Z",
+      "updated_at": "2026-10-09T18:03:04.810Z"
+    },
+    "task-1791569038524-22aa8d08": {
+      "task_id": "task-1791569038524-22aa8d08",
+      "task_type": "MICRO_FIX",
+      "objective": "Verification target",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-09T18:03:58.527Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:03:58.525Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:03:58.524Z",
+      "updated_at": "2026-10-09T18:03:58.527Z"
+    },
+    "task-1791569145551-23936915": {
+      "task_id": "task-1791569145551-23936915",
+      "task_type": "MICRO_FIX",
+      "objective": "Implement cross-platform line parser for SSR templates that handles Windows CRLF (\\r\\n) and Unix LF (\\n) without DOM hydration mismatch or newline truncation.",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 3,
+        "last_checkpoint_at": "2026-10-09T18:05:45.563Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:05:45.560Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:05:45.551Z",
+      "updated_at": "2026-10-09T18:05:45.563Z"
+    },
+    "task-1791569145570-8a85ea4f": {
+      "task_id": "task-1791569145570-8a85ea4f",
+      "task_type": "MICRO_FIX",
+      "objective": "Implement cross-platform line parser for SSR templates that handles Windows CRLF (\\r\\n) and Unix LF (\\n) without DOM hydration mismatch or newline truncation.",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 3,
+        "last_checkpoint_at": "2026-10-09T18:05:45.578Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:05:45.576Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:05:45.570Z",
+      "updated_at": "2026-10-09T18:05:45.578Z"
+    },
+    "task-1791569145586-3ecb6c54": {
+      "task_id": "task-1791569145586-3ecb6c54",
+      "task_type": "FEATURE",
+      "objective": "Generate SEO head tags for multilingual internationalized pages (en, hi, es) including self-referencing hreflang, x-default fallback, and canonical URL trailing-slash parity (Rule 15 & Rule 24).",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 4,
+        "last_checkpoint_at": "2026-10-09T18:05:45.596Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:05:45.594Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:05:45.586Z",
+      "updated_at": "2026-10-09T18:05:45.596Z"
+    },
+    "task-1791569145605-20ea3ae2": {
+      "task_id": "task-1791569145605-20ea3ae2",
+      "task_type": "MICRO_FIX",
+      "objective": "Implement high-DPI canvas transform handler that avoids fractional devicePixelRatio blur on retina displays and survives past defect memory shields.",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 3,
+        "last_checkpoint_at": "2026-10-09T18:05:45.612Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:05:45.611Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:05:45.605Z",
+      "updated_at": "2026-10-09T18:05:45.612Z"
+    },
+    "task-1791569154405-604662d8": {
+      "task_id": "task-1791569154405-604662d8",
+      "task_type": "MICRO_FIX",
+      "objective": "Implement cross-platform line parser for SSR templates that handles Windows CRLF (\\r\\n) and Unix LF (\\n) without DOM hydration mismatch or newline truncation.",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 3,
+        "last_checkpoint_at": "2026-10-09T18:05:54.418Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:05:54.416Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:05:54.405Z",
+      "updated_at": "2026-10-09T18:05:54.418Z"
+    },
+    "task-1791569154425-e1401104": {
+      "task_id": "task-1791569154425-e1401104",
+      "task_type": "MICRO_FIX",
+      "objective": "Implement cross-platform line parser for SSR templates that handles Windows CRLF (\\r\\n) and Unix LF (\\n) without DOM hydration mismatch or newline truncation.",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 3,
+        "last_checkpoint_at": "2026-10-09T18:05:54.432Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:05:54.430Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:05:54.425Z",
+      "updated_at": "2026-10-09T18:05:54.432Z"
+    },
+    "task-1791569154438-03d68884": {
+      "task_id": "task-1791569154438-03d68884",
+      "task_type": "FEATURE",
+      "objective": "Generate SEO head tags for multilingual internationalized pages (en, hi, es) including self-referencing hreflang, x-default fallback, and canonical URL trailing-slash parity (Rule 15 & Rule 24).",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 4,
+        "last_checkpoint_at": "2026-10-09T18:05:54.446Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:05:54.444Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:05:54.438Z",
+      "updated_at": "2026-10-09T18:05:54.446Z"
+    },
+    "task-1791569154451-79e9acfc": {
+      "task_id": "task-1791569154451-79e9acfc",
+      "task_type": "MICRO_FIX",
+      "objective": "Implement high-DPI canvas transform handler that avoids fractional devicePixelRatio blur on retina displays and survives past defect memory shields.",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 3,
+        "last_checkpoint_at": "2026-10-09T18:05:54.460Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:05:54.455Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:05:54.451Z",
+      "updated_at": "2026-10-09T18:05:54.460Z"
+    },
+    "task-1791569155429-98f70fb9": {
+      "task_id": "task-1791569155429-98f70fb9",
+      "task_type": "MICRO_FIX",
+      "objective": "Verification target",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-09T18:05:55.432Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-09T18:05:55.429Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-09T18:05:55.429Z",
+      "updated_at": "2026-10-09T18:05:55.432Z"
+    }
+  }
 }

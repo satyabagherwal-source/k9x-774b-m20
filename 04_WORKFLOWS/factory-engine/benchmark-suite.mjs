@@ -18,9 +18,16 @@ import { planTaskDecomposition } from './task-planner.mjs';
 import { bindSkillToTask } from './skill-runner.mjs';
 import { querySessionMemories, injectSessionMemoryIntoContract } from './cross-session-memory.mjs';
 
+import { loadAllAiKeys } from './ai-provider-pool.mjs';
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BRAIN_ROOT = path.resolve(__dirname, '..', '..');
+
+/**
+ * Benchmark Mode Classification: Explicitly labeled per Milestone 6 audit rules
+ */
+export const BENCHMARK_MODE = 'SIMULATED_DETERMINISTIC_FIXTURE';
 
 export const EVALUATION_CONDITIONS = {
   CONDITION_A_RAW_BASE: 'CONDITION_A_RAW_BASE',
@@ -455,11 +462,40 @@ export function runFullBenchmarkMatrix() {
 }
 
 /**
+ * Probes whether a live external AI model provider is accessible
+ * 
+ * @returns {object} Provider availability audit result
+ */
+export function probeLiveModelAvailability() {
+  const keys = loadAllAiKeys();
+  const available = [];
+  
+  if (keys.gemini && keys.gemini.length > 0) available.push(`Gemini (${keys.gemini.length} key)`);
+  if (keys.openai && keys.openai.length > 0) available.push(`OpenAI (${keys.openai.length} key)`);
+  if (keys.claude && keys.claude.length > 0) available.push(`Claude (${keys.claude.length} key)`);
+  if (keys.groq && keys.groq.length > 0) available.push(`Groq (${keys.groq.length} key)`);
+  if (keys.huggingface && keys.huggingface.length > 0) available.push(`Hugging Face (${keys.huggingface.length} token)`);
+
+  return {
+    benchmarkMode: BENCHMARK_MODE,
+    configuredProviders: available,
+    liveModelCallsPossible: available.length > 0,
+    activeStatus: available.length > 0 ? 'CONFIGURED_PENDING_PING' : 'NO_ACTIVE_KEYS_CONFIGURED'
+  };
+}
+
+/**
  * Formats full benchmark matrix results into GitHub-Flavored Markdown table
  */
 export function formatBenchmarkReport(matrixResult) {
   let md = '# AI-BUILDER-BRAIN Universal Intelligence Layer: Tri-Modal Benchmark Report\n\n';
-  md += `*Evaluated: ${matrixResult.evaluatedAt}*\n\n`;
+  md += `*Evaluated: ${matrixResult.evaluatedAt}*\n`;
+  md += `*Benchmark Engine Mode*: \`${BENCHMARK_MODE}\`\n\n`;
+
+  md += '> ⚠️ **METHODOLOGY AUDIT DISCLOSURE**:\n';
+  md += '> In accordance with Milestone 6 audit protocols, this benchmark matrix evaluates structural contracts,\n';
+  md += '> hybrid BM25 retrieval packing, DAG dependency gating, and empirical verification barriers using\n';
+  md += '> deterministic fixture outputs. Live external AI model network calls are tracked separately.\n\n';
 
   md += '## 1. Executive Summary: Aggregate Metrics\n\n';
   md += '| Operational Condition | Avg Invariant Compliance | First-Pass Verification Pass Rate | Total Re-work Cycles | Avg Brain Token Budget |\n';
