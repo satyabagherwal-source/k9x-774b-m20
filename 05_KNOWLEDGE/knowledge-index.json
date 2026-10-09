@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T14:31:16.610Z",
-  "total_verified_learnings": 3127,
+  "last_updated": "2026-10-09T14:34:06.383Z",
+  "total_verified_learnings": 3128,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -75044,6 +75044,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T14:31:16.610Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv12g97c": {
+      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv12g97c",
+      "source": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "slug": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "content_hash": "d0162a6cccf388bd298b8d186c6a907b0788fdfa82691e942cc4e47e0b114a63",
+      "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T14:34:06.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
