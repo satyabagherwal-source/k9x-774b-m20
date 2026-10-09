@@ -1,9 +1,23 @@
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1))  
+> **Source Version**: `hf-altworld-`  
+> **License**: Open-Source  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-10-09T04:24:04.625Z  
+> **Learning ID**: `learn-huggingface-hf-altworld-hemmingway-1-mv0gnr4h`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
 # Forensic Learning Record (Deep Inspection): Altworld/Hemmingway-1
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-05T18:58:24.402Z  
+> **Harvest Timestamp**: 2026-10-09T04:24:04.214Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -13,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 10205 downloads | 834 likes
+- **Stars / Engagement**: 10927 downloads | 844 likes
 
 ---
 

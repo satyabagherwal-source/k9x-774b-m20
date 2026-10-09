@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T04:21:14.365Z",
-  "total_verified_learnings": 2923,
+  "last_updated": "2026-10-09T04:24:04.652Z",
+  "total_verified_learnings": 2924,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -70148,6 +70148,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T04:21:14.365Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-altworld-hemmingway-1-mv0gnr4h": {
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv0gnr4h",
+      "source": "Altworld/Hemmingway-1",
+      "repository": "Altworld/Hemmingway-1",
+      "slug": "hf-altworld-hemmingway-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "content_hash": "d3d6d9243361971d713c6257313e1aeb60c87037f83094e9196247642af4f629",
+      "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T04:24:04.652Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

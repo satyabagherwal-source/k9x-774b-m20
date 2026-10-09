@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T04:21:14.379Z",
+  "last_updated": "2026-10-09T04:24:04.674Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -463,6 +463,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T04:21:14.379Z"
+    },
+    "Altworld/Hemmingway-1": {
+      "repository": "Altworld/Hemmingway-1",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv0gnr4h",
+      "content_hash": "d3d6d9243361971d713c6257313e1aeb60c87037f83094e9196247642af4f629",
+      "verified_at": "2026-10-09T04:24:04.674Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T04:24:04.674Z"
     }
   }
 }
