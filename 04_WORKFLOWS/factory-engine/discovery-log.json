@@ -17092,5 +17092,56 @@
     "downloads": 11470,
     "qualityScore": 3600,
     "discoveredAt": "2026-10-07T21:28:51.538Z"
+  },
+  {
+    "name": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "fullName": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: autotrust/GLM5.3-Flash-E224-DGX-Spark (417 likes, 5422 downloads)",
+    "likes": 417,
+    "downloads": 5422,
+    "qualityScore": 6170,
+    "discoveredAt": "2026-10-09T03:00:14.775Z"
+  },
+  {
+    "name": "LiquidAI/d1-3B",
+    "fullName": "LiquidAI/d1-3B",
+    "url": "https://huggingface.co/LiquidAI/d1-3B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: LiquidAI/d1-3B (195 likes, 5370 downloads)",
+    "likes": 195,
+    "downloads": 5370,
+    "qualityScore": 3950,
+    "discoveredAt": "2026-10-09T03:00:14.775Z"
+  },
+  {
+    "name": "Cactus-Compute/whistle",
+    "fullName": "Cactus-Compute/whistle",
+    "url": "https://huggingface.co/Cactus-Compute/whistle",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Cactus-Compute/whistle (191 likes, 2594 downloads)",
+    "likes": 191,
+    "downloads": 2594,
+    "qualityScore": 3910,
+    "discoveredAt": "2026-10-09T03:00:14.775Z"
+  },
+  {
+    "name": "OpenContracts",
+    "fullName": "Open-Source-Legal/OpenContracts",
+    "url": "https://github.com/Open-Source-Legal/OpenContracts",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "The open document intelligence platform for builders and hackers - DMS for the agentic world",
+    "stars": 1503,
+    "forks": 194,
+    "openIssues": 21,
+    "language": "Python",
+    "qualityScore": 1102,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-09T03:02:38.009Z"
   }
 ]

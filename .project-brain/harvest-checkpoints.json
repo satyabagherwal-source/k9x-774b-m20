@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T02:57:37.055Z",
+  "last_updated": "2026-10-09T03:03:35.035Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -141,6 +141,62 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T02:57:37.055Z"
+    },
+    "autotrust/GLM5.3-Flash-E224-DGX-Spark": {
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv0dooc9",
+      "content_hash": "d9fff0c77e2cd733e4a7a6fba959e7a9e366fd2540eecb47cbd492e194b70c19",
+      "verified_at": "2026-10-09T03:00:48.889Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T03:00:48.889Z"
+    },
+    "LiquidAI/d1-3B": {
+      "repository": "LiquidAI/d1-3B",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-liquidai-d1-3b-mv0dozlq",
+      "content_hash": "5cf798de2d14399b6a3995aeff85fd053bc1a96dd50edeb5864eff53162b816d",
+      "verified_at": "2026-10-09T03:01:03.478Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T03:01:03.478Z"
+    },
+    "Cactus-Compute/whistle": {
+      "repository": "Cactus-Compute/whistle",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv0dpau6",
+      "content_hash": "083a9e5042d57bb52952d587f0acfd8aa61d519a1b3ed0f162a252098995279a",
+      "verified_at": "2026-10-09T03:01:18.038Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T03:01:18.038Z"
+    },
+    "Open-Source-Legal/OpenContracts": {
+      "repository": "Open-Source-Legal/OpenContracts",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-open-source-legal-opencontracts-mv0ds8j9",
+      "content_hash": "19b8cee6bf32d2c8f8e00676868d47d135ca84bfbcf266bb33e0b9a85b0850a4",
+      "verified_at": "2026-10-09T03:03:35.034Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T03:03:35.034Z"
     }
   }
 }
