@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T03:59:24.060Z",
+  "last_updated": "2026-10-09T04:02:11.635Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -351,6 +351,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T03:59:24.060Z"
+    },
+    "Contrastive-LM/CLM-v0.1-8B": {
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv0fvlz2",
+      "content_hash": "51123517d0d3317781b67083aff2fa25362a144bd5fe70e3c79b7fa100da4b29",
+      "verified_at": "2026-10-09T04:02:11.635Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T04:02:11.635Z"
     }
   }
 }
