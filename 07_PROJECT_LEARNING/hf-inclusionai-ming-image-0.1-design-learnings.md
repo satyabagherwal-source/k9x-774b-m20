@@ -3,8 +3,8 @@
 > **Source Version**: `hf-inclusion`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T04:46:43.841Z  
-> **Learning ID**: `learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv0hgvwh`  
+> **Timestamp**: 2026-10-09T10:30:31.558Z  
+> **Learning ID**: `learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv0tr0cm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/inclusionAI/Ming-Image-0.1-Design](https://huggingface.co/inclusionAI/Ming-Image-0.1-Design))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T04:46:43.607Z  
+> **Harvest Timestamp**: 2026-10-09T10:30:31.183Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 402 likes
+- **Stars / Engagement**: 0 downloads | 403 likes
 
 ---
 
