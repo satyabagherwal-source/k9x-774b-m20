@@ -17206,5 +17206,17 @@
     "downloads": 9603998,
     "qualityScore": 9280,
     "discoveredAt": "2026-10-09T07:21:44.527Z"
+  },
+  {
+    "name": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "fullName": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: ConwayResearch/Underdog-Saluki-27B-1.0 (151 likes, 15274 downloads)",
+    "likes": 151,
+    "downloads": 15274,
+    "qualityScore": 3510,
+    "discoveredAt": "2026-10-09T13:36:28.614Z"
   }
 ]

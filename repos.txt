@@ -3816,3 +3816,7 @@ https://github.com/maxrave-dev/kotlin-footguns
 # --- Automatically Discovered by AI Scout Engine [2026-10-09T07:21:44.528Z] ---
 # [HUGGINGFACE-AI-MODELS] Qwen/Qwen3-4B (9280 score) - Verified Hugging Face Model: Qwen/Qwen3-4B (728 likes, 9603998 downloads)
 https://huggingface.co/Qwen/Qwen3-4B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-09T13:36:28.615Z] ---
+# [HUGGINGFACE-AI-MODELS] ConwayResearch/Underdog-Saluki-27B-1.0 (3510 score) - Verified Hugging Face Model: ConwayResearch/Underdog-Saluki-27B-1.0 (151 likes, 
+https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0
