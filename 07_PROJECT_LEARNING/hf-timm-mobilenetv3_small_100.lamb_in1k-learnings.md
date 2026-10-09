@@ -3,8 +3,8 @@
 > **Source Version**: `hf-timm-mobi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T11:44:01.790Z  
-> **Learning ID**: `learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv0wdjb2`  
+> **Timestamp**: 2026-10-09T17:34:46.595Z  
+> **Learning ID**: `learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv18wlkz`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k](https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T11:44:01.391Z  
+> **Harvest Timestamp**: 2026-10-09T17:34:46.325Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
