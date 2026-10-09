@@ -17242,5 +17242,17 @@
     "downloads": 89,
     "qualityScore": 1729,
     "discoveredAt": "2026-10-09T16:09:38.188Z"
+  },
+  {
+    "name": "microsoft/FrogNano-4B-2609",
+    "fullName": "microsoft/FrogNano-4B-2609",
+    "url": "https://huggingface.co/microsoft/FrogNano-4B-2609",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: microsoft/FrogNano-4B-2609 (138 likes, 1119 downloads)",
+    "likes": 138,
+    "downloads": 1119,
+    "qualityScore": 2499,
+    "discoveredAt": "2026-10-09T17:47:36.954Z"
   }
 ]
