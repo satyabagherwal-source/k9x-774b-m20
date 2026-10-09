@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T06:37:01.163Z",
+  "last_updated": "2026-10-09T06:39:42.674Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1065,6 +1065,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T06:37:01.163Z"
+    },
+    "deepseek-ai/DeepSeek-V4-Pro": {
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv0li6fu",
+      "content_hash": "36ac6b0218ad92f8c56cbc1aad5c771679e262b5abc282b937d10b6f217be927",
+      "verified_at": "2026-10-09T06:39:42.674Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T06:39:42.674Z"
     }
   }
 }
