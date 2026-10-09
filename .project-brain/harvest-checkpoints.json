@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T07:33:11.125Z",
+  "last_updated": "2026-10-09T07:35:56.879Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1331,6 +1331,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T07:33:11.125Z"
+    },
+    "NaiveAI/Naive-N0.5-Flash": {
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv0nihzw",
+      "content_hash": "a3dcb5fc0f6dd24d75e9e5d9a87447b0c3781f3217a0485d34b05987e743042c",
+      "verified_at": "2026-10-09T07:35:56.879Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T07:35:56.879Z"
     }
   }
 }
