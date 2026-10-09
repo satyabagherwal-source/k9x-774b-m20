@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T05:51:37.446Z",
-  "total_verified_learnings": 2955,
+  "last_updated": "2026-10-09T05:58:22.115Z",
+  "total_verified_learnings": 2956,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -70916,6 +70916,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-09T05:51:37.446Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-maxrave-dev-kotlin-footguns-mv0k10g5": {
+      "learning_id": "learn-github-maxrave-dev-kotlin-footguns-mv0k10g5",
+      "source": "maxrave-dev/kotlin-footguns",
+      "repository": "maxrave-dev/kotlin-footguns",
+      "slug": "maxrave-dev-kotlin-footguns",
+      "platform": "github",
+      "source_url": "https://github.com/maxrave-dev/kotlin-footguns",
+      "source_version": "f5f0b495",
+      "content_hash": "b75b09cedfabad1882ae5f41eb0b1a07f6c221886e7c864a09bf2be48f81bb89",
+      "dossier_path": "07_PROJECT_LEARNING/maxrave-dev-kotlin-footguns-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/maxrave-dev-kotlin-footguns-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-09T05:58:22.115Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

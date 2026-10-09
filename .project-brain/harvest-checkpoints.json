@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-09T05:51:37.471Z",
+  "last_updated": "2026-10-09T05:58:22.141Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -911,6 +911,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-09T05:51:37.471Z"
+    },
+    "maxrave-dev/kotlin-footguns": {
+      "repository": "maxrave-dev/kotlin-footguns",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-maxrave-dev-kotlin-footguns-mv0k10g5",
+      "content_hash": "b75b09cedfabad1882ae5f41eb0b1a07f6c221886e7c864a09bf2be48f81bb89",
+      "verified_at": "2026-10-09T05:58:22.141Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-09T05:58:22.141Z"
     }
   }
 }
