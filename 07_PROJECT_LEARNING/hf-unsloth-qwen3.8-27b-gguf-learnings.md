@@ -3,8 +3,8 @@
 > **Source Version**: `hf-unsloth-q`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T22:40:15.431Z  
-> **Learning ID**: `learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv1jtg7b`  
+> **Timestamp**: 2026-10-10T04:25:30.829Z  
+> **Learning ID**: `learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv1w5gb1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/unsloth/Qwen3.8-27B-GGUF](https://huggingface.co/unsloth/Qwen3.8-27B-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T22:40:15.028Z  
+> **Harvest Timestamp**: 2026-10-10T04:25:30.822Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6452782 downloads | 4978 likes
+- **Stars / Engagement**: 6452782 downloads | 4986 likes
 
 ---
 

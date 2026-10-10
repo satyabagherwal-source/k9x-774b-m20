@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T04:22:41.588Z",
-  "total_verified_learnings": 3412,
+  "last_updated": "2026-10-10T04:25:30.861Z",
+  "total_verified_learnings": 3413,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -81884,6 +81884,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T04:22:41.588Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv1w5gb1": {
+      "learning_id": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv1w5gb1",
+      "source": "unsloth/Qwen3.8-27B-GGUF",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "slug": "hf-unsloth-qwen3.8-27b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+      "source_version": "hf-unsloth-qwen3.8-27b-gguf",
+      "content_hash": "2f752231f734e2d55d04c1b8e8caceeb85d4899aacac970f078356b99e379387",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T04:25:30.861Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
