@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T20:38:17.028Z",
+  "last_updated": "2026-10-10T20:40:56.058Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -202,15 +202,15 @@
       "repository": "Qwen/Qwen3.8-27B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-qwen-qwen3-8-27b-mv2h3ws0",
-      "content_hash": "9c4b23776e3540b6abf6e6de26e2cee6e703b08ae94818d255472f2bb66e92d5",
-      "verified_at": "2026-10-10T14:12:10.869Z",
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-8-27b-mv2uzumt",
+      "content_hash": "5f721774a40ea627650cd5ae1c69fe57eb106c7d4517f41ccd0c79fdbd21377a",
+      "verified_at": "2026-10-10T20:40:56.058Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T14:12:10.869Z"
+      "last_updated": "2026-10-10T20:40:56.058Z"
     },
     "black-forest-labs/FLUX.1-dev": {
       "repository": "black-forest-labs/FLUX.1-dev",
