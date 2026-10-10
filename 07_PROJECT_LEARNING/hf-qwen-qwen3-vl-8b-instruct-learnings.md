@@ -3,8 +3,8 @@
 > **Source Version**: `hf-qwen-qwen`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T19:22:17.977Z  
-> **Learning ID**: `learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv1cqvi1`  
+> **Timestamp**: 2026-10-10T01:02:49.602Z  
+> **Learning ID**: `learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv1owsn6`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct](https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T19:22:17.602Z  
+> **Harvest Timestamp**: 2026-10-10T01:02:49.142Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
