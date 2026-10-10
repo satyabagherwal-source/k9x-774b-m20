@@ -3836,3 +3836,7 @@ https://huggingface.co/microsoft/FrogNano-4B-2609
 # --- Automatically Discovered by AI Scout Engine [2026-10-10T02:29:00.734Z] ---
 # [HUGGINGFACE-AI-MODELS] FrancisRing/Prism (1330 score) - Verified Hugging Face Model: FrancisRing/Prism (133 likes, 0 downloads)
 https://huggingface.co/FrancisRing/Prism
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-10T04:13:33.589Z] ---
+# [HUGGINGFACE-AI-MODELS] nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2 (3380 score) - Verified Hugging Face Model: nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5
+https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2
