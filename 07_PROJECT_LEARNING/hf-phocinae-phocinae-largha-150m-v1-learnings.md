@@ -3,8 +3,8 @@
 > **Source Version**: `hf-phocinae-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T21:56:54.365Z  
-> **Learning ID**: `learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv1i9p7h`  
+> **Timestamp**: 2026-10-10T03:39:22.200Z  
+> **Learning ID**: `learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv1ui40o`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1](https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T21:56:54.075Z  
+> **Harvest Timestamp**: 2026-10-10T03:39:21.899Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 89 downloads | 227 likes
+- **Stars / Engagement**: 89 downloads | 229 likes
 
 ---
 
