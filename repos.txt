@@ -3848,3 +3848,7 @@ https://github.com/ZHangZHengEric/Sage
 # --- Automatically Discovered by AI Scout Engine [2026-10-10T16:45:31.737Z] ---
 # [HUGGINGFACE-AI-MODELS] facebook/sam3 (41930 score) - Verified Hugging Face Model: facebook/sam3 (3993 likes, 2128836 downloads)
 https://huggingface.co/facebook/sam3
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-10T17:31:44.629Z] ---
+# [HUGGINGFACE-AI-MODELS] AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF (3500 score) - Verified Hugging Face Model: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF (15
+https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF

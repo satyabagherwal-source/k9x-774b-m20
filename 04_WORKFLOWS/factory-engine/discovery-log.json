@@ -17305,5 +17305,17 @@
     "downloads": 2128836,
     "qualityScore": 41930,
     "discoveredAt": "2026-10-10T16:45:31.735Z"
+  },
+  {
+    "name": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "fullName": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF (150 likes, 7314 downloads)",
+    "likes": 150,
+    "downloads": 7314,
+    "qualityScore": 3500,
+    "discoveredAt": "2026-10-10T17:31:44.628Z"
   }
 ]
