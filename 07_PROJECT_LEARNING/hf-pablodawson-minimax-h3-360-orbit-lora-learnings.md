@@ -3,8 +3,8 @@
 > **Source Version**: `hf-pablodaws`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T18:56:30.131Z  
-> **Learning ID**: `learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv1btp6b`  
+> **Timestamp**: 2026-10-10T00:37:14.396Z  
+> **Learning ID**: `learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv1nzw2k`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA](https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T18:56:29.702Z  
+> **Harvest Timestamp**: 2026-10-10T00:37:14.131Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
