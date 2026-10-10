@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T03:24:45.045Z",
+  "last_updated": "2026-10-10T03:27:51.566Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -482,15 +482,15 @@
       "repository": "fastino/GLiNER2.5-Decide",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-fastino-gliner2-5-decide-mv1huzrz",
-      "content_hash": "5fd585c9b6255ca84c891454702dfea5c85c4c8b1ec203cd359ed8aebd35060b",
-      "verified_at": "2026-10-09T21:45:28.302Z",
+      "learning_id": "learn-huggingface-hf-fastino-gliner2-5-decide-mv1u3b2s",
+      "content_hash": "3c42fca7e8b933395aa4b577a2165d10e4fdcdccd2809caef4990d22dddb1ff4",
+      "verified_at": "2026-10-10T03:27:51.566Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T21:45:28.302Z"
+      "last_updated": "2026-10-10T03:27:51.566Z"
     },
     "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
