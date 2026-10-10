@@ -1,12 +1,12 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 0,
-      "page": 2
+      "queryIndex": 2,
+      "page": 5
     },
     "fullstack-ui": {
-      "queryIndex": 2,
-      "page": 2
+      "queryIndex": 0,
+      "page": 3
     },
     "high-perf-systems": {
       "queryIndex": 3,
@@ -33,14 +33,14 @@
       "page": 4
     },
     "cognitive-neuroscience-systems": {
-      "queryIndex": 2,
-      "page": 2
+      "queryIndex": 0,
+      "page": 1
     }
   },
   "huggingFace": {
-    "sortIndex": 0,
+    "sortIndex": 1,
     "page": 1
   },
   "totalAutoDiscovered": 31,
-  "lastReplenishedAt": "2026-10-10T14:09:11.250Z"
+  "lastReplenishedAt": "2026-10-10T14:12:37.805Z"
 }
