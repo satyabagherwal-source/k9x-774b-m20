@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T13:17:38.851Z",
-  "total_verified_learnings": 3593,
+  "last_updated": "2026-10-10T13:20:19.660Z",
+  "total_verified_learnings": 3594,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -86228,6 +86228,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T13:17:38.851Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv2f986x": {
+      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv2f986x",
+      "source": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "slug": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "content_hash": "97876977471e8c8391a0ee59acdf2679718ab864ee75841f797a5de8549dd7e0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T13:20:19.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

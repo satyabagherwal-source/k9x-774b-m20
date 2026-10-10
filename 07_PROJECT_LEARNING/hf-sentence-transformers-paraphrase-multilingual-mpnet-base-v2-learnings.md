@@ -3,8 +3,8 @@
 > **Source Version**: `hf-sentence-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T07:17:23.904Z  
-> **Learning ID**: `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv22ahxc`  
+> **Timestamp**: 2026-10-10T13:20:19.641Z  
+> **Learning ID**: `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv2f986x`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T07:17:23.896Z  
+> **Harvest Timestamp**: 2026-10-10T13:20:19.637Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
