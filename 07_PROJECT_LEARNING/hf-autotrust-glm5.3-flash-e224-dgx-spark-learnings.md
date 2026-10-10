@@ -3,8 +3,8 @@
 > **Source Version**: `hf-autotrust`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T02:14:42.872Z  
-> **Learning ID**: `learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv1rh8s8`  
+> **Timestamp**: 2026-10-10T07:59:48.540Z  
+> **Learning ID**: `learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv23t1do`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark](https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T02:14:42.445Z  
+> **Harvest Timestamp**: 2026-10-10T07:59:48.536Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
