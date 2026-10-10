@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T06:05:53.606Z",
-  "total_verified_learnings": 3448,
+  "last_updated": "2026-10-10T06:08:41.489Z",
+  "total_verified_learnings": 3449,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -82748,6 +82748,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T06:05:53.606Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-baidu-unlimited-ocr-mv1zu50y": {
+      "learning_id": "learn-huggingface-hf-baidu-unlimited-ocr-mv1zu50y",
+      "source": "baidu/Unlimited-OCR",
+      "repository": "baidu/Unlimited-OCR",
+      "slug": "hf-baidu-unlimited-ocr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
+      "source_version": "hf-baidu-unlimited-ocr",
+      "content_hash": "fdac672c295104db537f81e71b93fec3cef2c95fed360c13578455bd0b8a5273",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T06:08:41.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
