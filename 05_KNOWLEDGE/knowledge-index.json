@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T15:15:58.516Z",
-  "total_verified_learnings": 3634,
+  "last_updated": "2026-10-10T15:18:46.428Z",
+  "total_verified_learnings": 3635,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -87212,6 +87212,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T15:15:58.516Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv2jhjsq": {
+      "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv2jhjsq",
+      "source": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "slug": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "content_hash": "bfdc6205d3f8902319aa9c3796852367c7cfb9cfef269467389df8fa2c021b14",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T15:18:46.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
