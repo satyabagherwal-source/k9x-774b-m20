@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T19:25:51.579Z",
+  "last_updated": "2026-10-10T19:28:34.705Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1462,15 +1462,15 @@
       "repository": "google/gemma-4-26B-A4B-it",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv2ejmf9",
-      "content_hash": "6d9fdf5a8777f96015c8ce5b2bd3613970cccfe2cd8f1c4f52e74f3fc1e2ee1c",
-      "verified_at": "2026-10-10T13:00:25.070Z",
+      "learning_id": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv2sesth",
+      "content_hash": "e3b45ba7c550dc9fee29fe11a3aab4b5e3f3fb6c7c2d70dd78967875dc195066",
+      "verified_at": "2026-10-10T19:28:34.705Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T13:00:25.070Z"
+      "last_updated": "2026-10-10T19:28:34.705Z"
     },
     "intfloat/multilingual-e5-small": {
       "repository": "intfloat/multilingual-e5-small",
