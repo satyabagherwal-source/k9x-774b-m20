@@ -93,5 +93,19 @@ This document records empirical learnings, forensic bug investigations, and patt
   6. Linked all 4 pages into `src/layouts/Layout.astro` header drawer, footer legal matrix, and footer copyright bar.
   7. Verification: Full static compilation (`npm run build`) succeeded with 631 pages generated, zero errors, and all routes verified in `dist/sitemap-0.xml`.
 
+### INC-07: Error Page Resilience Architecture (Custom 404 & 500 Pages)
+* **Context**: User requested adding custom 404 and 500 error pages.
+* **Requirements & Invariants**:
+  - Web-standard static host compatibility: `dist/404.html` and `dist/500.html` must generate directly at the build root for universal fallback across Cloudflare Pages, Netlify, Vercel, S3, and Nginx.
+  - Crawler protection: both pages must emit `<meta name="robots" content="noindex, nofollow" />` (via `noindex={true}`) to avoid indexing error pages as site content.
+  - XML Sitemap exclusion: configured `@astrojs/sitemap` integration `filter` option (`(page) => !page.includes('/500') && !page.includes('/404')`) to strictly prevent error pages from polluting search engine sitemaps.
+  - Theme Parity: High-contrast Obsidian Gold aesthetic (`Cinzel`, amber gold gradients, slate-900/950 glassmorphism, $\ge 7:1$ WCAG contrast).
+* **Architectural Remediation**:
+  1. Enhanced `src/pages/404.astro`: Illuminated Fraktur drop-cap `𝕱` and `𝟒𝟎𝟒` emblem, medieval scriptorium theming, interactive live search input (`action="/" method="GET"`), and quick recovery links (All Fonts, Tattoo Stencil Studio, A-Z Alphabet Directory, Fraktur Generator, and popular typefaces).
+  2. Created `src/pages/500.astro`: Mechanical printing press / gear emblem `𝟓𝟎𝟎`, Scriptorium engine interruption status, reload manuscript button (`window.location.reload()`), sanitized diagnostic container for `error` prop, recovery links, and direct support contact links (`/contact/` and `contact@oldenglishfontfree.com`).
+  3. Sitemap configuration in `astro.config.mjs`: added `filter: (page) => !page.includes('/500') && !page.includes('/404')`.
+  4. Build Verification: `npm run build` completed with 632 routes built in 29s, confirmed `dist/404.html` and `dist/500.html` exist, and verified zero sitemap contamination.
+
+
 
 
