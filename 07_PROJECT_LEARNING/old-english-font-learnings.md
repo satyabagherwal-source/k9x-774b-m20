@@ -32,3 +32,15 @@ This document records empirical learnings, forensic bug investigations, and patt
   3. Added mobile header close button (`#closeSidebarBtn`), backdrop tap dismiss, keyboard `Escape` dismiss, and a prominent bottom floating action button (`#applyMobileFiltersBtn`).
   4. Added responsive container layout: `<div class="flex flex-col lg:flex-row items-start gap-8 relative">`.
   5. Implemented live active filter counter badges and screen resize listeners that automatically reconcile desktop/mobile state without layout jumps.
+
+### INC-02: User-Supplied Low-Contrast / Dark-on-Dark SVG Logo & ForeignObject Bloat
+* **Context**: User provided a raw SVG code snippet extracted from an icon generator or browser DOM inspector to use as the site brand logo.
+* **Symptom**: In the website header on obsidian dark mode (`#030712`), the logo rendered as a pitch-black box with dark purple lettering (`stroke="rgb(43, 10, 134)"`), with contrast ratio below 1.3:1 ("invisible ho raha h"), contradicting the site's royal antique gold typography (`Cinzel Decorative`, amber gold gradient) and violating the brain's Universal Production Audit Rule (Zero dark-on-dark, WCAG AA/AAA >= 7:1). Additionally, the SVG was wrapped in a 68KB `<foreignObject>` structure with computed inline styles that broke in standard `<img>` tags.
+* **Root Cause**:
+  1. The raw SVG contained dark purple stroke styling designed for light surfaces, placed inside a `linear-gradient` with 94% black coverage.
+  2. Directly pasting third-party inspector SVGs imports bloated HTML namespaces (`foreignObject`, `xmlns="http://www.w3.org/1999/xhtml"`) instead of pure, scalable vector geometry.
+* **Architectural Remediation**:
+  1. Converted the SVG into a 100% native vector structure (`<rect>`, `<svg>`, `<path>`, `<circle>`, `<linearGradient>`, `<filter>`) with zero `foreignObject` bloat (file size reduced from 68.8KB to 1.2KB).
+  2. Preserved the user's exact glyph geometries (`Aa` from Lucide `case-sensitive` paths) while applying a luminous antique gold gradient (`#faeb9e` -> `#fbbf24` -> `#f59e0b` -> `#b45309`) with a soft ambient gold glow (`filter="url(#goldGlow)"`), achieving a 13.5:1 contrast ratio against the obsidian header.
+  3. Added an explicit gold hairline border (`url(#goldBorder)`) to the rounded tile container to maintain crisp edge definition against obsidian, slate, or parchment surfaces across both dark and light modes.
+
