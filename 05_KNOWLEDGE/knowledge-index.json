@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T15:21:26.503Z",
-  "total_verified_learnings": 3636,
+  "last_updated": "2026-10-10T15:25:20.242Z",
+  "total_verified_learnings": 3637,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -87260,6 +87260,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T15:21:26.503Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv2jpzo5": {
+      "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv2jpzo5",
+      "source": "TaichuAI/ZDTaichu5.0-9B",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "slug": "hf-taichuai-zdtaichu5.0-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "content_hash": "9a11f27c18bde0a8e79a41c3c3c8066f3e1c2c0af70bec181e8ffb484ac0416e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T15:25:20.242Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
