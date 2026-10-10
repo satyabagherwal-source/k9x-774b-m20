@@ -3,8 +3,8 @@
 > **Source Version**: `hf-zai-org-g`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T07:28:29.732Z  
-> **Learning ID**: `learn-huggingface-hf-zai-org-glm-5-3-mv22orol`  
+> **Timestamp**: 2026-10-10T13:31:58.003Z  
+> **Learning ID**: `learn-huggingface-hf-zai-org-glm-5-3-mv2fo71v`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/zai-org/GLM-5.3](https://huggingface.co/zai-org/GLM-5.3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T07:28:29.725Z  
+> **Harvest Timestamp**: 2026-10-10T13:31:57.996Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1648104 downloads | 2157 likes
+- **Stars / Engagement**: 1670161 downloads | 2163 likes
 
 ---
 
