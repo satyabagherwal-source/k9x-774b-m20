@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T21:59:15.472Z",
+  "last_updated": "2026-10-10T22:02:20.274Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -552,15 +552,15 @@
       "repository": "akhilaaa3/Jev-Omni",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-akhilaaa3-jev-omni-mv2k43of",
-      "content_hash": "bc81cbc43be5e40908576c7b98318ba1bdf027903e8c717c68a03064130078e3",
-      "verified_at": "2026-10-10T15:36:18.666Z",
+      "learning_id": "learn-huggingface-hf-akhilaaa3-jev-omni-mv2xwjay",
+      "content_hash": "dcfdb8ae78d5f96745e8d35637f7bad85f0ae2bc5094ba9f60235a7334e00b37",
+      "verified_at": "2026-10-10T22:02:20.274Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T15:36:18.666Z"
+      "last_updated": "2026-10-10T22:02:20.274Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
