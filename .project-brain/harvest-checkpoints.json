@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T09:23:10.746Z",
+  "last_updated": "2026-10-10T09:26:01.309Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -538,15 +538,15 @@
       "repository": "Comfy-Org/Qwen-Image-2.1",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv1ull7z",
-      "content_hash": "643795cee365b0117888b4dbfd4f26192199a9a9d31fbcb43c2390196d5a79b7",
-      "verified_at": "2026-10-10T03:42:04.498Z",
+      "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv26vwnw",
+      "content_hash": "c8b49d2351847f0b837cbe15b3bb5aa7905e4e972dd518424cd39701a53c5408",
+      "verified_at": "2026-10-10T09:26:01.308Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T03:42:04.498Z"
+      "last_updated": "2026-10-10T09:26:01.308Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",

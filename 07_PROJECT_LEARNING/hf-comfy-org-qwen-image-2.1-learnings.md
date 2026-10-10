@@ -3,8 +3,8 @@
 > **Source Version**: `hf-comfy-org`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T03:42:04.463Z  
-> **Learning ID**: `learn-huggingface-hf-comfy-org-qwen-image-2-1-mv1ull7z`  
+> **Timestamp**: 2026-10-10T09:26:01.244Z  
+> **Learning ID**: `learn-huggingface-hf-comfy-org-qwen-image-2-1-mv26vwnw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T03:42:04.304Z  
+> **Harvest Timestamp**: 2026-10-10T09:26:01.236Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 7755509 downloads | 1009 likes
+- **Stars / Engagement**: 8224717 downloads | 1018 likes
 
 ---
 
