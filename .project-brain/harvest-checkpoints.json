@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T18:56:40.572Z",
+  "last_updated": "2026-10-10T18:59:31.904Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1336,15 +1336,15 @@
       "repository": "NaiveAI/Naive-N0.5-Flash",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv2dizaq",
-      "content_hash": "bfa04cb7a19e02c042370ac014785b5bafaab37f453816335143d918503e51dc",
-      "verified_at": "2026-10-10T12:31:55.505Z",
+      "learning_id": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv2rdg1q",
+      "content_hash": "fd2c5137699cb2912a466e8dc3767ff96e5087c345789ec184473ecbe4fe53d6",
+      "verified_at": "2026-10-10T18:59:31.904Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T12:31:55.505Z"
+      "last_updated": "2026-10-10T18:59:31.904Z"
     },
     "openai/clip-vit-base-patch32": {
       "repository": "openai/clip-vit-base-patch32",
