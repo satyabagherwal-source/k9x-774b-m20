@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T03:10:25.733Z",
+  "last_updated": "2026-10-10T03:13:32.637Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1700,15 +1700,15 @@
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv1hcgmp",
-      "content_hash": "e59e2e2a477fc33eb677fd4e2726d405b10f40659e67a8bec0ecaa865caf8ec0",
-      "verified_at": "2026-10-09T21:31:03.635Z",
+      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv1tkwbj",
+      "content_hash": "15c2015b5cf1b47d6b577149da073e3c54a3b62f4e7533640d0e0ab1870c0007",
+      "verified_at": "2026-10-10T03:13:32.637Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T21:31:03.635Z"
+      "last_updated": "2026-10-10T03:13:32.637Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
