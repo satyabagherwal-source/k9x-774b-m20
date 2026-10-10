@@ -137,6 +137,22 @@ This document records empirical learnings, forensic bug investigations, and patt
      - `npm run build` completed with all 632 routes compiled with exit code 0.
      - Contrast ratios verified: $\ge 15.5:1$ in Light Mode, $\ge 20.5:1$ in Dark Mode.
 
+### INC-10: Immunity Hardening from Online Free Protractor Historical Defects
+* **Context**: User noted that the `onlinefreeprotractor` project suffered from recurring cascades of defects during iterative development, and instructed to perform a comprehensive audit to guarantee none of those issues recur in `old-english-font-free`. User also pointed out screenshot visual discrepancy: the Aa logo text appeared distorted/broken in light mode (`^ o` instead of `Aa`).
+* **Forensic Root Cause Analysis**:
+  1. *SVG LinearGradient Zero-Dimension Bounding Box Failure*: In `SiteLogo.astro`, the light mode logo glyph used `stroke="url(#logoGoldTextLight)"`. The `A` crossbar (`d="M4 13h6"`, height = 0) and the `a` vertical stem (`d="M21 9v6"`, width = 0) are 1-dimensional SVG paths. Because default `gradientUnits="objectBoundingBox"` evaluates bounding boxes with 0 dimension as undefined or transparent, the crossbar of `A` and the stem of `a` disappeared in browsers, mutating `Aa` into `^ o`! The dark mode logo used a solid color `stroke="rgb(43, 10, 134)"` which rendered all strokes cleanly.
+  2. *Error Page Multi-Locale Picker 404 Cascades (Protractor INC-28)*: In `404.html` and `500.html`, `LanguagePicker.astro` generated links to `/es/404/`, `/ja/404/`, etc., creating 26+ broken internal links for crawlers.
+  3. *Cloudflare Email Obfuscation Crawler 404 Loops (Protractor INC-19)*: Bare `mailto:` links across contact pages triggered Cloudflare Scrape Shield script injection (`/cdn-cgi/l/email-protection`), which search bots indexed as 404 errors.
+  4. *Schema.org Slash-less Domain Redirect Warnings (Protractor INC-24)*: JSON-LD graph in `Layout.astro` omitted trailing slashes on `"url": "https://oldenglishfontfree.com"`, triggering 308 redirect warnings in GSC.
+  5. *Multilingual Thin Utility Sitemap Crawl Exhaustion (Protractor INC-21 & INC-22)*: Auto-translated/boilerplate legal and utility pages in 13 locales flooded sitemaps and wasted Googlebot crawl budget.
+* **Architectural Remediation**:
+  1. *Identical Symmetrical Glyph Rendering*: Replaced gradient stroke in light mode `SiteLogo.astro` with solid `#fbbf24` gold, ensuring 100% geometric and stroke parity with dark mode `Aa`.
+  2. *Error Page Safe Routing*: Updated `LanguagePicker.astro` to detect error pages and safely redirect language selections to the canonical home page `/` of that language.
+  3. *Cloudflare Scrape Shield Protection*: Wrapped all `mailto:` links in `src/pages/contact.astro`, `src/pages/[lang]/contact.astro`, and `src/pages/500.astro` with `<!--email_off-->` comments, and created `public/_redirects` with `/cdn-cgi/l/email-protection* /contact/ 301`.
+  4. *Canonical Trailing Slashes in Schema*: Enforced `"url": "https://oldenglishfontfree.com/"` in `Layout.astro` JSON-LD graph.
+  5. *Programmatic Sitemap Pruning & Noindex Protection*: Added `noindex={true}` to localized non-English legal pages (`[lang]/terms.astro`, `[lang]/privacy.astro`, `[lang]/about.astro`, `[lang]/contact.astro`), and updated `astro.config.mjs` sitemap filter to exclude thin localized utility pages and deprecated frames routes.
+  6. *Automated Quality Audit Verification*: Created and ran `scripts/audit-site-quality.mjs` verifying 100% pass across all 9 incident categories on all 632 compiled HTML files.
+
 
 
 
