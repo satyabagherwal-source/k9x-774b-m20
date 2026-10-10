@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T15:46:34.865Z",
-  "total_verified_learnings": 3643,
+  "last_updated": "2026-10-10T15:49:59.619Z",
+  "total_verified_learnings": 3644,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -87428,6 +87428,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T15:46:34.865Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv2klp5j": {
+      "learning_id": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv2klp5j",
+      "source": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "slug": "hf-akatz-ai-minimax-h3-character-swap-lora",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
+      "content_hash": "1e894630c3e63bbc11c94bd35d6325bc194cad6d5bad8bc6c5bf31e9981a0257",
+      "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T15:49:59.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
