@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T13:31:58.065Z",
+  "last_updated": "2026-10-10T13:34:41.982Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1630,15 +1630,15 @@
       "repository": "mudler/locate-anything.cpp-gguf",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv22sqvh",
-      "content_hash": "1e8abad15b421dd72002f247957f541da29ebc197385ed6eda306ac425fe7c4a",
-      "verified_at": "2026-10-10T07:31:35.372Z",
+      "learning_id": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv2frpjr",
+      "content_hash": "6d34202fd290cc3938b139e6c93102316364f5dd1ecbcd71021402a2829f1802",
+      "verified_at": "2026-10-10T13:34:41.982Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T07:31:35.372Z"
+      "last_updated": "2026-10-10T13:34:41.982Z"
     },
     "jialinyyzz/humanizer": {
       "repository": "jialinyyzz/humanizer",
