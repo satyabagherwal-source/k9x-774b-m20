@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T20:12:07.803Z",
-  "total_verified_learnings": 3724,
+  "last_updated": "2026-10-10T20:14:56.204Z",
+  "total_verified_learnings": 3725,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -89372,6 +89372,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T20:12:07.803Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-convaiinnovations-laya-mv2u2f1k": {
+      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv2u2f1k",
+      "source": "convaiinnovations/laya",
+      "repository": "convaiinnovations/laya",
+      "slug": "hf-convaiinnovations-laya",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "content_hash": "0504ab84609d3b61465d22cd1ae405564e8e7e95d2d769d57fd0d0fc14e9c17e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T20:14:56.204Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
