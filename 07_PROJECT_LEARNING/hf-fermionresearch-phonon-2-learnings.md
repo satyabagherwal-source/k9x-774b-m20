@@ -3,8 +3,8 @@
 > **Source Version**: `hf-fermionre`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T00:31:23.046Z  
-> **Learning ID**: `learn-huggingface-hf-fermionresearch-phonon-2-mv1nscyv`  
+> **Timestamp**: 2026-10-10T06:17:02.172Z  
+> **Learning ID**: `learn-huggingface-hf-fermionresearch-phonon-2-mv204vdo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/FermionResearch/Phonon-2](https://huggingface.co/FermionResearch/Phonon-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T00:31:22.848Z  
+> **Harvest Timestamp**: 2026-10-10T06:17:02.166Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4137 downloads | 281 likes
+- **Stars / Engagement**: 4137 downloads | 282 likes
 
 ---
 
