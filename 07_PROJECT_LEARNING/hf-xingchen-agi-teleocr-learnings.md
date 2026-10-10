@@ -3,8 +3,8 @@
 > **Source Version**: `hf-xingchen-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T14:41:07.565Z  
-> **Learning ID**: `learn-huggingface-hf-xingchen-agi-teleocr-mv2i54vh`  
+> **Timestamp**: 2026-10-10T21:09:48.559Z  
+> **Learning ID**: `learn-huggingface-hf-xingchen-agi-teleocr-mv2w0zgv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XingChen-AGI/TeleOCR](https://huggingface.co/XingChen-AGI/TeleOCR))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T14:41:07.557Z  
+> **Harvest Timestamp**: 2026-10-10T21:09:48.351Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
