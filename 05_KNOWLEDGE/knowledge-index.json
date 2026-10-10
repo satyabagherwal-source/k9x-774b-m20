@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T11:30:05.961Z",
-  "total_verified_learnings": 3561,
+  "last_updated": "2026-10-10T11:32:47.180Z",
+  "total_verified_learnings": 3562,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -85460,6 +85460,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T11:30:05.961Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv2bexf5": {
+      "learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv2bexf5",
+      "source": "stabilityai/stable-diffusion-3-medium",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "slug": "hf-stabilityai-stable-diffusion-3-medium",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "source_version": "hf-stabilityai-stable-diffusion-3-medium",
+      "content_hash": "74ab038c67bcb3fb664a91dae93e283477da7b04d55a8efe5d7000d1ecae14c1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T11:32:47.180Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
