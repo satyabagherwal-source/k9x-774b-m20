@@ -3,8 +3,8 @@
 > **Source Version**: `hf-xiaomimim`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T22:05:50.462Z  
-> **Learning ID**: `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv1il6v3`  
+> **Timestamp**: 2026-10-10T03:48:14.606Z  
+> **Learning ID**: `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv1utitq`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T22:05:50.000Z  
+> **Harvest Timestamp**: 2026-10-10T03:48:14.248Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
