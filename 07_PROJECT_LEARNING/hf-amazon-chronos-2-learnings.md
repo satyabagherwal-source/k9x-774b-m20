@@ -3,8 +3,8 @@
 > **Source Version**: `hf-amazon-ch`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T17:38:02.803Z  
-> **Learning ID**: `learn-huggingface-hf-amazon-chronos-2-mv2ognn7`  
+> **Timestamp**: 2026-10-10T23:33:09.851Z  
+> **Learning ID**: `learn-huggingface-hf-amazon-chronos-2-mv315c9n`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/amazon/chronos-2](https://huggingface.co/amazon/chronos-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T17:38:02.613Z  
+> **Harvest Timestamp**: 2026-10-10T23:33:09.692Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
