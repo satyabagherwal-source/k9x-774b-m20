@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T11:06:47.238Z",
+  "last_updated": "2026-10-10T11:09:55.046Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1028,15 +1028,15 @@
       "repository": "black-forest-labs/FLUX.1-schnell",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv1yaf3n",
-      "content_hash": "f753123ed7996f26ff07091cc433a33c6f30b3a9d514064e2c2d34f4ed99bfb1",
-      "verified_at": "2026-10-10T05:25:21.841Z",
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv2alin6",
+      "content_hash": "c0f3b48a8a8b9f90934fa6de1068149a71daa09f2ece5f83e944db6bdd7f2cf5",
+      "verified_at": "2026-10-10T11:09:55.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T05:25:21.841Z"
+      "last_updated": "2026-10-10T11:09:55.046Z"
     },
     "MiniMaxAI/MiniMax-H3": {
       "repository": "MiniMaxAI/MiniMax-H3",
