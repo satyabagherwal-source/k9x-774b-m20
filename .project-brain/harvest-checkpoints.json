@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T12:26:14.622Z",
+  "last_updated": "2026-10-10T12:29:02.920Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1322,15 +1322,15 @@
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv20g6vm",
-      "content_hash": "a665d5ec525ae60e613f4ca30df9c0a64824cd0b18ba0c8809928cfdbd090829",
-      "verified_at": "2026-10-10T06:25:50.352Z",
+      "learning_id": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv2dfa4p",
+      "content_hash": "ecd8f3aa17aba3a771822839c000f7e6db66af11fa6d2596e6d01d358ee06e13",
+      "verified_at": "2026-10-10T12:29:02.920Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T06:25:50.352Z"
+      "last_updated": "2026-10-10T12:29:02.920Z"
     },
     "NaiveAI/Naive-N0.5-Flash": {
       "repository": "NaiveAI/Naive-N0.5-Flash",
