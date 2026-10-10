@@ -3,8 +3,8 @@
 > **Source Version**: `hf-mistralai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T18:35:24.033Z  
-> **Learning ID**: `learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv1b2k8x`  
+> **Timestamp**: 2026-10-10T00:17:29.163Z  
+> **Learning ID**: `learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv1nahjf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1](https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T18:35:23.629Z  
+> **Harvest Timestamp**: 2026-10-10T00:17:28.663Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
