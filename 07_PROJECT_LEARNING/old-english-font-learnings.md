@@ -153,6 +153,16 @@ This document records empirical learnings, forensic bug investigations, and patt
   5. *Programmatic Sitemap Pruning & Noindex Protection*: Added `noindex={true}` to localized non-English legal pages (`[lang]/terms.astro`, `[lang]/privacy.astro`, `[lang]/about.astro`, `[lang]/contact.astro`), and updated `astro.config.mjs` sitemap filter to exclude thin localized utility pages and deprecated frames routes.
   6. *Automated Quality Audit Verification*: Created and ran `scripts/audit-site-quality.mjs` verifying 100% pass across all 9 incident categories on all 632 compiled HTML files.
 
+### INC-11: Contact Architecture Simplification (Single Direct Email for Free Font Aggregator Model)
+* **Context**: User noted that having 4 separate corporate email cards (`contact@`, `fonts@`, `license@`, `compliance@`) was excessive and unnatural for the project's actual operating model (*"email jyada h . me keval internet se free use wale font le raha hu aur free me user use karega"*). Screenshot revealed awkward horizontal wrapping where long email addresses broke into multiple lines (`contact@oldenglishfontfre e.com`).
+* **Forensic Root Cause Analysis**:
+  - The previous multi-card contact design imitated a large commercial corporate font foundry. For an open-access aggregator providing free-to-use fonts collected from the public domain and open-source SIL OFL web, having four separate departmental mailboxes created unnecessary operational friction, looked artificially bloated, and caused visual line wrapping on smaller cards.
+* **Architectural Remediation**:
+  1. *Unified Direct Email Banner*: Replaced the 4 cramped cards in `src/pages/contact.astro` and `src/pages/[lang]/contact.astro` with a single, elegant, and responsive direct contact banner featuring ONLY `contact@oldenglishfontfree.com`.
+  2. *Streamlined Inquiry Categories*: Simplified the contact form subject dropdown to practical user categories: "General Question & Feedback", "Font Request or Suggestion", "Copyright or DMCA Request", and "Technical Bug or Website Issue".
+  3. *Eliminated Visual Wrapping*: Email address is rendered inside a dedicated full-width pill button with ample padding, guaranteeing zero line wrapping across all viewport breakpoints.
+
+
 
 
 
