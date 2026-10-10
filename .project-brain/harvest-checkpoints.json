@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T19:14:07.342Z",
+  "last_updated": "2026-10-10T19:16:53.468Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1420,15 +1420,15 @@
       "repository": "openai-community/gpt2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-openai-community-gpt2-mv2e585s",
-      "content_hash": "ca4375bd50e563cf1e0d11ed011804eb7b637d0d84c99832f677f7c0d643cc8d",
-      "verified_at": "2026-10-10T12:49:13.433Z",
+      "learning_id": "learn-huggingface-hf-openai-community-gpt2-mv2rzrqc",
+      "content_hash": "5744afc3904e1cf5df3c45ea8e19851417475031f1df095ebeabaed68cefec89",
+      "verified_at": "2026-10-10T19:16:53.468Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T12:49:13.433Z"
+      "last_updated": "2026-10-10T19:16:53.468Z"
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
