@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T23:36:02.719Z",
+  "last_updated": "2026-10-10T23:38:52.125Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -986,15 +986,15 @@
       "repository": "meta-llama/Meta-Llama-3-8B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv2onvar",
-      "content_hash": "01031ffb42d4567f70b83b4861073eff96d76fc85f5c98a3e710418bf4af4051",
-      "verified_at": "2026-10-10T17:43:39.370Z",
+      "learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv31cobz",
+      "content_hash": "bc610d35d2348910c89d3451212b4d71c8728ede274d8e26190c8f604c6eb26a",
+      "verified_at": "2026-10-10T23:38:52.125Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T17:43:39.370Z"
+      "last_updated": "2026-10-10T23:38:52.125Z"
     },
     "hexgrad/Kokoro-82M": {
       "repository": "hexgrad/Kokoro-82M",
