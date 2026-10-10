@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T15:36:18.666Z",
+  "last_updated": "2026-10-10T15:39:48.637Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -566,15 +566,15 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv273dwr",
-      "content_hash": "a5d78e1797ce36c67bf50ac139a5f79121dcaf8497bae737fc31c007c9efbef9",
-      "verified_at": "2026-10-10T09:31:50.252Z",
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv2k8lpb",
+      "content_hash": "8ca17b4ceb32a2351fedfe0f995da745937540b29d7a2454c49b85c2e44dcb6b",
+      "verified_at": "2026-10-10T15:39:48.637Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T09:31:50.252Z"
+      "last_updated": "2026-10-10T15:39:48.637Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
