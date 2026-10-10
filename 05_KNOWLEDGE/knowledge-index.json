@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T11:48:55.846Z",
-  "total_verified_learnings": 3567,
+  "last_updated": "2026-10-10T11:55:09.861Z",
+  "total_verified_learnings": 3568,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -85604,6 +85604,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T11:48:55.846Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-zhangzhengeric-sage-mv2c7pfb": {
+      "learning_id": "learn-github-zhangzhengeric-sage-mv2c7pfb",
+      "source": "ZHangZHengEric/Sage",
+      "repository": "ZHangZHengEric/Sage",
+      "slug": "zhangzhengeric-sage",
+      "platform": "github",
+      "source_url": "https://github.com/ZHangZHengEric/Sage",
+      "source_version": "ac0f83bc",
+      "content_hash": "5decfeed7e0f4b13dc3d316ac5dae4a553066afa6106a940f9b52929703bb992",
+      "dossier_path": "07_PROJECT_LEARNING/zhangzhengeric-sage-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/zhangzhengeric-sage-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T11:55:09.861Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

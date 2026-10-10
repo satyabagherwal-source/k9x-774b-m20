@@ -21375,5 +21375,22 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zhangzhengeric-sage": {
+    "name": "ZHangZHengEric/Sage",
+    "officialUrl": "https://github.com/ZHangZHengEric/Sage",
+    "sourceType": "github",
+    "technology": "Python",
+    "lastChecked": "2026-10-10T11:55:09.801Z",
+    "lastVerified": "2026-10-10T11:55:09.801Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zhangzhengeric-sage-mv2c7pfb",
+    "contentHash": "5decfeed7e0f4b13dc3d316ac5dae4a553066afa6106a940f9b52929703bb992",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 50,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
