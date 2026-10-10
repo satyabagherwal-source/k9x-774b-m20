@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T04:16:31.859Z",
+  "last_updated": "2026-10-10T04:19:34.552Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -706,15 +706,15 @@
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv1jlwrp",
-      "content_hash": "76df56d3485c554b7c4e465cfdad1e6b5275eb2f7f919665c00dac099ef579b3",
-      "verified_at": "2026-10-09T22:34:23.685Z",
+      "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv1vxtco",
+      "content_hash": "e3b96a02f8fe7547e96f45961a74127a7b46f22c0201829cdfe1da02b96662a1",
+      "verified_at": "2026-10-10T04:19:34.552Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-09T22:34:23.685Z"
+      "last_updated": "2026-10-10T04:19:34.552Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
