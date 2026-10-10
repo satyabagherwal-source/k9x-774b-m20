@@ -3,8 +3,8 @@
 > **Source Version**: `hf-deepseek-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T18:39:09.054Z  
-> **Learning ID**: `learn-huggingface-hf-deepseek-ai-deepseek-v3-mv1b7dvi`  
+> **Timestamp**: 2026-10-10T00:20:15.048Z  
+> **Learning ID**: `learn-huggingface-hf-deepseek-ai-deepseek-v3-mv1ne1jc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/deepseek-ai/DeepSeek-V3](https://huggingface.co/deepseek-ai/DeepSeek-V3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T18:39:08.804Z  
+> **Harvest Timestamp**: 2026-10-10T00:20:14.405Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
