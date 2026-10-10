@@ -3,8 +3,8 @@
 > **Source Version**: `hf-sentence-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T12:37:28.563Z  
-> **Learning ID**: `learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv2dq4c3`  
+> **Timestamp**: 2026-10-10T19:05:25.928Z  
+> **Learning ID**: `learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv2rl19k`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sentence-transformers/all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T12:37:28.555Z  
+> **Harvest Timestamp**: 2026-10-10T19:05:25.683Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
