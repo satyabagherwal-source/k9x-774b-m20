@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T13:40:29.951Z",
-  "total_verified_learnings": 3601,
+  "last_updated": "2026-10-10T13:43:38.360Z",
+  "total_verified_learnings": 3602,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -86420,6 +86420,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T13:40:29.951Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-autotrust-gev-26b-decide-mv2g37fc": {
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-mv2g37fc",
+      "source": "autotrust/GEV-26B-Decide",
+      "repository": "autotrust/GEV-26B-Decide",
+      "slug": "hf-autotrust-gev-26b-decide",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+      "source_version": "hf-autotrust-gev-26b-decide",
+      "content_hash": "4de4f8367d6c5545cdfee3951e9e9a1fd515bbc0ae5018fc671154a042207dd7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T13:43:38.360Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
