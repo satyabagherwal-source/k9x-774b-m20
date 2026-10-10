@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T01:31:33.387Z",
-  "total_verified_learnings": 3353,
+  "last_updated": "2026-10-10T01:34:14.337Z",
+  "total_verified_learnings": 3354,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -80468,6 +80468,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T01:31:33.387Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-bingsu-adetailer-mv1q16wg": {
+      "learning_id": "learn-huggingface-hf-bingsu-adetailer-mv1q16wg",
+      "source": "Bingsu/adetailer",
+      "repository": "Bingsu/adetailer",
+      "slug": "hf-bingsu-adetailer",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Bingsu/adetailer",
+      "source_version": "hf-bingsu-adetailer",
+      "content_hash": "aab1ad64563768553dcaba86dc6d8cff0dfee61cca0213a9a14751855b115c71",
+      "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T01:34:14.337Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
