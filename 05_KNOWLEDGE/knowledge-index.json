@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T09:14:34.551Z",
-  "total_verified_learnings": 3514,
+  "last_updated": "2026-10-10T09:17:17.249Z",
+  "total_verified_learnings": 3515,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -84332,6 +84332,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T09:14:34.551Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv26kobi": {
+      "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv26kobi",
+      "source": "orcarouter/OrcaSAQ-2-27B",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "slug": "hf-orcarouter-orcasaq-2-27b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "content_hash": "21079878724ac633c5110d1a6d413751910e715d23a16a3d6156481b47c790a7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T09:17:17.249Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
