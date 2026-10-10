@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T19:54:30.204Z",
-  "total_verified_learnings": 3718,
+  "last_updated": "2026-10-10T19:57:21.644Z",
+  "total_verified_learnings": 3719,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -89228,6 +89228,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T19:54:30.204Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-baai-bge-large-en-v1-5-mv2tftc9": {
+      "learning_id": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv2tftc9",
+      "source": "BAAI/bge-large-en-v1.5",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "slug": "hf-baai-bge-large-en-v1.5",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
+      "source_version": "hf-baai-bge-large-en-v1.5",
+      "content_hash": "3218ca08fdd7b8b93a10464dce2ba37222b63ae27b0544109db54a6a8074aa3d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T19:57:21.644Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
