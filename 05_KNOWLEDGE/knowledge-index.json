@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T14:21:12.341Z",
-  "total_verified_learnings": 3615,
+  "last_updated": "2026-10-10T14:23:56.400Z",
+  "total_verified_learnings": 3616,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -86756,6 +86756,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T14:21:12.341Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv2hj17d": {
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv2hj17d",
+      "source": "autotrust/GEV-26B-Decide-NVFP4",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "slug": "hf-autotrust-gev-26b-decide-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+      "content_hash": "b4bb29d98114d9e8a1ca5731836cbe8d49d29f1d62e8eae2e79f81f565206f47",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T14:23:56.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
