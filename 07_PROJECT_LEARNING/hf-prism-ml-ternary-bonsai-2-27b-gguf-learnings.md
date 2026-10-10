@@ -3,8 +3,8 @@
 > **Source Version**: `hf-prism-ml-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T21:25:14.995Z  
-> **Learning ID**: `learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv1h4zn7`  
+> **Timestamp**: 2026-10-10T03:07:23.448Z  
+> **Learning ID**: `learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv1tczi0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T21:25:14.723Z  
+> **Harvest Timestamp**: 2026-10-10T03:07:22.711Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4389072 downloads | 2568 likes
+- **Stars / Engagement**: 4389072 downloads | 2571 likes
 
 ---
 
