@@ -52,6 +52,14 @@ This document records empirical learnings, forensic bug investigations, and patt
   - `public/logo.svg` and `SiteLogo.astro` had a separate manually generated geometry.
 * **Architectural Remediation**:
   1. Synchronized all three vector endpoints: `public/favicon.svg`, `public/logo.svg`, and `src/components/SiteLogo.astro` to render the exact same brand artwork.
-  2. Component-level abstraction: `SiteLogo.astro` references `/logo.svg` directly via `<img src="/logo.svg" ... />`, eliminating duplicated inlined SVG data, enabling HTTP caching across page routes, and guaranteeing zero visual divergence between the browser tab favicon and header brand logo.
+### INC-04: Structured Data FAQPage Integration & Search Intent Entity Mapping
+* **Context**: User requested an authoritative, SEO-friendly FAQ section answering 36+ target search queries covering writing techniques, typography taxonomy (Blackletter/Textura/Fraktur), application integration (Google Docs, Microsoft Word, Instagram), tattoo stencils, and historic cultural artifacts (White Sox logo, 1920s Prohibition typography).
+* **Requirement**: Use Schema.org `FAQPage` JSON-LD structured data for Google rich snippet eligibility, accompanied by an interactive accordion UI.
+* **Architectural Remediation**:
+  1. Component Modularization: Created `src/components/OldEnglishFaq.astro` implementing native semantic `<details>` and `<summary>` elements with zero layout shift (CLS).
+  2. Entity Resolution & Schema Completeness: Mapped each core typographic topic into rich master answers while simultaneously generating 53 explicit `@type: Question` entities in `<script type="application/ld+json">`, directly targeting all verbatim long-tail user queries.
+  3. Interactive Discovery UX: Integrated a live client-side search input, category filter pills (`💻 Google Docs & Word`, `✍️ Typing & Generators`, `🔤 Font Types & Names`, `💉 Tattoos & Numbers`, `📜 History & White Sox`), dynamic question counter, and "Expand All / Collapse All" controls.
+  4. Design Parity: Implemented high-contrast Obsidian Gold design styling (`Cinzel Decorative`, amber-400 highlights, slate-900 glassmorphism) maintaining WCAG AA/AAA compliance (contrast ratio >= 7:1).
+  5. Static Generation Validation: Verified complete SSG compilation (`npm run build`, 617 static HTML routes generated with exit code 0) and validated JSON-LD schema parsing via automated Node test scripts.
 
 
