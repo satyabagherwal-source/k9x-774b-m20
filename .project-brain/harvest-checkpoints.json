@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T23:06:46.368Z",
+  "last_updated": "2026-10-10T23:09:53.891Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -846,15 +846,15 @@
       "repository": "google-bert/bert-base-uncased",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-google-bert-bert-base-uncased-mv2nn66y",
-      "content_hash": "73bbd9d1665f9ebe6930d779856ecb9a0b0db18a14580bf35bbe907dc302defc",
-      "verified_at": "2026-10-10T17:15:07.240Z",
+      "learning_id": "learn-huggingface-hf-google-bert-bert-base-uncased-mv30bf3j",
+      "content_hash": "e443b3167d53b511ee4434f47b9fdad089b57c5ccd9da2c4f8b41409e71ce05a",
+      "verified_at": "2026-10-10T23:09:53.891Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T17:15:07.240Z"
+      "last_updated": "2026-10-10T23:09:53.891Z"
     },
     "google/electra-base-discriminator": {
       "repository": "google/electra-base-discriminator",
