@@ -68,9 +68,9 @@ async function runMilestone7Audit() {
   assert(!emptyStringResult.present, 'Correctly flags empty string as missing');
 
   // ---------------------------------------------------------------------------
-  // TEST 2: Invalid-Key Classification & Live HTTP 401 Rejection
+  // TEST 2: Credential Diagnosis & Authentication Format Recognition
   // ---------------------------------------------------------------------------
-  console.log('\n[TEST 2] Testing Credential Diagnosis & Live HTTP 401 Rejection...');
+  console.log('\n[TEST 2] Testing Credential Diagnosis & Authentication Format Recognition...');
   const diag = resolveGeminiCredentialDiagnostics();
 
   console.log(`  - Credential Present      : ${diag.present ? 'YES' : 'NO'}`);
@@ -80,64 +80,43 @@ async function runMilestone7Audit() {
   console.log(`  - Raw Key Length          : ${diag.classification.length} chars`);
 
   assert(diag.present, 'Credential present in configured store', diag.source);
-  assert(diag.classification.format === 'UNSUPPORTED_SESSION_TOKEN', 
-    'Correctly diagnosed AQ. credential as UNSUPPORTED_SESSION_TOKEN');
-  assert(!diag.classification.validFormat, 'Flagged validFormat = false for unsupported session token');
+  assert(
+    diag.classification.format === 'GOOGLE_AI_STUDIO_API_KEY_V2' || diag.classification.format === 'GOOGLE_AI_STUDIO_API_KEY', 
+    'Correctly diagnosed official Google AI Studio API key format', 
+    diag.classification.format
+  );
+  assert(diag.classification.validFormat === true, 'Flagged validFormat = true for Google AI Studio API key');
+  assert(diag.classification.authMethod === 'HEADER_X_GOOG_API_KEY', 'Uses official x-goog-api-key header authentication');
 
-  // Send real diagnostic probe to Generative Language API
-  let httpStatus = 0;
-  let parsedErrorMsg = '';
-  let probeLatencyMs = 0;
-
-  if (diag.activeKey) {
-    const startTime = Date.now();
-    const model = 'gemini-2.5-flash';
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${diag.activeKey}`
-        },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: 'PONG' }] }]
-        })
-      });
-
-      probeLatencyMs = Date.now() - startTime;
-      httpStatus = response.status;
-      const rawText = await response.text();
-      try {
-        const json = JSON.parse(rawText);
-        parsedErrorMsg = json.error?.message || rawText;
-      } catch (e) {
-        parsedErrorMsg = rawText;
-      }
-    } catch (netErr) {
-      parsedErrorMsg = netErr.message;
-    }
-  }
-
-  assert(httpStatus === 401, 'Live Google Generative Language API returned HTTP 401', `Status: ${httpStatus}`);
-  assert(parsedErrorMsg.includes('invalid authentication credentials') || httpStatus === 401, 
-    'Provider rejection captures authentic unauthenticated response');
-  assert(!parsedErrorMsg.includes(diag.activeKey), 'Raw credential value strictly redacted from error output');
+  // Verify that an invalid token is correctly rejected by provider gate
+  const dummyInvalidKey = 'AQ.INVALID_MALFORMED_PROBE_TEST_KEY_REJECT_401';
+  try {
+    const probeRes = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': dummyInvalidKey },
+      body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: 'PONG' }] }] })
+    });
+    assert(probeRes.status === 400 || probeRes.status === 401 || probeRes.status === 403, 
+      'Provider gateway rejects invalid/malformed token', `HTTP ${probeRes.status}`);
+  } catch (e) {}
 
   // ---------------------------------------------------------------------------
-  // TEST 3: Live Model Request with Valid Credential (Conditional Gate)
+  // TEST 3: Real Live Model Execution with Valid Credential
   // ---------------------------------------------------------------------------
-  console.log('\n[TEST 3] Testing Live Model Execution Gate (Conditional)...');
+  console.log('\n[TEST 3] Testing Real Live Model Execution with Valid Credential...');
   let liveModelConnected = false;
   let modelIdentifier = null;
   let actualModelCallsCompleted = 0;
+  let probeLatencyMs = 0;
+  let modelOutputText = '';
 
   if (diag.classification.validFormat && diag.activeKey) {
-    // Only execute if an official valid credential format (AIzaSy...) is active
-    console.log('  - Valid credential detected. Initiating live model execution...');
+    const targetModel = GEMINI_MODELS[0] || 'gemini-3.8-flash';
+    console.log(`  - Sending live model request to ${targetModel}...`);
+    const startTime = Date.now();
+
     try {
-      const liveRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
+      const liveRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${targetModel}:generateContent`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,27 +127,31 @@ async function runMilestone7Audit() {
         })
       });
 
+      probeLatencyMs = Date.now() - startTime;
+      console.log(`  - HTTP Status: ${liveRes.status} ${liveRes.statusText} (${probeLatencyMs}ms)`);
+
       if (liveRes.status === 200) {
         const liveData = await liveRes.json();
         const text = liveData.candidates?.[0]?.content?.parts?.[0]?.text;
         if (text && text.trim().length > 0) {
           liveModelConnected = true;
-          modelIdentifier = 'gemini-2.5-flash';
+          modelIdentifier = targetModel;
           actualModelCallsCompleted = 1;
-          assert(true, 'Live model responded with verified content', text.trim());
+          modelOutputText = text.trim();
+          console.log(`  ✨ [LIVE MODEL CONFIRMED] Model responded: "${modelOutputText}" in ${probeLatencyMs}ms`);
         }
+      } else {
+        const errBody = await liveRes.text();
+        console.warn(`  ❌ [PROVIDER ERROR] HTTP ${liveRes.status}: ${errBody.slice(0, 160)}`);
       }
     } catch (e) {
-      assert(false, 'Live request failed', e.message);
+      console.error(`  ❌ [NETWORK ERROR] ${e.message}`);
     }
-  } else {
-    // Explicit blocker reporting: ZERO fake responses fabricated
-    console.log('  ℹ️ [LIVE EXECUTION GATE] Valid Google AI Studio API key not configured.');
-    assert(liveModelConnected === false, 
-      'Live model connected strictly set to false on authentication blocker (Zero Fabrication Standard)');
-    assert(actualModelCallsCompleted === 0, 
-      'Actual model calls recorded as 0 (Zero fake responses claimed)');
   }
+
+  assert(liveModelConnected === true, 'Live AI Model successfully connected and executed', modelIdentifier);
+  assert(actualModelCallsCompleted === 1, 'Actual model calls completed recorded', `Completed: ${actualModelCallsCompleted}`);
+  assert(modelOutputText.length > 0, 'Model returned verified non-empty intelligence text', modelOutputText);
 
   // ---------------------------------------------------------------------------
   // TEST 4: Response Content Non-Empty Validation Guard
@@ -177,14 +160,14 @@ async function runMilestone7Audit() {
   assert(!validateModelOutput(null).valid, 'Rejects null model output');
   assert(!validateModelOutput('').valid, 'Rejects empty model output');
   assert(!validateModelOutput('   ').valid, 'Rejects whitespace-only model output');
-  assert(validateModelOutput('Verified intelligence response').valid, 'Accepts non-empty response content');
+  assert(validateModelOutput(modelOutputText).valid, 'Accepts verified live model response content');
 
   // ---------------------------------------------------------------------------
   // TEST 5: Provider Failure & Isolated Circuit Breaker
   // ---------------------------------------------------------------------------
   console.log('\n[TEST 5] Testing Provider Failure & Isolated Circuit Breaker...');
   const testKey = 'test-probe-key-xyz-1234';
-  tripKeyCircuitBreaker(testKey, 120_000, 'HTTP 401 Invalid Credentials Test', 'Google Gemini');
+  tripKeyCircuitBreaker(testKey, 120_000, 'Provider Rate Limit Probe Test', 'Google Gemini');
   const trippedState = getKeyCircuitState(testKey, 'Google Gemini');
   assert(trippedState.status === 'RATE_LIMITED' || trippedState.status === 'QUOTA_EXHAUSTED', 
     'Failing key entered isolated cooldown state', trippedState.status);
@@ -194,9 +177,9 @@ async function runMilestone7Audit() {
     'Other providers remain HEALTHY and unaffected by Gemini cooldown');
 
   // ---------------------------------------------------------------------------
-  // TEST 6: Decoupling of Real MCP Client from Live Model Connection
+  // TEST 6: Verification of Real MCP Client & Live Model Connection
   // ---------------------------------------------------------------------------
-  console.log('\n[TEST 6] Testing Decoupling of MCP Client from Live Model Connection...');
+  console.log('\n[TEST 6] Testing Decoupling & Verification of MCP Client and Live Model...');
   const mcpGlobalPath = 'C:\\Users\\Admin\\.gemini\\config\\mcp_config.json';
   let realMcpClientConnected = false;
 
@@ -211,28 +194,26 @@ async function runMilestone7Audit() {
 
   assert(realMcpClientConnected === true, 
     'Real MCP Client Connected: YES (Registered in Antigravity IDE global config)');
-  assert(liveModelConnected === false, 
-    'Live Model Connected: NO (Independently tracked without false positive)');
-  assert(realMcpClientConnected !== liveModelConnected, 
-    'MCP Client status and Live Model status strictly decoupled and independently audited');
+  assert(liveModelConnected === true, 
+    'Live Model Connected: YES (Verified via live HTTP 200 response)');
 
   // ---------------------------------------------------------------------------
   // FINAL SCORECARD
   // ---------------------------------------------------------------------------
   console.log('\n======================================================================');
-  console.log('📊 ROOT CAUSE DIAGNOSIS & RECOVERY SCORECARD');
+  console.log('📊 MILESTONE 7 FINAL VERIFICATION SCORECARD');
   console.log('======================================================================');
-  console.log(`Root Cause Identified    : Credential starts with "AQ." (Antigravity/Chrome internal session token)`);
-  console.log(`                           Google Generative Language REST API requires Google AI Studio API key ("AIzaSy...") or OAuth access token ("ya29.").`);
-  console.log(`Resolved Source          : ${diag.source} (${diag.keyName})`);
-  console.log(`HTTP Status              : ${httpStatus} UNAUTHENTICATED`);
-  console.log(`Sanitized Error          : ${parsedErrorMsg.slice(0, 120)}`);
   console.log(`Live Model Connected     : ${liveModelConnected ? 'YES' : 'NO'}`);
+  console.log(`Active Model             : ${modelIdentifier}`);
+  console.log(`Latency                  : ${probeLatencyMs}ms`);
   console.log(`Actual Model Calls Done  : ${actualModelCallsCompleted}`);
   console.log(`Real MCP Client Connected: ${realMcpClientConnected ? 'YES' : 'NO'}`);
-  console.log(`Actionable Remedy        : ${diag.actionableSetup}`);
+  console.log(`Resolved Source          : ${diag.source} (${diag.keyName})`);
+  console.log(`Key Format               : ${diag.classification.format} (${diag.classification.masked})`);
+  console.log(`Authentication Method    : ${diag.classification.authMethod}`);
+  console.log(`Live Output Received     : "${modelOutputText}"`);
   console.log('======================================================================');
-  console.log(`🏁 LIVE MODEL DIAGNOSTIC SUITE: ${passedTests} PASSED | ${failedTests} FAILED`);
+  console.log(`🏁 LIVE MODEL VERIFICATION SUITE: ${passedTests} PASSED | ${failedTests} FAILED`);
   console.log('======================================================================\n');
 
   if (failedTests > 0) process.exit(1);

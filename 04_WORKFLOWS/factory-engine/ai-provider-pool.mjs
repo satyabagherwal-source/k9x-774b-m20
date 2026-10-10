@@ -11,10 +11,11 @@ const CIRCUIT_FILE = path.join(BRAIN_ROOT, '.harvest-locks', 'ai-key-circuit.jso
 
 // Supported Gemini Models (Official Google AI Studio API IDs)
 export const GEMINI_MODELS = [
+  'gemini-3.8-flash',
+  'gemini-3.7-flash',
+  'gemini-3.6-flash',
+  'gemini-3.5-flash',
   'gemini-2.5-flash',
-  'gemini-2.0-flash',
-  'gemini-1.5-flash',
-  'gemini-1.5-pro',
   'gemini-flash-latest'
 ];
 
@@ -101,6 +102,17 @@ export function classifyCredential(apiKey, provider = 'gemini') {
   const masked = len <= 8 ? '****' : `${trimmed.slice(0, 4)}...${trimmed.slice(-4)}`;
 
   if (provider === 'gemini') {
+    if (trimmed.startsWith('AQ.') && len >= 40) {
+      return {
+        present: true,
+        length: len,
+        format: 'GOOGLE_AI_STUDIO_API_KEY_V2',
+        masked,
+        validFormat: true,
+        authMethod: 'HEADER_X_GOOG_API_KEY',
+        error: null
+      };
+    }
     if (trimmed.startsWith('AIzaSy') && len === 39) {
       return {
         present: true,
@@ -123,17 +135,6 @@ export function classifyCredential(apiKey, provider = 'gemini') {
         error: null
       };
     }
-    if (trimmed.startsWith('AQ.')) {
-      return {
-        present: true,
-        length: len,
-        format: 'UNSUPPORTED_SESSION_TOKEN',
-        masked,
-        validFormat: false,
-        authMethod: 'REJECTED_UNSUPPORTED',
-        error: 'Credential starts with "AQ." which is an Antigravity/Chrome internal session token, not an official Google AI Studio API key (format: AIzaSy..., 39 chars) or OAuth 2.0 access token (format: ya29...). Google Generative Language REST API returns HTTP 401.'
-      };
-    }
     return {
       present: true,
       length: len,
@@ -141,7 +142,7 @@ export function classifyCredential(apiKey, provider = 'gemini') {
       masked,
       validFormat: false,
       authMethod: 'REJECTED_UNKNOWN',
-      error: `Unrecognized credential format (starts with ${trimmed.slice(0, 4)}...). Expected Google AI Studio API key starting with "AIzaSy" (39 chars).`
+      error: `Unrecognized credential format (starts with ${trimmed.slice(0, 4)}...). Expected Google AI Studio key starting with "AQ." or "AIzaSy".`
     };
   }
 
