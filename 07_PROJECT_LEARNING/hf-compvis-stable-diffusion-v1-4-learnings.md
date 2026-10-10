@@ -3,8 +3,8 @@
 > **Source Version**: `hf-compvis-s`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T05:11:18.340Z  
-> **Learning ID**: `learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv1xscas`  
+> **Timestamp**: 2026-10-10T10:55:21.897Z  
+> **Learning ID**: `learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv2a2syx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T05:11:18.333Z  
+> **Harvest Timestamp**: 2026-10-10T10:55:21.891Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 583859 downloads | 7107 likes
+- **Stars / Engagement**: 576538 downloads | 7107 likes
 
 ---
 

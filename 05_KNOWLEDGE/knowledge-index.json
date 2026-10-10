@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T10:52:33.523Z",
-  "total_verified_learnings": 3548,
+  "last_updated": "2026-10-10T10:55:21.925Z",
+  "total_verified_learnings": 3549,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -85148,6 +85148,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T10:52:33.523Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv2a2syx": {
+      "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv2a2syx",
+      "source": "CompVis/stable-diffusion-v1-4",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "slug": "hf-compvis-stable-diffusion-v1-4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "source_version": "hf-compvis-stable-diffusion-v1-4",
+      "content_hash": "e10a4ad329e9d3f4d77b64a3dfea2618a3aef48fa652261e9176e63c70d394ab",
+      "dossier_path": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T10:55:21.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
