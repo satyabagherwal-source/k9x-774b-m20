@@ -17278,5 +17278,20 @@
     "downloads": 8873,
     "qualityScore": 3380,
     "discoveredAt": "2026-10-10T04:13:33.588Z"
+  },
+  {
+    "name": "Sage",
+    "fullName": "ZHangZHengEric/Sage",
+    "url": "https://github.com/ZHangZHengEric/Sage",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Multi-Agent System Framework For Complex Tasks",
+    "stars": 1210,
+    "forks": 104,
+    "openIssues": 10,
+    "language": "Python",
+    "qualityScore": 906,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-10T11:50:42.191Z"
   }
 ]
