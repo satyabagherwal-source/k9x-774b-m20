@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T16:15:25.165Z",
+  "last_updated": "2026-10-10T16:28:56.072Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -678,15 +678,15 @@
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv27whla",
-      "content_hash": "03d63598933fa56d13a1429e652cb58549fe1c06f31a00310dc002bf863403f7",
-      "verified_at": "2026-10-10T09:54:28.049Z",
+      "learning_id": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv2lzryk",
+      "content_hash": "19cefd7a55ba5a66f1ec4148f8ce8bdcb741f8b8bd3f5237a4d3c272309ea8c9",
+      "verified_at": "2026-10-10T16:28:56.072Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T09:54:28.049Z"
+      "last_updated": "2026-10-10T16:28:56.072Z"
     },
     "PSRben/VisionHOPE": {
       "repository": "PSRben/VisionHOPE",
