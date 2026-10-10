@@ -71,12 +71,23 @@ async function runMcpClientTest() {
     });
   }
 
+  function sendNotification(method, params = {}) {
+    const notif = { jsonrpc: '2.0', method, params };
+    serverProc.stdin.write(JSON.stringify(notif) + '\n');
+  }
+
   // TEST 1: MCP Initialize Handshake
   console.log('[TEST 1] Testing MCP Initialize Handshake...');
   const initResp = await sendRpc('initialize');
   assert(initResp.result !== undefined, 'Server responded to initialize');
   assert(initResp.result.serverInfo.name === 'ai-builder-brain', 'Server identifies as ai-builder-brain');
   assert(initResp.result.protocolVersion === '2024-11-05', 'Server conforms to MCP protocol 2024-11-05');
+
+  // TEST 1.5: MCP Handshake Notification (notifications/initialized)
+  console.log('\n[TEST 1.5] Client Sending notifications/initialized (Must Not Pollute Stdio)...');
+  sendNotification('notifications/initialized');
+  // Small pause to ensure server processes notification without outputting anything
+  await new Promise(r => setTimeout(r, 50));
 
   // TEST 2: Discovering Available Brain Tools
   console.log('\n[TEST 2] Discovering Available Brain Tools via tools/list...');

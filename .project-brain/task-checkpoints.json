@@ -754,6 +754,58 @@
       },
       "created_at": "2026-10-10T15:19:57.276Z",
       "updated_at": "2026-10-10T15:19:57.279Z"
+    },
+    "task-1791647597406-6dc221b5": {
+      "task_id": "task-1791647597406-6dc221b5",
+      "task_type": "MICRO_FIX",
+      "objective": "Verification target",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-10T15:53:17.411Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-10T15:53:17.407Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-10T15:53:17.406Z",
+      "updated_at": "2026-10-10T15:53:17.411Z"
+    },
+    "task-1791647631621-c69a6bae": {
+      "task_id": "task-1791647631621-c69a6bae",
+      "task_type": "MICRO_FIX",
+      "objective": "Verification target",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-10T15:53:51.631Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-10T15:53:51.622Z",
+            "failure_reason": null
+          }
+        }
+      },
+      "created_at": "2026-10-10T15:53:51.621Z",
+      "updated_at": "2026-10-10T15:53:51.631Z"
     }
   }
 }

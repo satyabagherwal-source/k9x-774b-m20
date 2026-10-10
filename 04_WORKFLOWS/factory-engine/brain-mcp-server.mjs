@@ -271,23 +271,39 @@ export async function handleToolCall(name, args = {}) {
 export async function processJsonRpcMessage(message) {
   const { id, method, params } = message;
 
+  // JSON-RPC 2.0 & MCP Spec: Notifications MUST NOT receive a response
+  const isNotification = id === undefined || id === null;
+
   switch (method) {
-    case 'initialize':
+    case 'initialize': {
+      const clientVersion = params?.protocolVersion || PROTOCOL_VERSION;
       return {
         jsonrpc: '2.0',
         id,
         result: {
-          protocolVersion: PROTOCOL_VERSION,
-          capabilities: { tools: {} },
+          protocolVersion: clientVersion,
+          capabilities: {
+            tools: { listChanged: false },
+            resources: { subscribe: false, listChanged: false },
+            prompts: { listChanged: false }
+          },
           serverInfo: { name: SERVER_NAME, version: SERVER_VERSION }
         }
       };
+    }
+
+    case 'notifications/initialized':
+    case 'initialized':
+      // Client handshake complete notification
+      return null;
 
     case 'tools/list':
       return {
         jsonrpc: '2.0',
         id,
-        result: { tools: BRAIN_TOOLS }
+        result: {
+          tools: BRAIN_TOOLS
+        }
       };
 
     case 'tools/call': {
@@ -309,10 +325,38 @@ export async function processJsonRpcMessage(message) {
       }
     }
 
+    case 'resources/list':
+      return {
+        jsonrpc: '2.0',
+        id,
+        result: { resources: [] }
+      };
+
+    case 'resources/templates/list':
+      return {
+        jsonrpc: '2.0',
+        id,
+        result: { resourceTemplates: [] }
+      };
+
+    case 'prompts/list':
+      return {
+        jsonrpc: '2.0',
+        id,
+        result: { prompts: [] }
+      };
+
     case 'ping':
       return { jsonrpc: '2.0', id, result: {} };
 
+    case 'logging/setLevel':
+      return { jsonrpc: '2.0', id, result: {} };
+
     default:
+      if (isNotification) {
+        // Unhandled notification - drop silently per JSON-RPC 2.0
+        return null;
+      }
       return {
         jsonrpc: '2.0',
         id,
@@ -337,8 +381,11 @@ export function startStdioServer() {
     try {
       const request = JSON.parse(trimmed);
       const response = await processJsonRpcMessage(request);
-      process.stdout.write(JSON.stringify(response) + '\n');
+      if (response !== null && response !== undefined) {
+        process.stdout.write(JSON.stringify(response) + '\n');
+      }
     } catch (e) {
+      // Return parse error only if not an empty line
       const errResp = {
         jsonrpc: '2.0',
         id: null,
