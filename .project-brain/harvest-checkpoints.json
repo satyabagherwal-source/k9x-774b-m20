@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T13:58:04.503Z",
+  "last_updated": "2026-10-10T14:01:04.020Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -118,15 +118,15 @@
       "repository": "BAAI/bge-small-en-v1.5",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv23plb3",
-      "content_hash": "2a43caf9574c13661a27b221eb3eb8a01cb58924c7f1e1fd9721113ced02d7d0",
-      "verified_at": "2026-10-10T07:57:07.802Z",
+      "learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv2gpm9e",
+      "content_hash": "325d889afd5da4036b2f29080fda9c821af7ad49660b16dc373fc422b213bf0d",
+      "verified_at": "2026-10-10T14:01:04.020Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T07:57:07.802Z"
+      "last_updated": "2026-10-10T14:01:04.020Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",
