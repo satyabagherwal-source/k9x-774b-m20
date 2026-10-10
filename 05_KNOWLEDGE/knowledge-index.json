@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T02:26:21.224Z",
-  "total_verified_learnings": 3372,
+  "last_updated": "2026-10-10T02:29:12.818Z",
+  "total_verified_learnings": 3373,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -80924,6 +80924,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T02:26:21.224Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-francisring-prism-mv1rzw0h": {
+      "learning_id": "learn-huggingface-hf-francisring-prism-mv1rzw0h",
+      "source": "FrancisRing/Prism",
+      "repository": "FrancisRing/Prism",
+      "slug": "hf-francisring-prism",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FrancisRing/Prism",
+      "source_version": "hf-francisring-prism",
+      "content_hash": "3ca51af6b6e973f92dd6b491ca21ac0b1adf474a33e503138bafe93b261e6319",
+      "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T02:29:12.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

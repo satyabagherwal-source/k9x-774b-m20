@@ -17254,5 +17254,17 @@
     "downloads": 1119,
     "qualityScore": 2499,
     "discoveredAt": "2026-10-09T17:47:36.954Z"
+  },
+  {
+    "name": "FrancisRing/Prism",
+    "fullName": "FrancisRing/Prism",
+    "url": "https://huggingface.co/FrancisRing/Prism",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: FrancisRing/Prism (133 likes, 0 downloads)",
+    "likes": 133,
+    "downloads": 0,
+    "qualityScore": 1330,
+    "discoveredAt": "2026-10-10T02:29:00.732Z"
   }
 ]
