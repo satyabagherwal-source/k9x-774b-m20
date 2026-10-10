@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T06:40:21.642Z",
-  "total_verified_learnings": 3460,
+  "last_updated": "2026-10-10T06:43:08.543Z",
+  "total_verified_learnings": 3461,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -83036,6 +83036,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T06:40:21.642Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-facebookai-xlm-roberta-base-mv212fz0": {
+      "learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv212fz0",
+      "source": "FacebookAI/xlm-roberta-base",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "slug": "hf-facebookai-xlm-roberta-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+      "source_version": "hf-facebookai-xlm-roberta-base",
+      "content_hash": "7624595f4f23d03ca5fdc40b235b4b4eb1cf95230e9e26af2c23b08e2ba7d804",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T06:43:08.543Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
