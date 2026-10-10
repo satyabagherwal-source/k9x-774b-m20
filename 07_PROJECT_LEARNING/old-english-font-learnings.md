@@ -188,8 +188,18 @@ This document records empirical learnings, forensic bug investigations, and patt
   3. *Quality Assurance Gate*: Audited all 632 pages via `scripts/audit-seo-metadata.mjs` confirming 0 missing titles, 0 missing descriptions, 0 descriptions <50 chars, 0 descriptions >200 chars, and 0 missing image alt attributes.
 
 
-
-
+### INC-14: Self-Referential Redirect Loop in Cloudflare Pages `_redirects` (`// / 301`) Causing GSC Crawl Rejection
+* **Context**: User attempted to request indexing for the production homepage `https://oldenglishfontfree.com/` in Google Search Console. Google Search Console immediately rejected indexing with: *"Indexing request rejected. During live testing, indexing issues were detected with the URL"* -> *"Page fetch: Failed: Redirect error"*.
+* **Forensic Root Cause Analysis**:
+  1. *Rule Misinterpretation*: In `public/_redirects`, rule `// / 301` was added with the intention of normalizing accidental double slashes (`example.com//` -> `/`).
+  2. *Edge Path Normalization*: Cloudflare Pages edge router normalizes consecutive slashes in request paths before matching redirect rules. Consequently, the edge engine evaluates `//` as identical to root `/`.
+  3. *Self-Loop Triggered*: The rule was evaluated by Cloudflare Pages as: `Match: /` -> `Action: 301 Moved Permanently to /`.
+  4. *Catastrophic Bot Lockout*: Every incoming GET request to `https://oldenglishfontfree.com/` received `HTTP/1.1 301 Moved Permanently` with header `Location: /`. Crawlers (Google Inspection Tool smartphone) followed the redirect back into `/`, getting trapped in an infinite redirect loop until the crawl budget limit aborted with `Failed: Redirect error`.
+* **Architectural Remediation**:
+  1. *Removed Erroneous Edge Rule*: Removed `// / 301` from `public/_redirects`.
+  2. *Automated Pre-Deploy Quality Audit*: Added check #10 to `scripts/audit-site-quality.mjs` verifying that `_redirects` contains zero self-referential targets (`src === dest`), zero duplicate slash patterns (`//`), and zero redirect loops.
+  3. *Cloudflare Pages Edge Re-Deployment*: Rebuilt and deployed static build to production.
+  4. *Live Verification*: Probed live root URL with `curl.exe -I https://oldenglishfontfree.com/` confirming immediate `HTTP/1.1 200 OK` (0 redirects, 0 loops).
 
 
 

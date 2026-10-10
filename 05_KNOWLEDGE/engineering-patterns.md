@@ -5262,3 +5262,60 @@ return { success: true, learning }; // Defect: Data may never exist on disk!
 
 **VERIFICATION METHOD**:
 Simulate write corruption or disk fault; assert that the gateway catches the hash mismatch, refuses `SUCCESS` status, emits `FAILED_READBACK`, and preserves `checkpoint = last_verified_stage`.
+
+---
+
+## 139. Edge Redirects Syntax Isolation + Self-Referential Loop Immunity
+
+<!-- PROVENANCE_START
+Source: old-english-font-free production incident INC-14
+Date: 2026-10-11
+Trigger: Google Search Console live test rejection ("Page fetch: Failed: Redirect error" on root URL)
+PROVENANCE_END -->
+> **Provenance**: Forensic extraction from production Googlebot crawl rejection on Cloudflare Pages.  
+> **Evidence**: Live verification of `// / 301` evaluated by Cloudflare edge router as `/ -> /` self-redirect loop.
+
+**RULE**:
+In static hosting platforms (Cloudflare Pages, Netlify, Vercel) utilizing text-based routing rules (`_redirects`), NEVER define ambiguous root aliases or duplicate-slash normalization patterns (such as `// / 301`). Edge routing proxies normalize multiple consecutive slashes (`//`) into a single slash (`/`) prior to evaluating pattern rules. As a result, writing `// / 301` instructs the edge router to redirect `/` to `/` with HTTP 301, creating an immediate infinite redirect loop on the root domain that causes search engines (Googlebot) to reject indexing with `Failed: Redirect error`. Furthermore, all pre-deployment quality audit gates MUST validate `_redirects` rules for:
+1. `src !== dest` (after slash normalization)
+2. Zero source rules matching root `/` or aliases of root (`//`)
+3. Zero loops between chained redirect entries
+
+**WHY**:
+Prevents catastrophic search engine indexing de-listing where the homepage is trapped in an infinite 301 loop, completely invisible in standard static HTML audits because HTML files in `dist/` compile cleanly without executing edge routing rules.
+
+**WHEN TO APPLY**:
+Any static site or Jamstack deployment (Astro, Next.js, Vite, SvelteKit, Hugo) deploying to Cloudflare Pages, Netlify, AWS CloudFront, or any edge CDN using `_redirects` or edge route rewriting.
+
+**VERIFIED AUDIT IMPLEMENTATION PATTERN**:
+```javascript
+// Verified _redirects loop detection gate in pre-deploy audit
+export function auditRedirectsIntegrity(redirectsFilePath) {
+  if (!fs.existsSync(redirectsFilePath)) return true;
+  const lines = fs.readFileSync(redirectsFilePath, 'utf-8').split('\n');
+  const issues = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line || line.startsWith('#')) continue;
+    const parts = line.split(/\s+/);
+    if (parts.length >= 2) {
+      const srcNormalized = parts[0].replace(/\/+/g, '/');
+      const destNormalized = parts[1].split('#')[0].replace(/\/+/g, '/');
+      if (srcNormalized === destNormalized || parts[0] === '//') {
+        issues.push(`Line ${i + 1}: Fatal redirect loop detected: "${line}"`);
+      }
+    }
+  }
+  if (issues.length > 0) {
+    throw new Error(`_redirects validation failed:\n${issues.join('\n')}`);
+  }
+  return true;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```
+# Anti-pattern: DO NOT WRITE THIS IN _redirects
+// / 301   # FATAL: Cloudflare Pages normalizes // to /, creating infinite / -> / loop!
+/ / 301    # FATAL: Self-redirect loop
+```
