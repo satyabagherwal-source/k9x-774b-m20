@@ -201,5 +201,14 @@ This document records empirical learnings, forensic bug investigations, and patt
   3. *Cloudflare Pages Edge Re-Deployment*: Rebuilt and deployed static build to production.
   4. *Live Verification*: Probed live root URL with `curl.exe -I https://oldenglishfontfree.com/` confirming immediate `HTTP/1.1 200 OK` (0 redirects, 0 loops).
 
-
-
+### INC-15: Case-Sensitive 404 on Google AdSense `ads.txt` Crawlers (`Ads.txt` vs `ads.txt`)
+* **Context**: User attempted to verify site ownership in Google AdSense using `ads.txt`, but AdSense rejected verification (*"ads.txt se verify nahi huyi"*).
+* **Forensic Root Cause Analysis**:
+  1. *Filename Casing*: The file in `public/` was named `Ads.txt` with a capital `A`.
+  2. *Server Case Sensitivity*: While Windows filesystems are case-insensitive, Linux edge servers and Cloudflare Pages URL routing are strictly case-sensitive.
+  3. *AdSense Specification*: The official IAB Tech Lab Ads.txt specification mandates the URL path `https://<domain>/ads.txt` in strictly lowercase.
+  4. *Crawl Outcome*: Requests to `https://oldenglishfontfree.com/Ads.txt` returned 200 OK, but AdSense crawlers requesting `https://oldenglishfontfree.com/ads.txt` received `404 Not Found`.
+* **Architectural Remediation**:
+  1. *Case Normalization*: Renamed `public/Ads.txt` to strictly lowercase `public/ads.txt`.
+  2. *Edge Fallback Redirect*: Added `/Ads.txt /ads.txt 301` to `public/_redirects` to catch any capitalized crawler or browser bookmarks.
+  3. *Deployment & Verification*: Rebuilt and deployed to Cloudflare Pages. Confirmed `curl.exe -v https://oldenglishfontfree.com/ads.txt` returns `HTTP/1.1 200 OK` with valid publisher ID (`pub-5901471283694215`).
