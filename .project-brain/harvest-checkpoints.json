@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T20:32:16.673Z",
+  "last_updated": "2026-10-10T20:35:25.175Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -160,15 +160,15 @@
       "repository": "LiquidAI/d1-3B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-liquidai-d1-3b-mv2gwrie",
-      "content_hash": "f9d9d4bdd744d118b823719f19332288df73df83364042c8b3ab2f51d4d09973",
-      "verified_at": "2026-10-10T14:06:37.452Z",
+      "learning_id": "learn-huggingface-hf-liquidai-d1-3b-mv2usrax",
+      "content_hash": "0413d3182adb1364f243cd73e9550869ca073dc86db52d8461066d3e3a246117",
+      "verified_at": "2026-10-10T20:35:25.174Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T14:06:37.452Z"
+      "last_updated": "2026-10-10T20:35:25.174Z"
     },
     "Cactus-Compute/whistle": {
       "repository": "Cactus-Compute/whistle",
