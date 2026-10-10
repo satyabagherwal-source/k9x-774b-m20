@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T22:14:03.830Z",
+  "last_updated": "2026-10-10T22:16:55.243Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -622,15 +622,15 @@
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv2ksck7",
-      "content_hash": "4075e3266b7134d9ed380d267494d00d162ed1efb8d2b848cb808d5f05388295",
-      "verified_at": "2026-10-10T15:55:09.919Z",
+      "learning_id": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv2yfafg",
+      "content_hash": "1e8b33dce0b5263936bdb2a23853ba539ae506d5423f6cd24905be440f0423be",
+      "verified_at": "2026-10-10T22:16:55.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T15:55:09.919Z"
+      "last_updated": "2026-10-10T22:16:55.243Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Pro-RL": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
