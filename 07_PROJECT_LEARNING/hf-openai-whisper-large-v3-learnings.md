@@ -3,8 +3,8 @@
 > **Source Version**: `hf-openai-wh`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T05:22:33.143Z  
-> **Learning ID**: `learn-huggingface-hf-openai-whisper-large-v3-mv1y6szb`  
+> **Timestamp**: 2026-10-10T11:06:47.176Z  
+> **Learning ID**: `learn-huggingface-hf-openai-whisper-large-v3-mv2ahhqg`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openai/whisper-large-v3](https://huggingface.co/openai/whisper-large-v3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T05:22:33.136Z  
+> **Harvest Timestamp**: 2026-10-10T11:06:47.168Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3845887 downloads | 6585 likes
+- **Stars / Engagement**: 3791795 downloads | 6587 likes
 
 ---
 
