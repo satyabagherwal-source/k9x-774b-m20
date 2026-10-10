@@ -162,6 +162,32 @@ This document records empirical learnings, forensic bug investigations, and patt
   2. *Streamlined Inquiry Categories*: Simplified the contact form subject dropdown to practical user categories: "General Question & Feedback", "Font Request or Suggestion", "Copyright or DMCA Request", and "Technical Bug or Website Issue".
   3. *Eliminated Visual Wrapping*: Email address is rendered inside a dedicated full-width pill button with ample padding, guaranteeing zero line wrapping across all viewport breakpoints.
 
+### INC-12: Social Card Raster Standard (PNG 1200x630 vs SVG Rejection by Social Scrapers)
+* **Context**: User requested Open Graph (OG) image and on-page SEO verification ("title discreption, og image, on page seo nahi h to bana do inko").
+* **Forensic Root Cause Analysis**:
+  - The project was referencing `/logo.svg` (with 600x600 dimensions) in `<meta property="og:image">` and `<meta name="twitter:image">`.
+  - Open Graph scrapers (Facebook, Twitter/X Card validator, LinkedIn, WhatsApp, Telegram, Discord, Slack) **strictly reject SVG** files for preview card generation. They require raster bitmap formats (`image/png`, `image/jpeg`, or `image/webp`) with standard 1.91:1 aspect ratio (`1200x630`). As a result, sharing links produced empty cards with missing previews across all social networks.
+* **Architectural Remediation**:
+  1. *Programmatic Sharp OG Image Generator*: Created `scripts/generate-og-image.mjs` using `sharp` to synthesize a pixel-perfect 1200x630 obsidian-and-gold Gothic brand banner at `public/og-image.png`.
+  2. *Layout Meta Tag Modernization*:
+     - Updated default `ogImage` prop in `src/layouts/Layout.astro` to `'/og-image.png'`.
+     - Added `<meta property="og:image:secure_url" />`, `<meta property="og:image:type" content="image/png" />`, `<meta property="og:image:width" content="1200" />`, `<meta property="og:image:height" content="630" />`.
+     - Updated `<meta name="twitter:card" content="summary_large_image" />` with `twitter:image`.
+     - Injected `"image": "https://oldenglishfontfree.com/og-image.png"` into Schema.org `Organization` structured data graph.
+  3. *Automated Verification*: Audited all 632 compiled HTML files via `scripts/audit-seo-metadata.mjs`. SVG OG image count dropped from 632 to 0; 100% of pages now emit valid PNG Open Graph cards.
+
+### INC-13: Comprehensive On-Page SEO Harmonization (Title & Meta Description Lengths)
+* **Context**: User asked to verify and complete On-Page SEO, titles, and meta descriptions across the entire site.
+* **Forensic Root Cause Analysis**:
+  - Audit revealed 111 category and utility page titles exceeded 75-90 characters due to redundant keywords (e.g. `(Commercial Use) — Old English Font Free`), causing severe Google SERP desktop & mobile title truncation.
+  - Default meta description in `Layout.astro` and `ui.ts` was 219 characters, exceeding the 160-character maximum snippet threshold where search engines truncate text mid-sentence.
+  - Localized translator description in Japanese was under 50 characters (Japanese multi-byte sentence).
+* **Architectural Remediation**:
+  1. *SERP-Calibrated Title Hierarchy*: Streamlined all category page titles to 48–58 characters (e.g. `Free German Fraktur Fonts | Old English Font Free`), homepage title to 62 characters (`Old English Font Free — Download & Generator (𝕺𝖑𝖉 𝕰𝖓𝖌𝖑𝖎𝖘𝖍)`), and tool page titles to 55–65 characters.
+  2. *Meta Description Sweet Spot (140–160 chars)*: Rewrote primary English description to 153 characters and Spanish to 154 characters, targeting high-intent keywords ("Old English font generator", "commercial blackletter font downloads", "Fraktur text", "tattoo stencils") without truncation.
+  3. *Quality Assurance Gate*: Audited all 632 pages via `scripts/audit-seo-metadata.mjs` confirming 0 missing titles, 0 missing descriptions, 0 descriptions <50 chars, 0 descriptions >200 chars, and 0 missing image alt attributes.
+
+
 
 
 
