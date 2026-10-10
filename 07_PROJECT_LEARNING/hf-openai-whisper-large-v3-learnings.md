@@ -3,8 +3,8 @@
 > **Source Version**: `hf-openai-wh`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T17:52:11.823Z  
-> **Learning ID**: `learn-huggingface-hf-openai-whisper-large-v3-mv2oyur4`  
+> **Timestamp**: 2026-10-10T23:47:36.983Z  
+> **Learning ID**: `learn-huggingface-hf-openai-whisper-large-v3-mv31nxcn`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openai/whisper-large-v3](https://huggingface.co/openai/whisper-large-v3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T17:52:11.626Z  
+> **Harvest Timestamp**: 2026-10-10T23:47:36.810Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
