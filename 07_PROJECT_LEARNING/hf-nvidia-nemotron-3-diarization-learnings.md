@@ -3,8 +3,8 @@
 > **Source Version**: `hf-nvidia-ne`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T03:01:51.351Z  
-> **Learning ID**: `learn-huggingface-hf-nvidia-nemotron-3-diarization-mv1t5v93`  
+> **Timestamp**: 2026-10-10T08:46:17.268Z  
+> **Learning ID**: `learn-huggingface-hf-nvidia-nemotron-3-diarization-mv25gt6c`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/Nemotron-3-Diarization](https://huggingface.co/nvidia/Nemotron-3-Diarization))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T03:01:51.069Z  
+> **Harvest Timestamp**: 2026-10-10T08:46:17.260Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
