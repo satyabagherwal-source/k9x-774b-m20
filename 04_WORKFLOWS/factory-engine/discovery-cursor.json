@@ -1,12 +1,12 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 2,
-      "page": 3
+      "queryIndex": 5,
+      "page": 1
     },
     "fullstack-ui": {
-      "queryIndex": 1,
-      "page": 1
+      "queryIndex": 6,
+      "page": 2
     },
     "high-perf-systems": {
       "queryIndex": 3,
@@ -38,9 +38,9 @@
     }
   },
   "huggingFace": {
-    "sortIndex": 2,
+    "sortIndex": 0,
     "page": 1
   },
   "totalAutoDiscovered": 32,
-  "lastReplenishedAt": "2026-10-10T17:26:11.521Z"
+  "lastReplenishedAt": "2026-10-10T17:28:59.650Z"
 }
