@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T14:29:28.843Z",
-  "total_verified_learnings": 3618,
+  "last_updated": "2026-10-10T14:32:32.375Z",
+  "total_verified_learnings": 3619,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -86828,6 +86828,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T14:29:28.843Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-moonshotai-kimi-k3-mv2hu3bo": {
+      "learning_id": "learn-huggingface-hf-moonshotai-kimi-k3-mv2hu3bo",
+      "source": "moonshotai/Kimi-K3",
+      "repository": "moonshotai/Kimi-K3",
+      "slug": "hf-moonshotai-kimi-k3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
+      "source_version": "hf-moonshotai-kimi-k3",
+      "content_hash": "19a80d0271e76c6ee5b4a69f3b2049b6ccf9362a24607fcee10d8b1dde0b7834",
+      "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T14:32:32.375Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
