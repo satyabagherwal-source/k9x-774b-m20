@@ -3,8 +3,8 @@
 > **Source Version**: `hf-mudler-lo`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-09T20:05:44.344Z  
-> **Learning ID**: `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv1eaql4`  
+> **Timestamp**: 2026-10-10T01:45:54.755Z  
+> **Learning ID**: `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv1qg7cz`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-09T20:05:43.928Z  
+> **Harvest Timestamp**: 2026-10-10T01:45:54.226Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
