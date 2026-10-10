@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T15:28:50.627Z",
-  "total_verified_learnings": 3638,
+  "last_updated": "2026-10-10T15:31:36.841Z",
+  "total_verified_learnings": 3639,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -87308,6 +87308,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T15:28:50.627Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv2jy291": {
+      "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv2jy291",
+      "source": "Comfy-Org/Qwen-Image-2.1",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "slug": "hf-comfy-org-qwen-image-2.1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "content_hash": "92c1c693fb79bcda064ec479f3e71c805a6bb74916dfcd7ef4c65712fea05629",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T15:31:36.841Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
