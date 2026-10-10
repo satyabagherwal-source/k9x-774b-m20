@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T09:26:01.277Z",
-  "total_verified_learnings": 3518,
+  "last_updated": "2026-10-10T09:28:41.798Z",
+  "total_verified_learnings": 3519,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -84428,6 +84428,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T09:26:01.277Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-akhilaaa3-jev-omni-mv26zcj7": {
+      "learning_id": "learn-huggingface-hf-akhilaaa3-jev-omni-mv26zcj7",
+      "source": "akhilaaa3/Jev-Omni",
+      "repository": "akhilaaa3/Jev-Omni",
+      "slug": "hf-akhilaaa3-jev-omni",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "content_hash": "07d34bfbfd2879bf0afcdee2e99b1ba048e4a239bcfe05db56fe871c182b3f09",
+      "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T09:28:41.798Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
