@@ -62,4 +62,17 @@ This document records empirical learnings, forensic bug investigations, and patt
   4. Design Parity: Implemented high-contrast Obsidian Gold design styling (`Cinzel Decorative`, amber-400 highlights, slate-900 glassmorphism) maintaining WCAG AA/AAA compliance (contrast ratio >= 7:1).
   5. Static Generation Validation: Verified complete SSG compilation (`npm run build`, 617 static HTML routes generated with exit code 0) and validated JSON-LD schema parsing via automated Node test scripts.
 
+### INC-05: Dynamic Multilingual Sitemap & Robots.txt Discovery
+* **Context**: User requested `robots.txt` and `sitemap.xml` configuration using official Astro documentation via the `astro-docs` MCP tool.
+* **Findings from Astro Official Docs**:
+  - Astro provides the `@astrojs/sitemap` integration which crawls statically generated routes at build time (`sitemap-index.xml` + `sitemap-0.xml`).
+  - For multilingual architectures (`i18n`), `@astrojs/sitemap` accepts an `i18n` config object declaring `defaultLocale` and locale mapping dictionary to generate reciprocal `<xhtml:link rel="alternate" hreflang="..." />` tags across all language routes.
+  - Crawler discovery requires `<link rel="sitemap" href="/sitemap-index.xml" />` in `<head>` and `Sitemap:` directives in `public/robots.txt`.
+* **Architectural Remediation**:
+  1. Installed `@astrojs/sitemap` (^3.7.4) and integrated it in `astro.config.mjs` with full 14-locale i18n mapping (`en`, `es`, `ja`, `fr`, `de`, `pt`, `ko`, `it`, `no`, `sv`, `da`, `fi`, `ar`, `he`).
+  2. Created standardized `public/robots.txt` declaring global crawler allow rules and linking to both `https://oldenglishfontfree.com/sitemap-index.xml` and `https://oldenglishfontfree.com/sitemap.xml`.
+  3. Configured `public/sitemap.xml` as a valid XML sitemap index pointing to `sitemap-0.xml` for legacy bots, and synchronized `sitemap-index.xml` for dev and production parity.
+  4. Embedded `<link rel="sitemap" href="/sitemap-index.xml" />` into `src/layouts/Layout.astro` `<head>`.
+  5. Verified compilation: `npm run build` generated `dist/robots.txt`, `dist/sitemap.xml`, `dist/sitemap-index.xml`, and `dist/sitemap-0.xml` (915KB full URL index) with zero errors across all 617 routes.
+
 
