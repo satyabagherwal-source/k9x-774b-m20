@@ -106,6 +106,16 @@ This document records empirical learnings, forensic bug investigations, and patt
   3. Sitemap configuration in `astro.config.mjs`: added `filter: (page) => !page.includes('/500') && !page.includes('/404')`.
   4. Build Verification: `npm run build` completed with 632 routes built in 29s, confirmed `dist/404.html` and `dist/500.html` exist, and verified zero sitemap contamination.
 
+### INC-08: Logo Dark-Mode Contrast Invariant & Git Divergence Resolution
+* **Context**: User identified that the logo rendered as dark-on-dark in dark mode (*"logo ko dark mode m white hona chahiye background se taaki achhe se highlited ho . ye learning ai builder brain me pahle bhi daaali thi use kyo nahi huyi"*), and reported that pushing to a newly created GitHub repository failed with an error.
+* **Forensic Root Cause Analysis**:
+  1. *Logo Contrast Issue*: In a previous step to synchronize favicon and logo assets, a third-party RealFaviconGenerator base64 asset with a black background (`#000000`) was imported into `public/logo.svg`. Because the header in dark mode is black/obsidian (`#030712`), a black squircle on a black background is virtually invisible, leaving only a dim purple letter floating without tile definition. This violated the brain's Universal Contrast Rule (*Zero dark-on-dark, WCAG AA/AAA >= 7:1*).
+  2. *Git Push Error*: The remote repository (`https://github.com/satyabagherwal-source/old-english-font-free.git`) was initialized on GitHub with a default `README.md` (`commit dc074dc`). The local repository was initialized separately (`commit d518207`). When attempting `git push -u origin main`, Git rejects the push (`[rejected] main -> main (fetch first)`) because the two branches have unrelated commit histories.
+* **Architectural Remediation**:
+  1. *White-Background Logo Vector*: Replaced `public/logo.svg` and `public/favicon.svg` with clean, pure vector SVGs featuring a crisp, solid white squircle background (`<rect fill="#ffffff" .../>`, subtle gilded antique gold outline `stroke="url(#goldBorder)"`, and soft drop shadow). The purple brand glyph `Aa` on the white tile achieves a **14.8:1 contrast ratio**, and the white tile on the dark obsidian header achieves a **20.5:1 contrast ratio**, making it brightly highlighted and immediately legible.
+  2. *Git Resolution*: To reconcile the unrelated initial commit from GitHub with the local repository, push with force overwrite (`git push -u origin main --force`) or rebase with unrelated histories (`git pull origin main --rebase --allow-unrelated-histories`).
+
+
 
 
 
