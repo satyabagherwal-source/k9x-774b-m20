@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T16:42:56.886Z",
+  "last_updated": "2026-10-10T16:45:43.114Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1779,6 +1779,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-10T11:55:09.899Z"
+    },
+    "facebook/sam3": {
+      "repository": "facebook/sam3",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-facebook-sam3-mv2mlczp",
+      "content_hash": "63533f34a0911f2081c09da7c91a8fb803a8ec9aa8f3170259e570f9367450c6",
+      "verified_at": "2026-10-10T16:45:43.114Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-10T16:45:43.114Z"
     }
   }
 }

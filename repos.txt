@@ -3844,3 +3844,7 @@ https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6A
 # --- Automatically Discovered by AI Scout Engine [2026-10-10T11:51:35.328Z] ---
 # [AI-AGENTS] ZHangZHengEric/Sage (906 score) - Multi-Agent System Framework For Complex Tasks
 https://github.com/ZHangZHengEric/Sage
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-10T16:45:31.737Z] ---
+# [HUGGINGFACE-AI-MODELS] facebook/sam3 (41930 score) - Verified Hugging Face Model: facebook/sam3 (3993 likes, 2128836 downloads)
+https://huggingface.co/facebook/sam3

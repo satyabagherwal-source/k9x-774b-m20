@@ -17293,5 +17293,17 @@
     "qualityScore": 906,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-10T11:50:42.191Z"
+  },
+  {
+    "name": "facebook/sam3",
+    "fullName": "facebook/sam3",
+    "url": "https://huggingface.co/facebook/sam3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: facebook/sam3 (3993 likes, 2128836 downloads)",
+    "likes": 3993,
+    "downloads": 2128836,
+    "qualityScore": 41930,
+    "discoveredAt": "2026-10-10T16:45:31.735Z"
   }
 ]
