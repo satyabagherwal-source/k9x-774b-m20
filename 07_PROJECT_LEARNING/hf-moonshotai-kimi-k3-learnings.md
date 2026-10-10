@@ -3,8 +3,8 @@
 > **Source Version**: `hf-moonshota`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T02:44:37.992Z  
-> **Learning ID**: `learn-huggingface-hf-moonshotai-kimi-k3-mv1sjpwo`  
+> **Timestamp**: 2026-10-10T08:28:55.773Z  
+> **Learning ID**: `learn-huggingface-hf-moonshotai-kimi-k3-mv24uhjx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/moonshotai/Kimi-K3](https://huggingface.co/moonshotai/Kimi-K3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T02:44:37.816Z  
+> **Harvest Timestamp**: 2026-10-10T08:28:55.765Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
