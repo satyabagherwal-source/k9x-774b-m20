@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T20:23:31.149Z",
-  "total_verified_learnings": 3728,
+  "last_updated": "2026-10-10T20:26:20.830Z",
+  "total_verified_learnings": 3729,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -89468,6 +89468,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T20:23:31.149Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv2uh3ax": {
+      "learning_id": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv2uh3ax",
+      "source": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "slug": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "content_hash": "b6842654e415d58611b62139d1cf1ca741c0fccea35d142b15ca7c361164cfe7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T20:26:20.830Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
