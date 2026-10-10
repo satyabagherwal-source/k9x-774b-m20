@@ -3,8 +3,8 @@
 > **Source Version**: `hf-fermionre`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T12:20:02.142Z  
-> **Learning ID**: `learn-huggingface-hf-fermionresearch-phonon-2-mv2d3owu`  
+> **Timestamp**: 2026-10-10T18:48:04.914Z  
+> **Learning ID**: `learn-huggingface-hf-fermionresearch-phonon-2-mv2qyq0i`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/FermionResearch/Phonon-2](https://huggingface.co/FermionResearch/Phonon-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T12:20:02.133Z  
+> **Harvest Timestamp**: 2026-10-10T18:48:04.737Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
