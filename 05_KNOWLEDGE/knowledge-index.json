@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T17:05:41.488Z",
-  "total_verified_learnings": 3660,
+  "last_updated": "2026-10-10T17:08:32.254Z",
+  "total_verified_learnings": 3661,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -87836,6 +87836,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T17:05:41.488Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-flash-mv2nepgg": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv2nepgg",
+      "source": "Cloudflare/clef-flash",
+      "repository": "Cloudflare/clef-flash",
+      "slug": "hf-cloudflare-clef-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "content_hash": "f24cc7ccfb551f48a51002623362aef8ebf0c85b88414265a92be2293d0c60db",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T17:08:32.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
