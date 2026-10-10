@@ -44,3 +44,14 @@ This document records empirical learnings, forensic bug investigations, and patt
   2. Preserved the user's exact glyph geometries (`Aa` from Lucide `case-sensitive` paths) while applying a luminous antique gold gradient (`#faeb9e` -> `#fbbf24` -> `#f59e0b` -> `#b45309`) with a soft ambient gold glow (`filter="url(#goldGlow)"`), achieving a 13.5:1 contrast ratio against the obsidian header.
   3. Added an explicit gold hairline border (`url(#goldBorder)`) to the rounded tile container to maintain crisp edge definition against obsidian, slate, or parchment surfaces across both dark and light modes.
 
+### INC-03: Brand Parity Invariant — 100% Favicon & Site Logo Icon Synchronization
+* **Context**: User explicitly directed: *"favicon and svg icon same hona chahiye"*.
+* **Symptom**: The site had disparate brand representations across asset endpoints:
+  - `favicon.ico`, `favicon-96x96.png`, and `apple-touch-icon.png` used the user's custom generated RealFaviconGenerator package (`Aa` glyph on black squircle with cyan corner accent).
+  - `favicon.svg` previously had a legacy placeholder.
+  - `public/logo.svg` and `SiteLogo.astro` had a separate manually generated geometry.
+* **Architectural Remediation**:
+  1. Synchronized all three vector endpoints: `public/favicon.svg`, `public/logo.svg`, and `src/components/SiteLogo.astro` to render the exact same brand artwork.
+  2. Component-level abstraction: `SiteLogo.astro` references `/logo.svg` directly via `<img src="/logo.svg" ... />`, eliminating duplicated inlined SVG data, enabling HTTP caching across page routes, and guaranteeing zero visual divergence between the browser tab favicon and header brand logo.
+
+
