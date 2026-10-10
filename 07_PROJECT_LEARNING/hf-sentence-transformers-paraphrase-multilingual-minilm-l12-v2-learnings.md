@@ -3,8 +3,8 @@
 > **Source Version**: `hf-sentence-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T04:45:24.040Z  
-> **Learning ID**: `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv1wv0zs`  
+> **Timestamp**: 2026-10-10T10:28:58.895Z  
+> **Learning ID**: `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv294vio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T04:45:24.032Z  
+> **Harvest Timestamp**: 2026-10-10T10:28:58.888Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: sentence-similarity
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 49218833 downloads | 1426 likes
+- **Stars / Engagement**: 48797791 downloads | 1425 likes
 
 ---
 
