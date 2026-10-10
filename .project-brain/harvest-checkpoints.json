@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T21:39:00.654Z",
+  "last_updated": "2026-10-10T21:41:46.102Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -468,15 +468,15 @@
       "repository": "Altworld/Hemmingway-1",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv2jahww",
-      "content_hash": "dac282f75ed9bd59f827e470e0f3329358ce843af4b09dbaf4eb48498c0d2a2e",
-      "verified_at": "2026-10-10T15:13:17.422Z",
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv2x6309",
+      "content_hash": "35575fcd035d340d22ec6da5e44f3eba74b576a383e50e79257c3d918faa6f36",
+      "verified_at": "2026-10-10T21:41:46.102Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T15:13:17.422Z"
+      "last_updated": "2026-10-10T21:41:46.102Z"
     },
     "fastino/GLiNER2.5-Decide": {
       "repository": "fastino/GLiNER2.5-Decide",
