@@ -2,6 +2,22 @@
 
 This file records canonical promotion events, knowledge integration milestones, and rule evolutions into `C:\AI-Builder-Brain`.
 
+## Evolution Event: 2026-10-10 — Universal Intelligence Layer: Milestone 7 Root Cause Investigation & Credential Diagnostic Hardening
+
+* **Trigger**: Sovereign User Directive: *"FIX LIVE MODEL CONNECTED = NO — ROOT CAUSE INVESTIGATION... Milestone 7 की रिपोर्ट में MCP connection सफल है, लेकिन Live Model Connected = NO है। Gemini requests में HTTP 401 आया था। अब अनुमान मत लगाओ। वास्तविक root cause खोजो और सुरक्षित तरीके से ठीक करो।"*
+* **Forensic Diagnosis & Root Cause Identified**:
+  1. **Root Cause**: The stored credential in `.brain-secrets.json` (`AQ.A...8Wmg`) and user terminal environment (`AQ.A...1-uw`) starts with `AQ.`, which is an Antigravity/Chrome internal session token or expired cookie. Google Generative Language REST API (`generativelanguage.googleapis.com`) does NOT accept `AQ.` tokens, requiring either an official Google AI Studio API key (`AIzaSy...`, 39 chars) or an OAuth 2.0 access token (`ya29...`).
+  2. **Code Pre-check & Failure Loop**: Previously, `ai-provider-pool.mjs` checked `apiKey.startsWith('AQ.')` and passed it as `Authorization: Bearer AQ.A...`, causing Google to reject it with HTTP 401 across all 5 models sequentially.
+* **Architectural Remedies Implemented**:
+  1. **Safe Credential Classification**: Added `classifyCredential(apiKey, provider)` in `ai-provider-pool.mjs`, categorizing keys into `GOOGLE_AI_STUDIO_API_KEY`, `GOOGLE_OAUTH_ACCESS_TOKEN`, `UNSUPPORTED_SESSION_TOKEN`, and `MISSING` with zero raw secret exposure.
+  2. **Pre-Flight Authentication Guard**: `executeWithGeminiPool` now validates key format prior to dispatch. Malformed/unsupported tokens (`AQ.`) are flagged with `INVALID_CREDENTIAL_FORMAT`, preventing futile network loops.
+  3. **Official Authentication Headers**: Upgraded Google AI Studio API key transmission to use official `x-goog-api-key: <key>` header rather than exposing keys in URL query strings.
+  4. **Strict HTTP 401 Isolation**: On HTTP 401 response, the key circuit breaker immediately trips with `HTTP 401 Invalid Credentials`, logging a sanitized actionable message and halting model loops for that key.
+  5. **6-Point Verification Test Suite**: Upgraded `test-live-model-connection.mjs` verifying: (1) Missing-key guard, (2) Live HTTP 401 rejection capture, (3) Conditional live execution gate, (4) Non-empty content validation, (5) Isolated circuit breaker resilience, and (6) Strict decoupling of Real MCP Client (`YES`) from Live Model Connection (`NO`).
+* **Cumulative Verification**: **254 / 254 Tests Passing across 10 Test Suites** with 0 failures and 0 regressions.
+
+---
+
 ## Evolution Event: 2026-10-09 — Universal Intelligence Layer: Milestone 7 Live Model Connection Probe, Real MCP Client Integration & Cross-Run Persistent Learning
 
 * **Trigger**: Sovereign User Directive: *"Milestone 6 के बाद अब केवल एक प्राथमिक लक्ष्य है: AI-Builder-Brain को कम-से-कम एक वास्तविक AI model के साथ end-to-end चलाकर प्रमाणित करना कि Brain retrieval और execution workflow से task performance में वास्तविक सुधार होता है... Authentication को सही तरीके से configure करो... Secrets print मत करो... Fake model responses मत बताओ... MCP को कम-से-कम एक वास्तविक compatible client में configure करके verify करो... Persistent learning का अलग test करो।"*

@@ -80,6 +80,146 @@ export function loadAllAiKeys() {
   };
 }
 
+/**
+ * Safely classifies credential format without printing raw value
+ */
+export function classifyCredential(apiKey, provider = 'gemini') {
+  if (!apiKey || typeof apiKey !== 'string') {
+    return {
+      present: false,
+      length: 0,
+      format: 'MISSING',
+      masked: 'NOT_SET',
+      validFormat: false,
+      authMethod: 'NONE',
+      error: 'Credential is missing or empty'
+    };
+  }
+
+  const trimmed = apiKey.trim();
+  const len = trimmed.length;
+  const masked = len <= 8 ? '****' : `${trimmed.slice(0, 4)}...${trimmed.slice(-4)}`;
+
+  if (provider === 'gemini') {
+    if (trimmed.startsWith('AIzaSy') && len === 39) {
+      return {
+        present: true,
+        length: len,
+        format: 'GOOGLE_AI_STUDIO_API_KEY',
+        masked,
+        validFormat: true,
+        authMethod: 'HEADER_X_GOOG_API_KEY',
+        error: null
+      };
+    }
+    if (trimmed.startsWith('ya29.')) {
+      return {
+        present: true,
+        length: len,
+        format: 'GOOGLE_OAUTH_ACCESS_TOKEN',
+        masked,
+        validFormat: true,
+        authMethod: 'HEADER_BEARER',
+        error: null
+      };
+    }
+    if (trimmed.startsWith('AQ.')) {
+      return {
+        present: true,
+        length: len,
+        format: 'UNSUPPORTED_SESSION_TOKEN',
+        masked,
+        validFormat: false,
+        authMethod: 'REJECTED_UNSUPPORTED',
+        error: 'Credential starts with "AQ." which is an Antigravity/Chrome internal session token, not an official Google AI Studio API key (format: AIzaSy..., 39 chars) or OAuth 2.0 access token (format: ya29...). Google Generative Language REST API returns HTTP 401.'
+      };
+    }
+    return {
+      present: true,
+      length: len,
+      format: 'UNKNOWN_OR_MALFORMED',
+      masked,
+      validFormat: false,
+      authMethod: 'REJECTED_UNKNOWN',
+      error: `Unrecognized credential format (starts with ${trimmed.slice(0, 4)}...). Expected Google AI Studio API key starting with "AIzaSy" (39 chars).`
+    };
+  }
+
+  return {
+    present: true,
+    length: len,
+    format: 'GENERIC_KEY',
+    masked,
+    validFormat: len >= 16,
+    authMethod: 'BEARER_OR_CUSTOM',
+    error: null
+  };
+}
+
+/**
+ * Detailed diagnostic credential resolver:
+ * Checks process environment and .brain-secrets.json with strict precedence
+ */
+export function resolveGeminiCredentialDiagnostics() {
+  let envKey = process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY.trim() : null;
+  if (!envKey) {
+    for (let i = 1; i <= 10; i++) {
+      if (process.env[`GEMINI_KEY_${i}`]) {
+        envKey = process.env[`GEMINI_KEY_${i}`].trim();
+        break;
+      }
+    }
+  }
+
+  let fileSecrets = {};
+  if (fs.existsSync(SECRETS_PATH)) {
+    try {
+      fileSecrets = JSON.parse(fs.readFileSync(SECRETS_PATH, 'utf-8'));
+    } catch (e) {}
+  }
+
+  let fileKey = fileSecrets.GEMINI_API_KEY ? (typeof fileSecrets.GEMINI_API_KEY === 'string' ? fileSecrets.GEMINI_API_KEY.split(',')[0].trim() : null) : null;
+  if (!fileKey && Array.isArray(fileSecrets.GEMINI_KEYS) && fileSecrets.GEMINI_KEYS.length > 0) {
+    fileKey = fileSecrets.GEMINI_KEYS[0].trim();
+  }
+
+  // Precedence: ENVIRONMENT > SECRETS_FILE
+  let chosenKey = null;
+  let source = 'NONE';
+  let keyName = 'NONE';
+
+  if (envKey) {
+    chosenKey = envKey;
+    source = 'ENVIRONMENT';
+    keyName = 'process.env.GEMINI_API_KEY';
+  } else if (fileKey) {
+    chosenKey = fileKey;
+    source = 'SECRETS_FILE';
+    keyName = '.brain-secrets.json#GEMINI_API_KEY';
+  }
+
+  const classification = classifyCredential(chosenKey, 'gemini');
+  const envClassification = classifyCredential(envKey, 'gemini');
+  const fileClassification = classifyCredential(fileKey, 'gemini');
+
+  const actionableSetup = classification.validFormat
+    ? 'Credential format is valid. Ready for live API connection probe.'
+    : !chosenKey
+      ? 'Set GEMINI_API_KEY in environment ($env:GEMINI_API_KEY="AIzaSy...") or in .brain-secrets.json. Obtain key from https://aistudio.google.com/app/apikey'
+      : `Replace ${classification.masked} with an official Google AI Studio API key from https://aistudio.google.com/app/apikey (starts with "AIzaSy", 39 characters).`;
+
+  return {
+    present: classification.present,
+    source,
+    keyName,
+    activeKey: chosenKey,
+    classification,
+    envState: { present: envClassification.present, classification: envClassification },
+    fileState: { present: fileClassification.present, classification: fileClassification },
+    actionableSetup
+  };
+}
+
 let geminiKeyIndex = 0;
 
 /**
@@ -290,15 +430,23 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
 
     activeKeysTried++;
 
+    const keyClassification = classifyCredential(apiKey, 'gemini');
+    if (!keyClassification.validFormat) {
+      console.warn(`⚠️ [GEMINI CREDENTIAL REJECTED] ${keyLabel}: ${keyClassification.error}`);
+      tripKeyCircuitBreaker(apiKey, 86400_000, `Invalid Format (${keyClassification.format})`, 'Google Gemini');
+      lastError = new Error(`Invalid Credential Format: ${keyClassification.error}`);
+      continue;
+    }
+
     for (const model of GEMINI_MODELS) {
-      const isBearer = apiKey.startsWith('ya29.') || apiKey.startsWith('AQ.');
-      const url = isBearer
-        ? `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`
-        : `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+      const isBearer = keyClassification.format === 'GOOGLE_OAUTH_ACCESS_TOKEN';
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 
       const requestHeaders = { 'Content-Type': 'application/json' };
       if (isBearer) {
         requestHeaders['Authorization'] = `Bearer ${apiKey}`;
+      } else {
+        requestHeaders['x-goog-api-key'] = apiKey;
       }
 
       const requestBody = {
@@ -321,6 +469,20 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
           headers: requestHeaders,
           body: JSON.stringify(requestBody)
         });
+
+        if (response.status === 401) {
+          const errText = await response.text();
+          let parsedMsg = errText;
+          try {
+            const errObj = JSON.parse(errText);
+            parsedMsg = errObj.error?.message || errText;
+          } catch (e) {}
+
+          tripKeyCircuitBreaker(apiKey, 86400_000, 'HTTP 401 Invalid Credentials', 'Google Gemini');
+          console.warn(`❌ [GEMINI AUTH ERROR 401] ${keyLabel}: ${parsedMsg.slice(0, 150)}`);
+          lastError = new Error(`Gemini Authentication Failed (401): ${parsedMsg.slice(0, 120)}`);
+          break; // Stop querying subsequent models with this rejected key
+        }
 
         if (response.status === 429) {
           const errText = await response.text();
