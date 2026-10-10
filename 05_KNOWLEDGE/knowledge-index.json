@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T06:43:08.543Z",
-  "total_verified_learnings": 3461,
+  "last_updated": "2026-10-10T06:45:56.804Z",
+  "total_verified_learnings": 3462,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -83060,6 +83060,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T06:43:08.543Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openai-community-gpt2-mv2161sx": {
+      "learning_id": "learn-huggingface-hf-openai-community-gpt2-mv2161sx",
+      "source": "openai-community/gpt2",
+      "repository": "openai-community/gpt2",
+      "slug": "hf-openai-community-gpt2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openai-community/gpt2",
+      "source_version": "hf-openai-community-gpt2",
+      "content_hash": "c31f11dabaf797467be1cd9e93df5c40dded20dd0b075aafeea784db571c64cb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T06:45:56.804Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
