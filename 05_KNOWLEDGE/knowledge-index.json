@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T23:53:09.648Z",
-  "total_verified_learnings": 3800,
+  "last_updated": "2026-10-10T23:56:01.527Z",
+  "total_verified_learnings": 3801,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -91196,6 +91196,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T23:53:09.648Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv31yqmq": {
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv31yqmq",
+      "source": "Qwen/Qwen3.8-Flash-Next",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "slug": "hf-qwen-qwen3.8-flash-next",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+      "source_version": "hf-qwen-qwen3.8-flash-next",
+      "content_hash": "db33aa68ea636c84ec208185a2d2b099182e7e834fa2d09b83bb32c3ccc290f1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T23:56:01.527Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
