@@ -75,4 +75,23 @@ This document records empirical learnings, forensic bug investigations, and patt
   4. Embedded `<link rel="sitemap" href="/sitemap-index.xml" />` into `src/layouts/Layout.astro` `<head>`.
   5. Verified compilation: `npm run build` generated `dist/robots.txt`, `dist/sitemap.xml`, `dist/sitemap-index.xml`, and `dist/sitemap-0.xml` (915KB full URL index) with zero errors across all 617 routes.
 
+### INC-06: Legal & Trust Suite Architecture (Privacy Policy, About Us, Terms & Conditions, Contact Us)
+* **Context**: User requested adding 4 essential trust & compliance pages: **Privacy Policy** (`/privacy/`), **About Us** (`/about/`), **Terms & Conditions** (`/terms/`), and **Contact Us** (`/contact/`).
+* **Requirements & Invariants**:
+  - Full Google AdSense compliance: explicit disclosure of client-side text processing (zero server storage/telemetry), cookie policy, third-party network disclosures (DART, Google Ads Settings opt-out), and external font resources (Google Fonts).
+  - Dedicated Contact Us page with functional client-side form validation, mailto payload generation, 4 distinct departmental email routing channels (`contact@`, `fonts@`, `license@`, `compliance@`), response time guarantee (<24-48h), and formal statutory DMCA takedown notice requirements (17 U.S.C. § 512(c)(3)).
+  - Comprehensive About Us page explaining organizational origin: resolving the predatory font copyright demand letter epidemic ($3,000–$10,000 demand letters for unvetted personal-use fonts), 800-year history of blackletter (from 12th-century Textura Quadrata to Gutenberg, Cloister Black, Chicano lowriders, and West Coast tattoos), and our 4-Tier Typography Verification Protocol (SIL OFL Legal, Glyph Coverage, Cross-Platform Engine Stress Test, Vector Kontur/Stencil Integrity).
+  - Explicit Terms & Conditions detailing commercial rights under SIL OFL 1.1 (tattoos, apparel, logos, games, YouTube), user-generated stencil ownership, acceptable use, disclaimers, and limitation of liability.
+  - Multilingual route parity across all 14 supported locales (`en`, `es`, `ja`, `fr`, `de`, `pt`, `ko`, `it`, `no`, `sv`, `da`, `fi`, `ar`, `he`) using `getStaticPaths()`.
+  - Prominent cross-navigation links across desktop footer, mobile drawer menu, and copyright bottom bar using `translatePath`.
+* **Architectural Remediation**:
+  1. Created `src/pages/contact.astro` and multilingual counterpart `src/pages/[lang]/contact.astro`.
+  2. Enhanced `src/pages/about.astro` and `src/pages/[lang]/about.astro`.
+  3. Enhanced `src/pages/terms.astro` and `src/pages/[lang]/terms.astro`.
+  4. Updated `src/pages/privacy.astro` and `src/pages/[lang]/privacy.astro`.
+  5. Added `nav.contact` translation key to all 14 languages in `src/i18n/ui.ts`.
+  6. Linked all 4 pages into `src/layouts/Layout.astro` header drawer, footer legal matrix, and footer copyright bar.
+  7. Verification: Full static compilation (`npm run build`) succeeded with 631 pages generated, zero errors, and all routes verified in `dist/sitemap-0.xml`.
+
+
 
