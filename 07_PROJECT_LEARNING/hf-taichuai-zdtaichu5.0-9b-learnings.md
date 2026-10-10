@@ -3,8 +3,8 @@
 > **Source Version**: `hf-taichuai-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T03:36:35.680Z  
-> **Learning ID**: `learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv1uejj4`  
+> **Timestamp**: 2026-10-10T09:20:05.947Z  
+> **Learning ID**: `learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv26oaij`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T03:36:35.116Z  
+> **Harvest Timestamp**: 2026-10-10T09:20:05.940Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
