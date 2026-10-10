@@ -3,8 +3,8 @@
 > **Source Version**: `hf-bingsu-ad`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T13:23:28.554Z  
-> **Learning ID**: `learn-huggingface-hf-bingsu-adetailer-mv2fd9yi`  
+> **Timestamp**: 2026-10-10T19:51:30.654Z  
+> **Learning ID**: `learn-huggingface-hf-bingsu-adetailer-mv2t8aji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T13:23:28.548Z  
+> **Harvest Timestamp**: 2026-10-10T19:51:30.491Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
