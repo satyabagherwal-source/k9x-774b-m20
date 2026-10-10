@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T07:48:43.912Z",
+  "last_updated": "2026-10-10T07:51:30.192Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -76,15 +76,15 @@
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv1r6hvd",
-      "content_hash": "4174078eb8497248336f4c60c480125d47e3432adefc6f75f9d69fcb532c57c3",
-      "verified_at": "2026-10-10T02:06:21.495Z",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv23icsy",
+      "content_hash": "c9b6648a3e441431872115564fe12e219fe96bada900d281aad559fb166fd4c0",
+      "verified_at": "2026-10-10T07:51:30.192Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T02:06:21.495Z"
+      "last_updated": "2026-10-10T07:51:30.192Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
