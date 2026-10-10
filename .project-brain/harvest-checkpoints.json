@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T06:51:26.800Z",
+  "last_updated": "2026-10-10T06:54:28.739Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1686,15 +1686,15 @@
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv1p4a6u",
-      "content_hash": "f789af944d2ee400320817543f8cb7fe8457a08ebf97130dcefef554117f8175",
-      "verified_at": "2026-10-10T01:08:38.984Z",
+      "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv21h0sy",
+      "content_hash": "dc26db4bc073151e50bbf4f7663faed7a80677d683e10f9232e8e81f5cd12cb5",
+      "verified_at": "2026-10-10T06:54:28.739Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T01:08:38.984Z"
+      "last_updated": "2026-10-10T06:54:28.739Z"
     },
     "Qwen/Qwen-Image-2.1-Turbo": {
       "repository": "Qwen/Qwen-Image-2.1-Turbo",

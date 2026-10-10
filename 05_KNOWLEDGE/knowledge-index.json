@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T06:51:26.786Z",
-  "total_verified_learnings": 3464,
+  "last_updated": "2026-10-10T06:54:28.715Z",
+  "total_verified_learnings": 3465,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -83132,6 +83132,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T06:51:26.786Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv21h0sy": {
+      "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv21h0sy",
+      "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "slug": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "content_hash": "dc26db4bc073151e50bbf4f7663faed7a80677d683e10f9232e8e81f5cd12cb5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T06:54:28.715Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
