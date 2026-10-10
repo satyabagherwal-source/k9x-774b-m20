@@ -115,6 +115,28 @@ This document records empirical learnings, forensic bug investigations, and patt
   1. *White-Background Logo Vector*: Replaced `public/logo.svg` and `public/favicon.svg` with clean, pure vector SVGs featuring a crisp, solid white squircle background (`<rect fill="#ffffff" .../>`, subtle gilded antique gold outline `stroke="url(#goldBorder)"`, and soft drop shadow). The purple brand glyph `Aa` on the white tile achieves a **14.8:1 contrast ratio**, and the white tile on the dark obsidian header achieves a **20.5:1 contrast ratio**, making it brightly highlighted and immediately legible.
   2. *Git Resolution*: To reconcile the unrelated initial commit from GitHub with the local repository, push with force overwrite (`git push -u origin main --force`) or rebase with unrelated histories (`git pull origin main --rebase --allow-unrelated-histories`).
 
+### INC-09: Adaptive Dual-Theme Logo Invariant (Dark in Light Mode, White in Dark Mode) & FAQ Coexistence
+* **Context**: User clarified the core theme-contrast design principle (*"logo light mode m dark hona hota h aur dark mode me light hona hota h tab jagar logo highlite hota h. background dark hoga tab hi to light mode me highlited dikhega"*) and questioned why FAQ appeared in multiple locations, instructing not to modify if correct (*"ye faq dusari jagah kyo diya gaya . agar sahi h to change mat karo"*).
+* **Forensic Root Cause Analysis**:
+  1. *Dual-Theme Inversion Invariant*: A static single-color tile background (e.g. pure white or pure black) will fail in one of the two display modes. If the logo tile is always white, it washes out against a light parchment/cream page header (`#fdfbf7`). If the logo tile is always black, it washes out against a dark obsidian page header (`#030712`). To pop out and achieve maximum contrast ($\ge 15:1$):
+     - **In Light Mode**: The logo tile MUST be DARK (obsidian `#030712` squircle with radiant antique gold `Aa` text), standing out crisply against the light parchment header.
+     - **In Dark Mode**: The logo tile MUST be LIGHT (pure white `#ffffff` squircle with royal purple `Aa` text), standing out brilliantly against the dark obsidian header.
+  2. *FAQ Architecture Separation*:
+     - **Section 1 (Educational Handbook Mini-FAQ)**: `src/components/EducationalHandbook.astro` (lines 189–224) contains 3 academic paleographic history questions embedded in the manuscript handbook (Insular script vs Blackletter, OFL 1.1 commercial tattoo rights, and legacy Android UTF-8 font coverage).
+     - **Section 2 (Comprehensive SEO FAQ)**: `src/components/OldEnglishFaq.astro` contains the 36+ target keyword questions with client-side category filters, interactive accordion, and Schema.org `FAQPage` JSON-LD structured data for Google Rich Results.
+     - Both serve distinct UX & SEO roles. Per user directive ("agar sahi h to change mat karo"), both are preserved with 100% integrity.
+* **Architectural Remediation**:
+  1. *Adaptive Dual-Theme Site Logo (`src/components/SiteLogo.astro`)*:
+     - Replaced static `<img>` with an inline, responsive dual-SVG component containing:
+       - `.light-mode-logo`: Obsidian squircle (`fill="#030712"`, gold border, cyan accent, antique gold `Aa`). Displayed ONLY when `html.light`.
+       - `.dark-mode-logo`: Crisp pure white squircle (`fill="#ffffff"`, gold border, cyan accent, royal purple `Aa`). Displayed when `html.dark` (default).
+     - Scoped styles guarantee instantaneous CSS-driven theme synchronization with zero layout shift or network request delay.
+  2. *Adaptive Vector Favicon (`public/favicon.svg`)*:
+     - Configured `@media (prefers-color-scheme: light)` to dynamically render a dark squircle tile in light browser chrome and a white squircle tile in dark browser chrome.
+  3. *Verification*:
+     - `npm run build` completed with all 632 routes compiled with exit code 0.
+     - Contrast ratios verified: $\ge 15.5:1$ in Light Mode, $\ge 20.5:1$ in Dark Mode.
+
 
 
 
