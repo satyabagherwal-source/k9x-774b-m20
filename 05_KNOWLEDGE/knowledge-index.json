@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T03:19:11.760Z",
-  "total_verified_learnings": 3390,
+  "last_updated": "2026-10-10T03:22:00.084Z",
+  "total_verified_learnings": 3391,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -81356,6 +81356,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-10T03:19:11.760Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-apple-lensvlm-9b-mv1tvrwf": {
+      "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv1tvrwf",
+      "source": "apple/LensVLM-9B",
+      "repository": "apple/LensVLM-9B",
+      "slug": "hf-apple-lensvlm-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "content_hash": "77f57375d53dd587da4b1a1755a9fcb3ff10adea91e6cec94bf28bf4d28c18fb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-10T03:22:00.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
