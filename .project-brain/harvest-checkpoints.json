@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T07:45:41.207Z",
+  "last_updated": "2026-10-10T07:48:43.912Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -62,15 +62,15 @@
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv1r2u71",
-      "content_hash": "14bd4d60734aa50b32cea14591f24da9a46ebe96a6dde6a923edefae71470151",
-      "verified_at": "2026-10-10T02:03:30.843Z",
+      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv23esi2",
+      "content_hash": "33cc5a9d51fbb16d9f1a93281f1e9c643bf4778dc3ba45c3a71e8a5de424b3e7",
+      "verified_at": "2026-10-10T07:48:43.912Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T02:03:30.843Z"
+      "last_updated": "2026-10-10T07:48:43.912Z"
     },
     "sentence-transformers/all-MiniLM-L6-v2": {
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
