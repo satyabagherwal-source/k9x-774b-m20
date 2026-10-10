@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T11:15:41.222Z",
+  "last_updated": "2026-10-10T11:18:26.783Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1070,15 +1070,15 @@
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv1ylvzn",
-      "content_hash": "0e66b128582ceb3ab9353111ded38711b2cb165198e87d1795774fbd88d66167",
-      "verified_at": "2026-10-10T05:34:16.946Z",
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv2awhi4",
+      "content_hash": "dbd470d2a8c907eb8ca3653d4e76cca8c2cf0eff2f8c36ef25b9b260d1c6699f",
+      "verified_at": "2026-10-10T11:18:26.783Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T05:34:16.946Z"
+      "last_updated": "2026-10-10T11:18:26.783Z"
     },
     "Tongyi-MAI/Z-Image-Turbo": {
       "repository": "Tongyi-MAI/Z-Image-Turbo",
