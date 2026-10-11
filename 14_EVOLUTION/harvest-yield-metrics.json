@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:04:08.066Z",
-  "total_cycles_completed": 106,
-  "total_learnings_persisted": 106,
+  "last_updated": "2026-10-11T14:06:58.743Z",
+  "total_cycles_completed": 107,
+  "total_learnings_persisted": 107,
   "total_rules_promoted": 49,
   "history": [
     {
@@ -744,6 +744,13 @@
       "timestamp": "2026-10-11T14:04:08.066Z",
       "repository": "openai/gpt-oss-120b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv3w9ew3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:06:58.743Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv3wd2l6",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

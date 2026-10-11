@@ -948,5 +948,15 @@
     "contentHash": "6d6cfa042e2396a389039039a38657af9cfef456a688db748cb0105552958003",
     "lastHarvestedAt": "2026-10-11T14:04:08.065Z",
     "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv3w9ew3"
+  },
+  "hf-zai-org-glm-5.2": {
+    "repository": "zai-org/GLM-5.2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/zai-org/GLM-5.2",
+    "sourceVersion": "hf-zai-org-glm-5.2",
+    "license": "Open-Source",
+    "contentHash": "60c11b1579a31fa90b118dbfd0dcb4e052222095561efdd708a9336571d6f8f1",
+    "lastHarvestedAt": "2026-10-11T14:06:58.742Z",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv3wd2l6"
   }
 }

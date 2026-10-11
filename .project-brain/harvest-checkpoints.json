@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:04:08.066Z",
+  "last_updated": "2026-10-11T14:06:58.744Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1126,15 +1126,15 @@
       "repository": "zai-org/GLM-5.2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-zai-org-glm-5-2-mv3fb7me",
-      "content_hash": "ca556052b894f820c7f05bbbf8696e7bfe11c3adebcc7d4b8c9d7bbc38133714",
-      "verified_at": "2026-10-11T06:09:38.460Z",
+      "learning_id": "learn-huggingface-hf-zai-org-glm-5-2-mv3wd2l6",
+      "content_hash": "60c11b1579a31fa90b118dbfd0dcb4e052222095561efdd708a9336571d6f8f1",
+      "verified_at": "2026-10-11T14:06:58.744Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T06:09:38.460Z"
+      "last_updated": "2026-10-11T14:06:58.744Z"
     },
     "stabilityai/stable-diffusion-3-medium": {
       "repository": "stabilityai/stable-diffusion-3-medium",
