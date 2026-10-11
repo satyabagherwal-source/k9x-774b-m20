@@ -1168,5 +1168,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-WUJX",
+    "timestamp": "2026-10-11T12:58:22.509Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv3twuhc",
+    "contentHash": "7a773876a6d196eb7fa42226c8cebf45ccb57b85f9cfef0820ad261e40517910",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
