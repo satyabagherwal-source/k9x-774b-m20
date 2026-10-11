@@ -270,3 +270,4 @@
 | `CYCLE-20261011-HS2M` | `2026-10-11T19:46:33.694Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 348, Rule 349, Rule 350` | Yes (`2de7ea9c...`) |
 | `CYCLE-20261011-LEIL` | `2026-10-11T19:49:22.749Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 351, Rule 352, Rule 353` | Yes (`ca4a76d5...`) |
 | `CYCLE-20261011-PQQU` | `2026-10-11T19:52:45.222Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 354, Rule 355, Rule 356` | Yes (`2591a552...`) |
+| `CYCLE-20261011-TC7Q` | `2026-10-11T19:55:33.014Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`f03f4cf0...`) |

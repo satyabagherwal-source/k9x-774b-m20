@@ -3133,5 +3133,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-TC7Q",
+    "timestamp": "2026-10-11T19:55:33.014Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
+    "contentHash": "f03f4cf04d12a2097c8291635c794ec6fb6113ff9c99fa3cec48533fe423bb97",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
