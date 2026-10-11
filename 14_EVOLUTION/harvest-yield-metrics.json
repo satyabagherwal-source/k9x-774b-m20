@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T09:16:36.601Z",
-  "total_cycles_completed": 29,
-  "total_learnings_persisted": 29,
+  "last_updated": "2026-10-11T09:20:59.481Z",
+  "total_cycles_completed": 30,
+  "total_learnings_persisted": 30,
   "total_rules_promoted": 10,
   "history": [
     {
@@ -205,6 +205,13 @@
       "timestamp": "2026-10-11T09:16:36.601Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv3lznlb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T09:20:59.481Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv3m5af1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -178,5 +178,15 @@
     "contentHash": "44656e7588dd8c8475d5e8a9742d65f2a744ec508b8a06c83c0f8e4576d03239",
     "lastHarvestedAt": "2026-10-11T09:16:36.600Z",
     "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv3lznlb"
+  },
+  "hf-cross-encoder-ms-marco-minilm-l6-v2": {
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+    "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+    "license": "Open-Source",
+    "contentHash": "1e9c6bb461cab8b133fcc71862eacae50f6e872d78bcee8c1c3ffc27eef71d07",
+    "lastHarvestedAt": "2026-10-11T09:20:59.481Z",
+    "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv3m5af1"
   }
 }
