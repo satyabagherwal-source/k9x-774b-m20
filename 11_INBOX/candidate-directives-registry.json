@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:10:40.842Z",
+  "last_updated": "2026-10-11T11:16:53.723Z",
   "directives": [
     {
       "id": "CD-001",
@@ -471,6 +471,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv3q2cna"
+    },
+    {
+      "id": "CD-ACEZ",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "SupersonicLabs/Julia-1",
+      "source_commit": "hf-supersoni",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-supersoniclabs-julia-1-mv3qaccp"
+    },
+    {
+      "id": "CD-ACEZ",
+      "directive_title": "The Tokenizer Sanitization Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "SupersonicLabs/Julia-1",
+      "source_commit": "hf-supersoni",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-supersoniclabs-julia-1-mv3qaccp"
     }
   ]
 }

@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:13:28.411Z",
-  "total_cycles_completed": 53,
-  "total_learnings_persisted": 53,
-  "total_rules_promoted": 25,
+  "last_updated": "2026-10-11T11:16:53.724Z",
+  "total_cycles_completed": 54,
+  "total_learnings_persisted": 54,
+  "total_rules_promoted": 27,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -374,6 +374,13 @@
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv3q5xxw",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T11:16:53.724Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv3qaccp",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

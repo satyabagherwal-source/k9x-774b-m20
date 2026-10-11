@@ -6294,3 +6294,118 @@ pipe = QwenImage21Pipeline.from_pretrained(
 ```
 **VERIFICATION METHOD**:
 Generate an image and check for `NaN` values in the output. If any pixel is `NaN`, the inference failed.
+
+
+---
+
+## 278. The Confidence Threshold Gate (Harvested from SupersonicLabs/Julia-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Confidence Threshold Gate",
+  "source": "SupersonicLabs/Julia-1",
+  "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+  "source_version": "hf-supersoniclabs-julia-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:16:53.667Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-supersoniclabs-julia-1-mv3qaccp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [SupersonicLabs/Julia-1](https://huggingface.co/SupersonicLabs/Julia-1) (Revision: `hf-superso`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST implement a confidence threshold gate for model outputs. If the model's confidence score is below a predefined threshold, the system MUST return a "Low Confidence" flag or `None` instead of a default label.
+**WHY**:
+Models can output high-confidence incorrect labels, especially for out-of-distribution inputs. Returning a default label without a confidence check leads to silent failures and incorrect decisions.
+**WHEN TO APPLY**:
+Any system that uses a probabilistic model for decision-making.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def predict_with_confidence(model, input, threshold=0.5):
+    label, confidence = model.predict_with_confidence(input)
+    if confidence < threshold:
+        return None, confidence
+    return label, confidence
+
+# Usage
+label, conf = predict_with_confidence(model, input)
+if label is None:
+    handle_low_confidence()
+else:
+    process_decision(label)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Always returning a label
+label = model.predict(input)
+process_decision(label)
+```
+**VERIFICATION METHOD**:
+Unit test that asserts the function returns `None` when the confidence is below the threshold.
+
+
+---
+
+## 279. The Per-Locale Evaluation Mandate (Harvested from SupersonicLabs/Julia-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Per-Locale Evaluation Mandate",
+  "source": "SupersonicLabs/Julia-1",
+  "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+  "source_version": "hf-supersoniclabs-julia-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:16:53.673Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-supersoniclabs-julia-1-mv3qaccp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [SupersonicLabs/Julia-1](https://huggingface.co/SupersonicLabs/Julia-1) (Revision: `hf-superso`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST evaluate multilingual models on a per-locale basis. Do not rely on macro accuracy for multilingual systems.
+**WHY**:
+Macro accuracy can hide significant performance gaps in low-resource languages. A 71.5% macro average can mask 40% accuracy in critical locales, leading to unfair or incorrect decisions for users in those locales.
+**WHEN TO APPLY**:
+Any system that uses a multilingual model for user-facing decisions.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def evaluate_per_locale(model, test_data):
+    results = {}
+    for locale, examples in test_data.items():
+        correct = 0
+        for example in examples:
+            if model.predict(example.input) == example.expected:
+                correct += 1
+        results[locale] = correct / len(examples)
+    return results
+
+# Usage
+results = evaluate_per_locale(model, test_data)
+for locale, accuracy in results.items():
+    if accuracy < 0.8:
+        log_warning(f"Low accuracy for locale {locale}: {accuracy}")
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Only reporting macro accuracy
+macro_accuracy = sum(correct) / len(test_data)
+print(f"Macro Accuracy: {macro_accuracy}")
+```
+**VERIFICATION METHOD**:
+Automated test that asserts the evaluation function returns a dictionary of per-locale accuracies.

@@ -418,5 +418,15 @@
     "contentHash": "3542477bf1375e82460275223ebd819982c056636c60f2cf33a24d2f38906a6c",
     "lastHarvestedAt": "2026-10-11T11:13:28.410Z",
     "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv3q5xxw"
+  },
+  "hf-supersoniclabs-julia-1": {
+    "repository": "SupersonicLabs/Julia-1",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
+    "sourceVersion": "hf-supersoniclabs-julia-1",
+    "license": "Open-Source",
+    "contentHash": "16b49b88368ff41d20532fd54d82fef1fde057ba530bf5a2402985f6695ca2a2",
+    "lastHarvestedAt": "2026-10-11T11:16:53.723Z",
+    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv3qaccp"
   }
 }
