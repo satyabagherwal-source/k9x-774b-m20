@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:49:55.511Z",
-  "total_verified_learnings": 3971,
+  "last_updated": "2026-10-11T08:52:44.791Z",
+  "total_verified_learnings": 3972,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -95312,6 +95312,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T08:49:55.511Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp": {
+      "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp",
+      "source": "autotrust/JEV-27B-VL",
+      "repository": "autotrust/JEV-27B-VL",
+      "slug": "hf-autotrust-jev-27b-vl",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "content_hash": "4d03a0672166323428bc2774dd3cf8b9d3bdf98d8f4783114b607ab080ebb725",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 261,
+          "title": "Hybrid Attention Latency Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 262,
+          "title": "Probability Calibration for Decision Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T08:52:44.791Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

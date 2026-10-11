@@ -118,5 +118,15 @@
     "contentHash": "efddf4d6022433e2abada7c02bdfeb4980e7f3321be0cd5b0a26484cd8f7f73b",
     "lastHarvestedAt": "2026-10-11T08:49:55.550Z",
     "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv3l1c7c"
+  },
+  "hf-autotrust-jev-27b-vl": {
+    "repository": "autotrust/JEV-27B-VL",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
+    "sourceVersion": "hf-autotrust-jev-27b-vl",
+    "license": "Open-Source",
+    "contentHash": "4d03a0672166323428bc2774dd3cf8b9d3bdf98d8f4783114b607ab080ebb725",
+    "lastHarvestedAt": "2026-10-11T08:52:44.872Z",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp"
   }
 }

@@ -5403,3 +5403,102 @@ app.use((req, res, next) => {
 **VERIFICATION METHOD**:
 Automated integration test asserting that requests with 'Origin: https://malicious-site.com' receive no 'Access-Control-Allow-Origin' header and return HTTP 403 or 204 without credential grant.
 
+
+
+---
+
+## 261. Hybrid Attention Latency Optimization (Harvested from autotrust/JEV-27B-VL)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid Attention Latency Optimization",
+  "source": "autotrust/JEV-27B-VL",
+  "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+  "source_version": "hf-autotrust-jev-27b-vl",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T08:52:44.772Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/JEV-27B-VL](https://huggingface.co/autotrust/JEV-27B-VL) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For VLMs with long context windows, use a hybrid attention mechanism where linear attention ($O(N)$) is used for the majority of layers, and full attention ($O(N^2)$) is used at regular intervals (e.g., every 4th layer) to retain global context.
+**WHY**:
+Full attention scales quadratically with sequence length, causing latency and memory bottlenecks for long vision token sequences. Linear attention scales linearly, but loses global context. Hybrid attention balances both.
+**WHEN TO APPLY**:
+When deploying VLMs for real-time inference on long-context inputs (e.g., high-resolution images, long documents).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# In model config
+"layer_types": [
+    "linear_attention", "linear_attention", "linear_attention", "full_attention",
+    "linear_attention", "linear_attention", "linear_attention", "full_attention"
+],
+"full_attention_interval": 4
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Do NOT use full attention for all layers in long-context VLMs
+"layer_types": ["full_attention"] * 64
+```
+**VERIFICATION METHOD**:
+Benchmark inference latency on a fixed-length input (e.g., 4096 tokens). Assert latency < 300ms on target hardware.
+
+
+---
+
+## 262. Probability Calibration for Decision Models (Harvested from autotrust/JEV-27B-VL)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Probability Calibration for Decision Models",
+  "source": "autotrust/JEV-27B-VL",
+  "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+  "source_version": "hf-autotrust-jev-27b-vl",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T08:52:44.776Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/JEV-27B-VL](https://huggingface.co/autotrust/JEV-27B-VL) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any model used for decision-making (ranking, recommendation, risk assessment) must have its output probabilities calibrated to match empirical accuracy.
+**WHY**:
+Uncalibrated probabilities lead to poor decision-making. A model that outputs 0.99 confidence for a 70% correct answer will make poor risk-adjusted decisions.
+**WHEN TO APPLY**:
+When using LLM/VLM outputs for automated decision-making, not just text generation.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Apply temperature scaling during training or post-hoc
+logits = logits / temperature
+probabilities = softmax(logits)
+# Evaluate ECE on validation set
+ece = expected_calibration_error(probabilities, labels)
+assert ece < 0.02
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Do NOT use raw softmax probabilities for decision-making
+probabilities = softmax(logits)
+# Use directly without calibration
+```
+**VERIFICATION METHOD**:
+Compute Expected Calibration Error (ECE) on a held-out validation set. Assert ECE < 0.02.

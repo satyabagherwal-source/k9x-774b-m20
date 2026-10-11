@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:43:12.817Z",
+  "last_updated": "2026-10-11T08:52:44.873Z",
   "directives": [
     {
       "id": "CD-001",
@@ -86,6 +86,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-zai-org-glm-5-3-mv3kspgb"
+    },
+    {
+      "id": "CD-4YX5",
+      "directive_title": "Frozen Vision Encoder for Zero-Shot Generalization",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "autotrust/JEV-27B-VL",
+      "source_commit": "hf-autotrust",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp"
     }
   ]
 }
