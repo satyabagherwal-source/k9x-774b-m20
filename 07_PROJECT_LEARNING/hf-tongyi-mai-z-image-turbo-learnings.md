@@ -3,8 +3,8 @@
 > **Source Version**: `hf-tongyi-ma`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T18:06:31.655Z  
-> **Learning ID**: `learn-huggingface-hf-tongyi-mai-z-image-turbo-mv2pha7c`  
+> **Timestamp**: 2026-10-11T00:01:58.140Z  
+> **Learning ID**: `learn-huggingface-hf-tongyi-mai-z-image-turbo-mv326dto`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T18:06:31.459Z  
+> **Harvest Timestamp**: 2026-10-11T00:01:57.907Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 630535 downloads | 5433 likes
+- **Stars / Engagement**: 630535 downloads | 5434 likes
 
 ---
 
