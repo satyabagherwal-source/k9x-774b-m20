@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-11T16:58:04.220Z",
+  "lastUpdated": "2026-10-11T17:01:18.696Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -216,12 +216,12 @@
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-11T16:58:04.017Z",
-        "lastActiveAt": "2026-10-11T16:43:03.954Z",
-        "lastHarvestedAt": "2026-10-11T16:40:12.895Z",
-        "totalHarvested": 2295,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-11T17:00:56.203Z",
+        "lastHarvestedAt": "2026-10-11T17:00:56.203Z",
+        "totalHarvested": 2296,
+        "lastError": null
       },
       {
         "id": "Agent-Epsilon",
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-11T16:58:04.680Z",
+        "lastActiveAt": "2026-10-11T17:00:58.184Z",
         "lastHarvestedAt": "2026-10-11T16:46:47.541Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-11T16:58:07.191Z",
+        "lastActiveAt": "2026-10-11T17:01:00.651Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -294,10 +294,10 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 0,
+      "remaining": 20,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-11T16:57:45.689Z",
+      "trippedAt": "2026-10-11T17:00:38.770Z",
       "reason": null,
       "consecutiveBlocks": 1
     },

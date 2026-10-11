@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:46:45.020Z",
-  "total_cycles_completed": 154,
-  "total_learnings_persisted": 154,
+  "last_updated": "2026-10-11T17:00:53.683Z",
+  "total_cycles_completed": 155,
+  "total_learnings_persisted": 155,
   "total_rules_promoted": 65,
   "history": [
     {
@@ -1095,6 +1095,13 @@
       "repository": "autonomous-ai/openharness",
       "learningId": "learn-github-autonomous-ai-openharness-mv422jff",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T17:00:53.683Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
