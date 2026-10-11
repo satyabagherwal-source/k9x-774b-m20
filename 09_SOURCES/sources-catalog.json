@@ -608,5 +608,15 @@
     "contentHash": "2b4224a87ae78fff27b7a71c337a82a8ea6f410af1269450d46ec023b7aa8a20",
     "lastHarvestedAt": "2026-10-11T12:23:07.305Z",
     "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv3snier"
+  },
+  "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
+    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+    "license": "Open-Source",
+    "contentHash": "435531ac2d25bc3d3583a57226260a35ce616e6091a2399c4b3f012c238df22f",
+    "lastHarvestedAt": "2026-10-11T12:25:54.054Z",
+    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv3sr31t"
   }
 }
