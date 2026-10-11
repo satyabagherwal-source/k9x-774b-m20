@@ -3973,5 +3973,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-U8Z4",
+    "timestamp": "2026-10-11T22:44:13.168Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg",
+    "contentHash": "830edd66d55155ea020655949565553797e65b6d65b37f162d0c4f93a20142c8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
