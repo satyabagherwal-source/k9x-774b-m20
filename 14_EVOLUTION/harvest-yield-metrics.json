@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:42:03.418Z",
-  "total_cycles_completed": 58,
-  "total_learnings_persisted": 58,
+  "last_updated": "2026-10-11T11:44:50.318Z",
+  "total_cycles_completed": 59,
+  "total_learnings_persisted": 59,
   "total_rules_promoted": 31,
   "history": [
     {
@@ -408,6 +408,13 @@
       "timestamp": "2026-10-11T11:42:03.418Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv3r6p89",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T11:44:50.318Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv3raa0g",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
