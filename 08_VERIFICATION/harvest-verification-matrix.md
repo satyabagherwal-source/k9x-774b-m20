@@ -222,3 +222,4 @@
 | `CYCLE-20261011-C20S` | `2026-10-11T17:22:08.572Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`8586b5bc...`) |
 | `CYCLE-20261011-G3OH` | `2026-10-11T17:25:17.345Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`085d0202...`) |
 | `CYCLE-20261011-JVNQ` | `2026-10-11T17:28:13.574Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`d532018c...`) |
+| `CYCLE-20261011-NU2E` | `2026-10-11T17:31:18.134Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 325, Rule 326, Rule 327` | Yes (`66a7e8c2...`) |

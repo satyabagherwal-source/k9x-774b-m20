@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T17:28:13.577Z",
-  "total_cycles_completed": 164,
-  "total_learnings_persisted": 164,
-  "total_rules_promoted": 68,
+  "last_updated": "2026-10-11T17:31:18.136Z",
+  "total_cycles_completed": 165,
+  "total_learnings_persisted": 165,
+  "total_rules_promoted": 71,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -1165,6 +1165,13 @@
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-hf-francisring-prism-mv43jvl8",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T17:31:18.136Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
