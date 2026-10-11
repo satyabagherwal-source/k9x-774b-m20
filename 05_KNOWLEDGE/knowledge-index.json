@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:25:00.601Z",
-  "total_verified_learnings": 4158,
+  "last_updated": "2026-10-11T19:28:10.697Z",
+  "total_verified_learnings": 4159,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -100236,6 +100236,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T19:25:00.601Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-facebook-sam3-mv47u4yi": {
+      "learning_id": "learn-huggingface-hf-facebook-sam3-mv47u4yi",
+      "source": "facebook/sam3",
+      "repository": "facebook/sam3",
+      "slug": "hf-facebook-sam3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/facebook/sam3",
+      "source_version": "hf-facebook-sam3",
+      "content_hash": "c64c5be09e38a43a54d00e7aa33f4b6ed45271a72c5b5f970c1dea20ac5d1bed",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T19:28:10.697Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

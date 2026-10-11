@@ -2998,5 +2998,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-U513",
+    "timestamp": "2026-10-11T19:28:10.743Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-hf-facebook-sam3-mv47u4yi",
+    "contentHash": "c64c5be09e38a43a54d00e7aa33f4b6ed45271a72c5b5f970c1dea20ac5d1bed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
