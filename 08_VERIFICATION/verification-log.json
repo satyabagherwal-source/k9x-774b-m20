@@ -553,5 +553,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-3M2R",
+    "timestamp": "2026-10-11T10:43:40.035Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv3p3m0j",
+    "contentHash": "a3d70fdb2b41993c7fa83f68055faea6a0373e82396eac1d7c4d843822f27734",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

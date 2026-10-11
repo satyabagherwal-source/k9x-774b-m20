@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:39:50.813Z",
+  "last_updated": "2026-10-11T10:43:40.037Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -300,15 +300,15 @@
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv38h4k9",
-      "content_hash": "20ed3a0598439ab1a139d396f0dcfa393cadc88f3099e6551d42d679accd3e55",
-      "verified_at": "2026-10-11T02:58:17.111Z",
+      "learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv3p3m0j",
+      "content_hash": "a3d70fdb2b41993c7fa83f68055faea6a0373e82396eac1d7c4d843822f27734",
+      "verified_at": "2026-10-11T10:43:40.037Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T02:58:17.111Z"
+      "last_updated": "2026-10-11T10:43:40.037Z"
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
