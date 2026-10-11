@@ -2008,5 +2008,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-4ATN",
+    "timestamp": "2026-10-11T15:52:07.883Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
+    "contentHash": "e9750dbeb5f59940d707cc5971b7a08e4497dc1bb5f571357e34f353d3f2fd2b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

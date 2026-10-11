@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:49:20.635Z",
-  "total_cycles_completed": 137,
-  "total_learnings_persisted": 137,
+  "last_updated": "2026-10-11T15:52:07.891Z",
+  "total_cycles_completed": 138,
+  "total_learnings_persisted": 138,
   "total_rules_promoted": 59,
   "history": [
     {
@@ -976,6 +976,13 @@
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T15:52:07.891Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

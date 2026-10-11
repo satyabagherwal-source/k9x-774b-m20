@@ -1238,5 +1238,15 @@
     "contentHash": "fa832a68b31bbfaeecffa3de69e20a093340ca7eaf68cc04f852dc5439e41ae4",
     "lastHarvestedAt": "2026-10-11T15:49:20.634Z",
     "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8"
+  },
+  "hf-argmaxinc-whisperkit-coreml": {
+    "repository": "argmaxinc/whisperkit-coreml",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+    "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
+    "license": "Open-Source",
+    "contentHash": "e9750dbeb5f59940d707cc5971b7a08e4497dc1bb5f571357e34f353d3f2fd2b",
+    "lastHarvestedAt": "2026-10-11T15:52:07.890Z",
+    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8"
   }
 }

@@ -175,3 +175,4 @@ Every entry in this ledger must capture:
 | `learn-github-test-org-rule-verifier-mv3zrwqz` | `https://github.com/test-org/rule-verifier` | `HEAD` | Multi-dimensional audit evidence | 2026-10-11T15:42:30.002Z |
 | `learn-research-313` | `animir/node-rate-limiter-flexible` | `targeted-research` | `05_KNOWLEDGE/engineering-patterns.md#Rule 313` | 2026-10-11T15:42:31.350Z |
 | `learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-11T15:49:20.634Z |
+| `learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-11T15:52:07.890Z |
