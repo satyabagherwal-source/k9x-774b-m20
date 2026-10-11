@@ -128,5 +128,15 @@
     "contentHash": "4d03a0672166323428bc2774dd3cf8b9d3bdf98d8f4783114b607ab080ebb725",
     "lastHarvestedAt": "2026-10-11T08:52:44.872Z",
     "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp"
+  },
+  "hf-autotrust-gev-26b-decide": {
+    "repository": "autotrust/GEV-26B-Decide",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
+    "sourceVersion": "hf-autotrust-gev-26b-decide",
+    "license": "Open-Source",
+    "contentHash": "a8a1dd1ba3b9381b311da261fd748e20d0d07712db3dd3a30540276bf2b02a22",
+    "lastHarvestedAt": "2026-10-11T08:56:41.625Z",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv3la1jq"
   }
 }
