@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T22:04:43.535Z",
+  "last_updated": "2026-10-11T22:07:39.097Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1434,15 +1434,15 @@
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
-      "content_hash": "cc581525a32cacd567c2efa8cf95affd8e1a9e2fee9d8a3f7af9622780b66022",
-      "verified_at": "2026-10-11T15:19:11.342Z",
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1",
+      "content_hash": "31b09193f16b7add63a5ccd7c97dffdb34bafc30fa4c73ecec66fc068ea24368",
+      "verified_at": "2026-10-11T22:07:39.097Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T15:19:11.342Z"
+      "last_updated": "2026-10-11T22:07:39.097Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",

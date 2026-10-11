@@ -297,3 +297,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-11T21:58:38.121Z |
 | `learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-11T22:01:38.914Z |
 | `learn-huggingface-hf-openai-community-gpt2-mv4dfghb` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-11T22:04:43.533Z |
+| `learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-11T22:07:39.095Z |
