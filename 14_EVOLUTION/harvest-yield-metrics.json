@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T18:04:11.000Z",
-  "total_cycles_completed": 176,
-  "total_learnings_persisted": 176,
+  "last_updated": "2026-10-11T18:07:06.527Z",
+  "total_cycles_completed": 177,
+  "total_learnings_persisted": 177,
   "total_rules_promoted": 74,
   "history": [
     {
@@ -1248,6 +1248,13 @@
       "timestamp": "2026-10-11T18:04:11.000Z",
       "repository": "Lightricks/LTX-2.5",
       "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T18:07:06.527Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

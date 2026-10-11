@@ -385,9 +385,9 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "924f18c6a5e768006512ae6e7de0598bd9bf7533766f45348b86a4072e0fab7e",
-    "lastHarvestedAt": "2026-10-11T11:04:51.401Z",
-    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv3puv08"
+    "contentHash": "34409b083f80761d08740305c7eb686b09021d8c65695955736cb0971789c156",
+    "lastHarvestedAt": "2026-10-11T18:07:06.526Z",
+    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
