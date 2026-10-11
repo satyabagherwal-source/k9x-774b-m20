@@ -1198,5 +1198,15 @@
     "contentHash": "cc0472cdb064d7348c3a5a7e3dfeacd8bba2ffba6a820d86c1663f6c12b923be",
     "lastHarvestedAt": "2026-10-11T15:21:58.963Z",
     "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs"
+  },
+  "hf-conwayresearch-underdog-saluki-27b-1.0": {
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+    "sourceVersion": "hf-conwayresearch-underdog-saluki-27b-1.0",
+    "license": "Open-Source",
+    "contentHash": "947ded8be9493995d02c91eacb714c4cab90f5c6b4eb61aa71979ff637dd5f15",
+    "lastHarvestedAt": "2026-10-11T15:24:55.023Z",
+    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum"
   }
 }
