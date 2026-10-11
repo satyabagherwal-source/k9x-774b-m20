@@ -148,5 +148,15 @@
     "contentHash": "a683c478d0609b8b79d986dc2a0b243e4d486c5fb11000229a390ea04dad97b9",
     "lastHarvestedAt": "2026-10-11T09:00:49.644Z",
     "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv3lfcux"
+  },
+  "hf-edge0-audio8-asr-infinite": {
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+    "sourceVersion": "hf-edge0-audio8-asr-infinite",
+    "license": "Open-Source",
+    "contentHash": "25ecd6afea81ef3523c5026fc82fed91fd6a9e41a6a5826399c4cf68c3d11545",
+    "lastHarvestedAt": "2026-10-11T09:08:07.937Z",
+    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv3lor3e"
   }
 }

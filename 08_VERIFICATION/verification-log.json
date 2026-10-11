@@ -313,5 +313,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-OR5S",
+    "timestamp": "2026-10-11T09:08:07.936Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv3lor3e",
+    "contentHash": "25ecd6afea81ef3523c5026fc82fed91fd6a9e41a6a5826399c4cf68c3d11545",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
