@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T22:50:08.321Z",
-  "total_cycles_completed": 271,
-  "total_learnings_persisted": 271,
+  "last_updated": "2026-10-11T22:53:17.532Z",
+  "total_cycles_completed": 272,
+  "total_learnings_persisted": 272,
   "total_rules_promoted": 116,
   "history": [
-    {
-      "timestamp": "2026-10-11T12:28:58.055Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-hf-psrben-visionhope-mv3sv11p",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T12:32:05.917Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T22:50:08.321Z",
       "repository": "zai-org/GLM-5.3",
       "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T22:53:17.532Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
