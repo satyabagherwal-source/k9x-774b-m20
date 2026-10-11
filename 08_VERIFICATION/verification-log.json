@@ -3898,5 +3898,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-AIX1",
+    "timestamp": "2026-10-11T22:28:52.933Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut",
+    "contentHash": "d5f34f3af49629648c2aca16c02791a5a6f4601eeec988acf07a6f5a1271a60e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
