@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:34:27.160Z",
+  "last_updated": "2026-10-11T15:42:29.764Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1807,48 +1807,6 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-11T13:22:02.984Z"
-    },
-    "test-org/gateway-verifier": {
-      "repository": "test-org/gateway-verifier",
-      "stage": "VERIFIED",
-      "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-test-org-gateway-verifier-mv3wy9hl",
-      "content_hash": "e39f8bae266141dd70733e9f5a77c11a19684571aa9f7de9222bf7d29aa094e3",
-      "verified_at": "2026-10-11T14:23:27.659Z",
-      "extracted": true,
-      "validated": true,
-      "brain_write": true,
-      "brain_readback": true,
-      "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T14:23:27.659Z"
-    },
-    "test-org/tampered-repo": {
-      "repository": "test-org/tampered-repo",
-      "stage": "VALIDATED",
-      "status": "FAILED_PERSISTENCE",
-      "learning_id": "learn-github-test-org-tampered-repo-mv3wy9sb",
-      "content_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
-      "verified_at": null,
-      "extracted": true,
-      "validated": true,
-      "brain_write": true,
-      "brain_readback": false,
-      "knowledge_index_updated": false,
-      "last_updated": "2026-10-11T14:23:27.821Z"
-    },
-    "test-org/rule-verifier": {
-      "repository": "test-org/rule-verifier",
-      "stage": "VERIFIED",
-      "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-test-org-rule-verifier-mv3wy9ue",
-      "content_hash": "ab5f9a5a24a630d417f39a834bd9abbfe5f6a656cdddc34c3fc955f3617ab9a7",
-      "verified_at": "2026-10-11T14:23:28.107Z",
-      "extracted": true,
-      "validated": true,
-      "brain_write": true,
-      "brain_readback": true,
-      "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T14:23:28.107Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",

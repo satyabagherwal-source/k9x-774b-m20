@@ -537,3 +537,9 @@ This file records canonical promotion events, knowledge integration milestones, 
 - **2026-10-11T15:03:49.276Z**: [FEEDBACK LOOP] Rule 306 updated with traceable note: When handling streaming iterables or async generators, .length is undefined.
 
 - **2026-10-11T15:08:41.257Z**: [FEEDBACK LOOP] Rule 306 updated with traceable note: When handling streaming iterables or async generators, .length is undefined.
+
+- **2026-10-11T15:41:58.710Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-ZERO_TRUST_AUTH (ZERO_TRUST_AUTH) by codifying **Rule 312** (Distributed JWT JTI Revocation & Sliding Blacklist Invariant).
+
+- **2026-10-11T15:42:26.474Z**: [FEEDBACK LOOP] Rule 306 updated with traceable note: When handling streaming iterables or async generators, .length is undefined.
+
+- **2026-10-11T15:42:31.637Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-DISTRIBUTED_RATE_LIMITING (DISTRIBUTED_RATE_LIMITING) by codifying **Rule 313** (Distributed Sliding-Window Atomic Rate Limiting Invariant).

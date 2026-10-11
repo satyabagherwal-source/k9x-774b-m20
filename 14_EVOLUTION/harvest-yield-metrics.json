@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:34:27.159Z",
-  "total_cycles_completed": 134,
-  "total_learnings_persisted": 134,
-  "total_rules_promoted": 56,
+  "last_updated": "2026-10-11T15:42:30.036Z",
+  "total_cycles_completed": 136,
+  "total_learnings_persisted": 136,
+  "total_rules_promoted": 57,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -955,6 +955,20 @@
       "repository": "Infisical/infisical",
       "learningId": "learn-github-infisical-infisical-mv3zhkae",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T15:42:29.606Z",
+      "repository": "test-org/gateway-verifier",
+      "learningId": "learn-github-test-org-gateway-verifier-mv3zrwa8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T15:42:30.036Z",
+      "repository": "test-org/rule-verifier",
+      "learningId": "learn-github-test-org-rule-verifier-mv3zrwqz",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

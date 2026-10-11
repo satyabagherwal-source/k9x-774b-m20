@@ -1963,5 +1963,35 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-RWLT",
+    "timestamp": "2026-10-11T15:42:29.585Z",
+    "repository": "test-org/gateway-verifier",
+    "learningId": "learn-github-test-org-gateway-verifier-mv3zrwa8",
+    "contentHash": "66cec33ee84fc0cc1d9d97abcc288cb8b449c27057af67130d7ca47127d6a20e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261011-RWX3",
+    "timestamp": "2026-10-11T15:42:29.991Z",
+    "repository": "test-org/rule-verifier",
+    "learningId": "learn-github-test-org-rule-verifier-mv3zrwqz",
+    "contentHash": "b918a8e3e48e92ce4f5ed184cc467fc2675e74f1ecaec0411528382569dcd751",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

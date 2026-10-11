@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:34:27.114Z",
-  "total_verified_learnings": 4087,
+  "last_updated": "2026-10-11T15:42:31.298Z",
+  "total_verified_learnings": 4090,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -98402,6 +98402,39 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "learn-research-distributed_concurrency-311": {
+      "learning_id": "learn-research-distributed_concurrency-311",
+      "topic": "The Distributed Lease Fencing Token Invariant",
+      "category": "ENGINEERING_PATTERN",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "rule_number": 311,
+      "rule_id": "Rule 311",
+      "verified": true,
+      "source": "redis/redis",
+      "indexed_at": "2026-10-11T15:41:57.495Z"
+    },
+    "learn-research-zero_trust_auth-312": {
+      "learning_id": "learn-research-zero_trust_auth-312",
+      "topic": "Distributed JWT JTI Revocation & Sliding Blacklist Invariant",
+      "category": "ENGINEERING_PATTERN",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "rule_number": 312,
+      "rule_id": "Rule 312",
+      "verified": true,
+      "source": "auth0/node-jsonwebtoken",
+      "indexed_at": "2026-10-11T15:41:58.171Z"
+    },
+    "learn-research-distributed_rate_limiting-313": {
+      "learning_id": "learn-research-distributed_rate_limiting-313",
+      "topic": "Distributed Sliding-Window Atomic Rate Limiting Invariant",
+      "category": "ENGINEERING_PATTERN",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "rule_number": 313,
+      "rule_id": "Rule 313",
+      "verified": true,
+      "source": "animir/node-rate-limiter-flexible",
+      "indexed_at": "2026-10-11T15:42:31.298Z"
     }
   }
 }

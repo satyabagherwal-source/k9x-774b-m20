@@ -168,3 +168,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-11T15:24:55.023Z |
 | `learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-11T15:28:04.778Z |
 | `learn-github-infisical-infisical-mv3zhkae` | `https://github.com/Infisical/infisical` | `c40d5fd5` | Multi-dimensional audit evidence | 2026-10-11T15:34:27.157Z |
+| `learn-research-311` | `redis/redis` | `targeted-research` | `05_KNOWLEDGE/engineering-patterns.md#Rule 311` | 2026-10-11T15:41:57.560Z |
+| `learn-research-312` | `auth0/node-jsonwebtoken` | `targeted-research` | `05_KNOWLEDGE/engineering-patterns.md#Rule 312` | 2026-10-11T15:41:58.314Z |
+| `learn-cd-093` | `canonical_task_execution` | `task-task1-collection-bound` | `11_INBOX/candidate-directives/CD-093-stream---asynciterable-collection-b.md` | 2026-10-11T15:42:26.377Z |
+| `learn-github-test-org-gateway-verifier-mv3zrwa8` | `https://github.com/test-org/gateway-verifier` | `abc1234567` | Multi-dimensional audit evidence | 2026-10-11T15:42:29.590Z |
+| `learn-github-test-org-rule-verifier-mv3zrwqz` | `https://github.com/test-org/rule-verifier` | `HEAD` | Multi-dimensional audit evidence | 2026-10-11T15:42:30.002Z |
+| `learn-research-313` | `animir/node-rate-limiter-flexible` | `targeted-research` | `05_KNOWLEDGE/engineering-patterns.md#Rule 313` | 2026-10-11T15:42:31.350Z |

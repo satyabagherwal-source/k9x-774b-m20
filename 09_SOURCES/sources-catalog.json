@@ -5,9 +5,9 @@
     "sourceUrl": "https://github.com/test-org/gateway-verifier",
     "sourceVersion": "abc123456789",
     "license": "MIT",
-    "contentHash": "e39f8bae266141dd70733e9f5a77c11a19684571aa9f7de9222bf7d29aa094e3",
-    "lastHarvestedAt": "2026-10-11T14:23:27.650Z",
-    "learningId": "learn-github-test-org-gateway-verifier-mv3wy9hl"
+    "contentHash": "66cec33ee84fc0cc1d9d97abcc288cb8b449c27057af67130d7ca47127d6a20e",
+    "lastHarvestedAt": "2026-10-11T15:42:29.590Z",
+    "learningId": "learn-github-test-org-gateway-verifier-mv3zrwa8"
   },
   "test-org-rule-verifier": {
     "repository": "test-org/rule-verifier",
@@ -15,9 +15,9 @@
     "sourceUrl": "https://github.com/test-org/rule-verifier",
     "sourceVersion": "HEAD",
     "license": "Open-Source",
-    "contentHash": "ab5f9a5a24a630d417f39a834bd9abbfe5f6a656cdddc34c3fc955f3617ab9a7",
-    "lastHarvestedAt": "2026-10-11T14:23:28.093Z",
-    "learningId": "learn-github-test-org-rule-verifier-mv3wy9ue"
+    "contentHash": "b918a8e3e48e92ce4f5ed184cc467fc2675e74f1ecaec0411528382569dcd751",
+    "lastHarvestedAt": "2026-10-11T15:42:30.002Z",
+    "learningId": "learn-github-test-org-rule-verifier-mv3zrwqz"
   },
   "shadcn-ui-ui": {
     "repository": "shadcn-ui/ui",

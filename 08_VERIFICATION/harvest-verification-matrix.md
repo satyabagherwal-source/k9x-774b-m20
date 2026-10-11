@@ -185,3 +185,9 @@
 | `CYCLE-20261011-5AWF` | `2026-10-11T15:24:55.023Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`947ded8b...`) |
 | `CYCLE-20261011-9DBC` | `2026-10-11T15:28:04.777Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`f479aebe...`) |
 | `CYCLE-20261011-HKD0` | `2026-10-11T15:34:27.156Z` | `Infisical/infisical` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/infisical-infisical-learnings.md` | Yes (`42a79b45...`) |
+| `CYCLE-2026-10-11-RESEARCH` | `2026-10-11T15:41:57.559Z` | `redis/redis` | Targeted Research Proof | `VERIFIED` | `Rule 311` in `05_KNOWLEDGE` | Yes |
+| `CYCLE-2026-10-11-RESEARCH` | `2026-10-11T15:41:58.313Z` | `auth0/node-jsonwebtoken` | Targeted Research Proof | `VERIFIED` | `Rule 312` in `05_KNOWLEDGE` | Yes |
+| `CYCLE-2026-10-11-STAGED` | `2026-10-11T15:42:26.376Z` | `canonical_task_execution` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-093-stream---asynciterable-collection-b.md` | Pending |
+| `CYCLE-20261011-RWLT` | `2026-10-11T15:42:29.585Z` | `test-org/gateway-verifier` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-org-gateway-verifier-learnings.md` | Yes (`66cec33e...`) |
+| `CYCLE-20261011-RWX3` | `2026-10-11T15:42:29.991Z` | `test-org/rule-verifier` | Commit diff / Patch analysis | `VERIFIED` | `Rule 259` | Yes (`b918a8e3...`) |
+| `CYCLE-2026-10-11-RESEARCH` | `2026-10-11T15:42:31.349Z` | `animir/node-rate-limiter-flexible` | Targeted Research Proof | `VERIFIED` | `Rule 313` in `05_KNOWLEDGE` | Yes |
