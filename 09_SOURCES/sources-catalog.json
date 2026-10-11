@@ -315,9 +315,9 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "a3d70fdb2b41993c7fa83f68055faea6a0373e82396eac1d7c4d843822f27734",
-    "lastHarvestedAt": "2026-10-11T10:43:40.036Z",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv3p3m0j"
+    "contentHash": "cc5c86bf381aec8cd576aeae92dd48c5751cc364f8caa58758c8476f333367a4",
+    "lastHarvestedAt": "2026-10-11T17:46:11.285Z",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
