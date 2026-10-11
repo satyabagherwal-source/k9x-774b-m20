@@ -6628,3 +6628,103 @@ PROVENANCE_END -->
 }
 ```
 **VERIFICATION METHOD**: CI script that attempts to load the model with `dtype="auto"` and asserts no `RuntimeError` about dtype mismatch.
+
+
+---
+
+## 284. RoPE for Order Invariance (Harvested from Phocinae/Phocinae-Largha-150M-v1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "RoPE for Order Invariance",
+  "source": "Phocinae/Phocinae-Largha-150M-v1",
+  "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+  "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:50:28.118Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3rhipt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Phocinae/Phocinae-Largha-150M-v1](https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1) (Revision: `hf-phocina`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Use Rotary Position Embeddings (RoPE) instead of absolute position embeddings in encoder models where the output should be invariant to the order of input elements.
+**WHY**:
+Absolute position embeddings introduce a bias toward lower indices, which can lead to systematic errors in tasks like multiple-choice classification. RoPE encodes relative position, making the attention scores depend on the relative distance between tokens, not their absolute positions.
+**WHEN TO APPLY**:
+When the model is used for tasks where the order of input elements should not affect the output (e.g., multiple-choice questions, set-based classification).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config.json
+"position_embedding_type": "sans_pos",
+"rope_parameters": {
+    "full_attention": {
+        "rope_theta": 160000,
+        "rope_type": "default"
+    },
+    "sliding_attention": {
+        "rope_theta": 160000,
+        "rope_type": "default"
+    }
+}
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Do NOT use absolute position embeddings in order-invariant tasks
+"position_embedding_type": "absolute"
+```
+**VERIFICATION METHOD**:
+Test the model's output with permuted input options. Ensure the relative probabilities remain consistent.
+
+
+---
+
+## 285. Calibrated Probabilities for Decision Gating (Harvested from Phocinae/Phocinae-Largha-150M-v1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Calibrated Probabilities for Decision Gating",
+  "source": "Phocinae/Phocinae-Largha-150M-v1",
+  "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+  "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:50:28.121Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3rhipt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Phocinae/Phocinae-Largha-150M-v1](https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1) (Revision: `hf-phocina`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Train the model to output calibrated probabilities that reflect true confidence, enabling threshold-based decision gating without post-hoc calibration.
+**WHY**:
+Uncalibrated probabilities can lead to overconfidence or underconfidence in the model's decisions, resulting in incorrect gating. Calibrated probabilities allow for reliable human-in-the-loop review when confidence is low.
+**WHEN TO APPLY**:
+When the model's output is used for automated decision-making with a human-in-the-loop fallback.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Train with a calibration loss (e.g., focal loss, temperature scaling)
+# Ensure the output probabilities sum to 1 and reflect true confidence
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Do NOT use uncalibrated probabilities for decision gating
+# This can lead to overconfidence and incorrect decisions
+```
+**VERIFICATION METHOD**:
+Evaluate the model's calibration using metrics like Expected Calibration Error (ECE) or Brier Score.

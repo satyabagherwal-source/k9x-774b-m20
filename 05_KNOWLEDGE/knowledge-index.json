@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:47:41.261Z",
-  "total_verified_learnings": 4008,
+  "last_updated": "2026-10-11T11:50:28.136Z",
+  "total_verified_learnings": 4009,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -96330,6 +96330,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T11:47:41.260Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3rhipt": {
+      "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3rhipt",
+      "source": "Phocinae/Phocinae-Largha-150M-v1",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "slug": "hf-phocinae-phocinae-largha-150m-v1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+      "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+      "content_hash": "0f116edfa1f59e07ad983d18fb76257e0729bd724e011ba2606e821a9ed9b341",
+      "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 284,
+          "title": "RoPE for Order Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 285,
+          "title": "Calibrated Probabilities for Decision Gating",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T11:50:28.136Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

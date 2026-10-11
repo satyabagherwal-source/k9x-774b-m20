@@ -110,3 +110,4 @@
 | `CYCLE-20261011-6PAW` | `2026-10-11T11:42:03.416Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`74066af1...`) |
 | `CYCLE-20261011-AA30` | `2026-10-11T11:44:50.316Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`436c5819...`) |
 | `CYCLE-20261011-DY0Q` | `2026-10-11T11:47:41.306Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`9a14c3d6...`) |
+| `CYCLE-20261011-HIRY` | `2026-10-11T11:50:28.174Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 284, Rule 285` | Yes (`0f116edf...`) |

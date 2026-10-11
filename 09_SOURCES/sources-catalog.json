@@ -488,5 +488,15 @@
     "contentHash": "9a14c3d60aa622e9c925c3d47b10f196eb7ec8b647b6488ae1c8bde9e30ecaf4",
     "lastHarvestedAt": "2026-10-11T11:47:41.307Z",
     "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv3rdxya"
+  },
+  "hf-phocinae-phocinae-largha-150m-v1": {
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+    "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
+    "license": "Open-Source",
+    "contentHash": "0f116edfa1f59e07ad983d18fb76257e0729bd724e011ba2606e821a9ed9b341",
+    "lastHarvestedAt": "2026-10-11T11:50:28.175Z",
+    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3rhipt"
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:47:41.308Z",
+  "last_updated": "2026-10-11T11:50:28.175Z",
   "directives": [
     {
       "id": "CD-001",
@@ -603,6 +603,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv3rdxya"
+    },
+    {
+      "id": "CD-HIRZ",
+      "directive_title": "Hybrid Attention for Low-Latency Inference",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Phocinae/Phocinae-Largha-150M-v1",
+      "source_commit": "hf-phocinae-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHEN TO APPLY** context",
+      "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3rhipt"
     }
   ]
 }
