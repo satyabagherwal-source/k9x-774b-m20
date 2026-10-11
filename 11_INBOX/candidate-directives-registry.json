@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:56:46.863Z",
+  "last_updated": "2026-10-11T11:59:28.835Z",
   "directives": [
     {
       "id": "CD-001",
@@ -647,6 +647,50 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-akhilaaa3-jev-omni-mv3rpmwl"
+    },
+    {
+      "id": "CD-T3YB",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv3rt3wo"
+    },
+    {
+      "id": "CD-T3YB",
+      "directive_title": "Explicit Token ID Handling",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**",
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv3rt3wo"
+    },
+    {
+      "id": "CD-T3YB",
+      "directive_title": "Immutable Configuration Objects",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv3rt3wo"
+    },
+    {
+      "id": "CD-T3YB",
+      "directive_title": "Explicit EOS Token Validation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv3rt3wo"
     }
   ]
 }

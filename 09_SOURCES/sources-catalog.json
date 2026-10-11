@@ -518,5 +518,15 @@
     "contentHash": "ad1ca98aed89db8dcab21ced50fd66faf4b481c3addd58bbd14386e861172d19",
     "lastHarvestedAt": "2026-10-11T11:56:46.862Z",
     "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv3rpmwl"
+  },
+  "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
+    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+    "license": "Open-Source",
+    "contentHash": "3c944c82c8e3a8427ed3c53b531193a352343e22ac51cd7070b3eea56341684e",
+    "lastHarvestedAt": "2026-10-11T11:59:28.834Z",
+    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv3rt3wo"
   }
 }

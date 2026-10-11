@@ -113,3 +113,4 @@
 | `CYCLE-20261011-HIRY` | `2026-10-11T11:50:28.174Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 284, Rule 285` | Yes (`0f116edf...`) |
 | `CYCLE-20261011-LNHR` | `2026-10-11T11:53:40.911Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 286, Rule 287` | Yes (`0d802a4b...`) |
 | `CYCLE-20261011-PMZ1` | `2026-10-11T11:56:46.861Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `VERIFIED` | `Rule 288, Rule 289` | Yes (`ad1ca98a...`) |
+| `CYCLE-20261011-T3Y9` | `2026-10-11T11:59:28.833Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | Yes (`3c944c82...`) |
