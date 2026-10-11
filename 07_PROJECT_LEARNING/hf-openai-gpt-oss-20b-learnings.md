@@ -3,8 +3,8 @@
 > **Source Version**: `hf-openai-gp`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T18:23:49.763Z  
-> **Learning ID**: `learn-huggingface-hf-openai-gpt-oss-20b-mv2q3j7n`  
+> **Timestamp**: 2026-10-11T00:19:13.708Z  
+> **Learning ID**: `learn-huggingface-hf-openai-gpt-oss-20b-mv32skvg`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/openai/gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T18:23:49.610Z  
+> **Harvest Timestamp**: 2026-10-11T00:19:13.396Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
