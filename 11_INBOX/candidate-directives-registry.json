@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:30:46.285Z",
+  "last_updated": "2026-10-11T10:34:04.928Z",
   "directives": [
     {
       "id": "CD-001",
@@ -218,6 +218,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv3on0zs"
+    },
+    {
+      "id": "CD-RABK",
+      "directive_title": "Quantized Tensor Transplant Integrity Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_commit": "hf-sc117-qwe",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv3ora9g"
+    },
+    {
+      "id": "CD-RABK",
+      "directive_title": "GGUF Endianness Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_commit": "hf-sc117-qwe",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHEN TO APPLY** context",
+      "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv3ora9g"
     }
   ]
 }

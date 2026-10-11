@@ -278,5 +278,15 @@
     "contentHash": "67189bce33af5b60ad1b4777ce7c092cff1171cea022eb6225035d0a57d2978e",
     "lastHarvestedAt": "2026-10-11T10:30:46.284Z",
     "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv3on0zs"
+  },
+  "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+    "license": "Open-Source",
+    "contentHash": "4589ffd6134c6ba355a0a7eb58ab0179e629862db414070292c4d1974e0239d8",
+    "lastHarvestedAt": "2026-10-11T10:34:04.927Z",
+    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv3ora9g"
   }
 }

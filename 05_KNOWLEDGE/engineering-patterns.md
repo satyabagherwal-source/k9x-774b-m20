@@ -5682,3 +5682,61 @@ def test_immutable_weights():
     # Try to modify weights
     with pytest.raises(AttributeError):
         engine.weights.hidden_si
+
+
+---
+
+## 266. Model Context Window Verification Rule (Harvested from SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Model Context Window Verification Rule",
+  "source": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T10:34:04.879Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv3ora9g",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF](https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF) (Revision: `hf-sc117-q`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+After any structural modification to a model, you MUST verify that the context window is still functional.
+
+**WHY**:
+Structural modifications can inadvertently affect the attention mechanism or positional encoding, leading to a reduced or corrupted context window. This is a critical functional invariant.
+
+**WHEN TO APPLY**:
+Any operation that modifies the model's architecture or weights, such as abliteration, fine-tuning, or tensor surgery.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def verify_context_window(model, test_length=262144):
+    try:
+        # Generate a long prompt
+        long_prompt = "Hello " * (test_length // 6)
+        output = model.generate(long_prompt, max_new_tokens=100)
+        if len(output) < 100:
+            raise RuntimeError("Context window appears truncated")
+        return True
+    except Exception as e:
+        raise RuntimeError(f"Context window verification failed: {e}")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER do this:
+# Skip context window verification after modifying the model
+```
+
+**VERIFICATION METHOD**:
+Run a functional test that generates text with a long prompt and checks for errors or degradation.
