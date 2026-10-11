@@ -1228,5 +1228,15 @@
     "contentHash": "42a79b454ad378405837c3cc96c5fda8420342456449f4543c1fd3f2cb0650d9",
     "lastHarvestedAt": "2026-10-11T15:34:27.157Z",
     "learningId": "learn-github-infisical-infisical-mv3zhkae"
+  },
+  "hf-intfloat-multilingual-e5-small": {
+    "repository": "intfloat/multilingual-e5-small",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
+    "sourceVersion": "hf-intfloat-multilingual-e5-small",
+    "license": "Open-Source",
+    "contentHash": "fa832a68b31bbfaeecffa3de69e20a093340ca7eaf68cc04f852dc5439e41ae4",
+    "lastHarvestedAt": "2026-10-11T15:49:20.634Z",
+    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8"
   }
 }

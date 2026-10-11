@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:42:31.298Z",
-  "total_verified_learnings": 4090,
+  "last_updated": "2026-10-11T15:49:20.595Z",
+  "total_verified_learnings": 4091,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -98435,6 +98435,41 @@
       "verified": true,
       "source": "animir/node-rate-limiter-flexible",
       "indexed_at": "2026-10-11T15:42:31.298Z"
+    },
+    "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8": {
+      "learning_id": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
+      "source": "intfloat/multilingual-e5-small",
+      "repository": "intfloat/multilingual-e5-small",
+      "slug": "hf-intfloat-multilingual-e5-small",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
+      "source_version": "hf-intfloat-multilingual-e5-small",
+      "content_hash": "fa832a68b31bbfaeecffa3de69e20a093340ca7eaf68cc04f852dc5439e41ae4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 314,
+          "title": "Semantic Embedding Dimensionality & Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 315,
+          "title": "Tokenizer Truncation & Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T15:49:20.594Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   }
 }

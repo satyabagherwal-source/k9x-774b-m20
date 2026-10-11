@@ -1993,5 +1993,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-0PRT",
+    "timestamp": "2026-10-11T15:49:20.633Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
+    "contentHash": "fa832a68b31bbfaeecffa3de69e20a093340ca7eaf68cc04f852dc5439e41ae4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

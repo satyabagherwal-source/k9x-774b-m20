@@ -174,3 +174,4 @@ Every entry in this ledger must capture:
 | `learn-github-test-org-gateway-verifier-mv3zrwa8` | `https://github.com/test-org/gateway-verifier` | `abc1234567` | Multi-dimensional audit evidence | 2026-10-11T15:42:29.590Z |
 | `learn-github-test-org-rule-verifier-mv3zrwqz` | `https://github.com/test-org/rule-verifier` | `HEAD` | Multi-dimensional audit evidence | 2026-10-11T15:42:30.002Z |
 | `learn-research-313` | `animir/node-rate-limiter-flexible` | `targeted-research` | `05_KNOWLEDGE/engineering-patterns.md#Rule 313` | 2026-10-11T15:42:31.350Z |
+| `learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-11T15:49:20.634Z |

@@ -191,3 +191,4 @@
 | `CYCLE-20261011-RWLT` | `2026-10-11T15:42:29.585Z` | `test-org/gateway-verifier` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-org-gateway-verifier-learnings.md` | Yes (`66cec33e...`) |
 | `CYCLE-20261011-RWX3` | `2026-10-11T15:42:29.991Z` | `test-org/rule-verifier` | Commit diff / Patch analysis | `VERIFIED` | `Rule 259` | Yes (`b918a8e3...`) |
 | `CYCLE-2026-10-11-RESEARCH` | `2026-10-11T15:42:31.349Z` | `animir/node-rate-limiter-flexible` | Targeted Research Proof | `VERIFIED` | `Rule 313` in `05_KNOWLEDGE` | Yes |
+| `CYCLE-20261011-0PRT` | `2026-10-11T15:49:20.633Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 314, Rule 315` | Yes (`fa832a68...`) |
