@@ -17359,5 +17359,20 @@
     "qualityScore": 15994,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-11T15:29:52.376Z"
+  },
+  {
+    "name": "openharness",
+    "fullName": "autonomous-ai/openharness",
+    "url": "https://github.com/autonomous-ai/openharness",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The ultimate harness for coding agents and beyond. All your agents. All your machines. One command center. Start with code, then follow your curiosity and build across disciplines: CAD, circuits, robots, games and music.",
+    "stars": 1225,
+    "forks": 102,
+    "openIssues": 43,
+    "language": "TypeScript",
+    "qualityScore": 979,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-11T16:42:06.130Z"
   }
 ]
