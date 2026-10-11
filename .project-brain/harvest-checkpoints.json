@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:00:54.749Z",
+  "last_updated": "2026-10-11T19:03:49.327Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -636,15 +636,15 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v",
-      "content_hash": "3be2363f9176e6e7e5296e5f6aa35c26d3f417c500bf2ca75e8e8e2734e559c5",
-      "verified_at": "2026-10-11T12:14:38.843Z",
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
+      "content_hash": "8a478644b1cb6aabaa1aa4d78c4a047d26a8ac44e5016bc37122701524cfbfd8",
+      "verified_at": "2026-10-11T19:03:49.327Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T12:14:38.843Z"
+      "last_updated": "2026-10-11T19:03:49.327Z"
     },
     "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF": {
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
