@@ -328,3 +328,4 @@
 | `CYCLE-20261011-QNHT` | `2026-10-11T22:41:25.361Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 370, Rule 371` | Yes (`6789d109...`) |
 | `CYCLE-20261011-U8Z4` | `2026-10-11T22:44:13.168Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`830edd66...`) |
 | `CYCLE-20261011-XUUW` | `2026-10-11T22:47:01.496Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`ec0be189...`) |
+| `CYCLE-20261011-1V0F` | `2026-10-11T22:50:08.319Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`929d4170...`) |
