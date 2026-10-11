@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:13:10.661Z",
-  "total_cycles_completed": 109,
-  "total_learnings_persisted": 109,
+  "last_updated": "2026-10-11T14:16:05.619Z",
+  "total_cycles_completed": 110,
+  "total_learnings_persisted": 110,
   "total_rules_promoted": 52,
   "history": [
     {
@@ -765,6 +765,13 @@
       "timestamp": "2026-10-11T14:13:10.661Z",
       "repository": "bigscience/bloom",
       "learningId": "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:16:05.619Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv3woskc",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
