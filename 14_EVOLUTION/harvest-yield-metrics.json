@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T22:53:17.532Z",
-  "total_cycles_completed": 272,
-  "total_learnings_persisted": 272,
+  "last_updated": "2026-10-11T22:56:34.068Z",
+  "total_cycles_completed": 273,
+  "total_learnings_persisted": 273,
   "total_rules_promoted": 116,
   "history": [
-    {
-      "timestamp": "2026-10-11T12:32:05.917Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv3sz1z4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T12:34:55.761Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T22:53:17.532Z",
       "repository": "mudler/locate-anything.cpp-gguf",
       "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T22:56:34.068Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
