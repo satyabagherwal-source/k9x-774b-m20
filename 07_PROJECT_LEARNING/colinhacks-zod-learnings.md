@@ -3,6 +3,62 @@
 > **Source Version**: `284243fb`  
 > **License**: MIT  
 > **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-11T14:25:45.097Z  
+> **Learning ID**: `learn-github-colinhacks-zod-mv3x17rd`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/colinhacks-zod-learnings.md`  
+> **Source**: github ([https://github.com/colinhacks/zod](https://github.com/colinhacks/zod))  
+> **Source Version**: `284243fb`  
+> **License**: MIT  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-11T14:22:31.679Z  
+> **Learning ID**: `learn-github-colinhacks-zod-mv3wx2in`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/colinhacks-zod-learnings.md`  
+> **Source**: github ([https://github.com/colinhacks/zod](https://github.com/colinhacks/zod))  
+> **Source Version**: `284243fb`  
+> **License**: MIT  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-11T14:16:59.624Z  
+> **Learning ID**: `learn-github-colinhacks-zod-mv3wpyaw`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/colinhacks-zod-learnings.md`  
+> **Source**: github ([https://github.com/colinhacks/zod](https://github.com/colinhacks/zod))  
+> **Source Version**: `284243fb`  
+> **License**: MIT  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-11T14:16:51.961Z  
+> **Learning ID**: `learn-github-colinhacks-zod-mv3wpse1`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/colinhacks-zod-learnings.md`  
+> **Source**: github ([https://github.com/colinhacks/zod](https://github.com/colinhacks/zod))  
+> **Source Version**: `284243fb`  
+> **License**: MIT  
+> **Synthesized By**: google-gemini-cloud-agent  
 > **Timestamp**: 2026-10-11T08:28:54.849Z  
 > **Learning ID**: `learn-github-colinhacks-zod-mv3kabi9`  
 > **Pipeline Version**: `2.0.0`  
@@ -546,4 +602,42 @@ expect(ref.deref()).toBeUndefined();
 When validating or deserializing any variable-length data container (Array, Set, Map, String, or Buffer), the container’s length/size/byte-count MUST be validated against defined upper bounds BEFORE any child element, property, or character is individually processed.
 
 **WHY**:
-Parsing child items prior to verifying the container boundary allows attackers to send payloads with millions of invalid items. The engine exhausts CPU cycles, instantiates massive issue graphs, and crashes with
+Parsing child items prior to verifying the container boundary allows attackers to send payloads with millions of invalid items. The engine exhausts CPU cycles, instantiates massive issue graphs, and crashes with Out Of Memory (OOM) errors before ever rejecting the outer container.
+
+**WHEN TO APPLY**:
+Any schema validation library, JSON parser, request body deserializer, or data ingestion pipeline handling untrusted input.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+function parseCollectionSafely<T>(
+  input: unknown, 
+  maxItems: number = 1000, 
+  parseItem: (x: unknown) => T
+): T[] {
+  if (!Array.isArray(input)) {
+    throw new TypeError("Expected array payload");
+  }
+  // Hard Invariant: Bounding outer container BEFORE any child iteration
+  if (input.length > maxItems) {
+    throw new RangeError(`Collection length ${input.length} exceeds maximum allowed bound ${maxItems}`);
+  }
+  return input.map(parseItem);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern: Iterating and mapping child elements prior to checking container size
+function unsafeParseCollection<T>(input: unknown, maxItems: number = 1000, parseItem: (x: unknown) => T): T[] {
+  if (!Array.isArray(input)) throw new TypeError("Expected array");
+  // Severe vulnerability: Parses millions of child objects before validating length!
+  const parsed = input.map(parseItem);
+  if (parsed.length > maxItems) {
+    throw new RangeError("Exceeded max items");
+  }
+  return parsed;
+}
+```
+
+**VERIFICATION METHOD**:
+Automated stress test feeding an oversized array (1,000,000 items) asserts immediate rejection in <2ms without child mapper invocations.

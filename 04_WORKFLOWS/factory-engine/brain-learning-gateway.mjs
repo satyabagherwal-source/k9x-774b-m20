@@ -73,15 +73,22 @@ export function calculateContentHash(content) {
  */
 export function extractCandidateRulesFromText(rawText) {
   if (!rawText) return [];
-  const sectionRegex = /(?:##|###)\s+(?:(?:Rule\s+)?([X\d]+)[:.]?\s*|\d+\.\s+)?([^\n]+)\n([\s\S]*?)(?=(?:\n(?:##|###)\s+|\Z))/gi;
+  // CRITICAL ARCHITECTURAL INVARIANT:
+  // In JavaScript RegExp with the /i flag, NEVER use \Z because \Z matches literal 'z' or 'Z'!
+  // In standard JS, end-of-string is strictly '$'.
+  const sectionRegex = /(?:^|\r?\n)(?:##|###)\s+(?:(?:Rule\s+)?(?:X|\d+)[:.]?\s*|\d+\.\s+)?([^\r\n]+)\r?\n([\s\S]*?)(?=(?:\r?\n(?:##|###)\s+(?:(?:Rule\s+)?(?:X|\d+)[:.]|\d+\.|[A-Z0-9][\w\s-]{2,}:)|\r?\n##\s+|$))/g;
   let match;
   const candidates = [];
   while ((match = sectionRegex.exec(rawText)) !== null) {
-    const heading = (match[2] || '').trim();
-    const body = (match[3] || '').trim();
+    const rawHeading = (match[1] || '').trim();
+    const body = (match[2] || '').trim();
     if (/\*\*RULE\*\*:?/i.test(body)) {
-      const cleanTitle = heading.replace(/^(Rule\s+[X\d]+[:.]?\s*|\d+\.\s+)/i, '').trim();
-      candidates.push({ title: cleanTitle || heading, body });
+      const cleanTitle = rawHeading.replace(/^(?:(?:Rule\s+)?(?:X|\d+)[:.]?\s*|\d+\.\s+)/i, '').trim();
+      // Filter out high-level section container titles (e.g. "Net-New Universal Engineering Rules")
+      if (/^(?:net-new\s+universal|universal\s+engineering\s+rules|forensic\s+real|executive\s+forensic|microscopic|the\s+\d+|actionable)/i.test(cleanTitle)) {
+        continue;
+      }
+      candidates.push({ title: cleanTitle || rawHeading, body });
     }
   }
   return candidates;

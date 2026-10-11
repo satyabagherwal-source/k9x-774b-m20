@@ -34,15 +34,15 @@
       "repository": "convaiinnovations/laya",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv3lfcux",
-      "content_hash": "a683c478d0609b8b79d986dc2a0b243e4d486c5fb11000229a390ea04dad97b9",
-      "verified_at": "2026-10-11T09:00:49.646Z",
+      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv3x17jh",
+      "content_hash": "a5117b8369b86440f8e7c7a2a3945c9c38d2e7e1bcd8509eb62c646d47594c1d",
+      "verified_at": "2026-10-11T14:25:45.086Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T09:00:49.646Z"
+      "last_updated": "2026-10-11T14:25:45.086Z"
     },
     "Edge0/Audio8-ASR-Infinite": {
       "repository": "Edge0/Audio8-ASR-Infinite",
@@ -1196,15 +1196,15 @@
       "repository": "meta-llama/Llama-2-7b",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-mv3wvzie",
-      "content_hash": "2bfa1f966e36c635b626b01beb7962ce22449f6a3d643423a9cd92170ad0cb38",
-      "verified_at": "2026-10-11T14:21:41.214Z",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-mv3fuh18",
+      "content_hash": "22910b63bfe060cca294abb5a7dc5c067bcc7defdfb4af555b617e32ec40ffcc",
+      "verified_at": "2026-10-11T06:24:37.119Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T14:21:41.214Z"
+      "last_updated": "2026-10-11T06:24:37.119Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1812,21 +1812,21 @@
       "repository": "test-org/gateway-verifier",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-test-org-gateway-verifier-mv3jnpds",
-      "content_hash": "186dce14455b37e3553657443e15e6a63f3c469926911f263b9aa5b4edaa3af9",
-      "verified_at": "2026-10-11T08:11:19.977Z",
+      "learning_id": "learn-github-test-org-gateway-verifier-mv3wy9hl",
+      "content_hash": "e39f8bae266141dd70733e9f5a77c11a19684571aa9f7de9222bf7d29aa094e3",
+      "verified_at": "2026-10-11T14:23:27.659Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T08:11:19.977Z"
+      "last_updated": "2026-10-11T14:23:27.659Z"
     },
     "test-org/tampered-repo": {
       "repository": "test-org/tampered-repo",
       "stage": "VALIDATED",
       "status": "FAILED_PERSISTENCE",
-      "learning_id": "learn-github-test-org-tampered-repo-mv3jnpna",
+      "learning_id": "learn-github-test-org-tampered-repo-mv3wy9sb",
       "content_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
       "verified_at": null,
       "extracted": true,
@@ -1834,21 +1834,21 @@
       "brain_write": true,
       "brain_readback": false,
       "knowledge_index_updated": false,
-      "last_updated": "2026-10-11T08:11:20.135Z"
+      "last_updated": "2026-10-11T14:23:27.821Z"
     },
     "test-org/rule-verifier": {
       "repository": "test-org/rule-verifier",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-test-org-rule-verifier-mv3jnpou",
-      "content_hash": "88d7aa2a13ef018636d03825458f0c89447b23fbe7e9daf1c0bcda05fcfda8a3",
-      "verified_at": "2026-10-11T08:11:20.326Z",
+      "learning_id": "learn-github-test-org-rule-verifier-mv3wy9ue",
+      "content_hash": "ab5f9a5a24a630d417f39a834bd9abbfe5f6a656cdddc34c3fc955f3617ab9a7",
+      "verified_at": "2026-10-11T14:23:28.107Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T08:11:20.326Z"
+      "last_updated": "2026-10-11T14:23:28.107Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",
@@ -1868,15 +1868,15 @@
       "repository": "colinhacks/zod",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-colinhacks-zod-mv3kabi9",
-      "content_hash": "17cb722a221964b5fb65eec5f148d4a8c015c673abcce44e15f3c18448e1cf2f",
-      "verified_at": "2026-10-11T08:29:06.401Z",
+      "learning_id": "learn-github-colinhacks-zod-mv3x17rd",
+      "content_hash": "2c47292403f219ab5d67c8778db9bf094e950e03953a9ec8757010a819643a71",
+      "verified_at": "2026-10-11T14:25:45.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T08:29:06.401Z"
+      "last_updated": "2026-10-11T14:25:45.322Z"
     }
   }
 }

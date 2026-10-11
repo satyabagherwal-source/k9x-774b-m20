@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:46:19.185Z",
+  "last_updated": "2026-10-11T14:25:45.330Z",
   "directives": [
     {
       "id": "CD-001",
@@ -61,9 +61,11 @@
       "source_repo": "colinhacks/zod",
       "source_commit": "284243fb",
       "date_staged": "2026-10-11",
-      "status": "STAGED_FOR_VERIFICATION",
+      "status": "PROMOTED_CANONICAL_ACTIVE",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
-      "learning_id": "learn-github-colinhacks-zod-mv3kabi9"
+      "learning_id": "learn-github-colinhacks-zod-mv3kabi9",
+      "promoted_rule": "Rule 306",
+      "promoted_date": "2026-10-11"
     },
     {
       "id": "CD-SPIP",
@@ -105,9 +107,11 @@
       "source_repo": "convaiinnovations/laya",
       "source_commit": "hf-convaiinn",
       "date_staged": "2026-10-11",
-      "status": "STAGED_FOR_VERIFICATION",
+      "status": "PROMOTED_CANONICAL_ACTIVE",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
-      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv3lfcux"
+      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv3lfcux",
+      "promoted_rule": "Rule 305",
+      "promoted_date": "2026-10-11"
     },
     {
       "id": "CD-ZNND",

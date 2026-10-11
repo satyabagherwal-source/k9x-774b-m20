@@ -51,17 +51,24 @@ export function validateRuleCandidate(ruleTitle, ruleBody) {
   const hasWhen = /\*\*WHEN TO APPLY\*\*:?/i.test(ruleBody);
   const hasPattern = /\*\*VERIFIED IMPLEMENTATION PATTERN\*\*:?/i.test(ruleBody);
   const hasNegative = /\*\*NEGATIVE CONSTRAINT\*\*:?/i.test(ruleBody);
+  const hasVerification = /\*\*VERIFICATION METHOD\*\*:?/i.test(ruleBody);
 
   if (!hasRule) return { valid: false, reason: 'Missing mandatory **RULE** invariant' };
   if (!hasWhy) return { valid: false, reason: 'Missing mandatory **WHY** technical rationale' };
   if (!hasWhen) return { valid: false, reason: 'Missing mandatory **WHEN TO APPLY** context' };
   if (!hasPattern) return { valid: false, reason: 'Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**' };
   if (!hasNegative) return { valid: false, reason: 'Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern' };
+  if (!hasVerification) return { valid: false, reason: 'Missing mandatory **VERIFICATION METHOD** automated verification protocol' };
 
-  // Must contain verified code blocks
+  // Must contain verified code blocks (at least 1 pattern and 1 negative constraint)
   const codeBlockCount = (ruleBody.match(/```/g) || []).length;
   if (codeBlockCount < 2) {
     return { valid: false, reason: 'Rule must contain at least one implementation code block and one negative constraint block' };
+  }
+
+  // Governance check: separate purely repo-specific references from generalizable principles
+  if (/\b(?:PR\s*#\d+|issue\s*#\d+|merge\s+request)\b/i.test(ruleTitle)) {
+    return { valid: false, reason: 'Rule title references repository-specific PR/issue rather than a universal engineering principle' };
   }
 
   return { valid: true };
@@ -156,7 +163,28 @@ Structure your response in markdown with the following EXACT canonical sections:
 ## 1. Executive Forensic Architecture & System Mechanics
 Explain the exact technical problem this repo solves, its architectural boundaries, and critical subsystem abstractions.
 
-## 2. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+CRITICAL INVARIANT: You MUST formulate 1 to 3 self-contained, 100% complete Universal Engineering Rules derived directly from the architectural invariants and source code evidence.
+Each rule MUST be completely articulated without abbreviation or truncation, adhering strictly to this canonical schema:
+### 1. [Universal Invariant Title]
+**RULE**:
+[Clear, mandatory statement of invariant: MUST / MUST NOT]
+**WHY**:
+[Forensic technical explanation of failure modes avoided]
+**WHEN TO APPLY**:
+[Target subsystems, languages, and conditions where this applies]
+**VERIFIED IMPLEMENTATION PATTERN**:
+\`\`\`language
+// Complete, working, production-grade pattern
+\`\`\`
+**NEGATIVE CONSTRAINT**:
+\`\`\`language
+// Concrete anti-pattern to NEVER write
+\`\`\`
+**VERIFICATION METHOD**:
+[Automated test, assertion, or linter check to verify compliance]
+
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 For each real bug fix/incident discovered from the commits, patches, and issues, document:
 ### Incident X: [Specific Technical Title] (BUG-[SLUG]-0X)
 - **Context**: Subsystem and file path
@@ -171,7 +199,7 @@ For each real bug fix/incident discovered from the commits, patches, and issues,
 \`\`\`
 - **Lesson**: Generalized engineering invariant
 
-## 3. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 Provide deep, concrete code-level rules and invariants across these 5 technical domains:
 1. **Micro-Syntax & Token-Level Precision**: Exact comparison rules, type coercion traps, falsy 0 traps, deep immutability vs shallow mutation bugs with concrete code examples.
 2. **Infinite Loop & Recursion Guards**: Base condition proofs, termination invariants, circular dependency detection, event loop yield mechanisms, and recursion depth caps.
@@ -179,31 +207,11 @@ Provide deep, concrete code-level rules and invariants across these 5 technical 
 4. **Backend Concurrency & Memory Safety**: Race condition elimination (TOCTOU), connection pool starvation guards, memory leak prevention in event emitters/caches.
 5. **Defect & Error Prevention ("Galti Pakadna")**: Null/undefined chaining safeguards, off-by-one boundary checks, and error boundary containment.
 
-## 4. The 9 Deep Learning Dimensions
+## 5. The 9 Deep Learning Dimensions
 Provide deep technical analysis across all 9 core dimensions (Architecture, Core Abstractions, Error Handling, Testing, Security, Performance, Deployment, Agent Patterns, Data Flow).
 
-## 5. The 8 Learning Extraction Artifacts
+## 6. The 8 Learning Extraction Artifacts
 Synthesize the extracted intelligence into the 8 canonical artifacts (Pattern, Rule, Architecture Principle, Failure Mode, Reusable Skill, Decision, Anti-pattern, Verification Method).
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-Provide 1 to 3 net-new Universal Engineering Rules in the exact standard format:
-## X. [Rule Title]
-**RULE**:
-[Clear statement of invariant]
-**WHY**:
-[Forensic technical explanation of failure modes avoided]
-**WHEN TO APPLY**:
-[Target subsystems, languages, or architectural boundaries]
-**VERIFIED IMPLEMENTATION PATTERN**:
-\`\`\`language
-// Complete, working pattern
-\`\`\`
-**NEGATIVE CONSTRAINT**:
-\`\`\`language
-// Anti-pattern to NEVER write
-\`\`\`
-**VERIFICATION METHOD**:
-[Automated test, assertion, or linter rule to verify compliance]
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 Provide a step-by-step verification checklist for any AI coding agent building similar systems.`;

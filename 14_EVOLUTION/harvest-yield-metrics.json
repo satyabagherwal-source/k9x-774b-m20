@@ -783,9 +783,23 @@
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T14:21:41.213Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv3wvzie",
+      "timestamp": "2026-10-11T14:22:31.664Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv3wx2aw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:22:31.891Z",
+      "repository": "colinhacks/zod",
+      "learningId": "learn-github-colinhacks-zod-mv3wx2in",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:23:27.655Z",
+      "repository": "test-org/gateway-verifier",
+      "learningId": "learn-github-test-org-gateway-verifier-mv3wy9hl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },

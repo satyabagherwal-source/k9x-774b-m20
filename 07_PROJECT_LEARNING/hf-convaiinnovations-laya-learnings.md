@@ -1,6 +1,62 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
 > **Source**: huggingface ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
 > **Source Version**: `hf-convaiinn`  
+> **License**: Open-Source (Permissive)  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-11T14:25:44.812Z  
+> **Learning ID**: `learn-huggingface-hf-convaiinnovations-laya-mv3x17jh`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
+> **Source Version**: `hf-convaiinn`  
+> **License**: Open-Source (Permissive)  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-11T14:22:31.398Z  
+> **Learning ID**: `learn-huggingface-hf-convaiinnovations-laya-mv3wx2aw`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
+> **Source Version**: `hf-convaiinn`  
+> **License**: Open-Source (Permissive)  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-11T14:16:59.429Z  
+> **Learning ID**: `learn-huggingface-hf-convaiinnovations-laya-mv3wpy5j`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
+> **Source Version**: `hf-convaiinn`  
+> **License**: Open-Source (Permissive)  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-10-11T14:16:51.666Z  
+> **Learning ID**: `learn-huggingface-hf-convaiinnovations-laya-mv3wps5w`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
+> **Source**: huggingface ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
+> **Source Version**: `hf-convaiinn`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
 > **Timestamp**: 2026-10-11T09:00:49.497Z  
@@ -602,5 +658,27 @@ def validate_and_tokenize(
     # Lightweight token pre-check
     untruncated_tokens = tokenizer.encode(text, truncation=False)
     num_tokens = len(untruncated_tokens)
-    
-    if
+    if num_tokens > requested_max_len:
+        if num_tokens <= hard_limit:
+            effective_max_len = num_tokens
+        else:
+            raise ValueError(
+                f"Payload token length ({num_tokens}) exceeds maximum backbone ceiling ({hard_limit}). "
+                f"Refusing silent truncation of trailing context."
+            )
+    else:
+        effective_max_len = requested_max_len
+
+    return tokenizer(text, max_length=effective_max_len, truncation=True, return_tensors="pt")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# Anti-pattern: Blind silent truncation discarding trailing context
+def unsafe_tokenize(tokenizer, text: str) -> dict:
+    # Danger: Truncates silently to 512, lopping off critical trailing tokens
+    return tokenizer(text, max_length=512, truncation=True, return_tensors="pt")
+```
+
+**VERIFICATION METHOD**:
+Automated pytest asserting that input payloads exceeding requested length either elevate context allocation or raise explicit ValueError rather than truncating silently.

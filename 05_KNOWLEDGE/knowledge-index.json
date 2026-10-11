@@ -97679,22 +97679,172 @@
         "index_read_back_verified": true
       }
     },
-    "learn-huggingface-hf-meta-llama-llama-2-7b-mv3wvzie": {
-      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-mv3wvzie",
-      "source": "meta-llama/Llama-2-7b",
-      "repository": "meta-llama/Llama-2-7b",
-      "slug": "hf-meta-llama-llama-2-7b",
+    "learn-huggingface-hf-convaiinnovations-laya-mv3wx2aw": {
+      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv3wx2aw",
+      "source": "convaiinnovations/laya",
+      "repository": "convaiinnovations/laya",
+      "slug": "hf-convaiinnovations-laya",
       "platform": "huggingface",
-      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
-      "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "2bfa1f966e36c635b626b01beb7962ce22449f6a3d643423a9cd92170ad0cb38",
-      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "content_hash": "8154331ba5da0c7a9b601398eb64bd415ab3ed6a347fa6f29c45fdcd42f81b3f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 305,
+          "title": "Context-Budget Preflight Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T14:22:31.536Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-colinhacks-zod-mv3wx2in": {
+      "learning_id": "learn-github-colinhacks-zod-mv3wx2in",
+      "source": "colinhacks/zod",
+      "repository": "colinhacks/zod",
+      "slug": "colinhacks-zod",
+      "platform": "github",
+      "source_url": "https://github.com/colinhacks/zod",
+      "source_version": "284243fb",
+      "content_hash": "9e6928a8824cad58e666e081af0bc78acd5c39f12f8534477b29a0d400c34726",
+      "dossier_path": "07_PROJECT_LEARNING/colinhacks-zod-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/colinhacks-zod-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 306,
+          "title": "The Leading Collection Bound Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T14:22:31.783Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-test-org-gateway-verifier-mv3wy9hl": {
+      "learning_id": "learn-github-test-org-gateway-verifier-mv3wy9hl",
+      "source": "test-org/gateway-verifier",
+      "repository": "test-org/gateway-verifier",
+      "slug": "test-org-gateway-verifier",
+      "platform": "github",
+      "source_url": "https://github.com/test-org/gateway-verifier",
+      "source_version": "abc123456789",
+      "content_hash": "e39f8bae266141dd70733e9f5a77c11a19684571aa9f7de9222bf7d29aa094e3",
+      "dossier_path": "07_PROJECT_LEARNING/test-org-gateway-verifier-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/test-org-gateway-verifier-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-11T14:21:41.171Z",
+      "verified_at": "2026-10-11T14:23:27.519Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-test-org-rule-verifier-mv3wy9ue": {
+      "learning_id": "learn-github-test-org-rule-verifier-mv3wy9ue",
+      "source": "test-org/rule-verifier",
+      "repository": "test-org/rule-verifier",
+      "slug": "test-org-rule-verifier",
+      "platform": "github",
+      "source_url": "https://github.com/test-org/rule-verifier",
+      "source_version": "HEAD",
+      "content_hash": "ab5f9a5a24a630d417f39a834bd9abbfe5f6a656cdddc34c3fc955f3617ab9a7",
+      "dossier_path": "07_PROJECT_LEARNING/test-org-rule-verifier-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/test-org-rule-verifier-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 259,
+          "title": "Transactional Knowledge Gateway & Mandatory Read-Back Persistence Barrier",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T14:23:27.958Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-convaiinnovations-laya-mv3x17jh": {
+      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv3x17jh",
+      "source": "convaiinnovations/laya",
+      "repository": "convaiinnovations/laya",
+      "slug": "hf-convaiinnovations-laya",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "content_hash": "a5117b8369b86440f8e7c7a2a3945c9c38d2e7e1bcd8509eb62c646d47594c1d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 305,
+          "title": "Context-Budget Preflight Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T14:25:44.940Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-colinhacks-zod-mv3x17rd": {
+      "learning_id": "learn-github-colinhacks-zod-mv3x17rd",
+      "source": "colinhacks/zod",
+      "repository": "colinhacks/zod",
+      "slug": "colinhacks-zod",
+      "platform": "github",
+      "source_url": "https://github.com/colinhacks/zod",
+      "source_version": "284243fb",
+      "content_hash": "2c47292403f219ab5d67c8778db9bf094e950e03953a9ec8757010a819643a71",
+      "dossier_path": "07_PROJECT_LEARNING/colinhacks-zod-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/colinhacks-zod-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 306,
+          "title": "The Leading Collection Bound Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T14:25:45.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

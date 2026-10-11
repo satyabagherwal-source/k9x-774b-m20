@@ -171,7 +171,14 @@ Substance threshold is met with extensive technical details and real patch diffs
 const readBack = readBackVerifyFile(path, hash);
 if (!readBack.verified) throw new Error('FAILED_PERSISTENCE');
 \`\`\`
-**NEGATIVE CONSTRAINT**: Do not trust stdout console strings like SUCCESS or ZERO-CLONE SAVED as proof of storage.`;
+**NEGATIVE CONSTRAINT**:
+\`\`\`javascript
+// Anti-pattern: Trusting console strings without read-back
+console.log('SUCCESS: Saved');
+return { status: 'COMPLETED' };
+\`\`\`
+**VERIFICATION METHOD**:
+Automated integration test asserting physical existence and SHA-256 read-back validation.`;
 
   const rulePkg = createLearningPackage({
     repository: 'test-org/rule-verifier',
