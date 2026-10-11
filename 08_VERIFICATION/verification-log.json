@@ -2863,5 +2863,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-V2OR",
+    "timestamp": "2026-10-11T19:00:54.747Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv46v2n7",
+    "contentHash": "d1c20e8a2b38556708e0bc44d6bc3e0498c380471316749e67c12bdf46030b35",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
