@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T17:31:18.137Z",
+  "last_updated": "2026-10-11T17:34:03.019Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -244,15 +244,15 @@
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv3on0zs",
-      "content_hash": "67189bce33af5b60ad1b4777ce7c092cff1171cea022eb6225035d0a57d2978e",
-      "verified_at": "2026-10-11T10:30:46.286Z",
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
+      "content_hash": "0e3da3fb35f9894ee6827162b976eb5847e73fdf0b0e058a791c4215c36af144",
+      "verified_at": "2026-10-11T17:34:03.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T10:30:46.286Z"
+      "last_updated": "2026-10-11T17:34:03.019Z"
     },
     "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF": {
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
