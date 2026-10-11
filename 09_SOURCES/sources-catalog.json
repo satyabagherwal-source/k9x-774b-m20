@@ -58,5 +58,15 @@
     "contentHash": "17cb722a221964b5fb65eec5f148d4a8c015c673abcce44e15f3c18448e1cf2f",
     "lastHarvestedAt": "2026-10-11T08:29:06.345Z",
     "learningId": "learn-github-colinhacks-zod-mv3kabi9"
+  },
+  "hf-bingsu-adetailer": {
+    "repository": "Bingsu/adetailer",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
+    "sourceVersion": "hf-bingsu-adetailer",
+    "license": "Open-Source",
+    "contentHash": "a9c1ede9de7fa7f1fe4f12dfd6f3ee48de17b533ae6217f19d418f7cacc46b88",
+    "lastHarvestedAt": "2026-10-11T08:33:51.331Z",
+    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv3kgo7h"
   }
 }

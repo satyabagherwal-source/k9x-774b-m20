@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:29:06.383Z",
-  "total_cycles_completed": 17,
-  "total_learnings_persisted": 17,
+  "last_updated": "2026-10-11T08:33:51.332Z",
+  "total_cycles_completed": 18,
+  "total_learnings_persisted": 18,
   "total_rules_promoted": 8,
   "history": [
     {
@@ -121,6 +121,13 @@
       "timestamp": "2026-10-11T08:29:06.383Z",
       "repository": "colinhacks/zod",
       "learningId": "learn-github-colinhacks-zod-mv3kabi9",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:33:51.332Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv3kgo7h",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
