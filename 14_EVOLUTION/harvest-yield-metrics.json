@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T23:54:05.929Z",
-  "total_cycles_completed": 292,
-  "total_learnings_persisted": 292,
+  "last_updated": "2026-10-11T23:57:18.988Z",
+  "total_cycles_completed": 293,
+  "total_learnings_persisted": 293,
   "total_rules_promoted": 121,
   "history": [
-    {
-      "timestamp": "2026-10-11T13:31:10.403Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T13:33:56.986Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T23:54:05.929Z",
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T23:57:18.988Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
