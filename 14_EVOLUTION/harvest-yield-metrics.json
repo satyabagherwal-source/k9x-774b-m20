@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:13:04.093Z",
-  "total_cycles_completed": 199,
-  "total_learnings_persisted": 199,
+  "last_updated": "2026-10-11T19:16:20.096Z",
+  "total_cycles_completed": 200,
+  "total_learnings_persisted": 200,
   "total_rules_promoted": 90,
   "history": [
-    {
-      "timestamp": "2026-10-11T07:44:06.112Z",
-      "repository": "test-org/rule-verifier",
-      "learningId": "learn-github-test-org-rule-verifier-mv3iooq3",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T07:52:59.001Z",
       "repository": "shadcn-ui/ui",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T19:13:04.093Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T19:16:20.096Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv47ewm0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
