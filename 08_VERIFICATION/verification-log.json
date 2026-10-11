@@ -2038,5 +2038,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-BVJT",
+    "timestamp": "2026-10-11T15:58:01.337Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
+    "contentHash": "df22ddac9a0efd1caeeb45ac362cd890516d7d815098ef931d86f67f9db7c976",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
