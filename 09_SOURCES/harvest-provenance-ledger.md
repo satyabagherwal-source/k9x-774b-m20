@@ -329,3 +329,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-11T23:35:54.959Z |
 | `learn-huggingface-hf-francisring-prism-mv4gsoqj` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-11T23:38:59.610Z |
 | `learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-11T23:42:15.736Z |
+| `learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-11T23:45:02.369Z |
