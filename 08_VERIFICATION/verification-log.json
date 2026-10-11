@@ -1333,5 +1333,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-30ZK",
+    "timestamp": "2026-10-11T13:31:10.400Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu",
+    "contentHash": "1faab22027a307a732c617030b890e84bbf5158b5ee5a107225809a7beb76152",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

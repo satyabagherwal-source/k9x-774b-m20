@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:01:21.935Z",
+  "last_updated": "2026-10-11T13:31:10.402Z",
   "directives": [
     {
       "id": "CD-001",
@@ -966,6 +966,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv3u0oxd"
+    },
+    {
+      "id": "CD-30ZM",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "CompVis/stable-diffusion-v1-4",
+      "source_commit": "hf-compvis-s",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu"
+    },
+    {
+      "id": "CD-30ZM",
+      "directive_title": "Model Artifact Serialization Safety",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "CompVis/stable-diffusion-v1-4",
+      "source_commit": "hf-compvis-s",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu"
+    },
+    {
+      "id": "CD-30ZM",
+      "directive_title": "Memory Optimization for Large Models",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "CompVis/stable-diffusion-v1-4",
+      "source_commit": "hf-compvis-s",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu"
     }
   ]
 }

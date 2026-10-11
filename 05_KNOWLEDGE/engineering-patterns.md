@@ -7353,3 +7353,52 @@ sentence_embedding = model_output.last_hidden_state[:, 0, :] # Assuming CLS
 ```
 **VERIFICATION METHOD**:
 Unit test: Load a model with a known pooling mode. Verify that the pooling function used matches the model's configuration.
+
+
+---
+
+## 298. Model Version Compatibility Check (Harvested from CompVis/stable-diffusion-v1-4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Model Version Compatibility Check",
+  "source": "CompVis/stable-diffusion-v1-4",
+  "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+  "source_version": "hf-compvis-stable-diffusion-v1-4",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T13:31:10.331Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) (Revision: `hf-compvis`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Always verify that the model weights are compatible with the pipeline version before loading.
+**WHY**:
+Different versions of the model may have different architectures, leading to `KeyError` or incorrect behavior.
+**WHEN TO APPLY**:
+When loading model weights into a pipeline.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Check the model version
+model_version = "v1-4"
+pipeline_version = "v1-4"
+
+if model_version != pipeline_version:
+    raise ValueError(f"Model version {model_version} is not compatible with pipeline version {pipeline_version}")
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Do not assume compatibility
+pipe = StableDiffusionPipeline.from_pretrained("CompVis/stable-diffusion-v1-4")
+```
+**VERIFICATION METHOD**:
+Compare the model version in the repository metadata with the pipeline version.

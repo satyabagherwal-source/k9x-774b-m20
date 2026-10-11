@@ -828,5 +828,15 @@
     "contentHash": "001482e79beb9675f85089069235a9fedb8e09ae10f54a1c745249c6a6f66bcc",
     "lastHarvestedAt": "2026-10-11T13:28:04.764Z",
     "learningId": "learn-huggingface-hf-amazon-chronos-2-mv3uz1oh"
+  },
+  "hf-compvis-stable-diffusion-v1-4": {
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+    "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
+    "license": "Open-Source",
+    "contentHash": "1faab22027a307a732c617030b890e84bbf5158b5ee5a107225809a7beb76152",
+    "lastHarvestedAt": "2026-10-11T13:31:10.401Z",
+    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu"
   }
 }

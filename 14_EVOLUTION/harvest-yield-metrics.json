@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:28:04.764Z",
-  "total_cycles_completed": 94,
-  "total_learnings_persisted": 94,
-  "total_rules_promoted": 45,
+  "last_updated": "2026-10-11T13:31:10.403Z",
+  "total_cycles_completed": 95,
+  "total_learnings_persisted": 95,
+  "total_rules_promoted": 46,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -661,6 +661,13 @@
       "repository": "amazon/chronos-2",
       "learningId": "learn-huggingface-hf-amazon-chronos-2-mv3uz1oh",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T13:31:10.403Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
