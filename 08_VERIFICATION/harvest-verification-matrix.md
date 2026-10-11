@@ -99,3 +99,4 @@
 | `CYCLE-20261011-J27M` | `2026-10-11T10:55:40.786Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 271` | Yes (`93e41bd8...`) |
 | `CYCLE-20261011-MPI0` | `2026-10-11T10:58:30.936Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`73c65b4e...`) |
 | `CYCLE-20261011-QMGY` | `2026-10-11T11:01:33.634Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 272, Rule 273` | Yes (`580ff7e3...`) |
+| `CYCLE-20261011-UV2G` | `2026-10-11T11:04:51.400Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 274` | Yes (`924f18c6...`) |

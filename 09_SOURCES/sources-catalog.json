@@ -378,5 +378,15 @@
     "contentHash": "580ff7e39c56f65f6b92386c323cb5767671534b7600767e43f470fabae4f049",
     "lastHarvestedAt": "2026-10-11T11:01:33.634Z",
     "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv3pqmef"
+  },
+  "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+    "license": "Open-Source",
+    "contentHash": "924f18c6a5e768006512ae6e7de0598bd9bf7533766f45348b86a4072e0fab7e",
+    "lastHarvestedAt": "2026-10-11T11:04:51.401Z",
+    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv3puv08"
   }
 }

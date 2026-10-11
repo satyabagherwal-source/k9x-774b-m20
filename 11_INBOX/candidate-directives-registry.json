@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:01:33.635Z",
+  "last_updated": "2026-10-11T11:04:51.402Z",
   "directives": [
     {
       "id": "CD-001",
@@ -405,6 +405,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-lightricks-ltx-2-5-mv3pqmef"
+    },
+    {
+      "id": "CD-UV2I",
+      "directive_title": "Zero-Copy Low-Bit Computation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "source_commit": "hf-prism-ml-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv3puv08"
+    },
+    {
+      "id": "CD-UV2I",
+      "directive_title": "Modality Decoupling for Independent Quantization",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "source_commit": "hf-prism-ml-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv3puv08"
     }
   ]
 }

@@ -6090,3 +6090,52 @@ def generate_video(self, prompt, seed=42):
 ```
 **VERIFICATION METHOD**:
 Run generation twice with the same seed and assert that the output tensors are identical.
+
+
+---
+
+## 274. Hybrid Attention for Long Context (Harvested from prism-ml/Ternary-Bonsai-2-27B-gguf)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid Attention for Long Context",
+  "source": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+  "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+  "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:04:51.354Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv3puv08",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [prism-ml/Ternary-Bonsai-2-27B-gguf](https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf) (Revision: `hf-prism-m`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Use a hybrid attention mechanism (mix of linear and full attention) to manage long context windows efficiently on-device.
+**WHY**:
+Full attention has quadratic complexity with respect to sequence length, making it impractical for very long contexts on consumer hardware. Linear attention has linear complexity but may lose some precision. A hybrid approach balances both.
+**WHEN TO APPLY**:
+Any LLM inference system targeting long context windows (100K+ tokens) on consumer hardware.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Hybrid attention layer
+if (layer_index % 4 == 0) {
+    result = full_attention(q, k, v);
+} else {
+    result = linear_attention(q, k, v);
+}
+```
+**NEGATIVE CONSTRAINT**:
+```cpp
+// Anti-pattern: Use full attention for all layers
+result = full_attention(q, k, v);
+```
+**VERIFICATION METHOD**:
+Benchmark latency and memory usage for long context windows. Ensure that latency scales linearly with sequence length, not quadratically.

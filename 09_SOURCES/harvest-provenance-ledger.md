@@ -82,3 +82,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-11T10:55:40.787Z |
 | `learn-huggingface-hf-nvidia-nemotron-3-diarization-mv3pmpgf` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-11T10:58:30.936Z |
 | `learn-huggingface-hf-lightricks-ltx-2-5-mv3pqmef` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-11T11:01:33.634Z |
+| `learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv3puv08` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-11T11:04:51.401Z |
