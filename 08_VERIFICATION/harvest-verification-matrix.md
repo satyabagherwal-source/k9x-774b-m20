@@ -303,3 +303,4 @@
 | `CYCLE-20261011-0ZYG` | `2026-10-11T21:25:29.224Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`c42ba147...`) |
 | `CYCLE-20261011-50RB` | `2026-10-11T21:28:36.887Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 365, Rule 366, Rule 367` | Yes (`1f249f88...`) |
 | `CYCLE-20261011-8J7Q` | `2026-10-11T21:31:20.774Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`8a040370...`) |
+| `CYCLE-20261011-CP2W` | `2026-10-11T21:34:35.000Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`8e584ffa...`) |

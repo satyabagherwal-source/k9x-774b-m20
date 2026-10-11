@@ -3628,5 +3628,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-CP2W",
+    "timestamp": "2026-10-11T21:34:35.000Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv4ccp0f",
+    "contentHash": "8e584ffa8cc95be4d97ff145e374b5bd1f9a1e730680f82e0d439421b582b2ae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
