@@ -3013,5 +3013,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-YC6M",
+    "timestamp": "2026-10-11T19:31:26.638Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
+    "contentHash": "726dccea1bc941863d390a3a695561afa7ec8cfdc0884af7e2195d351f3c1f81",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

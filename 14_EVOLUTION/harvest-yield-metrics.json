@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:28:10.745Z",
-  "total_cycles_completed": 204,
-  "total_learnings_persisted": 204,
+  "last_updated": "2026-10-11T19:31:26.645Z",
+  "total_cycles_completed": 205,
+  "total_learnings_persisted": 205,
   "total_rules_promoted": 92,
   "history": [
-    {
-      "timestamp": "2026-10-11T08:11:04.658Z",
-      "repository": "test-org/test-idempotent-repo",
-      "learningId": "learn-github-test-e2e-idempotent-slug-mv3jndcp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T08:11:06.226Z",
       "repository": "expressjs/cors",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T19:28:10.745Z",
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-hf-facebook-sam3-mv47u4yi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T19:31:26.645Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
