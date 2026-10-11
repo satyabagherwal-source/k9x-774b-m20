@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:20:00.787Z",
-  "total_cycles_completed": 55,
-  "total_learnings_persisted": 55,
-  "total_rules_promoted": 29,
+  "last_updated": "2026-10-11T11:22:52.115Z",
+  "total_cycles_completed": 56,
+  "total_learnings_persisted": 56,
+  "total_rules_promoted": 31,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -387,6 +387,13 @@
       "timestamp": "2026-10-11T11:20:00.787Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T11:22:52.115Z",
+      "repository": "Altworld/Hemmingway-1",
+      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

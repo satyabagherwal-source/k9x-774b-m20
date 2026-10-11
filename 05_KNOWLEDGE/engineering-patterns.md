@@ -6538,3 +6538,93 @@ assert cfg["linear_value_head_dim"] % cfg["linear_num_value_heads"] == 0, \
 ```
 
 ---
+
+
+---
+
+## 282. **Rule Title**: *Explicit Special‑Token Declaration* (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Rule Title**: *Explicit Special‑Token Declaration*",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:22:52.028Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**: Every model configuration file that influences generation must explicitly declare `bos_token_id`, `eos_token_id`, and `pad_token_id`.  
+**WHY**: Missing or duplicated IDs cause silent truncation or padding errors that are hard to debug at runtime.  
+**WHEN TO APPLY**: All language‑model repositories, regardless of framework.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "bos_token_id": 248043,
+  "eos_token_id": 248044,
+  "pad_token_id": 248044
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+// Never omit pad_token_id
+{
+  "bos_token_id": 248043,
+  "eos_token_id": 248044
+}
+```
+**VERIFICATION METHOD**: Linter rule that parses JSON and fails if any of the three keys are missing.
+
+
+---
+
+## 283. **Rule Title**: *Avoid Hard‑Coded Dtype in Config* (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Rule Title**: *Avoid Hard‑Coded Dtype in Config*",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:22:52.034Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**: Do not hard‑code the `dtype` field in `config.json`; instead, let the model loader infer the best available type.  
+**WHY**: Hardware heterogeneity (CPU vs GPU, bfloat16 support) can cause runtime crashes if the config is too prescriptive.  
+**WHEN TO APPLY**: Any repository that ships weights for multiple hardware targets.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  // "dtype": "bfloat16",   // removed
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "dtype": "bfloat16"
+}
+```
+**VERIFICATION METHOD**: CI script that attempts to load the model with `dtype="auto"` and asserts no `RuntimeError` about dtype mismatch.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:20:00.786Z",
+  "last_updated": "2026-10-11T11:22:52.115Z",
   "directives": [
     {
       "id": "CD-001",
@@ -515,6 +515,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHEN TO APPLY** context",
       "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6"
+    },
+    {
+      "id": "CD-I0YB",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Altworld/Hemmingway-1",
+      "source_commit": "hf-altworld-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0"
     }
   ]
 }
