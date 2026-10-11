@@ -2698,5 +2698,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-OMXE",
+    "timestamp": "2026-10-11T18:27:54.770Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
+    "contentHash": "3e90f904bf3865cc10e412255f52caeaf97756a4f82054f7a7e1668ae4201e8f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

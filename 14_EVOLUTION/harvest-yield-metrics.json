@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T18:24:51.721Z",
-  "total_cycles_completed": 183,
-  "total_learnings_persisted": 183,
+  "last_updated": "2026-10-11T18:27:54.773Z",
+  "total_cycles_completed": 184,
+  "total_learnings_persisted": 184,
   "total_rules_promoted": 82,
   "history": [
     {
@@ -1298,6 +1298,13 @@
       "repository": "Altworld/Hemmingway-1",
       "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T18:27:54.773Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
