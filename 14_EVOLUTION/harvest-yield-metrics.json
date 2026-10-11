@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:09:58.943Z",
-  "total_cycles_completed": 144,
-  "total_learnings_persisted": 144,
-  "total_rules_promoted": 59,
+  "last_updated": "2026-10-11T16:13:18.661Z",
+  "total_cycles_completed": 145,
+  "total_learnings_persisted": 145,
+  "total_rules_promoted": 62,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -1025,6 +1025,13 @@
       "repository": "Bingsu/adetailer",
       "learningId": "learn-huggingface-hf-bingsu-adetailer-mv40r96p",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T16:13:18.661Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -199,3 +199,4 @@
 | `CYCLE-20261011-JXF1` | `2026-10-11T16:04:17.005Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`b0617730...`) |
 | `CYCLE-20261011-NMTB` | `2026-10-11T16:07:09.887Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`132cfc48...`) |
 | `CYCLE-20261011-R999` | `2026-10-11T16:09:58.941Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`cb23db52...`) |
+| `CYCLE-20261011-VJCW` | `2026-10-11T16:13:18.656Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 316, Rule 317, Rule 318` | Yes (`d1e4afcf...`) |

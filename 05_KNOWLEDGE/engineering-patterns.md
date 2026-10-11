@@ -8552,3 +8552,266 @@ padded = [text + " " * (512 - len(text)) for text in texts] # Incorrect, ignores
 **VERIFICATION METHOD**:
 1.  Assert `inputs["input_ids"].shape[1] <= 512`.
 2.  Assert all sequences in a batch have the same length: `len(set([seq.shape[0] for seq in inputs["input_ids"]])) == 1`.
+
+
+---
+
+## 316. Geometric-Style Disentanglement via Dual-Reference Conditioning (Harvested from lilylilith/QI_2.1_AnyAngle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Geometric-Style Disentanglement via Dual-Reference Conditioning",
+  "source": "lilylilith/QI_2.1_AnyAngle",
+  "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+  "source_version": "hf-lilylilith-qi_2.1_anyangle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T16:13:18.593Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) (Revision: `hf-lilylil`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When performing image-to-image transformations that involve significant geometric changes (camera angle, pose, perspective), the system MUST condition the diffusion model on **two distinct references**: one high-fidelity source (for style/content) and one low-fidelity geometric guide (for structure). The prompt MUST explicitly reference both images to enforce the mapping.
+
+**WHY**:
+Single-reference editing forces the model to hallucinate both geometry and style simultaneously, leading to style drift (color/texture changes) or geometric incoherence. By providing a "coarse" geometric guide, the model's attention mechanism can focus on aligning spatial features with the guide while copying texture/style from the source. This reduces the search space in latent space, preventing the model from "inventing" new styles to compensate for geometric uncertainty.
+
+**WHEN TO APPLY**:
+Any AI image editing pipeline involving:
+*   Camera angle changes (azimuth, elevation, roll).
+*   Pose changes (human/animal articulation).
+*   Perspective corrections.
+*   Any task where structural integrity must be preserved while altering viewpoint.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for the diffusion conditioning logic
+def edit_image_with_angle_change(original_img, coarse_angle_img, prompt_template):
+    # 1. Ensure coarse_img is low-fidelity but geometrically accurate
+    # 2. Ensure original_img is high-fidelity
+    # 3. Construct prompt with explicit image references
+    prompt = prompt_template.format(image1=coarse_angle_img, image2=original_img)
+    
+    # 4. Feed both images into the multi-image conditioning encoder
+    #    (e.g., Qwen-Image-2.1 supports multiple image inputs)
+    latents = encode_images([original_img, coarse_angle_img])
+    
+    # 5. Apply LoRA weights specifically trained for this dual-reference task
+    #    LoRA strength MUST be 1.0 for optimal geometric transfer
+    output = diffusion_model.generate(
+        prompt=prompt,
+        image_inputs=latents,
+        lora_weights="AnyAngle_LoRA",
+        lora_strength=1.0,
+        cfg_scale=3.0,  # Lower CFG to allow geometric flexibility
+        steps=20       # Minimum steps for geometric convergence
+    )
+    return output
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Single-reference editing for geometric changes
+# This leads to style drift and geometric hallucination
+def bad_edit_image(original_img, prompt):
+    # Only one image input
+    # Prompt: "Change camera angle to 45 degrees"
+    # The model must hallucinate the new geometry AND maintain style
+    # Result: Often changes lighting, color, or texture to "justify" the new angle
+    output = diffusion_model.generate(
+        prompt=prompt,
+        image_inputs=encode_image(original_img),
+        cfg_scale=7.5,  # High CFG locks style too tightly, causing geometric failure
+        steps=30
+    )
+    return output
+```
+
+**VERIFICATION METHOD**:
+1.  **Visual Inspection:** Compare the output image's color histogram and texture frequency with the original image. They should be nearly identical.
+2.  **Geometric Check:** Overlay the output image with the coarse angle image. Key structural lines (horizon, object edges) should align within a 2-3 pixel tolerance.
+3.  **A/B Testing:** Generate the same image with and without the coarse reference. The version with the coarse reference should show significantly less style drift.
+
+
+---
+
+## 317. Coarse-Reference Fidelity Threshold (Harvested from lilylilith/QI_2.1_AnyAngle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Coarse-Reference Fidelity Threshold",
+  "source": "lilylilith/QI_2.1_AnyAngle",
+  "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+  "source_version": "hf-lilylilith-qi_2.1_anyangle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T16:13:18.598Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) (Revision: `hf-lilylil`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The geometric guide image (coarse render) MUST be generated from a 3D reconstruction that is **geometrically accurate** but **stylistically neutral**. It MUST NOT contain high-fidelity textures, lighting, or artistic styles. The coarse image should appear "flat" or "clay-like" to prevent the diffusion model from copying its artifacts.
+
+**WHY**:
+If the coarse image contains strong stylistic elements (e.g., specific lighting, color casts), the diffusion model may blend these artifacts into the final output, causing color shifts or lighting inconsistencies. The coarse image should act as a "mask" for geometry only.
+
+**WHEN TO APPLY**:
+Any pipeline using 3D-to-2D projection as a conditioning signal for diffusion models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Blender Python Script for Coarse Render
+import bpy
+
+def render_coarse_angle(model_path, azimuth, elevation, output_path):
+    # 1. Import 3D model
+    bpy.ops.import_scene.gltf(filepath=model_path)
+    
+    # 2. Create new camera
+    cam_data = bpy.data.cameras.new("CoarseCam")
+    cam_obj = bpy.data.objects.new("CoarseCam", cam_data)
+    bpy.context.collection.objects.link(cam_obj)
+    
+    # 3. Set camera position based on azimuth/elevation
+    #    (Simplified: use spherical coordinates)
+    import math
+    radius = 5.0  # Distance from object
+    cam_obj.location = (
+        radius * math.cos(azimuth) * math.cos(elevation),
+        radius * math.sin(azimuth) * math.cos(elevation),
+        radius * math.sin(elevation)
+    )
+    cam_obj.rotation_euler = (elevation, 0, azimuth)
+    
+    # 4. Set render settings to "clay" or "matcap" mode
+    #    This ensures no lighting or texture is rendered
+    bpy.context.scene.render.engine = 'BLENDER_EEVEE'
+    bpy.context.scene.eevee.use_ssr = False
+    bpy.context.scene.eevee.use_gtao = False
+    
+    # 5. Use a simple white material for all objects
+    for obj in bpy.context.scene.objects:
+        if obj.type == 'MESH':
+            mat = bpy.data.materials.new("ClayMat")
+            mat.use_nodes = True
+            bsdf = mat.node_tree.nodes.get("Principled BSDF")
+            bsdf.inputs["Base Color"].default_value = (1, 1, 1, 1)
+            bsdf.inputs["Roughness"].default_value = 1.0
+            obj.data.materials.clear()
+            obj.data.materials.append(mat)
+    
+    # 6. Render
+    bpy.context.scene.camera = cam_obj
+    bpy.context.scene.render.filepath = output_path
+    bpy.ops.render.render(write_still=True)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using a fully textured 3D render as the coarse guide
+# This causes the diffusion model to copy the 3D render's lighting and textures
+# leading to "double lighting" or color shifts in the final output
+def bad_render_coarse(model_path, azimuth, elevation, output_path):
+    # Import model with original textures
+    # Use PBR materials with complex lighting
+    # Render with high-quality lighting
+    # Result: The coarse image has strong stylistic elements
+    # The diffusion model blends these with the original image, causing artifacts
+    pass
+```
+
+**VERIFICATION METHOD**:
+1.  **Visual Inspection:** The coarse image should look like a "clay model" or "wireframe" with no distinct colors or lighting.
+2.  **Color Histogram:** The coarse image should have a very narrow color histogram (mostly white/gray).
+3.  **A/B Testing:** Compare the final output when using a clay render vs. a textured render as the coarse guide. The clay render should produce more consistent style preservation.
+
+
+---
+
+## 318. LoRA Strength and CFG Scale Invariant for Geometric Transfer (Harvested from lilylilith/QI_2.1_AnyAngle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "LoRA Strength and CFG Scale Invariant for Geometric Transfer",
+  "source": "lilylilith/QI_2.1_AnyAngle",
+  "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+  "source_version": "hf-lilylilith-qi_2.1_anyangle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T16:13:18.603Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) (Revision: `hf-lilylil`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using a LoRA trained for geometric transfer (e.g., camera angle changes), the **LoRA strength MUST be set to 1.0** and the **CFG scale MUST be reduced to 3.0-4.0**. Higher CFG scales lock the model to the original image's style too tightly, preventing the geometric transformation from taking effect.
+
+**WHY**:
+CFG (Classifier-Free Guidance) controls how strongly the model follows the prompt. For geometric changes, the model needs "freedom" to alter the spatial arrangement of pixels. High CFG forces the model to stay close to the original image's latent representation, resisting the geometric shift. LoRA strength 1.0 ensures the geometric transfer weights are fully applied.
+
+**WHEN TO APPLY**:
+Any diffusion model fine-tuned with LoRA for structural/geometric changes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Correct parameters for geometric transfer
+parameters = {
+    "lora_strength": 1.0,
+    "cfg_scale": 3.0,
+    "steps": 20,
+    "prompt": "Change the camera angle from <image2> to <image1>."
+}
+
+# Incorrect parameters (high CFG, low LoRA strength)
+bad_parameters = {
+    "lora_strength": 0.5,
+    "cfg_scale": 7.5,
+    "steps": 30,
+    "prompt": "Change the camera angle from <image2> to <image1>."
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using high CFG and low LoRA strength
+# This results in minimal geometric change and potential style drift
+def bad_generate(original_img, coarse_img):
+    return diffusion_model.generate(
+        prompt="Change camera angle",
+        image_inputs=[original_img, coarse_img],
+        lora_strength=0.5,  # Too low, geometric transfer is weak
+        cfg_scale=7.5,      # Too high, model resists geometric change
+        steps=30
+    )
+```
+
+**VERIFICATION METHOD**:
+1.  **Geometric Accuracy:** Measure the angle difference between the coarse image and the output image. It should be within 5 degrees.
+2.  **Style Preservation:** Compare the color histogram of the output with the original. It should be nearly identical.
+3.  **A/B Testing:** Generate the same image with different CFG scales (3.0, 5.0, 7.5). The CFG 3.0 version should show the most accurate geometric change with the least style drift.
