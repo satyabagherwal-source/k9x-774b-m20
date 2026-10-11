@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:31:51.209Z",
-  "total_cycles_completed": 225,
-  "total_learnings_persisted": 225,
+  "last_updated": "2026-10-11T20:34:42.924Z",
+  "total_cycles_completed": 226,
+  "total_learnings_persisted": 226,
   "total_rules_promoted": 103,
   "history": [
-    {
-      "timestamp": "2026-10-11T09:12:49.422Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv3lusad",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T09:16:36.601Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T20:31:51.209Z",
       "repository": "hexgrad/Kokoro-82M",
       "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv4a40uh",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T20:34:42.924Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
