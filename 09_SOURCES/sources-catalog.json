@@ -28,5 +28,15 @@
     "contentHash": "a158393a932aec0175bab2de19fe111133eadf45c8623901fc33d356ad3ff077",
     "lastHarvestedAt": "2026-10-11T07:52:58.994Z",
     "learningId": "learn-github-shadcn-ui-ui-mv3j0403"
+  },
+  "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "license": "Open-Source",
+    "contentHash": "6d0e1b17a5866feb1ae9c9f88ab90706542665da8ae88133c9ece1b44e1696ff",
+    "lastHarvestedAt": "2026-10-11T08:12:11.610Z",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad"
   }
 }

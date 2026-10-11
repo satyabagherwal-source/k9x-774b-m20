@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T07:52:59.001Z",
-  "total_cycles_completed": 3,
-  "total_learnings_persisted": 3,
+  "last_updated": "2026-10-11T08:12:11.611Z",
+  "total_cycles_completed": 4,
+  "total_learnings_persisted": 4,
   "total_rules_promoted": 1,
   "history": [
     {
@@ -23,6 +23,13 @@
       "timestamp": "2026-10-11T07:52:59.001Z",
       "repository": "shadcn-ui/ui",
       "learningId": "learn-github-shadcn-ui-ui-mv3j0403",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:12:11.611Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

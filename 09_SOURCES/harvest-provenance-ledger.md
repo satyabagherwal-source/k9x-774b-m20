@@ -36,3 +36,4 @@ Every entry in this ledger must capture:
 | `learn-github-test-org-gateway-verifier-mv3ioo99` | `https://github.com/test-org/gateway-verifier` | `abc1234567` | Multi-dimensional audit evidence | 2026-10-11T07:44:05.753Z |
 | `learn-github-test-org-rule-verifier-mv3iooq3` | `https://github.com/test-org/rule-verifier` | `HEAD` | Multi-dimensional audit evidence | 2026-10-11T07:44:06.106Z |
 | `learn-github-shadcn-ui-ui-mv3j0403` | `https://github.com/shadcn-ui/ui` | `shadcn-ui-` | Multi-dimensional audit evidence | 2026-10-11T07:52:58.994Z |
+| `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-11T08:12:11.610Z |
