@@ -588,5 +588,15 @@
     "contentHash": "1ea13e7cc3efa26e3f964df446909b28b56e7ef6c6bf6cd371cf630de075c81d",
     "lastHarvestedAt": "2026-10-11T12:17:31.523Z",
     "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv3sgbac"
+  },
+  "hf-alissonerdx-bfs-best-face-swap": {
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
+    "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
+    "license": "Open-Source",
+    "contentHash": "dc0aeca660828f57ec854250d85d9abbd3b9fc79c58eab4595ea12e509839535",
+    "lastHarvestedAt": "2026-10-11T12:20:19.670Z",
+    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv3sjx1h"
   }
 }

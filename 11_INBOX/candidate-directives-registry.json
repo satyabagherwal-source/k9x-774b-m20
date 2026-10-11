@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:17:31.524Z",
+  "last_updated": "2026-10-11T12:20:19.671Z",
   "directives": [
     {
       "id": "CD-001",
@@ -801,6 +801,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**",
       "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv3sgbac"
+    },
+    {
+      "id": "CD-JX3R",
+      "directive_title": "Model-Weight Compatibility Validation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Alissonerdx/BFS-Best-Face-Swap",
+      "source_commit": "hf-alissoner",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHEN TO APPLY** context",
+      "learning_id": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv3sjx1h"
+    },
+    {
+      "id": "CD-JX3R",
+      "directive_title": "Safe Tensor Serialization",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Alissonerdx/BFS-Best-Face-Swap",
+      "source_commit": "hf-alissoner",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv3sjx1h"
     }
   ]
 }
