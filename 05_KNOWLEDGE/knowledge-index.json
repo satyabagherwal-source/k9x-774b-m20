@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:12:38.309Z",
-  "total_verified_learnings": 4081,
+  "last_updated": "2026-10-11T15:16:31.466Z",
+  "total_verified_learnings": 4082,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -98240,6 +98240,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T15:12:38.309Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq": {
+      "learning_id": "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
+      "source": "openai-community/gpt2",
+      "repository": "openai-community/gpt2",
+      "slug": "hf-openai-community-gpt2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openai-community/gpt2",
+      "source_version": "hf-openai-community-gpt2",
+      "content_hash": "59d53925a67152d18a89ce22ef85b954f16b5279232d815b0074e8263354b19f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 309,
+          "title": "Mandatory Explicit Padding Boundary & Mask Coupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 310,
+          "title": "Precise GELU Approximation Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T15:16:31.466Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

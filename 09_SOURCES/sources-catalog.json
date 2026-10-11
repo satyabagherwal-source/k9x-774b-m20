@@ -1168,5 +1168,15 @@
     "contentHash": "3ff9ca7c097f3eb5ddbc3895c80e45fde85c7f5b0295d476ab9e1969694cc699",
     "lastHarvestedAt": "2026-10-11T15:12:38.358Z",
     "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies"
+  },
+  "hf-openai-community-gpt2": {
+    "repository": "openai-community/gpt2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/openai-community/gpt2",
+    "sourceVersion": "hf-openai-community-gpt2",
+    "license": "Open-Source",
+    "contentHash": "59d53925a67152d18a89ce22ef85b954f16b5279232d815b0074e8263354b19f",
+    "lastHarvestedAt": "2026-10-11T15:16:31.509Z",
+    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq"
   }
 }
