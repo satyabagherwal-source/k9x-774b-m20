@@ -1118,5 +1118,15 @@
     "contentHash": "f791ecb6938d11132d6b5c72798814ecb44c9d5e9aab22801b9565a5bf1d3b23",
     "lastHarvestedAt": "2026-10-11T14:54:21.921Z",
     "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv3y20ev"
+  },
+  "hf-openai-clip-vit-base-patch32": {
+    "repository": "openai/clip-vit-base-patch32",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
+    "sourceVersion": "hf-openai-clip-vit-base-patch32",
+    "license": "Open-Source",
+    "contentHash": "ed2542c9942dc54225775837f3d6602ae27c6033d3c32ba489ccaadfb6a9b9eb",
+    "lastHarvestedAt": "2026-10-11T14:57:12.484Z",
+    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08"
   }
 }
