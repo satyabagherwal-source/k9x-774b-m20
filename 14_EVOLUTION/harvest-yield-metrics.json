@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:37:29.854Z",
-  "total_cycles_completed": 247,
-  "total_learnings_persisted": 247,
+  "last_updated": "2026-10-11T21:40:37.002Z",
+  "total_cycles_completed": 248,
+  "total_learnings_persisted": 248,
   "total_rules_promoted": 112,
   "history": [
-    {
-      "timestamp": "2026-10-11T11:04:51.403Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv3puv08",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T11:07:49.969Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T21:37:29.854Z",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T21:40:37.002Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

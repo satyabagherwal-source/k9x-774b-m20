@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:37:29.855Z",
+  "last_updated": "2026-10-11T21:40:37.003Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1308,15 +1308,15 @@
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
-      "content_hash": "a9830abce40b2d92ff5445b4e15091638e16e0b612634f85f2700ff6a7475c8e",
-      "verified_at": "2026-10-11T14:48:34.689Z",
+      "learning_id": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca",
+      "content_hash": "6a798f97d4d4781f2fb23c0b887915e6f153901f5573906cda02bdfe55afe931",
+      "verified_at": "2026-10-11T21:40:37.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T14:48:34.689Z"
+      "last_updated": "2026-10-11T21:40:37.003Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
