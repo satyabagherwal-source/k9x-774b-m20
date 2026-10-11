@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T03:55:59.054Z",
-  "total_verified_learnings": 3884,
+  "last_updated": "2026-10-11T03:58:48.678Z",
+  "total_verified_learnings": 3885,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -93212,6 +93212,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T03:55:59.054Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv3amypy": {
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv3amypy",
+      "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "slug": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "content_hash": "b9ca1bac8f2c8fbc9e2a35abff41a186d51d78ce9ce3eed9f8b134c0749d965a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T03:58:48.677Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
