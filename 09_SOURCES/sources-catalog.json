@@ -858,5 +858,15 @@
     "contentHash": "88f58e2f13c5dfc144bc4ef48c6625a17f60636aa52ade1a19c99413ab673b58",
     "lastHarvestedAt": "2026-10-11T13:36:50.597Z",
     "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv3vabf1"
+  },
+  "hf-hexgrad-kokoro-82m": {
+    "repository": "hexgrad/Kokoro-82M",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
+    "sourceVersion": "hf-hexgrad-kokoro-82m",
+    "license": "Open-Source",
+    "contentHash": "a62df5c8d99f4a6b86c9eede1486bb778d5849a5b32712d172163ea807a5714e",
+    "lastHarvestedAt": "2026-10-11T13:40:07.835Z",
+    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv3vejmd"
   }
 }

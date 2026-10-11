@@ -130,3 +130,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-11T13:31:10.401Z |
 | `learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv3v6lgj` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-11T13:33:56.985Z |
 | `learn-huggingface-hf-microsoft-frognano-4b-2609-mv3vabf1` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-11T13:36:50.597Z |
+| `learn-huggingface-hf-hexgrad-kokoro-82m-mv3vejmd` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-11T13:40:07.835Z |

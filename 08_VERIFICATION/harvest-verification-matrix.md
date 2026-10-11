@@ -147,3 +147,4 @@
 | `CYCLE-20261011-30ZK` | `2026-10-11T13:31:10.400Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 298` | Yes (`1faab220...`) |
 | `CYCLE-20261011-6LIX` | `2026-10-11T13:33:56.985Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`d0afebd8...`) |
 | `CYCLE-20261011-ABH4` | `2026-10-11T13:36:50.584Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`88f58e2f...`) |
+| `CYCLE-20261011-EJOB` | `2026-10-11T13:40:07.835Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`a62df5c8...`) |

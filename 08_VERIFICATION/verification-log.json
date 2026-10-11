@@ -1378,5 +1378,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-EJOB",
+    "timestamp": "2026-10-11T13:40:07.835Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv3vejmd",
+    "contentHash": "a62df5c8d99f4a6b86c9eede1486bb778d5849a5b32712d172163ea807a5714e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
