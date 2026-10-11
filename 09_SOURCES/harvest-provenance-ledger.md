@@ -320,3 +320,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-11T23:08:31.420Z |
 | `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-11T23:11:35.952Z |
 | `learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-11T23:14:39.603Z |
+| `learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-11T23:17:25.752Z |
