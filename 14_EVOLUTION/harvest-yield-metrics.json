@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:28:40.352Z",
-  "total_cycles_completed": 224,
-  "total_learnings_persisted": 224,
+  "last_updated": "2026-10-11T20:31:51.209Z",
+  "total_cycles_completed": 225,
+  "total_learnings_persisted": 225,
   "total_rules_promoted": 103,
   "history": [
-    {
-      "timestamp": "2026-10-11T09:08:07.937Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv3lor3e",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T09:12:49.422Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T20:28:40.352Z",
       "repository": "microsoft/FrogNano-4B-2609",
       "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv49zxkw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T20:31:51.209Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv4a40uh",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
