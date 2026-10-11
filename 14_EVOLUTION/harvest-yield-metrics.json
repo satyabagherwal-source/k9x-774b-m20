@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:42:12.234Z",
-  "total_cycles_completed": 119,
-  "total_learnings_persisted": 119,
+  "last_updated": "2026-10-11T14:45:22.352Z",
+  "total_cycles_completed": 120,
+  "total_learnings_persisted": 120,
   "total_rules_promoted": 54,
   "history": [
     {
@@ -849,6 +849,13 @@
       "timestamp": "2026-10-11T14:42:12.234Z",
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv3xmdbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:45:22.352Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1078,5 +1078,15 @@
     "contentHash": "8c3ba4957ba8c539f8ef5726bb4bf82e9edbc2dec33dd4e789537a6b2e354715",
     "lastHarvestedAt": "2026-10-11T14:42:12.233Z",
     "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv3xmdbo"
+  },
+  "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+    "license": "Open-Source",
+    "contentHash": "54dd9b9da68a5598c58a75d41299195eae9bf289cdc3485d0b2fe94eb939ddb0",
+    "lastHarvestedAt": "2026-10-11T14:45:22.351Z",
+    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c"
   }
 }

@@ -3,8 +3,8 @@
 > **Source Version**: `hf-infatoshi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-11T06:45:49.446Z  
-> **Learning ID**: `learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3glqtj`  
+> **Timestamp**: 2026-10-11T14:45:22.260Z  
+> **Learning ID**: `learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw](https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-11T06:45:49.286Z  
+> **Harvest Timestamp**: 2026-10-11T14:45:21.298Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2509 downloads | 319 likes
+- **Stars / Engagement**: 2656 downloads | 320 likes
 
 ---
 
