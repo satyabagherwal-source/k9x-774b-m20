@@ -478,5 +478,15 @@
     "contentHash": "436c581929206adb225f5712449b4da5517a203652b37beb2976791ec96f8d17",
     "lastHarvestedAt": "2026-10-11T11:44:50.317Z",
     "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv3raa0g"
+  },
+  "hf-taichuai-zdtaichu5.0-9b": {
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+    "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
+    "license": "Open-Source",
+    "contentHash": "9a14c3d60aa622e9c925c3d47b10f196eb7ec8b647b6488ae1c8bde9e30ecaf4",
+    "lastHarvestedAt": "2026-10-11T11:47:41.307Z",
+    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv3rdxya"
   }
 }
