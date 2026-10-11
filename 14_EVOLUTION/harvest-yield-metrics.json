@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T18:33:42.063Z",
-  "total_cycles_completed": 186,
-  "total_learnings_persisted": 186,
-  "total_rules_promoted": 82,
+  "last_updated": "2026-10-11T18:36:42.936Z",
+  "total_cycles_completed": 187,
+  "total_learnings_persisted": 187,
+  "total_rules_promoted": 85,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -1319,6 +1319,13 @@
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T18:36:42.936Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
