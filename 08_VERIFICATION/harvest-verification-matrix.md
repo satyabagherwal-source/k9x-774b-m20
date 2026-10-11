@@ -153,3 +153,4 @@
 | `CYCLE-20261011-Q47I` | `2026-10-11T13:49:07.662Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`28558981...`) |
 | `CYCLE-20261011-TS1B` | `2026-10-11T13:51:58.511Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`6f525079...`) |
 | `CYCLE-20261011-XW4R` | `2026-10-11T13:55:10.443Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`0da53bba...`) |
+| `CYCLE-20261011-1TJR` | `2026-10-11T13:58:13.719Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`7891ae25...`) |

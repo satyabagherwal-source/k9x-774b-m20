@@ -918,5 +918,15 @@
     "contentHash": "0da53bbaffce1f12deabb7a46d27100daaaf0008af3a402d5fc305b543bc1390",
     "lastHarvestedAt": "2026-10-11T13:55:10.444Z",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv3vxw29"
+  },
+  "hf-tongyi-mai-z-image-turbo": {
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+    "sourceVersion": "hf-tongyi-mai-z-image-turbo",
+    "license": "Open-Source",
+    "contentHash": "7891ae250f446b092cbf6abcf0773ca6f748678273a24fd771e737b276eb3367",
+    "lastHarvestedAt": "2026-10-11T13:58:13.719Z",
+    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv3w1tib"
   }
 }
