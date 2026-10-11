@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:37:00.117Z",
+  "last_updated": "2026-10-11T10:39:50.812Z",
   "directives": [
     {
       "id": "CD-001",
@@ -262,6 +262,50 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv3ov1f6"
+    },
+    {
+      "id": "CD-YP7G",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "moonshotai/Kimi-K3",
+      "source_commit": "hf-moonshota",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-moonshotai-kimi-k3-mv3oyp5u"
+    },
+    {
+      "id": "CD-YP7G",
+      "directive_title": "Hybrid Attention Residual Block Sizing",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "moonshotai/Kimi-K3",
+      "source_commit": "hf-moonshota",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-moonshotai-kimi-k3-mv3oyp5u"
+    },
+    {
+      "id": "CD-YP7G",
+      "directive_title": "MoE Latent Space Normalization",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "moonshotai/Kimi-K3",
+      "source_commit": "hf-moonshota",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-moonshotai-kimi-k3-mv3oyp5u"
+    },
+    {
+      "id": "CD-YP7G",
+      "directive_title": "Special Token Whitespace Handling",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "moonshotai/Kimi-K3",
+      "source_commit": "hf-moonshota",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHEN TO APPLY** context",
+      "learning_id": "learn-huggingface-hf-moonshotai-kimi-k3-mv3oyp5u"
     }
   ]
 }

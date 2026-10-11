@@ -91,3 +91,4 @@
 | `CYCLE-20261011-N11N` | `2026-10-11T10:30:46.283Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`67189bce...`) |
 | `CYCLE-20261011-RABJ` | `2026-10-11T10:34:04.927Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 266` | Yes (`4589ffd6...`) |
 | `CYCLE-20261011-V1HV` | `2026-10-11T10:37:00.115Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 267` | Yes (`c7287036...`) |
+| `CYCLE-20261011-YP7F` | `2026-10-11T10:39:50.811Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`a878c735...`) |
