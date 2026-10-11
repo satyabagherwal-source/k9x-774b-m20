@@ -838,5 +838,15 @@
     "contentHash": "1faab22027a307a732c617030b890e84bbf5158b5ee5a107225809a7beb76152",
     "lastHarvestedAt": "2026-10-11T13:31:10.401Z",
     "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv3v30wu"
+  },
+  "hf-meta-llama-meta-llama-3-8b": {
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+    "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
+    "license": "Open-Source",
+    "contentHash": "d0afebd822e5ad5401161d18e8eb92f52342169e620cd9b4a14fb8dbcb788735",
+    "lastHarvestedAt": "2026-10-11T13:33:56.985Z",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv3v6lgj"
   }
 }
