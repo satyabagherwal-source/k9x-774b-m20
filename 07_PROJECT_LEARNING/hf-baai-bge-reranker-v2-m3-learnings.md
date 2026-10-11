@@ -3,8 +3,8 @@
 > **Source Version**: `hf-baai-bge-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T19:08:29.440Z  
-> **Learning ID**: `learn-huggingface-hf-baai-bge-reranker-v2-m3-mv2royv4`  
+> **Timestamp**: 2026-10-11T01:02:47.097Z  
+> **Learning ID**: `learn-huggingface-hf-baai-bge-reranker-v2-m3-mv34cldl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/BAAI/bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T19:08:29.157Z  
+> **Harvest Timestamp**: 2026-10-11T01:02:46.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
