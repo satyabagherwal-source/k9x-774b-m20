@@ -51,3 +51,4 @@ Every entry in this ledger must capture:
 | `learn-github-slopus-happy-mv3jwv4i` | `https://github.com/slopus/happy` | `99f415fa` | Multi-dimensional audit evidence | 2026-10-11T08:18:27.157Z |
 | `learn-github-colinhacks-zod-mv3kabi9` | `https://github.com/colinhacks/zod` | `284243fb` | Multi-dimensional audit evidence | 2026-10-11T08:29:06.345Z |
 | `learn-huggingface-hf-bingsu-adetailer-mv3kgo7h` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-11T08:33:51.331Z |
+| `learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv3kk1cj` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-11T08:36:28.288Z |

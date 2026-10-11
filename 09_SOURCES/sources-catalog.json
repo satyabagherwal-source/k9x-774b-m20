@@ -68,5 +68,15 @@
     "contentHash": "a9c1ede9de7fa7f1fe4f12dfd6f3ee48de17b533ae6217f19d418f7cacc46b88",
     "lastHarvestedAt": "2026-10-11T08:33:51.331Z",
     "learningId": "learn-huggingface-hf-bingsu-adetailer-mv3kgo7h"
+  },
+  "hf-lilylilith-qi_2.1_anyangle": {
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+    "sourceVersion": "hf-lilylilith-qi_2.1_anyangle",
+    "license": "Open-Source",
+    "contentHash": "9951bec2152d7b6b810747aa0393c85634a75dcc33ae0af63b5ebf43db7c42b1",
+    "lastHarvestedAt": "2026-10-11T08:36:28.288Z",
+    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv3kk1cj"
   }
 }

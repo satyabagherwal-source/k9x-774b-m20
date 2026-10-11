@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:33:51.333Z",
+  "last_updated": "2026-10-11T08:36:28.289Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1588,15 +1588,15 @@
       "repository": "lilylilith/QI_2.1_AnyAngle",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv35zqwt",
-      "content_hash": "b152b723b5e9b39d4f3b88913c81a04b5a2f28211b86c2c89999c5c413056dd0",
-      "verified_at": "2026-10-11T01:48:47.009Z",
+      "learning_id": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv3kk1cj",
+      "content_hash": "9951bec2152d7b6b810747aa0393c85634a75dcc33ae0af63b5ebf43db7c42b1",
+      "verified_at": "2026-10-11T08:36:28.289Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T01:48:47.009Z"
+      "last_updated": "2026-10-11T08:36:28.289Z"
     },
     "BAAI/bge-large-en-v1.5": {
       "repository": "BAAI/bge-large-en-v1.5",
