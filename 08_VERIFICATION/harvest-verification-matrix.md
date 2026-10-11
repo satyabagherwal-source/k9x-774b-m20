@@ -85,3 +85,4 @@
 | `CYCLE-20261011-RMN4` | `2026-10-11T10:06:21.280Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`57bfb6f6...`) |
 | `CYCLE-20261011-WN5M` | `2026-10-11T10:10:15.226Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`cb026f1e...`) |
 | `CYCLE-20261011-6PCL` | `2026-10-11T10:18:04.629Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`da90061c...`) |
+| `CYCLE-20261011-BE6V` | `2026-10-11T10:21:43.447Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`4ea6f37b...`) |
