@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:22:52.115Z",
+  "last_updated": "2026-10-11T11:42:03.418Z",
   "directives": [
     {
       "id": "CD-001",
@@ -526,6 +526,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0"
+    },
+    {
+      "id": "CD-6PAX",
+      "directive_title": "Per-Granularity Type Resolution",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_commit": "hf-ista-dasl",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**",
+      "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv3r6p89"
+    },
+    {
+      "id": "CD-6PAY",
+      "directive_title": "Integer-Only Resource Accounting",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_commit": "hf-ista-dasl",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv3r6p89"
+    },
+    {
+      "id": "CD-6PAY",
+      "directive_title": "Multimodal Dimensional Compatibility Check",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_commit": "hf-ista-dasl",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv3r6p89"
     }
   ]
 }

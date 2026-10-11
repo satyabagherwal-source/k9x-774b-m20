@@ -458,5 +458,15 @@
     "contentHash": "c39dee825058231f8749c101a4d7559fc8e6c5e4cda07c15dc06d1242bf84876",
     "lastHarvestedAt": "2026-10-11T11:39:01.773Z",
     "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv3r2t2q"
+  },
+  "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+    "license": "Open-Source",
+    "contentHash": "74066af1aac658c2c2d0fcafb1dd2787162531cadba8e61026c1c79b7397fd95",
+    "lastHarvestedAt": "2026-10-11T11:42:03.417Z",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv3r6p89"
   }
 }

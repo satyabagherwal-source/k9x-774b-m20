@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:39:01.774Z",
-  "total_cycles_completed": 57,
-  "total_learnings_persisted": 57,
+  "last_updated": "2026-10-11T11:42:03.418Z",
+  "total_cycles_completed": 58,
+  "total_learnings_persisted": 58,
   "total_rules_promoted": 31,
   "history": [
     {
@@ -401,6 +401,13 @@
       "timestamp": "2026-10-11T11:39:01.774Z",
       "repository": "fastino/GLiNER2.5-Decide",
       "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv3r2t2q",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T11:42:03.418Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv3r6p89",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
