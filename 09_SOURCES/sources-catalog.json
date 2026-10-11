@@ -228,5 +228,15 @@
     "contentHash": "cb026f1ee27954b253d5faf883e6939925ae083edcf80eb08a5be69b8eba7e0d",
     "lastHarvestedAt": "2026-10-11T10:10:15.227Z",
     "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv3nwn3d"
+  },
+  "hf-qwen-qwen3.8-27b": {
+    "repository": "Qwen/Qwen3.8-27B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
+    "sourceVersion": "hf-qwen-qwen3.8-27b",
+    "license": "Open-Source",
+    "contentHash": "da90061cc1333f47a9797b44f2b8cdf263c157d0a4712e85baa3ec0b3af5ad73",
+    "lastHarvestedAt": "2026-10-11T10:18:04.630Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv3o6paa"
   }
 }
