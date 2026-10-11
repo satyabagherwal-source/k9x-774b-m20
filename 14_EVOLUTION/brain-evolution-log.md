@@ -535,3 +535,5 @@ This file records canonical promotion events, knowledge integration milestones, 
 * **Cumulative Verification**: 49 / 49 Tests Passing in test-knowledge-application.mjs; 100% regression suite passing.
 
 - **2026-10-11T15:03:49.276Z**: [FEEDBACK LOOP] Rule 306 updated with traceable note: When handling streaming iterables or async generators, .length is undefined.
+
+- **2026-10-11T15:08:41.257Z**: [FEEDBACK LOOP] Rule 306 updated with traceable note: When handling streaming iterables or async generators, .length is undefined.

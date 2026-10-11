@@ -177,3 +177,4 @@
 | `CYCLE-20261011-9982` | `2026-10-11T14:59:59.858Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`fd5029ef...`) |
 | `CYCLE-20261011-DE2J` | `2026-10-11T15:03:12.763Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`e76df3c6...`) |
 | `CYCLE-20261011-HJND` | `2026-10-11T15:06:26.617Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`c2b29bb5...`) |
+| `CYCLE-2026-10-11-STAGED` | `2026-10-11T15:08:41.230Z` | `canonical_task_execution` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-092-stream---asynciterable-collection-b.md` | Pending |
