@@ -188,5 +188,15 @@
     "contentHash": "1e9c6bb461cab8b133fcc71862eacae50f6e872d78bcee8c1c3ffc27eef71d07",
     "lastHarvestedAt": "2026-10-11T09:20:59.481Z",
     "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv3m5af1"
+  },
+  "hf-baai-bge-small-en-v1.5": {
+    "repository": "BAAI/bge-small-en-v1.5",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+    "sourceVersion": "hf-baai-bge-small-en-v1.5",
+    "license": "Open-Source",
+    "contentHash": "83b69df4c4f60bbfa1e1f931fbb6ef521a023141d9aae6d403a193cbeafbb2de",
+    "lastHarvestedAt": "2026-10-11T09:24:49.325Z",
+    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv3ma7rs"
   }
 }
