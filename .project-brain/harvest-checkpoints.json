@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:40:10.381Z",
+  "last_updated": "2026-10-11T16:46:45.025Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1863,6 +1863,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-11T15:34:27.160Z"
+    },
+    "autonomous-ai/openharness": {
+      "repository": "autonomous-ai/openharness",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-autonomous-ai-openharness-mv422jff",
+      "content_hash": "cca6e6e0602b39fd0c7d797f986eeab44458db6abaad6075bdf926917248f0fd",
+      "verified_at": "2026-10-11T16:46:45.025Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-11T16:46:45.025Z"
     }
   }
 }

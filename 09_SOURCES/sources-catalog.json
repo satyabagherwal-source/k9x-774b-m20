@@ -1298,5 +1298,15 @@
     "contentHash": "132cfc487b1ab0a9c04d15cc140a0774af573936dcdda0c47335a3d402591ef2",
     "lastHarvestedAt": "2026-10-11T16:07:09.888Z",
     "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt"
+  },
+  "autonomous-ai-openharness": {
+    "repository": "autonomous-ai/openharness",
+    "platform": "github",
+    "sourceUrl": "https://github.com/autonomous-ai/openharness",
+    "sourceVersion": "efa72443",
+    "license": "MIT",
+    "contentHash": "cca6e6e0602b39fd0c7d797f986eeab44458db6abaad6075bdf926917248f0fd",
+    "lastHarvestedAt": "2026-10-11T16:46:45.020Z",
+    "learningId": "learn-github-autonomous-ai-openharness-mv422jff"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:40:10.349Z",
-  "total_verified_learnings": 4108,
+  "last_updated": "2026-10-11T16:46:44.991Z",
+  "total_verified_learnings": 4109,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -98885,6 +98885,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T16:40:10.349Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-autonomous-ai-openharness-mv422jff": {
+      "learning_id": "learn-github-autonomous-ai-openharness-mv422jff",
+      "source": "autonomous-ai/openharness",
+      "repository": "autonomous-ai/openharness",
+      "slug": "autonomous-ai-openharness",
+      "platform": "github",
+      "source_url": "https://github.com/autonomous-ai/openharness",
+      "source_version": "efa72443",
+      "content_hash": "cca6e6e0602b39fd0c7d797f986eeab44458db6abaad6075bdf926917248f0fd",
+      "dossier_path": "07_PROJECT_LEARNING/autonomous-ai-openharness-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/autonomous-ai-openharness-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 322,
+          "title": "Harness Pro: its own firmware (Pod UI), notifications, OTA over the cable (#1170",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T16:46:44.991Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
