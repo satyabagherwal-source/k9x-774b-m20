@@ -1,20 +1,20 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:12:11.612Z",
+  "last_updated": "2026-10-11T08:14:19.809Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-expressjs-cors-muzryc1f",
-      "content_hash": "7a64f3b1541b29f000e12ad54a25a547aa4263f352719d77fcc0af2f955ee1bf",
-      "verified_at": "2026-10-08T16:52:27.919Z",
+      "learning_id": "learn-github-e2e-expressjs-cors-real-mv3jrj6s",
+      "content_hash": "cb5f2dfe0afb04b23e390295e83ca08603735a16961d0a3ec03fefc57cc82162",
+      "verified_at": "2026-10-11T08:14:19.809Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-08T16:52:27.919Z"
+      "last_updated": "2026-10-11T08:14:19.809Z"
     },
     "meta-llama/Llama-3.2-1B": {
       "repository": "meta-llama/Llama-3.2-1B",
@@ -1546,29 +1546,29 @@
       "repository": "BAAI/bge-base-en-v1.5",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv3jg6fu",
-      "content_hash": "80d267bb491fac07822767d89635fc0ea92edb4dc652dc30f9a4302e5e766d7c",
-      "verified_at": "2026-10-11T08:05:28.663Z",
+      "learning_id": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv35ofa1",
+      "content_hash": "752b69b1ac2044edc66268be7fe6a9349f7527b3780d27d57d93a61034769448",
+      "verified_at": "2026-10-11T01:39:58.732Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T08:05:28.663Z"
+      "last_updated": "2026-10-11T01:39:58.732Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad",
-      "content_hash": "6d0e1b17a5866feb1ae9c9f88ab90706542665da8ae88133c9ece1b44e1696ff",
-      "verified_at": "2026-10-11T08:12:11.612Z",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv35sga3",
+      "content_hash": "02a94be2e5003d6ef78303d3d08a4a4254c3400e21081f958ec76fdc4109baad",
+      "verified_at": "2026-10-11T01:43:06.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T08:12:11.612Z"
+      "last_updated": "2026-10-11T01:43:06.666Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
@@ -1807,6 +1807,48 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-11T05:24:17.744Z"
+    },
+    "test-org/gateway-verifier": {
+      "repository": "test-org/gateway-verifier",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-test-org-gateway-verifier-mv3jnpds",
+      "content_hash": "186dce14455b37e3553657443e15e6a63f3c469926911f263b9aa5b4edaa3af9",
+      "verified_at": "2026-10-11T08:11:19.977Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-11T08:11:19.977Z"
+    },
+    "test-org/tampered-repo": {
+      "repository": "test-org/tampered-repo",
+      "stage": "VALIDATED",
+      "status": "FAILED_PERSISTENCE",
+      "learning_id": "learn-github-test-org-tampered-repo-mv3jnpna",
+      "content_hash": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "verified_at": null,
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": false,
+      "knowledge_index_updated": false,
+      "last_updated": "2026-10-11T08:11:20.135Z"
+    },
+    "test-org/rule-verifier": {
+      "repository": "test-org/rule-verifier",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-test-org-rule-verifier-mv3jnpou",
+      "content_hash": "88d7aa2a13ef018636d03825458f0c89447b23fbe7e9daf1c0bcda05fcfda8a3",
+      "verified_at": "2026-10-11T08:11:20.326Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-11T08:11:20.326Z"
     }
   }
 }

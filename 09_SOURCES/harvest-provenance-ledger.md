@@ -36,4 +36,15 @@ Every entry in this ledger must capture:
 | `learn-github-test-org-gateway-verifier-mv3ioo99` | `https://github.com/test-org/gateway-verifier` | `abc1234567` | Multi-dimensional audit evidence | 2026-10-11T07:44:05.753Z |
 | `learn-github-test-org-rule-verifier-mv3iooq3` | `https://github.com/test-org/rule-verifier` | `HEAD` | Multi-dimensional audit evidence | 2026-10-11T07:44:06.106Z |
 | `learn-github-shadcn-ui-ui-mv3j0403` | `https://github.com/shadcn-ui/ui` | `shadcn-ui-` | Multi-dimensional audit evidence | 2026-10-11T07:52:58.994Z |
-| `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-11T08:12:11.610Z |
+| `learn-github-e2e-expressjs-cors-real-mv3jk707` | `https://github.com/expressjs/cors` | `5317ebe670` | Multi-dimensional audit evidence | 2026-10-11T08:08:36.333Z |
+| `learn-github-e2e-expressjs-cors-real-mv3jk707` | `https://github.com/expressjs/cors` | `5317ebe670` | Multi-dimensional audit evidence | 2026-10-11T08:08:38.029Z |
+| `learn-github-test-e2e-idempotent-slug-mv3jndcp` | `https://github.com/test-org/test-idempotent-repo` | `abc12345` | Multi-dimensional audit evidence | 2026-10-11T08:11:04.377Z |
+| `learn-github-test-e2e-idempotent-slug-mv3jndcp` | `https://github.com/test-org/test-idempotent-repo` | `abc12345` | Multi-dimensional audit evidence | 2026-10-11T08:11:04.650Z |
+| `learn-github-e2e-expressjs-cors-real-mv3jnepw` | `https://github.com/expressjs/cors` | `5317ebe670` | Multi-dimensional audit evidence | 2026-10-11T08:11:06.212Z |
+| `learn-github-e2e-expressjs-cors-real-mv3jnepw` | `https://github.com/expressjs/cors` | `5317ebe670` | Multi-dimensional audit evidence | 2026-10-11T08:11:07.209Z |
+| `learn-github-test-org-gateway-verifier-mv3jnpds` | `https://github.com/test-org/gateway-verifier` | `abc1234567` | Multi-dimensional audit evidence | 2026-10-11T08:11:19.966Z |
+| `learn-github-test-org-rule-verifier-mv3jnpou` | `https://github.com/test-org/rule-verifier` | `HEAD` | Multi-dimensional audit evidence | 2026-10-11T08:11:20.313Z |
+| `learn-github-test-e2e-idempotent-slug-mv3jrhym` | `https://github.com/test-org/test-idempotent-repo` | `abc12345` | Multi-dimensional audit evidence | 2026-10-11T08:14:16.961Z |
+| `learn-github-test-e2e-idempotent-slug-mv3jrhym` | `https://github.com/test-org/test-idempotent-repo` | `abc12345` | Multi-dimensional audit evidence | 2026-10-11T08:14:17.084Z |
+| `learn-github-e2e-expressjs-cors-real-mv3jrj6s` | `https://github.com/expressjs/cors` | `5317ebe670` | Multi-dimensional audit evidence | 2026-10-11T08:14:18.594Z |
+| `learn-github-e2e-expressjs-cors-real-mv3jrj6s` | `https://github.com/expressjs/cors` | `5317ebe670` | Multi-dimensional audit evidence | 2026-10-11T08:14:19.797Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:12:11.509Z",
-  "total_verified_learnings": 3960,
+  "last_updated": "2026-10-11T08:14:18.459Z",
+  "total_verified_learnings": 3964,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -94996,22 +94996,28 @@
         "index_read_back_verified": true
       }
     },
-    "learn-huggingface-hf-baai-bge-base-en-v1-5-mv3jg6fu": {
-      "learning_id": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv3jg6fu",
-      "source": "BAAI/bge-base-en-v1.5",
-      "repository": "BAAI/bge-base-en-v1.5",
-      "slug": "hf-baai-bge-base-en-v1.5",
-      "platform": "huggingface",
-      "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
-      "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "80d267bb491fac07822767d89635fc0ea92edb4dc652dc30f9a4302e5e766d7c",
-      "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
-      "promoted_rules": [],
+    "learn-github-e2e-expressjs-cors-real-mv3jk707": {
+      "learning_id": "learn-github-e2e-expressjs-cors-real-mv3jk707",
+      "source": "expressjs/cors",
+      "repository": "expressjs/cors",
+      "slug": "e2e-expressjs-cors-real",
+      "platform": "github",
+      "source_url": "https://github.com/expressjs/cors",
+      "source_version": "5317ebe670db2aaebc1d496eb5d33493deefb3ed",
+      "content_hash": "a23344a6f6265f41eed607c18adf7c30558c20be6805e0eeca5ab459784b6c8f",
+      "dossier_path": "07_PROJECT_LEARNING/e2e-expressjs-cors-real-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/e2e-expressjs-cors-real-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 260,
+          "title": "CORS Origin Reflection Preflight Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-11T08:05:28.631Z",
+      "verified_at": "2026-10-11T08:08:36.126Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -95020,22 +95026,100 @@
         "index_read_back_verified": true
       }
     },
-    "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad": {
-      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad",
-      "source": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "slug": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "platform": "huggingface",
-      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "6d0e1b17a5866feb1ae9c9f88ab90706542665da8ae88133c9ece1b44e1696ff",
-      "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
+    "learn-github-test-e2e-idempotent-slug-mv3jndcp": {
+      "learning_id": "learn-github-test-e2e-idempotent-slug-mv3jndcp",
+      "source": "test-org/test-idempotent-repo",
+      "repository": "test-org/test-idempotent-repo",
+      "slug": "test-e2e-idempotent-slug",
+      "platform": "github",
+      "source_url": "https://github.com/test-org/test-idempotent-repo",
+      "source_version": "abc12345",
+      "content_hash": "f76b99ef0d284987a608eaca6b4ddf81b362424e7477f50c64fae4ef4110ae90",
+      "dossier_path": "07_PROJECT_LEARNING/test-e2e-idempotent-slug-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/test-e2e-idempotent-slug-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
-      "verified_at": "2026-10-11T08:12:11.509Z",
+      "verified_at": "2026-10-11T08:11:04.508Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-test-org-gateway-verifier-mv3jnpds": {
+      "learning_id": "learn-github-test-org-gateway-verifier-mv3jnpds",
+      "source": "test-org/gateway-verifier",
+      "repository": "test-org/gateway-verifier",
+      "slug": "test-org-gateway-verifier",
+      "platform": "github",
+      "source_url": "https://github.com/test-org/gateway-verifier",
+      "source_version": "abc123456789",
+      "content_hash": "186dce14455b37e3553657443e15e6a63f3c469926911f263b9aa5b4edaa3af9",
+      "dossier_path": "07_PROJECT_LEARNING/test-org-gateway-verifier-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/test-org-gateway-verifier-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T08:11:19.880Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-test-org-rule-verifier-mv3jnpou": {
+      "learning_id": "learn-github-test-org-rule-verifier-mv3jnpou",
+      "source": "test-org/rule-verifier",
+      "repository": "test-org/rule-verifier",
+      "slug": "test-org-rule-verifier",
+      "platform": "github",
+      "source_url": "https://github.com/test-org/rule-verifier",
+      "source_version": "HEAD",
+      "content_hash": "88d7aa2a13ef018636d03825458f0c89447b23fbe7e9daf1c0bcda05fcfda8a3",
+      "dossier_path": "07_PROJECT_LEARNING/test-org-rule-verifier-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/test-org-rule-verifier-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 259,
+          "title": "Transactional Knowledge Gateway & Mandatory Read-Back Persistence Barrier",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T08:11:20.240Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-test-e2e-idempotent-slug-mv3jrhym": {
+      "learning_id": "learn-github-test-e2e-idempotent-slug-mv3jrhym",
+      "source": "test-org/test-idempotent-repo",
+      "repository": "test-org/test-idempotent-repo",
+      "slug": "test-e2e-idempotent-slug",
+      "platform": "github",
+      "source_url": "https://github.com/test-org/test-idempotent-repo",
+      "source_version": "abc12345",
+      "content_hash": "70fd8c659452c5ceec98d18e42a75962fbebc45d0701fbd26c8c29c188f59b32",
+      "dossier_path": "07_PROJECT_LEARNING/test-e2e-idempotent-slug-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/test-e2e-idempotent-slug-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T08:14:17.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

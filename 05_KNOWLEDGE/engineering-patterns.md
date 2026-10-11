@@ -5319,3 +5319,87 @@ export function auditRedirectsIntegrity(redirectsFilePath) {
 // / 301   # FATAL: Cloudflare Pages normalizes // to /, creating infinite / -> / loop!
 / / 301    # FATAL: Self-redirect loop
 ```
+
+
+---
+
+## 260. CORS Origin Reflection Preflight Invariant (Harvested from expressjs/cors)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "CORS Origin Reflection Preflight Invariant",
+  "source": "expressjs/cors",
+  "source_url": "https://github.com/expressjs/cors",
+  "source_version": "5317ebe670db2aaebc1d496eb5d33493deefb3ed",
+  "license": "MIT",
+  "extracted_at": "2026-10-11T08:08:36.036Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-e2e-expressjs-cors-real-mv3jk707",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [expressjs/cors](https://github.com/expressjs/cors) (Revision: `5317ebe670`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+
+**RULE**:
+When serving dynamic Cross-Origin Resource Sharing (CORS) headers with 'Access-Control-Allow-Origin: <origin>', applications MUST validate the requested 'Origin' against an explicit immutable whitelist before echoing, and MUST NEVER reflect untrusted Origin values while setting 'Access-Control-Allow-Credentials: true'.
+
+**WHY**:
+Dynamic origin echoing without strict whitelist validation creates a critical cross-origin credential leakage vulnerability. An attacker host (e.g. evil.com) can issue authenticated requests via browser XMLHttpRequest/fetch, read sensitive session state, and bypass Same-Origin Policy protections.
+
+**WHEN TO APPLY**:
+Apply to all HTTP edge servers, API gateways, Express/Connect middleware, and microservice ingress boundaries handling authenticated multi-tenant web clients.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+import { Request, Response, NextFunction } from 'express';
+
+const ALLOWED_ORIGINS: ReadonlySet<string> = new Set([
+  'https://app.example.com',
+  'https://admin.example.com'
+]);
+
+export function secureCorsMiddleware(req: Request, res: Response, next: NextFunction): void {
+  const incomingOrigin = req.headers.origin;
+  if (!incomingOrigin || typeof incomingOrigin !== 'string') {
+    return next();
+  }
+
+  if (ALLOWED_ORIGINS.has(incomingOrigin)) {
+    res.setHeader('Access-Control-Allow-Origin', incomingOrigin);
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Vary', 'Origin');
+  } else {
+    // Strictly omit Access-Control-Allow-Origin for unauthorized origins
+    res.removeHeader('Access-Control-Allow-Origin');
+  }
+
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+    res.status(204).end();
+    return;
+  }
+  next();
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Wildcard with credentials OR reflecting any arbitrary origin header
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin || '*'); // INSECURE: Echoes attacker origin
+  res.setHeader('Access-Control-Allow-Credentials', 'true'); // DANGEROUS: Leaks session cookies
+  next();
+});
+```
+
+**VERIFICATION METHOD**:
+Automated integration test asserting that requests with 'Origin: https://malicious-site.com' receive no 'Access-Control-Allow-Origin' header and return HTTP 403 or 204 without credential grant.
+

@@ -53,4 +53,15 @@
 | `CYCLE-20261011-OOKZ` | `2026-10-11T07:44:05.747Z` | `test-org/gateway-verifier` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-org-gateway-verifier-learnings.md` | Yes (`da33a3f8...`) |
 | `CYCLE-20261011-OOUT` | `2026-10-11T07:44:06.101Z` | `test-org/rule-verifier` | Commit diff / Patch analysis | `VERIFIED` | `Rule 259` | Yes (`115032c5...`) |
 | `CYCLE-20261011-0419` | `2026-10-11T07:52:58.989Z` | `shadcn-ui/ui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/shadcn-ui-ui-learnings.md` | Yes (`a158393a...`) |
-| `CYCLE-20261011-OTEH` | `2026-10-11T08:12:11.609Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`6d0e1b17...`) |
+| `CYCLE-20261011-K7AG` | `2026-10-11T08:08:36.328Z` | `expressjs/cors` | Commit diff / Patch analysis | `VERIFIED` | `Rule 260` | Yes (`a23344a6...`) |
+| `CYCLE-20261011-K8LK` | `2026-10-11T08:08:38.024Z` | `expressjs/cors` | Commit diff / Patch analysis | `VERIFIED` | `Rule 260` | Yes (`a23344a6...`) |
+| `CYCLE-20261011-NDIK` | `2026-10-11T08:11:04.364Z` | `test-org/test-idempotent-repo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-e2e-idempotent-slug-learnings.md` | Yes (`f76b99ef...`) |
+| `CYCLE-20261011-NDP7` | `2026-10-11T08:11:04.603Z` | `test-org/test-idempotent-repo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-e2e-idempotent-slug-learnings.md` | Yes (`f76b99ef...`) |
+| `CYCLE-20261011-NEX6` | `2026-10-11T08:11:06.186Z` | `expressjs/cors` | Commit diff / Patch analysis | `VERIFIED` | `Rule 260` | Yes (`2ee3af3d...`) |
+| `CYCLE-20261011-NFPG` | `2026-10-11T08:11:07.204Z` | `expressjs/cors` | Commit diff / Patch analysis | `VERIFIED` | `Rule 260` | Yes (`2ee3af3d...`) |
+| `CYCLE-20261011-NPJT` | `2026-10-11T08:11:19.961Z` | `test-org/gateway-verifier` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-org-gateway-verifier-learnings.md` | Yes (`186dce14...`) |
+| `CYCLE-20261011-NPTF` | `2026-10-11T08:11:20.307Z` | `test-org/rule-verifier` | Commit diff / Patch analysis | `VERIFIED` | `Rule 259` | Yes (`88d7aa2a...`) |
+| `CYCLE-20261011-RI4B` | `2026-10-11T08:14:16.955Z` | `test-org/test-idempotent-repo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-e2e-idempotent-slug-learnings.md` | Yes (`70fd8c65...`) |
+| `CYCLE-20261011-RI7Q` | `2026-10-11T08:14:17.078Z` | `test-org/test-idempotent-repo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-e2e-idempotent-slug-learnings.md` | Yes (`70fd8c65...`) |
+| `CYCLE-20261011-RJD6` | `2026-10-11T08:14:18.570Z` | `expressjs/cors` | Commit diff / Patch analysis | `VERIFIED` | `Rule 260` | Yes (`cb5f2dfe...`) |
+| `CYCLE-20261011-RKB4` | `2026-10-11T08:14:19.792Z` | `expressjs/cors` | Commit diff / Patch analysis | `VERIFIED` | `Rule 260` | Yes (`cb5f2dfe...`) |

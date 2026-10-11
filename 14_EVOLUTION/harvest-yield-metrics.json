@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:12:11.611Z",
-  "total_cycles_completed": 4,
-  "total_learnings_persisted": 4,
-  "total_rules_promoted": 1,
+  "last_updated": "2026-10-11T08:14:19.802Z",
+  "total_cycles_completed": 15,
+  "total_learnings_persisted": 15,
+  "total_rules_promoted": 8,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -27,10 +27,87 @@
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T08:12:11.611Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad",
+      "timestamp": "2026-10-11T08:08:36.338Z",
+      "repository": "expressjs/cors",
+      "learningId": "learn-github-e2e-expressjs-cors-real-mv3jk707",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:08:38.040Z",
+      "repository": "expressjs/cors",
+      "learningId": "learn-github-e2e-expressjs-cors-real-mv3jk707",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:11:04.390Z",
+      "repository": "test-org/test-idempotent-repo",
+      "learningId": "learn-github-test-e2e-idempotent-slug-mv3jndcp",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:11:04.658Z",
+      "repository": "test-org/test-idempotent-repo",
+      "learningId": "learn-github-test-e2e-idempotent-slug-mv3jndcp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:11:06.226Z",
+      "repository": "expressjs/cors",
+      "learningId": "learn-github-e2e-expressjs-cors-real-mv3jnepw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:11:07.215Z",
+      "repository": "expressjs/cors",
+      "learningId": "learn-github-e2e-expressjs-cors-real-mv3jnepw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:11:19.972Z",
+      "repository": "test-org/gateway-verifier",
+      "learningId": "learn-github-test-org-gateway-verifier-mv3jnpds",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:11:20.321Z",
+      "repository": "test-org/rule-verifier",
+      "learningId": "learn-github-test-org-rule-verifier-mv3jnpou",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:14:16.966Z",
+      "repository": "test-org/test-idempotent-repo",
+      "learningId": "learn-github-test-e2e-idempotent-slug-mv3jrhym",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:14:17.091Z",
+      "repository": "test-org/test-idempotent-repo",
+      "learningId": "learn-github-test-e2e-idempotent-slug-mv3jrhym",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:14:18.607Z",
+      "repository": "expressjs/cors",
+      "learningId": "learn-github-e2e-expressjs-cors-real-mv3jrj6s",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:14:19.802Z",
+      "repository": "expressjs/cors",
+      "learningId": "learn-github-e2e-expressjs-cors-real-mv3jrj6s",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

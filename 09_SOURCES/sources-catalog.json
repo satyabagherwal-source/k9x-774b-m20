@@ -5,9 +5,9 @@
     "sourceUrl": "https://github.com/test-org/gateway-verifier",
     "sourceVersion": "abc123456789",
     "license": "MIT",
-    "contentHash": "da33a3f884cb459116d677a0cfb8af39bea6ce9ac81fe0935e8bde6db556bee3",
-    "lastHarvestedAt": "2026-10-11T07:44:05.753Z",
-    "learningId": "learn-github-test-org-gateway-verifier-mv3ioo99"
+    "contentHash": "186dce14455b37e3553657443e15e6a63f3c469926911f263b9aa5b4edaa3af9",
+    "lastHarvestedAt": "2026-10-11T08:11:19.966Z",
+    "learningId": "learn-github-test-org-gateway-verifier-mv3jnpds"
   },
   "test-org-rule-verifier": {
     "repository": "test-org/rule-verifier",
@@ -15,9 +15,9 @@
     "sourceUrl": "https://github.com/test-org/rule-verifier",
     "sourceVersion": "HEAD",
     "license": "Open-Source",
-    "contentHash": "115032c59aa12885b0fe509accfe5d38600b5bf49b6fce953cd05436e1c2f870",
-    "lastHarvestedAt": "2026-10-11T07:44:06.106Z",
-    "learningId": "learn-github-test-org-rule-verifier-mv3iooq3"
+    "contentHash": "88d7aa2a13ef018636d03825458f0c89447b23fbe7e9daf1c0bcda05fcfda8a3",
+    "lastHarvestedAt": "2026-10-11T08:11:20.313Z",
+    "learningId": "learn-github-test-org-rule-verifier-mv3jnpou"
   },
   "shadcn-ui-ui": {
     "repository": "shadcn-ui/ui",
@@ -29,14 +29,14 @@
     "lastHarvestedAt": "2026-10-11T07:52:58.994Z",
     "learningId": "learn-github-shadcn-ui-ui-mv3j0403"
   },
-  "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "platform": "huggingface",
-    "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-    "license": "Open-Source",
-    "contentHash": "6d0e1b17a5866feb1ae9c9f88ab90706542665da8ae88133c9ece1b44e1696ff",
-    "lastHarvestedAt": "2026-10-11T08:12:11.610Z",
-    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad"
+  "test-e2e-idempotent-slug": {
+    "repository": "test-org/test-idempotent-repo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/test-org/test-idempotent-repo",
+    "sourceVersion": "abc12345",
+    "license": "MIT",
+    "contentHash": "70fd8c659452c5ceec98d18e42a75962fbebc45d0701fbd26c8c29c188f59b32",
+    "lastHarvestedAt": "2026-10-11T08:14:17.084Z",
+    "learningId": "learn-github-test-e2e-idempotent-slug-mv3jrhym"
   }
 }

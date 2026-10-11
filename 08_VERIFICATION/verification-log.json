@@ -45,11 +45,101 @@
     }
   },
   {
-    "cycleId": "CYCLE-20261011-OTEH",
-    "timestamp": "2026-10-11T08:12:11.609Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv3jotad",
-    "contentHash": "6d0e1b17a5866feb1ae9c9f88ab90706542665da8ae88133c9ece1b44e1696ff",
+    "cycleId": "CYCLE-20261011-K7AG",
+    "timestamp": "2026-10-11T08:08:36.328Z",
+    "repository": "expressjs/cors",
+    "learningId": "learn-github-e2e-expressjs-cors-real-mv3jk707",
+    "contentHash": "a23344a6f6265f41eed607c18adf7c30558c20be6805e0eeca5ab459784b6c8f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261011-NDIK",
+    "timestamp": "2026-10-11T08:11:04.364Z",
+    "repository": "test-org/test-idempotent-repo",
+    "learningId": "learn-github-test-e2e-idempotent-slug-mv3jndcp",
+    "contentHash": "f76b99ef0d284987a608eaca6b4ddf81b362424e7477f50c64fae4ef4110ae90",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261011-NDP7",
+    "timestamp": "2026-10-11T08:11:04.603Z",
+    "repository": "test-org/test-idempotent-repo",
+    "learningId": "learn-github-test-e2e-idempotent-slug-mv3jndcp",
+    "contentHash": "f76b99ef0d284987a608eaca6b4ddf81b362424e7477f50c64fae4ef4110ae90",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261011-NPJT",
+    "timestamp": "2026-10-11T08:11:19.961Z",
+    "repository": "test-org/gateway-verifier",
+    "learningId": "learn-github-test-org-gateway-verifier-mv3jnpds",
+    "contentHash": "186dce14455b37e3553657443e15e6a63f3c469926911f263b9aa5b4edaa3af9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261011-NPTF",
+    "timestamp": "2026-10-11T08:11:20.307Z",
+    "repository": "test-org/rule-verifier",
+    "learningId": "learn-github-test-org-rule-verifier-mv3jnpou",
+    "contentHash": "88d7aa2a13ef018636d03825458f0c89447b23fbe7e9daf1c0bcda05fcfda8a3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261011-RI4B",
+    "timestamp": "2026-10-11T08:14:16.955Z",
+    "repository": "test-org/test-idempotent-repo",
+    "learningId": "learn-github-test-e2e-idempotent-slug-mv3jrhym",
+    "contentHash": "70fd8c659452c5ceec98d18e42a75962fbebc45d0701fbd26c8c29c188f59b32",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261011-RI7Q",
+    "timestamp": "2026-10-11T08:14:17.078Z",
+    "repository": "test-org/test-idempotent-repo",
+    "learningId": "learn-github-test-e2e-idempotent-slug-mv3jrhym",
+    "contentHash": "70fd8c659452c5ceec98d18e42a75962fbebc45d0701fbd26c8c29c188f59b32",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
