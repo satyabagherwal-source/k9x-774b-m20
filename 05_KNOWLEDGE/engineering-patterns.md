@@ -6139,3 +6139,55 @@ result = full_attention(q, k, v);
 ```
 **VERIFICATION METHOD**:
 Benchmark latency and memory usage for long context windows. Ensure that latency scales linearly with sequence length, not quadratically.
+
+
+---
+
+## 275. Scheduler Configuration is Part of the Model (Harvested from Viggle/Qwen-Image-2.1-viggle-turbo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Scheduler Configuration is Part of the Model",
+  "source": "Viggle/Qwen-Image-2.1-viggle-turbo",
+  "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+  "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:07:49.930Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv3pyot0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Viggle/Qwen-Image-2.1-viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo) (Revision: `hf-viggle-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Distilled models are sensitive to scheduler parameters. Always provide and use the specific scheduler config that was used during distillation.
+**WHY**:
+The scheduler controls the timestep schedule, which is critical for the stability and quality of the denoising process. Using the wrong scheduler config can cause artifacts or instability.
+**WHEN TO APPLY**:
+When deploying distilled models, especially for image generation or audio synthesis.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Provide the scheduler config
+scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(".../scheduler")
+
+# Use the scheduler config
+pipeline = DiffusionPipeline(
+    model=model,
+    scheduler=scheduler,
+    ...
+)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Do not use the default scheduler config
+scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained("base_model")
+```
+**VERIFICATION METHOD**:
+Compare the outputs of the model with and without the provided scheduler config. Ensure that the provided config produces the expected quality.

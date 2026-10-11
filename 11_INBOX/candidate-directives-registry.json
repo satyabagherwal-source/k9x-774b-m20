@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:04:51.402Z",
+  "last_updated": "2026-10-11T11:07:49.969Z",
   "directives": [
     {
       "id": "CD-001",
@@ -427,6 +427,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv3puv08"
+    },
+    {
+      "id": "CD-YOUP",
+      "directive_title": "Distillation is Not Monotonic",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "source_commit": "hf-viggle-qw",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv3pyot0"
+    },
+    {
+      "id": "CD-YOUP",
+      "directive_title": "Quantization is a Quality-Speed Trade-off",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "source_commit": "hf-viggle-qw",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv3pyot0"
     }
   ]
 }

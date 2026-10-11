@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:04:51.403Z",
-  "total_cycles_completed": 50,
-  "total_learnings_persisted": 50,
-  "total_rules_promoted": 22,
+  "last_updated": "2026-10-11T11:07:49.969Z",
+  "total_cycles_completed": 51,
+  "total_learnings_persisted": 51,
+  "total_rules_promoted": 23,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -352,6 +352,13 @@
       "timestamp": "2026-10-11T11:04:51.403Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv3puv08",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T11:07:49.969Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv3pyot0",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
