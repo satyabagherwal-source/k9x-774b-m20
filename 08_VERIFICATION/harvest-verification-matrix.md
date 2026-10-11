@@ -160,3 +160,4 @@
 | `CYCLE-20261011-HBMX` | `2026-10-11T14:10:17.001Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 302, Rule 303, Rule 304` | Yes (`087218eb...`) |
 | `CYCLE-20261011-L1MR` | `2026-10-11T14:13:10.659Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`02bddb54...`) |
 | `CYCLE-20261011-OSMP` | `2026-10-11T14:16:05.617Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`d99a9126...`) |
+| `CYCLE-20261011-SD5O` | `2026-10-11T14:18:52.188Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`3f9d28c5...`) |
