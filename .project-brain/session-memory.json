@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-10T15:19:28.709Z",
+  "last_updated": "2026-10-11T14:58:55.513Z",
   "memories": [
     {
       "memory_id": "mem-1791568984337-695191",
@@ -73,6 +73,107 @@
     {
       "memory_id": "mem-1791645555840-a3f41c",
       "timestamp": "2026-10-10T15:19:15.840Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730072388-44032f",
+      "timestamp": "2026-10-11T14:47:52.389Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730203823-b0c0c9",
+      "timestamp": "2026-10-11T14:50:03.823Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730426138-f63187",
+      "timestamp": "2026-10-11T14:53:46.138Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730639202-ab4033",
+      "timestamp": "2026-10-11T14:57:19.202Z",
+      "task_context": "Parse untrusted input collection while strictly rejecting oversized payloads",
+      "defect_observed": "Missing required evidence type: TEST_PASS",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Missing required evidence type: TEST_PASS",
+      "keywords": [
+        "FEATURE",
+        "parse",
+        "untrusted",
+        "input",
+        "collection",
+        "while"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730673028-d03095",
+      "timestamp": "2026-10-11T14:57:53.028Z",
+      "task_context": "Test oversized collection rejection",
+      "defect_observed": "Missing required evidence type: TEST_PASS",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Missing required evidence type: TEST_PASS",
+      "keywords": [
+        "FEATURE",
+        "test",
+        "oversized",
+        "collection",
+        "rejection"
+      ]
+    },
+    {
+      "memory_id": "mem-1791730729849-66e617",
+      "timestamp": "2026-10-11T14:58:49.849Z",
       "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
       "defect_observed": "Build failed or missing: exit code was 1",
       "user_critique": null,

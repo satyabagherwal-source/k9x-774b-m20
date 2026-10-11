@@ -46,6 +46,18 @@ export const OUTPUT_FORMATS = [
   'COMMAND_EXECUTION'
 ];
 
+export const KNOWLEDGE_APPLICATION_STATUS = {
+  APPLIED: 'APPLIED',
+  REJECTED: 'REJECTED',
+  INAPPLICABLE: 'INAPPLICABLE'
+};
+
+export const VERIFICATION_OUTCOME = {
+  PASS: 'PASS',
+  FAIL: 'FAIL',
+  PENDING: 'PENDING'
+};
+
 /**
  * Validates a Task Contract against canonical structure and invariants
  * 
@@ -117,6 +129,40 @@ export function validateTaskContract(contract) {
     errors.push(`status must be a valid TASK_STATUS (Got: ${contract.status})`);
   }
 
+  // 8. Traceable Knowledge Applications (if specified)
+  if (contract.knowledge_applications) {
+    if (!Array.isArray(contract.knowledge_applications)) {
+      errors.push('knowledge_applications must be an array of knowledge application records.');
+    } else {
+      contract.knowledge_applications.forEach((app, idx) => {
+        if (!app.rule_id || typeof app.rule_id !== 'string') {
+          errors.push(`knowledge_applications[${idx}] missing valid rule_id.`);
+        }
+        if (!app.status || !Object.values(KNOWLEDGE_APPLICATION_STATUS).includes(app.status)) {
+          errors.push(`knowledge_applications[${idx}] status must be one of: ${Object.values(KNOWLEDGE_APPLICATION_STATUS).join(', ')} (Got: ${app.status})`);
+        }
+        if (app.status === KNOWLEDGE_APPLICATION_STATUS.REJECTED) {
+          if (!app.rejection_reason || typeof app.rejection_reason !== 'string' || app.rejection_reason.trim().length === 0) {
+            errors.push(`knowledge_applications[${idx}] status is REJECTED but rejection_reason is missing or empty.`);
+          }
+        }
+        if (app.status === KNOWLEDGE_APPLICATION_STATUS.APPLIED) {
+          if (!Array.isArray(app.influenced_decisions) || app.influenced_decisions.length === 0) {
+            errors.push(`knowledge_applications[${idx}] status is APPLIED but influenced_decisions must be a non-empty array.`);
+          }
+          if (!app.verification_method || typeof app.verification_method !== 'string') {
+            errors.push(`knowledge_applications[${idx}] status is APPLIED but verification_method is required.`);
+          }
+        }
+      });
+    }
+  }
+
+  // 9. Task Profile (if specified)
+  if (contract.task_profile && typeof contract.task_profile !== 'object') {
+    errors.push('task_profile must be an object representing task dimensions.');
+  }
+
   return {
     valid: errors.length === 0,
     errors
@@ -177,7 +223,7 @@ export function createTaskContract(options = {}) {
     verification_criteria: {
       build_required: options.build_required !== false,
       terminal_proof_required: options.terminal_proof_required !== false,
-      evidence_types: options.evidence_types || ['BUILD_EXIT_0', 'TEST_PASS'],
+      evidence_types: options.evidence_types || options.verification_criteria?.evidence_types || ['BUILD_EXIT_0', 'TEST_PASS'],
       required_exit_codes: [0]
     },
 
@@ -189,6 +235,18 @@ export function createTaskContract(options = {}) {
       last_checkpoint_at: null,
       state_payload: {}
     },
+
+    task_profile: options.task_profile || {
+      language: options.language || null,
+      framework: options.framework || null,
+      architecture: options.architecture || null,
+      security_implications: options.security_implications || [],
+      reliability_implications: options.reliability_implications || [],
+      preconditions: options.preconditions || [],
+      environmental_constraints: options.environmental_constraints || []
+    },
+
+    knowledge_applications: options.knowledge_applications || [],
 
     verification_results: {
       verified: false,

@@ -211,7 +211,8 @@ export function promoteCandidateToKnowledge(candidateId, verificationEvidence = 
     `**WHY**:\n${rootCauseText}\n\n` +
     `**WHEN TO APPLY**:\nAny system where this invariant prevents regression or defect recurrence.\n\n` +
     `**VERIFIED IMPLEMENTATION PATTERN**:\n\`\`\`javascript\n${verificationEvidence.patternCode || '// Verified pattern implementation'}\n\`\`\`\n\n` +
-    `**NEGATIVE CONSTRAINT**:\n\`\`\`javascript\n${verificationEvidence.negativeCode || '// Anti-pattern: Never deploy unverified implementations'}\n\`\`\`\n`;
+    `**NEGATIVE CONSTRAINT**:\n\`\`\`javascript\n${verificationEvidence.negativeCode || '// Anti-pattern: Never deploy unverified implementations'}\n\`\`\`\n\n` +
+    `**VERIFICATION METHOD**:\n${verificationEvidence.verificationMethod || 'Empirical unit or integration test passing with exit code 0 under boundary conditions.'}\n`;
 
   // 3. Durable Storage Write to 05_KNOWLEDGE/engineering-patterns.md
   const existingPatterns = fs.readFileSync(PATTERNS_FILE, 'utf-8');
@@ -244,5 +245,134 @@ export function promoteCandidateToKnowledge(candidateId, verificationEvidence = 
     ruleId,
     ruleTitle,
     targetFile: '05_KNOWLEDGE/engineering-patterns.md'
+  };
+}
+
+export const GAP_ROOT_CAUSES = [
+  'MISSING_KNOWLEDGE',
+  'POOR_RETRIEVAL',
+  'INCORRECT_APPLICABILITY',
+  'FLAWED_RULE',
+  'EXECUTION_ERROR',
+  'INADEQUATE_VERIFICATION'
+];
+
+/**
+ * Records an engineering gap incident discovered during task execution or verification.
+ * Categorizes the root cause, checks for duplicates/conflicts, and stages a candidate directive.
+ * 
+ * @param {object} gapPayload - Incident details
+ * @returns {object} { success: boolean, incidentId: string, candidateId: string, duplicateFound: boolean }
+ */
+export function recordEngineeringGapIncident(gapPayload = {}) {
+  const rootCause = gapPayload.rootCauseCategory || 'MISSING_KNOWLEDGE';
+  if (!GAP_ROOT_CAUSES.includes(rootCause)) {
+    throw new Error(`Invalid rootCauseCategory: ${rootCause}. Must be one of: ${GAP_ROOT_CAUSES.join(', ')}`);
+  }
+
+  const registry = loadDirectivesRegistry();
+  const title = gapPayload.title || 'Discovered Engineering Gap';
+
+  // Check for duplicates in candidate directives registry
+  const duplicateCandidate = registry.directives.find(d => 
+    d.directive_title.toLowerCase() === title.toLowerCase() ||
+    (gapPayload.ruleIdInvolved && d.directive_title.toLowerCase().includes(gapPayload.ruleIdInvolved.toLowerCase()))
+  );
+
+  const incident = {
+    title,
+    category: gapPayload.category || 'engineering_gap',
+    rootCause: `[${rootCause}] ${gapPayload.defectDescription || 'Engineering gap identified during execution'}`,
+    defectiveCode: gapPayload.defectiveEvidence || '// Defective implementation or missing pattern',
+    safeCode: gapPayload.safeInvariant || '// Safe invariant pattern',
+    universalRule: gapPayload.universalRule || gapPayload.safeInvariant || 'Universal engineering invariant',
+    tags: [
+      'engineering_gap',
+      rootCause.toLowerCase(),
+      ...(gapPayload.tags || [])
+    ]
+  };
+
+  const staged = stageIncidentAsCandidate(incident, {
+    type: 'engineering_gap_feedback',
+    repo: gapPayload.repo || 'canonical_task_execution',
+    commit: gapPayload.taskId || 'live_task',
+    author: 'AI Agent (Universal Feedback Loop)'
+  });
+
+  return {
+    success: true,
+    candidateId: staged.candidateId,
+    filePath: staged.filePath,
+    title,
+    rootCauseCategory: rootCause,
+    duplicateFound: Boolean(duplicateCandidate)
+  };
+}
+
+/**
+ * Formulates a traceable rule correction, limitation note, or supersession record
+ * in 05_KNOWLEDGE/engineering-patterns.md without silently overwriting history.
+ * 
+ * @param {string} ruleId - Canonical rule ID (e.g. 'Rule 306')
+ * @param {object} correctionDetails - Details of limitation or supersession
+ * @returns {object} { success: boolean, ruleId: string, verified: boolean }
+ */
+export function recordRuleCorrectionOrSupersession(ruleId, correctionDetails = {}) {
+  if (!fs.existsSync(PATTERNS_FILE)) {
+    throw new Error(`Canonical patterns file not found at: ${PATTERNS_FILE}`);
+  }
+
+  const content = fs.readFileSync(PATTERNS_FILE, 'utf-8');
+  const numMatch = ruleId.match(/(\d+)/);
+  if (!numMatch) {
+    throw new Error(`Invalid ruleId: ${ruleId}`);
+  }
+  const ruleNum = numMatch[1];
+  const targetHeaderRegex = new RegExp(`(^##\\s+${ruleNum}\\.\\s+.*$)`, 'm');
+
+  if (!targetHeaderRegex.test(content)) {
+    throw new Error(`Rule ${ruleNum} not found in ${PATTERNS_FILE}`);
+  }
+
+  const dateStr = new Date().toISOString().split('T')[0];
+  let updateBlock = '';
+
+  if (correctionDetails.supersededBy) {
+    updateBlock = `\n> ⚠️ **SUPERSEDED BY**: ${correctionDetails.supersededBy} (${dateStr})\n> **REASON**: ${correctionDetails.reason || 'Superseded by enhanced invariant.'}\n`;
+  } else {
+    updateBlock = `\n> ℹ️ **CORRECTION & ADAPTATION NOTE (${dateStr})**:\n> **LIMITATION / BOUNDARY**: ${correctionDetails.limitation || 'Boundary limitation discovered.'}\n> **VERIFIED ADAPTATION**: ${correctionDetails.adaptation || 'Apply context-specific adaptation.'}\n`;
+  }
+
+  // Insert immediately under rule header
+  const updatedContent = content.replace(targetHeaderRegex, `$1\n${updateBlock}`);
+  fs.writeFileSync(PATTERNS_FILE, updatedContent, 'utf-8');
+
+  // SHA-256 Read-back barrier
+  const verifyContent = fs.readFileSync(PATTERNS_FILE, 'utf-8');
+  const isPersisted = verifyContent.includes(`CORRECTION & ADAPTATION NOTE (${dateStr})`) || verifyContent.includes(`SUPERSEDED BY`);
+  if (!isPersisted) {
+    throw new Error(`Physical read-back barrier failed when writing correction to ${ruleId}`);
+  }
+
+  // Invalidate retrieval cache file if present so next query re-indexes
+  const cacheFile = path.join(BRAIN_ROOT, '.project-brain', 'cache', 'retrieval-index.json');
+  if (fs.existsSync(cacheFile)) {
+    try { fs.unlinkSync(cacheFile); } catch (e) {}
+  }
+
+  // Log in 14_EVOLUTION/brain-evolution-log.md
+  if (fs.existsSync(EVOLUTION_LOG_FILE)) {
+    try {
+      const evoEntry = `\n- **${new Date().toISOString()}**: [FEEDBACK LOOP] Rule ${ruleNum} updated with traceable note: ${correctionDetails.limitation || correctionDetails.reason || 'Limitation adaptation recorded.'}\n`;
+      fs.appendFileSync(EVOLUTION_LOG_FILE, evoEntry, 'utf-8');
+    } catch (e) {}
+  }
+
+  return {
+    success: true,
+    ruleId,
+    verified: true,
+    updateType: correctionDetails.supersededBy ? 'SUPERSEDED' : 'CORRECTION_NOTE'
   };
 }

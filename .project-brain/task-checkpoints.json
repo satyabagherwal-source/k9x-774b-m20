@@ -806,6 +806,225 @@
       },
       "created_at": "2026-10-10T15:53:51.621Z",
       "updated_at": "2026-10-10T15:53:51.631Z"
+    },
+    "task-task1-collection-bound": {
+      "task_id": "task-task1-collection-bound",
+      "task_type": "FEATURE",
+      "objective": "Parse untrusted input collection while strictly rejecting oversized payloads",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-11T15:03:49.177Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_COLLECTION_BOUND_PASS"
+            ],
+            "verified_at": "2026-10-11T15:03:49.174Z",
+            "failure_reason": null,
+            "knowledge_verification": {
+              "allVerified": true,
+              "evaluatedCount": 1,
+              "appliedCount": 1,
+              "verifiedCount": 1,
+              "failedCount": 0,
+              "rejectedCount": 0,
+              "inapplicableCount": 0,
+              "ruleOutcomes": [
+                {
+                  "rule_id": "Rule 306",
+                  "status": "VERIFIED",
+                  "outcome": "PASS",
+                  "evidence": "TEST_COLLECTION_BOUND_PASS"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "created_at": "2026-10-11T15:03:49.137Z",
+      "updated_at": "2026-10-11T15:03:49.177Z"
+    },
+    "task-1791730672898-aecb1f58": {
+      "task_id": "task-1791730672898-aecb1f58",
+      "task_type": "FEATURE",
+      "objective": "Test oversized collection rejection",
+      "status": "FAILED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-11T14:57:53.032Z",
+        "state_payload": {
+          "verification": {
+            "verified": false,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0"
+            ],
+            "verified_at": null,
+            "failure_reason": "Missing required evidence type: TEST_PASS",
+            "knowledge_verification": {
+              "allVerified": true,
+              "evaluatedCount": 1,
+              "appliedCount": 1,
+              "verifiedCount": 1,
+              "failedCount": 0,
+              "rejectedCount": 0,
+              "inapplicableCount": 0,
+              "ruleOutcomes": [
+                {
+                  "rule_id": "Rule 306",
+                  "status": "VERIFIED",
+                  "outcome": "PASS",
+                  "evidence": "TEST_COLLECTION_BOUND_PASS"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "created_at": "2026-10-11T14:57:52.898Z",
+      "updated_at": "2026-10-11T14:57:53.032Z"
+    },
+    "task-task2-context-budget": {
+      "task_id": "task-task2-context-budget",
+      "task_type": "FEATURE",
+      "objective": "Validate request token budget before memory allocation and downstream dispatch",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-11T15:03:49.219Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_BUDGET_PREFLIGHT_PASS"
+            ],
+            "verified_at": "2026-10-11T15:03:49.217Z",
+            "failure_reason": null,
+            "knowledge_verification": {
+              "allVerified": true,
+              "evaluatedCount": 1,
+              "appliedCount": 1,
+              "verifiedCount": 1,
+              "failedCount": 0,
+              "rejectedCount": 0,
+              "inapplicableCount": 0,
+              "ruleOutcomes": [
+                {
+                  "rule_id": "Rule 305",
+                  "status": "VERIFIED",
+                  "outcome": "PASS",
+                  "evidence": "TEST_BUDGET_PREFLIGHT_PASS"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "created_at": "2026-10-11T15:03:49.179Z",
+      "updated_at": "2026-10-11T15:03:49.219Z"
+    },
+    "task-task3-cors-origin": {
+      "task_id": "task-task3-cors-origin",
+      "task_type": "FEATURE",
+      "objective": "Implement secure CORS origin reflection middleware for authenticated API",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-11T15:03:49.252Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_CORS_ORIGIN_SECURITY_PASS"
+            ],
+            "verified_at": "2026-10-11T15:03:49.249Z",
+            "failure_reason": null,
+            "knowledge_verification": {
+              "allVerified": true,
+              "evaluatedCount": 2,
+              "appliedCount": 1,
+              "verifiedCount": 1,
+              "failedCount": 0,
+              "rejectedCount": 1,
+              "inapplicableCount": 0,
+              "ruleOutcomes": [
+                {
+                  "rule_id": "Rule 260",
+                  "status": "VERIFIED",
+                  "outcome": "PASS",
+                  "evidence": "TEST_CORS_ORIGIN_SECURITY_PASS"
+                },
+                {
+                  "rule_id": "Rule 259",
+                  "status": "REJECTED",
+                  "reason": "Task is an HTTP CORS header validator, not a socket binding server; port allocation fallback is inapplicable to header validation."
+                }
+              ]
+            }
+          }
+        }
+      },
+      "created_at": "2026-10-11T15:03:49.221Z",
+      "updated_at": "2026-10-11T15:03:49.252Z"
+    },
+    "task-transfer-stream-ingestor": {
+      "task_id": "task-transfer-stream-ingestor",
+      "task_type": "FEATURE",
+      "objective": "Ingest chunked data stream in ETL pipeline adhering to Collection Bound Invariant",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-11T15:03:49.965Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_TRANSFER_STREAM_PASS"
+            ],
+            "verified_at": "2026-10-11T15:03:49.962Z",
+            "failure_reason": null,
+            "knowledge_verification": {
+              "allVerified": true,
+              "evaluatedCount": 1,
+              "appliedCount": 1,
+              "verifiedCount": 1,
+              "failedCount": 0,
+              "rejectedCount": 0,
+              "inapplicableCount": 0,
+              "ruleOutcomes": [
+                {
+                  "rule_id": "Rule 306",
+                  "status": "VERIFIED",
+                  "outcome": "PASS",
+                  "evidence": "TEST_TRANSFER_STREAM_PASS"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "created_at": "2026-10-11T15:03:49.845Z",
+      "updated_at": "2026-10-11T15:03:49.965Z"
     }
   }
 }

@@ -12,8 +12,8 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { retrieveKnowledge } from './retrieval-engine.mjs';
-import { TASK_STATUS, validateTaskContract, createTaskContract } from './task-contract.mjs';
+import { retrieveKnowledge, parseEngineeringPatterns } from './retrieval-engine.mjs';
+import { TASK_STATUS, KNOWLEDGE_APPLICATION_STATUS, VERIFICATION_OUTCOME, validateTaskContract, createTaskContract } from './task-contract.mjs';
 import { injectSessionMemoryIntoContract, recordSessionMemory } from './cross-session-memory.mjs';
 import { planTaskDecomposition, validatePlanDAG, getNextExecutableSteps, advanceStep } from './task-planner.mjs';
 import { bindSkillToTask } from './skill-runner.mjs';
@@ -50,16 +50,234 @@ export function loadAllCheckpoints() {
 }
 
 /**
- * Resolves context for a Task Contract using Hybrid Retrieval Engine (Milestone 1)
- * and Cross-Session Memory Consolidation (Milestone 4).
+ * Multi-Attribute Knowledge-to-Task Matching Engine (Milestone Universal Application)
+ * Evaluates problem, language, framework, architecture, security/reliability,
+ * negative constraints, preconditions, and token budgets.
  * 
  * @param {object} contract - The task contract
+ * @param {object} options - Matching configuration options
+ * @returns {object} Updated contract with scored and bounded knowledge
+ */
+export function matchKnowledgeToTask(contract, options = {}) {
+  const validation = validateTaskContract(contract);
+  if (!validation.valid) {
+    throw new Error(`Invalid contract passed to matchKnowledgeToTask: ${validation.errors.join(', ')}`);
+  }
+
+  const profile = contract.task_profile || {};
+  const query = contract.context.retrieval_query || contract.objective;
+  const budget = contract.constraints.max_tokens_budget || 1200;
+
+  // Build expanded semantic search string including architecture and security/reliability terms
+  const terms = [query];
+  if (profile.language) terms.push(profile.language);
+  if (profile.framework) terms.push(profile.framework);
+  if (profile.architecture) terms.push(profile.architecture);
+  if (Array.isArray(profile.security_implications)) terms.push(...profile.security_implications);
+  if (Array.isArray(profile.reliability_implications)) terms.push(...profile.reliability_implications);
+  const expandedQuery = terms.join(' ');
+
+  // Retrieve candidate pool
+  const retrieval = retrieveKnowledge(expandedQuery, {
+    maxTokens: budget * 3,
+    topK: 12,
+    format: 'compact'
+  });
+
+  const allPatterns = parseEngineeringPatterns();
+  const patternMap = new Map();
+  for (const p of allPatterns) {
+    patternMap.set(p.id, p);
+  }
+
+  // Multi-attribute scoring
+  const scoredCandidates = [];
+  const taskLang = (profile.language || '').toLowerCase();
+  const secTags = (profile.security_implications || []).map(s => s.toLowerCase());
+  const relTags = (profile.reliability_implications || []).map(s => s.toLowerCase());
+  const constraints = (profile.environmental_constraints || []).map(s => s.toLowerCase());
+
+  for (const item of retrieval.items) {
+    const pat = patternMap.get(item.id);
+    const bodyText = (pat ? pat.fullContent : item.summary || '').toLowerCase();
+    const titleText = (item.title || '').toLowerCase();
+
+    let score = item.bm25Score || 1.0;
+    let relevanceRationale = [];
+    let preconditionsMet = true;
+    let extractedNegative = null;
+    let extractedVerification = null;
+
+    // 1. Language & Framework Matching
+    if (taskLang) {
+      if (bodyText.includes(taskLang) || titleText.includes(taskLang)) {
+        score += 2.0;
+        relevanceRationale.push(`Language affinity (${taskLang})`);
+      } else if (titleText.includes('invariant') || titleText.includes('bound') || titleText.includes('preflight')) {
+        score += 1.0; // Universal invariant
+        relevanceRationale.push('Universal invariant (cross-language applicable)');
+      }
+    }
+
+    // 2. Security Threat Matching
+    if (secTags.length > 0) {
+      for (const st of secTags) {
+        if (bodyText.includes(st) || titleText.includes(st) || 
+            (st.includes('untrusted') && (titleText.includes('bound') || bodyText.includes('input') || bodyText.includes('limit'))) ||
+            (st.includes('cors') && bodyText.includes('origin')) ||
+            (st.includes('dos') && (bodyText.includes('iteration') || bodyText.includes('bound')))) {
+          score += 3.0;
+          relevanceRationale.push(`Mitigates security threat: ${st}`);
+          break;
+        }
+      }
+    }
+
+    // 3. Reliability & Boundary Matching
+    if (relTags.length > 0) {
+      for (const rt of relTags) {
+        if (bodyText.includes(rt) || titleText.includes(rt) ||
+            (rt.includes('budget') && (bodyText.includes('budget') || bodyText.includes('token') || bodyText.includes('window'))) ||
+            (rt.includes('overflow') && bodyText.includes('bound')) ||
+            (rt.includes('race') && bodyText.includes('race'))) {
+          score += 2.5;
+          relevanceRationale.push(`Prevents reliability hazard: ${rt}`);
+          break;
+        }
+      }
+    }
+
+    // 4. Precondition Evaluation
+    if (pat && pat.whenText) {
+      const whenLower = pat.whenText.toLowerCase();
+      for (const c of constraints) {
+        if (c.includes('no_external') && (whenLower.includes('third-party') || whenLower.includes('docker'))) {
+          preconditionsMet = false;
+          score -= 5.0;
+          relevanceRationale.push(`Precondition warning: external dependency mismatch (${c})`);
+        }
+      }
+    }
+
+    // 5. Extract Negative Constraint & Verification Method
+    if (pat) {
+      const negMatch = pat.fullContent.match(/\*\*NEGATIVE CONSTRAINT\*\*:\s*([\s\S]*?)(?=\n##|\n\*\*|$)/i);
+      if (negMatch) {
+        extractedNegative = negMatch[1].replace(/```(?:javascript|typescript|bash|python)?/g, '').trim();
+      }
+      const verMatch = pat.fullContent.match(/\*\*VERIFICATION METHOD\*\*:\s*([\s\S]*?)(?=\n##|\n\*\*|$)/i);
+      if (verMatch) {
+        extractedVerification = verMatch[1].replace(/```(?:javascript|typescript|bash|python)?/g, '').trim();
+      } else {
+        extractedVerification = `Empirical verification test proving ${pat.id} invariant holds under boundary conditions.`;
+      }
+    }
+
+    scoredCandidates.push({
+      item,
+      pat,
+      score,
+      relevanceRationale: relevanceRationale.length > 0 ? relevanceRationale.join('; ') : 'Lexical BM25 match to task objective',
+      preconditionsMet,
+      extractedNegative,
+      extractedVerification
+    });
+  }
+
+  // Sort descending by multi-attribute score
+  scoredCandidates.sort((a, b) => b.score - a.score);
+
+  // Greedily pack into token budget
+  const maxRules = contract.task_type === 'MICRO_FIX' ? 2 : 4;
+  const selected = [];
+  let totalEstimatedTokens = 0;
+
+  for (const cand of scoredCandidates) {
+    if (selected.length >= maxRules) break;
+    const est = cand.item.estimatedTokens || 150;
+    if (totalEstimatedTokens + est <= budget) {
+      selected.push(cand);
+      totalEstimatedTokens += est;
+    }
+  }
+
+  // Update relevant_rules
+  contract.context.relevant_rules = selected.map(s => ({
+    id: s.item.id,
+    title: s.item.title,
+    category: s.item.category,
+    filePath: s.item.filePath,
+    lineRange: s.item.lineRange,
+    summary: s.item.summary,
+    relevance_rationale: s.relevanceRationale,
+    preconditions_met: s.preconditionsMet,
+    verification_method: s.extractedVerification
+  }));
+
+  contract.context.retrieved_tokens = totalEstimatedTokens;
+
+  // Inject extracted negative constraints into task contract
+  for (const s of selected) {
+    if (s.extractedNegative) {
+      const cleanNeg = s.extractedNegative.split('\n')[0].replace(/^[-*]\s*/, '').trim();
+      if (cleanNeg && !contract.constraints.negative_constraints.includes(cleanNeg)) {
+        contract.constraints.negative_constraints.push(cleanNeg);
+      }
+    }
+  }
+
+  // Format detailed prompt block
+  const lines = [
+    `=== AI-BUILDER-BRAIN MATCHED ENGINEERING KNOWLEDGE (${selected.length} Rules Selected | Budget: ${budget} tok) ===`
+  ];
+  for (const s of selected) {
+    lines.push(`\n[${s.item.id}] ${s.item.title}`);
+    lines.push(`- Canonical Source: 05_KNOWLEDGE/engineering-patterns.md`);
+    lines.push(`- Relevance Rationale: ${s.relevanceRationale}`);
+    lines.push(`- Preconditions Met: ${s.preconditionsMet ? 'YES' : 'REQUIRES ADAPTATION'}`);
+    if (s.pat && s.pat.ruleText) lines.push(`- Invariant Law: ${s.pat.ruleText.slice(0, 250)}`);
+    if (s.extractedNegative) lines.push(`- Negative Constraint: ${s.extractedNegative.slice(0, 200)}`);
+    if (s.extractedVerification) lines.push(`- Required Verification: ${s.extractedVerification.slice(0, 200)}`);
+  }
+  lines.push('\n=== END MATCHED KNOWLEDGE ===');
+
+  contract.context.retrieval_prompt_block = lines.join('\n');
+  contract.status = TASK_STATUS.CONTEXT_RESOLVED;
+
+  // Integrated Cross-Session Memory Shield: inject past failure warnings
+  try {
+    injectSessionMemoryIntoContract(contract);
+  } catch (e) {}
+
+  return contract;
+}
+
+/**
+ * Resolves context for a Task Contract using Hybrid Retrieval Engine (Milestone 1)
+ * and Cross-Session Memory Consolidation (Milestone 4).
+ * If task_profile has attributes or options.multiAttribute is true, delegates
+ * to matchKnowledgeToTask for multi-attribute resolution.
+ * 
+ * @param {object} contract - The task contract
+ * @param {object} options - Resolution options
  * @returns {object} Updated contract with resolved rules, skills, and memory shields
  */
-export function resolveTaskContext(contract) {
+export function resolveTaskContext(contract, options = {}) {
   const validation = validateTaskContract(contract);
   if (!validation.valid) {
     throw new Error(`Invalid contract passed to resolveTaskContext: ${validation.errors.join(', ')}`);
+  }
+
+  // Multi-attribute routing if task dimensions are provided
+  const profile = contract.task_profile;
+  const hasDimensions = profile && (
+    profile.language || profile.framework || profile.architecture ||
+    (Array.isArray(profile.security_implications) && profile.security_implications.length > 0) ||
+    (Array.isArray(profile.reliability_implications) && profile.reliability_implications.length > 0)
+  );
+
+  if (hasDimensions || options.multiAttribute) {
+    return matchKnowledgeToTask(contract, options);
   }
 
   const query = contract.context.retrieval_query || contract.objective;
@@ -206,7 +424,181 @@ export function loadTaskCheckpoint(taskId) {
 }
 
 /**
+ * Records a traceable knowledge application decision for an active task contract.
+ * Explicitly records whether a rule was APPLIED, REJECTED (with reason), or INAPPLICABLE,
+ * along with influenced implementation decisions, files, and empirical verification methods.
+ * 
+ * @param {object} contract - The task contract
+ * @param {object} decision - Knowledge decision payload
+ * @returns {object} Updated decision entry in contract
+ */
+export function recordKnowledgeDecision(contract, decision) {
+  if (!decision || typeof decision !== 'object') {
+    throw new Error('Decision must be a non-null object');
+  }
+
+  const {
+    rule_id,
+    title,
+    canonical_source,
+    applicability_rationale,
+    status,
+    rejection_reason,
+    influenced_decisions,
+    influenced_files,
+    verification_method,
+    verification_outcome,
+    evidence_ref,
+    limitations_observed
+  } = decision;
+
+  if (!rule_id || typeof rule_id !== 'string') {
+    throw new Error('rule_id is required and must be a string.');
+  }
+
+  if (!status || !Object.values(KNOWLEDGE_APPLICATION_STATUS).includes(status)) {
+    throw new Error(`status must be one of: ${Object.values(KNOWLEDGE_APPLICATION_STATUS).join(', ')} (Got: ${status})`);
+  }
+
+  if (status === KNOWLEDGE_APPLICATION_STATUS.REJECTED) {
+    if (!rejection_reason || typeof rejection_reason !== 'string' || rejection_reason.trim().length === 0) {
+      throw new Error(`Rejection of ${rule_id} requires an explicit non-empty rejection_reason.`);
+    }
+  }
+
+  if (status === KNOWLEDGE_APPLICATION_STATUS.APPLIED) {
+    if (!Array.isArray(influenced_decisions) || influenced_decisions.length === 0) {
+      throw new Error(`Application of ${rule_id} requires at least one entry in influenced_decisions.`);
+    }
+    if (!verification_method || typeof verification_method !== 'string') {
+      throw new Error(`Application of ${rule_id} requires a verification_method string.`);
+    }
+  }
+
+  if (!Array.isArray(contract.knowledge_applications)) {
+    contract.knowledge_applications = [];
+  }
+
+  const existingIdx = contract.knowledge_applications.findIndex(k => k.rule_id === rule_id);
+  const existing = existingIdx >= 0 ? contract.knowledge_applications[existingIdx] : {};
+
+  const record = {
+    rule_id,
+    title: title || existing.title || `Rule ${rule_id}`,
+    canonical_source: canonical_source || existing.canonical_source || `05_KNOWLEDGE/engineering-patterns.md#${rule_id}`,
+    applicability_rationale: applicability_rationale || existing.applicability_rationale || 'Evaluated for task applicability',
+    preconditions_met: decision.preconditions_met !== undefined ? decision.preconditions_met : (status !== KNOWLEDGE_APPLICATION_STATUS.REJECTED),
+    status,
+    rejection_reason: rejection_reason || null,
+    influenced_decisions: influenced_decisions || existing.influenced_decisions || [],
+    influenced_files: influenced_files || existing.influenced_files || [],
+    verification_method: verification_method || existing.verification_method || null,
+    verification_outcome: verification_outcome || existing.verification_outcome || VERIFICATION_OUTCOME.PENDING,
+    evidence_ref: evidence_ref || existing.evidence_ref || null,
+    limitations_observed: limitations_observed || existing.limitations_observed || null,
+    recorded_at: new Date().toISOString()
+  };
+
+  if (existingIdx >= 0) {
+    contract.knowledge_applications[existingIdx] = record;
+  } else {
+    contract.knowledge_applications.push(record);
+  }
+
+  return record;
+}
+
+/**
+ * Independently verifies each applied knowledge item against live empirical evidence.
+ * Differentiates retrieved vs applied vs rejected, and verifies rule compliance.
+ * 
+ * @param {object} contract - The task contract
+ * @param {object} executionEvidence - Evidence submitted from live execution
+ * @returns {object} Knowledge verification outcome summary
+ */
+export function verifyKnowledgeApplications(contract, executionEvidence = {}) {
+  if (!Array.isArray(contract.knowledge_applications) || contract.knowledge_applications.length === 0) {
+    return {
+      allVerified: true,
+      evaluatedCount: 0,
+      appliedCount: 0,
+      verifiedCount: 0,
+      failedCount: 0,
+      rejectedCount: 0,
+      inapplicableCount: 0,
+      ruleOutcomes: []
+    };
+  }
+
+  const ruleOutcomes = [];
+  let allVerified = true;
+  let appliedCount = 0;
+  let verifiedCount = 0;
+  let failedCount = 0;
+  let rejectedCount = 0;
+  let inapplicableCount = 0;
+
+  const evidenceTypes = Array.isArray(executionEvidence.evidenceTypes) ? executionEvidence.evidenceTypes : [];
+  const verifiedRules = Array.isArray(executionEvidence.verifiedRules) ? executionEvidence.verifiedRules : [];
+  const ruleEvidenceMap = executionEvidence.ruleEvidence || {};
+
+  for (const app of contract.knowledge_applications) {
+    if (app.status === KNOWLEDGE_APPLICATION_STATUS.REJECTED) {
+      rejectedCount++;
+      ruleOutcomes.push({ rule_id: app.rule_id, status: 'REJECTED', reason: app.rejection_reason });
+      continue;
+    }
+    if (app.status === KNOWLEDGE_APPLICATION_STATUS.INAPPLICABLE) {
+      inapplicableCount++;
+      ruleOutcomes.push({ rule_id: app.rule_id, status: 'INAPPLICABLE' });
+      continue;
+    }
+
+    if (app.status === KNOWLEDGE_APPLICATION_STATUS.APPLIED) {
+      appliedCount++;
+      // Check if empirical verification evidence proves this rule
+      const ruleEv = ruleEvidenceMap[app.rule_id];
+      const directRefPassed = app.evidence_ref && evidenceTypes.includes(app.evidence_ref);
+      const explicitlyVerified = verifiedRules.includes(app.rule_id);
+      const ruleEvidencePassed = ruleEv && (ruleEv.verified === true || ruleEv.status === 'PASS');
+
+      // Rule passes verification if directRef, ruleEvidence, or explicit verification was collected with build exit 0
+      const isVerified = (directRefPassed || explicitlyVerified || ruleEvidencePassed) ||
+        (executionEvidence.buildExitCode === 0 && !app.evidence_ref);
+
+      if (isVerified) {
+        app.verification_outcome = VERIFICATION_OUTCOME.PASS;
+        verifiedCount++;
+        ruleOutcomes.push({ rule_id: app.rule_id, status: 'VERIFIED', outcome: 'PASS', evidence: app.evidence_ref || 'BUILD_EXIT_0' });
+      } else {
+        app.verification_outcome = VERIFICATION_OUTCOME.FAIL;
+        failedCount++;
+        allVerified = false;
+        ruleOutcomes.push({
+          rule_id: app.rule_id,
+          status: 'FAILED',
+          outcome: 'FAIL',
+          reason: `Rule verification failed: evidence '${app.evidence_ref}' not observed for verification method: ${app.verification_method}`
+        });
+      }
+    }
+  }
+
+  return {
+    allVerified,
+    evaluatedCount: contract.knowledge_applications.length,
+    appliedCount,
+    verifiedCount,
+    failedCount,
+    rejectedCount,
+    inapplicableCount,
+    ruleOutcomes
+  };
+}
+
+/**
  * Verifies execution evidence against the contract's verification criteria
+ * and individual applied knowledge verification methods.
  * 
  * @param {object} contract - The task contract
  * @param {object} executionEvidence - Evidence submitted from live execution
@@ -253,11 +645,20 @@ export function verifyExecutionResult(contract, executionEvidence = {}) {
     }
   }
 
+  // 4. Traceable Knowledge Application Verification Barrier
+  const knowledgeVerification = verifyKnowledgeApplications(contract, executionEvidence);
+  if (!knowledgeVerification.allVerified && verified) {
+    verified = false;
+    const failedRules = knowledgeVerification.ruleOutcomes.filter(r => r.status === 'FAILED');
+    failureReason = `Knowledge Application Verification Barrier Failed: ${failedRules.map(f => `${f.rule_id} (${f.reason})`).join('; ')}`;
+  }
+
   contract.verification_results = {
     verified,
     evidence_collected: collected,
     verified_at: verified ? new Date().toISOString() : null,
-    failure_reason: failureReason
+    failure_reason: failureReason,
+    knowledge_verification: knowledgeVerification
   };
 
   contract.status = verified ? TASK_STATUS.VERIFIED : TASK_STATUS.FAILED;
