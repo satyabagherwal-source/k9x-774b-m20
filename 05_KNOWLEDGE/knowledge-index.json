@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:22:52.058Z",
-  "total_verified_learnings": 4004,
+  "last_updated": "2026-10-11T11:39:01.727Z",
+  "total_verified_learnings": 4005,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -96234,6 +96234,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T11:22:52.058Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-fastino-gliner2-5-decide-mv3r2t2q": {
+      "learning_id": "learn-huggingface-hf-fastino-gliner2-5-decide-mv3r2t2q",
+      "source": "fastino/GLiNER2.5-Decide",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "slug": "hf-fastino-gliner2.5-decide",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "source_version": "hf-fastino-gliner2.5-decide",
+      "content_hash": "c39dee825058231f8749c101a4d7559fc8e6c5e4cda07c15dc06d1242bf84876",
+      "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T11:39:01.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

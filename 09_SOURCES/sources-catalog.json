@@ -448,5 +448,15 @@
     "contentHash": "087b5559b172f104d4c5c313b7c22c3a95ce2db273d2242fbd8d084b9597f421",
     "lastHarvestedAt": "2026-10-11T11:22:52.114Z",
     "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0"
+  },
+  "hf-fastino-gliner2.5-decide": {
+    "repository": "fastino/GLiNER2.5-Decide",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+    "sourceVersion": "hf-fastino-gliner2.5-decide",
+    "license": "Open-Source",
+    "contentHash": "c39dee825058231f8749c101a4d7559fc8e6c5e4cda07c15dc06d1242bf84876",
+    "lastHarvestedAt": "2026-10-11T11:39:01.773Z",
+    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv3r2t2q"
   }
 }

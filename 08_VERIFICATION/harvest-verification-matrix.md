@@ -106,3 +106,4 @@
 | `CYCLE-20261011-ACEY` | `2026-10-11T11:16:53.722Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 278, Rule 279` | Yes (`16b49b88...`) |
 | `CYCLE-20261011-ECR4` | `2026-10-11T11:20:00.784Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 280, Rule 281` | Yes (`ba8376cb...`) |
 | `CYCLE-20261011-I0Y9` | `2026-10-11T11:22:52.113Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 282, Rule 283` | Yes (`087b5559...`) |
+| `CYCLE-20261011-2T59` | `2026-10-11T11:39:01.773Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`c39dee82...`) |
