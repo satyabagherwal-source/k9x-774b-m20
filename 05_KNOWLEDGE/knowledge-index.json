@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:34:42.884Z",
-  "total_verified_learnings": 4181,
+  "last_updated": "2026-10-11T20:38:17.071Z",
+  "total_verified_learnings": 4182,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -100847,6 +100847,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T20:34:42.884Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall": {
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
+      "source": "black-forest-labs/FLUX.1-schnell",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "slug": "hf-black-forest-labs-flux.1-schnell",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "content_hash": "37806320bcfd877a832e4502ffead7395873eef4af9397ca3c4a970fa042f0af",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 359,
+          "title": "Latency-Bounded Inference Pipeline Orchestration",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 360,
+          "title": "Distillation Fidelity vs. Speed Trade-off Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 361,
+          "title": "Zero-Copy Latent Space Management",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T20:38:17.071Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

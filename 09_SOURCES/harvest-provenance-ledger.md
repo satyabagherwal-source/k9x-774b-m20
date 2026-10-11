@@ -267,3 +267,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-microsoft-frognano-4b-2609-mv49zxkw` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-11T20:28:40.351Z |
 | `learn-huggingface-hf-hexgrad-kokoro-82m-mv4a40uh` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-11T20:31:51.208Z |
 | `learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-11T20:34:42.923Z |
+| `learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-11T20:38:17.119Z |

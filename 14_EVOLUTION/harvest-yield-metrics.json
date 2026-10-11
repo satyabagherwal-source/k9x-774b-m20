@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:34:42.924Z",
-  "total_cycles_completed": 226,
-  "total_learnings_persisted": 226,
-  "total_rules_promoted": 103,
+  "last_updated": "2026-10-11T20:38:17.120Z",
+  "total_cycles_completed": 227,
+  "total_learnings_persisted": 227,
+  "total_rules_promoted": 106,
   "history": [
-    {
-      "timestamp": "2026-10-11T09:16:36.601Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv3lznlb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T09:20:59.481Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1403,6 +1396,13 @@
       "repository": "openai/whisper-large-v3",
       "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T20:38:17.120Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
