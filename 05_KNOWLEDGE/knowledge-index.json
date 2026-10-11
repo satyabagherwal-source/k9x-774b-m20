@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:04:19.492Z",
-  "total_verified_learnings": 4034,
+  "last_updated": "2026-10-11T13:07:23.519Z",
+  "total_verified_learnings": 4035,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -97033,6 +97033,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T13:04:19.491Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-google-electra-base-discriminator-mv3u8fz6": {
+      "learning_id": "learn-huggingface-hf-google-electra-base-discriminator-mv3u8fz6",
+      "source": "google/electra-base-discriminator",
+      "repository": "google/electra-base-discriminator",
+      "slug": "hf-google-electra-base-discriminator",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google/electra-base-discriminator",
+      "source_version": "hf-google-electra-base-discriminator",
+      "content_hash": "70d47e80845ea41f495fba84dd798522f313c338296f3d55fef35ddf8021c8f4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T13:07:23.519Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

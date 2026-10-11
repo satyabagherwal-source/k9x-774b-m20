@@ -748,5 +748,15 @@
     "contentHash": "bd991783bdccda0a21b44e3dac7286a5fea6084a91f4ddcdd2800381b1fc21f3",
     "lastHarvestedAt": "2026-10-11T13:04:19.518Z",
     "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv3u4hza"
+  },
+  "hf-google-electra-base-discriminator": {
+    "repository": "google/electra-base-discriminator",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
+    "sourceVersion": "hf-google-electra-base-discriminator",
+    "license": "Open-Source",
+    "contentHash": "70d47e80845ea41f495fba84dd798522f313c338296f3d55fef35ddf8021c8f4",
+    "lastHarvestedAt": "2026-10-11T13:07:23.548Z",
+    "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv3u8fz6"
   }
 }
