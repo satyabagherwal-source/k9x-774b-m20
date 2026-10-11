@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:36:28.288Z",
-  "total_cycles_completed": 19,
-  "total_learnings_persisted": 19,
+  "last_updated": "2026-10-11T08:39:18.684Z",
+  "total_cycles_completed": 20,
+  "total_learnings_persisted": 20,
   "total_rules_promoted": 8,
   "history": [
     {
@@ -135,6 +135,13 @@
       "timestamp": "2026-10-11T08:36:28.288Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
       "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv3kk1cj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:39:18.684Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv3knotg",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
