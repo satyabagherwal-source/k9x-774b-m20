@@ -3,8 +3,8 @@
 > **Source Version**: `hf-autotrust`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-11T16:31:44.859Z  
-> **Learning ID**: `learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr`  
+> **Timestamp**: 2026-10-11T22:59:28.760Z  
+> **Learning ID**: `learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/JEV-27B-VL](https://huggingface.co/autotrust/JEV-27B-VL))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-11T16:31:43.852Z  
+> **Harvest Timestamp**: 2026-10-11T22:59:27.914Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

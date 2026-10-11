@@ -125,9 +125,9 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "70fe777f73937b3194619c865c40a2642c0b261e25b917b0be056782f60a1b13",
-    "lastHarvestedAt": "2026-10-11T16:31:44.951Z",
-    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr"
+    "contentHash": "7710436864d6ba61348af3f6666b141d6ca0f4bbbf02e583c998d2e49983a28a",
+    "lastHarvestedAt": "2026-10-11T22:59:28.855Z",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
   },
   "hf-autotrust-gev-26b-decide": {
     "repository": "autotrust/GEV-26B-Decide",

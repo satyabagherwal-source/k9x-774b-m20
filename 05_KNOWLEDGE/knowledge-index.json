@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T22:56:34.026Z",
-  "total_verified_learnings": 4228,
+  "last_updated": "2026-10-11T22:59:28.806Z",
+  "total_verified_learnings": 4229,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -102045,6 +102045,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T22:56:34.026Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8": {
+      "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8",
+      "source": "autotrust/JEV-27B-VL",
+      "repository": "autotrust/JEV-27B-VL",
+      "slug": "hf-autotrust-jev-27b-vl",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "content_hash": "7710436864d6ba61348af3f6666b141d6ca0f4bbbf02e583c998d2e49983a28a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T22:59:28.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

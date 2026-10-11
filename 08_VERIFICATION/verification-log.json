@@ -4048,5 +4048,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-DVIU",
+    "timestamp": "2026-10-11T22:59:28.854Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8",
+    "contentHash": "7710436864d6ba61348af3f6666b141d6ca0f4bbbf02e583c998d2e49983a28a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
