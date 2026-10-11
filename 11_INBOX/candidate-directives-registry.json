@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:49:51.606Z",
+  "last_updated": "2026-10-11T10:52:45.237Z",
   "directives": [
     {
       "id": "CD-001",
@@ -350,6 +350,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-hf-xingchen-agi-teleocr-mv3pbkqe"
+    },
+    {
+      "id": "CD-FAR9",
+      "directive_title": "Token-Aligned KV Cache Reuse",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Qwen/Qwen-Image-2.1",
+      "source_commit": "hf-qwen-qwen",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-mv3pfapi"
+    },
+    {
+      "id": "CD-FAR9",
+      "directive_title": "Dynamic Batching for Multi-Reference Conditioning",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Qwen/Qwen-Image-2.1",
+      "source_commit": "hf-qwen-qwen",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHEN TO APPLY** context",
+      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-mv3pfapi"
     }
   ]
 }

@@ -5889,3 +5889,56 @@ config = {
 ```
 **VERIFICATION METHOD**:
 Assert that `config.rope_scaling.type` is in `["mrope", "2d_sincos"]` for document parsing models.
+
+
+---
+
+## 270. Blended Attention Granularity (Harvested from Qwen/Qwen-Image-2.1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Blended Attention Granularity",
+  "source": "Qwen/Qwen-Image-2.1",
+  "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
+  "source_version": "hf-qwen-qwen-image-2.1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T10:52:45.198Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-mv3pfapi",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen-Image-2.1](https://huggingface.co/Qwen/Qwen-Image-2.1) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When combining different attention granularities, use blending or interpolation to avoid discontinuities.
+**WHY**:
+Hard switching between granularities causes visible artifacts at the boundaries. Blending ensures smooth transitions.
+**WHEN TO APPLY**:
+Any system using mixed-granularity attention (e.g., global + local features).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def blended_attention(x, layer_idx):
+    if layer_idx < 16:
+        return global_attention(x)
+    elif layer_idx < 24:
+        return 0.5 * global_attention(x) + 0.5 * local_attention(x)
+    else:
+        return local_attention(x)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER do this
+if layer_idx < 16:
+    return global_attention(x)
+else:
+    return local_attention(x)
+```
+**VERIFICATION METHOD**:
+Visual inspection of generated images for blocky artifacts. Assert that attention weights are continuous across layer boundaries.

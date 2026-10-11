@@ -338,5 +338,15 @@
     "contentHash": "7e3a18899159ec4e34c7c5823746c2b3cddaeaa680ed99e81514a6c9584a4652",
     "lastHarvestedAt": "2026-10-11T10:49:51.605Z",
     "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv3pbkqe"
+  },
+  "hf-qwen-qwen-image-2.1": {
+    "repository": "Qwen/Qwen-Image-2.1",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
+    "sourceVersion": "hf-qwen-qwen-image-2.1",
+    "license": "Open-Source",
+    "contentHash": "9f45356e7fc2422ac27750cae2768dc147c2fa3406f1bfe46b1d0b1a743b902c",
+    "lastHarvestedAt": "2026-10-11T10:52:45.236Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv3pfapi"
   }
 }
