@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:31:26.645Z",
-  "total_cycles_completed": 205,
-  "total_learnings_persisted": 205,
+  "last_updated": "2026-10-11T19:34:24.734Z",
+  "total_cycles_completed": 206,
+  "total_learnings_persisted": 206,
   "total_rules_promoted": 92,
   "history": [
-    {
-      "timestamp": "2026-10-11T08:11:06.226Z",
-      "repository": "expressjs/cors",
-      "learningId": "learn-github-e2e-expressjs-cors-real-mv3jnepw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T08:11:07.215Z",
       "repository": "expressjs/cors",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T19:31:26.645Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T19:34:24.734Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
