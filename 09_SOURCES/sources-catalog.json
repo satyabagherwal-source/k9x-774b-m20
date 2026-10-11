@@ -945,9 +945,9 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceVersion": "hf-openai-gpt-oss-120b",
     "license": "Open-Source",
-    "contentHash": "6d6cfa042e2396a389039039a38657af9cfef456a688db748cb0105552958003",
-    "lastHarvestedAt": "2026-10-11T14:04:08.065Z",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv3w9ew3"
+    "contentHash": "a4a39ef9ea1610df4a3a8543629228ea04c4851329c8509852ac97adb81589a9",
+    "lastHarvestedAt": "2026-10-11T20:55:35.687Z",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd"
   },
   "hf-zai-org-glm-5.2": {
     "repository": "zai-org/GLM-5.2",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:52:44.392Z",
-  "total_cycles_completed": 232,
-  "total_learnings_persisted": 232,
+  "last_updated": "2026-10-11T20:55:35.688Z",
+  "total_cycles_completed": 233,
+  "total_learnings_persisted": 233,
   "total_rules_promoted": 106,
   "history": [
-    {
-      "timestamp": "2026-10-11T10:18:04.631Z",
-      "repository": "Qwen/Qwen3.8-27B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv3o6paa",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T10:21:43.449Z",
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T20:52:44.392Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T20:55:35.688Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
