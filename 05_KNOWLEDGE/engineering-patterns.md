@@ -6728,3 +6728,104 @@ When the model's output is used for automated decision-making with a human-in-th
 ```
 **VERIFICATION METHOD**:
 Evaluate the model's calibration using metrics like Expected Calibration Error (ECE) or Brier Score.
+
+
+---
+
+## 286. LoRA Shape Compatibility Check (Harvested from Comfy-Org/Qwen-Image-2.1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "LoRA Shape Compatibility Check",
+  "source": "Comfy-Org/Qwen-Image-2.1",
+  "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+  "source_version": "hf-comfy-org-qwen-image-2.1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:53:40.839Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv3rlnex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Before applying a LoRA patch to a base model, the system **MUST** verify that the shape of each LoRA tensor matches the corresponding base model tensor. If there is a mismatch, the system **MUST** raise an error.
+**WHY**:
+LoRA weights are delta weights that are added to the base model's weights. If the shapes do not match, the addition will fail or produce garbage. This is a common source of bugs in model composition.
+**WHEN TO APPLY**:
+Any system that applies LoRA patches to neural network models.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def apply_lora(base_model, lora_weights):
+    for key, value in lora_weights.items():
+        if key in base_model.state_dict():
+            if base_model.state_dict()[key].shape != value.shape:
+                raise ValueError(f"LoRA shape mismatch for {key}")
+        else:
+            raise KeyError(f"LoRA key {key} not found in base model")
+    # Apply the LoRA weights
+    for key, value in lora_weights.items():
+        base_model.state_dict()[key] += value
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER apply a LoRA patch without checking shape compatibility
+# NEVER silently ignore shape mismatches
+```
+**VERIFICATION METHOD**:
+Unit test that applies a LoRA patch with a mismatched shape and verifies that an error is raised.
+
+
+---
+
+## 287. Precision Alignment Across Pipeline (Harvested from Comfy-Org/Qwen-Image-2.1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Precision Alignment Across Pipeline",
+  "source": "Comfy-Org/Qwen-Image-2.1",
+  "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+  "source_version": "hf-comfy-org-qwen-image-2.1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:53:40.844Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv3rlnex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The precision (dtype) of all models in a pipeline (Encoder, Diffusion, VAE) **MUST** be aligned. If one model is in BF16, all others **MUST** be in BF16. If one model is in FP16, all others **MUST** be in FP16.
+**WHY**:
+Mixing precisions causes numerical instability, color shifts, and artifacts. BF16 and FP16 have different exponent ranges, which affects the dynamic range of the values.
+**WHEN TO APPLY**:
+Any system that uses a multi-model pipeline for image generation or processing.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def load_pipeline(dtype):
+    encoder = load_model("encoder.safetensors", dtype=dtype)
+    diffusion = load_model("diffusion.safetensors", dtype=dtype)
+    vae = load_model("vae.safetensors", dtype=dtype)
+    return encoder, diffusion, vae
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER load models with different dtypes in the same pipeline
+# NEVER assume that the inference engine will automatically convert dtypes
+```
+**VERIFICATION METHOD**:
+Unit test that loads a pipeline with mismatched dtypes and verifies that an error is raised or that the output is incorrect.

@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:50:28.176Z",
-  "total_cycles_completed": 61,
-  "total_learnings_persisted": 61,
-  "total_rules_promoted": 33,
+  "last_updated": "2026-10-11T11:53:40.915Z",
+  "total_cycles_completed": 62,
+  "total_learnings_persisted": 62,
+  "total_rules_promoted": 35,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -429,6 +429,13 @@
       "timestamp": "2026-10-11T11:50:28.176Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
       "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3rhipt",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T11:53:40.915Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv3rlnex",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

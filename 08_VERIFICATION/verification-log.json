@@ -838,5 +838,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-LNHR",
+    "timestamp": "2026-10-11T11:53:40.911Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv3rlnex",
+    "contentHash": "0d802a4b63d4fdf27795cc6210ed419ed4b1b903178a7c2a0c2e0c4fc3372613",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
