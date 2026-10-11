@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:01:08.936Z",
-  "total_cycles_completed": 141,
-  "total_learnings_persisted": 141,
+  "last_updated": "2026-10-11T16:04:17.007Z",
+  "total_cycles_completed": 142,
+  "total_learnings_persisted": 142,
   "total_rules_promoted": 59,
   "history": [
     {
@@ -1003,6 +1003,13 @@
       "timestamp": "2026-10-11T16:01:08.936Z",
       "repository": "google/gemma-4-31B-it",
       "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T16:04:17.007Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

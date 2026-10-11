@@ -179,3 +179,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-qwen-qwen3-8b-mv407vz0` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-11T15:54:55.336Z |
 | `learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-11T15:58:01.338Z |
 | `learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-11T16:01:08.935Z |
+| `learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-11T16:04:17.006Z |

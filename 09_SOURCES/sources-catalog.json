@@ -1278,5 +1278,15 @@
     "contentHash": "eadbcf540658f842a15b8ae355f2b88b34604d5fe4e30ee947a381eff2a5e1de",
     "lastHarvestedAt": "2026-10-11T16:01:08.935Z",
     "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a"
+  },
+  "hf-baai-bge-base-en-v1.5": {
+    "repository": "BAAI/bge-base-en-v1.5",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+    "sourceVersion": "hf-baai-bge-base-en-v1.5",
+    "license": "Open-Source",
+    "contentHash": "b06177302be179b9c88b2d46a3506d15a95e837b1b741178da39c3d8b0393480",
+    "lastHarvestedAt": "2026-10-11T16:04:17.006Z",
+    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1"
   }
 }
