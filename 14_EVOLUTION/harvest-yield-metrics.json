@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:44:08.132Z",
-  "total_cycles_completed": 229,
-  "total_learnings_persisted": 229,
+  "last_updated": "2026-10-11T20:47:04.695Z",
+  "total_cycles_completed": 230,
+  "total_learnings_persisted": 230,
   "total_rules_promoted": 106,
   "history": [
-    {
-      "timestamp": "2026-10-11T09:49:30.854Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv3n5yx7",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T10:06:21.281Z",
       "repository": "LiquidAI/d1-3B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T20:44:08.132Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
       "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4ajtgj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T20:47:04.695Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4anlp3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
