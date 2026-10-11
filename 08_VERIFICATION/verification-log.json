@@ -3088,5 +3088,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-HS2M",
+    "timestamp": "2026-10-11T19:46:33.694Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
+    "contentHash": "2de7ea9c54f920be5b1d50b0dd410a39d337e39de3765363c6590608d1e6520a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

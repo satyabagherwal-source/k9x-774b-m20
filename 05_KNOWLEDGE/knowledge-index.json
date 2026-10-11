@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:43:28.938Z",
-  "total_verified_learnings": 4164,
+  "last_updated": "2026-10-11T19:46:33.665Z",
+  "total_verified_learnings": 4165,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -100380,6 +100380,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T19:43:28.938Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-mv48hs0n": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
+      "source": "Cloudflare/clef",
+      "repository": "Cloudflare/clef",
+      "slug": "hf-cloudflare-clef",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "content_hash": "2de7ea9c54f920be5b1d50b0dd410a39d337e39de3765363c6590608d1e6520a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 348,
+          "title": "**Immutable Tokenizer Configuration Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 349,
+          "title": "**No Mutable Default Arguments Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 350,
+          "title": "**Consistent Padding Token Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T19:46:33.665Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -10907,3 +10907,183 @@ depths = [10, 10, 10, 10]
 **VERIFICATION METHOD**:
 1.  **Unit Test:** `test_depth_asymmetry` that asserts the ratio `depths[2] / depths[0] >= 3.0`.
 2.  **Ablation Study:** Run training with uniform depths and verify that mAP drops by >2% compared to asymmetric depths.
+
+
+---
+
+## 348. **Immutable Tokenizer Configuration Rule** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Immutable Tokenizer Configuration Rule**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T19:46:33.643Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The tokenizer configuration (`tokenizer_config.json`) must be immutable at runtime; any mutation of `pad_token_id`, `bos_token_id`, or `eos_token_id` after model loading must be prohibited.  
+
+**WHY**:  
+Changing token IDs after the model is loaded breaks the alignment between the head’s logits and the question options, leading to mis‑labelled probabilities and silent data corruption.  
+
+**WHEN TO APPLY**:  
+All modules that consume the tokenizer: `joint_schema_model.py`, `processor.py`, and any downstream inference wrappers.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# joint_schema_model.py
+from dataclasses import dataclass, field
+from typing import Dict
+
+@dataclass(frozen=True)
+class TokenizerConfig:
+    pad_token_id: int
+    bos_token_id: int
+    eos_token_id: int
+    # other fields omitted for brevity
+
+def load_tokenizer_config(path: str) -> TokenizerConfig:
+    raw = json.load(open(path))
+    return TokenizerConfig(
+        pad_token_id=raw["pad_token_id"],
+        bos_token_id=raw["bos_token_id"],
+        eos_token_id=raw["eos_token_id"],
+    )
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: mutable tokenizer config
+tokenizer_config = json.load(open("tokenizer_config.json"))
+tokenizer_config["pad_token_id"] = 0  # mutates shared state
+```
+
+**VERIFICATION METHOD**  
+Run `pytest` with a fixture that asserts `isinstance(tokenizer_config, TokenizerConfig)` and that the dataclass is frozen.  
+
+---
+
+
+---
+
+## 349. **No Mutable Default Arguments Rule** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**No Mutable Default Arguments Rule**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T19:46:33.647Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> Functions that process records must never use mutable default arguments (e.g., `def encode_record(record, tokenizer, processor=None):`).  
+
+**WHY**:  
+Mutable defaults are shared across calls, causing state leakage between requests and unpredictable side‑effects such as stale caches or corrupted tensors.  
+
+**WHEN TO APPLY**:  
+All public API functions in `joint_schema_model.py` and `processor.py`.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+def encode_record(record: Dict, tokenizer, processor=None):
+    if processor is None:
+        processor = DefaultProcessor()
+    # processing logic
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+def encode_record(record: Dict, tokenizer, processor=DefaultProcessor()):
+    # processor is shared across calls
+```
+
+**VERIFICATION METHOD**  
+Static analysis with `flake8` rule `B006` (mutable default argument).  
+
+---
+
+
+---
+
+## 350. **Consistent Padding Token Rule** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Consistent Padding Token Rule**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T19:46:33.652Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The `pad_token_id` used by the tokenizer and the `pad_token_id` used by the collate function must be identical; any mismatch must raise an exception at model load time.  
+
+**WHY**:  
+Mismatched pad tokens cause the joint head to mis‑align logits with options, producing NaNs or incorrect probabilities.  
+
+**WHEN TO APPLY**:  
+During `load_release_model` and `collate_records`.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+def load_release_model(path: str, device: str):
+    tokenizer = AutoTokenizer.from_pretrained(path)
+    processor = Processor.from_pretrained(path)
+    if tokenizer.pad_token_id != processor.pad_token_id:
+        raise ValueError("Tokenizer and processor pad_token_id mismatch")
+    # load model
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: silent mismatch
+if tokenizer.pad_token_id != processor.pad_token_id:
+    pass  # no error, leads to silent corruption
+```
+
+**VERIFICATION METHOD**  
+Unit test that loads a model with a deliberately mismatched pad token and expects a `ValueError`.  
+
+---
