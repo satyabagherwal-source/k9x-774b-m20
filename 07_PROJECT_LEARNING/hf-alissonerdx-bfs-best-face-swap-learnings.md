@@ -3,8 +3,8 @@
 > **Source Version**: `hf-alissoner`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T22:25:36.568Z  
-> **Learning ID**: `learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv2yqgqg`  
+> **Timestamp**: 2026-10-11T04:19:42.996Z  
+> **Learning ID**: `learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv3bdul0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap](https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T22:25:36.407Z  
+> **Harvest Timestamp**: 2026-10-11T04:19:42.810Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 248475 downloads | 1353 likes
+- **Stars / Engagement**: 248475 downloads | 1362 likes
 
 ---
 
