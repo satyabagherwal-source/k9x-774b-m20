@@ -315,3 +315,4 @@
 | `CYCLE-20261011-BI3K` | `2026-10-11T22:01:38.912Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 368, Rule 369` | Yes (`102d508e...`) |
 | `CYCLE-20261011-FGJW` | `2026-10-11T22:04:43.532Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`4dc88b7e...`) |
 | `CYCLE-20261011-J80M` | `2026-10-11T22:07:39.094Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`31b09193...`) |
+| `CYCLE-20261011-ND5L` | `2026-10-11T22:10:52.377Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`a1ead13c...`) |

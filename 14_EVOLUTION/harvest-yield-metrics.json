@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T22:07:39.096Z",
-  "total_cycles_completed": 257,
-  "total_learnings_persisted": 257,
+  "last_updated": "2026-10-11T22:10:52.380Z",
+  "total_cycles_completed": 258,
+  "total_learnings_persisted": 258,
   "total_rules_promoted": 114,
   "history": [
-    {
-      "timestamp": "2026-10-11T11:47:41.309Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv3rdxya",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T11:50:28.176Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T22:07:39.096Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T22:10:52.380Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
