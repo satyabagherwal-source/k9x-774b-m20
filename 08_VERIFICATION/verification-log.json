@@ -2398,5 +2398,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-JVNQ",
+    "timestamp": "2026-10-11T17:28:13.574Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-hf-francisring-prism-mv43jvl8",
+    "contentHash": "d532018c7883c93c4416357bd00bf9a93b028872ea6055d96dc5a875fabb1e91",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
