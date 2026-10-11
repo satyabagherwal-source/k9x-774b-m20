@@ -1393,5 +1393,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-IN0W",
+    "timestamp": "2026-10-11T13:43:18.800Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv3vimz1",
+    "contentHash": "82a7128361f5d7b53c05ea6e599308189b2a4734ac546e5f1bbbd5def3c856c7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
