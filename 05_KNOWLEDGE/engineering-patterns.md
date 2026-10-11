@@ -7303,3 +7303,53 @@ model.safetensors  # No metadata, cannot be selected or validated
 
 **VERIFICATION METHOD**:
 Regex validation of LoRA filenames against the expected pattern.
+
+
+---
+
+## 297. The Pooling Strategy Contract (Harvested from sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Pooling Strategy Contract",
+  "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T13:01:21.870Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv3u0oxd",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The pooling method is a hyperparameter of the model, not a universal constant. The consumer MUST verify the `pooling_mode` in the model configuration or documentation. Using the wrong pooling method is a silent failure mode.
+**WHY**:
+Different models are fine-tuned with different pooling strategies. Using the wrong strategy will result in embeddings that are mathematically incorrect but do not cause a crash.
+**WHEN TO APPLY**:
+Any time a pre-trained model is used for a task that requires sentence-level embeddings.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Check the model configuration
+if model.config.pooling_mode_cls_token:
+    sentence_embedding = model_output.last_hidden_state[:, 0, :]
+elif model.config.pooling_mode_mean_tokens:
+    sentence_embedding = masked_mean_pooling(model_output.last_hidden_state, attention_mask)
+else:
+    raise ValueError("Unsupported pooling mode")
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER assume the pooling method
+sentence_embedding = model_output.last_hidden_state[:, 0, :] # Assuming CLS
+```
+**VERIFICATION METHOD**:
+Unit test: Load a model with a known pooling mode. Verify that the pooling function used matches the model's configuration.

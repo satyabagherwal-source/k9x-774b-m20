@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:58:22.511Z",
+  "last_updated": "2026-10-11T13:01:21.935Z",
   "directives": [
     {
       "id": "CD-001",
@@ -944,6 +944,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv3twuhc"
+    },
+    {
+      "id": "CD-0OZZ",
+      "directive_title": "The Masked Aggregation Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_commit": "hf-sentence-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv3u0oxd"
+    },
+    {
+      "id": "CD-0OZZ",
+      "directive_title": "The Input Boundary Enforcement",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_commit": "hf-sentence-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv3u0oxd"
     }
   ]
 }

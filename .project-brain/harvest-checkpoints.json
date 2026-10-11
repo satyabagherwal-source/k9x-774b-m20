@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:58:22.513Z",
+  "last_updated": "2026-10-11T13:01:21.937Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -832,15 +832,15 @@
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv3cz1mn",
-      "content_hash": "73ecc1606537449ec92be6f1c23ce4ed5cf933be6f66a417b9d7448409016bbe",
-      "verified_at": "2026-10-11T05:04:11.574Z",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv3u0oxd",
+      "content_hash": "5f2270e4bf4436682a5a6b89d417216996be4ffab0d7747afcceb932cf957b05",
+      "verified_at": "2026-10-11T13:01:21.937Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T05:04:11.574Z"
+      "last_updated": "2026-10-11T13:01:21.937Z"
     },
     "google-bert/bert-base-uncased": {
       "repository": "google-bert/bert-base-uncased",

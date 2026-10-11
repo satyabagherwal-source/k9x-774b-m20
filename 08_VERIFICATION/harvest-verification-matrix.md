@@ -134,3 +134,4 @@
 | `CYCLE-20261011-PC2R` | `2026-10-11T12:52:31.971Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`1d53d3c2...`) |
 | `CYCLE-20261011-T42G` | `2026-10-11T12:55:28.216Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md` | Yes (`86f423a2...`) |
 | `CYCLE-20261011-WUJX` | `2026-10-11T12:58:22.509Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | Yes (`7a773876...`) |
+| `CYCLE-20261011-0OZX` | `2026-10-11T13:01:21.933Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 297` | Yes (`5f2270e4...`) |
