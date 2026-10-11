@@ -213,3 +213,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-11T17:46:11.285Z |
 | `learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-11T17:49:17.784Z |
 | `learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-11T17:52:17.762Z |
+| `learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-11T17:55:27.780Z |
