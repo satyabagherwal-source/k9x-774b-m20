@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:03:12.715Z",
-  "total_verified_learnings": 4079,
+  "last_updated": "2026-10-11T15:06:26.569Z",
+  "total_verified_learnings": 4080,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -98192,6 +98192,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T15:03:12.715Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko": {
+      "learning_id": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
+      "source": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "slug": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "content_hash": "c2b29bb58a67f05f77766f11688b23b6b33e4ea28716ed1a418f02edbd237c9f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T15:06:26.568Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

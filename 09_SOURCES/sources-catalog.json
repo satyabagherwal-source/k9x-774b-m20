@@ -1148,5 +1148,15 @@
     "contentHash": "e76df3c62b458b4ac60c5b45d5a3d8ac6d2116514a0d43ee29f2bbdf6f995b9d",
     "lastHarvestedAt": "2026-10-11T15:03:12.764Z",
     "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy"
+  },
+  "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "license": "Open-Source",
+    "contentHash": "c2b29bb58a67f05f77766f11688b23b6b33e4ea28716ed1a418f02edbd237c9f",
+    "lastHarvestedAt": "2026-10-11T15:06:26.619Z",
+    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko"
   }
 }

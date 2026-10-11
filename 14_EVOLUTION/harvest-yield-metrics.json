@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:03:12.765Z",
-  "total_cycles_completed": 126,
-  "total_learnings_persisted": 126,
+  "last_updated": "2026-10-11T15:06:26.620Z",
+  "total_cycles_completed": 127,
+  "total_learnings_persisted": 127,
   "total_rules_promoted": 54,
   "history": [
     {
@@ -898,6 +898,13 @@
       "timestamp": "2026-10-11T15:03:12.765Z",
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T15:06:26.620Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
