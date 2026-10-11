@@ -204,3 +204,4 @@
 
 | `CYCLE-2026-10-11-RESEARCH` | `2026-10-11T16:20:12.611Z` | `temporalio/sdk-typescript` | Targeted Research Proof | `VERIFIED` | `Rule 319` in `05_KNOWLEDGE` | Yes |
 | `CYCLE-2026-10-11-STAGED` | `2026-10-11T16:20:12.611Z` | `canonical_task_execution` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-094-stream---asynciterable-collection-b.md` | Pending || `CYCLE-2026-10-11-STAGED` | `2026-10-11T16:21:54.935Z` | `canonical_task_execution` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-095-stream---asynciterable-collection-b.md` | Pending |
+| `CYCLE-20261011-3J6T` | `2026-10-11T16:19:31.685Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`ffdba1b5...`) |

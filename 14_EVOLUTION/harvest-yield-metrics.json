@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:16:20.747Z",
-  "total_cycles_completed": 146,
-  "total_learnings_persisted": 146,
+  "last_updated": "2026-10-11T16:19:31.687Z",
+  "total_cycles_completed": 147,
+  "total_learnings_persisted": 147,
   "total_rules_promoted": 62,
   "history": [
     {
@@ -1038,6 +1038,13 @@
       "timestamp": "2026-10-11T16:16:20.747Z",
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T16:19:31.687Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv413j49",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
