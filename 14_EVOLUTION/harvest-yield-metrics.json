@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:33:34.975Z",
-  "total_cycles_completed": 116,
-  "total_learnings_persisted": 116,
-  "total_rules_promoted": 52,
+  "last_updated": "2026-10-11T14:36:34.047Z",
+  "total_cycles_completed": 117,
+  "total_learnings_persisted": 117,
+  "total_rules_promoted": 54,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -829,6 +829,13 @@
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:36:34.047Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

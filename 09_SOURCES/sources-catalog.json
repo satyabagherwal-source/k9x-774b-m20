@@ -1048,5 +1048,15 @@
     "contentHash": "64dfad1ec27b2d0f354ac7c6b5700d9292d436ff2ab597d5f806cbe4260b573e",
     "lastHarvestedAt": "2026-10-11T14:33:34.975Z",
     "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0"
+  },
+  "hf-speridlabs-iris-3b": {
+    "repository": "speridlabs/iris-3b",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
+    "sourceVersion": "hf-speridlabs-iris-3b",
+    "license": "Open-Source",
+    "contentHash": "637d94aa9ae5d55f73c5b64c392eec4335125ed36c46a3bc78730e1a7451c2dc",
+    "lastHarvestedAt": "2026-10-11T14:36:34.046Z",
+    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7"
   }
 }

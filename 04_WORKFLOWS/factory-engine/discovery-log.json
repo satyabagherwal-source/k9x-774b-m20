@@ -17332,5 +17332,17 @@
     "qualityScore": 13010,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-11T08:13:59.517Z"
+  },
+  {
+    "name": "speridlabs/iris-3b",
+    "fullName": "speridlabs/iris-3b",
+    "url": "https://huggingface.co/speridlabs/iris-3b",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: speridlabs/iris-3b (135 likes, 393 downloads)",
+    "likes": 135,
+    "downloads": 393,
+    "qualityScore": 1743,
+    "discoveredAt": "2026-10-11T14:36:13.545Z"
   }
 ]
