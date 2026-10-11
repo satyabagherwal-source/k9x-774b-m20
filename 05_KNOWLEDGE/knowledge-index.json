@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:19:34.398Z",
-  "total_verified_learnings": 4176,
+  "last_updated": "2026-10-11T20:22:49.160Z",
+  "total_verified_learnings": 4177,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -100716,6 +100716,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T20:19:34.398Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm": {
+      "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm",
+      "source": "CompVis/stable-diffusion-v1-4",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "slug": "hf-compvis-stable-diffusion-v1-4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "source_version": "hf-compvis-stable-diffusion-v1-4",
+      "content_hash": "fb4cc1d288a936384381dd691102b00e877ad9ad5b322e16915a95ecadfa5c66",
+      "dossier_path": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 357,
+          "title": "Weight Lineage & Initialization Provenance Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 358,
+          "title": "Classifier-Free Guidance (CFG) Conditioning Drop Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T20:22:49.160Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

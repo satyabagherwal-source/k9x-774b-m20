@@ -262,3 +262,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv49gron` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-11T20:13:46.245Z |
 | `learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-11T20:16:41.058Z |
 | `learn-huggingface-hf-amazon-chronos-2-mv49o8cx` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-11T20:19:34.444Z |
+| `learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-11T20:22:49.190Z |
