@@ -4198,5 +4198,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-GUH6",
+    "timestamp": "2026-10-11T23:29:47.082Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv4gguek",
+    "contentHash": "ba4166b488d17326de99d66130b4c2157bb95e09ec5d74768f01e777777cc582",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

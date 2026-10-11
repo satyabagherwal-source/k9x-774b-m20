@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T23:26:55.002Z",
-  "total_cycles_completed": 283,
-  "total_learnings_persisted": 283,
+  "last_updated": "2026-10-11T23:29:47.084Z",
+  "total_cycles_completed": 284,
+  "total_learnings_persisted": 284,
   "total_rules_promoted": 118,
   "history": [
-    {
-      "timestamp": "2026-10-11T13:04:19.519Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv3u4hza",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T13:07:23.548Z",
       "repository": "google/electra-base-discriminator",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T23:26:55.002Z",
       "repository": "LiquidAI/d1-3B",
       "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv4gd5ma",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T23:29:47.084Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv4gguek",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
