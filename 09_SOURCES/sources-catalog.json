@@ -648,5 +648,15 @@
     "contentHash": "8b0bfd1928ebc67d8294551c65643ea351a360fe6803c33829d466cda388f4bf",
     "lastHarvestedAt": "2026-10-11T12:34:55.760Z",
     "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv3t2p10"
+  },
+  "hf-facebook-sam3": {
+    "repository": "facebook/sam3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/facebook/sam3",
+    "sourceVersion": "hf-facebook-sam3",
+    "license": "Open-Source",
+    "contentHash": "e51015cbdb81c497bc32a64f08d21aa57e859ad64107db901ad9b5590bfe3231",
+    "lastHarvestedAt": "2026-10-11T12:37:38.152Z",
+    "learningId": "learn-huggingface-hf-facebook-sam3-mv3t66d0"
   }
 }

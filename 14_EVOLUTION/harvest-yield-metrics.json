@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:34:55.761Z",
-  "total_cycles_completed": 76,
-  "total_learnings_persisted": 76,
+  "last_updated": "2026-10-11T12:37:38.152Z",
+  "total_cycles_completed": 77,
+  "total_learnings_persisted": 77,
   "total_rules_promoted": 44,
   "history": [
     {
@@ -534,6 +534,13 @@
       "timestamp": "2026-10-11T12:34:55.761Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv3t2p10",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T12:37:38.152Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-hf-facebook-sam3-mv3t66d0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
