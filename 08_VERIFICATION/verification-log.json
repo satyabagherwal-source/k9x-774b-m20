@@ -3853,5 +3853,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-Z4XC",
+    "timestamp": "2026-10-11T22:20:01.584Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0",
+    "contentHash": "edad5c5fd192b35d1dc039ee8e24f2fe2ccf5a8a1f847d6cfb7b2ab2ad0803d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
