@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:06:21.281Z",
-  "total_cycles_completed": 33,
-  "total_learnings_persisted": 33,
+  "last_updated": "2026-10-11T10:10:15.227Z",
+  "total_cycles_completed": 34,
+  "total_learnings_persisted": 34,
   "total_rules_promoted": 10,
   "history": [
     {
@@ -233,6 +233,13 @@
       "timestamp": "2026-10-11T10:06:21.281Z",
       "repository": "LiquidAI/d1-3B",
       "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv3nrmky",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T10:10:15.227Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv3nwn3d",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

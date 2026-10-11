@@ -83,3 +83,4 @@
 | `CYCLE-20261011-A7U4` | `2026-10-11T09:24:49.324Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`83b69df4...`) |
 | `CYCLE-20261011-5YZO` | `2026-10-11T09:49:30.852Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`3807cf57...`) |
 | `CYCLE-20261011-RMN4` | `2026-10-11T10:06:21.280Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`57bfb6f6...`) |
+| `CYCLE-20261011-WN5M` | `2026-10-11T10:10:15.226Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`cb026f1e...`) |

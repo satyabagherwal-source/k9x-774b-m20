@@ -218,5 +218,15 @@
     "contentHash": "57bfb6f6f81f2c2683e101d10dde7aa5dcf0853a3a2be684169959990749181c",
     "lastHarvestedAt": "2026-10-11T10:06:21.280Z",
     "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv3nrmky"
+  },
+  "hf-cactus-compute-whistle": {
+    "repository": "Cactus-Compute/whistle",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
+    "sourceVersion": "hf-cactus-compute-whistle",
+    "license": "Open-Source",
+    "contentHash": "cb026f1ee27954b253d5faf883e6939925ae083edcf80eb08a5be69b8eba7e0d",
+    "lastHarvestedAt": "2026-10-11T10:10:15.227Z",
+    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv3nwn3d"
   }
 }
