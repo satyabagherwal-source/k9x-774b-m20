@@ -75,3 +75,4 @@
 | `CYCLE-20261011-1C9P` | `2026-10-11T08:49:55.549Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`efddf4d6...`) |
 | `CYCLE-20261011-4YX4` | `2026-10-11T08:52:44.872Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 261, Rule 262` | Yes (`4d03a067...`) |
 | `CYCLE-20261011-A1LL` | `2026-10-11T08:56:41.625Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`a8a1dd1b...`) |
+| `CYCLE-20261011-FCYZ` | `2026-10-11T09:00:49.643Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`a683c478...`) |

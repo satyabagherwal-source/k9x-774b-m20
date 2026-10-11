@@ -138,5 +138,15 @@
     "contentHash": "a8a1dd1ba3b9381b311da261fd748e20d0d07712db3dd3a30540276bf2b02a22",
     "lastHarvestedAt": "2026-10-11T08:56:41.625Z",
     "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv3la1jq"
+  },
+  "hf-convaiinnovations-laya": {
+    "repository": "convaiinnovations/laya",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
+    "sourceVersion": "hf-convaiinnovations-laya",
+    "license": "Open-Source",
+    "contentHash": "a683c478d0609b8b79d986dc2a0b243e4d486c5fb11000229a390ea04dad97b9",
+    "lastHarvestedAt": "2026-10-11T09:00:49.644Z",
+    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv3lfcux"
   }
 }
