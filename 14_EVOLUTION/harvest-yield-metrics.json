@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:37:16.691Z",
-  "total_cycles_completed": 207,
-  "total_learnings_persisted": 207,
+  "last_updated": "2026-10-11T19:40:11.171Z",
+  "total_cycles_completed": 208,
+  "total_learnings_persisted": 208,
   "total_rules_promoted": 92,
   "history": [
-    {
-      "timestamp": "2026-10-11T08:11:19.972Z",
-      "repository": "test-org/gateway-verifier",
-      "learningId": "learn-github-test-org-gateway-verifier-mv3jnpds",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T08:11:20.321Z",
       "repository": "test-org/rule-verifier",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T19:37:16.691Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv485u82",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T19:40:11.171Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv489kut",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

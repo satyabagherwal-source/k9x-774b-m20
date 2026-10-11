@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:37:16.650Z",
-  "total_verified_learnings": 4162,
+  "last_updated": "2026-10-11T19:40:11.131Z",
+  "total_verified_learnings": 4163,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -100332,6 +100332,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T19:37:16.650Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-google-embeddinggemma-2-mv489kut": {
+      "learning_id": "learn-huggingface-hf-google-embeddinggemma-2-mv489kut",
+      "source": "google/embeddinggemma-2",
+      "repository": "google/embeddinggemma-2",
+      "slug": "hf-google-embeddinggemma-2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google/embeddinggemma-2",
+      "source_version": "hf-google-embeddinggemma-2",
+      "content_hash": "bfeb94c4cfb51e78f27d6294a3448c0cb16159e1ad8abb14be65c8917db4dac8",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T19:40:11.131Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
