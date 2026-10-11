@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:34:35.005Z",
-  "total_cycles_completed": 246,
-  "total_learnings_persisted": 246,
+  "last_updated": "2026-10-11T21:37:29.854Z",
+  "total_cycles_completed": 247,
+  "total_learnings_persisted": 247,
   "total_rules_promoted": 112,
   "history": [
-    {
-      "timestamp": "2026-10-11T11:01:33.636Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv3pqmef",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T11:04:51.403Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T21:34:35.005Z",
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv4ccp0f",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T21:37:29.854Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

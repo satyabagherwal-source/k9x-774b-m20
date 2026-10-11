@@ -3643,5 +3643,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-GFZU",
+    "timestamp": "2026-10-11T21:37:29.850Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7",
+    "contentHash": "34bd7ef3c6e2ae0cc7c2771ed3c12a06b2a3030faa9f14e6c063c9fbbb122adb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
