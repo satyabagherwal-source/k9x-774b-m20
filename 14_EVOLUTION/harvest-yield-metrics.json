@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:13:10.680Z",
-  "total_cycles_completed": 89,
-  "total_learnings_persisted": 89,
+  "last_updated": "2026-10-11T13:16:06.837Z",
+  "total_cycles_completed": 90,
+  "total_learnings_persisted": 90,
   "total_rules_promoted": 45,
   "history": [
     {
@@ -625,6 +625,13 @@
       "timestamp": "2026-10-11T13:13:10.680Z",
       "repository": "Qwen/Qwen3-0.6B",
       "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv3ufvt7",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T13:16:06.837Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-hf-google-t5-t5-small-mv3ujnq6",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
