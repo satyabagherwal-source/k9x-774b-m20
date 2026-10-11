@@ -108,5 +108,15 @@
     "contentHash": "81e0da704570394c655df8a2e3f5b0b3299a7a7364489a49d2a21a4089bd62ed",
     "lastHarvestedAt": "2026-10-11T08:45:55.480Z",
     "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv3kw6z4"
+  },
+  "hf-jialinyyzz-humanizer": {
+    "repository": "jialinyyzz/humanizer",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
+    "sourceVersion": "hf-jialinyyzz-humanizer",
+    "license": "Open-Source",
+    "contentHash": "efddf4d6022433e2abada7c02bdfeb4980e7f3321be0cd5b0a26484cd8f7f73b",
+    "lastHarvestedAt": "2026-10-11T08:49:55.550Z",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv3l1c7c"
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:45:55.482Z",
+  "last_updated": "2026-10-11T08:49:55.552Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1644,15 +1644,15 @@
       "repository": "jialinyyzz/humanizer",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-jialinyyzz-humanizer-mv36ef9s",
-      "content_hash": "e5d86433587d5eb923011cad8da4793b68e85697db7775f5ed992f3b66672ce4",
-      "verified_at": "2026-10-11T02:00:11.792Z",
+      "learning_id": "learn-huggingface-hf-jialinyyzz-humanizer-mv3l1c7c",
+      "content_hash": "efddf4d6022433e2abada7c02bdfeb4980e7f3321be0cd5b0a26484cd8f7f73b",
+      "verified_at": "2026-10-11T08:49:55.552Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T02:00:11.792Z"
+      "last_updated": "2026-10-11T08:49:55.552Z"
     },
     "autotrust/JEV-27B-VL": {
       "repository": "autotrust/JEV-27B-VL",

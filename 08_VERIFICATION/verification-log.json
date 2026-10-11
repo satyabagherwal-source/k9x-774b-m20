@@ -253,5 +253,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-1C9P",
+    "timestamp": "2026-10-11T08:49:55.549Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv3l1c7c",
+    "contentHash": "efddf4d6022433e2abada7c02bdfeb4980e7f3321be0cd5b0a26484cd8f7f73b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
