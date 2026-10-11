@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T23:23:43.015Z",
-  "total_cycles_completed": 282,
-  "total_learnings_persisted": 282,
+  "last_updated": "2026-10-11T23:26:55.002Z",
+  "total_cycles_completed": 283,
+  "total_learnings_persisted": 283,
   "total_rules_promoted": 118,
   "history": [
-    {
-      "timestamp": "2026-10-11T13:01:21.936Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv3u0oxd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T13:04:19.519Z",
       "repository": "google-bert/bert-base-uncased",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T23:23:43.015Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4g91hj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T23:26:55.002Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv4gd5ma",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
