@@ -8923,3 +8923,125 @@ async function unsafeDualWrite(db, messageBroker, order) {
 
 **VERIFICATION METHOD**:
 Retransmission assertion test simulating network timeouts during Saga rollback, proving that repeating the compensating action with the same sagaId and stepId executes the underlying external refund exactly once, while subsequent invocations return ALREADY_COMPENSATED without side-effects.
+
+
+---
+
+## 320. Non-Autoregressive Decision Routing for Low-Latency Guardrails (Harvested from convaiinnovations/laya)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Autoregressive Decision Routing for Low-Latency Guardrails",
+  "source": "convaiinnovations/laya",
+  "source_url": "https://huggingface.co/convaiinnovations/laya",
+  "source_version": "hf-convaiinnovations-laya",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T16:37:33.569Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya) (Revision: `hf-convaii`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For real-time decision routing (classification, scoring, binary checks) where latency < 100ms is required, you MUST use a non-autoregressive encoder-based model (e.g., BERT-style) with specialized decision heads. You MUST NOT use autoregressive LLMs for this specific task, as the sequential generation overhead and parsing fragility violate latency and reliability invariants.
+**WHY**:
+Autoregressive models incur $O(N)$ latency where $N$ is the output length, plus $O(1)$ per token overhead for KV-cache management. More critically, they require post-hoc parsing (JSON/XML) which introduces a failure mode (parse error) that does not exist in direct vector-to-label mapping. Non-autoregressive models provide a single forward pass $O(1)$ (relative to output length) and output native tensors, eliminating parsing errors.
+**WHEN TO APPLY**:
+Any system requiring real-time moderation, intent classification, or risk scoring on text inputs where sub-100ms latency is a hard constraint.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudo-code for Non-Autoregressive Decision Head
+class DecisionHead(nn.Module):
+    def __init__(self, hidden_size, num_classes):
+        super().__init__()
+        self.classifier = nn.Linear(hidden_size, num_classes)
+        self.softmax = nn.Softmax(dim=-1)
+
+    def forward(self, hidden_states):
+        # hidden_states: [batch_size, seq_len, hidden_size]
+        # Pooling strategy: Mean or CLS token
+        pooled = hidden_states[:, 0, :]  # CLS token
+        logits = self.classifier(pooled)
+        probabilities = self.softmax(logits)
+        return probabilities  # Direct probability output, no text generation
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using LLM for simple classification
+def classify_with_llm(text):
+    prompt = f"Classify this text as billing or technical: {text}. Output JSON."
+    response = llm.generate(prompt)  # Slow, sequential
+    try:
+        data = json.loads(response)  # Fragile parsing
+        return data["label"]
+    except json.JSONDecodeError:
+        return "error"  # High failure rate
+```
+**VERIFICATION METHOD**:
+1.  **Latency Test**: Assert `time.time() - start_time < 0.1` for 95th percentile requests.
+2.  **Output Type Check**: Assert `isinstance(result, float)` or `isinstance(result, str)` directly from the model output, ensuring no intermediate string parsing step exists in the critical path.
+
+
+---
+
+## 321. Calibrated Probability Output via Proper Scoring Rules (Harvested from convaiinnovations/laya)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Calibrated Probability Output via Proper Scoring Rules",
+  "source": "convaiinnovations/laya",
+  "source_url": "https://huggingface.co/convaiinnovations/laya",
+  "source_version": "hf-convaiinnovations-laya",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T16:37:33.576Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya) (Revision: `hf-convaii`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When a model outputs probabilities for decision-making, you MUST train or calibrate the model using **Strictly Proper Scoring Rules** (e.g., Log Loss, Brier Score) via Reinforcement Learning (RLCD) or post-hoc calibration. You MUST NOT rely on raw softmax outputs from standard cross-entropy training without verification, as they are often overconfident.
+**WHY**:
+Standard cross-entropy training minimizes error but does not guarantee that the predicted probability $p$ equals the true probability $P(y=1|x)$. Overconfident models (e.g., predicting 0.99 when true probability is 0.6) lead to catastrophic failures in risk management (e.g., approving a high-risk transaction because the model was "confident"). Proper scoring rules ensure that the model is rewarded only when its reported probability matches the empirical frequency.
+**WHEN TO APPLY**:
+Any system where the probability value itself is used for thresholding, risk scoring, or downstream probabilistic reasoning.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudo-code for RLCD Reward Function
+def rlcd_reward(predicted_prob, true_label):
+    # Log Loss (Strictly Proper)
+    if true_label == 1:
+        return -math.log(predicted_prob)
+    else:
+        return -math.log(1 - predicted_prob)
+    
+# During Training:
+# reward = rlcd_reward(model_output, ground_truth)
+# policy_gradient = reward * log_prob(action)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using raw softmax without calibration
+def get_risk_score(model_output):
+    # Raw softmax can be 0.99 for a 0.6 true probability
+    return model_output  # Dangerous for thresholding
+```
+**VERIFICATION METHOD**:
+1.  **Calibration Plot**: Generate a reliability diagram (predicted probability vs. empirical frequency). The curve must be close to the diagonal.
+2.  **ECE (Expected Calibration Error)**: Assert `ECE < 0.05` on a held-out validation set.

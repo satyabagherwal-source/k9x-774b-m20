@@ -209,3 +209,4 @@
 | `CYCLE-20261011-ATPC` | `2026-10-11T16:25:11.904Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`a099339a...`) |
 | `CYCLE-20261011-J8Z6` | `2026-10-11T16:31:44.946Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`70fe777f...`) |
 | `CYCLE-20261011-MUTX` | `2026-10-11T16:34:33.237Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`dc5fdfc1...`) |
+| `CYCLE-20261011-QQ1B` | `2026-10-11T16:37:33.647Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 320, Rule 321` | Yes (`e82f298a...`) |

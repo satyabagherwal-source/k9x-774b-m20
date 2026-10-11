@@ -192,3 +192,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-11T16:25:11.906Z |
 | `learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-11T16:31:44.951Z |
 | `learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-11T16:34:33.238Z |
+| `learn-huggingface-hf-convaiinnovations-laya-mv41qpya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-11T16:37:33.648Z |
