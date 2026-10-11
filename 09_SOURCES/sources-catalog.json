@@ -1098,5 +1098,15 @@
     "contentHash": "a9830abce40b2d92ff5445b4e15091638e16e0b612634f85f2700ff6a7475c8e",
     "lastHarvestedAt": "2026-10-11T14:48:34.687Z",
     "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu"
+  },
+  "hf-venastine-research-xing4.0-29b-a4b-gguf": {
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+    "license": "Open-Source",
+    "contentHash": "5e235bb6e47c02e2b638a3bf763873887c0d192ca9cb841ab9809f8bcf38148e",
+    "lastHarvestedAt": "2026-10-11T14:51:29.583Z",
+    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6"
   }
 }
