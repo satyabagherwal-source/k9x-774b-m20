@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T02:03:01.561Z",
+  "last_updated": "2026-10-11T02:06:06.762Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1672,15 +1672,15 @@
       "repository": "autotrust/GEV-26B-Decide",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-mv2tyt3t",
-      "content_hash": "c2167e01b1caf738bb3304b1cbc5de8d72cccf1f5fffaf530478b87c0fc7d6e1",
-      "verified_at": "2026-10-10T20:12:07.829Z",
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-mv36m163",
+      "content_hash": "2bf2dd9d8b1b1237ffd28274a70b9181e3043e9d56a15701ced8ff65ba511a52",
+      "verified_at": "2026-10-11T02:06:06.762Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T20:12:07.829Z"
+      "last_updated": "2026-10-11T02:06:06.762Z"
     },
     "ConwayResearch/Underdog-Saluki-27B-1.0": {
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
