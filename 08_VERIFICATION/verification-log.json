@@ -3238,5 +3238,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-KIN4",
+    "timestamp": "2026-10-11T20:16:41.056Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk",
+    "contentHash": "92a75a959a72f0410c5dc279b5bf61cf48ef6056b6ba5bd46a64dbb2828743a1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
