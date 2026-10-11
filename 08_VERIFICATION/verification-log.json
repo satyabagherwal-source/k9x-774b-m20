@@ -3673,5 +3673,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-O4RH",
+    "timestamp": "2026-10-11T21:43:28.541Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot",
+    "contentHash": "530430f856094584234622d996c296c23a2554f7afef4bdde165bae54c255177",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

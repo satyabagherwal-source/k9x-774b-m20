@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:40:37.002Z",
-  "total_cycles_completed": 248,
-  "total_learnings_persisted": 248,
+  "last_updated": "2026-10-11T21:43:28.543Z",
+  "total_cycles_completed": 249,
+  "total_learnings_persisted": 249,
   "total_rules_promoted": 112,
   "history": [
-    {
-      "timestamp": "2026-10-11T11:07:49.969Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv3pyot0",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T11:10:40.843Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T21:40:37.002Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T21:43:28.543Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

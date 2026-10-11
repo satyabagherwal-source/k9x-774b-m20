@@ -3,8 +3,8 @@
 > **Source Version**: `hf-venastine`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-11T14:51:29.490Z  
-> **Learning ID**: `learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6`  
+> **Timestamp**: 2026-10-11T21:43:28.445Z  
+> **Learning ID**: `learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF](https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-11T14:51:28.828Z  
+> **Harvest Timestamp**: 2026-10-11T21:43:27.712Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
