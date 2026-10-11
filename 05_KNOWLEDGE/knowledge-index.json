@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:16:20.697Z",
+  "last_updated": "2026-10-11T16:20:12.931Z",
   "total_verified_learnings": 4100,
   "total_promoted_rules": 0,
   "items": {
@@ -98702,6 +98702,17 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "learn-research-resilient_transactions-319": {
+      "learning_id": "learn-research-resilient_transactions-319",
+      "topic": "Idempotent Saga Compensation & Transactional Outbox Invariant",
+      "category": "ENGINEERING_PATTERN",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "rule_number": 319,
+      "rule_id": "Rule 319",
+      "verified": true,
+      "source": "temporalio/sdk-typescript",
+      "indexed_at": "2026-10-11T16:20:12.931Z"
     }
   }
 }

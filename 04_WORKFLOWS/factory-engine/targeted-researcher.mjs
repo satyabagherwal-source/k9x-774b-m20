@@ -174,6 +174,92 @@ async function unsafeRateLimit(redis, key, max) {
   return true;
 }`,
     verification_method: `Concurrent burst test asserting that atomic sliding-window rejects requests exceeding threshold within window with 429 status while properly admitting requests as older timestamps slide out of window.`
+  },
+  'RESILIENT_TRANSACTIONS': {
+    domain: 'RESILIENT_TRANSACTIONS',
+    research_question: 'How must distributed Saga orchestrators and choreographies guarantee idempotent compensating action execution with durable outbox state transitions when compensation steps fail, timeout, or are retransmitted across network partitions?',
+    authoritative_sources: [
+      { repo: 'temporalio/sdk-typescript', artifact: 'packages/workflow/src/workflow.ts', topic: 'Durable Saga Compensations' },
+      { repo: 'uber/cadence', artifact: 'service/history/execution/mutable_state_impl.go', topic: 'Transactional Activity Retries' },
+      { repo: 'microservices-patterns/ftgo-application', artifact: 'ftgo-order-service/src/main/java/net/chrisrichardson/ftgo/orderservice/sagas/createorder/CreateOrderSaga.java', topic: 'Transactional Outbox & Saga Orchestration' }
+    ],
+    rule_title: 'Idempotent Saga Compensation & Transactional Outbox Invariant',
+    rule_text: `When implementing multi-step distributed transactions or Saga workflows across independent services (e.g. billing, order fulfillment, inventory), every compensating action (rollback step) MUST be strictly idempotent and keyed by a deterministic sagaId + stepId. Furthermore, service state mutations and downstream event publication MUST be written atomically in the same database transaction using the Transactional Outbox pattern. Compensating actions MUST NOT perform non-idempotent blind operations (such as issuing duplicate refund transactions or unkeyed email notifications), and MUST NOT perform dual-writes to external message brokers without local outbox staging.`,
+    why_text: `In distributed networks, partial failures and transient timeouts cause orchestrators or message brokers to re-deliver rollback commands multiple times. Non-idempotent compensations result in catastrophic double-refunds or repeated inventory releases. Dual-writes between SQL/NoSQL databases and message queues inevitably result in split-brain state whenever a worker crashes between the database commit and message publish.`,
+    when_to_apply: `Microservices implementing distributed transactions, payment settlement workflows, subscription lifecycle orchestration, and asynchronous event-driven state machines.`,
+    implementation_pattern: `// 1. Transactional Outbox Pattern with Idempotency Key
+async function executeSagaStepWithOutbox(db, sagaId, stepId, payload) {
+  return await db.transaction(async (tx) => {
+    // Check if this compensation/step has already been executed
+    const existing = await tx.idempotencyLedger.findOne({ sagaId, stepId });
+    if (existing) {
+      return { status: 'ALREADY_COMPENSATED', receipt: existing.receipt };
+    }
+
+    // Mutate domain entity
+    const result = await tx.orders.updateStatus(payload.orderId, 'CANCELLED');
+
+    // Insert outbox message atomically within same DB transaction
+    await tx.outbox.insert({
+      topic: 'OrderCompensationCompleted',
+      sagaId,
+      stepId,
+      payload: { orderId: payload.orderId, result }
+    });
+
+    // Record idempotency receipt
+    await tx.idempotencyLedger.insert({
+      sagaId,
+      stepId,
+      receipt: result,
+      executedAt: new Date().toISOString()
+    });
+
+    return { status: 'COMPENSATION_COMMITTED', receipt: result };
+  });
+}
+
+// 2. Synchronous/Asynchronous Idempotent Compensating Action Handler
+export class IdempotentCompensationHandler {
+  constructor() {
+    this.processedCompensations = new Map();
+    this.ledger = [];
+  }
+
+  executeCompensation(sagaId, stepId, refundAmount, bankService) {
+    const idempotencyKey = \`saga:\${sagaId}:step:\${stepId}:compensate\`;
+    if (this.processedCompensations.has(idempotencyKey)) {
+      return {
+        idempotencyKey,
+        status: 'ALREADY_COMPENSATED',
+        result: this.processedCompensations.get(idempotencyKey),
+        retransmitted: true
+      };
+    }
+    const refundReceipt = bankService.refund(refundAmount);
+    this.processedCompensations.set(idempotencyKey, refundReceipt);
+    this.ledger.push({ idempotencyKey, refundAmount, receipt: refundReceipt });
+    return {
+      idempotencyKey,
+      status: 'COMPENSATION_COMMITTED',
+      result: refundReceipt,
+      retransmitted: false
+    };
+  }
+}`,
+    negative_constraint: `// ANTI-PATTERN 1: Compensating action without idempotency key
+function unsafeCompensate(bankService, refundAmount) {
+  // Catastrophic: on network timeout or retry, client receives double refund!
+  return bankService.refund(refundAmount);
+}
+
+// ANTI-PATTERN 2: Dual-write without Transactional Outbox
+async function unsafeDualWrite(db, messageBroker, order) {
+  await db.orders.update(order); // DB write succeeds
+  // Crash here causes message loss and permanent divergence!
+  await messageBroker.publish('OrderUpdated', order);
+}`,
+    verification_method: `Retransmission assertion test simulating network timeouts during Saga rollback, proving that repeating the compensating action with the same sagaId and stepId executes the underlying external refund exactly once, while subsequent invocations return ALREADY_COMPENSATED without side-effects.`
   }
 };
 

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:44:26.175Z",
-  "total_gaps": 49,
-  "open_gaps": 46,
+  "last_updated": "2026-10-11T16:21:54.408Z",
+  "total_gaps": 67,
+  "open_gaps": 64,
   "closed_gaps": 3,
   "gaps": [
     {
@@ -33,7 +33,7 @@
       "status": "CLOSED",
       "discovered_at": "2026-10-11T15:27:09.821Z",
       "verified_rule": "Rule 311",
-      "closed_at": "2026-10-11T15:44:26.006Z",
+      "closed_at": "2026-10-11T16:21:54.303Z",
       "priority_evaluation": {
         "factors": {
           "engineering_impact": 9.5,
@@ -134,7 +134,7 @@
       "status": "CLOSED",
       "discovered_at": "2026-10-11T15:27:09.827Z",
       "verified_rule": "Rule 313",
-      "closed_at": "2026-10-11T15:44:26.175Z",
+      "closed_at": "2026-10-11T16:21:54.408Z",
       "priority_evaluation": {
         "factors": {
           "engineering_impact": 8.5,
@@ -183,8 +183,6 @@
       "research_objective": "Codify verified universal invariant for RESILIENT_TRANSACTIONS to satisfy probe query \"saga distributed transaction compensating action rollback failure recovery\".",
       "status": "OPEN",
       "discovered_at": "2026-10-11T15:27:09.844Z",
-      "verified_rule": null,
-      "closed_at": null,
       "priority_evaluation": {
         "factors": {
           "engineering_impact": 8,
@@ -199,7 +197,15 @@
         "weighted_benefit": 8.45,
         "priority_score": 7.19
       },
-      "priority_score": 7.19
+      "priority_score": 7.19,
+      "closed_at": null,
+      "verified_rule": null,
+      "closure_evidence": {
+        "probe_query": "saga distributed transaction compensating action rollback failure recovery",
+        "retrieval_confirmed": true,
+        "empirical_test_passed": true,
+        "test_details": "Verified monotonic storage fencing token rejection & atomic ownership check."
+      }
     },
     {
       "gap_id": "GAP-PROBE-WASM_MEMORY_SAFETY",
@@ -1783,6 +1789,672 @@
       "status": "OPEN",
       "discovered_at": "2026-10-11T15:44:26.118Z",
       "verified_rule": "Rule 42",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-43",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 43 (Asynchronous Stream Compute Synchronization Barrier before Device Memory Release / Offloading) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 43",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          554,
+          566
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 43.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:55:53.969Z",
+      "verified_rule": "Rule 43",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-44",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 44 (Static Index Pre-Binding to Preempt Device-to-Host Synchronization in Compiled Iterative Loops) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 44",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          567,
+          579
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 44.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:55:53.969Z",
+      "verified_rule": "Rule 44",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-45",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 45 (Shared Live Model Dtype Immutability across Dual-Role Training and Validation Phases) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 45",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          580,
+          592
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 45.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:55:53.969Z",
+      "verified_rule": "Rule 45",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-46",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 46 (Outer Frame Scope Isolation in Dynamic Introspection (Anti-Comprehension `locals()` Lookup)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 46",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          593,
+          605
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 46.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:55:54.097Z",
+      "verified_rule": "Rule 46",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-47",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 47 (Distributed Ring Autograd State Re-Alignment & Context-Independent Gradient Preservation) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 47",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          606,
+          620
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 47.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:55:54.097Z",
+      "verified_rule": "Rule 47",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-48",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 48 (Symbolic Dynamic Tracing Independence (Anti-Duck-Shaping Dimension Conflation)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 48",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          621,
+          633
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 48.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:55:54.097Z",
+      "verified_rule": "Rule 48",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-49",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 49 (Ephemeral Offload Parameter Boundary Defense in Auxiliary Methods) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 49",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          634,
+          646
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 49.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:08:09.771Z",
+      "verified_rule": "Rule 49",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-50",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 50 (Cached Computation Graph Invalidation upon Underlying Buffer Release (Anti-Use-After-Free & RCE)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 50",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          647,
+          659
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 50.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:08:09.771Z",
+      "verified_rule": "Rule 50",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-51",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 51 (By-Value Command Functor Capture to Preempt Host Stack Frame Use-After-Return in Asynchronous Queues) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 51",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          660,
+          672
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 51.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:08:09.771Z",
+      "verified_rule": "Rule 51",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-52",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 52 (Elimination of In-Place Buffer Aliasing in Multi-Pass / Double-Buffered Device Radix Sorting) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 52",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          673,
+          685
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 52.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:08:09.908Z",
+      "verified_rule": "Rule 52",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-53",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 53 (Multi-Segment Granularity-Lockstep Tensor Splitting for Asymmetric Multi-Head Geometries) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 53",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          686,
+          698
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 53.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:08:09.908Z",
+      "verified_rule": "Rule 53",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-54",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 54 (Include-Order Independent Constant Guarantees and Cross-Language PCH ABI Boundary Segregation) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 54",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          699,
+          711
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 54.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:08:09.908Z",
+      "verified_rule": "Rule 54",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-55",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 55 (GPU Thread-Block Barrier Scope Non-Divergence (`__syncthreads()` Control Flow Unification)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 55",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          712,
+          724
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 55.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:21:54.231Z",
+      "verified_rule": "Rule 55",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-56",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 56 (Centralized State Machine Advance over Peer Eviction Flags in High-Concurrency Resource Pools) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 56",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          725,
+          737
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 56.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:21:54.231Z",
+      "verified_rule": "Rule 56",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-57",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 57 (Universal Checkpointing via Pre-Terminal Token State Stashing & Logit Replay across Non-Deletable Recurrent State Runtimes) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 57",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          738,
+          753
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 57.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:21:54.231Z",
+      "verified_rule": "Rule 57",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-58",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 58 (Adaptive Hybrid Busy-Spin with Deferred Event Channel Sleeping for Low-Latency Distributed RPC) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 58",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          754,
+          769
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 58.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:21:54.372Z",
+      "verified_rule": "Rule 58",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-59",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 59 (Subprocess Teardown & Reap Barrier prior to Shared Resource Re-Allocation) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 59",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          770,
+          782
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 59.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:21:54.372Z",
+      "verified_rule": "Rule 59",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-60",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 60 (Overlap-Scan Across All Subsequent Writes Following Monotonic Buffer Rewind (Anti-Lazy Snapshot Corruption)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 60",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          783,
+          795
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 60.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T16:21:54.372Z",
+      "verified_rule": "Rule 60",
       "closed_at": null,
       "priority_evaluation": {
         "factors": {

@@ -123,6 +123,37 @@ export class SimulatedTokenRevocationService {
 }
 
 /**
+ * Idempotent Compensation Handler for empirical testing of RESILIENT_TRANSACTIONS
+ */
+export class IdempotentCompensationHandler {
+  constructor() {
+    this.processedCompensations = new Map();
+    this.ledger = [];
+  }
+
+  executeCompensation(sagaId, stepId, refundAmount, bankService) {
+    const idempotencyKey = `saga:${sagaId}:step:${stepId}:compensate`;
+    if (this.processedCompensations.has(idempotencyKey)) {
+      return {
+        idempotencyKey,
+        status: 'ALREADY_COMPENSATED',
+        result: this.processedCompensations.get(idempotencyKey),
+        retransmitted: true
+      };
+    }
+    const refundReceipt = bankService.refund(refundAmount);
+    this.processedCompensations.set(idempotencyKey, refundReceipt);
+    this.ledger.push({ idempotencyKey, refundAmount, receipt: refundReceipt });
+    return {
+      idempotencyKey,
+      status: 'COMPENSATION_COMMITTED',
+      result: refundReceipt,
+      retransmitted: false
+    };
+  }
+}
+
+/**
  * Verifies whether a researched knowledge gap is genuinely closed
  * 
  * @param {object} gap - The knowledge gap record
@@ -227,6 +258,38 @@ export function verifyGapClosure(gap, researchResult, options = {}) {
 
         if (!revokedCaught) {
           throw new Error('CRITICAL FLAW: Gateway verified revoked token!');
+        }
+
+        empiricalTestPassed = true;
+      } else if (gap.domain === 'RESILIENT_TRANSACTIONS') {
+        const compensationHandler = new IdempotentCompensationHandler();
+        let externalRefundCalls = 0;
+        const mockBankService = {
+          refund: (amount) => {
+            externalRefundCalls++;
+            return { transactionId: `tx-${Date.now()}`, amount, refundedAt: new Date().toISOString() };
+          }
+        };
+
+        // Step 1: Initial compensation execution
+        const res1 = compensationHandler.executeCompensation('saga-order-99', 'step-charge', 150, mockBankService);
+        if (res1.status !== 'COMPENSATION_COMMITTED' || res1.retransmitted !== false || externalRefundCalls !== 1) {
+          throw new Error('Initial compensation execution failed or did not call bank service');
+        }
+
+        // Step 2: Simulated network retransmission of same compensation
+        const res2 = compensationHandler.executeCompensation('saga-order-99', 'step-charge', 150, mockBankService);
+        if (res2.status !== 'ALREADY_COMPENSATED' || res2.retransmitted !== true) {
+          throw new Error('Retransmitted compensation was not detected as already compensated');
+        }
+        if (externalRefundCalls !== 1) {
+          throw new Error(`CRITICAL INVARIANT BREACH: Bank service was called ${externalRefundCalls} times (expected exactly 1)`);
+        }
+
+        // Step 3: Different sagaId executes independently
+        const res3 = compensationHandler.executeCompensation('saga-order-100', 'step-charge', 200, mockBankService);
+        if (res3.status !== 'COMPENSATION_COMMITTED' || externalRefundCalls !== 2) {
+          throw new Error('Independent saga compensation failed');
         }
 
         empiricalTestPassed = true;

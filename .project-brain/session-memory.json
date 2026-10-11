@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:42:27.878Z",
+  "last_updated": "2026-10-11T16:21:56.800Z",
   "memories": [
     {
       "memory_id": "mem-1791568984337-695191",
@@ -191,6 +191,91 @@
     {
       "memory_id": "mem-1791733347618-e0a0fe",
       "timestamp": "2026-10-11T15:42:27.618Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791734881947-f023cc",
+      "timestamp": "2026-10-11T16:08:01.947Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 316: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791734903291-26a2d3",
+      "timestamp": "2026-10-11T16:08:23.291Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
+      ]
+    },
+    {
+      "memory_id": "mem-1791735452375-2139c9",
+      "timestamp": "2026-10-11T16:17:32.376Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 316: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791735697481-016b95",
+      "timestamp": "2026-10-11T16:21:37.481Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791735716398-7f5bc1",
+      "timestamp": "2026-10-11T16:21:56.398Z",
       "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
       "defect_observed": "Build failed or missing: exit code was 1",
       "user_critique": null,

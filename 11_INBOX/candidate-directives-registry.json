@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:42:26.375Z",
+  "last_updated": "2026-10-11T16:21:54.934Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1096,6 +1096,50 @@
       ],
       "status": "STAGED_FOR_VERIFICATION",
       "staged_file": "11_INBOX/candidate-directives/CD-093-stream---asynciterable-collection-b.md",
+      "promoted_date": null,
+      "canonical_locations": [],
+      "verification_criteria": [
+        "Empirical reproduction or test pass",
+        "Non-destructive invariant verified"
+      ]
+    },
+    {
+      "id": "CD-094",
+      "directive_title": "Stream & AsyncIterable Collection Bound Limitation",
+      "source_type": "engineering_gap_feedback",
+      "author": "AI Agent (Universal Feedback Loop)",
+      "date_staged": "2026-10-11",
+      "trigger_tags": [
+        "engineering_gap",
+        "missing_knowledge",
+        "streams",
+        "async_iterators",
+        "collection_bounds"
+      ],
+      "status": "STAGED_FOR_VERIFICATION",
+      "staged_file": "11_INBOX/candidate-directives/CD-094-stream---asynciterable-collection-b.md",
+      "promoted_date": null,
+      "canonical_locations": [],
+      "verification_criteria": [
+        "Empirical reproduction or test pass",
+        "Non-destructive invariant verified"
+      ]
+    },
+    {
+      "id": "CD-095",
+      "directive_title": "Stream & AsyncIterable Collection Bound Limitation",
+      "source_type": "engineering_gap_feedback",
+      "author": "AI Agent (Universal Feedback Loop)",
+      "date_staged": "2026-10-11",
+      "trigger_tags": [
+        "engineering_gap",
+        "missing_knowledge",
+        "streams",
+        "async_iterators",
+        "collection_bounds"
+      ],
+      "status": "STAGED_FOR_VERIFICATION",
+      "staged_file": "11_INBOX/candidate-directives/CD-095-stream---asynciterable-collection-b.md",
       "promoted_date": null,
       "canonical_locations": [],
       "verification_criteria": [

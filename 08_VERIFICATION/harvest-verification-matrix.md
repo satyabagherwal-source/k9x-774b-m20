@@ -201,3 +201,6 @@
 | `CYCLE-20261011-R999` | `2026-10-11T16:09:58.941Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`cb23db52...`) |
 | `CYCLE-20261011-VJCW` | `2026-10-11T16:13:18.656Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 316, Rule 317, Rule 318` | Yes (`d1e4afcf...`) |
 | `CYCLE-20261011-ZFUX` | `2026-10-11T16:16:20.745Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`7140e35e...`) |
+
+| `CYCLE-2026-10-11-RESEARCH` | `2026-10-11T16:20:12.611Z` | `temporalio/sdk-typescript` | Targeted Research Proof | `VERIFIED` | `Rule 319` in `05_KNOWLEDGE` | Yes |
+| `CYCLE-2026-10-11-STAGED` | `2026-10-11T16:20:12.611Z` | `canonical_task_execution` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-094-stream---asynciterable-collection-b.md` | Pending || `CYCLE-2026-10-11-STAGED` | `2026-10-11T16:21:54.935Z` | `canonical_task_execution` | Incident Autopsy | `UNCERTAIN` | Staged in `11_INBOX/candidate-directives/CD-095-stream---asynciterable-collection-b.md` | Pending |

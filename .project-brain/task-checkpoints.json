@@ -815,7 +815,7 @@
       "checkpoint": {
         "current_step": 0,
         "total_steps": 0,
-        "last_checkpoint_at": "2026-10-11T15:42:26.131Z",
+        "last_checkpoint_at": "2026-10-11T16:21:54.832Z",
         "state_payload": {
           "verification": {
             "verified": true,
@@ -825,7 +825,7 @@
               "BUILD_EXIT_0",
               "TEST_COLLECTION_BOUND_PASS"
             ],
-            "verified_at": "2026-10-11T15:42:26.129Z",
+            "verified_at": "2026-10-11T16:21:54.823Z",
             "failure_reason": null,
             "knowledge_verification": {
               "allVerified": true,
@@ -847,8 +847,8 @@
           }
         }
       },
-      "created_at": "2026-10-11T15:42:25.922Z",
-      "updated_at": "2026-10-11T15:42:26.131Z"
+      "created_at": "2026-10-11T16:21:54.735Z",
+      "updated_at": "2026-10-11T16:21:54.832Z"
     },
     "task-1791730672898-aecb1f58": {
       "task_id": "task-1791730672898-aecb1f58",
@@ -900,7 +900,7 @@
       "checkpoint": {
         "current_step": 0,
         "total_steps": 0,
-        "last_checkpoint_at": "2026-10-11T15:42:26.330Z",
+        "last_checkpoint_at": "2026-10-11T16:21:54.884Z",
         "state_payload": {
           "verification": {
             "verified": true,
@@ -910,7 +910,7 @@
               "BUILD_EXIT_0",
               "TEST_BUDGET_PREFLIGHT_PASS"
             ],
-            "verified_at": "2026-10-11T15:42:26.329Z",
+            "verified_at": "2026-10-11T16:21:54.881Z",
             "failure_reason": null,
             "knowledge_verification": {
               "allVerified": true,
@@ -932,8 +932,8 @@
           }
         }
       },
-      "created_at": "2026-10-11T15:42:26.133Z",
-      "updated_at": "2026-10-11T15:42:26.330Z"
+      "created_at": "2026-10-11T16:21:54.834Z",
+      "updated_at": "2026-10-11T16:21:54.884Z"
     },
     "task-task3-cors-origin": {
       "task_id": "task-task3-cors-origin",
@@ -943,7 +943,7 @@
       "checkpoint": {
         "current_step": 0,
         "total_steps": 0,
-        "last_checkpoint_at": "2026-10-11T15:42:26.363Z",
+        "last_checkpoint_at": "2026-10-11T16:21:54.924Z",
         "state_payload": {
           "verification": {
             "verified": true,
@@ -953,7 +953,7 @@
               "BUILD_EXIT_0",
               "TEST_CORS_ORIGIN_SECURITY_PASS"
             ],
-            "verified_at": "2026-10-11T15:42:26.362Z",
+            "verified_at": "2026-10-11T16:21:54.922Z",
             "failure_reason": null,
             "knowledge_verification": {
               "allVerified": true,
@@ -980,8 +980,8 @@
           }
         }
       },
-      "created_at": "2026-10-11T15:42:26.331Z",
-      "updated_at": "2026-10-11T15:42:26.364Z"
+      "created_at": "2026-10-11T16:21:54.885Z",
+      "updated_at": "2026-10-11T16:21:54.924Z"
     },
     "task-transfer-stream-ingestor": {
       "task_id": "task-transfer-stream-ingestor",
@@ -991,7 +991,7 @@
       "checkpoint": {
         "current_step": 0,
         "total_steps": 0,
-        "last_checkpoint_at": "2026-10-11T15:42:26.930Z",
+        "last_checkpoint_at": "2026-10-11T16:21:55.714Z",
         "state_payload": {
           "verification": {
             "verified": true,
@@ -1001,7 +1001,7 @@
               "BUILD_EXIT_0",
               "TEST_TRANSFER_STREAM_PASS"
             ],
-            "verified_at": "2026-10-11T15:42:26.927Z",
+            "verified_at": "2026-10-11T16:21:55.711Z",
             "failure_reason": null,
             "knowledge_verification": {
               "allVerified": true,
@@ -1023,8 +1023,51 @@
           }
         }
       },
-      "created_at": "2026-10-11T15:42:26.878Z",
-      "updated_at": "2026-10-11T15:42:26.930Z"
+      "created_at": "2026-10-11T16:21:55.672Z",
+      "updated_at": "2026-10-11T16:21:55.714Z"
+    },
+    "task-billing-sub-cancellation-001": {
+      "task_id": "task-billing-sub-cancellation-001",
+      "task_type": "FEATURE",
+      "objective": "Implement multi-tenant subscription cancellation saga with idempotent compensating refund and outbox state transition",
+      "status": "VERIFIED",
+      "checkpoint": {
+        "current_step": 0,
+        "total_steps": 0,
+        "last_checkpoint_at": "2026-10-11T16:21:37.478Z",
+        "state_payload": {
+          "verification": {
+            "verified": true,
+            "evidence_collected": [
+              "BUILD_EXIT_0",
+              "TERMINAL_PROOF_COLLECTED",
+              "BUILD_EXIT_0",
+              "TEST_PASS"
+            ],
+            "verified_at": "2026-10-11T16:21:37.475Z",
+            "failure_reason": null,
+            "knowledge_verification": {
+              "allVerified": true,
+              "evaluatedCount": 1,
+              "appliedCount": 1,
+              "verifiedCount": 1,
+              "failedCount": 0,
+              "rejectedCount": 0,
+              "inapplicableCount": 0,
+              "ruleOutcomes": [
+                {
+                  "rule_id": "Rule 319",
+                  "status": "VERIFIED",
+                  "outcome": "PASS",
+                  "evidence": "INVARIANT_SATISFIED_EXACTLY_ONCE_REFUND"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "created_at": "2026-10-11T16:21:37.429Z",
+      "updated_at": "2026-10-11T16:21:37.478Z"
     }
   }
 }

@@ -184,3 +184,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-bingsu-adetailer-mv40r96p` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-11T16:09:58.942Z |
 | `learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-11T16:13:18.660Z |
 | `learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-11T16:16:20.746Z |
+
+| `learn-research-319` | `temporalio/sdk-typescript` | `targeted-research` | `05_KNOWLEDGE/engineering-patterns.md#Rule 319` | 2026-10-11T16:20:12.724Z |
+| `learn-cd-094` | `canonical_task_execution` | `task-task1-collection-bound` | `11_INBOX/candidate-directives/CD-094-stream---asynciterable-collection-b.md` | 2026-10-11T16:20:12.724Z || `learn-cd-095` | `canonical_task_execution` | `task-task1-collection-bound` | `11_INBOX/candidate-directives/CD-095-stream---asynciterable-collection-b.md` | 2026-10-11T16:21:54.936Z |
