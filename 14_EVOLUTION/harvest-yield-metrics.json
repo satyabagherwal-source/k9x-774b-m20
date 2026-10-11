@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:55:35.688Z",
-  "total_cycles_completed": 233,
-  "total_learnings_persisted": 233,
+  "last_updated": "2026-10-11T20:58:31.330Z",
+  "total_cycles_completed": 234,
+  "total_learnings_persisted": 234,
   "total_rules_promoted": 106,
   "history": [
-    {
-      "timestamp": "2026-10-11T10:21:43.449Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv3obe4d",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T10:24:39.308Z",
       "repository": "FrancisRing/Prism",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T20:55:35.688Z",
       "repository": "openai/gpt-oss-120b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T20:58:31.330Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv4b2bic",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

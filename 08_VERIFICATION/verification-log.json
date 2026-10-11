@@ -3448,5 +3448,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-2BKV",
+    "timestamp": "2026-10-11T20:58:31.327Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv4b2bic",
+    "contentHash": "6f09bffed7a27c9132e1a337e38da45e9fb8cb99d45d48603d1aa869350ab309",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
