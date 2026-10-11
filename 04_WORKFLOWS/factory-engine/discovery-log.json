@@ -17344,5 +17344,20 @@
     "downloads": 393,
     "qualityScore": 1743,
     "discoveredAt": "2026-10-11T14:36:13.545Z"
+  },
+  {
+    "name": "infisical",
+    "fullName": "Infisical/infisical",
+    "url": "https://github.com/Infisical/infisical",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Infisical is the open-source platform for securing secrets, certificates, access, and AI Agents.",
+    "stars": 29694,
+    "forks": 2323,
+    "openIssues": 807,
+    "language": "TypeScript",
+    "qualityScore": 15994,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-11T15:29:52.376Z"
   }
 ]
