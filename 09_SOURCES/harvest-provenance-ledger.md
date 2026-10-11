@@ -161,3 +161,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-11T15:03:12.764Z |
 | `learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-10-11T15:06:26.619Z |
 | `learn-cd-092` | `canonical_task_execution` | `task-task1-collection-bound` | `11_INBOX/candidate-directives/CD-092-stream---asynciterable-collection-b.md` | 2026-10-11T15:08:41.231Z |
+| `learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-11T15:12:38.358Z |

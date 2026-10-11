@@ -1158,5 +1158,15 @@
     "contentHash": "c2b29bb58a67f05f77766f11688b23b6b33e4ea28716ed1a418f02edbd237c9f",
     "lastHarvestedAt": "2026-10-11T15:06:26.619Z",
     "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko"
+  },
+  "hf-facebookai-xlm-roberta-base": {
+    "repository": "FacebookAI/xlm-roberta-base",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+    "sourceVersion": "hf-facebookai-xlm-roberta-base",
+    "license": "Open-Source",
+    "contentHash": "3ff9ca7c097f3eb5ddbc3895c80e45fde85c7f5b0295d476ab9e1969694cc699",
+    "lastHarvestedAt": "2026-10-11T15:12:38.358Z",
+    "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies"
   }
 }
