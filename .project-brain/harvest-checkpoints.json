@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:18:52.190Z",
+  "last_updated": "2026-10-11T14:21:41.214Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1196,15 +1196,15 @@
       "repository": "meta-llama/Llama-2-7b",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-mv3fuh18",
-      "content_hash": "22910b63bfe060cca294abb5a7dc5c067bcc7defdfb4af555b617e32ec40ffcc",
-      "verified_at": "2026-10-11T06:24:37.119Z",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-mv3wvzie",
+      "content_hash": "2bfa1f966e36c635b626b01beb7962ce22449f6a3d643423a9cd92170ad0cb38",
+      "verified_at": "2026-10-11T14:21:41.214Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T06:24:37.119Z"
+      "last_updated": "2026-10-11T14:21:41.214Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",

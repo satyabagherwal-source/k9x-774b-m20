@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:18:52.189Z",
-  "total_cycles_completed": 111,
-  "total_learnings_persisted": 111,
+  "last_updated": "2026-10-11T14:21:41.213Z",
+  "total_cycles_completed": 112,
+  "total_learnings_persisted": 112,
   "total_rules_promoted": 52,
   "history": [
     {
@@ -779,6 +779,13 @@
       "timestamp": "2026-10-11T14:18:52.189Z",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
       "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:21:41.213Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv3wvzie",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
