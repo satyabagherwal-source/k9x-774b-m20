@@ -785,9 +785,9 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "bc95e041c6212256eb1d1bf368cb45196df51defe78f062b945cb1cfa4f7c1f5",
-    "lastHarvestedAt": "2026-10-11T13:16:06.836Z",
-    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv3ujnq6"
+    "contentHash": "8a47ed310e34702be0104038d13828c61817072c62714b0bd4751508bc7e2fc2",
+    "lastHarvestedAt": "2026-10-11T20:07:38.441Z",
+    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv498vvv"
   },
   "hf-comfy-org-minimax-h3": {
     "repository": "Comfy-Org/MiniMax-H3",
