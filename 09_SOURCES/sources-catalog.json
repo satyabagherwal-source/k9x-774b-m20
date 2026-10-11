@@ -758,5 +758,15 @@
     "contentHash": "70d47e80845ea41f495fba84dd798522f313c338296f3d55fef35ddf8021c8f4",
     "lastHarvestedAt": "2026-10-11T13:07:23.548Z",
     "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv3u8fz6"
+  },
+  "hf-baai-bge-m3": {
+    "repository": "BAAI/bge-m3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
+    "sourceVersion": "hf-baai-bge-m3",
+    "license": "Open-Source",
+    "contentHash": "32e472656a5a7e0c98fe8b5d0223c2dde3c7c734fdd7db7dda5b36dcfe270356",
+    "lastHarvestedAt": "2026-10-11T13:10:15.923Z",
+    "learningId": "learn-huggingface-hf-baai-bge-m3-mv3uc4yp"
   }
 }

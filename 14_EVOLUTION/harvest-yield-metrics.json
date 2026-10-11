@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:07:23.548Z",
-  "total_cycles_completed": 87,
-  "total_learnings_persisted": 87,
+  "last_updated": "2026-10-11T13:10:15.924Z",
+  "total_cycles_completed": 88,
+  "total_learnings_persisted": 88,
   "total_rules_promoted": 45,
   "history": [
     {
@@ -611,6 +611,13 @@
       "timestamp": "2026-10-11T13:07:23.548Z",
       "repository": "google/electra-base-discriminator",
       "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv3u8fz6",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T13:10:15.924Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-m3-mv3uc4yp",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
