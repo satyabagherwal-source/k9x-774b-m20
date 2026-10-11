@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T00:27:49.402Z",
+  "last_updated": "2026-10-11T00:30:35.638Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1224,15 +1224,15 @@
       "repository": "deepseek-ai/DeepSeek-V3",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv2qjst5",
-      "content_hash": "beaedc181d1082a9549b8ef20d1492d2df4adf69288c790604150853d6fee3dc",
-      "verified_at": "2026-10-10T18:36:28.763Z",
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv33770e",
+      "content_hash": "e8a36e88c2dca90df54914d9976aa6d63850c73c2b92cb0e2f8606cad67a0f2c",
+      "verified_at": "2026-10-11T00:30:35.638Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T18:36:28.763Z"
+      "last_updated": "2026-10-11T00:30:35.638Z"
     },
     "baidu/Unlimited-OCR": {
       "repository": "baidu/Unlimited-OCR",
