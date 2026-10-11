@@ -3283,5 +3283,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-VWMP",
+    "timestamp": "2026-10-11T20:25:32.401Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv49vwk3",
+    "contentHash": "daae77660d2660d10adb8874921cbf041d38454853aa66e7cb40e76dfd73458a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
