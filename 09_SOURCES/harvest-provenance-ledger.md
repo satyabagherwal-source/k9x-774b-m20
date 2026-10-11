@@ -290,3 +290,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-11T21:37:29.852Z |
 | `learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-11T21:40:37.001Z |
 | `learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-11T21:43:28.542Z |
+| `learn-huggingface-hf-naiveai-naive-n0-5-flash-mv4crs6s` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-11T21:46:18.948Z |

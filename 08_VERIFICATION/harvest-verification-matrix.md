@@ -307,3 +307,4 @@
 | `CYCLE-20261011-GFZU` | `2026-10-11T21:37:29.850Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`34bd7ef3...`) |
 | `CYCLE-20261011-KGEG` | `2026-10-11T21:40:37.000Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`6a798f97...`) |
 | `CYCLE-20261011-O4RH` | `2026-10-11T21:43:28.541Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`530430f8...`) |
+| `CYCLE-20261011-RS8Y` | `2026-10-11T21:46:18.946Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`3a9e2058...`) |
