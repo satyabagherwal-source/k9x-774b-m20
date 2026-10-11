@@ -788,5 +788,15 @@
     "contentHash": "bc95e041c6212256eb1d1bf368cb45196df51defe78f062b945cb1cfa4f7c1f5",
     "lastHarvestedAt": "2026-10-11T13:16:06.836Z",
     "learningId": "learn-huggingface-hf-google-t5-t5-small-mv3ujnq6"
+  },
+  "hf-comfy-org-minimax-h3": {
+    "repository": "Comfy-Org/MiniMax-H3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+    "sourceVersion": "hf-comfy-org-minimax-h3",
+    "license": "Open-Source",
+    "contentHash": "33c64250cc3459969798bde196373d6620a533bc192829ef7e117ef71677e19f",
+    "lastHarvestedAt": "2026-10-11T13:18:54.510Z",
+    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv3un94r"
   }
 }

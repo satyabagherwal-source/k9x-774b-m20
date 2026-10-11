@@ -140,3 +140,4 @@
 | `CYCLE-20261011-C50Y` | `2026-10-11T13:10:15.922Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`32e47265...`) |
 | `CYCLE-20261011-FVVB` | `2026-10-11T13:13:10.679Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`bc5661c6...`) |
 | `CYCLE-20261011-JNSJ` | `2026-10-11T13:16:06.835Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`bc95e041...`) |
+| `CYCLE-20261011-N966` | `2026-10-11T13:18:54.510Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`33c64250...`) |
