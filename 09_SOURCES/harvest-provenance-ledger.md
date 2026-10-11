@@ -220,3 +220,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv44xvpe` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-11T18:07:06.526Z |
 | `learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-11T18:10:13.241Z |
 | `learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv455o5m` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-11T18:13:09.994Z |
+| `learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-11T18:16:00.734Z |
