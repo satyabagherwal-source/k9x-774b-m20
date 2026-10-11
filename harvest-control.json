@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-11T10:42:51.228Z",
+  "lastUpdated": "2026-10-11T10:46:59.888Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-11T10:43:42.556Z",
-        "lastHarvestedAt": "2026-10-11T10:43:42.556Z",
-        "totalHarvested": 2188,
+        "lastActiveAt": "2026-10-11T10:46:49.297Z",
+        "lastHarvestedAt": "2026-10-11T10:46:49.297Z",
+        "totalHarvested": 2189,
         "lastError": null
       },
       {
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-11T10:42:51.925Z",
+        "lastActiveAt": "2026-10-11T10:46:38.663Z",
         "lastHarvestedAt": "2026-10-11T08:18:29.673Z",
         "totalHarvested": 1092,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-11T10:42:54.403Z",
+        "lastActiveAt": "2026-10-11T10:46:41.165Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -294,10 +294,10 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 0,
+      "remaining": 20,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-11T10:42:32.487Z",
+      "trippedAt": "2026-10-11T10:46:18.922Z",
       "reason": null,
       "consecutiveBlocks": 1
     },

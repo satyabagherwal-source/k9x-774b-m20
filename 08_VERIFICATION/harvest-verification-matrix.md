@@ -93,3 +93,4 @@
 | `CYCLE-20261011-V1HV` | `2026-10-11T10:37:00.115Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 267` | Yes (`c7287036...`) |
 | `CYCLE-20261011-YP7F` | `2026-10-11T10:39:50.811Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`a878c735...`) |
 | `CYCLE-20261011-3M2R` | `2026-10-11T10:43:40.035Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`a3d70fdb...`) |
+| `CYCLE-20261011-7M63` | `2026-10-11T10:46:46.779Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`689afaf3...`) |

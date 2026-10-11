@@ -76,3 +76,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-deepseek-ai-deepseek-r1-mv3ov1f6` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-11T10:37:00.116Z |
 | `learn-huggingface-hf-moonshotai-kimi-k3-mv3oyp5u` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-11T10:39:50.811Z |
 | `learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv3p3m0j` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-11T10:43:40.036Z |
+| `learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv3p7m42` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-11T10:46:46.780Z |

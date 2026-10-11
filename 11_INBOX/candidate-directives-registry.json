@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:39:50.812Z",
+  "last_updated": "2026-10-11T10:46:46.781Z",
   "directives": [
     {
       "id": "CD-001",
@@ -306,6 +306,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHEN TO APPLY** context",
       "learning_id": "learn-huggingface-hf-moonshotai-kimi-k3-mv3oyp5u"
+    },
+    {
+      "id": "CD-7M65",
+      "directive_title": "Zero-Copy Artifact Loading Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "meta-llama/Llama-3.1-8B-Instruct",
+      "source_commit": "hf-meta-llam",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv3p7m42"
+    },
+    {
+      "id": "CD-7M65",
+      "directive_title": "Template Integrity Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "meta-llama/Llama-3.1-8B-Instruct",
+      "source_commit": "hf-meta-llam",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv3p7m42"
+    },
+    {
+      "id": "CD-7M65",
+      "directive_title": "Bounded Resource Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "meta-llama/Llama-3.1-8B-Instruct",
+      "source_commit": "hf-meta-llam",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv3p7m42"
     }
   ]
 }
