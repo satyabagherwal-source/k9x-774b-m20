@@ -2608,5 +2608,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-1VUG",
+    "timestamp": "2026-10-11T18:10:13.240Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
+    "contentHash": "bd9abfede07f328da9543edb818d1fd97972dd74f0f162e748d4f58a522335a7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
