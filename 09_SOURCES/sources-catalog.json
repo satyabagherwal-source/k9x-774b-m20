@@ -1058,5 +1058,15 @@
     "contentHash": "637d94aa9ae5d55f73c5b64c392eec4335125ed36c46a3bc78730e1a7451c2dc",
     "lastHarvestedAt": "2026-10-11T14:36:34.046Z",
     "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7"
+  },
+  "hf-qwen-qwen3-4b": {
+    "repository": "Qwen/Qwen3-4B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
+    "sourceVersion": "hf-qwen-qwen3-4b",
+    "license": "Open-Source",
+    "contentHash": "55dd1cf6cfef5fa958f97fb3116b77b6f5f5d73ffc065a2414ffe1474e10c2ee",
+    "lastHarvestedAt": "2026-10-11T14:39:20.384Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv3xiori"
   }
 }

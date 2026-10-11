@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:36:34.047Z",
-  "total_cycles_completed": 117,
-  "total_learnings_persisted": 117,
+  "last_updated": "2026-10-11T14:39:20.385Z",
+  "total_cycles_completed": 118,
+  "total_learnings_persisted": 118,
   "total_rules_promoted": 54,
   "history": [
     {
@@ -836,6 +836,13 @@
       "repository": "speridlabs/iris-3b",
       "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv3xf4f7",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:39:20.385Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv3xiori",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
