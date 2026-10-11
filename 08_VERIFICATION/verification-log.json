@@ -4228,5 +4228,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-OQBY",
+    "timestamp": "2026-10-11T23:35:54.958Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m",
+    "contentHash": "4ffac1115dc33f304179839983b7e2e3e5e0f129d5752c2033883120e1e76308",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

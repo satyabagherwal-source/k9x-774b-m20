@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T23:32:43.074Z",
-  "total_cycles_completed": 285,
-  "total_learnings_persisted": 285,
-  "total_rules_promoted": 118,
+  "last_updated": "2026-10-11T23:35:54.960Z",
+  "total_cycles_completed": 286,
+  "total_learnings_persisted": 286,
+  "total_rules_promoted": 121,
   "history": [
-    {
-      "timestamp": "2026-10-11T13:10:15.924Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-m3-mv3uc4yp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T13:13:10.680Z",
       "repository": "Qwen/Qwen3-0.6B",
@@ -1403,6 +1396,13 @@
       "repository": "Qwen/Qwen3.8-27B",
       "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T23:35:54.960Z",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

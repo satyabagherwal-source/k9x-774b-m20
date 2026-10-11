@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T23:32:43.024Z",
-  "total_verified_learnings": 4240,
+  "last_updated": "2026-10-11T23:35:54.901Z",
+  "total_verified_learnings": 4241,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -102344,6 +102344,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T23:32:43.024Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m": {
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m",
+      "source": "black-forest-labs/FLUX.1-dev",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "slug": "hf-black-forest-labs-flux.1-dev",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "content_hash": "4ffac1115dc33f304179839983b7e2e3e5e0f129d5752c2033883120e1e76308",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 374,
+          "title": "Flow Matching Scheduler Step Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 375,
+          "title": "Latent Space Dimensionality Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 376,
+          "title": "Prompt Embedding Caching and Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T23:35:54.901Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
