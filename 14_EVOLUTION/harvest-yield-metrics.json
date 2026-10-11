@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T23:38:59.611Z",
-  "total_cycles_completed": 287,
-  "total_learnings_persisted": 287,
+  "last_updated": "2026-10-11T23:42:15.737Z",
+  "total_cycles_completed": 288,
+  "total_learnings_persisted": 288,
   "total_rules_promoted": 121,
   "history": [
-    {
-      "timestamp": "2026-10-11T13:16:06.837Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-hf-google-t5-t5-small-mv3ujnq6",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T13:18:54.511Z",
       "repository": "Comfy-Org/MiniMax-H3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T23:38:59.611Z",
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-hf-francisring-prism-mv4gsoqj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T23:42:15.737Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
