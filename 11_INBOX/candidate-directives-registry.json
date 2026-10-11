@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:07:49.969Z",
+  "last_updated": "2026-10-11T11:10:40.842Z",
   "directives": [
     {
       "id": "CD-001",
@@ -449,6 +449,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv3pyot0"
+    },
+    {
+      "id": "CD-2CP6",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Qwen/Qwen-Image-2.1-Turbo",
+      "source_commit": "hf-qwen-qwen",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv3q2cna"
+    },
+    {
+      "id": "CD-2CP6",
+      "directive_title": "Model-Defined Inference Schedule Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Qwen/Qwen-Image-2.1-Turbo",
+      "source_commit": "hf-qwen-qwen",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv3q2cna"
     }
   ]
 }

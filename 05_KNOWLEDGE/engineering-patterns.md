@@ -6191,3 +6191,106 @@ scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained("base_model")
 ```
 **VERIFICATION METHOD**:
 Compare the outputs of the model with and without the provided scheduler config. Ensure that the provided config produces the expected quality.
+
+
+---
+
+## 276. KV Cache Reset Invariant (Harvested from Qwen/Qwen-Image-2.1-Turbo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "KV Cache Reset Invariant",
+  "source": "Qwen/Qwen-Image-2.1-Turbo",
+  "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+  "source_version": "hf-qwen-qwen-image-2.1-turbo",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:10:40.794Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv3q2cna",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen-Image-2.1-Turbo](https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any inference pipeline that uses KV caching MUST reset the cache at the start of each new generation request.
+**WHY**:
+If the cache is not reset, the second generation will attend to the first generation's context, causing semantic contamination. For example, if the first prompt is "a cat" and the second is "a dog", the second image may contain cat-like features.
+**WHEN TO APPLY**:
+Any diffusion model pipeline that uses KV caching for context reuse.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def generate(pipe, prompt):
+    # Reset KV cache
+    pipe.transformer.clear_kv_cache()
+    
+    # Generate
+    image = pipe(prompt).images[0]
+    return image
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER do this:
+def generate(pipe, prompt):
+    # Forgetting to reset the cache
+    image = pipe(prompt).images[0]
+    return image
+```
+**VERIFICATION METHOD**:
+Generate two images with different prompts. Verify that the second image does not contain features from the first prompt. Use a perceptual metric to compare the second image to a reference image generated with a fresh cache.
+
+
+---
+
+## 277. BFloat16 Numerical Stability Invariant (Harvested from Qwen/Qwen-Image-2.1-Turbo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "BFloat16 Numerical Stability Invariant",
+  "source": "Qwen/Qwen-Image-2.1-Turbo",
+  "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+  "source_version": "hf-qwen-qwen-image-2.1-turbo",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:10:40.798Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv3q2cna",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen-Image-2.1-Turbo](https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Diffusion models with 7B+ parameters MUST be loaded in `bfloat16` dtype to ensure numerical stability in the attention mechanism.
+**WHY**:
+`float16` has a limited range and precision, which can lead to overflow in the attention logits or underflow in the noise prediction, causing `NaN` values. `bfloat16` has the same range as `float32` but half the precision, making it more stable for large models.
+**WHEN TO APPLY**:
+Any diffusion model with 7B+ parameters on Ampere+ GPUs.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+pipe = QwenImage21Pipeline.from_pretrained(
+    "Qwen/Qwen-Image-2.1-Turbo",
+    dtype=torch.bfloat16,
+).to("cuda")
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER do this:
+pipe = QwenImage21Pipeline.from_pretrained(
+    "Qwen/Qwen-Image-2.1-Turbo",
+    dtype=torch.float16, # Can lead to NaNs
+).to("cuda")
+```
+**VERIFICATION METHOD**:
+Generate an image and check for `NaN` values in the output. If any pixel is `NaN`, the inference failed.

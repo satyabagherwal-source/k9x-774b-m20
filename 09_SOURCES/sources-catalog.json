@@ -398,5 +398,15 @@
     "contentHash": "7f9ca8a939ed65e212179f4270a473c9d7166e1261ed65295a4d3f658ae6ea83",
     "lastHarvestedAt": "2026-10-11T11:07:49.968Z",
     "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv3pyot0"
+  },
+  "hf-qwen-qwen-image-2.1-turbo": {
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+    "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
+    "license": "Open-Source",
+    "contentHash": "f75ae7180e3eae543857bc1f93256015776c7f3f756775f143f1031a61eb3276",
+    "lastHarvestedAt": "2026-10-11T11:10:40.842Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv3q2cna"
   }
 }
