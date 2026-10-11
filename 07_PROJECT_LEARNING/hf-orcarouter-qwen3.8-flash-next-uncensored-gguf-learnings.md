@@ -3,8 +3,8 @@
 > **Source Version**: `hf-orcaroute`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T20:49:22.440Z  
-> **Learning ID**: `learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv2vape0`  
+> **Timestamp**: 2026-10-11T02:43:48.486Z  
+> **Learning ID**: `learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv37yidi`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF](https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T20:49:22.233Z  
+> **Harvest Timestamp**: 2026-10-11T02:43:48.320Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 520450 downloads | 725 likes
+- **Stars / Engagement**: 520450 downloads | 737 likes
 
 ---
 
