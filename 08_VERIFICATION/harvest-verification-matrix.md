@@ -272,3 +272,4 @@
 | `CYCLE-20261011-PQQU` | `2026-10-11T19:52:45.222Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 354, Rule 355, Rule 356` | Yes (`2591a552...`) |
 | `CYCLE-20261011-TC7Q` | `2026-10-11T19:55:33.014Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`f03f4cf0...`) |
 | `CYCLE-20261011-XAL1` | `2026-10-11T19:58:37.525Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`52d137b7...`) |
+| `CYCLE-20261011-10TV` | `2026-10-11T20:01:31.507Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`4f599790...`) |
