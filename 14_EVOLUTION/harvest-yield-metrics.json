@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:33:56.986Z",
-  "total_cycles_completed": 96,
-  "total_learnings_persisted": 96,
+  "last_updated": "2026-10-11T13:36:50.598Z",
+  "total_cycles_completed": 97,
+  "total_learnings_persisted": 97,
   "total_rules_promoted": 46,
   "history": [
     {
@@ -674,6 +674,13 @@
       "timestamp": "2026-10-11T13:33:56.986Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
       "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv3v6lgj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T13:36:50.598Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv3vabf1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
