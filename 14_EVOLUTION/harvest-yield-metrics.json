@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:10:15.924Z",
-  "total_cycles_completed": 88,
-  "total_learnings_persisted": 88,
+  "last_updated": "2026-10-11T13:13:10.680Z",
+  "total_cycles_completed": 89,
+  "total_learnings_persisted": 89,
   "total_rules_promoted": 45,
   "history": [
     {
@@ -618,6 +618,13 @@
       "timestamp": "2026-10-11T13:10:15.924Z",
       "repository": "BAAI/bge-m3",
       "learningId": "learn-huggingface-hf-baai-bge-m3-mv3uc4yp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T13:13:10.680Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv3ufvt7",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
