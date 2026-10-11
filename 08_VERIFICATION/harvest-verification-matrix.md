@@ -102,3 +102,4 @@
 | `CYCLE-20261011-UV2G` | `2026-10-11T11:04:51.400Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 274` | Yes (`924f18c6...`) |
 | `CYCLE-20261011-YOUN` | `2026-10-11T11:07:49.967Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 275` | Yes (`7f9ca8a9...`) |
 | `CYCLE-20261011-2CP5` | `2026-10-11T11:10:40.841Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 276, Rule 277` | Yes (`f75ae718...`) |
+| `CYCLE-20261011-5XZT` | `2026-10-11T11:13:28.409Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`3542477b...`) |

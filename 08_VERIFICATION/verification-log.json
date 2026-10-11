@@ -703,5 +703,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-5XZT",
+    "timestamp": "2026-10-11T11:13:28.409Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv3q5xxw",
+    "contentHash": "3542477bf1375e82460275223ebd819982c056636c60f2cf33a24d2f38906a6c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
