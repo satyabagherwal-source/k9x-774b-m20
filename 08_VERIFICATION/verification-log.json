@@ -4318,5 +4318,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-C44M",
+    "timestamp": "2026-10-11T23:54:05.926Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y",
+    "contentHash": "49bf2e2a712aeb331c1ee0255c8bef8642b1c15545fb8ee20f775368a1c18ee9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
