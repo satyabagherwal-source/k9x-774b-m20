@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:16:53.723Z",
+  "last_updated": "2026-10-11T11:20:00.786Z",
   "directives": [
     {
       "id": "CD-001",
@@ -493,6 +493,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-supersoniclabs-julia-1-mv3qaccp"
+    },
+    {
+      "id": "CD-ECR6",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "apple/LensVLM-9B",
+      "source_commit": "hf-apple-len",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6"
+    },
+    {
+      "id": "CD-ECR6",
+      "directive_title": "1 Rule 1 – Token Namespace Integrity",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "apple/LensVLM-9B",
+      "source_commit": "hf-apple-len",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHEN TO APPLY** context",
+      "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6"
     }
   ]
 }

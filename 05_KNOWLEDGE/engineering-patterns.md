@@ -6409,3 +6409,132 @@ print(f"Macro Accuracy: {macro_accuracy}")
 ```
 **VERIFICATION METHOD**:
 Automated test that asserts the evaluation function returns a dictionary of per-locale accuracies.
+
+
+---
+
+## 280. 2 Rule 2 – Layer‑Type Consistency (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "2 Rule 2 – Layer‑Type Consistency",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:20:00.737Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**  
+`num_hidden_layers` must equal the length of `layer_types`; `full_attention_interval` must divide `num_hidden_layers` evenly.
+
+**WHY**  
+A mismatch causes the layer factory to attempt to instantiate a non‑existent layer, leading to an infinite loop or runtime exception.
+
+**WHEN TO APPLY**  
+Any transformer that mixes sparse and full attention layers.
+
+**VERIFIED IMPLEMENTATION PATTERN**
+```json
+{
+  "num_hidden_layers": 32,
+  "layer_types": [
+    "linear_attention", "linear_attention", "linear_attention",
+    "full_attention", /* ... 28 more entries ... */ "full_attention"
+  ],
+  "full_attention_interval": 4
+}
+```
+
+**NEGATIVE CONSTRAINT**
+```json
+{
+  "num_hidden_layers": 32,
+  "layer_types": ["linear_attention", "full_attention"],  // only 2 entries
+  "full_attention_interval": 4
+}
+```
+
+**VERIFICATION METHOD**  
+```python
+assert len(cfg["layer_types"]) == cfg["num_hidden_layers"], \
+       "layer_types length mismatch"
+assert cfg["num_hidden_layers"] % cfg["full_attention_interval"] == 0, \
+       "full_attention_interval does not divide num_hidden_layers"
+```
+
+---
+
+
+---
+
+## 281. 3 Rule 3 – Sparse Attention Safety (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "3 Rule 3 – Sparse Attention Safety",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:20:00.741Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**  
+When using `linear_attention`, the `linear_key_head_dim` and `linear_value_head_dim` must be multiples of `num_key_heads` and `num_value_heads`, respectively.
+
+**WHY**  
+Non‑multiples cause mis‑aligned tensor shapes, leading to broadcasting errors or silent data corruption.
+
+**WHEN TO APPLY**  
+Any sparse attention implementation that partitions heads.
+
+**VERIFIED IMPLEMENTATION PATTERN**
+```json
+{
+  "linear_key_head_dim": 128,
+  "linear_num_key_heads": 16,
+  "linear_value_head_dim": 128,
+  "linear_num_value_heads": 32
+}
+```
+
+**NEGATIVE CONSTRAINT**
+```json
+{
+  "linear_key_head_dim": 130,  // not divisible by 16
+  "linear_num_key_heads": 16
+}
+```
+
+**VERIFICATION METHOD**  
+```python
+assert cfg["linear_key_head_dim"] % cfg["linear_num_key_heads"] == 0, \
+       "linear_key_head_dim not divisible by linear_num_key_heads"
+assert cfg["linear_value_head_dim"] % cfg["linear_num_value_heads"] == 0, \
+       "linear_value_head_dim not divisible by linear_num_value_heads"
+```
+
+---

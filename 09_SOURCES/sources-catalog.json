@@ -428,5 +428,15 @@
     "contentHash": "16b49b88368ff41d20532fd54d82fef1fde057ba530bf5a2402985f6695ca2a2",
     "lastHarvestedAt": "2026-10-11T11:16:53.723Z",
     "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv3qaccp"
+  },
+  "hf-apple-lensvlm-9b": {
+    "repository": "apple/LensVLM-9B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
+    "sourceVersion": "hf-apple-lensvlm-9b",
+    "license": "Open-Source",
+    "contentHash": "ba8376cb6fde1edc2cb5a6e6352d0042898633bc7d4ca9eb329dadb41b977954",
+    "lastHarvestedAt": "2026-10-11T11:20:00.785Z",
+    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6"
   }
 }

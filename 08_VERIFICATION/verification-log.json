@@ -733,5 +733,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-ECR4",
+    "timestamp": "2026-10-11T11:20:00.784Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6",
+    "contentHash": "ba8376cb6fde1edc2cb5a6e6352d0042898633bc7d4ca9eb329dadb41b977954",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
