@@ -5740,3 +5740,46 @@ def verify_context_window(model, test_length=262144):
 
 **VERIFICATION METHOD**:
 Run a functional test that generates text with a long prompt and checks for errors or degradation.
+
+
+---
+
+## 267. YaRN RoPE Scaling Parameter Invariant (Harvested from deepseek-ai/DeepSeek-R1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "YaRN RoPE Scaling Parameter Invariant",
+  "source": "deepseek-ai/DeepSeek-R1",
+  "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+  "source_version": "hf-deepseek-ai-deepseek-r1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T10:37:00.055Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv3ov1f6",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [deepseek-ai/DeepSeek-R1](https://huggingface.co/deepseek-ai/DeepSeek-R1) (Revision: `hf-deepsee`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For extended context models using YaRN RoPE, all scaling parameters (`factor`, `beta_fast`, `beta_slow`, `mscale`) must be used.
+**WHY**:
+Ignoring any parameter leads to incorrect frequency scaling and attention score degradation.
+**WHEN TO APPLY**:
+Any model using YaRN RoPE (e.g., DeepSeek-V3, DeepSeek-R1).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+cos, sin = get_yarn_rope_embeddings(seq_len, head_dim, theta, factor, beta_fast, beta_slow, mscale)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+cos, sin = get_rope_embeddings(seq_len, head_dim, theta)
+```
+**VERIFICATION METHOD**:
+Assert that the RoPE embeddings match the expected values for a given sequence length.

@@ -73,3 +73,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-11T10:27:48.614Z |
 | `learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv3on0zs` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-11T10:30:46.284Z |
 | `learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv3ora9g` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-11T10:34:04.927Z |
+| `learn-huggingface-hf-deepseek-ai-deepseek-r1-mv3ov1f6` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-11T10:37:00.116Z |

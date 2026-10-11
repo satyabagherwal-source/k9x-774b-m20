@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:34:04.928Z",
+  "last_updated": "2026-10-11T10:37:00.117Z",
   "directives": [
     {
       "id": "CD-001",
@@ -240,6 +240,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHEN TO APPLY** context",
       "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv3ora9g"
+    },
+    {
+      "id": "CD-V1HX",
+      "directive_title": "MLA KV Cache Dimension Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "deepseek-ai/DeepSeek-R1",
+      "source_commit": "hf-deepseek-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv3ov1f6"
+    },
+    {
+      "id": "CD-V1HX",
+      "directive_title": "MoE Top-K Weight Normalization Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "deepseek-ai/DeepSeek-R1",
+      "source_commit": "hf-deepseek-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv3ov1f6"
     }
   ]
 }
