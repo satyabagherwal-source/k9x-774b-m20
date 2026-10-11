@@ -3778,5 +3778,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-FGJW",
+    "timestamp": "2026-10-11T22:04:43.532Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv4dfghb",
+    "contentHash": "4dc88b7ebeb2ec526e3b3f513b8c419bd8132a0799765906bca2f7743456e1e3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
