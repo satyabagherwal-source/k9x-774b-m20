@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T18:45:53.347Z",
-  "total_cycles_completed": 190,
-  "total_learnings_persisted": 190,
-  "total_rules_promoted": 85,
+  "last_updated": "2026-10-11T18:48:56.209Z",
+  "total_cycles_completed": 191,
+  "total_learnings_persisted": 191,
+  "total_rules_promoted": 87,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -1347,6 +1347,13 @@
       "repository": "akhilaaa3/Jev-Omni",
       "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv46br3m",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T18:48:56.209Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

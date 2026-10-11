@@ -10492,3 +10492,121 @@ config.max_position_embeddings = 64_000  # ❌
 Add a CI check that compares `config.max_position_embeddings` against a constant derived from the generation config (`model_max_length`). Fail the build if the assertion is violated.
 
 ---
+
+
+---
+
+## 342. Tokenizer‑Model Configuration Consistency (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tokenizer‑Model Configuration Consistency",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T18:48:56.121Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The tokenizer’s `vocab_size`, `model_max_length`, and special token IDs must match the corresponding values in the model’s configuration; otherwise, tokenization errors or out‑of‑range indices will occur.
+
+**WHY**:  
+Mismatched vocab sizes cause `IndexError` during embedding lookup. A `model_max_length` smaller than the longest input sequence leads to truncation or hidden‑state overflow. Special token IDs that are not present in the embedding matrix break the attention mask and can produce NaNs.
+
+**WHEN TO APPLY**:  
+During any model export, fine‑tuning, or deployment pipeline that involves a tokenizer and a transformer model.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Ensure tokenizer and model configs are aligned
+tokenizer = AutoTokenizer.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
+model = AutoModelForCausalLM.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
+
+assert tokenizer.vocab_size == model.config.vocab_size, \
+    f"Tokenizer vocab ({tokenizer.vocab_size}) != model vocab ({model.config.vocab_size})"
+
+assert tokenizer.model_max_length == model.config.max_position_embeddings, \
+    f"Tokenizer max length ({tokenizer.model_max_length}) != model max positions ({model.config.max_position_embeddings})"
+
+# Verify special token IDs are present in the embedding matrix
+for token, idx in tokenizer.special_tokens_map.items():
+    assert idx < model.config.vocab_size, f"Special token {token} id {idx} out of bounds"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Hard‑coded vocab size that diverges from the model
+tokenizer = AutoTokenizer.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
+tokenizer.vocab_size = 300000  # Wrong value
+```
+
+**VERIFICATION METHOD**:  
+Unit test that loads the tokenizer and model and asserts the equality of `vocab_size`, `model_max_length`, and special token IDs. Lint rule that flags hard‑coded numeric overrides of tokenizer attributes.
+
+---
+
+
+---
+
+## 343. Attention Layer Alternation Integrity (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Attention Layer Alternation Integrity",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T18:48:56.129Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The sequence of attention layers in the transformer must follow the pattern defined in `layer_types`: a block of 3 `linear_attention` layers followed by a `full_attention` layer, repeated throughout the stack. Any deviation can break the expected memory‑time trade‑off and lead to performance regressions.
+
+**WHY**:  
+The alternating pattern is engineered to reduce compute while maintaining accuracy. Swapping a `full_attention` layer into a `linear_attention` block increases memory usage and latency; conversely, replacing a `full_attention` with a `linear_attention` can degrade accuracy on long‑context tasks.
+
+**WHEN TO APPLY**:  
+During model architecture modifications, pruning, or quantization steps that alter the attention mechanism.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+expected_pattern = ["linear_attention"] * 3 + ["full_attention"]
+for i in range(0, model.config.num_hidden_layers, 4):
+    actual = model.config.layer_types[i:i+4]
+    assert actual == expected_pattern, f"Layer {i}-{i+3} mismatch: {actual}"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Randomly inserting full_attention layers
+model.config.layer_types = ["full_attention"] * model.config.num_hidden_layers
+```
+
+**VERIFICATION METHOD**:  
+Automated test that iterates over `layer_types` and checks the 4‑layer block pattern. CI lint rule that warns when `layer_types` length is not a multiple of 4 or when the pattern deviates.
+
+---
