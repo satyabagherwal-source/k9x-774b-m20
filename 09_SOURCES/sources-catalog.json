@@ -158,5 +158,15 @@
     "contentHash": "25ecd6afea81ef3523c5026fc82fed91fd6a9e41a6a5826399c4cf68c3d11545",
     "lastHarvestedAt": "2026-10-11T09:08:07.937Z",
     "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv3lor3e"
+  },
+  "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+    "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+    "license": "Open-Source",
+    "contentHash": "3aebdecedbb19f46914f62832ff91762eb880952d3139ae777d11fe4a375e18c",
+    "lastHarvestedAt": "2026-10-11T09:12:49.422Z",
+    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv3lusad"
   }
 }

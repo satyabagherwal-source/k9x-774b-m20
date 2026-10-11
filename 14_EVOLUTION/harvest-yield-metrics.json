@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T09:08:07.937Z",
-  "total_cycles_completed": 27,
-  "total_learnings_persisted": 27,
+  "last_updated": "2026-10-11T09:12:49.422Z",
+  "total_cycles_completed": 28,
+  "total_learnings_persisted": 28,
   "total_rules_promoted": 10,
   "history": [
     {
@@ -191,6 +191,13 @@
       "timestamp": "2026-10-11T09:08:07.937Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
       "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv3lor3e",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T09:12:49.422Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv3lusad",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
