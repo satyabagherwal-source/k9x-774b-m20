@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:59:59.859Z",
-  "total_cycles_completed": 125,
-  "total_learnings_persisted": 125,
+  "last_updated": "2026-10-11T15:03:12.765Z",
+  "total_cycles_completed": 126,
+  "total_learnings_persisted": 126,
   "total_rules_promoted": 54,
   "history": [
     {
@@ -891,6 +891,13 @@
       "timestamp": "2026-10-11T14:59:59.859Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T15:03:12.765Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

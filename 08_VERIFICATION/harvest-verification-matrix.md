@@ -175,3 +175,4 @@
 | `CYCLE-20261011-20GW` | `2026-10-11T14:54:21.920Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`f791ecb6...`) |
 | `CYCLE-20261011-5O2R` | `2026-10-11T14:57:12.483Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`ed2542c9...`) |
 | `CYCLE-20261011-9982` | `2026-10-11T14:59:59.858Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`fd5029ef...`) |
+| `CYCLE-20261011-DE2J` | `2026-10-11T15:03:12.763Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`e76df3c6...`) |

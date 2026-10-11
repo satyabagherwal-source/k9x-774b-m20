@@ -1138,5 +1138,15 @@
     "contentHash": "fd5029ef09aeff6441eefcd18ee65488403995dd1ddfd61686580de9be8faa87",
     "lastHarvestedAt": "2026-10-11T14:59:59.858Z",
     "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e"
+  },
+  "hf-baai-bge-reranker-v2-m3": {
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
+    "sourceVersion": "hf-baai-bge-reranker-v2-m3",
+    "license": "Open-Source",
+    "contentHash": "e76df3c62b458b4ac60c5b45d5a3d8ac6d2116514a0d43ee29f2bbdf6f995b9d",
+    "lastHarvestedAt": "2026-10-11T15:03:12.764Z",
+    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy"
   }
 }
