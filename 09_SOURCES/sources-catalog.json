@@ -708,5 +708,15 @@
     "contentHash": "1d53d3c2e234c26bbd4fe9cd0239033138638113279f579149afb4820c89d2b9",
     "lastHarvestedAt": "2026-10-11T12:52:31.972Z",
     "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv3tpc11"
+  },
+  "hf-cloudflare-clef": {
+    "repository": "Cloudflare/clef",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Cloudflare/clef",
+    "sourceVersion": "hf-cloudflare-clef",
+    "license": "Open-Source",
+    "contentHash": "86f423a2fe399bd46f2c588f7d238b7d8b58d07694ad43ee0ba30a864e3585f5",
+    "lastHarvestedAt": "2026-10-11T12:55:28.217Z",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-mv3tt3zm"
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:23:07.306Z",
+  "last_updated": "2026-10-11T12:55:28.218Z",
   "directives": [
     {
       "id": "CD-001",
@@ -856,6 +856,50 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv3snier"
+    },
+    {
+      "id": "CD-T42I",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Cloudflare/clef",
+      "source_commit": "hf-cloudflar",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv3tt3zm"
+    },
+    {
+      "id": "CD-T42I",
+      "directive_title": "1 Rule: Explicit Token ID Validation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Cloudflare/clef",
+      "source_commit": "hf-cloudflar",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**",
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv3tt3zm"
+    },
+    {
+      "id": "CD-T42I",
+      "directive_title": "2 Rule: Immutable Configuration Objects",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Cloudflare/clef",
+      "source_commit": "hf-cloudflar",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**",
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv3tt3zm"
+    },
+    {
+      "id": "CD-T42I",
+      "directive_title": "3 Rule: Safe Padding for Variable‑Length Sequences",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Cloudflare/clef",
+      "source_commit": "hf-cloudflar",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv3tt3zm"
     }
   ]
 }
