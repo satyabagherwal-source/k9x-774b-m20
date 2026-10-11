@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:25:41.496Z",
+  "last_updated": "2026-10-11T16:28:10.193Z",
   "total_gaps": 67,
   "open_gaps": 63,
   "closed_gaps": 4,
@@ -198,7 +198,7 @@
         "priority_score": 7.19
       },
       "priority_score": 7.19,
-      "closed_at": "2026-10-11T16:25:41.495Z",
+      "closed_at": "2026-10-11T16:28:10.193Z",
       "verified_rule": "Rule 319",
       "closure_evidence": {
         "probe_query": "saga distributed transaction compensating action rollback failure recovery",
