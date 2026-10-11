@@ -3,8 +3,8 @@
 > **Source Version**: `hf-phocinae-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T21:56:21.640Z  
-> **Learning ID**: `learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv2xoumg`  
+> **Timestamp**: 2026-10-11T03:50:26.399Z  
+> **Learning ID**: `learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3ac76n`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1](https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T21:56:21.413Z  
+> **Harvest Timestamp**: 2026-10-11T03:50:26.221Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
