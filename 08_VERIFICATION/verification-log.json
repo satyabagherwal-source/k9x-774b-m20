@@ -2548,5 +2548,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-MQWV",
+    "timestamp": "2026-10-11T17:58:27.007Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
+    "contentHash": "e60fd09c358b66d18d79f1aa7ed7f83dbd44fe21da41008c59fa3073df525e21",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

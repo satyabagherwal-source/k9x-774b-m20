@@ -231,3 +231,4 @@
 | `CYCLE-20261011-AZ4N` | `2026-10-11T17:49:17.783Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 328, Rule 329, Rule 330` | Yes (`9f8e9770...`) |
 | `CYCLE-20261011-EU00` | `2026-10-11T17:52:17.760Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`e4df0c4e...`) |
 | `CYCLE-20261011-IWMB` | `2026-10-11T17:55:27.779Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`3b2795fc...`) |
+| `CYCLE-20261011-MQWV` | `2026-10-11T17:58:27.007Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`e60fd09c...`) |

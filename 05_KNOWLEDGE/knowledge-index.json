@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T17:55:27.730Z",
-  "total_verified_learnings": 4128,
+  "last_updated": "2026-10-11T17:58:26.961Z",
+  "total_verified_learnings": 4129,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -99419,6 +99419,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T17:55:27.729Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua": {
+      "learning_id": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
+      "source": "Contrastive-LM/CLM-v0.1-8B",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "slug": "hf-contrastive-lm-clm-v0.1-8b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "content_hash": "e60fd09c358b66d18d79f1aa7ed7f83dbd44fe21da41008c59fa3073df525e21",
+      "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T17:58:26.961Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

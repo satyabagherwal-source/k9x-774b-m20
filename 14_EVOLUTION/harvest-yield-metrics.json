@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T17:55:27.781Z",
-  "total_cycles_completed": 173,
-  "total_learnings_persisted": 173,
+  "last_updated": "2026-10-11T17:58:27.009Z",
+  "total_cycles_completed": 174,
+  "total_learnings_persisted": 174,
   "total_rules_promoted": 74,
   "history": [
     {
@@ -1227,6 +1227,13 @@
       "timestamp": "2026-10-11T17:55:27.781Z",
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T17:58:27.009Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
