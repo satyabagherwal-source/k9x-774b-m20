@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:46:34.184Z",
-  "total_cycles_completed": 80,
-  "total_learnings_persisted": 80,
+  "last_updated": "2026-10-11T12:49:46.369Z",
+  "total_cycles_completed": 81,
+  "total_learnings_persisted": 81,
   "total_rules_promoted": 44,
   "history": [
     {
@@ -562,6 +562,13 @@
       "timestamp": "2026-10-11T12:46:34.184Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv3thnwu",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T12:49:46.369Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv3tls88",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
