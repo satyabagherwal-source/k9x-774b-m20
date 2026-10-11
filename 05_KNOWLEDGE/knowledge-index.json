@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T18:01:19.205Z",
-  "total_verified_learnings": 4130,
+  "last_updated": "2026-10-11T18:04:10.961Z",
+  "total_verified_learnings": 4131,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -99467,6 +99467,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T18:01:19.205Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4": {
+      "learning_id": "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
+      "source": "Lightricks/LTX-2.5",
+      "repository": "Lightricks/LTX-2.5",
+      "slug": "hf-lightricks-ltx-2.5",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
+      "content_hash": "422b6a3f78efceaae7995deccc6af68509cd1efd8f6d2c9346c2039bc17bd085",
+      "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T18:04:10.961Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

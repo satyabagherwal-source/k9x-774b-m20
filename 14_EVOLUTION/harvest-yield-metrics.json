@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T18:01:19.254Z",
-  "total_cycles_completed": 175,
-  "total_learnings_persisted": 175,
+  "last_updated": "2026-10-11T18:04:11.000Z",
+  "total_cycles_completed": 176,
+  "total_learnings_persisted": 176,
   "total_rules_promoted": 74,
   "history": [
     {
@@ -1241,6 +1241,13 @@
       "timestamp": "2026-10-11T18:01:19.254Z",
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T18:04:11.000Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
