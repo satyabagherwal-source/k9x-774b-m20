@@ -798,5 +798,15 @@
     "contentHash": "33c64250cc3459969798bde196373d6620a533bc192829ef7e117ef71677e19f",
     "lastHarvestedAt": "2026-10-11T13:18:54.510Z",
     "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv3un94r"
+  },
+  "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+    "license": "Open-Source",
+    "contentHash": "1971b557e7a23d4ab0335ab5a9236b234a32952f341f6759116891e559c923b6",
+    "lastHarvestedAt": "2026-10-11T13:22:02.983Z",
+    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv3uraji"
   }
 }

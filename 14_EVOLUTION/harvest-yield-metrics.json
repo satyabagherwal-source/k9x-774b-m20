@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:18:54.511Z",
-  "total_cycles_completed": 91,
-  "total_learnings_persisted": 91,
+  "last_updated": "2026-10-11T13:22:02.983Z",
+  "total_cycles_completed": 92,
+  "total_learnings_persisted": 92,
   "total_rules_promoted": 45,
   "history": [
     {
@@ -639,6 +639,13 @@
       "timestamp": "2026-10-11T13:18:54.511Z",
       "repository": "Comfy-Org/MiniMax-H3",
       "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv3un94r",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T13:22:02.983Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv3uraji",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1288,5 +1288,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-RALF",
+    "timestamp": "2026-10-11T13:22:02.979Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv3uraji",
+    "contentHash": "1971b557e7a23d4ab0335ab5a9236b234a32952f341f6759116891e559c923b6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
