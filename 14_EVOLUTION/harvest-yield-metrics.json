@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:49:07.664Z",
-  "total_cycles_completed": 101,
-  "total_learnings_persisted": 101,
+  "last_updated": "2026-10-11T13:51:58.512Z",
+  "total_cycles_completed": 102,
+  "total_learnings_persisted": 102,
   "total_rules_promoted": 49,
   "history": [
     {
@@ -709,6 +709,13 @@
       "timestamp": "2026-10-11T13:49:07.664Z",
       "repository": "MiniMaxAI/MiniMax-H3",
       "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv3vq45h",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T13:51:58.512Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv3vtrzd",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

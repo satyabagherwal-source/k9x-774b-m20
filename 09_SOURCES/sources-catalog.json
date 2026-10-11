@@ -898,5 +898,15 @@
     "contentHash": "285589811e4d5ff07f92b2274f2d43daf64d7b71260772e89a5add4b4b717826",
     "lastHarvestedAt": "2026-10-11T13:49:07.663Z",
     "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv3vq45h"
+  },
+  "hf-qwen-qwen3.8-flash-next": {
+    "repository": "Qwen/Qwen3.8-Flash-Next",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+    "sourceVersion": "hf-qwen-qwen3.8-flash-next",
+    "license": "Open-Source",
+    "contentHash": "6f5250799cd1f75038c2d3e3f369a903b939f02c44f35bb7ae9e57c89af500df",
+    "lastHarvestedAt": "2026-10-11T13:51:58.512Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv3vtrzd"
   }
 }

@@ -1438,5 +1438,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-TS1B",
+    "timestamp": "2026-10-11T13:51:58.511Z",
+    "repository": "Qwen/Qwen3.8-Flash-Next",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv3vtrzd",
+    "contentHash": "6f5250799cd1f75038c2d3e3f369a903b939f02c44f35bb7ae9e57c89af500df",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
