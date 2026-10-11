@@ -53,3 +53,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-bingsu-adetailer-mv3kgo7h` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-11T08:33:51.331Z |
 | `learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv3kk1cj` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-11T08:36:28.288Z |
 | `learn-huggingface-hf-baai-bge-large-en-v1-5-mv3knotg` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-11T08:39:18.684Z |
+| `learn-huggingface-hf-zai-org-glm-5-3-mv3kspgb` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-11T08:43:12.817Z |

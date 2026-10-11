@@ -70,3 +70,4 @@
 | `CYCLE-20261011-GO9V` | `2026-10-11T08:33:51.331Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`a9c1ede9...`) |
 | `CYCLE-20261011-K1DR` | `2026-10-11T08:36:28.287Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`9951bec2...`) |
 | `CYCLE-20261011-NOUZ` | `2026-10-11T08:39:18.683Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`92cea6b7...`) |
+| `CYCLE-20261011-SPIO` | `2026-10-11T08:43:12.816Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`f2842313...`) |

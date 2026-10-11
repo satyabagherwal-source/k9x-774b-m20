@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:29:06.374Z",
+  "last_updated": "2026-10-11T08:43:12.817Z",
   "directives": [
     {
       "id": "CD-001",
@@ -64,6 +64,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-github-colinhacks-zod-mv3kabi9"
+    },
+    {
+      "id": "CD-SPIP",
+      "directive_title": "Dynamic Top-K Tensor Boundary Guard",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "zai-org/GLM-5.3",
+      "source_commit": "hf-zai-org-g",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-zai-org-glm-5-3-mv3kspgb"
+    },
+    {
+      "id": "CD-SPIP",
+      "directive_title": "Multi-EOS Set-Normalizing Generation Terminal Guard",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "zai-org/GLM-5.3",
+      "source_commit": "hf-zai-org-g",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-zai-org-glm-5-3-mv3kspgb"
     }
   ]
 }
