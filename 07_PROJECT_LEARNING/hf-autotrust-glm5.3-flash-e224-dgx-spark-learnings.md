@@ -3,8 +3,8 @@
 > **Source Version**: `hf-autotrust`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-11T17:13:04.991Z  
-> **Learning ID**: `learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv430elb`  
+> **Timestamp**: 2026-10-11T23:23:42.919Z  
+> **Learning ID**: `learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4g91hj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark](https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-11T17:13:04.315Z  
+> **Harvest Timestamp**: 2026-10-11T23:23:42.081Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 16331 downloads | 560 likes
+- **Stars / Engagement**: 16331 downloads | 561 likes
 
 ---
 
