@@ -198,5 +198,15 @@
     "contentHash": "83b69df4c4f60bbfa1e1f931fbb6ef521a023141d9aae6d403a193cbeafbb2de",
     "lastHarvestedAt": "2026-10-11T09:24:49.325Z",
     "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv3ma7rs"
+  },
+  "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "sourceVersion": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
+    "license": "Open-Source",
+    "contentHash": "3807cf5738c81e50eb91cd65d859170bdbcb32fe23e170ccfbb68dff9c75bed0",
+    "lastHarvestedAt": "2026-10-11T09:49:30.853Z",
+    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv3n5yx7"
   }
 }
