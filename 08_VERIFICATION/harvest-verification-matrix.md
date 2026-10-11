@@ -246,3 +246,4 @@
 | `CYCLE-20261011-W2WD` | `2026-10-11T18:33:42.061Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`ea6cbfae...`) |
 | `CYCLE-20261011-ZYGM` | `2026-10-11T18:36:42.934Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 339, Rule 340, Rule 341` | Yes (`5e346f46...`) |
 | `CYCLE-20261011-3KTY` | `2026-10-11T18:39:31.894Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`8bc273fc...`) |
+| `CYCLE-20261011-7OOC` | `2026-10-11T18:42:43.500Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`2ee3718b...`) |
