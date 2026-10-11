@@ -738,5 +738,15 @@
     "contentHash": "5f2270e4bf4436682a5a6b89d417216996be4ffab0d7747afcceb932cf957b05",
     "lastHarvestedAt": "2026-10-11T13:01:21.934Z",
     "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv3u0oxd"
+  },
+  "hf-google-bert-bert-base-uncased": {
+    "repository": "google-bert/bert-base-uncased",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
+    "sourceVersion": "hf-google-bert-bert-base-uncased",
+    "license": "Open-Source",
+    "contentHash": "bd991783bdccda0a21b44e3dac7286a5fea6084a91f4ddcdd2800381b1fc21f3",
+    "lastHarvestedAt": "2026-10-11T13:04:19.518Z",
+    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv3u4hza"
   }
 }

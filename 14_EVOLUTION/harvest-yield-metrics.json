@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:01:21.936Z",
-  "total_cycles_completed": 85,
-  "total_learnings_persisted": 85,
+  "last_updated": "2026-10-11T13:04:19.519Z",
+  "total_cycles_completed": 86,
+  "total_learnings_persisted": 86,
   "total_rules_promoted": 45,
   "history": [
     {
@@ -598,6 +598,13 @@
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv3u0oxd",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T13:04:19.519Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv3u4hza",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

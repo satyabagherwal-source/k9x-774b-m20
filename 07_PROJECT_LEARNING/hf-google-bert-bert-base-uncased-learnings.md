@@ -3,8 +3,8 @@
 > **Source Version**: `hf-google-be`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-11T05:06:59.749Z  
-> **Learning ID**: `learn-huggingface-hf-google-bert-bert-base-uncased-mv3d2nfp`  
+> **Timestamp**: 2026-10-11T13:04:19.462Z  
+> **Learning ID**: `learn-huggingface-hf-google-bert-bert-base-uncased-mv3u4hza`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-11T05:06:59.597Z  
+> **Harvest Timestamp**: 2026-10-11T13:04:18.887Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: fill-mask
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 36586526 downloads | 3398 likes
+- **Stars / Engagement**: 35402796 downloads | 3398 likes
 
 ---
 
