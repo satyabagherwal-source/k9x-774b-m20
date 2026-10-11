@@ -878,5 +878,15 @@
     "contentHash": "82a7128361f5d7b53c05ea6e599308189b2a4734ac546e5f1bbbd5def3c856c7",
     "lastHarvestedAt": "2026-10-11T13:43:18.801Z",
     "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv3vimz1"
+  },
+  "hf-black-forest-labs-flux.1-schnell": {
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+    "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
+    "license": "Open-Source",
+    "contentHash": "f2b4241011022aea8eb5ac93d5e3b1faf918c4edd2e4a466524c9262e64a253b",
+    "lastHarvestedAt": "2026-10-11T13:46:19.184Z",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv3vmi4l"
   }
 }

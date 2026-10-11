@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:43:18.802Z",
-  "total_cycles_completed": 99,
-  "total_learnings_persisted": 99,
-  "total_rules_promoted": 46,
+  "last_updated": "2026-10-11T13:46:19.186Z",
+  "total_cycles_completed": 100,
+  "total_learnings_persisted": 100,
+  "total_rules_promoted": 49,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -696,6 +696,13 @@
       "repository": "openai/whisper-large-v3",
       "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv3vimz1",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T13:46:19.186Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv3vmi4l",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

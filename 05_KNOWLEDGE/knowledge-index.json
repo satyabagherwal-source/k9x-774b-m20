@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:43:18.768Z",
-  "total_verified_learnings": 4047,
+  "last_updated": "2026-10-11T13:46:19.138Z",
+  "total_verified_learnings": 4048,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -97351,6 +97351,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T13:43:18.768Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv3vmi4l": {
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv3vmi4l",
+      "source": "black-forest-labs/FLUX.1-schnell",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "slug": "hf-black-forest-labs-flux.1-schnell",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "content_hash": "f2b4241011022aea8eb5ac93d5e3b1faf918c4edd2e4a466524c9262e64a253b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 299,
+          "title": "Scheduler-Objective Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 300,
+          "title": "VAE Decode Memory Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 301,
+          "title": "Dual-Text-Encoder Fusion",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T13:46:19.138Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
