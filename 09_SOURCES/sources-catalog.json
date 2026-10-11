@@ -818,5 +818,15 @@
     "contentHash": "20e7f6ab918aeca394fb3cbe25bb161ec05800534a6dc2553c7118d5521ebdff",
     "lastHarvestedAt": "2026-10-11T13:25:14.673Z",
     "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv3uvefu"
+  },
+  "hf-amazon-chronos-2": {
+    "repository": "amazon/chronos-2",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/amazon/chronos-2",
+    "sourceVersion": "hf-amazon-chronos-2",
+    "license": "Open-Source",
+    "contentHash": "001482e79beb9675f85089069235a9fedb8e09ae10f54a1c745249c6a6f66bcc",
+    "lastHarvestedAt": "2026-10-11T13:28:04.764Z",
+    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv3uz1oh"
   }
 }

@@ -1318,5 +1318,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-Z1QZ",
+    "timestamp": "2026-10-11T13:28:04.763Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv3uz1oh",
+    "contentHash": "001482e79beb9675f85089069235a9fedb8e09ae10f54a1c745249c6a6f66bcc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

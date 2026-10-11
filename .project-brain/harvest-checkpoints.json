@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T13:25:14.675Z",
+  "last_updated": "2026-10-11T13:28:04.765Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -958,15 +958,15 @@
       "repository": "amazon/chronos-2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-amazon-chronos-2-mv3dwwtk",
-      "content_hash": "5b5fee932fac690a3d164133e86c158d50d34e01c11664ba54c8dec41860c312",
-      "verified_at": "2026-10-11T05:30:31.643Z",
+      "learning_id": "learn-huggingface-hf-amazon-chronos-2-mv3uz1oh",
+      "content_hash": "001482e79beb9675f85089069235a9fedb8e09ae10f54a1c745249c6a6f66bcc",
+      "verified_at": "2026-10-11T13:28:04.765Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T05:30:31.643Z"
+      "last_updated": "2026-10-11T13:28:04.765Z"
     },
     "CompVis/stable-diffusion-v1-4": {
       "repository": "CompVis/stable-diffusion-v1-4",
