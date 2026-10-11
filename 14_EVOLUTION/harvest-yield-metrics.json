@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:40:11.171Z",
-  "total_cycles_completed": 208,
-  "total_learnings_persisted": 208,
+  "last_updated": "2026-10-11T19:43:28.990Z",
+  "total_cycles_completed": 209,
+  "total_learnings_persisted": 209,
   "total_rules_promoted": 92,
   "history": [
-    {
-      "timestamp": "2026-10-11T08:11:20.321Z",
-      "repository": "test-org/rule-verifier",
-      "learningId": "learn-github-test-org-rule-verifier-mv3jnpou",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T08:14:16.966Z",
       "repository": "test-org/test-idempotent-repo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T19:40:11.171Z",
       "repository": "google/embeddinggemma-2",
       "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv489kut",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T19:43:28.990Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
