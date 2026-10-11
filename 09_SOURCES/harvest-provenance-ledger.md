@@ -95,3 +95,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv3rdxya` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-11T11:47:41.307Z |
 | `learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3rhipt` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-11T11:50:28.175Z |
 | `learn-huggingface-hf-comfy-org-qwen-image-2-1-mv3rlnex` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-11T11:53:40.914Z |
+| `learn-huggingface-hf-akhilaaa3-jev-omni-mv3rpmwl` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-11T11:56:46.862Z |

@@ -6829,3 +6829,98 @@ def load_pipeline(dtype):
 ```
 **VERIFICATION METHOD**:
 Unit test that loads a pipeline with mismatched dtypes and verifies that an error is raised or that the output is incorrect.
+
+
+---
+
+## 288. Multimodal Input Length Enforcement (Harvested from akhilaaa3/Jev-Omni)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multimodal Input Length Enforcement",
+  "source": "akhilaaa3/Jev-Omni",
+  "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+  "source_version": "hf-akhilaaa3-jev-omni",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:56:46.800Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-akhilaaa3-jev-omni-mv3rpmwl",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [akhilaaa3/Jev-Omni](https://huggingface.co/akhilaaa3/Jev-Omni) (Revision: `hf-akhilaa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Always enforce input length constraints (e.g., audio duration, video frame count) at the API boundary, not just in documentation.
+**WHY**:
+Multimodal models have fixed context windows and memory constraints. Exceeding these can lead to OOM errors or silent truncation, causing hallucinations.
+**WHEN TO APPLY**:
+Any multimodal model that accepts variable-length media inputs.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def predict(self, media, modality, **kwargs):
+    if modality == "audio":
+        duration = get_audio_duration(media)
+        if duration > 30:
+            media = truncate_audio(media, 30)
+    # ...
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Assuming the processor handles all lengths
+# audio_features = processor(audio=long_audio_file)
+```
+**VERIFICATION METHOD**:
+Unit test with an audio file > 30s, assert that the output is truncated or an error is raised.
+
+
+---
+
+## 289. Logit Softcapping in Low-Precision Inference (Harvested from akhilaaa3/Jev-Omni)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Logit Softcapping in Low-Precision Inference",
+  "source": "akhilaaa3/Jev-Omni",
+  "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+  "source_version": "hf-akhilaaa3-jev-omni",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T11:56:46.805Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-akhilaaa3-jev-omni-mv3rpmwl",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [akhilaaa3/Jev-Omni](https://huggingface.co/akhilaaa3/Jev-Omni) (Revision: `hf-akhilaa`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Always apply logit capping in low-precision inference to prevent softmax instability.
+**WHY**:
+BF16 has only 7 bits of mantissa. Large logit values can cause overflow in softmax if not capped.
+**WHEN TO APPLY**:
+Any model that uses BF16 or FP16 inference.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def safe_softmax(logits, cap=30.0):
+    logits = torch.clamp(logits, min=-cap, max=cap)
+    return torch.softmax(logits, dim=-1)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Direct softmax on BF16 logits
+# probs = torch.softmax(logits, dim=-1)
+```
+**VERIFICATION METHOD**:
+Unit test with large logit values, assert that the softmax output is stable and does not contain NaNs.

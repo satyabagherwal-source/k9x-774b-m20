@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:53:40.915Z",
+  "last_updated": "2026-10-11T11:56:46.863Z",
   "directives": [
     {
       "id": "CD-001",
@@ -625,6 +625,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv3rlnex"
+    },
+    {
+      "id": "CD-PMZ3",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "akhilaaa3/Jev-Omni",
+      "source_commit": "hf-akhilaaa3",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-akhilaaa3-jev-omni-mv3rpmwl"
+    },
+    {
+      "id": "CD-PMZ3",
+      "directive_title": "Special Token ID Verification",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "akhilaaa3/Jev-Omni",
+      "source_commit": "hf-akhilaaa3",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-akhilaaa3-jev-omni-mv3rpmwl"
     }
   ]
 }

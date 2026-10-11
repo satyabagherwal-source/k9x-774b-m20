@@ -508,5 +508,15 @@
     "contentHash": "0d802a4b63d4fdf27795cc6210ed419ed4b1b903178a7c2a0c2e0c4fc3372613",
     "lastHarvestedAt": "2026-10-11T11:53:40.914Z",
     "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv3rlnex"
+  },
+  "hf-akhilaaa3-jev-omni": {
+    "repository": "akhilaaa3/Jev-Omni",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
+    "sourceVersion": "hf-akhilaaa3-jev-omni",
+    "license": "Open-Source",
+    "contentHash": "ad1ca98aed89db8dcab21ced50fd66faf4b481c3addd58bbd14386e861172d19",
+    "lastHarvestedAt": "2026-10-11T11:56:46.862Z",
+    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv3rpmwl"
   }
 }
