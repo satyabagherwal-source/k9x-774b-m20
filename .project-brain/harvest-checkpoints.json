@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:49:22.885Z",
+  "last_updated": "2026-10-11T21:52:33.308Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1364,15 +1364,15 @@
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
-      "content_hash": "fd5029ef09aeff6441eefcd18ee65488403995dd1ddfd61686580de9be8faa87",
-      "verified_at": "2026-10-11T14:59:59.860Z",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14",
+      "content_hash": "e04c3f41197c64074b49ce6dc99ad45d7ded4c93dbd5f7246a802de1215f95d2",
+      "verified_at": "2026-10-11T21:52:33.308Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T14:59:59.860Z"
+      "last_updated": "2026-10-11T21:52:33.308Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",

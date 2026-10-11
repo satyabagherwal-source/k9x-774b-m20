@@ -3718,5 +3718,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-ZT3S",
+    "timestamp": "2026-10-11T21:52:33.304Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14",
+    "contentHash": "e04c3f41197c64074b49ce6dc99ad45d7ded4c93dbd5f7246a802de1215f95d2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

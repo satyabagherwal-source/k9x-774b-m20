@@ -309,3 +309,4 @@
 | `CYCLE-20261011-O4RH` | `2026-10-11T21:43:28.541Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`530430f8...`) |
 | `CYCLE-20261011-RS8Y` | `2026-10-11T21:46:18.946Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`3a9e2058...`) |
 | `CYCLE-20261011-VQ6B` | `2026-10-11T21:49:22.883Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`86dd080f...`) |
+| `CYCLE-20261011-ZT3S` | `2026-10-11T21:52:33.304Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`e04c3f41...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:49:22.884Z",
-  "total_cycles_completed": 251,
-  "total_learnings_persisted": 251,
+  "last_updated": "2026-10-11T21:52:33.307Z",
+  "total_cycles_completed": 252,
+  "total_learnings_persisted": 252,
   "total_rules_promoted": 112,
   "history": [
-    {
-      "timestamp": "2026-10-11T11:16:53.724Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv3qaccp",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T11:20:00.787Z",
       "repository": "apple/LensVLM-9B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T21:49:22.884Z",
       "repository": "openai/clip-vit-base-patch32",
       "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T21:52:33.307Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
