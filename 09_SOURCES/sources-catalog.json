@@ -908,5 +908,15 @@
     "contentHash": "6f5250799cd1f75038c2d3e3f369a903b939f02c44f35bb7ae9e57c89af500df",
     "lastHarvestedAt": "2026-10-11T13:51:58.512Z",
     "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv3vtrzd"
+  },
+  "hf-deepseek-ai-deepseek-v4-pro": {
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+    "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
+    "license": "Open-Source",
+    "contentHash": "0da53bbaffce1f12deabb7a46d27100daaaf0008af3a402d5fc305b543bc1390",
+    "lastHarvestedAt": "2026-10-11T13:55:10.444Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv3vxw29"
   }
 }
