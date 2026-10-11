@@ -311,3 +311,4 @@
 | `CYCLE-20261011-VQ6B` | `2026-10-11T21:49:22.883Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`86dd080f...`) |
 | `CYCLE-20261011-ZT3S` | `2026-10-11T21:52:33.304Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`e04c3f41...`) |
 | `CYCLE-20261011-4017` | `2026-10-11T21:55:48.907Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`e8cddf25...`) |
+| `CYCLE-20261011-7MLJ` | `2026-10-11T21:58:38.119Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`cd6045de...`) |

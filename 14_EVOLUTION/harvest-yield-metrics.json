@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:55:48.910Z",
-  "total_cycles_completed": 253,
-  "total_learnings_persisted": 253,
+  "last_updated": "2026-10-11T21:58:38.122Z",
+  "total_cycles_completed": 254,
+  "total_learnings_persisted": 254,
   "total_rules_promoted": 112,
   "history": [
-    {
-      "timestamp": "2026-10-11T11:22:52.115Z",
-      "repository": "Altworld/Hemmingway-1",
-      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T11:39:01.774Z",
       "repository": "fastino/GLiNER2.5-Decide",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T21:55:48.910Z",
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T21:58:38.122Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
