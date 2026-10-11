@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:19:11.341Z",
-  "total_cycles_completed": 130,
-  "total_learnings_persisted": 130,
+  "last_updated": "2026-10-11T15:21:58.964Z",
+  "total_cycles_completed": 131,
+  "total_learnings_persisted": 131,
   "total_rules_promoted": 56,
   "history": [
     {
@@ -926,6 +926,13 @@
       "timestamp": "2026-10-11T15:19:11.341Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T15:21:58.964Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

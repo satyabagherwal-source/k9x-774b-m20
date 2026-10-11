@@ -1188,5 +1188,15 @@
     "contentHash": "cc581525a32cacd567c2efa8cf95affd8e1a9e2fee9d8a3f7af9622780b66022",
     "lastHarvestedAt": "2026-10-11T15:19:11.337Z",
     "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno"
+  },
+  "hf-nomic-ai-nomic-embed-text-v1.5": {
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
+    "sourceVersion": "hf-nomic-ai-nomic-embed-text-v1.5",
+    "license": "Open-Source",
+    "contentHash": "cc0472cdb064d7348c3a5a7e3dfeacd8bba2ffba6a820d86c1663f6c12b923be",
+    "lastHarvestedAt": "2026-10-11T15:21:58.963Z",
+    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs"
   }
 }

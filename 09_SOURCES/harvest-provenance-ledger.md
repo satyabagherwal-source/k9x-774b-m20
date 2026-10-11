@@ -164,3 +164,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-11T15:12:38.358Z |
 | `learn-huggingface-hf-openai-community-gpt2-mv3yuiaq` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-11T15:16:31.509Z |
 | `learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-11T15:19:11.337Z |
+| `learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-11T15:21:58.963Z |
