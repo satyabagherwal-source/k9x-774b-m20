@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T17:10:20.462Z",
-  "total_cycles_completed": 158,
-  "total_learnings_persisted": 158,
+  "last_updated": "2026-10-11T17:13:05.088Z",
+  "total_cycles_completed": 159,
+  "total_learnings_persisted": 159,
   "total_rules_promoted": 68,
   "history": [
     {
@@ -1123,6 +1123,13 @@
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T17:13:05.088Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv430elb",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

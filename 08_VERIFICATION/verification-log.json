@@ -2323,5 +2323,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-0ENY",
+    "timestamp": "2026-10-11T17:13:05.086Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv430elb",
+    "contentHash": "fb2f675837a66a09169a9087c6109e900e79632d9e2a273f4d181d81985ded6d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
