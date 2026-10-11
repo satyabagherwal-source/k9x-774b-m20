@@ -65,9 +65,9 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "a9c1ede9de7fa7f1fe4f12dfd6f3ee48de17b533ae6217f19d418f7cacc46b88",
-    "lastHarvestedAt": "2026-10-11T08:33:51.331Z",
-    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv3kgo7h"
+    "contentHash": "cb23db5267db31a1809d6f82577946f799b087fdff27a222abda65b66ac0dbe3",
+    "lastHarvestedAt": "2026-10-11T16:09:58.942Z",
+    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv40r96p"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
     "repository": "lilylilith/QI_2.1_AnyAngle",
