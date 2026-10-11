@@ -193,3 +193,4 @@
 | `CYCLE-2026-10-11-RESEARCH` | `2026-10-11T15:42:31.349Z` | `animir/node-rate-limiter-flexible` | Targeted Research Proof | `VERIFIED` | `Rule 313` in `05_KNOWLEDGE` | Yes |
 | `CYCLE-20261011-0PRT` | `2026-10-11T15:49:20.633Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 314, Rule 315` | Yes (`fa832a68...`) |
 | `CYCLE-20261011-4ATN` | `2026-10-11T15:52:07.883Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`e9750dbe...`) |
+| `CYCLE-20261011-7W13` | `2026-10-11T15:54:55.335Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`af0157e7...`) |

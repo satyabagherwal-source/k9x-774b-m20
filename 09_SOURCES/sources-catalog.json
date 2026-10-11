@@ -1248,5 +1248,15 @@
     "contentHash": "e9750dbeb5f59940d707cc5971b7a08e4497dc1bb5f571357e34f353d3f2fd2b",
     "lastHarvestedAt": "2026-10-11T15:52:07.890Z",
     "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8"
+  },
+  "hf-qwen-qwen3-8b": {
+    "repository": "Qwen/Qwen3-8B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
+    "sourceVersion": "hf-qwen-qwen3-8b",
+    "license": "Open-Source",
+    "contentHash": "af0157e75094b01eeb2334e7e57957d1a729c6ab9434b2d5ec745b443784fa82",
+    "lastHarvestedAt": "2026-10-11T15:54:55.336Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv407vz0"
   }
 }
