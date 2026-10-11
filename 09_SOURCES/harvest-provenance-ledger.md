@@ -293,3 +293,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-naiveai-naive-n0-5-flash-mv4crs6s` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-11T21:46:18.948Z |
 | `learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-11T21:49:22.884Z |
 | `learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-11T21:52:33.306Z |
+| `learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-11T21:55:48.909Z |

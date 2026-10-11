@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:52:33.307Z",
-  "total_cycles_completed": 252,
-  "total_learnings_persisted": 252,
+  "last_updated": "2026-10-11T21:55:48.910Z",
+  "total_cycles_completed": 253,
+  "total_learnings_persisted": 253,
   "total_rules_promoted": 112,
   "history": [
-    {
-      "timestamp": "2026-10-11T11:20:00.787Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv3qecp6",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T11:22:52.115Z",
       "repository": "Altworld/Hemmingway-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T21:52:33.307Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T21:55:48.910Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

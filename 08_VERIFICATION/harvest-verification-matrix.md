@@ -310,3 +310,4 @@
 | `CYCLE-20261011-RS8Y` | `2026-10-11T21:46:18.946Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`3a9e2058...`) |
 | `CYCLE-20261011-VQ6B` | `2026-10-11T21:49:22.883Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`86dd080f...`) |
 | `CYCLE-20261011-ZT3S` | `2026-10-11T21:52:33.304Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`e04c3f41...`) |
+| `CYCLE-20261011-4017` | `2026-10-11T21:55:48.907Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`e8cddf25...`) |
