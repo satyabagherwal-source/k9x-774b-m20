@@ -155,3 +155,4 @@
 | `CYCLE-20261011-XW4R` | `2026-10-11T13:55:10.443Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`0da53bba...`) |
 | `CYCLE-20261011-1TJR` | `2026-10-11T13:58:13.719Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`7891ae25...`) |
 | `CYCLE-20261011-5S9K` | `2026-10-11T14:01:18.680Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`3942f84e...`) |
+| `CYCLE-20261011-9EYN` | `2026-10-11T14:04:08.063Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`6d6cfa04...`) |
