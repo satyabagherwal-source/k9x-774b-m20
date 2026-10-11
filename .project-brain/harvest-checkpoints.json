@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:03:49.327Z",
+  "last_updated": "2026-10-11T19:06:59.298Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,15 +650,15 @@
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv3sgbac",
-      "content_hash": "1ea13e7cc3efa26e3f964df446909b28b56e7ef6c6bf6cd371cf630de075c81d",
-      "verified_at": "2026-10-11T12:17:31.526Z",
+      "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
+      "content_hash": "f159c59cab8a323eac85ecfe4088ce996121f2819f61621acc408c698fff7bee",
+      "verified_at": "2026-10-11T19:06:59.298Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T12:17:31.526Z"
+      "last_updated": "2026-10-11T19:06:59.298Z"
     },
     "Alissonerdx/BFS-Best-Face-Swap": {
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
