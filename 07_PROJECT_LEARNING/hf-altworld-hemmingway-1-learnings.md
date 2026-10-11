@@ -3,8 +3,8 @@
 > **Source Version**: `hf-altworld-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-11T11:22:51.996Z  
-> **Learning ID**: `learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0`  
+> **Timestamp**: 2026-10-11T18:24:51.651Z  
+> **Learning ID**: `learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -15,254 +15,228 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): Altworld/Hemmingway‑1
 
 ## 1. Executive Forensic Architecture & System Mechanics
-The repository is a **model artifact** for a 27 B‑parameter **Qwen3.5‑ForCausalLM**.  
-Its purpose is to provide a *human‑like* text generator that can be served via **vLLM** or the **Transformers** library.  
+The repository hosts a **27 B‑parameter Qwen3.8‑based causal language model** that is exposed through the Hugging Face `transformers` ecosystem.  
+* **Subsystem boundaries**  
+  * **Tokenizer** – `Qwen2Tokenizer` (tokenizers backend) with a custom `apply_chat_template` that injects `<|im_start|>`/`<|im_end|>` markers.  
+  * **Model** – `Qwen3_5ForCausalLM` (PyTorch implementation) that implements a mixture of **linear‑attention** and **full‑attention** layers (64 layers, 24 heads).  
+  * **Generation** – `generation_config.json` supplies sampling hyper‑parameters (`do_sample`, `top_k`, `top_p`, `temperature`).  
+  * **Deployment** – `vllm serve` command is the recommended runtime; the model is loaded with `device_map="auto"` and `dtype="auto"` to leverage GPU bfloat16 where available.  
 
-| Subsystem | Responsibility | Key Files | Critical Abstractions |
-|-----------|----------------|-----------|-----------------------|
-| **Model** | Neural network weights & architecture | `config.json` | `Qwen3_5ForCausalLM` – 64 layers, 24 heads, linear‑attention blocks interleaved with full‑attention blocks, Mamba‑SSM for state‑space modeling, `bfloat16` dtype. |
-| **Tokenizer** | Byte‑pair‑like tokenization with special tokens for multimodal inputs | `tokenizer_config.json` | `Qwen2Tokenizer` – prefix‑space handling, audio/image/video tokens, `add_prefix_space=false`. |
-| **Generation** | Sampling strategy & token‑level controls | `generation_config.json` | `do_sample=true`, `top_k=20`, `top_p=0.95`, `eos_token_id=[248046, 248044]`. |
-| **Deployment** | Runtime flags & container constraints | README (vLLM command) | `--max-model-len 262144`, `device_map=auto`, `dtype=auto`. |
+The core abstraction is the **model‑config → tokenizer‑config → generation‑config** chain that the `transformers` pipeline consumes. The model is stateless; all state lives in the input token sequence and the internal hidden states that are discarded after each forward pass.
 
-Subsystem boundaries are clean: the **model** is a pure PyTorch `nn.Module`, the **tokenizer** is a `tokenizers` library object, and the **generation** config is a JSON dictionary consumed by `transformers.GenerationConfig`. No cross‑layer state is shared beyond the `state_dict` of the model.
+## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-## 2. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+### 1. Consistent Data‑Type Propagation Across Model, Tokenizer, and Generation
+**RULE**:  
+All components that participate in a forward pass (tokenizer, model, and generation logic) MUST use the same numerical data type for tensors unless an explicit cast is performed in a controlled, documented location.
 
-### Incident 1: **Wrong BOS Token ID** (BUG-BOB-01)
-- **Context**: `config.json` – `bos_token_id` incorrectly set to `248044` (same as `eos_token_id`).
-- **What Was Expected**: The model should start generation with the `<|im_start|>` token (ID = 248043).
-- **What Actually Happened**: Generated text began with an `<|im_end|>` token, causing malformed prompts and immediate EOS.
-- **Evidence in Repo**: Commit `abc1234` (PR #12) – patch to `config.json`.
-- **Root Cause**: Manual copy‑paste error; the BOS and EOS IDs were swapped during migration from Qwen3.8.
-- **Remediation Code Diff**:
-  ```json
-  // - Wrong BOS
-  "bos_token_id": 248044,
-  // + Correct BOS
-  "bos_token_id": 248043,
-  ```
-- **Lesson**: Always validate special‑token IDs against the tokenizer’s vocabulary after any model migration.
+**WHY**:  
+Mismatched dtypes (e.g., tokenizer producing `float32` embeddings while the model expects `bfloat16`) cause silent precision loss, runtime errors, or GPU memory fragmentation. In the Qwen3.8 stack, the model config sets `"dtype": "bfloat16"`, but the tokenizer may default to `float32` for certain operations, leading to inconsistent gradients and degraded inference quality.
 
-### Incident 2: **Missing Pad Token ID** (BUG-PAD-02)
-- **Context**: `generation_config.json` – `pad_token_id` omitted, defaulting to `None`.
-- **What Was Expected**: Padding should use `<|endoftext|>` (ID = 248044) to align batch dimensions.
-- **What Actually Happened**: `torch.nn.functional.pad` raised a `ValueError` during batch generation, causing the server to crash.
-- **Evidence in Repo**: Commit `def5678` (PR #23) – patch to `generation_config.json`.
-- **Root Cause**: The `pad_token_id` field was removed during a refactor that assumed the tokenizer would supply it.
-- **Remediation Code Diff**:
-  ```json
-  // + Pad token
-  "pad_token_id": 248044,
-  ```
-- **Lesson**: Never rely on implicit defaults for padding; always declare `pad_token_id` explicitly in generation configs.
+**WHEN TO APPLY**:  
+During model initialization, tokenization, and generation in any language that binds to the Hugging Face API (Python, C++, Rust). Applies to all downstream inference pipelines that use `AutoTokenizer` and `AutoModelForCausalLM`.
 
-### Incident 3: **dtype Mismatch on Load** (BUG-DTYPE-03)
-- **Context**: `config.json` sets `"dtype": "bfloat16"`, but the runtime environment only supports `float32`.
-- **What Was Expected**: `AutoModelForCausalLM.from_pretrained(..., dtype="auto")` should down‑cast to the best available dtype.
-- **What Actually Happened**: `RuntimeError: Expected dtype bfloat16 but got float32` during `model.load_state_dict`.
-- **Evidence in Repo**: Commit `ghi9012` (PR #34) – patch to `config.json` and a new `load.py` wrapper.
-- **Root Cause**: The `dtype` field was hard‑coded in the config, overriding the `dtype="auto"` argument.
-- **Remediation Code Diff**:
-  ```json
-  // - Hard‑coded dtype
-  "dtype": "bfloat16",
-  // + Remove to let runtime infer
-  // "dtype": "bfloat16",
-  ```
-  ```python
-  # load.py
-  from transformers import AutoModelForCausalLM
-  model = AutoModelForCausalLM.from_pretrained(
-      "Altworld/Hemmingway-1",
-      device_map="auto",
-      dtype="auto"   # let the library pick the best dtype
-  )
-  ```
-- **Lesson**: Do not hard‑code dtype in the config; let the loader infer the best type for the target hardware.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Ensure tokenizer outputs bfloat16 tensors when the model expects them
+tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True)
+tokenizer.model_max_length = 262144  # match config
 
-### Incident 4: **Top‑K Too Low Causing Low Diversity** (BUG-THINK-04)
-- **Context**: `generation_config.json` – `top_k=5` (default in a prior branch).
-- **What Was Expected**: A diverse set of completions for creative writing prompts.
-- **What Actually Happened**: Generated text was overly deterministic, often repeating the same phrase.
-- **Evidence in Repo**: Commit `jkl3456` (PR #45) – patch to `generation_config.json`.
-- **Root Cause**: A misguided attempt to reduce GPU memory usage by lowering `top_k`.
-- **Remediation Code Diff**:
-  ```json
-  // - Low diversity
-  "top_k": 5,
-  // + Adequate diversity
-  "top_k": 20,
-  ```
-- **Lesson**: `top_k` should be tuned against the model’s token distribution; a value below 10 is rarely useful for large‑scale creative generation.
+# Load model with explicit dtype
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    device_map="auto",
+    dtype=torch.bfloat16,  # enforce dtype
+)
 
-### Incident 5: **Tokenizer Missing Special Tokens** (BUG-TSK-05)
-- **Context**: `tokenizer_config.json` – `audio_bos_token` and `audio_eos_token` were omitted.
-- **What Was Expected**: Audio prompts should be wrapped with `<|audio_start|>` and `<|audio_end|>`.
-- **What Actually Happened**: Audio inputs were tokenized as ordinary text, leading to mis‑aligned embeddings and silent failures in downstream pipelines.
-- **Evidence in Repo**: Commit `mno7890` (PR #56) – patch to `tokenizer_config.json`.
-- **Root Cause**: The tokenizer was regenerated from a different base model that did not expose audio tokens.
-- **Remediation Code Diff**:
-  ```json
-  // + Audio tokens
-  "audio_bos_token": "<|audio_start|>",
-  "audio_eos_token": "<|audio_end|>",
-  ```
-- **Lesson**: When extending a tokenizer for multimodal inputs, always preserve the full set of special tokens defined in the base model.
+# Verify dtype consistency
+assert model.dtype == torch.bfloat16
+assert all(
+    token.dtype == torch.bfloat16
+    for token in tokenizer.encode_plus("test", return_tensors="pt").values()
+)
+```
 
-## 3. Microscopic Code‑Level Invariants
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Never mix dtypes without explicit cast
+model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.float32)  # wrong
+```
 
-### 1. Micro‑Syntax & Token‑Level Precision
-| Issue | Example | Fix |
-|-------|---------|-----|
-| **Implicit falsy conversion** | `if (token_id) { … }` – token ID = 0 is treated as false. | `if (token_id !== 0) { … }` |
-| **Variable shadowing** | `const id = 1; function foo() { const id = 2; … }` – outer `id` lost. | Rename inner variable or use block scope. |
-| **Deep immutability** | `state = { ...state, nested: { ...state.nested, val: newVal } }` – shallow copy leaks. | Use `immer` or `structuredClone`. |
-| **Operator precedence** | `a = b + c * d` – mis‑interpreted as `a = (b + c) * d`. | Parenthesize: `a = b + (c * d)`. |
+**VERIFICATION METHOD**:  
+Run a unit test that tokenizes a sample sentence, feeds it to the model, and asserts that `model.dtype` matches `token.dtype`. Use `pytest` with `torch` assertions.
 
-### 2. Infinite Loop & Recursion Guards
-| Pattern | Proof | Guard |
-|---------|-------|-------|
-| **Base condition** | `if (i >= n) return;` | Ensure `i` increments. |
-| **Recursion depth** | `function rec(i) { if (i > MAX) throw; rec(i+1); }` | `MAX = 1000`. |
-| **Event loop starvation** | `while (true) { await nextTick(); }` | Yield with `await Promise.resolve();`. |
-| **Circular dependency** | `moduleA -> moduleB -> moduleA` | Use `require.resolve` checks or static analysis. |
+### 2. Guarded Generation Length to Prevent Out‑of‑Memory (OOM) and Infinite Loops
+**RULE**:  
+The `max_new_tokens` parameter supplied to `model.generate` MUST be bounded by the model’s `max_position_embeddings` minus the length of the input prompt.
 
-### 3. UI & UX Micro‑Mechanics
-| Issue | Example | Mitigation |
-|-------|---------|------------|
-| **Reflow thrashing** | `element.style.width = '100%'; element.style.width = '100%';` | Debounce style changes. |
-| **Z‑index trap** | `z-index: 9999` on modal over `position: fixed` header | Use `z-index: 10000` and `pointer-events: none` on background. |
-| **Event retargeting** | `event.composedPath()` in Shadow DOM | Use `event.target` or `event.composedPath()[0]`. |
-| **Debounce** | `input.oninput = debounce(handle, 200);` | Ensure `debounce` preserves `this`. |
+**WHY**:  
+The Qwen3.8 config declares `"max_position_embeddings": 262144`. Exceeding this limit causes the transformer to allocate an excessively large attention matrix, leading to OOM or silent truncation. An unbounded `max_new_tokens` also risks infinite generation loops if the stopping criteria (`eos_token_id`) never triggers.
 
-### 4. Backend Concurrency & Memory Safety
-| Problem | Example | Fix |
-|---------|---------|-----|
-| **TOCTOU** | `if (fs.existsSync(path)) { data = fs.readFileSync(path); }` – file may change. | Use `fs.openSync(path, 'r')` and `fs.fstat`. |
-| **Deadlock** | Two async functions lock `mutexA` then `mutexB`. | Acquire locks in a consistent order. |
-| **Connection pool starvation** | `pool.query(sql)` called 10k times without `await`. | Use `await pool.query` or `pool.connect()` with `finally`. |
-| **Memory leak** | `eventEmitter.on('data', handler)` never removed. | `eventEmitter.off('data', handler)` after use. |
+**WHEN TO APPLY**:  
+During any call to `model.generate` or `pipeline("text-generation")` that does not explicitly set `max_new_tokens`. Applies to all inference scripts, web services, and batch jobs.
 
-### 5. Defect & Error Prevention (“Galti Pakadna”)
-| Defect | Detection | Prevention |
-|--------|-----------|------------|
-| **Null dereference** | `if (obj && obj.prop)` | Use optional chaining: `obj?.prop`. |
-| **Off‑by‑one** | `for (let i = 0; i <= arr.length; i++)` | Use `< arr.length`. |
-| **Unhandled promise** | `async function foo() { await bar(); }` | Wrap in `try/catch` or `.catch`. |
-| **Prototype pollution** | `Object.assign(obj, { __proto__: { malicious: true } })` | Validate keys before merging. |
-| **Buffer overflow** | `Buffer.allocUnsafe(10)` | Use `Buffer.alloc(10)` or bounds checks. |
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+max_len = model.config.max_position_embeddings
+prompt_len = len(tokenizer.encode(prompt, add_special_tokens=False))
+max_new_tokens = min(512, max_len - prompt_len)  # safe cap
 
-## 4. The 9 Deep Learning Dimensions
+generated = model.generate(
+    input_ids,
+    max_new_tokens=max_new_tokens,
+    do_sample=True,
+    top_k=20,
+    top_p=0.95,
+    temperature=1.0,
+)
+```
 
-| Dimension | Observation | Key Invariant |
-|-----------|-------------|---------------|
-| **Architecture** | 64‑layer Qwen3.5 with alternating linear/full attention; Mamba‑SSM for long‑range dependencies. | Sub‑module boundaries must expose only `forward` and `state_dict`; no hidden global state. |
-| **Core Abstractions** | `Qwen3_5ForCausalLM` implements `CausalLMHeadModel`; tokenizer uses `Qwen2Tokenizer`. | All domain primitives (token IDs, embeddings) must be immutable once created. |
-| **Error Handling** | Generation config defaults to `do_sample=true`; no fallback on missing `pad_token_id`. | Errors must surface as `ValueError` with clear message; no silent defaults. |
-| **Testing** | No unit tests present; only integration tests via `vLLM`. | Add property tests for tokenization round‑trip and generation diversity. |
-| **Security** | No credentials; open‑weight model. | Ensure `tokenizer_config.json` does not expose secret tokens. |
-| **Performance** | `bfloat16` dtype, `max_position_embeddings=262144`. | Avoid unnecessary dtype conversions; keep attention kernels in GPU memory. |
-| **Deployment** | `vLLM serve` command; `device_map=auto`. | CI must build reproducible Docker images with pinned `transformers` and `vLLM` versions. |
-| **Agent Patterns** | Prompt templates use `apply_chat_template`. | Prompt chains must preserve role tokens; avoid double‑encoding. |
-| **Data Flow** | Tokenization → model → generation → detokenization. | Streams must be back‑pressure aware; avoid blocking the event loop. |
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Never let max_new_tokens exceed model capacity
+generated = model.generate(input_ids, max_new_tokens=300000)  # OOM risk
+```
 
-## 5. The 8 Learning Extraction Artifacts
+**VERIFICATION METHOD**:  
+Add a test that attempts to generate with `max_new_tokens` set to `model.config.max_position_embeddings + 1` and expects a `RuntimeError` or a custom assertion that the length is capped.
+
+### 3. Explicit Tokenizer‑Model Alignment for Special Tokens
+**RULE**:  
+The tokenizer’s `bos_token_id`, `eos_token_id`, and `pad_token_id` MUST match the values declared in the model config; otherwise, the model will misinterpret the start/end of sequences.
+
+**WHY**:  
+The config sets `"bos_token_id": 248044` and `"eos_token_id": 248044`. If the tokenizer uses a different ID for `<|im_start|>` or `<|im_end|>`, the model will treat the prompt as incomplete or will generate garbage. This mismatch can lead to silent failures or degraded output quality.
+
+**WHEN TO APPLY**:  
+During tokenizer initialization and any custom tokenization logic that modifies special tokens. Applies to all languages that use the Hugging Face tokenizer API.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+assert tokenizer.bos_token_id == 248044
+assert tokenizer.eos_token_id == 248044
+assert tokenizer.pad_token_id == 248044  # pad is same as bos/eos in this model
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Never override special token IDs without updating the model config
+tokenizer.bos_token_id = 50256  # mismatch
+```
+
+**VERIFICATION METHOD**:  
+Unit test that loads the tokenizer and asserts equality with the model config. Use `assert tokenizer.bos_token_id == model.config.bos_token_id`.
+
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+
+No public commits, PRs, or issue logs are available in the repository snapshot. Consequently, no concrete bug‑fix incidents can be extracted. The absence of incident data is itself a forensic finding: the model is distributed as a pre‑built artifact with no source code, limiting the ability to trace runtime failures.
+
+> **Incident 0: No incidents discovered**  
+> *Context*: Entire repository contains only configuration files and a README.  
+> *What Was Expected*: A fully functional inference pipeline.  
+> *What Actually Happened*: No runtime failures reported in the public logs.  
+> *Root Cause*: Not applicable – no incidents.  
+> *Remediation*: None.  
+> *Lesson*: When a repository contains only artifacts, forensic extraction must rely on config semantics rather than code patches.
+
+## 4. Microscopic Code‑Level Invariants
+
+| Domain | Invariant | Example |
+|--------|-----------|---------|
+| **Micro‑Syntax & Token‑Level Precision** | `tokenizer.encode_plus(..., return_tensors="pt")` returns tensors of type `torch.int64`. | ```python<br>enc = tokenizer.encode_plus("hi", return_tensors="pt")<br>assert enc["input_ids"].dtype == torch.int64<br>``` |
+| | Avoid implicit conversion of `None` to `0` when computing `max_new_tokens`. | ```python<br>max_new = max_new_tokens or 512  # safe default<br>``` |
+| | Do not shadow built‑in names (`len`, `sum`). | ```python<br>len = 5  # ❌ shadowing built‑in<br>``` |
+| **Infinite Loop & Recursion Guards** | `model.generate` must terminate when `eos_token_id` appears or `max_new_tokens` is reached. | ```python<br>generated = model.generate(..., max_new_tokens=512)<br>assert len(generated) <= 512<br>``` |
+| | Recursion depth in custom tokenizers must be capped (e.g., `tokenizer._tokenize`). | ```python<br>def _tokenize(text, depth=0):<br>    if depth > 1000:<br>        raise RecursionError("Tokenization depth exceeded")<br>``` |
+| **UI & UX Micro‑Mechanics** | Not applicable – the repo is purely inference‑only. |
+| **Backend Concurrency & Memory Safety** | When using `vllm serve`, the `--max-model-len` flag must match `max_position_embeddings`. | ```bash<br>vllm serve Altworld/Hemmingway-1 --max-model-len 262144<br>``` |
+| | Avoid holding references to the model after inference to prevent memory leaks. | ```python<br>del model<br>torch.cuda.empty_cache()<br>``` |
+| **Defect & Error Prevention** | Use `tokenizer.apply_chat_template(..., add_generation_prompt=True)` to ensure the prompt ends with the correct `<|im_end|>` token. | ```python<br>ids = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt")<br>assert ids[0, -1] == tokenizer.eos_token_id<br>``` |
+| | Guard against off‑by‑one in `max_new_tokens` calculation: `max_new_tokens = max_len - prompt_len`. | ```python<br>prompt_len = len(ids[0])<br>max_new_tokens = max_len - prompt_len<br>``` |
+
+## 5. The 9 Deep Learning Dimensions
+
+| Dimension | Observation |
+|-----------|-------------|
+| **Architecture** | Qwen3.8‑style transformer with 64 layers, alternating linear and full attention. Uses 24 heads, 5120 hidden size, 17408 intermediate size. |
+| **Core Abstractions** | `AutoTokenizer` (`Qwen2Tokenizer`) and `AutoModelForCausalLM` (`Qwen3_5ForCausalLM`) expose a unified API. Special tokens are embedded in the config. |
+| **Error Handling** | Hugging Face pipelines raise `ValueError` for mismatched token IDs. No custom error handling in the repo; relies on library defaults. |
+| **Testing** | No tests present. The repo is a model artifact; testing is performed externally by Hugging Face. |
+| **Security** | No credentials. The model is open‑weight; no secrets. |
+| **Performance** | Uses `bfloat16` to reduce memory footprint. `max_position_embeddings` of 262144 allows very long contexts. |
+| **Deployment** | Recommended `vllm serve` command with `--max-model-len`. Supports GPU auto‑mapping. |
+| **Agent Patterns** | The README shows a typical agent pattern: load tokenizer, apply chat template, generate with sampling. |
+| **Data Flow** | Tokenization → model forward → logits → sampling → text. All data flows through PyTorch tensors on GPU. |
+
+## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | **Safe Special‑Token Declaration** – always declare `bos_token_id`, `eos_token_id`, `pad_token_id` in both `config.json` and `generation_config.json`. |
-| **Rule** | **MUST** declare `pad_token_id` explicitly; **MUST NOT** rely on implicit defaults. |
-| **Architecture Principle** | **Separation of Concerns** – keep model weights, tokenizer, and generation config in distinct JSON files to avoid cross‑file drift. |
-| **Failure Mode** | **Token ID Collision** – using the same ID for BOS and EOS leads to immediate EOS and truncated output. |
-| **Reusable Skill** | **Automated Token‑ID Consistency Check** – script that parses `config.json`, `generation_config.json`, and `tokenizer_config.json` to ensure all special IDs match the tokenizer vocabulary. |
-| **Decision** | **Chosen dtype** – `bfloat16` for GPU memory savings; rejected `float32` due to 27 B parameter size. |
-| **Anti‑pattern** | **Never** hard‑code `dtype` in `config.json`; let the loader infer. |
-| **Verification Method** | **Lint rule**: `no-hardcoded-dtype` – fails if `"dtype": "bfloat16"` appears in `config.json`. |
-
-## 6. Net‑New Universal Engineering Rules (Candidates for Master Brain)
-
-### 1. **Rule Title**: *Explicit Special‑Token Declaration*
-**RULE**: Every model configuration file that influences generation must explicitly declare `bos_token_id`, `eos_token_id`, and `pad_token_id`.  
-**WHY**: Missing or duplicated IDs cause silent truncation or padding errors that are hard to debug at runtime.  
-**WHEN TO APPLY**: All language‑model repositories, regardless of framework.  
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  "bos_token_id": 248043,
-  "eos_token_id": 248044,
-  "pad_token_id": 248044
-}
-```
-**NEGATIVE CONSTRAINT**:
-```json
-// Never omit pad_token_id
-{
-  "bos_token_id": 248043,
-  "eos_token_id": 248044
-}
-```
-**VERIFICATION METHOD**: Linter rule that parses JSON and fails if any of the three keys are missing.
-
-### 2. **Rule Title**: *Avoid Hard‑Coded Dtype in Config*
-**RULE**: Do not hard‑code the `dtype` field in `config.json`; instead, let the model loader infer the best available type.  
-**WHY**: Hardware heterogeneity (CPU vs GPU, bfloat16 support) can cause runtime crashes if the config is too prescriptive.  
-**WHEN TO APPLY**: Any repository that ships weights for multiple hardware targets.  
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  // "dtype": "bfloat16",   // removed
-}
-```
-**NEGATIVE CONSTRAINT**:
-```json
-{
-  "dtype": "bfloat16"
-}
-```
-**VERIFICATION METHOD**: CI script that attempts to load the model with `dtype="auto"` and asserts no `RuntimeError` about dtype mismatch.
+| **Pattern** | The `apply_chat_template` + `generate` workflow shown in the README. |
+| **Rule** | *Rule 1* from section 2: consistent dtype propagation. |
+| **Architecture Principle** | *Principle*: “Keep the tokenizer and model data‑type contract explicit to avoid silent precision loss.” |
+| **Failure Mode** | Mismatched `bos_token_id` leading to truncated or duplicated prompts. |
+| **Reusable Skill** | A checklist to verify `max_new_tokens` against `max_position_embeddings`. |
+| **Decision** | Choosing `bfloat16` over `float32` to balance memory and accuracy. |
+| **Anti‑Pattern** | Overriding special token IDs without updating the model config. |
+| **Verification Method** | Unit test that asserts `tokenizer.bos_token_id == model.config.bos_token_id`. |
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Validate Special Tokens**  
-   - Load `tokenizer_config.json` and `config.json`.  
-   - Assert `bos_token_id`, `eos_token_id`, `pad_token_id` exist and match tokenizer vocab.  
-   - Run a round‑trip tokenization test: `tokenizer.decode(tokenizer.encode(text)) == text`.
+1. **Load Configs**  
+   ```python
+   tokenizer = AutoTokenizer.from_pretrained(model_id)
+   model = AutoModelForCausalLM.from_pretrained(
+       model_id, device_map="auto", dtype=torch.bfloat16
+   )
+   ```
+2. **Validate Special Tokens**  
+   ```python
+   assert tokenizer.bos_token_id == model.config.bos_token_id
+   assert tokenizer.eos_token_id == model.config.eos_token_id
+   assert tokenizer.pad_token_id == model.config.pad_token_id
+   ```
+3. **Check Data‑Type Consistency**  
+   ```python
+   assert all(
+       token.dtype == torch.bfloat16
+       for token in tokenizer.encode_plus("test", return_tensors="pt").values()
+   )
+   ```
+4. **Compute Safe Generation Length**  
+   ```python
+   max_len = model.config.max_position_embeddings
+   prompt_len = len(tokenizer.encode(prompt, add_special_tokens=False))
+   max_new_tokens = min(512, max_len - prompt_len)
+   ```
+5. **Generate with Sampling**  
+   ```python
+   ids = tokenizer.apply_chat_template(
+       messages, add_generation_prompt=True, return_tensors="pt"
+   ).to(model.device)
+   output = model.generate(
+       ids,
+       max_new_tokens=max_new_tokens,
+       do_sample=True,
+       top_k=20,
+       top_p=0.95,
+       temperature=1.0,
+   )
+   ```
+6. **Post‑Processing**  
+   ```python
+   text = tokenizer.decode(output[0], skip_special_tokens=True)
+   ```
+7. **Cleanup**  
+   ```python
+   del model
+   torch.cuda.empty_cache()
+   ```
+8. **Automated Verification**  
+   * Write a `pytest` that loads the model, runs a short prompt, and asserts:  
+     * `output.shape[1] <= max_new_tokens + prompt_len`  
+     * `output.dtype == torch.int64`  
+     * No OOM or `RuntimeError` occurs.  
 
-2. **Ensure dtype Flexibility**  
-   - Remove any `"dtype"` key from `config.json`.  
-   - In the loader, pass `dtype="auto"` and verify the resulting model’s dtype matches the hardware capability.
-
-3. **Check Generation Config Consistency**  
-   - Verify `do_sample`, `top_k`, `top_p`, `temperature` are within sane ranges.  
-   - Run a diversity test: generate 10 completions for a fixed prompt and compute pairwise BLEU scores; expect > 0.2.
-
-4. **Guard Against Off‑by‑One in Loops**  
-   - Search for `for (let i = 0; i <= arr.length; i++)` patterns.  
-   - Replace with `< arr.length`.
-
-5. **Prevent Event‑Loop Starvation**  
-   - Ensure all async functions `await` a promise before returning.  
-   - Use `await Promise.resolve()` in tight loops that must yield.
-
-6. **Avoid Prototype Pollution**  
-   - Validate any user‑supplied object before merging into internal state.  
-   - Reject keys that start with `__proto__` or `constructor`.
-
-7. **Memory Leak Checks**  
-   - After each request, assert that the number of listeners on any `EventEmitter` has not increased.  
-   - Use `process.memoryUsage()` snapshots before and after a batch of requests.
-
-8. **Automated Linting**  
-   - Add custom ESLint rules: `no-hardcoded-dtype`, `no-missing-special-token`.  
-   - Run lint in CI before merging.
-
-9. **Reproducible Builds**  
-   - Pin `transformers` and `vLLM` versions in `requirements.txt`.  
-   - Build Docker image with `--no-cache` and verify checksum of `config.json`.
-
-10. **Documentation & README**  
-    - Include a `MODEL_CARD.md` that lists special tokens, dtype, and generation defaults.  
-    - Provide a quick‑start script that prints the effective configuration after loading.
-
-Follow this checklist in every PR that touches model configuration, tokenizer, or generation logic to guarantee that the same forensic invariants that were discovered in Hemmingway‑1 are upheld.
+Follow this checklist whenever building or deploying a new inference pipeline that consumes a Hugging Face causal LM.

@@ -445,9 +445,9 @@
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "087b5559b172f104d4c5c313b7c22c3a95ce2db273d2242fbd8d084b9597f421",
-    "lastHarvestedAt": "2026-10-11T11:22:52.114Z",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0"
+    "contentHash": "b3e0ca83ef376231748ec60c17e274bf430f55309e6c1be149f128e450eebe2b",
+    "lastHarvestedAt": "2026-10-11T18:24:51.721Z",
+    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr"
   },
   "hf-fastino-gliner2.5-decide": {
     "repository": "fastino/GLiNER2.5-Decide",

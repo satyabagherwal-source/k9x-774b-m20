@@ -2683,5 +2683,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-KPOO",
+    "timestamp": "2026-10-11T18:24:51.720Z",
+    "repository": "Altworld/Hemmingway-1",
+    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
+    "contentHash": "b3e0ca83ef376231748ec60c17e274bf430f55309e6c1be149f128e450eebe2b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
