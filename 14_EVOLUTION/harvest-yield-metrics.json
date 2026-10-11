@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:19:33.230Z",
-  "total_cycles_completed": 241,
-  "total_learnings_persisted": 241,
+  "last_updated": "2026-10-11T21:22:35.383Z",
+  "total_cycles_completed": 242,
+  "total_learnings_persisted": 242,
   "total_rules_promoted": 109,
   "history": [
-    {
-      "timestamp": "2026-10-11T10:46:46.781Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv3p7m42",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T10:49:51.606Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T21:19:33.230Z",
       "repository": "deepseek-ai/DeepSeek-V3",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4btd7d",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T21:22:35.383Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

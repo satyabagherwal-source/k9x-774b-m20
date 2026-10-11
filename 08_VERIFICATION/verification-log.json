@@ -3568,5 +3568,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-X9TH",
+    "timestamp": "2026-10-11T21:22:35.381Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt",
+    "contentHash": "5576c26eef65a64b907dc019eccf9f88bcda554533facbc217354e50e8712865",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
