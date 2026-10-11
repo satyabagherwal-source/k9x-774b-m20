@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:27:48.616Z",
-  "total_cycles_completed": 38,
-  "total_learnings_persisted": 38,
+  "last_updated": "2026-10-11T10:30:46.285Z",
+  "total_cycles_completed": 39,
+  "total_learnings_persisted": 39,
   "total_rules_promoted": 13,
   "history": [
     {
@@ -269,6 +269,13 @@
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T10:30:46.285Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv3on0zs",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

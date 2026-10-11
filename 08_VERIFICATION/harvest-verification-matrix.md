@@ -88,3 +88,4 @@
 | `CYCLE-20261011-BE6V` | `2026-10-11T10:21:43.447Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`4ea6f37b...`) |
 | `CYCLE-20261011-F5VU` | `2026-10-11T10:24:39.306Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule 263, Rule 264` | Yes (`905b0422...`) |
 | `CYCLE-20261011-J7YE` | `2026-10-11T10:27:48.614Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 265` | Yes (`6db6f53b...`) |
+| `CYCLE-20261011-N11N` | `2026-10-11T10:30:46.283Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`67189bce...`) |

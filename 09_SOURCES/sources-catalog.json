@@ -268,5 +268,15 @@
     "contentHash": "6db6f53b25e4d190752dcd969386c5f07a6d73ce70c64cb8c7cd6204e1266fcb",
     "lastHarvestedAt": "2026-10-11T10:27:48.614Z",
     "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb"
+  },
+  "hf-autotrust-gev-26b-decide-nvfp4": {
+    "repository": "autotrust/GEV-26B-Decide-NVFP4",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+    "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
+    "license": "Open-Source",
+    "contentHash": "67189bce33af5b60ad1b4777ce7c092cff1171cea022eb6225035d0a57d2978e",
+    "lastHarvestedAt": "2026-10-11T10:30:46.284Z",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv3on0zs"
   }
 }

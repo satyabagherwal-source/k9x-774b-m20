@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:27:48.615Z",
+  "last_updated": "2026-10-11T10:30:46.285Z",
   "directives": [
     {
       "id": "CD-001",
@@ -185,6 +185,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb"
+    },
+    {
+      "id": "CD-N11P",
+      "directive_title": "Selective MoE Quantization Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "autotrust/GEV-26B-Decide-NVFP4",
+      "source_commit": "hf-autotrust",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv3on0zs"
+    },
+    {
+      "id": "CD-N11P",
+      "directive_title": "Domain-Specific Calibration Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "autotrust/GEV-26B-Decide-NVFP4",
+      "source_commit": "hf-autotrust",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv3on0zs"
+    },
+    {
+      "id": "CD-N11P",
+      "directive_title": "Engine-Specific Checkpoint Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "autotrust/GEV-26B-Decide-NVFP4",
+      "source_commit": "hf-autotrust",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv3on0zs"
     }
   ]
 }
