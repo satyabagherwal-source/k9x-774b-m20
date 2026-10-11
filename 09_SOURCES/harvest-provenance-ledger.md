@@ -228,3 +228,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-11T18:30:46.387Z |
 | `learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-11T18:33:42.062Z |
 | `learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-11T18:36:42.935Z |
+| `learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-11T18:39:31.896Z |

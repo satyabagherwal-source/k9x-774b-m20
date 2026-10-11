@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T18:36:42.936Z",
-  "total_cycles_completed": 187,
-  "total_learnings_persisted": 187,
+  "last_updated": "2026-10-11T18:39:31.897Z",
+  "total_cycles_completed": 188,
+  "total_learnings_persisted": 188,
   "total_rules_promoted": 85,
   "history": [
     {
@@ -1326,6 +1326,13 @@
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T18:39:31.897Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
