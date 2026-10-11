@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T23:11:35.909Z",
-  "total_verified_learnings": 4233,
+  "last_updated": "2026-10-11T23:14:39.562Z",
+  "total_verified_learnings": 4234,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -102165,6 +102165,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T23:11:35.909Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65": {
+      "learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65",
+      "source": "sentence-transformers/all-MiniLM-L6-v2",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "slug": "hf-sentence-transformers-all-minilm-l6-v2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+      "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+      "content_hash": "b42bf7853f856dcbc2abc739715fbbe628fb592917d44ec9e197becfcc09a8d1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 372,
+          "title": "The Masked Mean Pooling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 373,
+          "title": "The L2 Normalization for Cosine Similarity Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T23:14:39.562Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

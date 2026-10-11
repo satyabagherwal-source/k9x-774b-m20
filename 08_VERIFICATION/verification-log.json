@@ -4123,5 +4123,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-XE9D",
+    "timestamp": "2026-10-11T23:14:39.601Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65",
+    "contentHash": "b42bf7853f856dcbc2abc739715fbbe628fb592917d44ec9e197becfcc09a8d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

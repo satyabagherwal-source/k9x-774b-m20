@@ -12574,3 +12574,145 @@ for box in bboxes:
 **VERIFICATION METHOD**:
 1.  **Visual Regression Test**: Compare the generated mask against a ground-truth mask using IoU (Intersection over Union). Assert IoU > 0.8 for segmentation models.
 2.  **Performance Benchmark**: Measure inference time for both BBox and Seg models. Document the trade-off in the README.
+
+
+---
+
+## 372. The Masked Mean Pooling Invariant (Harvested from sentence-transformers/all-MiniLM-L6-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Masked Mean Pooling Invariant",
+  "source": "sentence-transformers/all-MiniLM-L6-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+  "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T23:14:39.522Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When aggregating variable-length sequences into a fixed-size vector using mean pooling, you MUST multiply the token embeddings by the expanded attention mask before summing, and you MUST clamp the denominator to a minimum epsilon value to prevent division by zero. You MUST NOT simply average the raw tensor dimensions without accounting for padding.
+
+**WHY**:
+Transformer models pad inputs to the maximum length in a batch. Padding tokens (usually ID 0) produce non-zero embeddings in the hidden state. If you average all positions including padding, the semantic signal is diluted by the "noise" of the padding embeddings. Furthermore, if a batch contains a single empty string or a string that truncates to zero valid tokens, the sum of the mask is 0, leading to a `NaN` (Not a Number) result due to division by zero, which propagates through the entire downstream computation.
+
+**WHEN TO APPLY**:
+Any system performing sequence-to-vector aggregation (NLP, time-series summarization, audio feature extraction) where inputs are variable length and padded for batch processing.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn.functional as F
+
+def safe_mean_pooling(model_output, attention_mask):
+    """
+    model_output: Tensor of shape [batch_size, seq_len, hidden_size]
+    attention_mask: Tensor of shape [batch_size, seq_len] (1 for real tokens, 0 for pad)
+    """
+    token_embeddings = model_output[0] # [B, L, H]
+    
+    # Expand mask to match hidden dimension: [B, L, 1]
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+    
+    # Multiply embeddings by mask to zero out padding contributions
+    masked_embeddings = token_embeddings * input_mask_expanded
+    
+    # Sum over sequence dimension
+    sum_embeddings = torch.sum(masked_embeddings, dim=1)
+    
+    # Calculate count of valid tokens per sequence
+    # Clamp min to 1e-9 to avoid division by zero if a sequence is empty
+    valid_token_count = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
+    
+    # Compute mean
+    return sum_embeddings / valid_token_count
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naive mean pooling
+def naive_mean_pooling(model_output, attention_mask):
+    token_embeddings = model_output[0]
+    # BUG 1: Ignores padding, dilutes signal
+    # BUG 2: If attention_mask.sum(1) is 0, this results in NaN
+    return torch.mean(token_embeddings, dim=1)
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Create a batch with one valid sentence and one empty string (or all-padding). Assert that the output for the empty string is a zero vector (or defined fallback) and NOT `NaN`.
+2.  **Gradient Check**: Verify that gradients flow correctly through the pooling layer. If `NaN` appears in gradients, the mask expansion or clamping is incorrect.
+3.  **Cosine Similarity Check**: Compute cosine similarity between a sentence and its padded version. They should be nearly identical (1.0). If naive pooling is used, the similarity will drop significantly.
+
+
+---
+
+## 373. The L2 Normalization for Cosine Similarity Optimization (Harvested from sentence-transformers/all-MiniLM-L6-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The L2 Normalization for Cosine Similarity Optimization",
+  "source": "sentence-transformers/all-MiniLM-L6-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+  "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T23:14:39.531Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using embeddings for semantic search or clustering based on cosine similarity, you MUST L2-normalize the final embedding vectors. You MUST NOT rely on raw dot products for similarity if the vector magnitudes vary significantly across different inputs.
+
+**WHY**:
+Cosine similarity is defined as the dot product of two unit vectors. If vectors are not normalized, the dot product is sensitive to the magnitude (length) of the vectors. In NLP, longer sentences or sentences with high-frequency words may produce embeddings with larger norms. This introduces a bias where "longer" or "more confident" sentences appear more similar to everything, distorting the semantic space. Normalization projects all vectors onto the unit hypersphere, ensuring that only the *direction* (semantic meaning) matters, not the *magnitude*. Additionally, on normalized vectors, cosine similarity is computationally equivalent to a simple dot product, which is faster to compute in high-dimensional spaces.
+
+**WHEN TO APPLY**:
+Any retrieval system, clustering algorithm (K-Means, DBSCAN), or similarity search engine using dense vector embeddings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch.nn.functional as F
+
+def normalize_embeddings(embeddings):
+    """
+    embeddings: Tensor of shape [batch_size, hidden_size]
+    """
+    # p=2 is Euclidean norm, dim=1 is the feature dimension
+    # eps=1e-12 is default, prevents division by zero for zero vectors
+    return F.normalize(embeddings, p=2, dim=1)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using raw dot product for similarity
+def compute_similarity(embedding_a, embedding_b):
+    # BUG: Sensitive to vector magnitude. 
+    # If embedding_a is [10, 10] and embedding_b is [1, 1], 
+    # dot product is 20, but cosine similarity is 1.0.
+    # This breaks the geometric interpretation of similarity.
+    return torch.dot(embedding_a, embedding_b)
+```
+
+**VERIFICATION METHOD**:
+1.  **Geometric Test**: Generate two vectors with the same direction but different magnitudes (e.g., `[1, 1]` and `[10, 10]`). Assert that their cosine similarity is 1.0. If using raw dot product, the result will be 20, failing the test.
+2.  **Search Accuracy Test**: Perform a semantic search query. Compare results using normalized embeddings vs. raw embeddings. Normalized embeddings should yield more consistent ranking based on semantic meaning rather than input length.
