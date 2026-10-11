@@ -368,5 +368,15 @@
     "contentHash": "73c65b4edfcd9a5607b507d86495a8b0abc7f22f8bc4c0f1e74e08f5f422bab9",
     "lastHarvestedAt": "2026-10-11T10:58:30.936Z",
     "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv3pmpgf"
+  },
+  "hf-lightricks-ltx-2.5": {
+    "repository": "Lightricks/LTX-2.5",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
+    "sourceVersion": "hf-lightricks-ltx-2.5",
+    "license": "Open-Source",
+    "contentHash": "580ff7e39c56f65f6b92386c323cb5767671534b7600767e43f470fabae4f049",
+    "lastHarvestedAt": "2026-10-11T11:01:33.634Z",
+    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv3pqmef"
   }
 }

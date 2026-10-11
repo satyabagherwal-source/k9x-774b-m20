@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:55:40.787Z",
+  "last_updated": "2026-10-11T11:01:33.635Z",
   "directives": [
     {
       "id": "CD-001",
@@ -394,6 +394,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w"
+    },
+    {
+      "id": "CD-QMGZ",
+      "directive_title": "Prompt Length Validation Before Tokenization",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Lightricks/LTX-2.5",
+      "source_commit": "hf-lightrick",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-lightricks-ltx-2-5-mv3pqmef"
     }
   ]
 }
