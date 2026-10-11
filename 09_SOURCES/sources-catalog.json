@@ -678,5 +678,15 @@
     "contentHash": "e87b4ccee6fbce7376ade15d8791f4406943a86979efbf23c2e743da40b56b93",
     "lastHarvestedAt": "2026-10-11T12:43:19.519Z",
     "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv3tdhqc"
+  },
+  "hf-canberkkkkkk-ema-lightning": {
+    "repository": "canberkkkkkk/ema-lightning",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
+    "sourceVersion": "hf-canberkkkkkk-ema-lightning",
+    "license": "Open-Source",
+    "contentHash": "54903a977645c61e6dcfc18363a3c421801eac31d9c5d9523e0ed9915ed6daae",
+    "lastHarvestedAt": "2026-10-11T12:46:34.165Z",
+    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv3thnwu"
   }
 }
