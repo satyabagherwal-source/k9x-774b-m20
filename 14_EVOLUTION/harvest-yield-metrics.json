@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:14:38.842Z",
-  "total_cycles_completed": 69,
-  "total_learnings_persisted": 69,
-  "total_rules_promoted": 42,
+  "last_updated": "2026-10-11T12:17:31.525Z",
+  "total_cycles_completed": 70,
+  "total_learnings_persisted": 70,
+  "total_rules_promoted": 43,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -486,6 +486,13 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T12:17:31.525Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv3sgbac",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

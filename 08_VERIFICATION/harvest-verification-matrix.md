@@ -119,3 +119,4 @@
 | `CYCLE-20261011-48OR` | `2026-10-11T12:08:08.187Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`52668650...`) |
 | `CYCLE-20261011-8JVR` | `2026-10-11T12:11:29.319Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`8dd98140...`) |
 | `CYCLE-20261011-CM48` | `2026-10-11T12:14:38.840Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 293, Rule 294` | Yes (`3be2363f...`) |
+| `CYCLE-20261011-GBCY` | `2026-10-11T12:17:31.522Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 295` | Yes (`1ea13e7c...`) |
