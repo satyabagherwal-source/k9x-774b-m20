@@ -29,27 +29,47 @@ export function loadAllAiKeys() {
 
   const parseKeys = (envPrefix, secretKey, multiSecretKey, maxIndex = 10) => {
     const keys = new Set();
+    const altEnv = envPrefix.replace(/_API_KEY$/, '_KEY');
+    const altSec = secretKey.replace(/_API_KEY$/, '_KEY');
+
     // 1. Single env var
     if (process.env[envPrefix]) {
       process.env[envPrefix].split(',').forEach((k) => k.trim() && keys.add(k.trim()));
     }
-    // 2. Indexed env vars (e.g. GEMINI_KEY_1..10, OPENAI_KEY_1..5)
+    if (process.env[altEnv]) {
+      process.env[altEnv].split(',').forEach((k) => k.trim() && keys.add(k.trim()));
+    }
+
+    // 2. Indexed env vars (e.g. GEMINI_KEY_1..10, GEMINI_API_KEY_1..10)
     for (let i = 1; i <= maxIndex; i++) {
-      const k = process.env[`${envPrefix}_${i}`] || process.env[`${secretKey}_${i}`];
+      const k = process.env[`${envPrefix}_${i}`] || 
+                process.env[`${secretKey}_${i}`] ||
+                process.env[`${altEnv}_${i}`] ||
+                process.env[`${altSec}_${i}`];
       if (k) keys.add(k.trim());
     }
+
     // 3. Secrets single
     if (fileSecrets[secretKey]) {
       const val = fileSecrets[secretKey];
       if (typeof val === 'string') val.split(',').forEach((k) => k.trim() && keys.add(k.trim()));
     }
+    if (fileSecrets[altSec]) {
+      const val = fileSecrets[altSec];
+      if (typeof val === 'string') val.split(',').forEach((k) => k.trim() && keys.add(k.trim()));
+    }
+
     // 4. Secrets array
     if (multiSecretKey && Array.isArray(fileSecrets[multiSecretKey])) {
       fileSecrets[multiSecretKey].forEach((k) => k && keys.add(k.trim()));
     }
+
     // 5. Secrets indexed
     for (let i = 1; i <= maxIndex; i++) {
-      const k = fileSecrets[`${secretKey}_${i}`] || fileSecrets[`${envPrefix}_${i}`];
+      const k = fileSecrets[`${secretKey}_${i}`] || 
+                fileSecrets[`${envPrefix}_${i}`] ||
+                fileSecrets[`${altSec}_${i}`] ||
+                fileSecrets[`${altEnv}_${i}`];
       if (k) keys.add(k.trim());
     }
     return Array.from(keys).filter(Boolean);

@@ -41,7 +41,7 @@ jobs:
           git config --global user.name "satyabgherval-source"
           git config --global user.email "315064083+satyabgherval-source@users.noreply.github.com"
 
-      - name: Verify Server-to-Server Gemini AI Swarm Pool
+      - name: Verify Server-to-Server Multi-AI Swarm Pool (Live Inference Health Check)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
@@ -49,28 +49,14 @@ jobs:
           GEMINI_KEY_3: ${{ secrets.GEMINI_KEY_3 }}
           GEMINI_KEY_4: ${{ secrets.GEMINI_KEY_4 }}
           GEMINI_KEY_5: ${{ secrets.GEMINI_KEY_5 }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          ACTIVE_KEYS=0
-          [ -n "$GEMINI_API_KEY" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
-          [ -n "$GEMINI_KEY_1" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
-          [ -n "$GEMINI_KEY_2" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
-          [ -n "$GEMINI_KEY_3" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
-          [ -n "$GEMINI_KEY_4" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
-          [ -n "$GEMINI_KEY_5" ] && ACTIVE_KEYS=$((ACTIVE_KEYS + 1))
-
-          if [ $ACTIVE_KEYS -eq 0 ]; then
-            echo "::warning title=Gemini API Keys Missing::To enable deep 24/7 AI reasoning, add your Gemini subscription key as GEMINI_KEY_1..5 in repository secrets: https://github.com/${{ github.repository }}/settings/secrets/actions"
-          else
-            echo "======================================================================"
-            echo "✅ VERIFIED: Found $ACTIVE_KEYS active Gemini Subscription Key(s) in Pool!"
-            echo "🚀 Server-to-Server AI reasoning is LIVE with Zero-Cost Rotation."
-            echo "======================================================================"
-          fi
+          node 04_WORKFLOWS/factory-engine/cloud-provider-healthcheck.mjs
 
       - name: Execute Parallel Multi-Agent Learning Swarm (8 Domains)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GEMINI_KEY_1 }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY || secrets.GEMINI_KEY_2 || secrets.GEMINI_KEY_1 }}
           GEMINI_KEY_1: ${{ secrets.GEMINI_KEY_1 }}
           GEMINI_KEY_2: ${{ secrets.GEMINI_KEY_2 }}
           GEMINI_KEY_3: ${{ secrets.GEMINI_KEY_3 }}
