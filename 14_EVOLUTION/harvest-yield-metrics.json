@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:21:41.213Z",
-  "total_cycles_completed": 112,
-  "total_learnings_persisted": 112,
+  "last_updated": "2026-10-11T14:24:31.067Z",
+  "total_cycles_completed": 113,
+  "total_learnings_persisted": 113,
   "total_rules_promoted": 52,
   "history": [
     {
@@ -786,6 +786,13 @@
       "timestamp": "2026-10-11T14:21:41.213Z",
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv3wvzie",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:24:31.067Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3wzmkj",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

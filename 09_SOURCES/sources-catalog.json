@@ -1008,5 +1008,15 @@
     "contentHash": "2bfa1f966e36c635b626b01beb7962ce22449f6a3d643423a9cd92170ad0cb38",
     "lastHarvestedAt": "2026-10-11T14:21:41.212Z",
     "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv3wvzie"
+  },
+  "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
+    "license": "Open-Source",
+    "contentHash": "1b1a9dbe1e24f34a59efff7b50fdca9e97da3016ee291d8edbc1337063d0cb2a",
+    "lastHarvestedAt": "2026-10-11T14:24:31.066Z",
+    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3wzmkj"
   }
 }

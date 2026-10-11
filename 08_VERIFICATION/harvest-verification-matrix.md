@@ -162,3 +162,4 @@
 | `CYCLE-20261011-OSMP` | `2026-10-11T14:16:05.617Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`d99a9126...`) |
 | `CYCLE-20261011-SD5O` | `2026-10-11T14:18:52.188Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`3f9d28c5...`) |
 | `CYCLE-20261011-VZKS` | `2026-10-11T14:21:41.212Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`2bfa1f96...`) |
+| `CYCLE-20261011-ZMMX` | `2026-10-11T14:24:31.065Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`1b1a9dbe...`) |
