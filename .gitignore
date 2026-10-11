@@ -22,6 +22,9 @@ Desktop.ini
 *.p12
 *.pfx
 *.crt
+key.txt
+keys.txt
+
 
 # Temporary and backup files
 *.tmp
