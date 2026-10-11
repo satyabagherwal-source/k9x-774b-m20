@@ -3,8 +3,8 @@
 > **Source Version**: `hf-infatoshi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T18:51:10.859Z  
-> **Learning ID**: `learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv2r2phn`  
+> **Timestamp**: 2026-10-11T00:45:16.280Z  
+> **Learning ID**: `learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv33q2k8`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw](https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T18:51:10.689Z  
+> **Harvest Timestamp**: 2026-10-11T00:45:16.119Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
