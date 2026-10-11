@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:46:46.781Z",
+  "last_updated": "2026-10-11T10:49:51.606Z",
   "directives": [
     {
       "id": "CD-001",
@@ -339,6 +339,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv3p7m42"
+    },
+    {
+      "id": "CD-BKS6",
+      "directive_title": "Deterministic Decoding for Extraction Tasks",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XingChen-AGI/TeleOCR",
+      "source_commit": "hf-xingchen-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-xingchen-agi-teleocr-mv3pbkqe"
     }
   ]
 }

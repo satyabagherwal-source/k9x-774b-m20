@@ -328,5 +328,15 @@
     "contentHash": "689afaf335a062c9afb6efac4b37d4e7978ec81cedc7a1a9c029adbd5190f2e8",
     "lastHarvestedAt": "2026-10-11T10:46:46.780Z",
     "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv3p7m42"
+  },
+  "hf-xingchen-agi-teleocr": {
+    "repository": "XingChen-AGI/TeleOCR",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
+    "sourceVersion": "hf-xingchen-agi-teleocr",
+    "license": "Open-Source",
+    "contentHash": "7e3a18899159ec4e34c7c5823746c2b3cddaeaa680ed99e81514a6c9584a4652",
+    "lastHarvestedAt": "2026-10-11T10:49:51.605Z",
+    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv3pbkqe"
   }
 }

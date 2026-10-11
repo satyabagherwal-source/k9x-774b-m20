@@ -5783,3 +5783,109 @@ cos, sin = get_rope_embeddings(seq_len, head_dim, theta)
 ```
 **VERIFICATION METHOD**:
 Assert that the RoPE embeddings match the expected values for a given sequence length.
+
+
+---
+
+## 268. Grouped Query Attention (GQA) for Long-Context VLMs (Harvested from XingChen-AGI/TeleOCR)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Grouped Query Attention (GQA) for Long-Context VLMs",
+  "source": "XingChen-AGI/TeleOCR",
+  "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
+  "source_version": "hf-xingchen-agi-teleocr",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T10:49:51.565Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xingchen-agi-teleocr-mv3pbkqe",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XingChen-AGI/TeleOCR](https://huggingface.co/XingChen-AGI/TeleOCR) (Revision: `hf-xingche`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any VLM with `max_position_embeddings > 32k` **MUST** use Grouped Query Attention (GQA) or Multi-Query Attention (MQA) to reduce KV cache memory usage. Standard Multi-Head Attention (MHA) is **FORBIDDEN** for long-context scenarios.
+**WHY**:
+MHA stores separate Key and Value vectors for every attention head, leading to O(N^2) memory growth. GQA shares KV states between groups of heads, reducing memory by a factor of `num_heads / num_kv_heads`. This is critical for preventing OOM errors on long documents.
+**WHEN TO APPLY**:
+Any VLM or LLM designed for long-context processing (e.g., document parsing, code analysis).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# In the model config
+config = {
+    "num_attention_heads": 16,
+    "num_key_value_heads": 8, # GQA: 8 KV heads for 16 query heads
+    "head_dim": 128
+}
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER use this for long-context models
+config = {
+    "num_attention_heads": 16,
+    "num_key_value_heads": 16, # MHA: Full KV cache
+}
+```
+**VERIFICATION METHOD**:
+Assert that `config.num_key_value_heads < config.num_attention_heads` for models with `max_position_embeddings > 32k`.
+
+
+---
+
+## 269. 2D-Aware Positional Encoding for Document Understanding (Harvested from XingChen-AGI/TeleOCR)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "2D-Aware Positional Encoding for Document Understanding",
+  "source": "XingChen-AGI/TeleOCR",
+  "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
+  "source_version": "hf-xingchen-agi-teleocr",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T10:49:51.568Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xingchen-agi-teleocr-mv3pbkqe",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XingChen-AGI/TeleOCR](https://huggingface.co/XingChen-AGI/TeleOCR) (Revision: `hf-xingche`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any VLM used for document parsing or layout-sensitive tasks **MUST** use 2D-aware positional encoding (e.g., M-RoPE, 2D Sincos). 1D positional encoding is **FORBIDDEN**.
+**WHY**:
+Documents have a 2D structure (rows and columns). 1D positional encoding treats the sequence as a flat list, losing the spatial relationship between patches. This causes the model to misinterpret layout, read across columns, or mix up table rows.
+**WHEN TO APPLY**:
+Any VLM used for OCR, document parsing, or layout analysis.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# In the model config
+config = {
+    "rope_scaling": {
+        "type": "mrope",
+        "mrope_section": [16, 24, 24] # 2D-aware RoPE
+    }
+}
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER use this for document parsing
+config = {
+    "rope_scaling": {
+        "type": "default", # 1D RoPE
+    }
+}
+```
+**VERIFICATION METHOD**:
+Assert that `config.rope_scaling.type` is in `["mrope", "2d_sincos"]` for document parsing models.
