@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:49:22.705Z",
-  "total_verified_learnings": 4166,
+  "last_updated": "2026-10-11T19:52:45.175Z",
+  "total_verified_learnings": 4167,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -100460,6 +100460,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T19:49:22.705Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn": {
+      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
+      "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "slug": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "content_hash": "2591a552a946c0176f012d721f26747518e1565dffba135d894af8cfb1a8a4f1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 354,
+          "title": "Mask-Aware Mean Pooling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 355,
+          "title": "Tokenizer-Model Dimensional Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 356,
+          "title": "Deterministic Inference via `torch.no_grad()`",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T19:52:45.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

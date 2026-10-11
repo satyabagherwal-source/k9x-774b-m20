@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:49:22.751Z",
-  "total_cycles_completed": 211,
-  "total_learnings_persisted": 211,
-  "total_rules_promoted": 98,
+  "last_updated": "2026-10-11T19:52:45.224Z",
+  "total_cycles_completed": 212,
+  "total_learnings_persisted": 212,
+  "total_rules_promoted": 101,
   "history": [
-    {
-      "timestamp": "2026-10-11T08:14:18.607Z",
-      "repository": "expressjs/cors",
-      "learningId": "learn-github-e2e-expressjs-cors-real-mv3jrj6s",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T08:14:19.802Z",
       "repository": "expressjs/cors",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T19:49:22.751Z",
       "repository": "Cloudflare/clef-flash",
       "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T19:52:45.224Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
