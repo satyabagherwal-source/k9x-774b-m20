@@ -225,9 +225,9 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "cb026f1ee27954b253d5faf883e6939925ae083edcf80eb08a5be69b8eba7e0d",
-    "lastHarvestedAt": "2026-10-11T10:10:15.227Z",
-    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv3nwn3d"
+    "contentHash": "6ac706a617d8c75718462ac1b5150f38538829e3bb64031b95143d255cc068d5",
+    "lastHarvestedAt": "2026-10-11T17:18:49.432Z",
+    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv437sal"
   },
   "hf-qwen-qwen3.8-27b": {
     "repository": "Qwen/Qwen3.8-27B",
