@@ -157,3 +157,4 @@
 | `CYCLE-20261011-5S9K` | `2026-10-11T14:01:18.680Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`3942f84e...`) |
 | `CYCLE-20261011-9EYN` | `2026-10-11T14:04:08.063Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`6d6cfa04...`) |
 | `CYCLE-20261011-D2NP` | `2026-10-11T14:06:58.741Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`60c11b15...`) |
+| `CYCLE-20261011-HBMX` | `2026-10-11T14:10:17.001Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 302, Rule 303, Rule 304` | Yes (`087218eb...`) |

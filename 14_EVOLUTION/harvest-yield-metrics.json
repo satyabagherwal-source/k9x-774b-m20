@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:06:58.743Z",
-  "total_cycles_completed": 107,
-  "total_learnings_persisted": 107,
-  "total_rules_promoted": 49,
+  "last_updated": "2026-10-11T14:10:17.003Z",
+  "total_cycles_completed": 108,
+  "total_learnings_persisted": 108,
+  "total_rules_promoted": 52,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -752,6 +752,13 @@
       "repository": "zai-org/GLM-5.2",
       "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv3wd2l6",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:10:17.003Z",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv3whbk4",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

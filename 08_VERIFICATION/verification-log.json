@@ -1528,5 +1528,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-HBMX",
+    "timestamp": "2026-10-11T14:10:17.001Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv3whbk4",
+    "contentHash": "087218ebba1bba19a6378d9abc0b32b0b47e0d3e6160c5f43298a07448d08de9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

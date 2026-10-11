@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:06:58.695Z",
-  "total_verified_learnings": 4055,
+  "last_updated": "2026-10-11T14:10:16.958Z",
+  "total_verified_learnings": 4056,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -97559,6 +97559,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T14:06:58.695Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv3whbk4": {
+      "learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv3whbk4",
+      "source": "stabilityai/stable-diffusion-3-medium",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "slug": "hf-stabilityai-stable-diffusion-3-medium",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+      "source_version": "hf-stabilityai-stable-diffusion-3-medium",
+      "content_hash": "087218ebba1bba19a6378d9abc0b32b0b47e0d3e6160c5f43298a07448d08de9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 302,
+          "title": "Heterogeneous Encoder Memory Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 303,
+          "title": "FP16 Overflow Guard for Transformer Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 304,
+          "title": "Latent Space Scaling Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T14:10:16.958Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

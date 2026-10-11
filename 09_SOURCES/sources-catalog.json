@@ -958,5 +958,15 @@
     "contentHash": "60c11b1579a31fa90b118dbfd0dcb4e052222095561efdd708a9336571d6f8f1",
     "lastHarvestedAt": "2026-10-11T14:06:58.742Z",
     "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv3wd2l6"
+  },
+  "hf-stabilityai-stable-diffusion-3-medium": {
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+    "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
+    "license": "Open-Source",
+    "contentHash": "087218ebba1bba19a6378d9abc0b32b0b47e0d3e6160c5f43298a07448d08de9",
+    "lastHarvestedAt": "2026-10-11T14:10:17.002Z",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv3whbk4"
   }
 }
