@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:25:11.907Z",
-  "total_cycles_completed": 149,
-  "total_learnings_persisted": 149,
+  "last_updated": "2026-10-11T16:34:33.239Z",
+  "total_cycles_completed": 151,
+  "total_learnings_persisted": 151,
   "total_rules_promoted": 62,
   "history": [
     {
@@ -1059,6 +1059,20 @@
       "timestamp": "2026-10-11T16:25:11.907Z",
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T16:31:44.952Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T16:34:33.239Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

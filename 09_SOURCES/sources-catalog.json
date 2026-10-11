@@ -125,9 +125,9 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "4d03a0672166323428bc2774dd3cf8b9d3bdf98d8f4783114b607ab080ebb725",
-    "lastHarvestedAt": "2026-10-11T08:52:44.872Z",
-    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp"
+    "contentHash": "70fe777f73937b3194619c865c40a2642c0b261e25b917b0be056782f60a1b13",
+    "lastHarvestedAt": "2026-10-11T16:31:44.951Z",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr"
   },
   "hf-autotrust-gev-26b-decide": {
     "repository": "autotrust/GEV-26B-Decide",
@@ -135,9 +135,9 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "a8a1dd1ba3b9381b311da261fd748e20d0d07712db3dd3a30540276bf2b02a22",
-    "lastHarvestedAt": "2026-10-11T08:56:41.625Z",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv3la1jq"
+    "contentHash": "dc5fdfc1aebe98814d98db8b7dd99c37a7452b79be7483f7a40067efa57f8399",
+    "lastHarvestedAt": "2026-10-11T16:34:33.238Z",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8"
   },
   "hf-convaiinnovations-laya": {
     "repository": "convaiinnovations/laya",
