@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T06:12:26.668Z",
-  "total_verified_learnings": 3929,
+  "last_updated": "2026-10-11T06:15:34.505Z",
+  "total_verified_learnings": 3930,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -94292,6 +94292,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T06:12:26.668Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-bigscience-bloom-mv3fiudc": {
+      "learning_id": "learn-huggingface-hf-bigscience-bloom-mv3fiudc",
+      "source": "bigscience/bloom",
+      "repository": "bigscience/bloom",
+      "slug": "hf-bigscience-bloom",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "content_hash": "7990daacd9a17d0921285a3fe0c3b64d31abf85ea904d6d5f11b2d3a725b156b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T06:15:34.505Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
