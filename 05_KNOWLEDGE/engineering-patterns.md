@@ -5604,3 +5604,81 @@ mask_cache[step] = compute_mask(latent)
 ```
 **VERIFICATION METHOD**:
 Memory profiling test that asserts memory usage remains stable across multiple inference steps.
+
+
+---
+
+## 265. Immutable Data, Mutable State Separation (Harvested from orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Immutable Data, Mutable State Separation",
+  "source": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+  "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+  "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T10:27:48.567Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF](https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF) (Revision: `hf-orcarou`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Separate immutable data (model weights) from mutable state (KV cache, attention heads). Ensure that the immutable data is **read-only** and the mutable state is **thread-safe**.
+
+**WHY**:
+Mixing immutable and mutable data can lead to **race conditions** and **data corruption**. The model weights should never be modified during inference.
+
+**WHEN TO APPLY**:
+Any system that loads and serves machine learning models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+class InferenceEngine {
+private:
+    const ModelWeights* weights_; // Immutable
+    mutable KVCache kv_cache_;   // Mutable, thread-safe
+
+public:
+    void load(const std::string& path) {
+        weights_ = new ModelWeights(path); // Read-only
+    }
+
+    void infer(const Input& input) {
+        // Use weights_ (read-only)
+        // Update kv_cache_ (thread-safe)
+    }
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// - BAD: Mutable weights
+class InferenceEngine {
+private:
+    ModelWeights* weights_; // Mutable
+
+public:
+    void infer(const Input& input) {
+        weights_->update(input); // Race condition
+    }
+};
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_immutable_weights():
+    engine = InferenceEngine()
+    engine.load("model.gguf")
+    
+    # Try to modify weights
+    with pytest.raises(AttributeError):
+        engine.weights.hidden_si

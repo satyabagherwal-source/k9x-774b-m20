@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:24:39.279Z",
-  "total_verified_learnings": 3985,
+  "last_updated": "2026-10-11T10:27:48.584Z",
+  "total_verified_learnings": 3986,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -95670,6 +95670,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T10:24:39.279Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb": {
+      "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb",
+      "source": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "slug": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "content_hash": "6db6f53b25e4d190752dcd969386c5f07a6d73ce70c64cb8c7cd6204e1266fcb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 265,
+          "title": "Immutable Data, Mutable State Separation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T10:27:48.584Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

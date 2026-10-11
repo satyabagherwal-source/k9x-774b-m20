@@ -258,5 +258,15 @@
     "contentHash": "905b04222d37ded93474a7439ee9fad95bf6910f105c15e5d145bcf6c41f8319",
     "lastHarvestedAt": "2026-10-11T10:24:39.306Z",
     "learningId": "learn-huggingface-hf-francisring-prism-mv3of5tu"
+  },
+  "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+    "license": "Open-Source",
+    "contentHash": "6db6f53b25e4d190752dcd969386c5f07a6d73ce70c64cb8c7cd6204e1266fcb",
+    "lastHarvestedAt": "2026-10-11T10:27:48.614Z",
+    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb"
   }
 }

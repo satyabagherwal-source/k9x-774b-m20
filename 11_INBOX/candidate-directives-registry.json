@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:24:39.307Z",
+  "last_updated": "2026-10-11T10:27:48.615Z",
   "directives": [
     {
       "id": "CD-001",
@@ -163,6 +163,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHEN TO APPLY** context",
       "learning_id": "learn-huggingface-hf-francisring-prism-mv3of5tu"
+    },
+    {
+      "id": "CD-J7YF",
+      "directive_title": "Binary Artifact Validation Before Memory Allocation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_commit": "hf-orcaroute",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb"
+    },
+    {
+      "id": "CD-J7YF",
+      "directive_title": "Context Length Clamping",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_commit": "hf-orcaroute",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb"
     }
   ]
 }
