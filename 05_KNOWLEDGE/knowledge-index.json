@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:22:23.359Z",
-  "total_verified_learnings": 4102,
+  "last_updated": "2026-10-11T16:25:11.857Z",
+  "total_verified_learnings": 4103,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -98743,6 +98743,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T16:22:23.359Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq": {
+      "learning_id": "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
+      "source": "jialinyyzz/humanizer",
+      "repository": "jialinyyzz/humanizer",
+      "slug": "hf-jialinyyzz-humanizer",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+      "source_version": "hf-jialinyyzz-humanizer",
+      "content_hash": "a099339a4a6d0ff55868c458352c6c726347cf39a9c2cdc224cf95bbb69c8d39",
+      "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T16:25:11.857Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

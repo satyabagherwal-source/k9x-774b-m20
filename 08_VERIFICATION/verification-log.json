@@ -2173,5 +2173,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-ATPC",
+    "timestamp": "2026-10-11T16:25:11.904Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
+    "contentHash": "a099339a4a6d0ff55868c458352c6c726347cf39a9c2cdc224cf95bbb69c8d39",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
