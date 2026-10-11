@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-11T15:31:03.224Z",
+  "lastUpdated": "2026-10-11T15:34:19.416Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -248,9 +248,9 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-11T15:31:03.936Z",
-        "lastHarvestedAt": "2026-10-11T08:18:29.673Z",
-        "totalHarvested": 1092,
+        "lastActiveAt": "2026-10-11T15:34:29.678Z",
+        "lastHarvestedAt": "2026-10-11T15:34:29.678Z",
+        "totalHarvested": 1093,
         "lastError": null
       },
       {
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-11T15:31:06.442Z",
+        "lastActiveAt": "2026-10-11T15:34:01.451Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-11T15:31:08.916Z",
+        "lastActiveAt": "2026-10-11T15:34:21.647Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -294,10 +294,10 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 0,
+      "remaining": 20,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-11T15:30:44.451Z",
+      "trippedAt": "2026-10-11T15:33:39.354Z",
       "reason": null,
       "consecutiveBlocks": 1
     },

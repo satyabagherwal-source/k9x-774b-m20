@@ -1218,5 +1218,15 @@
     "contentHash": "f479aebef8ec285ece361f10233234e81168d847db85653231dc8ad274912e9d",
     "lastHarvestedAt": "2026-10-11T15:28:04.778Z",
     "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l"
+  },
+  "infisical-infisical": {
+    "repository": "Infisical/infisical",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Infisical/infisical",
+    "sourceVersion": "c40d5fd5",
+    "license": "NOASSERTION",
+    "contentHash": "42a79b454ad378405837c3cc96c5fda8420342456449f4543c1fd3f2cb0650d9",
+    "lastHarvestedAt": "2026-10-11T15:34:27.157Z",
+    "learningId": "learn-github-infisical-infisical-mv3zhkae"
   }
 }
