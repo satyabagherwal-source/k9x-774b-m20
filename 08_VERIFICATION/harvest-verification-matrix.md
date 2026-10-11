@@ -294,3 +294,4 @@
 | `CYCLE-20261011-2BKV` | `2026-10-11T20:58:31.327Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`6f09bffe...`) |
 | `CYCLE-20261011-6MIP` | `2026-10-11T21:01:52.129Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 362, Rule 363, Rule 364` | Yes (`f44b1b2c...`) |
 | `CYCLE-20261011-A36A` | `2026-10-11T21:04:33.682Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`24f015a9...`) |
+| `CYCLE-20261011-EAN9` | `2026-10-11T21:07:49.989Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`b32500a0...`) |
