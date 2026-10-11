@@ -1208,5 +1208,15 @@
     "contentHash": "947ded8be9493995d02c91eacb714c4cab90f5c6b4eb61aa71979ff637dd5f15",
     "lastHarvestedAt": "2026-10-11T15:24:55.023Z",
     "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum"
+  },
+  "hf-google-gemma-4-26b-a4b-it": {
+    "repository": "google/gemma-4-26B-A4B-it",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+    "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
+    "license": "Open-Source",
+    "contentHash": "f479aebef8ec285ece361f10233234e81168d847db85653231dc8ad274912e9d",
+    "lastHarvestedAt": "2026-10-11T15:28:04.778Z",
+    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l"
   }
 }
