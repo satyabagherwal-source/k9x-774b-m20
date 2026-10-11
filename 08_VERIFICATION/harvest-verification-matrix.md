@@ -251,3 +251,4 @@
 | `CYCLE-20261011-FO9B` | `2026-10-11T18:48:56.207Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 342, Rule 343` | Yes (`e957d672...`) |
 | `CYCLE-20261011-JE5H` | `2026-10-11T18:51:49.733Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 290, Rule 344, Rule 345` | Yes (`6183d443...`) |
 | `CYCLE-20261011-MZH8` | `2026-10-11T18:54:37.340Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`694c9ec1...`) |
+| `CYCLE-20261011-R4FJ` | `2026-10-11T18:57:50.383Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`e292e039...`) |
