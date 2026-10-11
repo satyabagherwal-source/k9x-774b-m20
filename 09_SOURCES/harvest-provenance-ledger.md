@@ -315,3 +315,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-11T22:53:17.531Z |
 | `learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-11T22:56:34.067Z |
 | `learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-11T22:59:28.855Z |
+| `learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-11T23:02:20.779Z |
