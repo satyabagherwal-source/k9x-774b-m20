@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:10:17.003Z",
-  "total_cycles_completed": 108,
-  "total_learnings_persisted": 108,
+  "last_updated": "2026-10-11T14:13:10.661Z",
+  "total_cycles_completed": 109,
+  "total_learnings_persisted": 109,
   "total_rules_promoted": 52,
   "history": [
     {
@@ -759,6 +759,13 @@
       "repository": "stabilityai/stable-diffusion-3-medium",
       "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv3whbk4",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:13:10.661Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

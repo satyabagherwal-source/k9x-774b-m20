@@ -968,5 +968,15 @@
     "contentHash": "087218ebba1bba19a6378d9abc0b32b0b47e0d3e6160c5f43298a07448d08de9",
     "lastHarvestedAt": "2026-10-11T14:10:17.002Z",
     "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv3whbk4"
+  },
+  "hf-bigscience-bloom": {
+    "repository": "bigscience/bloom",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/bigscience/bloom",
+    "sourceVersion": "hf-bigscience-bloom",
+    "license": "Open-Source",
+    "contentHash": "02bddb5486008361f130239f4bfee9735dd2743f4750347019402fe5ba5bf48d",
+    "lastHarvestedAt": "2026-10-11T14:13:10.660Z",
+    "learningId": "learn-huggingface-hf-bigscience-bloom-mv3wl1kr"
   }
 }

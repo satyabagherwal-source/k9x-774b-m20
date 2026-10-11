@@ -158,3 +158,4 @@
 | `CYCLE-20261011-9EYN` | `2026-10-11T14:04:08.063Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`6d6cfa04...`) |
 | `CYCLE-20261011-D2NP` | `2026-10-11T14:06:58.741Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`60c11b15...`) |
 | `CYCLE-20261011-HBMX` | `2026-10-11T14:10:17.001Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 302, Rule 303, Rule 304` | Yes (`087218eb...`) |
+| `CYCLE-20261011-L1MR` | `2026-10-11T14:13:10.659Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`02bddb54...`) |
