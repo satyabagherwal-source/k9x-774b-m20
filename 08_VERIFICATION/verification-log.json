@@ -238,5 +238,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-W714",
+    "timestamp": "2026-10-11T08:45:55.480Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv3kw6z4",
+    "contentHash": "81e0da704570394c655df8a2e3f5b0b3299a7a7364489a49d2a21a4089bd62ed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

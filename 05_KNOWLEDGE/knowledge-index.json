@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:43:12.780Z",
-  "total_verified_learnings": 3969,
+  "last_updated": "2026-10-11T08:45:55.448Z",
+  "total_verified_learnings": 3970,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -95264,6 +95264,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T08:43:12.780Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv3kw6z4": {
+      "learning_id": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv3kw6z4",
+      "source": "mudler/locate-anything.cpp-gguf",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "slug": "hf-mudler-locate-anything.cpp-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "content_hash": "81e0da704570394c655df8a2e3f5b0b3299a7a7364489a49d2a21a4089bd62ed",
+      "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T08:45:55.448Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

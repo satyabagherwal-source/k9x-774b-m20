@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:43:12.818Z",
-  "total_cycles_completed": 21,
-  "total_learnings_persisted": 21,
+  "last_updated": "2026-10-11T08:45:55.481Z",
+  "total_cycles_completed": 22,
+  "total_learnings_persisted": 22,
   "total_rules_promoted": 8,
   "history": [
     {
@@ -149,6 +149,13 @@
       "timestamp": "2026-10-11T08:43:12.818Z",
       "repository": "zai-org/GLM-5.3",
       "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv3kspgb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T08:45:55.481Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv3kw6z4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

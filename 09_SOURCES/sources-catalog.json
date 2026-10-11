@@ -98,5 +98,15 @@
     "contentHash": "f2842313a6023ee05ac2ff2494da61bf4caafdac41d841f2c89f41875fad3ac9",
     "lastHarvestedAt": "2026-10-11T08:43:12.817Z",
     "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv3kspgb"
+  },
+  "hf-mudler-locate-anything.cpp-gguf": {
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+    "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
+    "license": "Open-Source",
+    "contentHash": "81e0da704570394c655df8a2e3f5b0b3299a7a7364489a49d2a21a4089bd62ed",
+    "lastHarvestedAt": "2026-10-11T08:45:55.480Z",
+    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv3kw6z4"
   }
 }
