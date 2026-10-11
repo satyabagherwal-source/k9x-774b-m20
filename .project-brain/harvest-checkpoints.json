@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T01:48:47.009Z",
+  "last_updated": "2026-10-11T01:51:27.374Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1602,15 +1602,15 @@
       "repository": "BAAI/bge-large-en-v1.5",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv2tftc9",
-      "content_hash": "3218ca08fdd7b8b93a10464dce2ba37222b63ae27b0544109db54a6a8074aa3d",
-      "verified_at": "2026-10-10T19:57:21.670Z",
+      "learning_id": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv3636ng",
+      "content_hash": "af6051581dabe9128fd48b145cac531319764a1f328d548c87ad76a4eec468f2",
+      "verified_at": "2026-10-11T01:51:27.374Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-10T19:57:21.670Z"
+      "last_updated": "2026-10-11T01:51:27.374Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",
