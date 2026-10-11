@@ -1,11 +1,11 @@
 {
   "domains": {
     "ai-agents": {
-      "queryIndex": 7,
+      "queryIndex": 1,
       "page": 4
     },
     "fullstack-ui": {
-      "queryIndex": 3,
+      "queryIndex": 1,
       "page": 1
     },
     "high-perf-systems": {
@@ -33,14 +33,14 @@
       "page": 4
     },
     "cognitive-neuroscience-systems": {
-      "queryIndex": 0,
+      "queryIndex": 2,
       "page": 2
     }
   },
   "huggingFace": {
-    "sortIndex": 0,
+    "sortIndex": 1,
     "page": 1
   },
   "totalAutoDiscovered": 36,
-  "lastReplenishedAt": "2026-10-11T15:58:27.826Z"
+  "lastReplenishedAt": "2026-10-11T16:01:35.414Z"
 }

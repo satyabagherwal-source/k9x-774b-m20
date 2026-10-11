@@ -1268,5 +1268,15 @@
     "contentHash": "df22ddac9a0efd1caeeb45ac362cd890516d7d815098ef931d86f67f9db7c976",
     "lastHarvestedAt": "2026-10-11T15:58:01.338Z",
     "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc"
+  },
+  "hf-google-gemma-4-31b-it": {
+    "repository": "google/gemma-4-31B-it",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
+    "sourceVersion": "hf-google-gemma-4-31b-it",
+    "license": "Open-Source",
+    "contentHash": "eadbcf540658f842a15b8ae355f2b88b34604d5fe4e30ee947a381eff2a5e1de",
+    "lastHarvestedAt": "2026-10-11T16:01:08.935Z",
+    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a"
   }
 }
