@@ -215,3 +215,4 @@
 | `CYCLE-20261011-KQB4` | `2026-10-11T17:00:53.680Z` | `abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`e0a13357...`) |
 | `CYCLE-20261011-OVGS` | `2026-10-11T17:04:06.988Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`c83c4b17...`) |
 | `CYCLE-20261011-SYKV` | `2026-10-11T17:07:17.647Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`871a93fa...`) |
+| `CYCLE-20261011-WVN0` | `2026-10-11T17:10:20.460Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 314, Rule 323, Rule 324` | Yes (`23ad8bb4...`) |

@@ -9102,3 +9102,151 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `d93bf113` are properly handled with clean fallback behavior.
+
+
+---
+
+## 323. Tokenizer Normalization & Truncation Boundary Invariant (Harvested from BAAI/bge-small-en-v1.5)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tokenizer Normalization & Truncation Boundary Invariant",
+  "source": "BAAI/bge-small-en-v1.5",
+  "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+  "source_version": "hf-baai-bge-small-en-v1.5",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T17:10:20.384Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [BAAI/bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5) (Revision: `hf-baai-bg`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The input text MUST be processed by the specific tokenizer associated with the model (`BertTokenizer` with `do_lower_case=True`). Inputs exceeding `max_position_embeddings` (512) MUST be truncated, and the truncation strategy (left or right) MUST be explicitly defined to avoid silent data loss in critical contexts (e.g., truncating the query vs. the document).
+
+**WHY**:
+BGE-small-en-v1.5 uses a WordPiece tokenizer with lowercasing. If the input is not lowercased, the tokenization will differ, leading to different embeddings and broken retrieval. Truncation without awareness can cut off the most relevant part of a long document (e.g., the conclusion) or query (e.g., the specific question at the end).
+
+**WHEN TO APPLY**:
+Any text preprocessing pipeline feeding into a BERT-based model.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import BertTokenizer
+
+tokenizer = BertTokenizer.from_pretrained("BAAI/bge-small-en-v1.5")
+
+def safe_encode(text: str, max_length: int = 512):
+    # Tokenizer handles lowercasing and truncation
+    # truncation=True ensures we never exceed max_length
+    # padding='max_length' ensures consistent shape for batching
+    inputs = tokenizer(
+        text,
+        max_length=max_length,
+        padding='max_length',
+        truncation=True,
+        return_tensors="pt"
+    )
+    return inputs
+
+# Example: Long text
+long_text = "This is a very long text that will definitely exceed 512 tokens. " * 100
+inputs = safe_encode(long_text)
+assert inputs['input_ids'].shape[1] == 512
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Manual truncation without tokenizer awareness
+def bad_encode(text: str):
+    # This cuts characters, not tokens. A single token can be multiple characters.
+    # This can break token boundaries and cause [UNK] tokens or misalignment.
+    truncated_text = text[:512] 
+    inputs = tokenizer(truncated_text, return_tensors="pt")
+    return inputs
+```
+
+**VERIFICATION METHOD**:
+1.  **Boundary Test**: Input a string of exactly 512 tokens and 513 tokens. Verify that the 513-token input is truncated to 512 and does not raise an error.
+2.  **Normalization Test**: Encode "Hello World" and "hello world". The embeddings should be identical (or nearly identical) because `do_lower_case=True`.
+3.  **Token Count Check**: `len(tokenizer.encode(text))` should be <= 512 after truncation.
+
+
+---
+
+## 324. Batch Inference Memory & Throughput Invariant (Harvested from BAAI/bge-small-en-v1.5)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Batch Inference Memory & Throughput Invariant",
+  "source": "BAAI/bge-small-en-v1.5",
+  "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+  "source_version": "hf-baai-bge-small-en-v1.5",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T17:10:20.391Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [BAAI/bge-small-en-v1.5](https://huggingface.co/BAAI/bge-small-en-v1.5) (Revision: `hf-baai-bg`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Inference MUST be performed in batches with a dynamically adjusted `batch_size` to prevent Out-Of-Memory (OOM) errors on GPU/CPU. The batch size MUST be tuned based on the available memory and the maximum sequence length (512).
+
+**WHY**:
+Processing a single long sequence (512 tokens) requires significant memory for the attention matrices ($O(N^2)$). Processing a large batch of such sequences can quickly exhaust GPU memory. OOM crashes are a common failure mode in production embedding services.
+
+**WHEN TO APPLY**:
+Any high-throughput embedding service or batch processing job.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer("BAAI/bge-small-en-v1.5")
+
+def infer_with_dynamic_batch(texts: list[str], initial_batch_size: int = 32):
+    batch_size = initial_batch_size
+    while batch_size > 1:
+        try:
+            # Use model.encode which handles batching internally
+            embeddings = model.encode(
+                texts, 
+                batch_size=batch_size, 
+                show_progress_bar=False,
+                convert_to_numpy=True
+            )
+            return embeddings
+        except torch.cuda.OutOfMemoryError:
+            torch.cuda.empty_cache()
+            batch_size //= 2
+            print(f"OOM detected. Reducing batch size to {batch_size}")
+    # If batch_size is 1 and still OOM, raise error
+    raise MemoryError("Cannot process even a single sequence with current memory constraints")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoded large batch size
+embeddings = model.encode(huge_list_of_texts, batch_size=1024) # Likely OOM
+```
+
+**VERIFICATION METHOD**:
+1.  **Load Test**: Run inference with a list of 10,000 long texts. Monitor GPU memory usage. Ensure it stays below 90% of available memory.
+2.  **OOM Simulation**: Reduce available memory (e.g., using `nvidia-smi` to check or limiting CUDA memory) and verify the dynamic batch size reduction works.

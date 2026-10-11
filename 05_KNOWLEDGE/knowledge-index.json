@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T17:07:17.601Z",
-  "total_verified_learnings": 4112,
+  "last_updated": "2026-10-11T17:10:20.413Z",
+  "total_verified_learnings": 4113,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -98987,6 +98987,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T17:07:17.601Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy": {
+      "learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
+      "source": "BAAI/bge-small-en-v1.5",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "slug": "hf-baai-bge-small-en-v1.5",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "content_hash": "23ad8bb4378f86d3e1d0e3d8f7f0fb6a2f62c4f34db6b8f69115f8f57a559670",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 314,
+          "title": "Semantic Embedding Dimensionality & Precision Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 323,
+          "title": "Tokenizer Normalization & Truncation Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 324,
+          "title": "Batch Inference Memory & Throughput Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T17:10:20.413Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
