@@ -1018,5 +1018,15 @@
     "contentHash": "1b1a9dbe1e24f34a59efff7b50fdca9e97da3016ee291d8edbc1337063d0cb2a",
     "lastHarvestedAt": "2026-10-11T14:24:31.066Z",
     "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3wzmkj"
+  },
+  "hf-deepseek-ai-deepseek-v3": {
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+    "sourceVersion": "hf-deepseek-ai-deepseek-v3",
+    "license": "Open-Source",
+    "contentHash": "4c33a4e2ea3d4b7dd6eb00f47fa38a5bf1896aeb67f1596ee089c7de2db6a0d9",
+    "lastHarvestedAt": "2026-10-11T14:27:34.974Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf"
   }
 }

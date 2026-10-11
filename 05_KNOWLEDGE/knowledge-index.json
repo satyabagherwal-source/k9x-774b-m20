@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:24:31.024Z",
-  "total_verified_learnings": 4061,
+  "last_updated": "2026-10-11T14:27:34.939Z",
+  "total_verified_learnings": 4062,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -97869,6 +97869,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T14:24:31.024Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf": {
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf",
+      "source": "deepseek-ai/DeepSeek-V3",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "slug": "hf-deepseek-ai-deepseek-v3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+      "source_version": "hf-deepseek-ai-deepseek-v3",
+      "content_hash": "4c33a4e2ea3d4b7dd6eb00f47fa38a5bf1896aeb67f1596ee089c7de2db6a0d9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T14:27:34.938Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1648,5 +1648,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-3KJH",
+    "timestamp": "2026-10-11T14:27:34.973Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf",
+    "contentHash": "4c33a4e2ea3d4b7dd6eb00f47fa38a5bf1896aeb67f1596ee089c7de2db6a0d9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
