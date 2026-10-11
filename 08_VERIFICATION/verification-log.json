@@ -4108,5 +4108,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-TGJY",
+    "timestamp": "2026-10-11T23:11:35.950Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho",
+    "contentHash": "a7a12644e407c6f35437d9de28f8527a0b208775a40b4d85ff566cdb2b175bbc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
