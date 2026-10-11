@@ -239,3 +239,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-11T19:03:49.325Z |
 | `learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-11T19:06:59.296Z |
 | `learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-10-11T19:09:50.624Z |
+| `learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-10-11T19:13:04.092Z |

@@ -2923,5 +2923,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-APGB",
+    "timestamp": "2026-10-11T19:13:04.091Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
+    "contentHash": "d9deb51e88dd70b62f2dfce217b006647a9ffbcad0fdb62f3293003b3764f247",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
