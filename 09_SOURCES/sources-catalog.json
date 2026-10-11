@@ -618,5 +618,15 @@
     "contentHash": "435531ac2d25bc3d3583a57226260a35ce616e6091a2399c4b3f012c238df22f",
     "lastHarvestedAt": "2026-10-11T12:25:54.054Z",
     "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv3sr31t"
+  },
+  "hf-psrben-visionhope": {
+    "repository": "PSRben/VisionHOPE",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
+    "sourceVersion": "hf-psrben-visionhope",
+    "license": "Open-Source",
+    "contentHash": "d25d1b04dd02a7554434990a8ca51353ca82b183853a743a19a37d53a922a2f7",
+    "lastHarvestedAt": "2026-10-11T12:28:58.054Z",
+    "learningId": "learn-huggingface-hf-psrben-visionhope-mv3sv11p"
   }
 }
