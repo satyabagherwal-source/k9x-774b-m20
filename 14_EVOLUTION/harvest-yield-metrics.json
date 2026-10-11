@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:11:29.322Z",
-  "total_cycles_completed": 68,
-  "total_learnings_persisted": 68,
-  "total_rules_promoted": 40,
+  "last_updated": "2026-10-11T12:14:38.842Z",
+  "total_cycles_completed": 69,
+  "total_learnings_persisted": 69,
+  "total_rules_promoted": 42,
   "history": [
     {
       "timestamp": "2026-10-11T07:44:05.759Z",
@@ -479,6 +479,13 @@
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv3s8jsv",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T12:14:38.842Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -568,5 +568,15 @@
     "contentHash": "8dd9814059f9a8765de3aefc20f8e6013045b508789d113c8b388bfcdf814632",
     "lastHarvestedAt": "2026-10-11T12:11:29.320Z",
     "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv3s8jsv"
+  },
+  "hf-xiaomimimo-mimo-v2.6-pro-rl": {
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "sourceVersion": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+    "license": "Open-Source",
+    "contentHash": "3be2363f9176e6e7e5296e5f6aa35c26d3f417c500bf2ca75e8e8e2734e559c5",
+    "lastHarvestedAt": "2026-10-11T12:14:38.841Z",
+    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v"
   }
 }

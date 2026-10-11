@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:11:29.321Z",
+  "last_updated": "2026-10-11T12:14:38.842Z",
   "directives": [
     {
       "id": "CD-001",
@@ -746,6 +746,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv3s8jsv"
+    },
+    {
+      "id": "CD-CM4A",
+      "directive_title": "The 8 Learning Extraction Artifacts",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v"
+    },
+    {
+      "id": "CD-CM4A",
+      "directive_title": "Hybrid Attention Sink Bias Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_commit": "hf-xiaomimim",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v"
     }
   ]
 }

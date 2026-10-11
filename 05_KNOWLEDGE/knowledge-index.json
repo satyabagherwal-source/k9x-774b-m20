@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:11:29.260Z",
-  "total_verified_learnings": 4016,
+  "last_updated": "2026-10-11T12:14:38.803Z",
+  "total_verified_learnings": 4017,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -96572,6 +96572,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T12:11:29.260Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v": {
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v",
+      "source": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "slug": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "content_hash": "3be2363f9176e6e7e5296e5f6aa35c26d3f417c500bf2ca75e8e8e2734e559c5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 293,
+          "title": "MoE Router Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 294,
+          "title": "Groupwise Advantage Redistribution Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T12:14:38.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
