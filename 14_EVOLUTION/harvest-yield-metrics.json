@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T23:02:20.780Z",
-  "total_cycles_completed": 275,
-  "total_learnings_persisted": 275,
+  "last_updated": "2026-10-11T23:05:35.769Z",
+  "total_cycles_completed": 276,
+  "total_learnings_persisted": 276,
   "total_rules_promoted": 116,
   "history": [
-    {
-      "timestamp": "2026-10-11T12:40:21.144Z",
-      "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv3t9o4j",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T12:43:19.520Z",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T23:02:20.780Z",
       "repository": "autotrust/GEV-26B-Decide",
       "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T23:05:35.769Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

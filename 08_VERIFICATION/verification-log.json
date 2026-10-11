@@ -4078,5 +4078,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-LQMU",
+    "timestamp": "2026-10-11T23:05:35.766Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7",
+    "contentHash": "b5ff1a0812a9aa2addf1517663912f3a8845ac18b6a1d11cf200d3b6cc0a5202",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
