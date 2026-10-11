@@ -538,5 +538,15 @@
     "contentHash": "59f7c6d7a40548d16656060d5ea052999931f12d95ab2a714389fcfe6f3c1ba8",
     "lastHarvestedAt": "2026-10-11T12:02:27.393Z",
     "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv3rwxna"
+  },
+  "hf-deepseek-ai-deepseek-v4.1-flash": {
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+    "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
+    "license": "Open-Source",
+    "contentHash": "d70586913cd335783df35a9881dbf76195268f8481036f397c58be13f0f9b0a8",
+    "lastHarvestedAt": "2026-10-11T12:05:21.438Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv3s0nyl"
   }
 }

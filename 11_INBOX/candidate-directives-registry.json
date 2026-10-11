@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:02:27.394Z",
+  "last_updated": "2026-10-11T12:05:21.439Z",
   "directives": [
     {
       "id": "CD-001",
@@ -702,6 +702,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv3rwxna"
+    },
+    {
+      "id": "CD-0O0V",
+      "directive_title": "FP8 Dynamic Scaling Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_commit": "hf-deepseek-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv3s0nyl"
+    },
+    {
+      "id": "CD-0O0V",
+      "directive_title": "MoE Expert Utilization Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_commit": "hf-deepseek-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv3s0nyl"
     }
   ]
 }
