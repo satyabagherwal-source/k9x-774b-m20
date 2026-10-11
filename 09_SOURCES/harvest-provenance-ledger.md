@@ -291,3 +291,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-11T21:40:37.001Z |
 | `learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-11T21:43:28.542Z |
 | `learn-huggingface-hf-naiveai-naive-n0-5-flash-mv4crs6s` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-11T21:46:18.948Z |
+| `learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-11T21:49:22.884Z |
