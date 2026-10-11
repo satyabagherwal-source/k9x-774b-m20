@@ -78,3 +78,4 @@
 | `CYCLE-20261011-FCYZ` | `2026-10-11T09:00:49.643Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`a683c478...`) |
 | `CYCLE-20261011-OR5S` | `2026-10-11T09:08:07.936Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`25ecd6af...`) |
 | `CYCLE-20261011-USCT` | `2026-10-11T09:12:49.421Z` | `abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`3aebdece...`) |
+| `CYCLE-20261011-ZNNB` | `2026-10-11T09:16:36.599Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`44656e75...`) |

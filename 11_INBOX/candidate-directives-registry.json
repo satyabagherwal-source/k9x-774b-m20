@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T09:00:49.644Z",
+  "last_updated": "2026-10-11T09:16:36.601Z",
   "directives": [
     {
       "id": "CD-001",
@@ -108,6 +108,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv3lfcux"
+    },
+    {
+      "id": "CD-ZNND",
+      "directive_title": "Clamped Masked Temporal Pooling (CMTP)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sentence-transformers/all-MiniLM-L6-v2",
+      "source_commit": "hf-sentence-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHEN TO APPLY** context",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv3lznlb"
+    },
+    {
+      "id": "CD-ZNND",
+      "directive_title": "Metric Hypersphere Unit Projection (MHUP)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "sentence-transformers/all-MiniLM-L6-v2",
+      "source_commit": "hf-sentence-",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv3lznlb"
     }
   ]
 }
