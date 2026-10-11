@@ -188,3 +188,5 @@ Every entry in this ledger must capture:
 | `learn-research-319` | `temporalio/sdk-typescript` | `targeted-research` | `05_KNOWLEDGE/engineering-patterns.md#Rule 319` | 2026-10-11T16:20:12.724Z |
 | `learn-cd-094` | `canonical_task_execution` | `task-task1-collection-bound` | `11_INBOX/candidate-directives/CD-094-stream---asynciterable-collection-b.md` | 2026-10-11T16:20:12.724Z || `learn-cd-095` | `canonical_task_execution` | `task-task1-collection-bound` | `11_INBOX/candidate-directives/CD-095-stream---asynciterable-collection-b.md` | 2026-10-11T16:21:54.936Z |
 | `learn-huggingface-hf-zai-org-glm-5-3-mv413j49` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-11T16:19:31.686Z |
+| `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-11T16:22:23.407Z |
+| `learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-11T16:25:11.906Z |

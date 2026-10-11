@@ -105,9 +105,9 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "81e0da704570394c655df8a2e3f5b0b3299a7a7364489a49d2a21a4089bd62ed",
-    "lastHarvestedAt": "2026-10-11T08:45:55.480Z",
-    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv3kw6z4"
+    "contentHash": "2c9aa70c1e3879b5ef7c6015e4ed76f5a5934cc726ec0f0910744569df03b815",
+    "lastHarvestedAt": "2026-10-11T16:22:23.407Z",
+    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8"
   },
   "hf-jialinyyzz-humanizer": {
     "repository": "jialinyyzz/humanizer",
@@ -115,9 +115,9 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "efddf4d6022433e2abada7c02bdfeb4980e7f3321be0cd5b0a26484cd8f7f73b",
-    "lastHarvestedAt": "2026-10-11T08:49:55.550Z",
-    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv3l1c7c"
+    "contentHash": "a099339a4a6d0ff55868c458352c6c726347cf39a9c2cdc224cf95bbb69c8d39",
+    "lastHarvestedAt": "2026-10-11T16:25:11.906Z",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq"
   },
   "hf-autotrust-jev-27b-vl": {
     "repository": "autotrust/JEV-27B-VL",
