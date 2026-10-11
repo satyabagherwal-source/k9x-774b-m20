@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T17:34:03.018Z",
-  "total_cycles_completed": 166,
-  "total_learnings_persisted": 166,
+  "last_updated": "2026-10-11T17:37:10.875Z",
+  "total_cycles_completed": 167,
+  "total_learnings_persisted": 167,
   "total_rules_promoted": 71,
   "history": [
     {
@@ -1178,6 +1178,13 @@
       "timestamp": "2026-10-11T17:34:03.018Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T17:37:10.875Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
