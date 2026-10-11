@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:22:35.383Z",
-  "total_cycles_completed": 242,
-  "total_learnings_persisted": 242,
+  "last_updated": "2026-10-11T21:25:29.226Z",
+  "total_cycles_completed": 243,
+  "total_learnings_persisted": 243,
   "total_rules_promoted": 109,
   "history": [
-    {
-      "timestamp": "2026-10-11T10:49:51.606Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv3pbkqe",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T10:52:45.237Z",
       "repository": "Qwen/Qwen-Image-2.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T21:22:35.383Z",
       "repository": "baidu/Unlimited-OCR",
       "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T21:25:29.226Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

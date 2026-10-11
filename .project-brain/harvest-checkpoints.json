@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:22:35.383Z",
+  "last_updated": "2026-10-11T21:25:29.227Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1252,15 +1252,15 @@
       "repository": "Aleph-Alpha/Kolibri-1",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
-      "content_hash": "64dfad1ec27b2d0f354ac7c6b5700d9292d436ff2ab597d5f806cbe4260b573e",
-      "verified_at": "2026-10-11T14:33:34.976Z",
+      "learning_id": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx",
+      "content_hash": "c42ba1472a1485912a9149061f02f4c30b6d18b0007480d0ac5ab79fa2ae8390",
+      "verified_at": "2026-10-11T21:25:29.227Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T14:33:34.976Z"
+      "last_updated": "2026-10-11T21:25:29.227Z"
     },
     "Qwen/Qwen3-4B": {
       "repository": "Qwen/Qwen3-4B",
