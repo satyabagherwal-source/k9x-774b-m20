@@ -5942,3 +5942,56 @@ else:
 ```
 **VERIFICATION METHOD**:
 Visual inspection of generated images for blocky artifacts. Assert that attention weights are continuous across layer boundaries.
+
+
+---
+
+## 271. The Versioned Cache Invariant (Harvested from Contrastive-LM/CLM-v0.1-8B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Versioned Cache Invariant",
+  "source": "Contrastive-LM/CLM-v0.1-8B",
+  "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+  "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-11T10:55:40.747Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Contrastive-LM/CLM-v0.1-8B](https://huggingface.co/Contrastive-LM/CLM-v0.1-8B) (Revision: `hf-contras`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When caching model outputs, the cache key MUST include the model version/checkpoint hash.
+**WHY**:
+If the model is updated, the old embeddings are no longer valid. Using stale embeddings leads to incorrect decisions.
+**WHEN TO APPLY**:
+Any system that caches model outputs (embeddings, predictions, etc.).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import hashlib
+
+def get_cache_key(text, model_version):
+    text_hash = hashlib.sha256(text.encode()).hexdigest()
+    return f"{model_version}:{text_hash}"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER use the text itself as the cache key without versioning
+# key = text # WRONG
+```
+**VERIFICATION METHOD**:
+```python
+def test_cache_key_versioning():
+    key1 = get_cache_key("hello", "v1")
+    key2 = get_cache_key("hello", "v2")
+    assert key1 != key2
+```

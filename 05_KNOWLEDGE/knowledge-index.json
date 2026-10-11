@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:52:45.212Z",
-  "total_verified_learnings": 3994,
+  "last_updated": "2026-10-11T10:55:40.762Z",
+  "total_verified_learnings": 3995,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -95921,6 +95921,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T10:52:45.212Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w": {
+      "learning_id": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w",
+      "source": "Contrastive-LM/CLM-v0.1-8B",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "slug": "hf-contrastive-lm-clm-v0.1-8b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "content_hash": "93e41bd8a7b296c72ec14b983e04445ce395c479aa432edfcc1286cd06d0a7b6",
+      "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 271,
+          "title": "The Versioned Cache Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T10:55:40.762Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

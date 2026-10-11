@@ -348,5 +348,15 @@
     "contentHash": "9f45356e7fc2422ac27750cae2768dc147c2fa3406f1bfe46b1d0b1a743b902c",
     "lastHarvestedAt": "2026-10-11T10:52:45.236Z",
     "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv3pfapi"
+  },
+  "hf-contrastive-lm-clm-v0.1-8b": {
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+    "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
+    "license": "Open-Source",
+    "contentHash": "93e41bd8a7b296c72ec14b983e04445ce395c479aa432edfcc1286cd06d0a7b6",
+    "lastHarvestedAt": "2026-10-11T10:55:40.787Z",
+    "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w"
   }
 }

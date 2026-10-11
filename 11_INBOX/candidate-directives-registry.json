@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:52:45.237Z",
+  "last_updated": "2026-10-11T10:55:40.787Z",
   "directives": [
     {
       "id": "CD-001",
@@ -372,6 +372,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHEN TO APPLY** context",
       "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-mv3pfapi"
+    },
+    {
+      "id": "CD-J27N",
+      "directive_title": "The Frozen Encoder Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Contrastive-LM/CLM-v0.1-8B",
+      "source_commit": "hf-contrasti",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w"
+    },
+    {
+      "id": "CD-J27N",
+      "directive_title": "The Temperature Scaling Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Contrastive-LM/CLM-v0.1-8B",
+      "source_commit": "hf-contrasti",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w"
     }
   ]
 }
