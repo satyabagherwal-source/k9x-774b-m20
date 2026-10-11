@@ -150,3 +150,4 @@
 | `CYCLE-20261011-EJOB` | `2026-10-11T13:40:07.835Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`a62df5c8...`) |
 | `CYCLE-20261011-IN0W` | `2026-10-11T13:43:18.800Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`82a71283...`) |
 | `CYCLE-20261011-MI7I` | `2026-10-11T13:46:19.182Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 299, Rule 300, Rule 301` | Yes (`f2b42410...`) |
+| `CYCLE-20261011-Q47I` | `2026-10-11T13:49:07.662Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`28558981...`) |

@@ -1423,5 +1423,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-Q47I",
+    "timestamp": "2026-10-11T13:49:07.662Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv3vq45h",
+    "contentHash": "285589811e4d5ff07f92b2274f2d43daf64d7b71260772e89a5add4b4b717826",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

@@ -888,5 +888,15 @@
     "contentHash": "f2b4241011022aea8eb5ac93d5e3b1faf918c4edd2e4a466524c9262e64a253b",
     "lastHarvestedAt": "2026-10-11T13:46:19.184Z",
     "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv3vmi4l"
+  },
+  "hf-minimaxai-minimax-h3": {
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
+    "sourceVersion": "hf-minimaxai-minimax-h3",
+    "license": "Open-Source",
+    "contentHash": "285589811e4d5ff07f92b2274f2d43daf64d7b71260772e89a5add4b4b717826",
+    "lastHarvestedAt": "2026-10-11T13:49:07.663Z",
+    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv3vq45h"
   }
 }
