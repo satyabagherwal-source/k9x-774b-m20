@@ -1028,5 +1028,15 @@
     "contentHash": "4c33a4e2ea3d4b7dd6eb00f47fa38a5bf1896aeb67f1596ee089c7de2db6a0d9",
     "lastHarvestedAt": "2026-10-11T14:27:34.974Z",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv3x3khf"
+  },
+  "hf-baidu-unlimited-ocr": {
+    "repository": "baidu/Unlimited-OCR",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
+    "sourceVersion": "hf-baidu-unlimited-ocr",
+    "license": "Open-Source",
+    "contentHash": "a3e1fbfbc63affe43b2bfab19cc72f1f30b7eb56b4d8bd9fd9cf2445753fbf55",
+    "lastHarvestedAt": "2026-10-11T14:30:48.082Z",
+    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4"
   }
 }
