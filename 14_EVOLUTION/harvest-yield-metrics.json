@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T22:44:13.171Z",
-  "total_cycles_completed": 269,
-  "total_learnings_persisted": 269,
+  "last_updated": "2026-10-11T22:47:01.499Z",
+  "total_cycles_completed": 270,
+  "total_learnings_persisted": 270,
   "total_rules_promoted": 116,
   "history": [
-    {
-      "timestamp": "2026-10-11T12:23:07.306Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv3snier",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T12:25:54.055Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T22:44:13.171Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
       "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T22:47:01.499Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
