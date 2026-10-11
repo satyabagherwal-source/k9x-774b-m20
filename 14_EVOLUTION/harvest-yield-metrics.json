@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:57:12.485Z",
-  "total_cycles_completed": 124,
-  "total_learnings_persisted": 124,
+  "last_updated": "2026-10-11T14:59:59.859Z",
+  "total_cycles_completed": 125,
+  "total_learnings_persisted": 125,
   "total_rules_promoted": 54,
   "history": [
     {
@@ -884,6 +884,13 @@
       "timestamp": "2026-10-11T14:57:12.485Z",
       "repository": "openai/clip-vit-base-patch32",
       "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:59:59.859Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

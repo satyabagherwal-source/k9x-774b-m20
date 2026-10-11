@@ -157,3 +157,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-10-11T14:51:29.583Z |
 | `learn-huggingface-hf-naiveai-naive-n0-5-flash-mv3y20ev` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-11T14:54:21.921Z |
 | `learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-11T14:57:12.484Z |
+| `learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-11T14:59:59.858Z |
