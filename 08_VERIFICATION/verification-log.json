@@ -148,5 +148,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-WV6C",
+    "timestamp": "2026-10-11T08:18:27.156Z",
+    "repository": "slopus/happy",
+    "learningId": "learn-github-slopus-happy-mv3jwv4i",
+    "contentHash": "9e32d3b09e187f13afc60631de22da8b4557d1a58721a3daaf4287dd3ea139e1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

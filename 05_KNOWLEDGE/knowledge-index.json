@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:14:18.459Z",
+  "last_updated": "2026-10-11T08:18:27.120Z",
   "total_verified_learnings": 3964,
   "total_promoted_rules": 0,
   "items": {
@@ -95120,6 +95120,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T08:14:17.009Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-slopus-happy-mv3jwv4i": {
+      "learning_id": "learn-github-slopus-happy-mv3jwv4i",
+      "source": "slopus/happy",
+      "repository": "slopus/happy",
+      "slug": "slopus-happy",
+      "platform": "github",
+      "source_url": "https://github.com/slopus/happy",
+      "source_version": "99f415fa",
+      "content_hash": "9e32d3b09e187f13afc60631de22da8b4557d1a58721a3daaf4287dd3ea139e1",
+      "dossier_path": "07_PROJECT_LEARNING/slopus-happy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/slopus-happy-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T08:18:27.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

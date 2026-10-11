@@ -38,5 +38,15 @@
     "contentHash": "70fd8c659452c5ceec98d18e42a75962fbebc45d0701fbd26c8c29c188f59b32",
     "lastHarvestedAt": "2026-10-11T08:14:17.084Z",
     "learningId": "learn-github-test-e2e-idempotent-slug-mv3jrhym"
+  },
+  "slopus-happy": {
+    "repository": "slopus/happy",
+    "platform": "github",
+    "sourceUrl": "https://github.com/slopus/happy",
+    "sourceVersion": "99f415fa",
+    "license": "MIT",
+    "contentHash": "9e32d3b09e187f13afc60631de22da8b4557d1a58721a3daaf4287dd3ea139e1",
+    "lastHarvestedAt": "2026-10-11T08:18:27.157Z",
+    "learningId": "learn-github-slopus-happy-mv3jwv4i"
   }
 }
