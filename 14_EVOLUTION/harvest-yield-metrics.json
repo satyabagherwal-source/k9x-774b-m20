@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:38:17.120Z",
-  "total_cycles_completed": 227,
-  "total_learnings_persisted": 227,
+  "last_updated": "2026-10-11T20:40:56.416Z",
+  "total_cycles_completed": 228,
+  "total_learnings_persisted": 228,
   "total_rules_promoted": 106,
   "history": [
-    {
-      "timestamp": "2026-10-11T09:20:59.481Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv3m5af1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T09:24:49.325Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1403,6 +1396,13 @@
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T20:40:56.416Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
