@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T11:59:28.835Z",
+  "last_updated": "2026-10-11T12:02:27.394Z",
   "directives": [
     {
       "id": "CD-001",
@@ -691,6 +691,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv3rt3wo"
+    },
+    {
+      "id": "CD-WXQA",
+      "directive_title": "Prompt Enhancement Layer for Specialized T2I Models",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "inclusionAI/Ming-Image-0.1-Design",
+      "source_commit": "hf-inclusion",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv3rwxna"
     }
   ]
 }

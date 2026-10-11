@@ -528,5 +528,15 @@
     "contentHash": "3c944c82c8e3a8427ed3c53b531193a352343e22ac51cd7070b3eea56341684e",
     "lastHarvestedAt": "2026-10-11T11:59:28.834Z",
     "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv3rt3wo"
+  },
+  "hf-inclusionai-ming-image-0.1-design": {
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+    "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
+    "license": "Open-Source",
+    "contentHash": "59f7c6d7a40548d16656060d5ea052999931f12d95ab2a714389fcfe6f3c1ba8",
+    "lastHarvestedAt": "2026-10-11T12:02:27.393Z",
+    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv3rwxna"
   }
 }
