@@ -1678,5 +1678,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-BABI",
+    "timestamp": "2026-10-11T14:33:34.974Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
+    "contentHash": "64dfad1ec27b2d0f354ac7c6b5700d9292d436ff2ab597d5f806cbe4260b573e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

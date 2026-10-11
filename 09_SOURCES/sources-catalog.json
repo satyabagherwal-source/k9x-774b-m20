@@ -1038,5 +1038,15 @@
     "contentHash": "a3e1fbfbc63affe43b2bfab19cc72f1f30b7eb56b4d8bd9fd9cf2445753fbf55",
     "lastHarvestedAt": "2026-10-11T14:30:48.082Z",
     "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4"
+  },
+  "hf-aleph-alpha-kolibri-1": {
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+    "sourceVersion": "hf-aleph-alpha-kolibri-1",
+    "license": "Open-Source",
+    "contentHash": "64dfad1ec27b2d0f354ac7c6b5700d9292d436ff2ab597d5f806cbe4260b573e",
+    "lastHarvestedAt": "2026-10-11T14:33:34.975Z",
+    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0"
   }
 }

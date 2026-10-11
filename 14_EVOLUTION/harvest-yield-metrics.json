@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T14:30:48.083Z",
-  "total_cycles_completed": 115,
-  "total_learnings_persisted": 115,
+  "last_updated": "2026-10-11T14:33:34.975Z",
+  "total_cycles_completed": 116,
+  "total_learnings_persisted": 116,
   "total_rules_promoted": 52,
   "history": [
     {
@@ -821,6 +821,13 @@
       "timestamp": "2026-10-11T14:30:48.083Z",
       "repository": "baidu/Unlimited-OCR",
       "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T14:33:34.975Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
