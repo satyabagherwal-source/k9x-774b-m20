@@ -17317,5 +17317,20 @@
     "downloads": 7314,
     "qualityScore": 3500,
     "discoveredAt": "2026-10-10T17:31:44.628Z"
+  },
+  {
+    "name": "happy",
+    "fullName": "slopus/happy",
+    "url": "https://github.com/slopus/happy",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Orchestrate Claude, Codex and Grok in one app. Open-source (MIT), reuses the subscriptions you already pay for.",
+    "stars": 24084,
+    "forks": 2059,
+    "openIssues": 1061,
+    "language": "TypeScript",
+    "qualityScore": 13010,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-11T08:13:59.517Z"
   }
 ]

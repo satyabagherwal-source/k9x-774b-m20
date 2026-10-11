@@ -3852,3 +3852,7 @@ https://huggingface.co/facebook/sam3
 # --- Automatically Discovered by AI Scout Engine [2026-10-10T17:31:44.629Z] ---
 # [HUGGINGFACE-AI-MODELS] AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF (3500 score) - Verified Hugging Face Model: AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF (15
 https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-11T08:14:45.397Z] ---
+# [AI-AGENTS] slopus/happy (13010 score) - Orchestrate Claude, Codex and Grok in one app. Open-source (MIT), reuses the sub
+https://github.com/slopus/happy
