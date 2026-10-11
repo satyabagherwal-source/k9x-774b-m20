@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:37:38.152Z",
-  "total_cycles_completed": 77,
-  "total_learnings_persisted": 77,
+  "last_updated": "2026-10-11T12:40:21.144Z",
+  "total_cycles_completed": 78,
+  "total_learnings_persisted": 78,
   "total_rules_promoted": 44,
   "history": [
     {
@@ -541,6 +541,13 @@
       "timestamp": "2026-10-11T12:37:38.152Z",
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-hf-facebook-sam3-mv3t66d0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T12:40:21.144Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv3t9o4j",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
