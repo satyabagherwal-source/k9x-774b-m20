@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:18:27.120Z",
-  "total_verified_learnings": 3964,
+  "last_updated": "2026-10-11T08:29:06.223Z",
+  "total_verified_learnings": 3965,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -95144,6 +95144,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T08:18:27.120Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-colinhacks-zod-mv3kabi9": {
+      "learning_id": "learn-github-colinhacks-zod-mv3kabi9",
+      "source": "colinhacks/zod",
+      "repository": "colinhacks/zod",
+      "slug": "colinhacks-zod",
+      "platform": "github",
+      "source_url": "https://github.com/colinhacks/zod",
+      "source_version": "284243fb",
+      "content_hash": "17cb722a221964b5fb65eec5f148d4a8c015c673abcce44e15f3c18448e1cf2f",
+      "dossier_path": "07_PROJECT_LEARNING/colinhacks-zod-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/colinhacks-zod-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T08:29:06.222Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

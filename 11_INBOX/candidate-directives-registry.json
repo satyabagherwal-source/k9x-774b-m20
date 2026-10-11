@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T08:18:27.158Z",
+  "last_updated": "2026-10-11T08:29:06.374Z",
   "directives": [
     {
       "id": "CD-001",
@@ -53,6 +53,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**",
       "learning_id": "learn-github-slopus-happy-mv3jwv4i"
+    },
+    {
+      "id": "CD-AKEE",
+      "directive_title": "The Leading Collection Bound Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "colinhacks/zod",
+      "source_commit": "284243fb",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-github-colinhacks-zod-mv3kabi9"
     }
   ]
 }

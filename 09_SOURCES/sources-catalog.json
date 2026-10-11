@@ -48,5 +48,15 @@
     "contentHash": "9e32d3b09e187f13afc60631de22da8b4557d1a58721a3daaf4287dd3ea139e1",
     "lastHarvestedAt": "2026-10-11T08:18:27.157Z",
     "learningId": "learn-github-slopus-happy-mv3jwv4i"
+  },
+  "colinhacks-zod": {
+    "repository": "colinhacks/zod",
+    "platform": "github",
+    "sourceUrl": "https://github.com/colinhacks/zod",
+    "sourceVersion": "284243fb",
+    "license": "MIT",
+    "contentHash": "17cb722a221964b5fb65eec5f148d4a8c015c673abcce44e15f3c18448e1cf2f",
+    "lastHarvestedAt": "2026-10-11T08:29:06.345Z",
+    "learningId": "learn-github-colinhacks-zod-mv3kabi9"
   }
 }
