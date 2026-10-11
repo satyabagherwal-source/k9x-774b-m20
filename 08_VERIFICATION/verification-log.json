@@ -628,5 +628,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-MPI0",
+    "timestamp": "2026-10-11T10:58:30.936Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv3pmpgf",
+    "contentHash": "73c65b4edfcd9a5607b507d86495a8b0abc7f22f8bc4c0f1e74e08f5f422bab9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

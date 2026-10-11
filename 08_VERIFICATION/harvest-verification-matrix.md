@@ -97,3 +97,4 @@
 | `CYCLE-20261011-BKS5` | `2026-10-11T10:49:51.605Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `VERIFIED` | `Rule 268, Rule 269` | Yes (`7e3a1889...`) |
 | `CYCLE-20261011-FAR8` | `2026-10-11T10:52:45.236Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 270` | Yes (`9f45356e...`) |
 | `CYCLE-20261011-J27M` | `2026-10-11T10:55:40.786Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 271` | Yes (`93e41bd8...`) |
+| `CYCLE-20261011-MPI0` | `2026-10-11T10:58:30.936Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`73c65b4e...`) |

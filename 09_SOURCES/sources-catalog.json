@@ -358,5 +358,15 @@
     "contentHash": "93e41bd8a7b296c72ec14b983e04445ce395c479aa432edfcc1286cd06d0a7b6",
     "lastHarvestedAt": "2026-10-11T10:55:40.787Z",
     "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv3pj25w"
+  },
+  "hf-nvidia-nemotron-3-diarization": {
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+    "sourceVersion": "hf-nvidia-nemotron-3-diarization",
+    "license": "Open-Source",
+    "contentHash": "73c65b4edfcd9a5607b507d86495a8b0abc7f22f8bc4c0f1e74e08f5f422bab9",
+    "lastHarvestedAt": "2026-10-11T10:58:30.936Z",
+    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv3pmpgf"
   }
 }

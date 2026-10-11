@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:55:40.789Z",
+  "last_updated": "2026-10-11T10:58:30.937Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -370,15 +370,15 @@
       "repository": "nvidia/Nemotron-3-Diarization",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv38zmi7",
-      "content_hash": "7394f0477035475171546f1d5747021c8001c904322c70f3721b3ce89585655e",
-      "verified_at": "2026-10-11T03:12:40.174Z",
+      "learning_id": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv3pmpgf",
+      "content_hash": "73c65b4edfcd9a5607b507d86495a8b0abc7f22f8bc4c0f1e74e08f5f422bab9",
+      "verified_at": "2026-10-11T10:58:30.937Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T03:12:40.175Z"
+      "last_updated": "2026-10-11T10:58:30.937Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
