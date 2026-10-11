@@ -100,3 +100,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv3rwxna` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-11T12:02:27.393Z |
 | `learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv3s0nyl` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-11T12:05:21.438Z |
 | `learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv3s48mc` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-11T12:08:08.188Z |
+| `learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv3s8jsv` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-11T12:11:29.320Z |

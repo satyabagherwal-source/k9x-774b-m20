@@ -117,3 +117,4 @@
 | `CYCLE-20261011-WXQ8` | `2026-10-11T12:02:27.392Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 290, Rule 291` | Yes (`59f7c6d7...`) |
 | `CYCLE-20261011-0O0U` | `2026-10-11T12:05:21.438Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 292` | Yes (`d7058691...`) |
 | `CYCLE-20261011-48OR` | `2026-10-11T12:08:08.187Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`52668650...`) |
+| `CYCLE-20261011-8JVR` | `2026-10-11T12:11:29.319Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`8dd98140...`) |

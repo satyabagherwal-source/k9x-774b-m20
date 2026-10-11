@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:05:21.439Z",
+  "last_updated": "2026-10-11T12:11:29.321Z",
   "directives": [
     {
       "id": "CD-001",
@@ -724,6 +724,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv3s0nyl"
+    },
+    {
+      "id": "CD-8JVT",
+      "directive_title": "Dynamic Precision Allocation for Neural Networks",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "unsloth/Qwen-Image-2.1-GGUF",
+      "source_commit": "hf-unsloth-q",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv3s8jsv"
+    },
+    {
+      "id": "CD-8JVT",
+      "directive_title": "Pipeline-Wide VRAM Optimization",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "unsloth/Qwen-Image-2.1-GGUF",
+      "source_commit": "hf-unsloth-q",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv3s8jsv"
     }
   ]
 }
