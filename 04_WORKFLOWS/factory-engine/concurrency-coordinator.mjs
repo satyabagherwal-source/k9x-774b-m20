@@ -209,8 +209,8 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
       return { success: true, pushed: false };
     }
 
-    const hasKnowledge = /^(07_PROJECT_LEARNING\/|05_KNOWLEDGE\/|03_SKILLS\/|repos\.txt)/m.test(staged);
-    if (!hasKnowledge && !commitMsg.includes('feat(patterns)') && !commitMsg.includes('fix(') && !commitMsg.includes('docs(')) {
+    const hasKnowledge = /^([0-1][0-9]_[A-Z_]+\/|repos\.txt|knowledge-index\.json|\.github\/|04_WORKFLOWS\/)/m.test(staged);
+    if (!hasKnowledge && !commitMsg.includes('feat(') && !commitMsg.includes('fix(') && !commitMsg.includes('docs(')) {
       console.log(`[CONCURRENCY SYNC] Only timestamps/cursors staged. Skipping empty knowledge commit.`);
       try { run('git checkout HEAD -- harvest-control.json 04_WORKFLOWS/factory-engine/discovery-cursor.json', cwd); } catch (e) {}
       return { success: true, pushed: false };

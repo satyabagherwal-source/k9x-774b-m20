@@ -12,12 +12,9 @@ const CIRCUIT_FILE = path.join(BRAIN_ROOT, '.harvest-locks', 'ai-key-circuit.jso
 // Supported Gemini Models (Official Google AI Studio API IDs)
 export const GEMINI_MODELS = [
   'gemini-3.8-flash',
-  'gemini-3.7-flash',
-  'gemini-3.6-flash',
-  'gemini-3.5-flash',
-  'gemini-2.5-flash',
   'gemini-flash-latest'
 ];
+
 
 /**
  * Universal key discovery helper: loads keys from environment & .brain-secrets.json
@@ -815,41 +812,54 @@ export async function executeWithGroqFree(prompt, systemInstruction = '') {
     if (systemInstruction) messages.push({ role: 'system', content: systemInstruction });
     messages.push({ role: 'user', content: prompt });
 
-    try {
-      console.log(`⚡ [GROQ FREE AI] Sending request via ${keyLabel} to Llama-3.3-70b-versatile...`);
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages,
-          temperature: 0.2,
-          max_tokens: 8192
-        })
-      });
+    const activeGroqModels = [
+      'qwen/qwen3.8-27b',
+      'openai/gpt-oss-20b',
+      'openai/gpt-oss-120b'
+    ];
 
-      if (res.status === 429) {
-        tripKeyCircuitBreaker(apiKey, 65_000, 'Groq Rate Limit Exceeded', 'Groq Free');
-        continue;
+    for (const model of activeGroqModels) {
+      try {
+        console.log(`⚡ [GROQ FREE AI] Sending request via ${keyLabel} to ${model}...`);
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${apiKey}`
+          },
+          body: JSON.stringify({
+            model,
+            messages,
+            temperature: 0.2,
+            max_tokens: 8192
+          })
+        });
+
+        if (res.status === 429) {
+          tripKeyCircuitBreaker(apiKey, 65_000, 'Groq Rate Limit Exceeded', 'Groq Free');
+          break;
+        }
+
+        if (res.status === 404) {
+          console.warn(`[GROQ 404] Model ${model} not found, trying fallback model...`);
+          continue;
+        }
+
+        if (!res.ok) continue;
+
+        const data = await res.json();
+        const text = data.choices?.[0]?.message?.content || '';
+        if (text) {
+          reportKeySuccess(apiKey, 'Groq Free');
+          return {
+            text,
+            model: `${model} (Groq Free)`,
+            keyUsed: keyLabel
+          };
+        }
+      } catch (e) {
+        console.warn(`[GROQ FREE AI ERROR] ${keyLabel} (${model}): ${e.message}`);
       }
-
-      if (!res.ok) continue;
-
-      const data = await res.json();
-      const text = data.choices?.[0]?.message?.content || '';
-      if (text) {
-        reportKeySuccess(apiKey, 'Groq Free');
-        return {
-          text,
-          model: 'llama-3.3-70b-versatile (Groq Free)',
-          keyUsed: keyLabel
-        };
-      }
-    } catch (e) {
-      console.warn(`[GROQ FREE AI ERROR] ${keyLabel}: ${e.message}`);
     }
   }
 
@@ -1042,3 +1052,82 @@ export async function dispatchZeroCostAiSynthesis(prompt, systemInstruction = ''
 
   throw new Error('All configured AI providers (Gemini, Claude, ChatGPT, Grok, MiniMax, Groq, Ollama) are either resting in isolated cooldown or unconfigured.');
 }
+
+export const CAPABILITY_TASKS = {
+  SYNTHESIS: 'SYNTHESIS',
+  EXTRACTION: 'EXTRACTION',
+  CRITIQUE: 'CRITIQUE',
+  VERIFICATION: 'VERIFICATION',
+  CLASSIFICATION: 'CLASSIFICATION',
+  DEDUPLICATION: 'DEDUPLICATION'
+};
+
+/**
+ * Capability-Based Multi-Provider Orchestrator:
+ * Routes tasks to optimal providers based on capability profile:
+ * - SYNTHESIS / EXTRACTION: Heavy reasoning -> Google Gemini Pool first, cascade to Groq Free / Ollama.
+ * - CRITIQUE / VERIFICATION / CLASSIFICATION / DEDUPLICATION: Fast lexical checks -> Groq Free first, cascade to Gemini Pool / Ollama.
+ * Telemetry recorded: task, provider, model, latency, chars without leaking secrets.
+ */
+export async function dispatchCapabilityTask(taskType, prompt, systemInstruction = '') {
+  const startTime = Date.now();
+  const sanitized = classifyAndSanitizeOutboundPayload(prompt, systemInstruction);
+  const cleanPrompt = sanitized.prompt;
+  const cleanSystem = sanitized.systemInstruction;
+
+  let result = null;
+  const category = (taskType || 'SYNTHESIS').toUpperCase();
+
+  if (
+    category === CAPABILITY_TASKS.CRITIQUE ||
+    category === CAPABILITY_TASKS.VERIFICATION ||
+    category === CAPABILITY_TASKS.CLASSIFICATION ||
+    category === CAPABILITY_TASKS.DEDUPLICATION
+  ) {
+    // Fast path: Groq -> Gemini -> Local
+    try {
+      result = await executeWithGroqFree(cleanPrompt, cleanSystem);
+    } catch (e) {}
+
+    if (!result) {
+      try {
+        result = await executeWithGeminiPool(cleanPrompt, cleanSystem);
+      } catch (e) {}
+    }
+
+    if (!result) {
+      try {
+        result = await executeWithLocalOllama(cleanPrompt, cleanSystem);
+      } catch (e) {}
+    }
+  } else {
+    // Deep reasoning path: Gemini -> Groq -> Local
+    try {
+      result = await executeWithGeminiPool(cleanPrompt, cleanSystem);
+    } catch (e) {}
+
+    if (!result) {
+      try {
+        result = await executeWithGroqFree(cleanPrompt, cleanSystem);
+      } catch (e) {}
+    }
+
+    if (!result) {
+      try {
+        result = await executeWithLocalOllama(cleanPrompt, cleanSystem);
+      } catch (e) {}
+    }
+  }
+
+  const latencyMs = Date.now() - startTime;
+  if (result && result.text) {
+    result.taskType = category;
+    result.latencyMs = latencyMs;
+    result.outputLength = result.text.length;
+    result.distillationProhibited = true;
+    return result;
+  }
+
+  throw new Error(`Capability task "${taskType}" failed: No healthy AI provider available after ${latencyMs}ms cascade.`);
+}
+

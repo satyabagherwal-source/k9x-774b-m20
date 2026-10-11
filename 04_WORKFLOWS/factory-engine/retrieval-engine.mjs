@@ -61,6 +61,7 @@ function computeSourceFilesHash() {
   const hash = crypto.createHash('sha256');
   if (fs.existsSync(PATTERNS_FILE)) hash.update(fs.statSync(PATTERNS_FILE).mtimeMs.toString());
   if (fs.existsSync(CORE_RULES_FILE)) hash.update(fs.statSync(CORE_RULES_FILE).mtimeMs.toString());
+  if (fs.existsSync(KNOWLEDGE_INDEX_FILE)) hash.update(fs.statSync(KNOWLEDGE_INDEX_FILE).mtimeMs.toString());
   if (fs.existsSync(SKILLS_DIR)) {
     const skills = fs.readdirSync(SKILLS_DIR).filter(f => f.endsWith('.md'));
     for (const f of skills) {
@@ -222,6 +223,44 @@ export function parseSkills() {
 }
 
 /**
+ * Parses 05_KNOWLEDGE/knowledge-index.json into searchable knowledge documents
+ */
+export function parseKnowledgeIndex() {
+  if (!fs.existsSync(KNOWLEDGE_INDEX_FILE)) return [];
+  try {
+    const raw = fs.readFileSync(KNOWLEDGE_INDEX_FILE, 'utf-8');
+    const data = JSON.parse(raw);
+    const items = data.items || {};
+    const selected = Object.values(items);
+    const docs = [];
+
+    for (const item of selected) {
+      const repoName = item.repository || item.slug || item.learning_id;
+      const title = `${repoName} (Harvested Intelligence Dossier)`;
+      const rulesList = (item.promoted_rules || []).map(r => r.title || `Rule ${r.number}`).join(', ');
+      const summary = `Harvested engineering intelligence for ${repoName}. Platform: ${item.platform || 'github'}. Revision: ${item.source_version || 'HEAD'}. Dossier: ${item.dossier_path || '07_PROJECT_LEARNING'}. Rules: ${rulesList || 'Recorded'}`;
+      const fullContent = `## ${title}\n\n- Repository: ${repoName}\n- Platform: ${item.platform || 'github'}\n- Learning ID: ${item.learning_id}\n- Content Hash: ${item.content_hash}\n- Dossier: ${item.dossier_path}\n- Verified At: ${item.verified_at}\n\n${summary}`;
+
+      docs.push({
+        id: `Dossier: ${item.slug || repoName}`,
+        learningId: item.learning_id,
+        title,
+        category: 'HARVESTED_INTELLIGENCE_DOSSIER',
+        filePath: item.dossier_path || `07_PROJECT_LEARNING/${item.slug}-learnings.md`,
+        lineRange: [1, 50],
+        summary,
+        fullContent,
+        tokens: tokenize(`${repoName} ${item.slug || ''} ${item.platform || ''} ${rulesList} ${summary}`)
+      });
+    }
+
+    return docs;
+  } catch (err) {
+    return [];
+  }
+}
+
+/**
  * Builds the complete BM25 & Lexical Inverted Index
  */
 export function buildSearchIndex(forceRebuild = false) {
@@ -249,8 +288,9 @@ export function buildSearchIndex(forceRebuild = false) {
   const patternDocs = parseEngineeringPatterns();
   const coreDocs = parseCoreOperatingRules();
   const skillDocs = parseSkills();
+  const indexDocs = parseKnowledgeIndex();
 
-  const documents = [...patternDocs, ...coreDocs, ...skillDocs];
+  const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs];
   const N = documents.length;
 
   let totalDocLength = 0;

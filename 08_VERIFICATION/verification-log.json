@@ -1,0 +1,47 @@
+[
+  {
+    "cycleId": "CYCLE-20261011-OOKZ",
+    "timestamp": "2026-10-11T07:44:05.747Z",
+    "repository": "test-org/gateway-verifier",
+    "learningId": "learn-github-test-org-gateway-verifier-mv3ioo99",
+    "contentHash": "da33a3f884cb459116d677a0cfb8af39bea6ce9ac81fe0935e8bde6db556bee3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261011-OOUT",
+    "timestamp": "2026-10-11T07:44:06.101Z",
+    "repository": "test-org/rule-verifier",
+    "learningId": "learn-github-test-org-rule-verifier-mv3iooq3",
+    "contentHash": "115032c59aa12885b0fe509accfe5d38600b5bf49b6fce953cd05436e1c2f870",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261011-0419",
+    "timestamp": "2026-10-11T07:52:58.989Z",
+    "repository": "shadcn-ui/ui",
+    "learningId": "learn-github-shadcn-ui-ui-mv3j0403",
+    "contentHash": "a158393a932aec0175bab2de19fe111133eadf45c8623901fc33d356ad3ff077",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  }
+]

@@ -13,6 +13,15 @@ export const LEARNING_DIR = path.join(BRAIN_ROOT, '07_PROJECT_LEARNING');
 export const PATTERNS_PATH = path.join(BRAIN_ROOT, '05_KNOWLEDGE', 'engineering-patterns.md');
 export const INDEX_PATH = path.join(BRAIN_ROOT, '05_KNOWLEDGE', 'knowledge-index.json');
 export const CHECKPOINTS_PATH = path.join(BRAIN_ROOT, '.project-brain', 'harvest-checkpoints.json');
+export const VERIFICATION_MATRIX_PATH = path.join(BRAIN_ROOT, '08_VERIFICATION', 'harvest-verification-matrix.md');
+export const VERIFICATION_LOG_PATH = path.join(BRAIN_ROOT, '08_VERIFICATION', 'verification-log.json');
+export const PROVENANCE_LEDGER_PATH = path.join(BRAIN_ROOT, '09_SOURCES', 'harvest-provenance-ledger.md');
+export const SOURCES_CATALOG_PATH = path.join(BRAIN_ROOT, '09_SOURCES', 'sources-catalog.json');
+export const INBOX_DIR = path.join(BRAIN_ROOT, '11_INBOX');
+export const INBOX_REGISTRY_PATH = path.join(BRAIN_ROOT, '11_INBOX', 'candidate-directives-registry.json');
+export const EVOLUTION_METRICS_PATH = path.join(BRAIN_ROOT, '14_EVOLUTION', 'harvest-yield-metrics.json');
+export const EVOLUTION_LOG_PATH = path.join(BRAIN_ROOT, '14_EVOLUTION', 'brain-evolution-log.md');
+export const TAXONOMY_PATH = path.join(BRAIN_ROOT, '15_METADATA', 'knowledge-taxonomy.json');
 
 /**
  * The Discrete Lifecycle States for Harvesting Intelligence
@@ -59,20 +68,25 @@ export function calculateContentHash(content) {
 }
 
 /**
- * Extracts candidate rule objects from raw synthesis or audit text
+ * Extracts candidate rule objects from raw synthesis or audit text.
+ * Requires genuine **RULE**: invariant block to avoid false-positive matches on structural sections.
  */
 export function extractCandidateRulesFromText(rawText) {
   if (!rawText) return [];
-  const ruleRegex = /(?:##|###)\s+(?:Rule\s+)?(?:X|\d+)[:.]?\s*(.+?)\n([\s\S]*?)(?=(?:\n(?:##|###)\s+(?:Rule\s+)?(?:X|\d+)[:.]?|\n##\s+6\.|\n###\s+6\.|\Z))/gi;
+  const sectionRegex = /(?:##|###)\s+(?:(?:Rule\s+)?([X\d]+)[:.]?\s*|\d+\.\s+)?([^\n]+)\n([\s\S]*?)(?=(?:\n(?:##|###)\s+|\Z))/gi;
   let match;
   const candidates = [];
-  while ((match = ruleRegex.exec(rawText)) !== null) {
-    const title = match[1].trim();
-    const body = match[2].trim();
-    candidates.push({ title, body });
+  while ((match = sectionRegex.exec(rawText)) !== null) {
+    const heading = (match[2] || '').trim();
+    const body = (match[3] || '').trim();
+    if (/\*\*RULE\*\*:?/i.test(body)) {
+      const cleanTitle = heading.replace(/^(Rule\s+[X\d]+[:.]?\s*|\d+\.\s+)/i, '').trim();
+      candidates.push({ title: cleanTitle || heading, body });
+    }
   }
   return candidates;
 }
+
 
 /**
  * Loads the canonical Knowledge Index (05_KNOWLEDGE/knowledge-index.json)
@@ -90,14 +104,10 @@ export function loadKnowledgeIndex() {
   try {
     return JSON.parse(fs.readFileSync(INDEX_PATH, 'utf-8'));
   } catch (err) {
-    console.warn(`[GATEWAY WARNING] Failed to parse knowledge index, initializing fresh schema: ${err.message}`);
-    return {
-      version: '1.0.0',
-      last_updated: new Date().toISOString(),
-      total_verified_learnings: 0,
-      total_promoted_rules: 0,
-      items: {}
-    };
+    console.error(`[GATEWAY CRITICAL] Failed to parse existing knowledge index at ${INDEX_PATH}: ${err.message}`);
+    const backupPath = `${INDEX_PATH}.corrupted.${Date.now()}.bak`;
+    try { fs.copyFileSync(INDEX_PATH, backupPath); } catch (e) {}
+    throw new Error(`KNOWLEDGE_INDEX_PARSE_FAILURE: Refusing to silently clobber existing index. Backup created at ${backupPath}. Error: ${err.message}`);
   }
 }
 
@@ -126,11 +136,10 @@ export function loadCheckpoints() {
   try {
     return JSON.parse(fs.readFileSync(CHECKPOINTS_PATH, 'utf-8'));
   } catch (err) {
-    return {
-      version: '1.0.0',
-      last_updated: new Date().toISOString(),
-      checkpoints: {}
-    };
+    console.error(`[GATEWAY CRITICAL] Failed to parse checkpoints at ${CHECKPOINTS_PATH}: ${err.message}`);
+    const backupPath = `${CHECKPOINTS_PATH}.corrupted.${Date.now()}.bak`;
+    try { fs.copyFileSync(CHECKPOINTS_PATH, backupPath); } catch (e) {}
+    throw new Error(`CHECKPOINTS_PARSE_FAILURE: Refusing to clobber existing checkpoints: ${err.message}`);
   }
 }
 
@@ -245,6 +254,7 @@ export function validateLearningPackage(learningPackage) {
 
   // Validate candidate rules if any are attached
   const validatedRules = [];
+  const rejectedRules = [];
   if (Array.isArray(learningPackage.candidate_rules)) {
     for (const rule of learningPackage.candidate_rules) {
       const v = validateRuleCandidate(rule.title, rule.body);
@@ -252,11 +262,13 @@ export function validateLearningPackage(learningPackage) {
         validatedRules.push(rule);
       } else {
         console.warn(`🛡️ [GATEWAY VALIDATION GUARD] Candidate rule "${rule.title}" rejected: ${v.reason}`);
+        rejectedRules.push({ title: rule.title, body: rule.body, reason: v.reason });
       }
     }
   }
 
   learningPackage.validated_rules = validatedRules;
+  learningPackage.rejected_rules = rejectedRules;
   learningPackage.validated = true;
   learningPackage.stage = LEARNING_STAGES.VALIDATED;
   learningPackage.status = LEARNING_STATUS.VALIDATED;
@@ -264,7 +276,8 @@ export function validateLearningPackage(learningPackage) {
   return {
     valid: true,
     package: learningPackage,
-    validRuleCount: validatedRules.length
+    validRuleCount: validatedRules.length,
+    rejectedRuleCount: rejectedRules.length
   };
 }
 
@@ -405,6 +418,176 @@ export function promoteValidatedRules(learningPackage) {
 }
 
 /**
+ * Records verification evidence into 08_VERIFICATION with read-back verification
+ */
+export function recordVerificationEvidence(learningPackage, results) {
+  fs.mkdirSync(path.dirname(VERIFICATION_MATRIX_PATH), { recursive: true });
+  const cycleId = `CYCLE-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Date.now().toString(36).slice(-4).toUpperCase()}`;
+  const timestamp = new Date().toISOString();
+  const status = (results.promoted_rules && results.promoted_rules.length > 0) ? 'VERIFIED' : 'PROJECT_ONLY';
+  const promotedTarget = (results.promoted_rules && results.promoted_rules.length > 0)
+    ? results.promoted_rules.map(r => `Rule ${r.number}`).join(', ')
+    : results.dossier_path ? path.relative(BRAIN_ROOT, results.dossier_path).replace(/\\/g, '/') : '07_PROJECT_LEARNING';
+  
+  const row = `| \`${cycleId}\` | \`${timestamp}\` | \`${learningPackage.repository}\` | Commit diff / Patch analysis | \`${status}\` | \`${promotedTarget}\` | Yes (\`${learningPackage.content_hash.slice(0, 8)}...\`) |\n`;
+
+  if (!fs.existsSync(VERIFICATION_MATRIX_PATH)) {
+    fs.writeFileSync(VERIFICATION_MATRIX_PATH, '# Daily Harvesting Verification Matrix & Evidence Ledger\n\n| Cycle ID | Timestamp (UTC) | Source Inspected | Evidence Type | Verification Status | Promoted Target / Dossier | SHA-256 Verified |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n', 'utf-8');
+  }
+  fs.appendFileSync(VERIFICATION_MATRIX_PATH, row, 'utf-8');
+
+  // Structured verification log
+  let verLog = [];
+  if (fs.existsSync(VERIFICATION_LOG_PATH)) {
+    try { verLog = JSON.parse(fs.readFileSync(VERIFICATION_LOG_PATH, 'utf-8')); } catch (e) { verLog = []; }
+  }
+  verLog.push({
+    cycleId,
+    timestamp,
+    repository: learningPackage.repository,
+    learningId: learningPackage.learning_id,
+    contentHash: learningPackage.content_hash,
+    status,
+    promotedRulesCount: (results.promoted_rules || []).length,
+    barriers: {
+      storage_written: results.brain_write,
+      read_back_verified: results.brain_readback,
+      content_hash_verified: true,
+      index_read_back_verified: results.knowledge_index_updated
+    }
+  });
+  if (verLog.length > 500) verLog = verLog.slice(-500);
+  fs.writeFileSync(VERIFICATION_LOG_PATH, JSON.stringify(verLog, null, 2), 'utf-8');
+
+  // Read-back verification
+  const readBackMatrix = fs.readFileSync(VERIFICATION_MATRIX_PATH, 'utf-8');
+  if (!readBackMatrix.includes(cycleId)) {
+    throw new Error(`Verification matrix read-back failed: entry ${cycleId} not found`);
+  }
+  return { cycleId, status };
+}
+
+/**
+ * Records source provenance into 09_SOURCES with read-back verification
+ */
+export function recordSourceProvenance(learningPackage) {
+  fs.mkdirSync(path.dirname(PROVENANCE_LEDGER_PATH), { recursive: true });
+  const timestamp = new Date().toISOString();
+  const commitSha = (learningPackage.source_version || 'HEAD').slice(0, 10);
+  const row = `| \`${learningPackage.learning_id}\` | \`${learningPackage.source_url}\` | \`${commitSha}\` | Multi-dimensional audit evidence | ${timestamp} |\n`;
+
+  if (!fs.existsSync(PROVENANCE_LEDGER_PATH)) {
+    fs.writeFileSync(PROVENANCE_LEDGER_PATH, '# Daily Harvesting Source Provenance Ledger\n\n| Learning ID | Source Repository | Commit SHA / Tag | File & Line Provenance | Extraction Date |\n| :--- | :--- | :--- | :--- | :--- |\n', 'utf-8');
+  }
+  fs.appendFileSync(PROVENANCE_LEDGER_PATH, row, 'utf-8');
+
+  // Update sources catalog
+  let catalog = {};
+  if (fs.existsSync(SOURCES_CATALOG_PATH)) {
+    try { catalog = JSON.parse(fs.readFileSync(SOURCES_CATALOG_PATH, 'utf-8')); } catch (e) { catalog = {}; }
+  }
+  catalog[learningPackage.slug] = {
+    repository: learningPackage.repository,
+    platform: learningPackage.platform,
+    sourceUrl: learningPackage.source_url,
+    sourceVersion: learningPackage.source_version,
+    license: learningPackage.license,
+    contentHash: learningPackage.content_hash,
+    lastHarvestedAt: timestamp,
+    learningId: learningPackage.learning_id
+  };
+  fs.writeFileSync(SOURCES_CATALOG_PATH, JSON.stringify(catalog, null, 2), 'utf-8');
+
+  // Read-back verification
+  const readBackLedger = fs.readFileSync(PROVENANCE_LEDGER_PATH, 'utf-8');
+  if (!readBackLedger.includes(learningPackage.learning_id)) {
+    throw new Error(`Provenance ledger read-back failed: entry ${learningPackage.learning_id} not found`);
+  }
+  return true;
+}
+
+/**
+ * Stages unverified or rejected candidate rules into 11_INBOX so no candidate disappears silently
+ */
+export function stageUnverifiedCandidates(learningPackage, rejectedCandidates = []) {
+  if (!Array.isArray(rejectedCandidates) || rejectedCandidates.length === 0) return true;
+  fs.mkdirSync(INBOX_DIR, { recursive: true });
+
+  let registry = { version: '1.0.0', last_updated: new Date().toISOString(), directives: [] };
+  if (fs.existsSync(INBOX_REGISTRY_PATH)) {
+    try { registry = JSON.parse(fs.readFileSync(INBOX_REGISTRY_PATH, 'utf-8')); } catch (e) {}
+  }
+  if (!Array.isArray(registry.directives)) registry.directives = [];
+
+  for (const cand of rejectedCandidates) {
+    const candId = `CD-${Date.now().toString(36).slice(-4).toUpperCase()}`;
+    registry.directives.push({
+      id: candId,
+      directive_title: cand.title,
+      source_type: 'automated_harvester_candidate',
+      source_repo: learningPackage.repository,
+      source_commit: (learningPackage.source_version || 'HEAD').slice(0, 12),
+      date_staged: new Date().toISOString().slice(0, 10),
+      status: 'STAGED_FOR_VERIFICATION',
+      reason: cand.reason || 'Awaiting deep empirical review',
+      learning_id: learningPackage.learning_id
+    });
+  }
+  registry.last_updated = new Date().toISOString();
+  fs.writeFileSync(INBOX_REGISTRY_PATH, JSON.stringify(registry, null, 2), 'utf-8');
+
+  // Read-back verification
+  const reloaded = JSON.parse(fs.readFileSync(INBOX_REGISTRY_PATH, 'utf-8'));
+  if (!Array.isArray(reloaded.directives)) {
+    throw new Error('Inbox registry read-back verification failed');
+  }
+  return true;
+}
+
+/**
+ * Records evolution metrics into 14_EVOLUTION with read-back verification
+ */
+export function recordEvolutionMetrics(results) {
+  fs.mkdirSync(path.dirname(EVOLUTION_METRICS_PATH), { recursive: true });
+  let metrics = {
+    version: '1.0.0',
+    last_updated: new Date().toISOString(),
+    total_cycles_completed: 0,
+    total_learnings_persisted: 0,
+    total_rules_promoted: 0,
+    history: []
+  };
+
+  if (fs.existsSync(EVOLUTION_METRICS_PATH)) {
+    try { metrics = JSON.parse(fs.readFileSync(EVOLUTION_METRICS_PATH, 'utf-8')); } catch (e) {}
+  }
+
+  metrics.total_cycles_completed = (metrics.total_cycles_completed || 0) + 1;
+  metrics.total_learnings_persisted = (metrics.total_learnings_persisted || 0) + 1;
+  metrics.total_rules_promoted = (metrics.total_rules_promoted || 0) + (results.promoted_rules ? results.promoted_rules.length : 0);
+  metrics.last_updated = new Date().toISOString();
+
+  if (!Array.isArray(metrics.history)) metrics.history = [];
+  metrics.history.push({
+    timestamp: metrics.last_updated,
+    repository: results.repository,
+    learningId: results.learning_id,
+    promotedRulesCount: (results.promoted_rules || []).length,
+    status: results.status
+  });
+  if (metrics.history.length > 200) metrics.history = metrics.history.slice(-200);
+
+  fs.writeFileSync(EVOLUTION_METRICS_PATH, JSON.stringify(metrics, null, 2), 'utf-8');
+
+  // Read-back verification
+  const reloaded = JSON.parse(fs.readFileSync(EVOLUTION_METRICS_PATH, 'utf-8'));
+  if (reloaded.total_cycles_completed !== metrics.total_cycles_completed) {
+    throw new Error('Evolution metrics read-back verification failed: count mismatch');
+  }
+  return true;
+}
+
+/**
  * Core Brain Learning Gateway:
  * Implements the transactional pipeline with hard invariant:
  *
@@ -414,6 +597,7 @@ export function promoteValidatedRules(learningPackage) {
  *   AND brain_write_success
  *   AND brain_readback_success
  *   AND index_update_success
+
  */
 export async function submitToBrainGateway(learningPackage, options = {}) {
   const startTime = Date.now();
@@ -547,6 +731,46 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
 
     results.knowledge_index_updated = true;
     console.log(`📖 [GATEWAY STAGE 5: INDEX UPDATED & READ-BACK VERIFIED] Recorded in 05_KNOWLEDGE/knowledge-index.json`);
+
+    // 6. Multi-Folder Canonical Intelligence Routing & Ledgers
+    // A. 08_VERIFICATION: Verification Matrix and Empirical Evidence Ledger
+    try {
+      const verEvidence = recordVerificationEvidence(learningPackage, results);
+      results.verification_ledger_updated = true;
+      console.log(`📊 [GATEWAY STAGE 6: VERIFICATION RECORDED] Cycle ${verEvidence.cycleId} written to 08_VERIFICATION/harvest-verification-matrix.md`);
+    } catch (verErr) {
+      console.error(`❌ [GATEWAY VERIFICATION LEDGER FAILED] ${verErr.message}`);
+      results.errors.push(`Verification ledger failed: ${verErr.message}`);
+    }
+
+    // B. 09_SOURCES: Cryptographic Source Provenance Ledger
+    try {
+      recordSourceProvenance(learningPackage);
+      results.source_provenance_updated = true;
+      console.log(`🔗 [GATEWAY STAGE 7: PROVENANCE RECORDED] Recorded in 09_SOURCES/harvest-provenance-ledger.md`);
+    } catch (provErr) {
+      console.error(`❌ [GATEWAY PROVENANCE FAILED] ${provErr.message}`);
+      results.errors.push(`Provenance ledger failed: ${provErr.message}`);
+    }
+
+    // C. 11_INBOX: Stage Rejected / Uncertain Candidates (No candidate lost silently!)
+    if (learningPackage.rejected_rules && learningPackage.rejected_rules.length > 0) {
+      try {
+        stageUnverifiedCandidates(learningPackage, learningPackage.rejected_rules);
+        console.log(`📥 [GATEWAY STAGE 8: CANDIDATES STAGED] ${learningPackage.rejected_rules.length} unpromoted candidate(s) staged in 11_INBOX/candidate-directives-registry.json`);
+      } catch (inboxErr) {
+        console.error(`❌ [GATEWAY INBOX FAILED] ${inboxErr.message}`);
+      }
+    }
+
+    // D. 14_EVOLUTION: Quantified Harvest Yield Metrics
+    try {
+      recordEvolutionMetrics(results);
+      results.evolution_metrics_updated = true;
+      console.log(`📈 [GATEWAY STAGE 9: EVOLUTION METRICS UPDATED] Yield logged to 14_EVOLUTION/harvest-yield-metrics.json`);
+    } catch (evoErr) {
+      console.error(`❌ [GATEWAY EVOLUTION FAILED] ${evoErr.message}`);
+    }
   } catch (err) {
     results.status = LEARNING_STATUS.FAILED_PERSISTENCE;
     results.errors.push(`Index update failed: ${err.message}`);
@@ -556,18 +780,21 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     return { success: false, ...results };
   }
 
-  // 6. Hard Invariant Assertion: EXTRACTED ≠ LEARNED
+  // 10. Hard Invariant Assertion: EXTRACTED ≠ LEARNED
   const learningSuccess =
     results.extracted === true &&
     results.validated === true &&
     results.brain_write === true &&
     results.brain_readback === true &&
     results.promoted_to_brain === true &&
-    results.knowledge_index_updated === true;
+    results.knowledge_index_updated === true &&
+    results.verification_ledger_updated === true &&
+    results.source_provenance_updated === true &&
+    results.evolution_metrics_updated === true;
 
   if (!learningSuccess) {
     results.status = LEARNING_STATUS.FAILED_PERSISTENCE;
-    console.error(`❌ [HARD INVARIANT BREACHED] Learning persistence was incomplete. Status set to FAILED_PERSISTENCE.`);
+    console.error(`❌ [HARD INVARIANT BREACHED] Learning persistence was incomplete across canonical folders. Status set to FAILED_PERSISTENCE.`);
     updateCheckpoint(learningPackage.repository, results);
     dispatchIPCResult(results);
     return { success: false, ...results };

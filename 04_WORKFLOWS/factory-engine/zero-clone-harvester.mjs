@@ -816,6 +816,7 @@ export async function runZeroCloneHarvester(customUrls = null) {
           const candidateText = extractMicroInvariantsFromAudit(audit);
           if (candidateText) {
             candidateRules = extractCandidateRulesFromText(candidateText);
+            dossierText += `\n\n---\n\n## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)\n\n${candidateText}`;
           }
         }
 

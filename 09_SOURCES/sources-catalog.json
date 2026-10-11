@@ -1,0 +1,32 @@
+{
+  "test-org-gateway-verifier": {
+    "repository": "test-org/gateway-verifier",
+    "platform": "github",
+    "sourceUrl": "https://github.com/test-org/gateway-verifier",
+    "sourceVersion": "abc123456789",
+    "license": "MIT",
+    "contentHash": "da33a3f884cb459116d677a0cfb8af39bea6ce9ac81fe0935e8bde6db556bee3",
+    "lastHarvestedAt": "2026-10-11T07:44:05.753Z",
+    "learningId": "learn-github-test-org-gateway-verifier-mv3ioo99"
+  },
+  "test-org-rule-verifier": {
+    "repository": "test-org/rule-verifier",
+    "platform": "github",
+    "sourceUrl": "https://github.com/test-org/rule-verifier",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "115032c59aa12885b0fe509accfe5d38600b5bf49b6fce953cd05436e1c2f870",
+    "lastHarvestedAt": "2026-10-11T07:44:06.106Z",
+    "learningId": "learn-github-test-org-rule-verifier-mv3iooq3"
+  },
+  "shadcn-ui-ui": {
+    "repository": "shadcn-ui/ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/shadcn-ui/ui",
+    "sourceVersion": "shadcn-ui-ui",
+    "license": "MIT",
+    "contentHash": "a158393a932aec0175bab2de19fe111133eadf45c8623901fc33d356ad3ff077",
+    "lastHarvestedAt": "2026-10-11T07:52:58.994Z",
+    "learningId": "learn-github-shadcn-ui-ui-mv3j0403"
+  }
+}

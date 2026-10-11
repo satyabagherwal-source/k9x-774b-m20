@@ -1,0 +1,115 @@
+{
+  "version": "2.0.0",
+  "name": "AI-Builder-Brain Universal Knowledge Taxonomy & Destination Registry",
+  "last_updated": "2026-10-11T13:10:00.000Z",
+  "description": "Canonical machine-readable classification taxonomy and routing destination registry governing durable intelligence acquisition across the 16 locked folders.",
+  "canonical_folders": {
+    "00_START_HERE": {
+      "purpose": "Primary entry point, boot protocols, surgical fix shields, instant routing",
+      "routing_policy": "CONDITIONAL_GOVERNED",
+      "schema_format": "MARKDOWN",
+      "harvester_target": false
+    },
+    "01_CORE": {
+      "purpose": "Universal operating rules, agent invariants, quality standards, and core principles",
+      "routing_policy": "CONDITIONAL_PROMOTED",
+      "schema_format": "MARKDOWN",
+      "harvester_target": false
+    },
+    "02_AGENT_INTELLIGENCE": {
+      "purpose": "Agent behavioral governance, boot protocols, multi-agent coordination frameworks",
+      "routing_policy": "CONDITIONAL_PROMOTED",
+      "schema_format": "MARKDOWN",
+      "harvester_target": false
+    },
+    "03_SKILLS": {
+      "purpose": "Reusable procedural skills, technical implementation playbooks, framework checklists",
+      "routing_policy": "CONDITIONAL_PROMOTED",
+      "schema_format": "MARKDOWN",
+      "harvester_target": true
+    },
+    "04_WORKFLOWS": {
+      "purpose": "Automation engines, batch pipelines, verification runners, and factory blueprints",
+      "routing_policy": "RUNTIME_ENGINE",
+      "schema_format": "JAVASCRIPT_ESM_AND_MARKDOWN",
+      "harvester_target": false
+    },
+    "05_KNOWLEDGE": {
+      "purpose": "Universal verified engineering patterns (engineering-patterns.md) and canonical knowledge index (knowledge-index.json)",
+      "routing_policy": "MANDATORY_PIPELINE_VERIFIED",
+      "schema_format": "MARKDOWN_AND_JSON",
+      "harvester_target": true
+    },
+    "06_PROJECT_CONTEXT": {
+      "purpose": "Active project mission boundaries, architectural stack, and environment constraints",
+      "routing_policy": "PROJECT_BOUNDED",
+      "schema_format": "MARKDOWN",
+      "harvester_target": false
+    },
+    "07_PROJECT_LEARNING": {
+      "purpose": "Comprehensive forensic learning dossiers, repository autopsies, and real incident patch analyses",
+      "routing_policy": "MANDATORY_PIPELINE_DOSSIER",
+      "schema_format": "MARKDOWN",
+      "harvester_target": true
+    },
+    "08_VERIFICATION": {
+      "purpose": "Empirical inspection matrices, test proofs, verification ledgers, rejected and uncertain records",
+      "routing_policy": "MANDATORY_PIPELINE_AUDIT",
+      "schema_format": "MARKDOWN_AND_JSON",
+      "harvester_target": true
+    },
+    "09_SOURCES": {
+      "purpose": "Authoritative source catalogs, cryptographic provenance ledgers, repository commit SHAs and line citations",
+      "routing_policy": "MANDATORY_PIPELINE_PROVENANCE",
+      "schema_format": "MARKDOWN_AND_JSON",
+      "harvester_target": true
+    },
+    "10_PROMPTS": {
+      "purpose": "Standardized master prompts, harvester prompts, bootstrap instructions, and system directives",
+      "routing_policy": "CONDITIONAL_GOVERNED",
+      "schema_format": "MARKDOWN",
+      "harvester_target": false
+    },
+    "11_INBOX": {
+      "purpose": "Staging area for raw candidate learnings, unverified hypotheses, and deferred findings awaiting governance review",
+      "routing_policy": "MANDATORY_PIPELINE_STAGING",
+      "schema_format": "MARKDOWN_AND_JSON",
+      "harvester_target": true
+    },
+    "12_DECISIONS": {
+      "purpose": "Architectural Decision Records (ADRs) documenting formal engineering trade-offs and rationale",
+      "routing_policy": "CONDITIONAL_DECISION",
+      "schema_format": "MARKDOWN",
+      "harvester_target": false
+    },
+    "13_GOVERNANCE": {
+      "purpose": "Data classification rules, provider usage policies, non-distillation mandates, audit protocols",
+      "routing_policy": "CONDITIONAL_GOVERNED",
+      "schema_format": "MARKDOWN",
+      "harvester_target": false
+    },
+    "14_EVOLUTION": {
+      "purpose": "Quantified self-assessment of harvesting yield, failure post-mortems, adaptation metrics, and evolution logs",
+      "routing_policy": "MANDATORY_PIPELINE_METRICS",
+      "schema_format": "MARKDOWN_AND_JSON",
+      "harvester_target": true
+    },
+    "15_METADATA": {
+      "purpose": "Knowledge taxonomy, machine-readable destination registries, schemas, and brain status records",
+      "routing_policy": "CANONICAL_INDEX",
+      "schema_format": "JSON_AND_MARKDOWN",
+      "harvester_target": true
+    }
+  },
+  "knowledge_dimensions": [
+    "D1: Architecture & Structural Boundaries",
+    "D2: Asynchronous State & Concurrency",
+    "D3: Error Boundaries, Recovery & Rollbacks",
+    "D4: Resource Lifecycle & Leak Defenses",
+    "D5: Boundary Deserialization & Encoding",
+    "D6: Cross-Platform & Runtime Gotchas",
+    "D7: Build, CI/CD, Deployment & Tooling",
+    "D8: Forensic Bug Fixes & Code Patches",
+    "D9: Microscopic Code-Level Invariants"
+  ]
+}

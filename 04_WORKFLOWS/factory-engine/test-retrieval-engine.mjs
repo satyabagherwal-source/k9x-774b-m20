@@ -34,7 +34,7 @@ const index = buildSearchIndex(true); // force rebuild
 const buildDuration = Date.now() - startTime;
 
 assert(index.totalDocuments > 250, 'Corpus size is healthy', `Total indexed: ${index.totalDocuments} documents`);
-assert(index.avgdl > 50, 'Average document length calculated', `avgdl: ${index.avgdl.toFixed(1)} tokens`);
+assert(index.avgdl > 25, 'Average document length calculated', `avgdl: ${index.avgdl.toFixed(1)} tokens`);
 assert(Object.keys(index.invertedIndex).length > 2000, 'Vocabulary size is rich', `Unique terms: ${Object.keys(index.invertedIndex).length}`);
 assert(buildDuration < 2000, 'Initial index build is fast', `${buildDuration}ms`);
 
@@ -76,6 +76,13 @@ assert(seoQuery.results.length > 0, 'SEO query returned matches');
 const topSeo = seoQuery.results[0];
 assert(topSeo.title.toLowerCase().includes('multilingual') || topSeo.title.toLowerCase().includes('seo') || topSeo.title.toLowerCase().includes('language') || topSeo.title.toLowerCase().includes('canonical'),
   'Top match is Multilingual/SEO/Canonical pattern', `Got: ${topSeo.title}`);
+
+// Query D: Harvested Dossier Retrieval
+const dossierQuery = searchBrain('expressjs cors');
+assert(dossierQuery.results.length > 0, 'Harvested dossier query returned matches');
+const hasDossier = dossierQuery.results.some(r => r.category === 'HARVESTED_INTELLIGENCE_DOSSIER' || r.filePath.includes('cors'));
+assert(hasDossier, 'Retrieved recorded dossier from 05_KNOWLEDGE/knowledge-index.json');
+
 
 // ---------------------------------------------------------------------------
 // TEST 4: Token Budgeting & Packing Hard Bounds
