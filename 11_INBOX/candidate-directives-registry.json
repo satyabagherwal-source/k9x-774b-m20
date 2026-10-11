@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T10:21:43.449Z",
+  "last_updated": "2026-10-11T10:24:39.307Z",
   "directives": [
     {
       "id": "CD-001",
@@ -152,6 +152,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv3obe4d"
+    },
+    {
+      "id": "CD-F5VV",
+      "directive_title": "Modality-Specific Sparsity Heuristic",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "FrancisRing/Prism",
+      "source_commit": "hf-francisri",
+      "date_staged": "2026-10-11",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHEN TO APPLY** context",
+      "learning_id": "learn-huggingface-hf-francisring-prism-mv3of5tu"
     }
   ]
 }

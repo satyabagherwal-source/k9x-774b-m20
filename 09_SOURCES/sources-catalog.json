@@ -248,5 +248,15 @@
     "contentHash": "4ea6f37b2fa73ca5e72d82cc4a35639acc29b9bae0b6f99f98b49fca7063b5d0",
     "lastHarvestedAt": "2026-10-11T10:21:43.448Z",
     "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv3obe4d"
+  },
+  "hf-francisring-prism": {
+    "repository": "FrancisRing/Prism",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
+    "sourceVersion": "hf-francisring-prism",
+    "license": "Open-Source",
+    "contentHash": "905b04222d37ded93474a7439ee9fad95bf6910f105c15e5d145bcf6c41f8319",
+    "lastHarvestedAt": "2026-10-11T10:24:39.306Z",
+    "learningId": "learn-huggingface-hf-francisring-prism-mv3of5tu"
   }
 }
