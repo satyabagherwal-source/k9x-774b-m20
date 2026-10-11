@@ -297,3 +297,4 @@
 | `CYCLE-20261011-EAN9` | `2026-10-11T21:07:49.989Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`b32500a0...`) |
 | `CYCLE-20261011-HYVG` | `2026-10-11T21:10:41.356Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`440c8709...`) |
 | `CYCLE-20261011-LMUZ` | `2026-10-11T21:13:32.411Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`1efbe262...`) |
+| `CYCLE-20261011-PPYI` | `2026-10-11T21:16:43.050Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`b96d5f0a...`) |
