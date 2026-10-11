@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:16:20.096Z",
-  "total_cycles_completed": 200,
-  "total_learnings_persisted": 200,
-  "total_rules_promoted": 90,
+  "last_updated": "2026-10-11T19:19:21.697Z",
+  "total_cycles_completed": 201,
+  "total_learnings_persisted": 201,
+  "total_rules_promoted": 92,
   "history": [
-    {
-      "timestamp": "2026-10-11T07:52:59.001Z",
-      "repository": "shadcn-ui/ui",
-      "learningId": "learn-github-shadcn-ui-ui-mv3j0403",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T08:08:36.338Z",
       "repository": "expressjs/cors",
@@ -1403,6 +1396,13 @@
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv47ewm0",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T19:19:21.697Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-hf-psrben-visionhope-mv47isqm",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:16:20.042Z",
-  "total_verified_learnings": 4155,
+  "last_updated": "2026-10-11T19:19:21.654Z",
+  "total_verified_learnings": 4156,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -100153,6 +100153,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T19:16:20.042Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-psrben-visionhope-mv47isqm": {
+      "learning_id": "learn-huggingface-hf-psrben-visionhope-mv47isqm",
+      "source": "PSRben/VisionHOPE",
+      "repository": "PSRben/VisionHOPE",
+      "slug": "hf-psrben-visionhope",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "content_hash": "4164049574b3adba21d38108f510d523716a6d1d6e9cfe813ada3c12d5da2707",
+      "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 346,
+          "title": "Dimensional Decoupling in Hierarchical Vision Backbones",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 347,
+          "title": "Hierarchical Depth Asymmetry for Feature Hierarchy",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T19:19:21.654Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
