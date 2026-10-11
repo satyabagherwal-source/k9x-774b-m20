@@ -307,3 +307,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-11T22:28:52.935Z |
 | `learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-11T22:31:38.181Z |
 | `learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-11T22:34:51.992Z |
+| `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-11T22:38:02.312Z |

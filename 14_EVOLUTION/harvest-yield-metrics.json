@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T22:34:51.992Z",
-  "total_cycles_completed": 266,
-  "total_learnings_persisted": 266,
+  "last_updated": "2026-10-11T22:38:02.313Z",
+  "total_cycles_completed": 267,
+  "total_learnings_persisted": 267,
   "total_rules_promoted": 114,
   "history": [
-    {
-      "timestamp": "2026-10-11T12:14:38.842Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T12:17:31.525Z",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T22:34:51.992Z",
       "repository": "BAAI/bge-base-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T22:38:02.313Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
