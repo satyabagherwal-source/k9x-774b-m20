@@ -208,5 +208,15 @@
     "contentHash": "3807cf5738c81e50eb91cd65d859170bdbcb32fe23e170ccfbb68dff9c75bed0",
     "lastHarvestedAt": "2026-10-11T09:49:30.853Z",
     "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv3n5yx7"
+  },
+  "hf-liquidai-d1-3b": {
+    "repository": "LiquidAI/d1-3B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
+    "sourceVersion": "hf-liquidai-d1-3b",
+    "license": "Open-Source",
+    "contentHash": "57bfb6f6f81f2c2683e101d10dde7aa5dcf0853a3a2be684169959990749181c",
+    "lastHarvestedAt": "2026-10-11T10:06:21.280Z",
+    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv3nrmky"
   }
 }

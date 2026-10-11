@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T09:49:30.811Z",
-  "total_verified_learnings": 3980,
+  "last_updated": "2026-10-11T10:06:21.241Z",
+  "total_verified_learnings": 3981,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -95539,6 +95539,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T09:49:30.811Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-liquidai-d1-3b-mv3nrmky": {
+      "learning_id": "learn-huggingface-hf-liquidai-d1-3b-mv3nrmky",
+      "source": "LiquidAI/d1-3B",
+      "repository": "LiquidAI/d1-3B",
+      "slug": "hf-liquidai-d1-3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "content_hash": "57bfb6f6f81f2c2683e101d10dde7aa5dcf0853a3a2be684169959990749181c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T10:06:21.241Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
