@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T18:48:56.153Z",
-  "total_verified_learnings": 4146,
+  "last_updated": "2026-10-11T18:51:49.696Z",
+  "total_verified_learnings": 4147,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -99921,6 +99921,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T18:48:56.153Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y": {
+      "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
+      "source": "inclusionAI/Ming-Image-0.1-Design",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "slug": "hf-inclusionai-ming-image-0.1-design",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "content_hash": "6183d44391eda36c737c28b3eec4dab9487a872a6832cea67892e55f6af68103",
+      "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 290,
+          "title": "Discrete Resolution Bucketing for Diffusion Models",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 344,
+          "title": "RGBA Alpha Channel Integrity in Post-Processing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 345,
+          "title": "CFG Scale Invariance for Text-Rich Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T18:51:49.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

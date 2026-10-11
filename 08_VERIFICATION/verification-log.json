@@ -2818,5 +2818,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-JE5H",
+    "timestamp": "2026-10-11T18:51:49.733Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
+    "contentHash": "6183d44391eda36c737c28b3eec4dab9487a872a6832cea67892e55f6af68103",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
