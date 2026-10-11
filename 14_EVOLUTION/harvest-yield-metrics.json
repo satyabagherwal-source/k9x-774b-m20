@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:16:31.510Z",
-  "total_cycles_completed": 129,
-  "total_learnings_persisted": 129,
+  "last_updated": "2026-10-11T15:19:11.341Z",
+  "total_cycles_completed": 130,
+  "total_learnings_persisted": 130,
   "total_rules_promoted": 56,
   "history": [
     {
@@ -920,6 +920,13 @@
       "repository": "openai-community/gpt2",
       "learningId": "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T15:19:11.341Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

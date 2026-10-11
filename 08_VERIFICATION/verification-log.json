@@ -1888,5 +1888,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-XXPI",
+    "timestamp": "2026-10-11T15:19:11.334Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
+    "contentHash": "cc581525a32cacd567c2efa8cf95affd8e1a9e2fee9d8a3f7af9622780b66022",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

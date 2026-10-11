@@ -163,3 +163,4 @@ Every entry in this ledger must capture:
 | `learn-cd-092` | `canonical_task_execution` | `task-task1-collection-bound` | `11_INBOX/candidate-directives/CD-092-stream---asynciterable-collection-b.md` | 2026-10-11T15:08:41.231Z |
 | `learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-11T15:12:38.358Z |
 | `learn-huggingface-hf-openai-community-gpt2-mv3yuiaq` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-11T15:16:31.509Z |
+| `learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-11T15:19:11.337Z |

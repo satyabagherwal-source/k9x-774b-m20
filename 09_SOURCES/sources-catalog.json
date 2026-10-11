@@ -1178,5 +1178,15 @@
     "contentHash": "59d53925a67152d18a89ce22ef85b954f16b5279232d815b0074e8263354b19f",
     "lastHarvestedAt": "2026-10-11T15:16:31.509Z",
     "learningId": "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq"
+  },
+  "hf-qwen-qwen3-vl-8b-instruct": {
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
+    "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
+    "license": "Open-Source",
+    "contentHash": "cc581525a32cacd567c2efa8cf95affd8e1a9e2fee9d8a3f7af9622780b66022",
+    "lastHarvestedAt": "2026-10-11T15:19:11.337Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno"
   }
 }
