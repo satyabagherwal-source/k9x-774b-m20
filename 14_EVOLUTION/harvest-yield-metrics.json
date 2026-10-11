@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:01:52.131Z",
-  "total_cycles_completed": 235,
-  "total_learnings_persisted": 235,
+  "last_updated": "2026-10-11T21:04:33.685Z",
+  "total_cycles_completed": 236,
+  "total_learnings_persisted": 236,
   "total_rules_promoted": 109,
   "history": [
-    {
-      "timestamp": "2026-10-11T10:27:48.616Z",
-      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv3oj7wb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T10:30:46.285Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -1403,6 +1396,13 @@
       "repository": "stabilityai/stable-diffusion-3-medium",
       "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4b6mg5",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T21:04:33.685Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-hf-bigscience-bloom-mv4ba34m",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
