@@ -243,3 +243,4 @@
 | `CYCLE-20261011-KPOO` | `2026-10-11T18:24:51.720Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 336, Rule 337, Rule 338` | Yes (`b3e0ca83...`) |
 | `CYCLE-20261011-OMXE` | `2026-10-11T18:27:54.770Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`3e90f904...`) |
 | `CYCLE-20261011-SBCH` | `2026-10-11T18:30:46.385Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`fffc86c0...`) |
+| `CYCLE-20261011-W2WD` | `2026-10-11T18:33:42.061Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`ea6cbfae...`) |
