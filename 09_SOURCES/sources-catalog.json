@@ -808,5 +808,15 @@
     "contentHash": "1971b557e7a23d4ab0335ab5a9236b234a32952f341f6759116891e559c923b6",
     "lastHarvestedAt": "2026-10-11T13:22:02.983Z",
     "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv3uraji"
+  },
+  "hf-timm-mobilenetv3_small_100.lamb_in1k": {
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+    "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
+    "license": "Open-Source",
+    "contentHash": "20e7f6ab918aeca394fb3cbe25bb161ec05800534a6dc2553c7118d5521ebdff",
+    "lastHarvestedAt": "2026-10-11T13:25:14.673Z",
+    "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv3uvefu"
   }
 }

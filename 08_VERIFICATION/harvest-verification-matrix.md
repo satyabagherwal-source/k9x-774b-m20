@@ -142,3 +142,4 @@
 | `CYCLE-20261011-JNSJ` | `2026-10-11T13:16:06.835Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`bc95e041...`) |
 | `CYCLE-20261011-N966` | `2026-10-11T13:18:54.510Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`33c64250...`) |
 | `CYCLE-20261011-RALF` | `2026-10-11T13:22:02.979Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`1971b557...`) |
+| `CYCLE-20261011-VEI8` | `2026-10-11T13:25:14.672Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`20e7f6ab...`) |
