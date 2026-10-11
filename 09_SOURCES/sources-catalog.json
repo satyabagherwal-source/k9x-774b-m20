@@ -1088,5 +1088,15 @@
     "contentHash": "54dd9b9da68a5598c58a75d41299195eae9bf289cdc3485d0b2fe94eb939ddb0",
     "lastHarvestedAt": "2026-10-11T14:45:22.351Z",
     "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c"
+  },
+  "hf-pablodawson-minimax-h3-360-orbit-lora": {
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
+    "license": "Open-Source",
+    "contentHash": "a9830abce40b2d92ff5445b4e15091638e16e0b612634f85f2700ff6a7475c8e",
+    "lastHarvestedAt": "2026-10-11T14:48:34.687Z",
+    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu"
   }
 }
