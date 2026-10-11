@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T19:19:21.697Z",
-  "total_cycles_completed": 201,
-  "total_learnings_persisted": 201,
+  "last_updated": "2026-10-11T19:22:08.254Z",
+  "total_cycles_completed": 202,
+  "total_learnings_persisted": 202,
   "total_rules_promoted": 92,
   "history": [
-    {
-      "timestamp": "2026-10-11T08:08:36.338Z",
-      "repository": "expressjs/cors",
-      "learningId": "learn-github-e2e-expressjs-cors-real-mv3jk707",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T08:08:38.040Z",
       "repository": "expressjs/cors",
@@ -1403,6 +1396,13 @@
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-hf-psrben-visionhope-mv47isqm",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T19:22:08.254Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
