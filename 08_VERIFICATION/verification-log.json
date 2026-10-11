@@ -3913,5 +3913,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-E2F8",
+    "timestamp": "2026-10-11T22:31:38.180Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq",
+    "contentHash": "ffe2dfe1ed717adacbfc5142d5ce16335bd7f6f34c3d743544d65844fc89e1f1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
