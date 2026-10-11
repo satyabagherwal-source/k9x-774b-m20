@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T15:42:31.634Z",
-  "total_gaps": 43,
-  "open_gaps": 40,
+  "last_updated": "2026-10-11T15:44:26.175Z",
+  "total_gaps": 49,
+  "open_gaps": 46,
   "closed_gaps": 3,
   "gaps": [
     {
@@ -33,7 +33,7 @@
       "status": "CLOSED",
       "discovered_at": "2026-10-11T15:27:09.821Z",
       "verified_rule": "Rule 311",
-      "closed_at": "2026-10-11T15:42:31.133Z",
+      "closed_at": "2026-10-11T15:44:26.006Z",
       "priority_evaluation": {
         "factors": {
           "engineering_impact": 9.5,
@@ -117,24 +117,24 @@
       "evidence": {
         "probe_query": "distributed rate limiter sliding window token bucket concurrency race",
         "top_retrieved_irrelevant_rule": {
-          "id": "Rule 312",
-          "title": "Distributed JWT JTI Revocation & Sliding Blacklist Invariant (Harvested from auth0/node-jsonwebtoken)",
-          "summary": "When issuing and verifying stateless JSON Web Tokens (JWT) in distributed zero-trust systems, all tokens MUST contain a unique, cryptographically rand"
+          "id": "Rule 313",
+          "title": "Distributed Sliding-Window Atomic Rate Limiting Invariant (Harvested from animir/node-rate-limiter-flexible)",
+          "summary": "When enforcing rate limits across distributed API gateways, rate limit tracking MUST use an atomic sliding-window algorithm (e.g. Redis Sorted Set Lua"
         },
-        "matched_concepts_count": 0,
+        "matched_concepts_count": 1,
         "expected_concepts": [
           "sliding window",
           "rate limit",
           "token bucket",
           "concurrency"
         ],
-        "diagnosis": "Top retrieved rule (Rule 312: \"Distributed JWT JTI Revocation & Sliding Blacklist Invariant (Harvested from auth0/node-jsonwebtoken)\") fails to satisfy domain concepts."
+        "diagnosis": "Top retrieved rule (Rule 313: \"Distributed Sliding-Window Atomic Rate Limiting Invariant (Harvested from animir/node-rate-limiter-flexible)\") fails to satisfy domain concepts."
       },
       "research_objective": "Codify verified universal invariant for DISTRIBUTED_RATE_LIMITING to satisfy probe query \"distributed rate limiter sliding window token bucket concurrency race\".",
       "status": "CLOSED",
       "discovered_at": "2026-10-11T15:27:09.827Z",
       "verified_rule": "Rule 313",
-      "closed_at": "2026-10-11T15:42:31.634Z",
+      "closed_at": "2026-10-11T15:44:26.175Z",
       "priority_evaluation": {
         "factors": {
           "engineering_impact": 8.5,
@@ -1561,6 +1561,228 @@
       "status": "OPEN",
       "discovered_at": "2026-10-11T15:42:31.208Z",
       "verified_rule": "Rule 36",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-37",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 37 (Lexical-Containment Path Traversal Defense for Symlink-Preserving Repositories) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 37",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          476,
+          488
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 37.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:44:25.968Z",
+      "verified_rule": "Rule 37",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-38",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 38 (Additive Mask Degeneracy Clamping under Pre-Masked Constraint Spaces) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 38",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          489,
+          501
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 38.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:44:25.968Z",
+      "verified_rule": "Rule 38",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-39",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 39 (Pagefile Commit Charge Mitigation on Memory-Mapped Multi-Shard Checkpoints) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 39",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          502,
+          514
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 39.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:44:25.968Z",
+      "verified_rule": "Rule 39",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-40",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 40 (State-Dict Key Reconciliation Invariant (Anti-Silent Unbound Model State)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 40",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          515,
+          527
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 40.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:44:26.118Z",
+      "verified_rule": "Rule 40",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-41",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 41 (Immutable Revision Resolution Barrier for Multi-File Distributed Artifacts) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 41",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          528,
+          540
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 41.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:44:26.118Z",
+      "verified_rule": "Rule 41",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-42",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 42 (Out-of-Band Channel Metadata Preservation in Mode-Dispatched Media Decoders) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 42",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          541,
+          553
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 42.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-11T15:44:26.118Z",
+      "verified_rule": "Rule 42",
       "closed_at": null,
       "priority_evaluation": {
         "factors": {

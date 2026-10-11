@@ -1,6 +1,6 @@
 # EVIDENCE-BASED KNOWLEDGE GAP & TARGETED RESEARCH REPORT
 > **Verification Status**: EMPIRICALLY DISCOVERED & PRIORITIZED
-> **Generated At**: `2026-10-11T15:42:31.643Z`
+> **Generated At**: `2026-10-11T15:44:26.196Z`
 > **Authority**: AI-Builder-Brain Universal Governance Substrate
 
 ---
@@ -9,12 +9,12 @@
 
 | Metric | Measured Value | Denominator | Rate | Interpretation |
 | :--- | :--- | :--- | :--- | :--- |
-| **Total Evidence-Backed Gaps** | `43` | 43 Gaps | 100% | Discovered via probes, audits & memory |
-| **Gaps Closed via Research** | `3` | 43 Gaps | **7.0%** | Verified via retrieval & empirical test |
-| **Open Gaps Remaining** | `40` | 43 Gaps | 93.0% | Prioritized for next research cycles |
-| **High-Severity Gaps** | `3` | 43 Gaps | 7.0% | Split-brain, DoS, Auth compromise hazards |
-| **Medium-Severity Gaps** | `38` | 43 Gaps | 88.4% | Sandbox bounds, transaction consistency |
-| **Low-Severity Gaps** | `2` | 43 Gaps | 4.7% | Unpromoted candidate directive syntax |
+| **Total Evidence-Backed Gaps** | `49` | 49 Gaps | 100% | Discovered via probes, audits & memory |
+| **Gaps Closed via Research** | `3` | 49 Gaps | **6.1%** | Verified via retrieval & empirical test |
+| **Open Gaps Remaining** | `46` | 49 Gaps | 93.9% | Prioritized for next research cycles |
+| **High-Severity Gaps** | `3` | 49 Gaps | 6.1% | Split-brain, DoS, Auth compromise hazards |
+| **Medium-Severity Gaps** | `44` | 49 Gaps | 89.8% | Sandbox bounds, transaction consistency |
+| **Low-Severity Gaps** | `2` | 49 Gaps | 4.1% | Unpromoted candidate directive syntax |
 
 > [!NOTE]
 > **Disciplined Targeted Research vs Indiscriminate Scraping**: The Brain does not harvest repositories based on popularity or raw stars. Every research task originates from an empirical retrieval deficit, missing verification method, or production incident autopsy.
@@ -84,6 +84,12 @@ $$\text{Priority} = \frac{(I \times 0.25) + (R \times 0.25) + (E \times 0.20) + 
 | `GAP-VERIFY-RULE-34` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
 | `GAP-VERIFY-RULE-35` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
 | `GAP-VERIFY-RULE-36` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-37` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-38` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-39` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-40` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-41` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-42` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
 | `GAP-INBOX-CD-WV6E` | INBOX_CANDIDATES | `UNRESOLVED_CANDIDATE` | **LOW** | 4 | 3.5 | 8.5 | **4** | `OPEN` |
 | `GAP-INBOX-CD-SPIP` | INBOX_CANDIDATES | `UNRESOLVED_CANDIDATE` | **LOW** | 4 | 3.5 | 8.5 | **4** | `OPEN` |
 
@@ -322,6 +328,42 @@ $$\text{Priority} = \frac{(I \times 0.25) + (R \times 0.25) + (E \times 0.20) + 
 - **Impact Area**: Empirical Verification Governance
 - **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
 - **Target Research Objective**: Formulate concrete verification probe for Rule 36.
+
+### `[GAP-VERIFY-RULE-37]` Rule 37 (Lexical-Containment Path Traversal Defense for Symlink-Preserving Repositories) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 37.
+
+### `[GAP-VERIFY-RULE-38]` Rule 38 (Additive Mask Degeneracy Clamping under Pre-Masked Constraint Spaces) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 38.
+
+### `[GAP-VERIFY-RULE-39]` Rule 39 (Pagefile Commit Charge Mitigation on Memory-Mapped Multi-Shard Checkpoints) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 39.
+
+### `[GAP-VERIFY-RULE-40]` Rule 40 (State-Dict Key Reconciliation Invariant (Anti-Silent Unbound Model State)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 40.
+
+### `[GAP-VERIFY-RULE-41]` Rule 41 (Immutable Revision Resolution Barrier for Multi-File Distributed Artifacts) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 41.
+
+### `[GAP-VERIFY-RULE-42]` Rule 42 (Out-of-Band Channel Metadata Preservation in Mode-Dispatched Media Decoders) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 42.
 
 ### `[GAP-INBOX-CD-WV6E]` Candidate CD-WV6E unpromoted: Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**
 - **Category**: `UNRESOLVED_CANDIDATE` | **Severity**: **LOW** | **Priority Score**: `4`

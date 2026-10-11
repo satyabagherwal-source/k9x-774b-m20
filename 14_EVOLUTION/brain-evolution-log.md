@@ -543,3 +543,5 @@ This file records canonical promotion events, knowledge integration milestones, 
 - **2026-10-11T15:42:26.474Z**: [FEEDBACK LOOP] Rule 306 updated with traceable note: When handling streaming iterables or async generators, .length is undefined.
 
 - **2026-10-11T15:42:31.637Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-DISTRIBUTED_RATE_LIMITING (DISTRIBUTED_RATE_LIMITING) by codifying **Rule 313** (Distributed Sliding-Window Atomic Rate Limiting Invariant).
+
+- **2026-10-11T15:44:26.180Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-DISTRIBUTED_RATE_LIMITING (DISTRIBUTED_RATE_LIMITING) by codifying **Rule 313** (Distributed Sliding-Window Atomic Rate Limiting Invariant).
