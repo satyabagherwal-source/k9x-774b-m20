@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:32:05.917Z",
-  "total_cycles_completed": 75,
-  "total_learnings_persisted": 75,
+  "last_updated": "2026-10-11T12:34:55.761Z",
+  "total_cycles_completed": 76,
+  "total_learnings_persisted": 76,
   "total_rules_promoted": 44,
   "history": [
     {
@@ -527,6 +527,13 @@
       "timestamp": "2026-10-11T12:32:05.917Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv3sz1z4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T12:34:55.761Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv3t2p10",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
