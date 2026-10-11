@@ -212,3 +212,16 @@ This document records empirical learnings, forensic bug investigations, and patt
   1. *Case Normalization*: Renamed `public/Ads.txt` to strictly lowercase `public/ads.txt`.
   2. *Edge Fallback Redirect*: Added `/Ads.txt /ads.txt 301` to `public/_redirects` to catch any capitalized crawler or browser bookmarks.
   3. *Deployment & Verification*: Rebuilt and deployed to Cloudflare Pages. Confirmed `curl.exe -v https://oldenglishfontfree.com/ads.txt` returns `HTTP/1.1 200 OK` with valid publisher ID (`pub-5901471283694215`).
+
+### INC-16: Zero-Stray-English Localization Invariant & Elevated Mobile Filter Control Strip
+* **Context**: User explicitly directed: *"language convert hone ka matlb hi h ki ek bhi word yesa nahi hona chahiye jise us native language ka user use karta ho... front, fir isme mojood icon par click karne par open hone wale sabhi cheeze, micro se micro tak ke sabhi text convert hone chahiye... bas keval filter wali raw mobile responsive me bahut chhoti dikhati h isase user ko automatically nazar nahi aati h... saala ek ek ko dhundh dhundh ke karo"*.
+* **Forensic Root Cause Analysis**:
+  1. *Client Script Translation Isolation*: In Astro SSG, client-side `<script>` blocks cannot directly execute server-side `t()` template functions. As a result, interactive toasts, mobile drawer DOM mutations, character map modal titles, and dynamic copy button feedback defaulted to hardcoded English strings on non-English locales.
+  2. *Cramped Mobile Filter Controls*: The original mobile filter row was an unstyled inline flex row with small fonts and minimal padding, making it virtually unnoticeable and difficult to tap on mobile screens.
+  3. *Cross-Tool Client Routing*: When client scripts piped text between tools (e.g. clicking "✒️ Stencil" on a Fraktur card or piping to Tattoo Studio), hardcoded URLs like `/stencil-studio/?text=...` dropped the user back into the English edition instead of keeping the active language prefix (`/${lang}/stencil-studio/`).
+* **Architectural Remediation**:
+  1. *Global Client Translation Bridge*: Injected reactive dictionary `window.__I18N__ = i18nClientData;` inside `src/layouts/Layout.astro` `<head>`, giving all client-side scripts across 45+ pages instant access to active locale strings (toasts, modal titles, button states, counter labels).
+  2. *Elevated Mobile Filter Strip*: Redesigned `.filter-control-strip` in `src/pages/index.astro` and `src/pages/[lang]/index.astro` into an elevated obsidian card (`bg-slate-900/95 border border-amber-500/30 rounded-2xl shadow-lg p-2.5 sm:p-4`) with an eye-catching amber-gold gradient button (`min-h-[42px]`, `px-4.5 py-2.5 font-extrabold`), active count badge, dedicated pill badge for font counts, and touch-friendly sort dropdown (`min-h-[42px]`).
+  3. *100% Dictionary Key Parity*: Expanded `src/i18n/ui.ts` to 336 keys across all 14 supported languages (`en`, `es`, `ja`, `fr`, `de`, `pt`, `ko`, `it`, `no`, `sv`, `da`, `fi`, `ar`, `he`), localizing legal trust sections, character inspector modals (`GlyphModal`), FAQ search & counters, compact tool ribbons, theme toggles, and cross-tool routes.
+  4. *Verified Static Build*: All 632 static HTML pages compile cleanly with `npm run build` in exit code 0.
+
