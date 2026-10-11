@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T06:24:37.091Z",
-  "total_verified_learnings": 3933,
+  "last_updated": "2026-10-11T06:27:44.074Z",
+  "total_verified_learnings": 3934,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -94388,6 +94388,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T06:24:37.091Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3fyhb9": {
+      "learning_id": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3fyhb9",
+      "source": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "slug": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "source_version": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
+      "content_hash": "0a4e90e1f5a3d693969f129fb39abe9b21f53a206f54e10c4d1e7f5c6b330194",
+      "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T06:27:44.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
