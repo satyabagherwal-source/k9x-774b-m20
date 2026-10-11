@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T18:51:49.736Z",
-  "total_cycles_completed": 192,
-  "total_learnings_persisted": 192,
+  "last_updated": "2026-10-11T18:54:37.342Z",
+  "total_cycles_completed": 193,
+  "total_learnings_persisted": 193,
   "total_rules_promoted": 90,
   "history": [
     {
@@ -1361,6 +1361,13 @@
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T18:54:37.342Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
