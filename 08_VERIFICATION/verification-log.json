@@ -3958,5 +3958,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-QNHT",
+    "timestamp": "2026-10-11T22:41:25.361Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv4eqnev",
+    "contentHash": "6789d109ba44ce1e8a4c4e0f47b34cd5b0f5ebad71f34ee8772ae4d09c605603",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
