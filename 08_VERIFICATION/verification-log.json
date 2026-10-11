@@ -3823,5 +3823,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261011-R5RT",
+    "timestamp": "2026-10-11T22:13:49.433Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5",
+    "contentHash": "218b4e6b376dc59ad058d24b5f6be737f46aaa5782c0b574edd57c833546ab6f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
