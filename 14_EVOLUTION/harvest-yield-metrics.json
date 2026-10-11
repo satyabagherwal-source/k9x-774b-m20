@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:49:49.405Z",
-  "total_cycles_completed": 231,
-  "total_learnings_persisted": 231,
+  "last_updated": "2026-10-11T20:52:44.392Z",
+  "total_cycles_completed": 232,
+  "total_learnings_persisted": 232,
   "total_rules_promoted": 106,
   "history": [
-    {
-      "timestamp": "2026-10-11T10:10:15.227Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv3nwn3d",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T10:18:04.631Z",
       "repository": "Qwen/Qwen3.8-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-11T20:49:49.405Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T20:52:44.392Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
