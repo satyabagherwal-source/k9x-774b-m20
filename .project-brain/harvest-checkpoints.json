@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T20:07:38.446Z",
+  "last_updated": "2026-10-11T20:10:34.819Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -930,15 +930,15 @@
       "repository": "Comfy-Org/MiniMax-H3",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv3un94r",
-      "content_hash": "33c64250cc3459969798bde196373d6620a533bc192829ef7e117ef71677e19f",
-      "verified_at": "2026-10-11T13:18:54.512Z",
+      "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
+      "content_hash": "1ab8aea540f3528778076cb3fa4959ef7f5466c312c03a3ad509c04787b2ead5",
+      "verified_at": "2026-10-11T20:10:34.819Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T13:18:54.512Z"
+      "last_updated": "2026-10-11T20:10:34.819Z"
     },
     "timm/mobilenetv3_small_100.lamb_in1k": {
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
