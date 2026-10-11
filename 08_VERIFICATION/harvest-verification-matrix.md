@@ -302,3 +302,4 @@
 | `CYCLE-20261011-X9TH` | `2026-10-11T21:22:35.381Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`5576c26e...`) |
 | `CYCLE-20261011-0ZYG` | `2026-10-11T21:25:29.224Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`c42ba147...`) |
 | `CYCLE-20261011-50RB` | `2026-10-11T21:28:36.887Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 365, Rule 366, Rule 367` | Yes (`1f249f88...`) |
+| `CYCLE-20261011-8J7Q` | `2026-10-11T21:31:20.774Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`8a040370...`) |
