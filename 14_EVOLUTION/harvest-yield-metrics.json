@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T17:37:10.875Z",
-  "total_cycles_completed": 167,
-  "total_learnings_persisted": 167,
+  "last_updated": "2026-10-11T17:40:22.917Z",
+  "total_cycles_completed": 168,
+  "total_learnings_persisted": 168,
   "total_rules_promoted": 71,
   "history": [
     {
@@ -1185,6 +1185,13 @@
       "timestamp": "2026-10-11T17:37:10.875Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T17:40:22.917Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv43zicx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
