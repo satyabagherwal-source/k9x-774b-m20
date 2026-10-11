@@ -344,3 +344,4 @@
 | `CYCLE-20261011-GUH6` | `2026-10-11T23:29:47.082Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`ba4166b4...`) |
 | `CYCLE-20261011-KM9S` | `2026-10-11T23:32:43.072Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`3373ae29...`) |
 | `CYCLE-20261011-OQBY` | `2026-10-11T23:35:54.958Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 374, Rule 375, Rule 376` | Yes (`4ffac111...`) |
+| `CYCLE-20261011-SOT4` | `2026-10-11T23:38:59.608Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`5f192c09...`) |
