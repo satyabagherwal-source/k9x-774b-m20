@@ -121,3 +121,4 @@
 | `CYCLE-20261011-CM48` | `2026-10-11T12:14:38.840Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 293, Rule 294` | Yes (`3be2363f...`) |
 | `CYCLE-20261011-GBCY` | `2026-10-11T12:17:31.522Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 295` | Yes (`1ea13e7c...`) |
 | `CYCLE-20261011-JX3P` | `2026-10-11T12:20:19.669Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `VERIFIED` | `Rule 296` | Yes (`dc0aeca6...`) |
+| `CYCLE-20261011-NIG8` | `2026-10-11T12:23:07.304Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`2b4224a8...`) |
