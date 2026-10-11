@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:58:38.080Z",
-  "total_verified_learnings": 4209,
+  "last_updated": "2026-10-11T22:01:38.870Z",
+  "total_verified_learnings": 4210,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -101567,6 +101567,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-11T21:58:38.080Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d": {
+      "learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d",
+      "source": "FacebookAI/xlm-roberta-base",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "slug": "hf-facebookai-xlm-roberta-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+      "source_version": "hf-facebookai-xlm-roberta-base",
+      "content_hash": "102d508eead78d8711a878d65fbb5458c25df7aa7d2685b87784eb51ab46fcf0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 368,
+          "title": "The Vocab-Weight Dimensional Lock Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 369,
+          "title": "The Tokenizer-Model ID Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-11T22:01:38.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

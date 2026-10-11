@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T21:58:38.122Z",
-  "total_cycles_completed": 254,
-  "total_learnings_persisted": 254,
-  "total_rules_promoted": 112,
+  "last_updated": "2026-10-11T22:01:38.915Z",
+  "total_cycles_completed": 255,
+  "total_learnings_persisted": 255,
+  "total_rules_promoted": 114,
   "history": [
-    {
-      "timestamp": "2026-10-11T11:39:01.774Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv3r2t2q",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T11:42:03.418Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T22:01:38.915Z",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
