@@ -3,8 +3,8 @@
 > **Source Version**: `hf-moonshota`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-10T21:00:47.055Z  
-> **Learning ID**: `learn-huggingface-hf-moonshotai-kimi-k3-mv2vpdn3`  
+> **Timestamp**: 2026-10-11T02:55:12.590Z  
+> **Learning ID**: `learn-huggingface-hf-moonshotai-kimi-k3-mv38d68e`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/moonshotai/Kimi-K3](https://huggingface.co/moonshotai/Kimi-K3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-10T21:00:46.817Z  
+> **Harvest Timestamp**: 2026-10-11T02:55:12.425Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1160630 downloads | 11653 likes
+- **Stars / Engagement**: 1160630 downloads | 11654 likes
 
 ---
 
