@@ -698,5 +698,15 @@
     "contentHash": "9af990d1726855b6bdc17fdb4dad65fa562099c525ede0d3e32d88d3d9cc876e",
     "lastHarvestedAt": "2026-10-11T12:49:46.368Z",
     "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv3tls88"
+  },
+  "hf-unsloth-embeddinggemma-2-gguf": {
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+    "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
+    "license": "Open-Source",
+    "contentHash": "1d53d3c2e234c26bbd4fe9cd0239033138638113279f579149afb4820c89d2b9",
+    "lastHarvestedAt": "2026-10-11T12:52:31.972Z",
+    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv3tpc11"
   }
 }

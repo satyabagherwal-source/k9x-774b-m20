@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T12:49:46.369Z",
-  "total_cycles_completed": 81,
-  "total_learnings_persisted": 81,
+  "last_updated": "2026-10-11T12:52:31.973Z",
+  "total_cycles_completed": 82,
+  "total_learnings_persisted": 82,
   "total_rules_promoted": 44,
   "history": [
     {
@@ -569,6 +569,13 @@
       "timestamp": "2026-10-11T12:49:46.369Z",
       "repository": "google/embeddinggemma-2",
       "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv3tls88",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-11T12:52:31.973Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv3tpc11",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
