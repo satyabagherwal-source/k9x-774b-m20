@@ -775,3 +775,4 @@
 | `CYCLE-20261012-S8D6` | `2026-10-12T23:26:18.714Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule 599, Rule 600, Rule 601` | Yes (`0bb43cf9...`) |
 | `CYCLE-20261012-VO8F` | `2026-10-12T23:28:59.247Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`4524a2c8...`) |
 | `CYCLE-20261012-ZD1V` | `2026-10-12T23:31:51.379Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`9bb5697d...`) |
+| `CYCLE-20261012-384L` | `2026-10-12T23:34:51.621Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`57a1fce2...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-8VYG",
-    "timestamp": "2026-10-11T20:07:38.440Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
-    "contentHash": "8a47ed310e34702be0104038d13828c61817072c62714b0bd4751508bc7e2fc2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-CO1R",
     "timestamp": "2026-10-11T20:10:34.815Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-m3",
     "learningId": "learn-huggingface-hf-baai-bge-m3-mv5vzczk",
     "contentHash": "9bb5697df618e2422753ef140e03be60c3ef66a48483281bc4007d96a264e8f5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-384L",
+    "timestamp": "2026-10-12T23:34:51.621Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv5w381k",
+    "contentHash": "57a1fce2607073cb03344d7ea8a2aaff64337fa168bb15cb1791f8b05038091f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
