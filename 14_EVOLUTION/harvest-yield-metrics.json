@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T05:26:54.248Z",
-  "total_cycles_completed": 396,
-  "total_learnings_persisted": 396,
+  "last_updated": "2026-10-12T05:29:50.235Z",
+  "total_cycles_completed": 397,
+  "total_learnings_persisted": 397,
   "total_rules_promoted": 175,
   "history": [
-    {
-      "timestamp": "2026-10-11T19:06:59.297Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T19:09:50.625Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T05:26:54.248Z",
       "repository": "mudler/locate-anything.cpp-gguf",
       "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4t83po",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T05:29:50.235Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv4tbvi0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
