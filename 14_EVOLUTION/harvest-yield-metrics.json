@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:20:34.906Z",
-  "total_cycles_completed": 493,
-  "total_learnings_persisted": 493,
+  "last_updated": "2026-10-12T11:23:52.202Z",
+  "total_cycles_completed": 494,
+  "total_learnings_persisted": 494,
   "total_rules_promoted": 244,
   "history": [
-    {
-      "timestamp": "2026-10-12T00:00:24.001Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T00:03:11.144Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T11:20:34.906Z",
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv55uxp0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T11:23:52.202Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv55z5we",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

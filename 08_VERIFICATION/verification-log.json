@@ -7348,5 +7348,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-Z5ZA",
+    "timestamp": "2026-10-12T11:23:52.198Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv55z5we",
+    "contentHash": "108dc1dd9d31296db44055caa735f5f542f12f4e778df92c7f0f24d03e8f4e0f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

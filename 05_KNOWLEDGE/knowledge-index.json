@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:20:34.870Z",
-  "total_verified_learnings": 4448,
+  "last_updated": "2026-10-12T11:23:52.146Z",
+  "total_verified_learnings": 4449,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -108015,6 +108015,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T11:20:34.869Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-speridlabs-iris-3b-mv55z5we": {
+      "learning_id": "learn-huggingface-hf-speridlabs-iris-3b-mv55z5we",
+      "source": "speridlabs/iris-3b",
+      "repository": "speridlabs/iris-3b",
+      "slug": "hf-speridlabs-iris-3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "content_hash": "108dc1dd9d31296db44055caa735f5f542f12f4e778df92c7f0f24d03e8f4e0f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T11:23:52.146Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
