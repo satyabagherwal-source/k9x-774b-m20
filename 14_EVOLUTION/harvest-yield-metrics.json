@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T01:09:48.667Z",
-  "total_cycles_completed": 317,
-  "total_learnings_persisted": 317,
+  "last_updated": "2026-10-12T01:12:41.022Z",
+  "total_cycles_completed": 318,
+  "total_learnings_persisted": 318,
   "total_rules_promoted": 141,
   "history": [
-    {
-      "timestamp": "2026-10-11T14:39:20.385Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv3xiori",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T14:42:12.234Z",
       "repository": "FermionResearch/Phonon-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T01:09:48.667Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T01:12:41.022Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
