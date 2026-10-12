@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T04:22:33.780Z",
-  "total_verified_learnings": 4334,
+  "last_updated": "2026-10-12T04:26:14.984Z",
+  "total_verified_learnings": 4335,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -104862,6 +104862,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T04:22:33.780Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4r23mz": {
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4r23mz",
+      "source": "Qwen/Qwen3-VL-8B-Instruct",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "slug": "hf-qwen-qwen3-vl-8b-instruct",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
+      "source_version": "hf-qwen-qwen3-vl-8b-instruct",
+      "content_hash": "ada77ba64d638320c0992e531e1ec04922f04b208e64cb16df1571a1fb22b9be",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 424,
+          "title": "Interleaved-MRoPE Coordinate Tensor Alignment Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 425,
+          "title": "Multi-Level ViT Skip-Connection Residual Alignment (DeepStack Guard)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 426,
+          "title": "Asymmetric Dynamic Visual Token Boundary Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T04:26:14.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
