@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-12T13:44:26.425Z",
+  "lastUpdated": "2026-10-12T13:47:46.749Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -216,12 +216,12 @@
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T13:44:25.274Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-12T14:02:39.954Z",
+        "lastActiveAt": "2026-10-12T13:47:39.891Z",
         "lastHarvestedAt": "2026-10-12T13:44:25.274Z",
         "totalHarvested": 2677,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Epsilon",
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T13:44:27.168Z",
+        "lastActiveAt": "2026-10-12T13:47:47.452Z",
         "lastHarvestedAt": "2026-10-12T09:58:42.055Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T13:44:29.635Z",
+        "lastActiveAt": "2026-10-12T13:47:49.950Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T13:44:32.138Z",
+        "lastActiveAt": "2026-10-12T13:47:52.431Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -297,7 +297,7 @@
       "remaining": 0,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-12T13:44:07.701Z",
+      "trippedAt": "2026-10-12T13:47:28.053Z",
       "reason": null,
       "consecutiveBlocks": 1
     },
