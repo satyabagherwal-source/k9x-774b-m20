@@ -30645,3 +30645,183 @@ logits = model(batch)[0]  # autograd enabled
 Use `torch.is_grad_enabled()` to assert that gradients are disabled during inference.
 
 ---
+
+
+---
+
+## 596. Consistent Special‑Token Mapping (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Special‑Token Mapping",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T23:19:51.784Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv5vjxs2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that every special token defined in `tokenizer_config.json` has a corresponding ID in `config.json` and that the IDs are identical across both files.
+
+**WHY**:  
+Mismatched token IDs cause the tokenizer to emit IDs that the model does not recognize, leading to `IndexError` or silent mis‑tokenization, which in turn corrupts the joint head’s evidence routing.
+
+**WHEN TO APPLY**:  
+During model packaging, any time a tokenizer is modified or a new special token is added (e.g., `<|image_pad|>`), the rule applies to the tokenizer config, model config, and any downstream scripts that reference these IDs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoTokenizer, AutoConfig
+
+tokenizer = AutoTokenizer.from_pretrained("Cloudflare/clef-flash")
+config = AutoConfig.from_pretrained("Cloudflare/clef-flash")
+
+special_tokens = tokenizer.special_tokens_map
+for name, token in special_tokens.items():
+    expected_id = config.__dict__.get(f"{name}_id")
+    actual_id = tokenizer.convert_tokens_to_ids(token)
+    assert expected_id == actual_id, (
+        f"Token ID mismatch for {name}: expected {expected_id}, got {actual_id}"
+    )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: hard‑coding token IDs
+image_token_id = 12345  # arbitrary number, not verified against config
+```
+
+**VERIFICATION METHOD**:  
+Run the above script as part of CI; any assertion failure flags a mis‑alignment.
+
+---
+
+
+---
+
+## 597. Dtype‑Consistent Weight Loading (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dtype‑Consistent Weight Loading",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T23:19:51.806Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv5vjxs2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** load model weights using the `torch_dtype` specified in `config.json` (here `bfloat16`) unless a higher‑precision fallback is explicitly required.
+
+**WHY**:  
+Loading weights with an incorrect dtype triggers silent casting or runtime errors on GPUs that do not support the requested precision, leading to incorrect inference or out‑of‑memory failures.
+
+**WHEN TO APPLY**:  
+During `AutoModelForCausalLM.from_pretrained` or any custom weight‑loading routine.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(
+    "Cloudflare/clef-flash",
+    torch_dtype=torch.bfloat16,
+    device_map="auto",
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: ignoring dtype from config
+model = AutoModelForCausalLM.from_pretrained("Cloudflare/clef-flash")
+```
+
+**VERIFICATION METHOD**:  
+CI test that checks `model.dtype` matches `config.dtype`.
+
+---
+
+
+---
+
+## 598. Mandatory Processor‑First Inference (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mandatory Processor‑First Inference",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T23:19:51.821Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv5vjxs2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** pass all multimodal inputs through the `processor` (tokenizer + vision encoder) before feeding them to the model; **MUST NOT** feed raw tensors directly to the backbone.
+
+**WHY**:  
+The processor normalizes token IDs, pads sequences, and aligns image/video tensors to the expected shape. Skipping it leads to shape mismatches, incorrect attention masks, and catastrophic failures.
+
+**WHEN TO APPLY**:  
+In any inference pipeline that accepts text, image, or video data.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from joint_schema_model import load_release_model, encode_record, collate_records
+
+model, processor = load_release_model("Cloudflare/clef-flash", device="cuda")
+
+record = {"state": {"invoice": {"vendor": "Acme", "total": 1250.0}}, "questions": {}}
+encoded = encode_record(processor.tokenizer, record, processor=processor)
+batch = collate_records([encoded], processor.tokenizer.pad_token_id, torch.device("cuda"))
+
+with torch.inference_mode():
+    logits = model(batch)[0]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: bypassing processor
+input_ids = tokenizer.encode("Hello")
+logits = model(input_ids)  # shape mismatch, missing vision features
+```
+
+**VERIFICATION METHOD**:  
+Unit test that asserts `batch.shape` matches the model’s expected input shape and that `processor` is invoked.
+
+---

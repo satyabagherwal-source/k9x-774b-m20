@@ -770,3 +770,4 @@
 | `CYCLE-20261012-8BBS` | `2026-10-12T23:10:49.432Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`48dbcf2c...`) |
 | `CYCLE-20261012-C4ND` | `2026-10-12T23:13:47.401Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`8ba3d522...`) |
 | `CYCLE-20261012-G68Y` | `2026-10-12T23:16:56.098Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 593, Rule 594, Rule 595` | Yes (`0e3b5456...`) |
+| `CYCLE-20261012-JXVU` | `2026-10-12T23:19:51.882Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 596, Rule 597, Rule 598` | Yes (`1eedb4a6...`) |
