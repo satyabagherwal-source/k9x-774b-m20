@@ -5608,5 +5608,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-TSXG",
+    "timestamp": "2026-10-12T04:19:47.764Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4qtstq",
+    "contentHash": "1e11afbfe188f9ba71e670dfdd0751bf05a250eb59cd3e6ca8534911de2d4512",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

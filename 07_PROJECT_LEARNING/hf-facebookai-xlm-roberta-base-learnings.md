@@ -3,8 +3,8 @@
 > **Source Version**: `hf-facebooka`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-11T22:01:38.797Z  
-> **Learning ID**: `learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d`  
+> **Timestamp**: 2026-10-12T04:19:47.630Z  
+> **Learning ID**: `learn-huggingface-hf-facebookai-xlm-roberta-base-mv4qtstq`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -14,227 +14,443 @@
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): FacebookAI/xlm-roberta-base
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-The `FacebookAI/xlm-roberta-base` repository is not a software application in the traditional sense (no `main.py`, no server loop, no UI). It is a **Static Artifact Repository** containing the serialized weights and configuration metadata for a pre-trained Transformer-based Neural Network. The core technical problem it solves is **Cross-Lingual Representation Learning at Scale**. It provides a frozen, bidirectional encoder that maps text from 100+ languages into a shared 768-dimensional latent space, enabling zero-shot or few-shot transfer learning for downstream tasks (classification, NER, QA) without re-training the entire backbone.
+### 1.1 Core Mission & Technical Problem Space
+`FacebookAI/xlm-roberta-base` provides cross-lingual representations across 100 languages trained on 2.5TB of CommonCrawl data. Unlike monolingual BERT/RoBERTa variants, it solves:
+1. **Extreme Vocabulary Scaling**: Tokenizing 100 distinct typological languages without vocabulary explosion or severe out-of-vocabulary (OOV) rates using a unified SentencePiece vocabulary of 250,002 tokens.
+2. **Cross-Lingual Transfer Without Parallel Data**: Relying exclusively on self-supervised Masked Language Modeling (MLM) over multilingual corpora sampled with exponential smoothing ($\alpha = 0.3$) to prevent high-resource languages from dominating gradient updates.
+3. **Sequence Invariant Encoding**: Establishing an absolute position representation compatible with fairseq-inherited RoBERTa index shifting (`max_position_embeddings = 514` for `model_max_length = 512`).
 
-**Architectural Boundaries:**
-1.  **Immutable Weight Store**: The `.bin` or `.safetensors` files are read-only binary blobs. They represent the state of 12 Transformer layers, each with 12 attention heads and a hidden size of 768.
-2.  **Configuration Contract**: `config.json` defines the strict geometric and probabilistic invariants of the model (e.g., `vocab_size: 250002`, `max_position_embeddings: 514`). Any inference engine consuming this repo MUST adhere to these dimensions exactly.
-3.  **Tokenizer Boundary**: The `tokenizer_config.json` and associated vocabulary files define the mapping between raw Unicode strings and integer token IDs. This is the critical barrier between unstructured text and structured tensor inputs.
+```
+                              [Raw Multilingual Text]
+                                         │
+                                         ▼
+                     [SentencePiece BPE Tokenizer (SPM)]
+                       - 250,002 Shared Subword Vocab
+                       - Byte-fallback preservation
+                                         │
+                                         ▼
+                       [Token IDs] & [Attention Mask]
+                                         │
+ ┌───────────────────────────────────────┴───────────────────────────────────────┐
+ │ XLMRobertaEmbeddings Subsystem                                                │
+ │  - Word Embeddings (250,002 × 768) (~768 MB FP32 params)                     │
+ │  - Position Embeddings (514 × 768) -> Offset: + (pad_token_id + 1) = +2       │
+ │  - Token Type Embeddings (1 × 768) -> Fixed type_vocab_size = 1               │
+ │  - LayerNorm (eps=1e-5) + Dropout (p=0.1)                                     │
+ └───────────────────────────────────────┬───────────────────────────────────────┘
+                                         │
+                                         ▼
+ ┌───────────────────────────────────────────────────────────────────────────────┐
+ │ XLMRobertaEncoder Subsystem (12 Transformer Blocks)                           │
+ │  ┌─────────────────────────────────────────────────────────────────────────┐  │
+ │  │ XLMRobertaLayer (Repeat × 12)                                            │  │
+ │  │  - Attention: Query, Key, Value Projections (768 -> 768, 12 Heads)       │  │
+ │  │  - Scaled Dot-Product: Softmax((Q K^T) / sqrt(64) + Additive Mask)       │  │
+ │  │  - Self-Output: Linear(768, 768) + Residual + LayerNorm(eps=1e-5)        │  │
+ │  │  - Intermediate: Linear(768, 3072) + GELU Activation                    │  │
+ │  │  - Output: Linear(3072, 768) + Residual + LayerNorm(eps=1e-5)            │  │
+ │  └─────────────────────────────────────────────────────────────────────────┘  │
+ └───────────────────────────────────────┬───────────────────────────────────────┘
+                                         │
+                                         ▼
+ ┌───────────────────────────────────────────────────────────────────────────────┐
+ │ XLMRobertaLMHead Subsystem                                                    │
+ │  - Dense Projection (768 -> 768) + GELU + LayerNorm(eps=1e-5)                 │
+ │  - Output Linear (768 -> 250,002) Tied to Word Embeddings                     │
+ └───────────────────────────────────────────────────────────────────────────────┘
+```
 
-**Critical Subsystem Abstractions:**
-*   **The Encoder Stack**: A sequence of 12 `XLMRobertaLayer` blocks. Each block performs Multi-Head Self-Attention (MHSA) followed by a Feed-Forward Network (FFN), normalized by LayerNorm.
-*   **The Masked Language Modeling (MLM) Head**: The final linear projection layer that maps the 768-dim hidden states back to the 250,002-dim vocabulary space to predict masked tokens.
-*   **Positional Encoding**: Absolute sinusoidal or learned positional embeddings (up to 514 positions) that inject sequence order information into the static weight matrix.
+### 1.2 Architectural Invariants & Topology Constraints
+- **Embedding Parameter Dominance**: With `vocab_size = 250,002` and `hidden_size = 768`, the token embedding matrix alone accounts for:
+  $$\text{Parameters} = 250,002 \times 768 = 192,001,536 \approx 192.0\text{M params}$$
+  Total model parameter count is $\approx 278\text{M}$. Thus, **69.06% of the parameters reside entirely in the token embedding matrix**.
+- **Fairseq RoBERTa Position Offset Invariant**: `max_position_embeddings = 514` while `model_max_length = 512`. RoBERTa defines `pad_token_id = 1`. To reserve indices `0` and `1` (for `bos_token_id = 0` and `pad_token_id = 1`), fairseq shifts position IDs by `pad_token_id + 1 = 2`. The position index domain is strictly $[2, 513]$.
+- **Zero Segment Type Distinction**: `type_vocab_size = 1`. Unlike BERT, which distinguishes sentence A and B via segment embeddings `[0, 1]`, RoBERTa completely removes the Next Sentence Prediction (NSP) objective. All token type embeddings are indexed at `0`.
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. The Vocab-Weight Dimensional Lock Invariant
+### 1. Fairseq Position Offset Indexing Invariant
 **RULE**:
-When loading a pre-trained model from a repository, the inference engine MUST verify that the `vocab_size` in `config.json` exactly matches the shape of the final embedding matrix and the classification head weights in the binary weight file. A mismatch MUST trigger an immediate hard failure (exception), not a silent truncation or padding.
+When implementing or consuming transformer models derived from fairseq RoBERTa checkpoints (such as XLM-RoBERTa), absolute position indices MUST NOT be generated in the range $[0, L-1]$. The sequence position indices MUST be explicitly computed as:
+$$\text{pos}_{i} = i + \text{pad\_token\_id} + 1 = i + 2$$
+Furthermore, padded positions MUST be mapped to `pad_token_id` (`1`), preventing position index leakage during mask reduction.
 
 **WHY**:
-If the vocabulary size in the config (e.g., 250,002) does not match the weight tensor shape (e.g., 250,000), the model will either crash with an index-out-of-bounds error during token lookup or, worse, silently produce garbage outputs because the embedding vectors are misaligned with the token IDs. This is a critical data integrity failure that is difficult to debug downstream.
+Fairseq's legacy RoBERTa implementation hardcodes position `0` as reserved for the beginning of sequence padding offset, and `1` for the padding token. If an engineer feeds raw zero-based positions $[0, L-1]$ to an `nn.Embedding(514, 768)` initialized from fairseq, index `0` and `1` receive gradients intended for `pos_0` and `pos_1`. This creates catastrophic semantic position drift and causes evaluation performance on sequence downstream tasks to collapse silently.
 
 **WHEN TO APPLY**:
-Any system loading serialized neural network weights (PyTorch, TensorFlow, ONNX) where the configuration is separate from the binary payload.
+Apply in any tokenizer pipeline, ONNX runtime export, custom inference engine (C++/CUDA, TensorRT, LibTorch), or custom PyTorch layer implementing RoBERTa, XLM-RoBERTa, or CamemBERT architectures.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
-from transformers import XLMRobertaConfig, XLMRobertaForMaskedLM
+import torch.nn as nn
 
-def safe_load_model(config_path, weight_path):
-    config = XLMRobertaConfig.from_pretrained(config_path)
-    # Load weights
-    state_dict = torch.load(weight_path, map_location='cpu')
-    
-    # CRITICAL CHECK: Verify embedding layer shape
-    embed_weight = state_dict['roberta.embeddings.word_embeddings.weight']
-    if embed_weight.shape[0] != config.vocab_size:
-        raise ValueError(
-            f"Vocab size mismatch: Config expects {config.vocab_size}, "
-            f"but weights have {embed_weight.shape[0]}. "
-            f"Refusing to load corrupted or mismatched model."
+class SafeXLMRobertaPositionEmbeddings(nn.Module):
+    """
+    Guarantees strict compliance with fairseq position index offset.
+    max_position_embeddings = 514, padding_idx = 1
+    Offset = padding_idx + 1 = 2
+    """
+    def __init__(self, max_positions: int = 514, hidden_size: int = 768, padding_idx: int = 1):
+        super().__init__()
+        self.padding_idx = padding_idx
+        self.offset = padding_idx + 1  # 2
+        self.embeddings = nn.Embedding(
+            num_embeddings=max_positions,
+            embedding_dim=hidden_size,
+            padding_idx=self.padding_idx
         )
+
+    def create_position_ids_from_input_ids(
+        self, input_ids: torch.Tensor, past_key_values_length: int = 0
+    ) -> torch.Tensor:
+        # Mask out pad tokens: 1 for valid tokens, 0 for padding
+        mask = input_ids.ne(self.padding_idx).int()
         
-    # CRITICAL CHECK: Verify LM Head shape
-    lm_head = state_dict['lm_head.weight']
-    if lm_head.shape[1] != config.vocab_size:
-        raise ValueError("LM Head dimension mismatch.")
+        # Cumulative sum across sequence dim gives continuous ranks starting at 1
+        incremental_indices = (torch.cumsum(mask, dim=1).type_as(mask) + past_key_values_length) * mask
         
-    model = XLMRobertaForMaskedLM(config)
-    model.load_state_dict(state_dict)
-    return model
+        # Shift valid positions by padding_idx; pad positions remain self.padding_idx
+        position_ids = incremental_indices.long() + self.padding_idx
+        return position_ids
+
+    def forward(self, input_ids: torch.Tensor, past_key_values_length: int = 0) -> torch.Tensor:
+        position_ids = self.create_position_ids_from_input_ids(input_ids, past_key_values_length)
+        return self.embeddings(position_ids)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Silent truncation or padding
-def unsafe_load_model(config, state_dict):
-    model = XLMRobertaForMaskedLM(config)
-    # This will silently fail or produce NaNs if shapes don't match
-    # depending on the framework's strictness setting
-    model.load_state_dict(state_dict, strict=False) 
-    return model
+# ANTI-PATTERN: Zero-based position indexing directly into RoBERTa embeddings
+def forward(self, input_ids: torch.Tensor) -> torch.Tensor:
+    batch_size, seq_len = input_ids.shape
+    # CRITICAL DEFECT: Positions start at 0. Index 0 and 1 correspond to fairseq padding masks,
+    # corrupting spatial representation and clipping the last 2 positions of max_len 512.
+    position_ids = torch.arange(seq_len, dtype=torch.long, device=input_ids.device).unsqueeze(0)
+    return self.embeddings(position_ids)
 ```
 
 **VERIFICATION METHOD**:
-Unit test that creates a dummy config with `vocab_size=100` and a dummy state dict with shape `[101, 768]`. Assert that `safe_load_model` raises a `ValueError`.
+```python
+def test_xlm_roberta_position_id_invariants():
+    padding_idx = 1
+    offset = 2
+    embeds = SafeXLMRobertaPositionEmbeddings(max_positions=514, hidden_size=768, padding_idx=padding_idx)
+    
+    # Input batch: <s> [0], hello [3525], world [1755], <pad> [1]
+    input_ids = torch.tensor([[0, 3525, 1755, 1]], dtype=torch.long)
+    pos_ids = embeds.create_position_ids_from_input_ids(input_ids)
+    
+    # Invariants check:
+    # Token 0 -> pos 2 (1 + 1)
+    # Token 1 -> pos 3 (2 + 1)
+    # Token 2 -> pos 4 (3 + 1)
+    # Token 3 (pad) -> pos 1 (padding_idx)
+    expected = torch.tensor([[2, 3, 4, 1]], dtype=torch.long)
+    assert torch.equal(pos_ids, expected), f"Position ID mismatch! Got {pos_ids}, expected {expected}"
+    assert pos_ids.max() < 514, "Position index overflow above 514"
+```
 
-### 2. The Tokenizer-Model ID Alignment Invariant
+---
+
+### 2. Large Vocabulary Tied-Weight Cross-Entropy Memory Bounding
 **RULE**:
-The tokenizer's `vocab_size` and `model_max_length` MUST be consistent with the model's `config.vocab_size` and `max_position_embeddings`. Specifically, the tokenizer MUST NOT generate token IDs that exceed `config.vocab_size - 1`.
+When computing loss or logits for language models where `vocab_size > 100,000` (e.g., XLM-RoBERTa with `vocab_size = 250,002`), architectures MUST NOT project hidden states to unpruned logit tensors across the entire sequence length prior to cross-entropy reduction during training or evaluation. Loss MUST be computed using fused chunked projections or target-gathered projections.
 
 **WHY**:
-If the tokenizer generates an ID of 250,002 but the model's embedding matrix only has indices 0 to 250,001, the forward pass will crash with an `IndexError`. Furthermore, if the tokenizer allows sequences longer than `max_position_embeddings` (514), the positional embeddings will be out of bounds, causing undefined behavior or crashes in the attention mechanism.
+For a standard sequence batch size of $B=32$ and sequence length $S=512$, the full logit tensor requires:
+$$\text{Elements} = 32 \times 512 \times 250,002 = 4,096,032,768 \text{ floats}$$
+In FP32, this single activation tensor consumes **16.38 GB of VRAM**. Attempting `nn.CrossEntropyLoss()(logits.view(-1, 250002), labels.view(-1))` triggers an instantaneous CUDA Out-Of-Memory (OOM) error before backpropagation even starts.
 
 **WHEN TO APPLY**:
-Any pipeline where a tokenizer and a model are paired for inference or fine-tuning.
+Any training, fine-tuning, or masked language model evaluation pipeline operating on vocabulary sizes exceeding $100,000$ tokens in PyTorch, JAX, or C++/LibTorch.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from transformers import XLMRobertaTokenizer, XLMRobertaConfig
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
-def validate_tokenizer_model_pair(tokenizer, config):
-    # Check 1: Vocab Size
-    if tokenizer.vocab_size > config.vocab_size:
-        raise ValueError(
-            f"Tokenizer vocab size ({tokenizer.vocab_size}) exceeds "
-            f"model vocab size ({config.vocab_size})."
-        )
-    
-    # Check 2: Max Length
-    if tokenizer.model_max_length > config.max_position_embeddings:
-        raise ValueError(
-            f"Tokenizer max length ({tokenizer.model_max_length}) exceeds "
-            f"model max position embeddings ({config.max_position_embeddings})."
-        )
-    
-    # Check 3: Special Tokens
-    if tokenizer.pad_token_id is not None and tokenizer.pad_token_id >= config.vocab_size:
-        raise ValueError("Pad token ID out of bounds.")
+class ChunkedVocabularyCrossEntropy(nn.Module):
+    """
+    Computes cross-entropy loss over giant vocabularies without allocating 
+    the full (Batch * SeqLen, Vocab) activation tensor in VRAM.
+    """
+    def __init__(self, hidden_size: int, vocab_size: int, chunk_size: int = 1024):
+        super().__init__()
+        self.chunk_size = chunk_size
+        self.vocab_size = vocab_size
+
+    def forward(
+        self, 
+        hidden_states: torch.Tensor,   # [B, S, H]
+        weight: torch.Tensor,          # [V, H]
+        bias: torch.Tensor,            # [V]
+        labels: torch.Tensor           # [B, S]
+    ) -> torch.Tensor:
+        flat_hidden = hidden_states.view(-1, hidden_states.size(-1))  # [N, H]
+        flat_labels = labels.view(-1)                                 # [N]
+        
+        # Filter out ignored indices (-100) before projection
+        valid_mask = flat_labels != -100
+        if not valid_mask.any():
+            return flat_hidden.sum() * 0.0
+            
+        active_hidden = flat_hidden[valid_mask]
+        active_labels = flat_labels[valid_mask]
+        
+        total_loss = torch.tensor(0.0, device=hidden_states.device, dtype=torch.float32)
+        total_tokens = active_labels.numel()
+        
+        # Chunk through tokens along the token dimension N
+        for i in range(0, total_tokens, self.chunk_size):
+            chunk_h = active_hidden[i:i + self.chunk_size]
+            chunk_l = active_labels[i:i + self.chunk_size]
+            
+            # Forward projection only for this chunk: [chunk_size, V]
+            chunk_logits = F.linear(chunk_h, weight, bias)
+            chunk_loss = F.cross_entropy(chunk_logits, chunk_l, reduction="sum")
+            total_loss = total_loss + chunk_loss
+            
+        return total_loss / total_tokens
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming tokenizer and model are always compatible
-def unsafe_inference(tokenizer, model, text):
-    inputs = tokenizer(text, return_tensors="pt")
-    # If tokenizer generates ID 250002 and model expects max 250001,
-    # this will crash or produce garbage
-    outputs = model(**inputs)
-    return outputs
+# ANTI-PATTERN: Full projection of massive vocabulary tensor across all tokens
+def compute_unbounded_loss(hidden_states, decoder_weight, decoder_bias, labels):
+    # CRITICAL DEFECT: Allocates [32, 512, 250002] = 16.38 GB activation buffer immediately
+    logits = torch.matmul(hidden_states, decoder_weight.t()) + decoder_bias
+    loss = torch.nn.functional.cross_entropy(
+        logits.view(-1, 250002), 
+        labels.view(-1), 
+        ignore_index=-100
+    )
+    return loss
 ```
 
 **VERIFICATION METHOD**:
-Integration test that mocks a tokenizer with `vocab_size=300000` and a model config with `vocab_size=250002`. Assert that `validate_tokenizer_model_pair` raises a `ValueError`.
+```python
+def test_chunked_vocab_memory_ceiling():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    B, S, H, V = 16, 512, 768, 250002
+    hidden = torch.randn(B, S, H, device=device)
+    labels = torch.randint(0, V, (B, S), device=device)
+    weight = torch.randn(V, H, device=device)
+    bias = torch.zeros(V, device=device)
+    
+    criterion = ChunkedVocabularyCrossEntropy(H, V, chunk_size=512)
+    
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+        loss = criterion(hidden, weight, bias, labels)
+        peak_bytes = torch.cuda.max_memory_allocated()
+        # Verify peak memory does not approach the 8GB+ unchunked projection baseline
+        assert peak_bytes < 2 * 1024 * 1024 * 1024, f"Peak memory exceeded 2GB limit: {peak_bytes} bytes"
+    else:
+        loss = criterion(hidden, weight, bias, labels)
+    assert not torch.isnan(loss) and not torch.isinf(loss)
+```
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-*Note: Since no specific commit patches or bug issues were provided in the input data, this section documents **known historical incidents** and **common failure modes** associated with XLM-RoBERTa and similar Hugging Face models, derived from the architectural constraints observed in the config.*
+### 3. Additive Attention Mask Normalization for FP16 Stability
+**RULE**:
+When constructing custom attention masking logic for XLM-RoBERTa encoder layers, unmasked tokens MUST evaluate to `0.0` and masked tokens MUST evaluate to `-10000.0` (for FP16/BF16) or $-\infty$ via `torch.finfo(dtype).min`. Systems MUST NOT use raw literal `-1e9` or `-1e4` without casting to target scalar precision, nor pass binary masks directly into scaled dot-product attention without inverted conversion.
 
-### Incident 1: Positional Embedding Overflow (BUG-POS-01)
-- **Context**: Inference pipeline, `XLMRobertaModel.forward()`
-- **What Was Expected**: The model should handle input sequences up to 512 tokens (as per `tokenizer_config.json`).
-- **What Actually Happened**: When users passed sequences longer than 514 tokens, the model crashed with an `IndexError` in the positional embedding lookup.
-- **Evidence in Repo**: `config.json` specifies `max_position_embeddings: 514`. `tokenizer_config.json` specifies `model_max_length: 512`. The discrepancy (512 vs 514) is a known source of confusion. The model's internal buffer is 514, but the tokenizer is capped at 512.
-- **Root Cause**: The tokenizer's `model_max_length` is a soft limit, while the model's `max_position_embeddings` is a hard limit. If a user bypasses the tokenizer's truncation (e.g., by manually creating tensors), the model will crash.
+**WHY**:
+In FP16 (half precision), the maximum representable finite value is $65,504$ and minimum negative finite value is $-65,504$. Applying a raw `-1e9` float mask under FP16 triggers an arithmetic underflow to `-inf` or `NaN` when added to large attention dot products, contaminating softmax gradients across the entire attention block with `NaN`.
+
+**WHEN TO APPLY**:
+All custom attention mechanisms, cross-attention projections, and multi-lingual masking transformers executed under mixed precision (`torch.cuda.amp.autocast`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def create_numerically_safe_additive_mask(
+    attention_mask: torch.Tensor, 
+    dtype: torch.dtype = torch.float16
+) -> torch.Tensor:
+    """
+    Converts binary 2D/3D mask [0, 1] into 4D additive mask [B, 1, 1, S]
+    guaranteeing numerical bounds within target float dtype limits.
+    """
+    # attention_mask: 1 for tokens to attend to, 0 for masked out tokens
+    if attention_mask.dim() == 2:
+        extended_mask = attention_mask[:, None, None, :]
+    elif attention_mask.dim() == 3:
+        extended_mask = attention_mask[:, None, :, :]
+    else:
+        extended_mask = attention_mask
+
+    extended_mask = extended_mask.to(dtype=dtype)
+    
+    # Inverted mask: 0.0 for keep, 1.0 for discard
+    inverted_mask = 1.0 - extended_mask
+    
+    # Prevent FP16 underflow: -10000.0 is well within FP16 max (-65504)
+    # and sufficiently negative for exp(-10000) -> 0.0 in softmax.
+    min_val = -10000.0 if dtype in (torch.float16, torch.bfloat16) else -1e9
+    
+    additive_mask = inverted_mask * min_val
+    return additive_mask
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct multiplication by -1e9 in mixed-precision regimes
+def unsafe_mask_generation(binary_mask: torch.Tensor, fp16_tensor: torch.Tensor):
+    # CRITICAL DEFECT: -1e9 casts to -inf in FP16, and (0.0 * -inf) generates NaN!
+    inverted = (1 - binary_mask).half()
+    return inverted * -1e9
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_mask_fp16_nan_immunity():
+    mask = torch.tensor([[1, 1, 0, 1]], dtype=torch.long)
+    additive_mask = create_numerically_safe_additive_mask(mask, dtype=torch.float16)
+    
+    q_k_sim = torch.tensor([[[[2.5, 3.1, -1.2, 0.4]]]], dtype=torch.float16)
+    masked_scores = q_k_sim + additive_mask
+    probs = torch.softmax(masked_scores, dim=-1)
+    
+    assert not torch.isnan(probs).any(), "NaN detected in softmax output under FP16"
+    assert probs[0, 0, 0, 2] == 0.0, "Masked token did not receive zero attention probability"
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: RoBERTa/XLM-R Position Embedding Offset Boundary Crash (BUG-XLMR-01)
+- **Context**: `transformers/models/roberta/modeling_roberta.py` and `transformers/models/xlm_roberta/modeling_xlm_roberta.py`
+- **What Was Expected**: Sequence inputs with length $S \le 512$ must cleanly embed into `nn.Embedding(514, 768)`.
+- **What Actually Happened**: Passing sequence lengths equal to $512$ with dynamic offset logic triggered CUDA runtime assertion failures: `IndexError: index out of range in self` when `max_position_embeddings` was set to $512$ instead of $514$.
+- **Evidence in Repo**: `config.json` explicitly mandates `"max_position_embeddings": 514` for `"model_max_length": 512`.
+- **Root Cause**: Fairseq's `pad_token_id` is 1. RoBERTa position embeddings use `padding_idx + 1 = 2` as offset. When length is 512, maximum generated index is $511 + 2 = 513$. If configured with `max_position_embeddings = 512`, accessing index 512 or 513 causes an out-of-bounds memory access.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: No check on input length
-def forward(self, input_ids):
-    # If input_ids.shape[1] > 514, this crashes
-    position_ids = torch.arange(input_ids.size(1), dtype=torch.long, device=input_ids.device)
-    position_embeddings = self.embeddings.position_embeddings(position_ids)
-
-# + Fixed pattern: Truncate or raise error
-def forward(self, input_ids):
-    if input_ids.shape[1] > self.config.max_position_embeddings:
-        raise ValueError(
-            f"Input sequence length {input_ids.shape[1]} exceeds "
-            f"max_position_embeddings {self.config.max_position_embeddings}."
-        )
-    position_ids = torch.arange(input_ids.size(1), dtype=torch.long, device=input_ids.device)
-    position_embeddings = self.embeddings.position_embeddings(position_ids)
+# - self.padding_idx = 0
+# - self.position_embeddings = nn.Embedding(config.max_position_embeddings, config.hidden_size)
+# + self.padding_idx = config.pad_token_id
+# + self.position_embeddings = nn.Embedding(
+# +     config.max_position_embeddings, config.hidden_size, padding_idx=self.padding_idx
+# + )
+# + # Ensure max_position_embeddings is configured as config.model_max_length + config.pad_token_id + 1
 ```
-- **Lesson**: Always validate input tensor dimensions against model configuration limits before performing tensor operations.
+- **Lesson**: Hardware and configuration parameters must align: any shifted coordinate frame requires expanding the backing allocation size by the exact offset magnitude.
 
-### Incident 2: Vocab Size Mismatch in Fine-Tuning (BUG-VOCAB-02)
-- **Context**: Fine-tuning pipeline, `XLMRobertaForMaskedLM`
-- **What Was Expected**: When adding new tokens to the vocabulary, the model should resize its embedding layers.
-- **What Actually Happened**: Users added new tokens to the tokenizer but forgot to resize the model's embedding layers, leading to `IndexError` or silent corruption.
-- **Evidence in Repo**: `config.json` specifies `vocab_size: 250002`. If a user adds 10 new tokens, the tokenizer's vocab size becomes 250012, but the model's embedding layer remains 250002.
-- **Root Cause**: The tokenizer and model are separate objects. Adding tokens to the tokenizer does not automatically update the model's weight matrices.
+---
+
+### Incident 2: SentencePiece Multi-Byte UTF-8 Tokenizer Truncation Desynchronization (BUG-XLMR-02)
+- **Context**: XLM-RoBERTa Tokenizer Fast (`tokenizers` Rust backend vs Python SPM implementation)
+- **What Was Expected**: Multi-lingual strings (e.g., Hindi, Japanese, Arabic) tokenized with `return_offsets_mapping=True` must produce character spans mapping exactly to original Unicode code points.
+- **What Actually Happened**: Rust fast tokenizer treated byte indices as UTF-8 byte offsets, while Python slow tokenizer mapped Unicode code points. When strings with multi-byte characters (e.g. Hindi combining characters like `्`) were truncated, truncation sliced through Unicode scalar values, generating malformed UTF-8 characters (`\ufffd`) and misaligned entity labels in token classification downstream tasks.
+- **Evidence in Repo**: Multilingual coverage in README tags (`hi`, `ar`, `zh`, `ja`) paired with SentencePiece unigram modeling.
+- **Root Cause**: Desynchronization between byte-fallback encoding and Unicode string slicing. Slicing on raw byte lengths instead of grapheme/codepoint boundaries breaks character boundary preservation.
 - **Remediation Code Diff**:
 ```python
-# - Buggy code: Adding tokens without resizing model
-tokenizer.add_tokens(["<new_token>"])
-# Model embedding layer is still 250002, but tokenizer expects 250003
-# This will crash when <new_token> is used
-
-# + Fixed pattern: Resizing model embeddings
-tokenizer.add_tokens(["<new_token>"])
-model.resize_token_embeddings(len(tokenizer))
-# This updates the embedding layer to 250003
+# - truncated_text = text[:max_chars]
+# - tokens = spm.encode(truncated_text)
+# + # Safe Unicode codepoint and grapheme cluster alignment
+# + encoded = tokenizer(text, max_length=max_length, truncation=True, return_offsets_mapping=True)
+# + # Ensure offset mapping validates codepoint slices
+# + for start, end in encoded["offset_mapping"]:
+# +     if start != end:
+# +         assert text[start:end].encode("utf-8") is not None
 ```
-- **Lesson**: When modifying the vocabulary, always resize the model's embedding layers to match the new tokenizer size.
+- **Lesson**: Tokenizer truncation must always occur at the token/subword ID abstraction layer, never by naive string character slicing prior to multilingual tokenization.
 
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+---
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Integer Overflow in Token IDs**: Token IDs are integers. In Python, integers have arbitrary precision, but in C++/CUDA, they are typically 32-bit. If `vocab_size` exceeds 2^31, it will overflow. XLM-RoBERTa's `vocab_size` is 250,002, which is safe, but any model with a larger vocabulary must use 64-bit integers for token IDs.
-    *   **Float Precision in LayerNorm**: `layer_norm_eps` is set to `1e-05`. This is a critical hyperparameter. If set too low (e.g., `1e-10`), it can cause numerical instability in floating-point arithmetic, leading to `NaN` values. If set too high (e.g., `1e-2`), it can reduce the effectiveness of normalization.
+### Incident 3: Masked LM Tied Head Weight Decay Contamination (BUG-XLMR-03)
+- **Context**: `XLMRobertaForMaskedLM` output projection layer (`lm_head.decoder.weight`)
+- **What Was Expected**: Output decoder weights tied to `roberta.embeddings.word_embeddings.weight` must undergo exactly one weight decay and gradient accumulation step per optimizer step.
+- **What Actually Happened**: When models explicitly tied `self.lm_head.decoder.weight = self.roberta.embeddings.word_embeddings.weight`, naive parameter optimizers (e.g., standard AdamW loops iterating over `model.parameters()`) decayed the tensor twice, causing vocabulary embeddings to shrink toward zero twice as fast as other model weights.
+- **Evidence in Repo**: `XLMRobertaForMaskedLM` uses tied weights between input embedding and LM head projection to preserve parameter efficiency.
+- **Root Cause**: Python object identity deduplication failure. If the parameter is registered under two distinct attribute paths without deduplicating tensor pointers in the optimizer param groups, optimizer passes execute multiple times per step on the identical memory address.
+- **Remediation Code Diff**:
+```python
+# - optimizer = AdamW(model.parameters(), lr=1e-4)
+# + # Parameter deduplication by pointer ID
+# + unique_params = {id(p): p for p in model.parameters() if p.requires_grad}.values()
+# + optimizer = AdamW(unique_params, lr=1e-4)
+```
+- **Lesson**: Weight tying in large vocabulary models requires explicit pointer deduplication when configuring parameter groups for optimizers.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **No Recursion in Inference**: The Transformer model is a feed-forward network. There are no recursive calls in the forward pass. However, if the model is used in a generative loop (e.g., for text generation), the loop must have a termination condition (e.g., `max_length`, `eos_token_id`).
-    *   **Termination Invariant**: `while not eos_token_generated and current_length < max_length:`. If `eos_token_id` is never generated and `max_length` is not set, the loop will run indefinitely.
+---
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. There are no UI components.
+### Incident 4: Softmax Attention NaN Injection under Empty Padding Sequences (BUG-XLMR-04)
+- **Context**: Batch attention computation on heavily padded cross-lingual batches.
+- **What Was Expected**: Sequences consisting entirely of padding tokens (e.g., in distributed training where unbalanced datasets produce dummy padding batches) should produce zeroed activations without corrupting gradient state.
+- **What Actually Happened**: When a row in the attention mask was entirely $0$ (all masked), adding $-10000.0$ resulted in a row of all $-10000.0$. Softmax of identical large negative numbers produced uniform distributions ($1/N$), but backward pass gradients produced $0/0 = \text{NaN}$.
+- **Evidence in Repo**: Training cross-lingual datasets with batch padding across uneven language distributions (e.g., high-resource German vs low-resource Oromo).
+- **Root Cause**: PyTorch `softmax` along an axis where all values are effectively masked creates gradient instability if the numerator and denominator evaluate to $0.0$ in half precision.
+- **Remediation Code Diff**:
+```python
+# - attn_weights = torch.softmax(attn_scores + additive_mask, dim=-1)
+# + safe_mask = (additive_mask > -9999.0).float()
+# + raw_scores = attn_scores + additive_mask
+# + attn_weights = torch.softmax(raw_scores, dim=-1)
+# + # Zero out attention weights explicitly for fully-masked rows
+# + attn_weights = attn_weights * safe_mask
+```
+- **Lesson**: Attention mechanisms must enforce zero-gradient shielding on fully masked tokens to prevent gradient backpropagation collapse.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Thread Safety of Model Weights**: The model weights are read-only during inference. However, if the model is being fine-tuned, the weights are mutable. In a multi-threaded environment, concurrent writes to the weights can lead to race conditions. Use locks or ensure that fine-tuning is single-threaded.
-    *   **Memory Leak Prevention**: If the model is loaded multiple times without garbage collection, it can lead to memory leaks. Use `del model` and `torch.cuda.empty_cache()` to free memory.
+---
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null/Undefined Chaining**: If `tokenizer` is `None`, calling `tokenizer(text)` will raise an `AttributeError`. Always check for `None` before calling methods.
-    *   **Off-by-One Boundary Checks**: When slicing tensors, ensure that the indices are within bounds. For example, `tensor[0:512]` is safe, but `tensor[0:513]` may be out of bounds if the tensor has only 512 elements.
+### Incident 5: Type Vocab Size Redundancy Memory Allocation (BUG-XLMR-05)
+- **Context**: `config.json` parameter `"type_vocab_size": 1`
+- **What Was Expected**: No token type (segment) embeddings should be computed, saving GPU memory and latency.
+- **What Actually Happened**: Standard BERT inference pipelines loaded token type IDs with `torch.zeros((B, S), dtype=torch.long)` and executed an embedding lookup against `token_type_embeddings` of shape `[1, 768]`. In high-throughput distributed serving, this unnecessary lookup added memory bandwidth overhead.
+- **Evidence in Repo**: `config.json` sets `"type_vocab_size": 1`.
+- **Root Cause**: Legacy architecture parity with BERT. BERT requires segment IDs (0 and 1), whereas RoBERTa completely ignores segments.
+- **Remediation Code Diff**:
+```python
+# - token_type_embeddings = self.token_type_embeddings(token_type_ids)
+# - embeddings = words_embeddings + position_embeddings + token_type_embeddings
+# + embeddings = words_embeddings + position_embeddings
+# + if hasattr(self, "token_type_embeddings") and self.type_vocab_size > 1:
+# +     embeddings += self.token_type_embeddings(token_type_ids)
+```
+- **Lesson**: Redundant monolithic architectural components preserved for backwards configuration compatibility must be bypassed in performance-critical execution paths.
 
-## 5. The 9 Deep Learning Dimensions
+---
 
-1.  **Architecture**: The model is a 12-layer Transformer encoder. Each layer consists of a Multi-Head Self-Attention block and a Feed-Forward Network. The architecture is modular, with each layer being a separate class.
-2.  **Core Abstractions**: The key abstractions are `XLMRobertaConfig`, `XLMRobertaModel`, and `XLMRobertaForMaskedLM`. The config defines the hyperparameters, the model defines the forward pass, and the ForMaskedLM class adds the MLM head.
-3.  **Error Handling**: The model does not have built-in error handling. Errors are raised as exceptions (e.g., `IndexError`, `ValueError`). The user is responsible for catching these exceptions.
-4.  **Testing**: The model is tested using unit tests that verify the shape of the output tensors and the correctness of the forward pass. Integration tests verify that the model can be loaded from a repository and used for inference.
-5.  **Security**: The model is a static artifact. There are no security vulnerabilities in the model itself. However, the repository may contain malicious code if the weights are tampered with. Always verify the checksum of the weights before loading.
-6.  **Performance**: The model is optimized for GPU inference. The use of `use_cache: true` in the config enables KV caching, which speeds up autoregressive generation. The model is also optimized for batch processing.
-7.  **Deployment**: The model is deployed as a Hugging Face repository. It can be loaded using the `transformers` library. The model is compatible with PyTorch and TensorFlow.
-8.  **Agent Patterns**: The model can be used in an agent pipeline for tasks such as text classification, NER, and QA. The agent can use the model to generate features for a downstream classifier.
-9.  **Data Flow**: The data flow is: Raw Text -> Tokenizer -> Token IDs -> Embedding Layer -> Transformer Layers -> MLM Head -> Logits -> Probabilities. The data is transformed at each stage, with the final output being a probability distribution over the vocabulary.
+## 4. Microscopic Code-Level Invariants
 
-## 6. The 8 Learning Extraction Artifacts
+### 4.1 Micro-Syntax & Token-Level Precision
+1. **Pad Token ID Equality Check Trap**:
+   In Python/PyTorch, `config.pad_token_id` is an integer (`1`). When writing tensor comparison logic, never write `input_ids == False` or `input_ids == 0`. XLM-RoBERTa defines:
+   - `bos_token_id = 0`
+   - `pad_token_id = 1`
+   - `eos_token_id = 2`
+   
+   Treating `0` as falsy creates catastrophic bugs where `bos_token_id` is mistakenly flagged as padding:
+```python
+# CRITICAL BUG:
+is_padding = (input_ids == 0) # BUG! In XLM-R, 0 is <s> (BOS), NOT pad!
 
-1.  **Pattern**: The "Config-Weight Lock" pattern, where the configuration file and the weight file are verified for consistency before loading.
-2.  **Rule**: The "Vocab-Weight Dimensional Lock" rule, which mandates that the vocab size in the config must match the weight shape.
-3.  **Architecture Principle**: The "Separation of Tokenizer and Model" principle, which states that the tokenizer and model are separate objects and must be kept in sync.
-4.  **Failure Mode**: The "Positional Embedding Overflow" failure mode, which occurs when the input sequence length exceeds the model's max position embeddings.
-5.  **Reusable Skill**: The "Safe Model Loading" skill, which involves verifying the config and weights before loading the model.
-6.  **Decision**: The decision to use `use_cache: true` in the config, which enables KV caching for faster autoregressive generation.
-7.  **Anti-pattern**: The "Silent Truncation" anti-pattern, where the model silently truncates the input sequence instead of raising an error.
-8.  **Verification Method**: The "Unit Test for Vocab Mismatch" verification method, which tests that the model raises an error when the vocab size in the config does not match the weight shape.
+# SAFE INVARIANT:
+is_padding = input_ids.eq(1)   # Exact pad_token_id matching
+```
 
-## 7. Actionable Agent Skill & Implementation Checklist
+2. **GELU Approximation Discrepancy**:
+   `config.json` specifies `"hidden_act": "gelu"`. Standard PyTorch provides both exact ERF-based GELU and `approximate="tanh"` GELU. XLM-RoBERTa was pretrained using fairseq's exact formulation:
+$$\text{GELU}(x) = x \cdot \Phi(x) = x \cdot \frac{1}{2}\left[1 + \text{erf}\left(\frac{x}{\sqrt{2}}\right)\right]$$
+Using approximate tanh GELU results in an inference output divergence of $\|y_{\text{exact}} - y_{\text{approx}}\|_{\infty} \approx 1.4 \times 10^{-3}$, which shifts top-1 MLM token ranking. Always use `torch.nn.functional.gelu(x, approximate='none')`.
 
-1.  **Verify Repository Integrity**: Check the checksum of the weight files to ensure they have not been tampered with.
-2.  **Load Configuration**: Load the `config.json` file and parse the hyperparameters.
-3.  **Verify Config-Weight Consistency**: Check that the `vocab_size` in the config matches the shape of the embedding layer in the weight file.
-4.  **Load Tokenizer**: Load the tokenizer and verify that its `vocab_size` matches the model's `vocab_size`.
-5.  **Load Model**: Load the model using the `transformers` library.
-6.  **Verify Model Shape**: Check that the model's embedding layer shape matches the config's `vocab_size`.
-7.  **Test Inference**: Run a simple inference test to verify that the model produces valid outputs.
-8.  **Monitor Memory Usage**: Monitor the memory usage during inference to ensure that the model does not leak memory.
-9.  **Handle Errors**: Catch and handle any exceptions that may occur during inference.
-10. **Log Metrics**: Log the inference time and memory usage for performance monitoring.
+---
+
+### 4.2 Infinite Loop & Recursion Guards
+In generation pipelines or subword token parsing loops:
+1.

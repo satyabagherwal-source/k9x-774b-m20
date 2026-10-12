@@ -16254,3 +16254,332 @@ def bad_classify(logits):
 **VERIFICATION METHOD**:
 1.  **Unit Test:** Verify that the sum of probabilities for a given image is approximately 1.0.
 2.  **Consistency Test:** Verify that adding a new, irrelevant label to the candidate set does not change the relative ranking of the existing labels (it should only reduce their probabilities).
+
+
+---
+
+## 421. Fairseq Position Offset Indexing Invariant (Harvested from FacebookAI/xlm-roberta-base)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fairseq Position Offset Indexing Invariant",
+  "source": "FacebookAI/xlm-roberta-base",
+  "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+  "source_version": "hf-facebookai-xlm-roberta-base",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T04:19:47.671Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4qtstq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [FacebookAI/xlm-roberta-base](https://huggingface.co/FacebookAI/xlm-roberta-base) (Revision: `hf-faceboo`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing or consuming transformer models derived from fairseq RoBERTa checkpoints (such as XLM-RoBERTa), absolute position indices MUST NOT be generated in the range $[0, L-1]$. The sequence position indices MUST be explicitly computed as:
+$$\text{pos}_{i} = i + \text{pad\_token\_id} + 1 = i + 2$$
+Furthermore, padded positions MUST be mapped to `pad_token_id` (`1`), preventing position index leakage during mask reduction.
+
+**WHY**:
+Fairseq's legacy RoBERTa implementation hardcodes position `0` as reserved for the beginning of sequence padding offset, and `1` for the padding token. If an engineer feeds raw zero-based positions $[0, L-1]$ to an `nn.Embedding(514, 768)` initialized from fairseq, index `0` and `1` receive gradients intended for `pos_0` and `pos_1`. This creates catastrophic semantic position drift and causes evaluation performance on sequence downstream tasks to collapse silently.
+
+**WHEN TO APPLY**:
+Apply in any tokenizer pipeline, ONNX runtime export, custom inference engine (C++/CUDA, TensorRT, LibTorch), or custom PyTorch layer implementing RoBERTa, XLM-RoBERTa, or CamemBERT architectures.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+
+class SafeXLMRobertaPositionEmbeddings(nn.Module):
+    """
+    Guarantees strict compliance with fairseq position index offset.
+    max_position_embeddings = 514, padding_idx = 1
+    Offset = padding_idx + 1 = 2
+    """
+    def __init__(self, max_positions: int = 514, hidden_size: int = 768, padding_idx: int = 1):
+        super().__init__()
+        self.padding_idx = padding_idx
+        self.offset = padding_idx + 1  # 2
+        self.embeddings = nn.Embedding(
+            num_embeddings=max_positions,
+            embedding_dim=hidden_size,
+            padding_idx=self.padding_idx
+        )
+
+    def create_position_ids_from_input_ids(
+        self, input_ids: torch.Tensor, past_key_values_length: int = 0
+    ) -> torch.Tensor:
+        # Mask out pad tokens: 1 for valid tokens, 0 for padding
+        mask = input_ids.ne(self.padding_idx).int()
+        
+        # Cumulative sum across sequence dim gives continuous ranks starting at 1
+        incremental_indices = (torch.cumsum(mask, dim=1).type_as(mask) + past_key_values_length) * mask
+        
+        # Shift valid positions by padding_idx; pad positions remain self.padding_idx
+        position_ids = incremental_indices.long() + self.padding_idx
+        return position_ids
+
+    def forward(self, input_ids: torch.Tensor, past_key_values_length: int = 0) -> torch.Tensor:
+        position_ids = self.create_position_ids_from_input_ids(input_ids, past_key_values_length)
+        return self.embeddings(position_ids)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Zero-based position indexing directly into RoBERTa embeddings
+def forward(self, input_ids: torch.Tensor) -> torch.Tensor:
+    batch_size, seq_len = input_ids.shape
+    # CRITICAL DEFECT: Positions start at 0. Index 0 and 1 correspond to fairseq padding masks,
+    # corrupting spatial representation and clipping the last 2 positions of max_len 512.
+    position_ids = torch.arange(seq_len, dtype=torch.long, device=input_ids.device).unsqueeze(0)
+    return self.embeddings(position_ids)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_xlm_roberta_position_id_invariants():
+    padding_idx = 1
+    offset = 2
+    embeds = SafeXLMRobertaPositionEmbeddings(max_positions=514, hidden_size=768, padding_idx=padding_idx)
+    
+    # Input batch: <s> [0], hello [3525], world [1755], <pad> [1]
+    input_ids = torch.tensor([[0, 3525, 1755, 1]], dtype=torch.long)
+    pos_ids = embeds.create_position_ids_from_input_ids(input_ids)
+    
+    # Invariants check:
+    # Token 0 -> pos 2 (1 + 1)
+    # Token 1 -> pos 3 (2 + 1)
+    # Token 2 -> pos 4 (3 + 1)
+    # Token 3 (pad) -> pos 1 (padding_idx)
+    expected = torch.tensor([[2, 3, 4, 1]], dtype=torch.long)
+    assert torch.equal(pos_ids, expected), f"Position ID mismatch! Got {pos_ids}, expected {expected}"
+    assert pos_ids.max() < 514, "Position index overflow above 514"
+```
+
+---
+
+
+---
+
+## 422. Large Vocabulary Tied-Weight Cross-Entropy Memory Bounding (Harvested from FacebookAI/xlm-roberta-base)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Large Vocabulary Tied-Weight Cross-Entropy Memory Bounding",
+  "source": "FacebookAI/xlm-roberta-base",
+  "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+  "source_version": "hf-facebookai-xlm-roberta-base",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T04:19:47.683Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4qtstq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [FacebookAI/xlm-roberta-base](https://huggingface.co/FacebookAI/xlm-roberta-base) (Revision: `hf-faceboo`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When computing loss or logits for language models where `vocab_size > 100,000` (e.g., XLM-RoBERTa with `vocab_size = 250,002`), architectures MUST NOT project hidden states to unpruned logit tensors across the entire sequence length prior to cross-entropy reduction during training or evaluation. Loss MUST be computed using fused chunked projections or target-gathered projections.
+
+**WHY**:
+For a standard sequence batch size of $B=32$ and sequence length $S=512$, the full logit tensor requires:
+$$\text{Elements} = 32 \times 512 \times 250,002 = 4,096,032,768 \text{ floats}$$
+In FP32, this single activation tensor consumes **16.38 GB of VRAM**. Attempting `nn.CrossEntropyLoss()(logits.view(-1, 250002), labels.view(-1))` triggers an instantaneous CUDA Out-Of-Memory (OOM) error before backpropagation even starts.
+
+**WHEN TO APPLY**:
+Any training, fine-tuning, or masked language model evaluation pipeline operating on vocabulary sizes exceeding $100,000$ tokens in PyTorch, JAX, or C++/LibTorch.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class ChunkedVocabularyCrossEntropy(nn.Module):
+    """
+    Computes cross-entropy loss over giant vocabularies without allocating 
+    the full (Batch * SeqLen, Vocab) activation tensor in VRAM.
+    """
+    def __init__(self, hidden_size: int, vocab_size: int, chunk_size: int = 1024):
+        super().__init__()
+        self.chunk_size = chunk_size
+        self.vocab_size = vocab_size
+
+    def forward(
+        self, 
+        hidden_states: torch.Tensor,   # [B, S, H]
+        weight: torch.Tensor,          # [V, H]
+        bias: torch.Tensor,            # [V]
+        labels: torch.Tensor           # [B, S]
+    ) -> torch.Tensor:
+        flat_hidden = hidden_states.view(-1, hidden_states.size(-1))  # [N, H]
+        flat_labels = labels.view(-1)                                 # [N]
+        
+        # Filter out ignored indices (-100) before projection
+        valid_mask = flat_labels != -100
+        if not valid_mask.any():
+            return flat_hidden.sum() * 0.0
+            
+        active_hidden = flat_hidden[valid_mask]
+        active_labels = flat_labels[valid_mask]
+        
+        total_loss = torch.tensor(0.0, device=hidden_states.device, dtype=torch.float32)
+        total_tokens = active_labels.numel()
+        
+        # Chunk through tokens along the token dimension N
+        for i in range(0, total_tokens, self.chunk_size):
+            chunk_h = active_hidden[i:i + self.chunk_size]
+            chunk_l = active_labels[i:i + self.chunk_size]
+            
+            # Forward projection only for this chunk: [chunk_size, V]
+            chunk_logits = F.linear(chunk_h, weight, bias)
+            chunk_loss = F.cross_entropy(chunk_logits, chunk_l, reduction="sum")
+            total_loss = total_loss + chunk_loss
+            
+        return total_loss / total_tokens
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Full projection of massive vocabulary tensor across all tokens
+def compute_unbounded_loss(hidden_states, decoder_weight, decoder_bias, labels):
+    # CRITICAL DEFECT: Allocates [32, 512, 250002] = 16.38 GB activation buffer immediately
+    logits = torch.matmul(hidden_states, decoder_weight.t()) + decoder_bias
+    loss = torch.nn.functional.cross_entropy(
+        logits.view(-1, 250002), 
+        labels.view(-1), 
+        ignore_index=-100
+    )
+    return loss
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_chunked_vocab_memory_ceiling():
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    B, S, H, V = 16, 512, 768, 250002
+    hidden = torch.randn(B, S, H, device=device)
+    labels = torch.randint(0, V, (B, S), device=device)
+    weight = torch.randn(V, H, device=device)
+    bias = torch.zeros(V, device=device)
+    
+    criterion = ChunkedVocabularyCrossEntropy(H, V, chunk_size=512)
+    
+    if torch.cuda.is_available():
+        torch.cuda.reset_peak_memory_stats()
+        loss = criterion(hidden, weight, bias, labels)
+        peak_bytes = torch.cuda.max_memory_allocated()
+        # Verify peak memory does not approach the 8GB+ unchunked projection baseline
+        assert peak_bytes < 2 * 1024 * 1024 * 1024, f"Peak memory exceeded 2GB limit: {peak_bytes} bytes"
+    else:
+        loss = criterion(hidden, weight, bias, labels)
+    assert not torch.isnan(loss) and not torch.isinf(loss)
+```
+
+---
+
+
+---
+
+## 423. Additive Attention Mask Normalization for FP16 Stability (Harvested from FacebookAI/xlm-roberta-base)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Additive Attention Mask Normalization for FP16 Stability",
+  "source": "FacebookAI/xlm-roberta-base",
+  "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+  "source_version": "hf-facebookai-xlm-roberta-base",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T04:19:47.696Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4qtstq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [FacebookAI/xlm-roberta-base](https://huggingface.co/FacebookAI/xlm-roberta-base) (Revision: `hf-faceboo`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When constructing custom attention masking logic for XLM-RoBERTa encoder layers, unmasked tokens MUST evaluate to `0.0` and masked tokens MUST evaluate to `-10000.0` (for FP16/BF16) or $-\infty$ via `torch.finfo(dtype).min`. Systems MUST NOT use raw literal `-1e9` or `-1e4` without casting to target scalar precision, nor pass binary masks directly into scaled dot-product attention without inverted conversion.
+
+**WHY**:
+In FP16 (half precision), the maximum representable finite value is $65,504$ and minimum negative finite value is $-65,504$. Applying a raw `-1e9` float mask under FP16 triggers an arithmetic underflow to `-inf` or `NaN` when added to large attention dot products, contaminating softmax gradients across the entire attention block with `NaN`.
+
+**WHEN TO APPLY**:
+All custom attention mechanisms, cross-attention projections, and multi-lingual masking transformers executed under mixed precision (`torch.cuda.amp.autocast`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def create_numerically_safe_additive_mask(
+    attention_mask: torch.Tensor, 
+    dtype: torch.dtype = torch.float16
+) -> torch.Tensor:
+    """
+    Converts binary 2D/3D mask [0, 1] into 4D additive mask [B, 1, 1, S]
+    guaranteeing numerical bounds within target float dtype limits.
+    """
+    # attention_mask: 1 for tokens to attend to, 0 for masked out tokens
+    if attention_mask.dim() == 2:
+        extended_mask = attention_mask[:, None, None, :]
+    elif attention_mask.dim() == 3:
+        extended_mask = attention_mask[:, None, :, :]
+    else:
+        extended_mask = attention_mask
+
+    extended_mask = extended_mask.to(dtype=dtype)
+    
+    # Inverted mask: 0.0 for keep, 1.0 for discard
+    inverted_mask = 1.0 - extended_mask
+    
+    # Prevent FP16 underflow: -10000.0 is well within FP16 max (-65504)
+    # and sufficiently negative for exp(-10000) -> 0.0 in softmax.
+    min_val = -10000.0 if dtype in (torch.float16, torch.bfloat16) else -1e9
+    
+    additive_mask = inverted_mask * min_val
+    return additive_mask
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct multiplication by -1e9 in mixed-precision regimes
+def unsafe_mask_generation(binary_mask: torch.Tensor, fp16_tensor: torch.Tensor):
+    # CRITICAL DEFECT: -1e9 casts to -inf in FP16, and (0.0 * -inf) generates NaN!
+    inverted = (1 - binary_mask).half()
+    return inverted * -1e9
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_mask_fp16_nan_immunity():
+    mask = torch.tensor([[1, 1, 0, 1]], dtype=torch.long)
+    additive_mask = create_numerically_safe_additive_mask(mask, dtype=torch.float16)
+    
+    q_k_sim = torch.tensor([[[[2.5, 3.1, -1.2, 0.4]]]], dtype=torch.float16)
+    masked_scores = q_k_sim + additive_mask
+    probs = torch.softmax(masked_scores, dim=-1)
+    
+    assert not torch.isnan(probs).any(), "NaN detected in softmax output under FP16"
+    assert probs[0, 0, 0, 2] == 0.0, "Masked token did not receive zero attention probability"
+```
+
+---

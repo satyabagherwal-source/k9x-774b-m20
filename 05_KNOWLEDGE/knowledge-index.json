@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T04:15:48.683Z",
-  "total_verified_learnings": 4332,
+  "last_updated": "2026-10-12T04:19:47.721Z",
+  "total_verified_learnings": 4333,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -104798,6 +104798,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T04:15:48.683Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4qtstq": {
+      "learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4qtstq",
+      "source": "FacebookAI/xlm-roberta-base",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "slug": "hf-facebookai-xlm-roberta-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+      "source_version": "hf-facebookai-xlm-roberta-base",
+      "content_hash": "1e11afbfe188f9ba71e670dfdd0751bf05a250eb59cd3e6ca8534911de2d4512",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 421,
+          "title": "Fairseq Position Offset Indexing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 422,
+          "title": "Large Vocabulary Tied-Weight Cross-Entropy Memory Bounding",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 423,
+          "title": "Additive Attention Mask Normalization for FP16 Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T04:19:47.721Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
