@@ -656,3 +656,4 @@
 | `CYCLE-20261012-Q7RV` | `2026-10-12T16:52:50.011Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`d073f4a7...`) |
 | `CYCLE-20261012-UJ2R` | `2026-10-12T16:56:11.283Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`0740a81d...`) |
 | `CYCLE-20261012-Y64A` | `2026-10-12T16:59:01.114Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`1d19aa63...`) |
+| `CYCLE-20261012-207K` | `2026-10-12T17:02:00.080Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`55bc4aca...`) |
