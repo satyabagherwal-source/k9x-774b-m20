@@ -3,8 +3,8 @@
 > **Source Version**: `hf-abenzerps`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T05:44:53.103Z  
-> **Learning ID**: `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4tv88f`  
+> **Timestamp**: 2026-10-12T13:10:47.766Z  
+> **Learning ID**: `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv59so9i`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -12,22 +12,22 @@
 
 ---
 
-# Forensic Learning Record (Deep Inspection): abenzerps/Qwen-Image-2.1-Uncensored-GGUF
+# Forensic Learning Record (Deep Inspection): abenzerps/Qwen-Image-2.1-Uncensored-Quantized
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF](https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T05:44:52.259Z  
+> **Harvest Timestamp**: 2026-10-12T13:10:46.955Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
-- **Repository / Resource**: `abenzerps/Qwen-Image-2.1-Uncensored-GGUF`
+- **Repository / Resource**: `abenzerps/Qwen-Image-2.1-Uncensored-Quantized`
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2188658 downloads | 4004 likes
+- **Stars / Engagement**: 2188658 downloads | 4048 likes
 
 ---
 
