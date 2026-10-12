@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-QFTG",
-    "timestamp": "2026-10-11T18:01:19.252Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv44qfqt",
-    "contentHash": "0d3a5c0d1dc7e6a6c1397bf47581f5e022e9e58f2b4b988bb90f61d1169574d1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-U4C6",
     "timestamp": "2026-10-11T18:04:10.998Z",
     "repository": "Lightricks/LTX-2.5",
@@ -7490,6 +7475,21 @@
     "repository": "nvidia/Nemotron-3-Diarization",
     "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv5qsbav",
     "contentHash": "c4e3d9fb5d6fea19c614353cf418867735647ffa48f16d458d87802410357cbc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-W6LC",
+    "timestamp": "2026-10-12T21:09:24.960Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv5qw6ic",
+    "contentHash": "83339651819b0defbb6f3c55f17b3afb514047e20a3e8fad6bf29915a36246b5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
