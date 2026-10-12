@@ -365,9 +365,9 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "f55d3e2c4c8b40d1aac7379a5d2c86144ad202abb41de72a2d179ca47974e772",
-    "lastHarvestedAt": "2026-10-12T06:45:04.778Z",
-    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4w0mz1"
+    "contentHash": "ebf6fe3db54b6ecd533a7f710c2f4821d362b9e07ae1b86b2b9c1f41b8637612",
+    "lastHarvestedAt": "2026-10-12T14:28:09.976Z",
+    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv5ck64s"
   },
   "hf-lightricks-ltx-2.5": {
     "repository": "Lightricks/LTX-2.5",

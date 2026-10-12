@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T14:25:12.626Z",
-  "total_cycles_completed": 548,
-  "total_learnings_persisted": 548,
+  "last_updated": "2026-10-12T14:28:09.977Z",
+  "total_cycles_completed": 549,
+  "total_learnings_persisted": 549,
   "total_rules_promoted": 259,
   "history": [
-    {
-      "timestamp": "2026-10-12T02:49:00.643Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T02:52:13.121Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T14:25:12.626Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
       "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv5cgdac",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T14:28:09.977Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv5ck64s",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
