@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:23:52.203Z",
+  "last_updated": "2026-10-12T11:27:00.572Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1266,15 +1266,15 @@
       "repository": "Qwen/Qwen3-4B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-qwen-qwen3-4b-mv4pptwo",
-      "content_hash": "110954da03e60add19e174fb324ac157684fce41e9d287f352a41129291f4ba3",
-      "verified_at": "2026-10-12T03:48:42.873Z",
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-4b-mv5637a7",
+      "content_hash": "4682c551dbdcf675fabc3fe015c9a9dd5fc686f5447f1f06096041e74f9e2de5",
+      "verified_at": "2026-10-12T11:27:00.572Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T03:48:42.873Z"
+      "last_updated": "2026-10-12T11:27:00.572Z"
     },
     "FermionResearch/Phonon-2": {
       "repository": "FermionResearch/Phonon-2",

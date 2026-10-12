@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:23:52.202Z",
-  "total_cycles_completed": 494,
-  "total_learnings_persisted": 494,
+  "last_updated": "2026-10-12T11:27:00.571Z",
+  "total_cycles_completed": 495,
+  "total_learnings_persisted": 495,
   "total_rules_promoted": 244,
   "history": [
-    {
-      "timestamp": "2026-10-12T00:03:11.144Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T00:06:17.060Z",
       "repository": "Qwen/Qwen-Image-2.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T11:23:52.202Z",
       "repository": "speridlabs/iris-3b",
       "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv55z5we",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T11:27:00.571Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv5637a7",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
