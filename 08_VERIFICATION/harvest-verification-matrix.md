@@ -428,3 +428,4 @@
 | `CYCLE-20261012-LTYN` | `2026-10-12T03:45:36.239Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`40ed8500...`) |
 | `CYCLE-20261012-PTYU` | `2026-10-12T03:48:42.870Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`110954da...`) |
 | `CYCLE-20261012-TVAH` | `2026-10-12T03:51:51.209Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`3c336dda...`) |
+| `CYCLE-20261012-XSWK` | `2026-10-12T03:54:54.740Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`c4c25ccd...`) |

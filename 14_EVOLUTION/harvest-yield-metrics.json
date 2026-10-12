@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:51:51.212Z",
-  "total_cycles_completed": 369,
-  "total_learnings_persisted": 369,
+  "last_updated": "2026-10-12T03:54:54.742Z",
+  "total_cycles_completed": 370,
+  "total_learnings_persisted": 370,
   "total_rules_promoted": 161,
   "history": [
-    {
-      "timestamp": "2026-10-11T17:46:11.286Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T17:49:17.785Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T03:51:51.212Z",
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv4ptv8c",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T03:54:54.742Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4pxsuw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
