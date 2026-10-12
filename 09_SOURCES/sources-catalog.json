@@ -855,9 +855,9 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "4d51c7c5822486fcdd1b46125868e0d1ce2341ef577f218700947297eec07144",
-    "lastHarvestedAt": "2026-10-12T10:22:47.499Z",
-    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv53sm75"
+    "contentHash": "aa5249e5d11c68330d446f5b5e4f5dfe3152a06654515116dd7b4d9ca2261258",
+    "lastHarvestedAt": "2026-10-12T17:04:58.341Z",
+    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv5i5toe"
   },
   "hf-hexgrad-kokoro-82m": {
     "repository": "hexgrad/Kokoro-82M",
