@@ -5113,5 +5113,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-5MYU",
+    "timestamp": "2026-10-12T02:37:01.446Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6",
+    "contentHash": "aa76c071cfcd6dfc073bc54c03676801f94e7f63ac41ee7b837fd21b54df8eae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
