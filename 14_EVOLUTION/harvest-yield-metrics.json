@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T05:11:54.419Z",
-  "total_cycles_completed": 391,
-  "total_learnings_persisted": 391,
+  "last_updated": "2026-10-12T05:14:36.760Z",
+  "total_cycles_completed": 392,
+  "total_learnings_persisted": 392,
   "total_rules_promoted": 175,
   "history": [
-    {
-      "timestamp": "2026-10-11T18:51:49.736Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T18:54:37.342Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -1403,6 +1396,13 @@
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4sotdp",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T05:14:36.760Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv4ssaoi",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
