@@ -689,3 +689,4 @@
 | `CYCLE-20261012-AO3L` | `2026-10-12T18:32:43.137Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`f5693c7b...`) |
 | `CYCLE-20261012-EGBF` | `2026-10-12T18:35:39.675Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`590b970f...`) |
 | `CYCLE-20261012-I7GN` | `2026-10-12T18:38:34.823Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`3d40ad69...`) |
+| `CYCLE-20261012-MH8J` | `2026-10-12T18:41:54.115Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`031c13ae...`) |

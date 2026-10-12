@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-1J1U",
-    "timestamp": "2026-10-11T15:21:58.962Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
-    "contentHash": "cc0472cdb064d7348c3a5a7e3dfeacd8bba2ffba6a820d86c1663f6c12b923be",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-5AWF",
     "timestamp": "2026-10-11T15:24:55.023Z",
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "FacebookAI/xlm-roberta-base",
     "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv5li7en",
     "contentHash": "3d40ad69fa7a54f002a819f4d6b88d22b1bcf9686b5a12fdcb9311fd21bdb02c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-MH8J",
+    "timestamp": "2026-10-12T18:41:54.115Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv5lmh5f",
+    "contentHash": "031c13ae36a27c98115f7c01c06b2c026ccc88a60a5f6926defe6c3d771fab90",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
