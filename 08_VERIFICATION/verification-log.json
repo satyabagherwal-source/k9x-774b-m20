@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-5O89",
-    "timestamp": "2026-10-11T18:13:09.993Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv455o5m",
-    "contentHash": "a8bab2d2bffb012df7fe57f092e1e7c1a16c804ba00037487dc08587a34ae372",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-9BZ0",
     "timestamp": "2026-10-11T18:16:00.732Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
     "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv5r7lub",
     "contentHash": "25d6742bcfd2849d61a0e15be4947aedc3bdac8f4a4b8ef0b290a978db68d7e9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-BRP0",
+    "timestamp": "2026-10-12T21:21:32.148Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv5rbrmh",
+    "contentHash": "602df1e69355c9baf08cec03b6719b119469ba804b351ceffa16df80f1b96d8c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
