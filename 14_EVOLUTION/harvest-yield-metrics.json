@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:54:54.742Z",
-  "total_cycles_completed": 370,
-  "total_learnings_persisted": 370,
+  "last_updated": "2026-10-12T03:57:50.986Z",
+  "total_cycles_completed": 371,
+  "total_learnings_persisted": 371,
   "total_rules_promoted": 161,
   "history": [
-    {
-      "timestamp": "2026-10-11T17:49:17.785Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T17:52:17.763Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T03:54:54.742Z",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4pxsuw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T03:57:50.986Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4q1kth",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

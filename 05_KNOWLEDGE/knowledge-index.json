@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:54:54.710Z",
-  "total_verified_learnings": 4325,
+  "last_updated": "2026-10-12T03:57:50.934Z",
+  "total_verified_learnings": 4326,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -104614,6 +104614,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T03:54:54.710Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4q1kth": {
+      "learning_id": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4q1kth",
+      "source": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "slug": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "content_hash": "9f61fef334b2da5fd32cf951caab73e925f30ddd7ff23586b0d0d3288b3022ef",
+      "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T03:57:50.934Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

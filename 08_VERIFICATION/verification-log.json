@@ -5503,5 +5503,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-1KW7",
+    "timestamp": "2026-10-12T03:57:50.983Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4q1kth",
+    "contentHash": "9f61fef334b2da5fd32cf951caab73e925f30ddd7ff23586b0d0d3288b3022ef",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
