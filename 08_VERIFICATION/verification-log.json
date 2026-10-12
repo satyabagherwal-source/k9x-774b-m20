@@ -7288,5 +7288,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-JNRM",
+    "timestamp": "2026-10-12T11:11:48.754Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv55jnpx",
+    "contentHash": "9c92f1c6a30556a8a738a4b64a3faf45361ac0eec43e0db9796d433f5c651cf0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
