@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T12:33:19.912Z",
-  "total_cycles_completed": 516,
-  "total_learnings_persisted": 516,
+  "last_updated": "2026-10-12T12:36:12.472Z",
+  "total_cycles_completed": 517,
+  "total_learnings_persisted": 517,
   "total_rules_promoted": 249,
   "history": [
-    {
-      "timestamp": "2026-10-12T01:09:48.667Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T01:12:41.022Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T12:33:19.912Z",
       "repository": "BAAI/bge-base-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv58ghq2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T12:36:12.472Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv58k6w6",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

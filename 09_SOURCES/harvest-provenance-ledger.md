@@ -558,3 +558,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-google-vit-base-patch16-224-mv587rz1` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-12T12:26:33.239Z |
 | `learn-huggingface-hf-google-gemma-4-31b-it-mv58c4j4` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-12T12:29:56.186Z |
 | `learn-huggingface-hf-baai-bge-base-en-v1-5-mv58ghq2` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-12T12:33:19.911Z |
+| `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv58k6w6` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-12T12:36:12.471Z |
