@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T02:01:11.285Z",
-  "total_verified_learnings": 4288,
+  "last_updated": "2026-10-12T02:04:01.114Z",
+  "total_verified_learnings": 4289,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -103651,6 +103651,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T02:01:11.285Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs",
+      "source": "Cloudflare/clef-flash",
+      "repository": "Cloudflare/clef-flash",
+      "slug": "hf-cloudflare-clef-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "content_hash": "3181bdfb619135b98662fd2d806d9af96dd9801abe77304c89848fc1d81d0fe9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 404,
+          "title": "[Consistent Dtype Across Model and Processor]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 405,
+          "title": "[Special Token Integrity in Tokenizer]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 406,
+          "title": "[Joint Head Input Shape Contract]",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T02:04:01.114Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

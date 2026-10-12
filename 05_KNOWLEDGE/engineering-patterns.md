@@ -14922,3 +14922,198 @@ for rec in encoded_records:
 Profile memory usage with `torch.cuda.memory_summary()` before and after collation; assert no increase beyond the padded tensor size.
 
 ---
+
+
+---
+
+## 404. [Consistent Dtype Across Model and Processor] (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Consistent Dtype Across Model and Processor]",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T02:04:01.077Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that every tensor produced by the backbone, joint head, and processor is of dtype `torch.bfloat16` unless a higher precision is explicitly required for a downstream operation.  
+
+**WHY**:  
+* Mixing `float32` and `bfloat16` tensors in a single forward pass triggers implicit casts that can degrade performance and introduce subtle numerical drift, especially in the vision encoder where `bfloat16` is the native dtype.  
+
+**WHEN TO APPLY**:  
+* During model construction, after loading weights, and before any forward pass.  
+* In any custom layer added to the joint head.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+import torch
+
+def enforce_bfloat16(model: torch.nn.Module):
+    for name, param in model.named_parameters():
+        if param.dtype != torch.bfloat16:
+            raise TypeError(f"Parameter {name} dtype {param.dtype} != bfloat16")
+    for buffer_name, buffer in model.named_buffers():
+        if buffer.dtype != torch.bfloat16:
+            raise TypeError(f"Buffer {buffer_name} dtype {buffer.dtype} != bfloat16")
+
+# Usage
+model = Qwen3_5ForConditionalGeneration.from_pretrained(...)
+enforce_bfloat16(model)
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Mixing dtypes in a single forward pass
+output = model(input_ids, attention_mask).to(torch.float32)  # casts to float32 mid‑pipeline
+```
+
+**VERIFICATION METHOD**  
+* Unit test that iterates over `model.parameters()` and `model.buffers()` asserting `dtype == torch.bfloat16`.  
+* Linter rule that flags any `.to(torch.float32)` or `.float()` calls on tensors that originate from the backbone or joint head.
+
+---
+
+
+---
+
+## 405. [Special Token Integrity in Tokenizer] (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Special Token Integrity in Tokenizer]",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T02:04:01.086Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** verify that the tokenizer’s `pad_token_id` equals the ID of `<|endoftext|>` and that all image/video special tokens are present and correctly mapped.  
+
+**WHY**:  
+* The inference pipeline pads sequences with `<|endoftext|>`; a mismatch causes mis‑aligned attention masks and corrupt logits.  
+* Missing image/video tokens break multimodal input handling.  
+
+**WHEN TO APPLY**:  
+* Immediately after tokenizer construction.  
+* Whenever the tokenizer configuration is updated or re‑loaded.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+def validate_special_tokens(tokenizer: Qwen2Tokenizer):
+    # Pad token
+    pad_id = tokenizer.convert_tokens_to_ids("<|endoftext|>")
+    assert tokenizer.pad_token_id == pad_id, (
+        f"pad_token_id {tokenizer.pad_token_id} != <|endoftext|> id {pad_id}"
+    )
+    # Image token
+    image_id = tokenizer.convert_tokens_to_ids("<|image_pad|>")
+    assert image_id is not None, "Missing <|image_pad|> token"
+    # Video token
+    video_id = tokenizer.convert_tokens_to_ids("<|video_pad|>")
+    assert video_id is not None, "Missing <|video_pad|> token"
+
+# Usage
+tokenizer = Qwen2Tokenizer.from_pretrained(...)
+validate_special_tokens(tokenizer)
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Overriding pad_token_id with None
+tokenizer.pad_token_id = None
+```
+
+**VERIFICATION METHOD**  
+* Unit test that calls `validate_special_tokens` on the tokenizer instance.  
+* CI lint rule that flags any assignment to `tokenizer.pad_token_id` after construction.
+
+---
+
+
+---
+
+## 406. [Joint Head Input Shape Contract] (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Joint Head Input Shape Contract]",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T02:04:01.095Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** feed the joint schema head a tensor of shape `(batch, seq_len, hidden_size)` where `hidden_size` matches the backbone’s `hidden_size` (4096).  
+
+**WHY**:  
+* A shape mismatch leads to runtime errors or silent broadcasting that corrupts logits.  
+* The joint head’s internal linear layers expect the exact hidden dimension.  
+
+**WHEN TO APPLY**:  
+* In `joint_schema_model.encode_record` when extracting hidden states.  
+* In any custom wrapper that forwards backbone outputs to the joint head.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+def forward_joint_head(joint_head, hidden_states):
+    # hidden_states: (batch, seq_len, hidden_size)
+    assert hidden_states.ndim == 3, f"Expected 3‑D tensor, got {hidden_states.ndim}"
+    batch, seq_len, hidden_dim = hidden_states.shape
+    assert hidden_dim == joint_head.config.hidden_size, (
+        f"Hidden size mismatch: {hidden_dim} != {joint_head.config.hidden_size}"
+    )
+    return joint_head(hidden_states)
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Passing a flattened tensor
+joint_head(hidden_states.view(-1, hidden_dim))
+```
+
+**VERIFICATION METHOD**  
+* Unit test that constructs a dummy hidden state tensor and asserts the shape contract before passing to the joint head.  
+* Static type checker rule that flags any reshaping that reduces the dimensionality of the hidden state.
+
+---

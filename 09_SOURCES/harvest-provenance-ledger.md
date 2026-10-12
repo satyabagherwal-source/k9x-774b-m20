@@ -374,3 +374,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-google-embeddinggemma-2-mv4ljeb8` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-12T01:51:44.279Z |
 | `learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-12T01:54:55.456Z |
 | `learn-huggingface-hf-cloudflare-clef-mv4lvjtz` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-12T02:01:11.336Z |
+| `learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-12T02:04:01.157Z |

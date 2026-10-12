@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T02:01:11.337Z",
-  "total_cycles_completed": 333,
-  "total_learnings_persisted": 333,
-  "total_rules_promoted": 147,
+  "last_updated": "2026-10-12T02:04:01.158Z",
+  "total_cycles_completed": 334,
+  "total_learnings_persisted": 334,
+  "total_rules_promoted": 150,
   "history": [
-    {
-      "timestamp": "2026-10-11T15:34:27.159Z",
-      "repository": "Infisical/infisical",
-      "learningId": "learn-github-infisical-infisical-mv3zhkae",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T15:42:29.606Z",
       "repository": "test-org/gateway-verifier",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T02:01:11.337Z",
       "repository": "Cloudflare/clef",
       "learningId": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T02:04:01.158Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
