@@ -4723,5 +4723,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-8XHV",
+    "timestamp": "2026-10-12T01:15:36.211Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7",
+    "contentHash": "f19821686f1ea401afac4bfae0ceea25a3f7632eac7314249db2092b94af28cd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
