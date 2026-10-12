@@ -615,9 +615,9 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "e90a20a27e1292c405743022ade3f29289bc7d6f4a2d53fd9565f388e5e9b4b6",
-    "lastHarvestedAt": "2026-10-12T08:53:19.166Z",
-    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv50ljzg"
+    "contentHash": "95d6f34d8efd01d127a1689bb200fc1123039b1d2e14873135ab4a7fd1e93efd",
+    "lastHarvestedAt": "2026-10-12T15:49:20.864Z",
+    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv5fgkjb"
   },
   "hf-psrben-visionhope": {
     "repository": "PSRben/VisionHOPE",

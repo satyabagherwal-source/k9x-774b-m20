@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T15:46:01.980Z",
-  "total_cycles_completed": 574,
-  "total_learnings_persisted": 574,
+  "last_updated": "2026-10-12T15:49:20.866Z",
+  "total_cycles_completed": 575,
+  "total_learnings_persisted": 575,
   "total_rules_promoted": 279,
   "history": [
-    {
-      "timestamp": "2026-10-12T04:10:01.676Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4qh8nk",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T04:12:46.707Z",
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T15:46:01.980Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv5fcb2i",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T15:49:20.866Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv5fgkjb",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
