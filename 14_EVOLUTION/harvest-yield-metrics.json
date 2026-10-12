@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:56:21.150Z",
-  "total_cycles_completed": 690,
-  "total_learnings_persisted": 690,
-  "total_rules_promoted": 330,
+  "last_updated": "2026-10-12T21:59:30.297Z",
+  "total_cycles_completed": 691,
+  "total_learnings_persisted": 691,
+  "total_rules_promoted": 333,
   "history": [
-    {
-      "timestamp": "2026-10-12T11:14:47.325Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv55nhgy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T11:17:46.412Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1403,6 +1396,13 @@
       "repository": "akhilaaa3/Jev-Omni",
       "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv5skjht",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:59:30.297Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv5solec",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
