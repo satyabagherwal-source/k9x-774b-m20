@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-RABJ",
-    "timestamp": "2026-10-11T10:34:04.927Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv3ora9g",
-    "contentHash": "4589ffd6134c6ba355a0a7eb58ab0179e629862db414070292c4d1974e0239d8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-V1HV",
     "timestamp": "2026-10-11T10:37:00.115Z",
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -7490,6 +7475,21 @@
     "repository": "FrancisRing/Prism",
     "learningId": "learn-huggingface-hf-francisring-prism-mv5asb07",
     "contentHash": "68b1a00c842de418827d2e680cf270e855666c316e277445a63606be46426fd3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-W2HK",
+    "timestamp": "2026-10-12T13:41:25.784Z",
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv5aw2eq",
+    "contentHash": "2683896ada3bbd8561543926691215bc41f87addb7acb55dd7e05eba76b53b32",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

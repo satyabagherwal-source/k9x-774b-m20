@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T13:38:30.310Z",
-  "total_cycles_completed": 537,
-  "total_learnings_persisted": 537,
+  "last_updated": "2026-10-12T13:41:25.787Z",
+  "total_cycles_completed": 538,
+  "total_learnings_persisted": 538,
   "total_rules_promoted": 257,
   "history": [
-    {
-      "timestamp": "2026-10-12T02:16:11.114Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-m3-mv4meu5h",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T02:18:56.978Z",
       "repository": "Qwen/Qwen3-0.6B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T13:38:30.310Z",
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-hf-francisring-prism-mv5asb07",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T13:41:25.787Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv5aw2eq",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
