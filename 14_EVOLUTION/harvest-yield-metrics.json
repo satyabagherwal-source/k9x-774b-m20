@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T02:09:46.876Z",
-  "total_cycles_completed": 336,
-  "total_learnings_persisted": 336,
-  "total_rules_promoted": 150,
+  "last_updated": "2026-10-12T02:13:09.960Z",
+  "total_cycles_completed": 337,
+  "total_learnings_persisted": 337,
+  "total_rules_promoted": 152,
   "history": [
-    {
-      "timestamp": "2026-10-11T15:49:20.635Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv400pp8",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T15:52:07.891Z",
       "repository": "argmaxinc/whisperkit-coreml",
@@ -1403,6 +1396,13 @@
       "repository": "google-bert/bert-base-uncased",
       "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T02:13:09.960Z",
+      "repository": "google/electra-base-discriminator",
+      "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
