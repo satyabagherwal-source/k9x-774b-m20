@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-RMN4",
-    "timestamp": "2026-10-11T10:06:21.280Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv3nrmky",
-    "contentHash": "57bfb6f6f81f2c2683e101d10dde7aa5dcf0853a3a2be684169959990749181c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-WN5M",
     "timestamp": "2026-10-11T10:10:15.226Z",
     "repository": "Cactus-Compute/whistle",
@@ -7490,6 +7475,21 @@
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
     "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv5a0dt0",
     "contentHash": "0a680c10df709da34b91539d9d7032e1379af0a16c896eb4e7e0d49af283a529",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-4AGK",
+    "timestamp": "2026-10-12T13:19:49.748Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv5a4adr",
+    "contentHash": "d418053f2497952e5204a2cfb7633c370e56473c05fec687d37d8e2828d8618d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

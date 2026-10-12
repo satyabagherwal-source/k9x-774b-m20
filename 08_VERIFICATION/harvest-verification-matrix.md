@@ -589,3 +589,4 @@
 | `CYCLE-20261012-SOC9` | `2026-10-12T13:10:47.865Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`712d9223...`) |
 | `CYCLE-20261012-WK0A` | `2026-10-12T13:13:48.874Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`fb9a7eea...`) |
 | `CYCLE-20261012-0DVQ` | `2026-10-12T13:16:47.558Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`0a680c10...`) |
+| `CYCLE-20261012-4AGK` | `2026-10-12T13:19:49.748Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`d418053f...`) |
