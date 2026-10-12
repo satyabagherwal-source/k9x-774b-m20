@@ -4903,5 +4903,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-JEDX",
+    "timestamp": "2026-10-12T01:51:44.277Z",
+    "repository": "google/embeddinggemma-2",
+    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv4ljeb8",
+    "contentHash": "a9813a33c97015da24b4e3d43bfe8086ae215adf78fa94787ecb5fa39b906a8b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
