@@ -305,9 +305,9 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "5c67f9f75dda5fb4fc6ade4b2f9f77cf709eaaf8661bab3e3ec07ad15e09860e",
-    "lastHarvestedAt": "2026-10-12T06:27:13.288Z",
-    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv4vdo6a"
+    "contentHash": "881355eff68ef239b2aadc0ad03aafb0dc18d7d441679e80c1be7163976f52a0",
+    "lastHarvestedAt": "2026-10-12T14:09:44.663Z",
+    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv5bwh9o"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
