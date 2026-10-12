@@ -489,3 +489,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4zm0yc` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-12T08:25:41.548Z |
 | `learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4zsto3` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-10-12T08:30:58.711Z |
 | `learn-github-iliyami-macsai-mv50297p` | `https://github.com/iliyami/MacSai` | `06271a8f` | Multi-dimensional audit evidence | 2026-10-12T08:38:18.764Z |
+| `learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv50ho00` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-10-12T08:50:17.765Z |

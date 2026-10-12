@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:38:18.765Z",
-  "total_cycles_completed": 447,
-  "total_learnings_persisted": 447,
+  "last_updated": "2026-10-12T08:50:17.766Z",
+  "total_cycles_completed": 448,
+  "total_learnings_persisted": 448,
   "total_rules_promoted": 225,
   "history": [
-    {
-      "timestamp": "2026-10-11T21:40:37.002Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T21:43:28.543Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "iliyami/MacSai",
       "learningId": "learn-github-iliyami-macsai-mv50297p",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T08:50:17.766Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv50ho00",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
