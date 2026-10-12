@@ -680,3 +680,4 @@
 | `CYCLE-20261012-BKAM` | `2026-10-12T18:05:25.246Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`3a606756...`) |
 | `CYCLE-20261012-FI4R` | `2026-10-12T18:08:29.067Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`a463b19a...`) |
 | `CYCLE-20261012-JAWT` | `2026-10-12T18:11:26.333Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`b9eaff06...`) |
+| `CYCLE-20261012-N2TP` | `2026-10-12T18:14:22.477Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`03a9ef63...`) |

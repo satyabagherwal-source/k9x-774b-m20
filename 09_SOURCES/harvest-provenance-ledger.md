@@ -663,3 +663,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-speridlabs-iris-3b-mv5kbk7q` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-12T18:05:25.249Z |
 | `learn-huggingface-hf-qwen-qwen3-4b-mv5kfi1z` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-12T18:08:29.070Z |
 | `learn-huggingface-hf-fermionresearch-phonon-2-mv5kjaug` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-12T18:11:26.334Z |
+| `learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv5kn2rb` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-12T18:14:22.479Z |
