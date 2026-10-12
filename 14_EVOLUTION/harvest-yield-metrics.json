@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:32:53.768Z",
-  "total_cycles_completed": 497,
-  "total_learnings_persisted": 497,
-  "total_rules_promoted": 244,
+  "last_updated": "2026-10-12T11:36:39.543Z",
+  "total_cycles_completed": 498,
+  "total_learnings_persisted": 498,
+  "total_rules_promoted": 246,
   "history": [
-    {
-      "timestamp": "2026-10-12T00:12:27.123Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T00:15:22.221Z",
       "repository": "Lightricks/LTX-2.5",
@@ -1403,6 +1396,13 @@
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv56ars3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T11:36:39.543Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv56flya",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

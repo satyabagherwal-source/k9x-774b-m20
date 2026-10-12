@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:32:53.716Z",
-  "total_verified_learnings": 4452,
+  "last_updated": "2026-10-12T11:36:39.493Z",
+  "total_verified_learnings": 4453,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -108111,6 +108111,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T11:32:53.715Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv56flya": {
+      "learning_id": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv56flya",
+      "source": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "slug": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "content_hash": "4f8de801ac68588b1356c7a9ea14662266385ae92e981548cbc3af2fd1dc03c3",
+      "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 500,
+          "title": "Closed-Loop Video Generation Keyframe Symmetry Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 501,
+          "title": "LoRA Adapter Semantic Decoupling Principle",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T11:36:39.493Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
