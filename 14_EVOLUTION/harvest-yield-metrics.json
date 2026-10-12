@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:36:53.241Z",
-  "total_cycles_completed": 684,
-  "total_learnings_persisted": 684,
+  "last_updated": "2026-10-12T21:39:49.813Z",
+  "total_cycles_completed": 685,
+  "total_learnings_persisted": 685,
   "total_rules_promoted": 328,
   "history": [
-    {
-      "timestamp": "2026-10-12T10:56:31.279Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv54zzru",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T10:59:18.208Z",
       "repository": "bigscience/bloom",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T21:36:53.241Z",
       "repository": "fastino/GLiNER2.5-Decide",
       "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv5rvid0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:39:49.813Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv5rzalc",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

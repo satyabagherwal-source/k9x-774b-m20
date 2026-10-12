@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-SBCH",
-    "timestamp": "2026-10-11T18:30:46.385Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
-    "contentHash": "fffc86c0b54511b4cfd73e19e3f3071c8582e9b28bb47f392e0cd7d954ac637a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-W2WD",
     "timestamp": "2026-10-11T18:33:42.061Z",
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -7490,6 +7475,21 @@
     "repository": "fastino/GLiNER2.5-Decide",
     "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv5rvid0",
     "contentHash": "c51f0c2342c8f4e22fd3bc2106b7139050d0f16f4949816324544536534b30f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-ZANM",
+    "timestamp": "2026-10-12T21:39:49.810Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv5rzalc",
+    "contentHash": "f181ea38fa87e7e05163093d4b59ba30967c8e910618ad15b7c69090393af9e6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
