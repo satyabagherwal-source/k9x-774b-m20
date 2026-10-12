@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:41:00.283Z",
-  "total_cycles_completed": 719,
-  "total_learnings_persisted": 719,
+  "last_updated": "2026-10-12T23:44:06.253Z",
+  "total_cycles_completed": 720,
+  "total_learnings_persisted": 720,
   "total_rules_promoted": 350,
   "history": [
-    {
-      "timestamp": "2026-10-12T12:45:13.125Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv58vs1r",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T12:48:31.600Z",
       "repository": "zai-org/GLM-5.3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T23:41:00.283Z",
       "repository": "Comfy-Org/MiniMax-H3",
       "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv5wb4i8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T23:44:06.253Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv5wf416",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
