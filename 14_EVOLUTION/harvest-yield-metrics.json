@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:12:24.830Z",
-  "total_cycles_completed": 676,
-  "total_learnings_persisted": 676,
+  "last_updated": "2026-10-12T21:15:27.453Z",
+  "total_cycles_completed": 677,
+  "total_learnings_persisted": 677,
   "total_rules_promoted": 320,
   "history": [
-    {
-      "timestamp": "2026-10-12T10:32:06.084Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv544l7i",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T10:35:24.450Z",
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T21:12:24.830Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv5r01ao",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:15:27.453Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv5r3y7i",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
