@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T15:34:16.089Z",
-  "total_cycles_completed": 570,
-  "total_learnings_persisted": 570,
+  "last_updated": "2026-10-12T15:37:18.735Z",
+  "total_cycles_completed": 571,
+  "total_learnings_persisted": 571,
   "total_rules_promoted": 279,
   "history": [
-    {
-      "timestamp": "2026-10-12T03:57:50.986Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4q1kth",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T04:00:45.464Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T15:34:16.089Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv5ex6es",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T15:37:18.735Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv5f13c5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

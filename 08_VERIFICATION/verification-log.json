@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-R345",
-    "timestamp": "2026-10-11T12:25:54.053Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv3sr31t",
-    "contentHash": "435531ac2d25bc3d3583a57226260a35ce616e6091a2399c4b3f012c238df22f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-V139",
     "timestamp": "2026-10-11T12:28:58.053Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
     "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv5ex6es",
     "contentHash": "0b550faffdd0449d97c92daa7c390b6934a89d7e152f4bd6865151aa01442f8f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-13EZ",
+    "timestamp": "2026-10-12T15:37:18.731Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv5f13c5",
+    "contentHash": "ee5c54afd2b1fab13d9ae25a65010bbd93b253ccd8f20baef583a5a993bbe4e9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
