@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:13:36.509Z",
-  "total_cycles_completed": 429,
-  "total_learnings_persisted": 429,
-  "total_rules_promoted": 189,
+  "last_updated": "2026-10-12T07:17:59.822Z",
+  "total_cycles_completed": 430,
+  "total_learnings_persisted": 430,
+  "total_rules_promoted": 192,
   "history": [
-    {
-      "timestamp": "2026-10-11T20:47:04.695Z",
-      "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4anlp3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T20:49:49.405Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T07:13:36.509Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv4x1bos",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T07:17:59.822Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv4x6yv0",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

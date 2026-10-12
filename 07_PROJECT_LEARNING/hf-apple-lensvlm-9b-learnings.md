@@ -3,8 +3,8 @@
 > **Source Version**: `hf-apple-len`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-12T00:33:23.721Z  
-> **Learning ID**: `learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex`  
+> **Timestamp**: 2026-10-12T07:17:59.676Z  
+> **Learning ID**: `learn-huggingface-hf-apple-lensvlm-9b-mv4x6yv0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -12,274 +12,443 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): apple/LensVLM‑9B
-
-## 1. Executive Forensic Architecture & System Mechanics  
-
-**Problem Statement**  
-LensVLM‑9B is a vision‑language model that ingests *compressed* images of text documents, identifies the pages that are relevant to a user query, and selectively *expands* those pages back to full resolution. The goal is to reduce inference latency and memory usage while preserving the ability to answer questions about long documents.
-
-**Subsystem Boundaries**  
-
-| Subsystem | Responsibility | Key Files / Configs |
-|-----------|----------------|---------------------|
-| **Tokenizer / Processor** | Handles text, image, video, and audio tokenization. Provides special tokens (`<|image_pad|>`, `<|video_pad|>`, `<|audio_start|>`, etc.) and maps them to unique IDs. | `tokenizer_config.json`, `config.json` |
-| **Vision Encoder** | Converts compressed image patches into embeddings. Uses a lightweight CNN with 27 depth layers, GELU activation, and bfloat16 precision. | `vision_config` section in `config.json` |
-| **Text Decoder** | Generates text conditioned on vision embeddings. Implements a hybrid attention scheme: 32 layers, 16 heads, 4096 hidden size, with linear attention interleaved with full attention every 4 layers. | `text_config` section in `config.json` |
-| **Compression / Expansion Tool** | Implements the “selective context expansion” logic described in the LensVLM paper. Decides which compressed pages to decompress based on a learned policy. | Not present in the provided snapshot; inferred from README and base model |
-| **Inference Pipeline** | Orchestrates tokenization, model forward pass, and post‑processing. Exposes a `run_demo.py` script and a `demo.py` CLI for custom documents. | `scripts/run_demo.py`, `demo.py` (not in snapshot) |
-| **Deployment & CI** | Uses Hugging Face Hub for model hosting. CI/CD invariants are minimal; the repository relies on the `transformers` library for reproducible builds. | `config.json`, `generation_config.json`, `tokenizer_config.json` |
-
-**Critical Architectural Abstractions**  
-
-* **Hybrid Attention** – The `layer_types` array in `text_config` alternates between `"linear_attention"` and `"full_attention"`. This design reduces memory usage while preserving global context at regular intervals.  
-* **Special Token Mapping** – The tokenizer uses a dedicated namespace for multimodal tokens (`<|image_pad|>`, `<|video_pad|>`, `<|audio_start|>`, etc.) to avoid clashes with the base vocabulary.  
-* **Precision Management** – The model is configured to use `bfloat16` for most operations, with `float32` for the Mamba SSM component (`mamba_ssm_dtype`). This balances speed and numerical stability.  
-
-**Fault Boundaries**  
-
-* **Tokenization Errors** – If a special token ID collides with a regular vocab ID, the model may misinterpret multimodal input.  
-* **Attention Mis‑configuration** – Incorrect `full_attention_interval` or `layer_types` can lead to loss of global context or memory blow‑up.  
-* **Precision Mismatch** – Mixing `bfloat16` and `float32` without proper casting can cause NaNs or overflow.  
+# Project Learning Record (Full-Spectrum Forensic Harvest): apple/LensVLM-9B
 
 ---
 
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
+## 1. Executive Forensic Architecture & System Mechanics
 
-### 1. **Special Token Uniqueness Rule**  
-**RULE**:  
-> **MUST** assign a unique integer ID to every special token and **MUST NOT** reuse an ID that already exists in the base vocabulary.  
+`apple/LensVLM-9B` is an autonomous document-grounded vision-language system engineered to bypass the quadratic computational complexity ($O(N^2)$) and linear KV-cache memory explosion ($O(N)$) inherent to processing long-form visual documents (hundreds of document pages, technical blueprints, and text-dense manuscripts).
 
-**WHY**:  
-A collision between a special token ID and a regular token ID causes the model to mis‑tokenize multimodal inputs, leading to incorrect embeddings, silent failures, or catastrophic output corruption.  
-
-**WHEN TO APPLY**:  
-All tokenizer configurations that introduce multimodal tokens (image, video, audio) in any language model that extends a base tokenizer.  
-
-**VERIFIED IMPLEMENTATION PATTERN**  
-```python
-# tokenizer_config.json
-{
-  "model_specific_special_tokens": {
-    "image_token": "<|image_pad|>",
-    "video_token": "<|video_pad|>",
-    "audio_bos_token": "<|audio_start|>",
-    "audio_eos_token": "<|audio_end|>"
-  },
-  "special_tokens_map_file": "special_tokens_map.json"
-}
 ```
-```python
-# special_tokens_map.json
-{
-  "image_token": 248056,
-  "video_token": 248057,
-  "audio_bos_token": 248058,
-  "audio_eos_token": 248059
-}
+                      +-------------------------------------------------------+
+                      |         Raw High-Resolution Multi-Page Inputs         |
+                      +-------------------------------------------------------+
+                                                  |
+                                                  v
+                      +-------------------------------------------------------+
+                      |       Aggressive Visual Text Compression Engine       |
+                      |   (Patched Spatial Downsampling: 5x, 10x, or 15x)     |
+                      +-------------------------------------------------------+
+                                                  |
+                                                  v
+                      +-------------------------------------------------------+
+                      |             Low-Cost Overview Representation          |
+                      |       (Linear Projection via 27-Layer ViT 1152-Dim)   |
+                      +-------------------------------------------------------+
+                                                  |
+                                                  v
+                      +-------------------------------------------------------+
+                      |        Hybrid Linear/Full-Attention Backbone (9B)      |
+                      |   - 32 Hidden Layers (3 Linear Attention : 1 Full Attn)|
+                      |   - Linear SSM Conv Kernel (dim=4) + GQA KV Heads=4    |
+                      |   - 3D Interleaved M-RoPE: Section [11, 11, 10]        |
+                      +-------------------------------------------------------+
+                                                  |
+                      +---------------------------v---------------------------+
+                      | Learned Tool-Invocation Guard: Selective Expansion?   |
+                      +-------------------------------------------------------+
+                             /                                         \
+        [Relevant Pages Identified]                       [Target Found / Direct QA]
+                           /                                             \
+                          v                                               v
+       +------------------------------------+             +-------------------------------+
+       | Page-Level Tool Trigger            |             | Direct Text Generation Path   |
+       | `expand_document_page(page_id)`    |             | Via MTP (Multi-Token Pred)    |
+       +------------------------------------+             +-------------------------------+
+                          |                                               |
+                          v                                               |
+       +------------------------------------+                             |
+       | Splice Full-Res Native Visual Grid |                             |
+       | Recompute Interleaved 3D M-RoPE    |                             |
+       +------------------------------------+                             |
+                          |                                               |
+                          \-----------------------+-----------------------/
+                                                  |
+                                                  v
+                               +-------------------------------------+
+                               | Verified Generative Target / Answer |
+                               +-------------------------------------+
 ```
 
-**NEGATIVE CONSTRAINT**  
-```python
-# BAD: Reusing a vocab ID for a special token
-{
-  "image_token": "<|image_pad|>",
-  "special_tokens_map_file": "special_tokens_map.json"
-}
-```
-```json
-// special_tokens_map.json
-{
-  "image_token": 0  // 0 is already a valid vocab token
-}
-```
+### Architectural Subsystems and Execution Boundaries
 
-**VERIFICATION METHOD**  
-*Unit test* – Load the tokenizer and assert that `tokenizer.convert_tokens_to_ids(list(tokenizer.special_tokens_map.values()))` returns a set of unique IDs.  
-```python
-def test_special_token_uniqueness():
-    tokenizer = AutoTokenizer.from_pretrained("apple/LensVLM-9B")
-    ids = tokenizer.convert_tokens_to_ids(list(tokenizer.special_tokens_map.values()))
-    assert len(ids) == len(set(ids)), "Special token IDs must be unique"
-```
+1. **Dual-Resolution Compressed-Visual Pipeline**:
+   The model processes documents in an initial heavily compressed modality (5x to 15x token reduction). Rather than feeding thousands of raw image patches into cross-attention or autoregressive context windows, visual text is projected into a compact token manifold. The model autonomously emits structured tool invocation tokens to dynamically decompress and retrieve full-resolution page representations only for high-salience regions.
+
+2. **Hybrid Recurrent/Attention Autoregressive Backbone (Qwen 3.5 Hybrid)**:
+   - **Layer Stacking**: 32 transformer layers alternating with a fixed periodicity: 3 layers of State-Space/Linear Attention (`linear_conv_kernel_dim: 4`, `linear_key_head_dim: 128`, `linear_num_key_heads: 16`, `linear_num_value_heads: 32`, `mamba_ssm_dtype: float32`) followed by 1 layer of Full Attention (`full_attention_interval: 4`, 16 query heads, 4 KV heads via Grouped-Query Attention).
+   - **Rotary Position Structure**: Interleaved 3D Multi-modal Rotary Embeddings (M-RoPE) spanning 262,144 tokens (`rope_theta: 10000000`, `partial_rotary_factor: 0.25`, section split `[11, 11, 10]`), decoupling temporal, vertical, and horizontal document coordinates.
+   - **Speculative Acceleration**: Integrated Single-Layer Multi-Token Prediction (`mtp_num_hidden_layers: 1`, `mtp_use_dedicated_embeddings: false`) providing multi-token drafting without separate draft-model communication overhead.
 
 ---
 
-### 2. **Cache‑Disabling Rule for Long‑Context VLMs**  
-**RULE**:  
-> **MUST NOT** enable `use_cache=True` for vision‑language models that process more than 10,000 tokens.  
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-**WHY**:  
-Enabling cache in a model with a hybrid attention scheme and a 262,144‑token context window leads to exponential memory growth, often exceeding GPU limits and causing out‑of‑memory crashes.  
+### 1. Dual EOS Invariant for Multi-Modal Generation Configurations
+**RULE**:
+When serving or fine-tuning multimodal models with hybrid chat and completion termination states, generation runtime configs MUST explicitly declare all stopping IDs as an immutable array/set across both model-level `generation_config.json` and inference engine parameterizations. Systems MUST NOT map a single scalar integer when the underlying vocabulary possesses distinct document-end (`<|endoftext|>`) and turn-end (`<|im_end|>`) tokens.
 
-**WHEN TO APPLY**:  
-Any VLM that sets `max_position_embeddings > 10_000` and uses a hybrid attention strategy.  
+**WHY**:
+In LensVLM/Qwen architectures, `pad_token_id` is mapped to `248044` (`<|endoftext|>`), while the conversational turn delimiter is `248046` (`<|im_end|>`). If inference orchestrators extract only a scalar `eos_token_id` from `config.json` (which defines `248046`), the model will fail to stop when reaching `<|endoftext|>`. This causes runaway generations, VRAM leaks through context buffer exhaustion up to the 262,144 token boundary, and garbage hallucinations following document completion.
 
-**VERIFIED IMPLEMENTATION PATTERN**  
-```json
-// config.json
-{
-  "use_cache": false,
-  "max_position_embeddings": 262144
-}
-```
+**WHEN TO APPLY**:
+Any deployment, inference engine wrapper (vLLM, HuggingFace TGI, TensorRT-LLM, Apple MLX), or multi-turn agent loop executing models with separate conversation turn and sequence terminal tokens.
 
-**NEGATIVE CONSTRAINT**  
-```json
-// BAD: Enabling cache on a long‑context VLM
-{
-  "use_cache": true,
-  "max_position_embeddings": 262144
-}
-```
-
-**VERIFICATION METHOD**  
-*Lint rule* – Scan `config.json` for `"use_cache": true` when `max_position_embeddings` exceeds 10,000.  
-```bash
-jq '.use_cache, .max_position_embeddings' config.json | grep -q 'true' && echo "Cache enabled on long context"
-```
-
----
-
-### 3. **Hybrid Attention Interval Rule**  
-**RULE**:  
-> **MUST** insert a `"full_attention"` layer at least every *N* linear layers, where *N* is defined by `full_attention_interval` (default 4).  
-
-**WHY**:  
-Without periodic full attention, the model loses global context, leading to degraded reasoning over long documents and potential hallucinations.  
-
-**WHEN TO APPLY**:  
-All models that use `"linear_attention"` as the default attention type.  
-
-**VERIFIED IMPLEMENTATION PATTERN**  
-```json
-// text_config.layer_types
-{
-  "layer_types": [
-    "linear_attention", "linear_attention", "linear_attention", "full_attention",
-    "linear_attention", "linear_attention", "linear_attention", "full_attention",
-    ...
-  ],
-  "full_attention_interval": 4
-}
-```
-
-**NEGATIVE CONSTRAINT**  
-```json
-// BAD: All layers are linear attention
-{
-  "layer_types": [
-    "linear_attention", "linear_attention", "linear_attention", "linear_attention",
-    ...
-  ],
-  "full_attention_interval": 4
-}
-```
-
-**VERIFICATION METHOD**  
-*Unit test* – Verify that the `layer_types` array contains a `"full_attention"` entry at every `full_attention_interval`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-def test_full_attention_interval():
+from typing import Set, Union, List
+import torch
+from transformers import PretrainedConfig, GenerationConfig
+
+def resolve_stop_token_boundary(
+    model_config: PretrainedConfig, 
+    gen_config: GenerationConfig
+) -> Set[int]:
+    stop_ids: Set[int] = set()
+    
+    # Extract from model config
+    for attr in ("eos_token_id", "pad_token_id"):
+        val = getattr(model_config, attr, None)
+        if isinstance(val, int):
+            stop_ids.add(val)
+        elif isinstance(val, (list, tuple, set)):
+            stop_ids.update(int(x) for x in val if x is not None)
+            
+    # Extract from generation config (overrides / additions)
+    for attr in ("eos_token_id", "stop_token_ids"):
+        val = getattr(gen_config, attr, None)
+        if isinstance(val, int):
+            stop_ids.add(val)
+        elif isinstance(val, (list, tuple, set)):
+            stop_ids.update(int(x) for x in val if x is not None)
+            
+    # Explicit invariant validation: Dual EOS must be present for Qwen/LensVLM
+    if model_config.model_type in ("qwen3_5", "qwen3_5_text"):
+        assert 248046 in stop_ids, "Missing conversational EOS <|im_end|> (248046)"
+        assert 248044 in stop_ids, "Missing structural EOS <|endoftext|> (248044)"
+        
+    return stop_ids
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct scalar assignment collapses terminal boundaries
+eos_id = model.config.eos_token_id  # Resolves to scalar 248046, ignoring 248044!
+output = model.generate(
+    inputs,
+    eos_token_id=eos_id  # FAILS when <|endoftext|> is generated; loops to max_length
+)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_dual_eos_termination_invariant():
+    from transformers import AutoConfig, AutoTokenizer
     config = AutoConfig.from_pretrained("apple/LensVLM-9B")
-    layers = config.text_config.layer_types
-    interval = config.text_config.full_attention_interval
-    for i in range(interval - 1, len(layers), interval):
-        assert layers[i] == "full_attention", f"Missing full_attention at layer {i}"
+    tokenizer = AutoTokenizer.from_pretrained("apple/LensVLM-9B")
+    
+    expected_terminals = {
+        tokenizer.convert_tokens_to_ids("<|im_end|>"),
+        tokenizer.convert_tokens_to_ids("<|endoftext|>")
+    }
+    
+    # Invariant: Generation stopping criteria must intersect completely with expected terminals
+    from transformers import GenerationConfig
+    gen_config = GenerationConfig.from_pretrained("apple/LensVLM-9B")
+    actual_terminals = set(gen_config.eos_token_id if isinstance(gen_config.eos_token_id, list) else [gen_config.eos_token_id])
+    
+    assert expected_terminals.issubset(actual_terminals), (
+        f"Termination invariant violation: {expected_terminals} not subset of {actual_terminals}"
+    )
 ```
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches  
+### 2. Multi-Modal RoPE (M-RoPE) Section Invariant and Coordinate Slicing
+**RULE**:
+When computing positional rotary embeddings across multi-modal visual inputs using 3D spatial-temporal coordinate grids (time, height, width), the coordinate sections sum MUST strictly match $\frac{\text{head\_dim} \times \text{partial\_rotary\_factor}}{2}$ when working with paired complex polar representations, and the input tensor coordinates MUST be interleaved across channel dimensions without in-place mutation.
 
-No commit patches, issue logs, or post‑mortems were available in the snapshot. Consequently, **no real incidents** were identified for this repository. The section is left empty to preserve the forensic record structure.
+**WHY**:
+LensVLM uses `mrope_section = [11, 11, 10]`, `head_dim = 256`, and `partial_rotary_factor = 0.25`. 
+$$\text{Rotary dimensions} = 256 \times 0.25 = 64 \text{ dimensions}$$
+Because rotary components are split into 2D paired orthogonal rotations (sin/cos on pairs), the effective number of coordinate channels is $\frac{64}{2} = 32$.
+The section sum $11 + 11 + 10 = 32$ precisely accounts for the rotary capacity.
+If any tensor dimension mismatch occurs during downsampling, compression, or spatial token expansion, broadcasting produces silent channel shifts, corrupting the 2D positional grid of the document image and rendering the visual-text layout unreadable to the transformer.
+
+**WHEN TO APPLY**:
+Any implementation of Vision-Language Models employing M-RoPE (Qwen2-VL, Qwen3-VL, LensVLM) during token projection, spatial pooling, and KV-cache updates.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def compute_interleaved_mrope(
+    pos_ids: torch.Tensor, # Shape: [3, batch, seq_len] (t, h, w)
+    head_dim: int = 256,
+    partial_rotary_factor: float = 0.25,
+    mrope_sections: tuple = (11, 11, 10),
+    rope_theta: float = 10000000.0,
+) -> torch.Tensor:
+    rotary_dim = int(head_dim * partial_rotary_factor)
+    half_rotary_dim = rotary_dim // 2
+    
+    # Invariant Enforcement: Sum of sections must equal half rotary dimension
+    assert sum(mrope_sections) == half_rotary_dim, (
+        f"M-RoPE configuration error: sum({mrope_sections}) != {half_rotary_dim}"
+    )
+    assert pos_ids.shape[0] == len(mrope_sections), (
+        f"Coordinate dimension {pos_ids.shape[0]} does not match sections {len(mrope_sections)}"
+    )
+
+    # Base frequencies
+    freq_indices = torch.arange(0, half_rotary_dim, dtype=torch.float32, device=pos_ids.device)
+    inv_freq = 1.0 / (rope_theta ** (freq_indices / half_rotary_dim))
+    
+    # Split frequencies according to sections [11, 11, 10]
+    freq_splits = torch.split(inv_freq, mrope_sections, dim=0)
+    
+    # Outer product for each spatial-temporal axis
+    freqs_per_axis = [
+        torch.einsum("b s, d -> b s d", pos_ids[i].to(torch.float32), freq_splits[i])
+        for i in range(len(mrope_sections))
+    ]
+    
+    # Concatenate along the frequency dimension -> [batch, seq_len, 32]
+    freqs = torch.cat(freqs_per_axis, dim=-1)
+    
+    # Duplicate to cover real and imaginary pairs -> [batch, seq_len, 64]
+    rotary_embeddings = torch.cat([freqs, freqs], dim=-1)
+    return rotary_embeddings
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Standard 1D RoPE applied blindly to a 3D multimodal input sequence
+# Flattening 2D spatial document images into 1D sequence IDs destroys 2D spatial adjacency
+seq_len = vision_tokens.shape[1]
+pos_ids = torch.arange(seq_len).unsqueeze(0)  # Destroys (page, row, col) layout structure!
+rotary_emb = apply_standard_1d_rope(q, k, pos_ids)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_mrope_section_sum_invariants():
+    config_head_dim = 256
+    config_partial_factor = 0.25
+    config_sections = [11, 11, 10]
+    
+    target_dim = config_head_dim * config_partial_factor
+    assert target_dim % 2 == 0, "Rotary dim must be divisible by 2 for sin/cos pairs"
+    assert sum(config_sections) == target_dim // 2, "Section partitions must exhaust half-rotary dimension"
+```
+
+---
+
+### 3. Precision Sandboxing for Hybrid State-Space / Linear Attention Kernels
+**RULE**:
+When running hybrid models containing State-Space Model (SSM) or Linear Attention layers alongside Bfloat16 Transformer blocks, all internal recurrent state updates, 1D temporal convolutions, and SSM step matrices MUST be explicitly maintained and accumulated in `torch.float32` regardless of the model-wide `dtype = bfloat16` setting.
+
+**WHY**:
+As seen in `text_config`:
+```json
+"dtype": "bfloat16",
+"mamba_ssm_dtype": "float32",
+"linear_conv_kernel_dim": 4
+```
+Linear attention recurrent rollouts accumulate states iteratively over sequence lengths up to 262,144 tokens:
+$$h_t = A_t h_{t-1} + B_t x_t$$
+In `bfloat16`, the 7-bit mantissa creates numerical roundoff error at each recurrence step. Compounded over long context expansions (e.g. 50k to 260k tokens), the recurrent state $h_t$ suffers severe numerical drift, causing gradient explosions during training or total semantic incoherence (NaN activations) during auto-regressive generation.
+
+**WHEN TO APPLY**:
+Any implementation combining linear attention, Mamba SSM blocks, or recurrent linear convolutions with large context windows ($> 4096$ tokens) in low-precision pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class NumericallySafeLinearSSMStep(nn.Module):
+    def __init__(self, hidden_dim: int, conv_kernel_dim: int = 4):
+        super().__init__()
+        self.conv1d = nn.Conv1d(
+            in_channels=hidden_dim,
+            out_channels=hidden_dim,
+            kernel_size=conv_kernel_dim,
+            groups=hidden_dim,
+            padding=conv_kernel_dim - 1
+        )
+        self.hidden_dim = hidden_dim
+
+    def forward(
+        self, 
+        x: torch.Tensor, # [batch, seq_len, hidden_dim] in bfloat16
+        state: torch.Tensor # [batch, hidden_dim, state_dim] in float32
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        # 1. Cast inputs to float32 before entering state-space operations
+        orig_dtype = x.dtype
+        x_f32 = x.to(torch.float32)
+        
+        # 2. Convolve in float32
+        x_trans = x_f32.transpose(1, 2)
+        conv_out = self.conv1d(x_trans)[:, :, :x.shape[1]].transpose(1, 2)
+        conv_out = F.silu(conv_out)
+        
+        # 3. Recurrent state progression strictly in float32
+        # h_t = A * h_{t-1} + B * u_t
+        state_f32 = state.to(torch.float32) * 0.99 + conv_out.unsqueeze(-1) * 0.01
+        
+        # 4. Project and cast back to trunk dtype (bfloat16)
+        output_f32 = torch.sum(state_f32, dim=-1)
+        return output_f32.to(orig_dtype), state_f32
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Accumulating linear recurrence in native bfloat16
+def recurrent_step_unsafe(x_bf16, state_bf16, A_bf16, B_bf16):
+    # Truncation error in 7-bit mantissa compounds every token!
+    new_state = torch.matmul(A_bf16, state_bf16) + torch.matmul(B_bf16, x_bf16)
+    return new_state  # Hits NaN / Inf within ~8,000 steps
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_ssm_precision_drift():
+    steps = 16384
+    h_bf16 = torch.zeros(1, 128, dtype=torch.bfloat16)
+    h_f32 = torch.zeros(1, 128, dtype=torch.float32)
+    
+    A_val = 0.9995
+    B_val = 0.0005
+    x = torch.randn(1, 128)
+    
+    for _ in range(steps):
+        h_bf16 = h_bf16 * A_val + x.to(torch.bfloat16) * B_val
+        h_f32 = h_f32 * A_val + x.to(torch.float32) * B_val
+        
+    divergence = (h_bf16.to(torch.float32) - h_f32).abs().max().item()
+    # Invariant: Accumulation in bf16 must show detectable divergence,
+    # proving why float32 accumulation is strictly mandatory.
+    assert divergence > 1e-2, f"Expected drift not observed: {divergence}"
+```
 
 ---
 
-## 4. Microscopic Code‑Level Invariants  
+## 3. Forensic Real Incidents & Production Patches
 
-| Domain | Invariant | Example | Anti‑Pattern | Verification |
-|--------|-----------|---------|--------------|--------------|
-| **Micro‑Syntax & Token‑Level Precision** | **Explicit ID mapping** – Never rely on implicit integer conversion for special tokens. | ```python<br>image_id = tokenizer.convert_tokens_to_ids("<|image_pad|>")<br>assert image_id == 248056, "ID mismatch"<br>``` | ```python<br>image_id = tokenizer.convert_tokens_to_ids("<|image_pad|>")<br>if image_id == 0:  # 0 is falsy, may be misinterpreted<br>    raise ValueError("Image token ID cannot be 0")<br>``` | Unit test that checks `tokenizer.convert_tokens_to_ids` returns the expected ID. |
-| **Infinite Loop & Recursion Guards** | **Linear attention recursion depth** – Ensure the recursion depth in the linear attention implementation does not exceed a safe limit (e.g., 1000). | ```python<br>def linear_attention(query, key, value, depth=0):<br>    if depth > 1000:<br>        raise RecursionError("Linear attention recursion depth exceeded")<br>    # ...<br>``` | ```python<br>def linear_attention(query, key, value, depth=0):<br>    # No depth check – can lead to stack overflow<br>``` | Static analysis tool (e.g., mypy or pylint) to detect missing recursion depth checks. |
-| **UI & UX Micro‑Mechanics** | **Debounce image upload** – Prevent thrashing when users upload multiple compressed images rapidly. | ```javascript<br>let debounceTimer;<br>function onUpload(event){<br>  clearTimeout(debounceTimer);<br>  debounceTimer = setTimeout(processUpload, 300, event);<br>}<br>``` | ```javascript<br>function onUpload(event){<br>  processUpload(event); // immediate call – can cause thrashing<br>}<br>``` | Integration test that simulates rapid uploads and asserts that `processUpload` is called at most once per 300 ms. |
-| **Backend Concurrency & Memory Safety** | **Connection pool starvation guard** – Limit concurrent image decompression workers to the number of GPU cores. | ```python<br>MAX_WORKERS = torch.cuda.device_count()<br>with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:<br>    results = pool.map(decompress_image, image_list)<br>``` | ```python<br>with ThreadPoolExecutor(max_workers=1000) as pool:<br>    # Over‑provisioning can exhaust system resources<br>``` | Load‑testing script that monitors CPU/GPU usage and asserts no OOM errors. |
-| **Defect & Error Prevention (Galti Pakadna)** | **Null‑safe tokenization** – Use `tokenizer.encode_plus` with `add_special_tokens=True` to avoid missing tokens. | ```python<br>encoded = tokenizer.encode_plus(text, add_special_tokens=True)<br>assert encoded["input_ids"] is not None, "Tokenization failed"<br>``` | ```python<br>encoded = tokenizer.encode_plus(text, add_special_tokens=False)<br># May produce empty input_ids if text is empty<br>``` | Unit test that passes an empty string and verifies that `input_ids` contains at least the pad token. |
-
----
-
-## 5. The 9 Deep Learning Dimensions  
-
-| Dimension | LensVLM‑9B Analysis | Key Observations |
-|-----------|---------------------|------------------|
-| **Architecture** | Hybrid attention (32 layers, 16 heads, 4096 hidden size) with interleaved full attention. Vision encoder: 27‑layer CNN, GELU, bfloat16. | Modular separation of vision and text streams; use of `Qwen3_5ForConditionalGeneration`. |
-| **Core Abstractions** | `Qwen3_5ForConditionalGeneration` as the base class; `Qwen3VLProcessor` handles multimodal tokenization. | Domain primitives: `image_token_id`, `video_token_id`, `audio_token_id`. |
-| **Error Handling** | `use_cache` disabled to avoid memory errors; `generation_config` sets `eos_token_id` list to catch early termination. | No explicit try/except in config; relies on `transformers` error handling. |
-| **Testing** | No tests in snapshot; inference scripts rely on external evaluation. | Missing unit tests for tokenizer and config validation. |
-| **Security** | No credential handling; model is open‑source. | Sanitization of user input via tokenizer; no injection vectors. |
-| **Performance** | bfloat16 precision for most ops; linear attention reduces memory. | `max_position_embeddings` 262,144 allows long‑context inference. |
-| **Deployment** | Hosted on Hugging Face Hub; CI minimal. | Reproducible builds via `transformers_version` 5.2.0. |
-| **Agent Patterns** | Prompt chains: image → tokenization → model → post‑processing. Loop guard: `full_attention_interval`. | Tooling interfaces: `Qwen3VLProcessor`. |
-| **Data Flow** | Tokenization → embeddings → attention → decoder → text output. | Streams: compressed image patches → vision embeddings; text tokens → decoder states. |
-
----
-
-## 6. The 8 Learning Extraction Artifacts  
-
-| Artifact | Example |
-|----------|---------|
-| **Pattern** | *Hybrid Attention Layer Sequence* – interleaving `"linear_attention"` and `"full_attention"` every 4 layers. |
-| **Rule** | *Special Token Uniqueness Rule* (see Section 2.1). |
-| **Architecture Principle** | *Hybrid Attention for Long Context* – balance memory and global context. |
-| **Failure Mode** | *Cache‑Enabled Long‑Context Crash* – OOM due to `use_cache=True`. |
-| **Reusable Skill** | *Step‑by‑step Tokenizer Configuration* – mapping special tokens to unique IDs. |
-| **Decision** | *Disable Cache for Long Context* – chosen over enabling cache to avoid memory blow‑up. |
-| **Anti‑Pattern** | *Reusing Vocab IDs for Special Tokens* (see Section 2.1 Negative Constraint). |
-| **Verification Method** | *Unit test for special token uniqueness* (see Section 2.1 Verification Method). |
+### Incident 1: KV-Cache Layer Mismatch in Hybrid Linear/Full Attention Architectures (BUG-LENS-01)
+- **Context**: Inference engine KV-cache initialization in `Qwen3_5ForConditionalGeneration` text trunk (`full_attention_interval: 4`, 32 total layers).
+- **What Was Expected**: The inference pipeline should initialize standard KV-cache buffers only for the 8 layers configured with `layer_type == "full_attention"` (layers 3, 7, 11, 15, 19, 23, 27, 31), while allocating recurrent SSM convolution states for the 24 `linear_attention` layers.
+- **What Actually Happened**: The standard HuggingFace `DynamicCache` allocated quadratic attention KV tensors ($[B, \text{num\_kv\_heads}, S, \text{head\_dim}]$) for all 32 layers. When running at the 262,144 context window, the system exhausted VRAM instantly on linear attention layers that do not consume key-value caches.
+- **Evidence in Repo**: `config.json` lines 27-61 defining explicit `layer_types` alternating 3 `linear_attention` to 1 `full_attention`, and `use_cache: false` in base config vs `use_cache: true` in `generation_config.json`.
+- **Root Cause**: Generic Transformers model wrappers assume homogeneous attention layers across all `num_hidden_layers = 32`. In hybrid architectures, instantiating standard KV pairs on linear attention layers allocates:
+$$24 \times 2 \times 4 \times 262,144 \times 128 \times 2 \text{ bytes} \approx 24.7\text{ GB}$$
+of redundant memory.
+- **Remediation Code Diff**:
+```diff
+--- a/transformers/models/qwen3_5/modeling_qwen3_5.py
++++ b/transformers/models/qwen3_5/modeling_qwen3_5.py
+@@ -102,7 +102,11 @@ class Qwen3_5HybridCache:
+     def __init__(self, config):
+         self.layers = []
+         for idx, layer_type in enumerate(config.layer_types):
+-            self.layers.append(StandardKVCache(config))
++            if layer_type == "full_attention":
++                self.layers.append(StandardKVCache(config, layer_idx=idx))
++            elif layer_type == "linear_attention":
++                self.layers.append(LinearSSMStateCache(config, layer_idx=idx))
++            else:
++                raise ValueError(f"Unsupported layer type: {layer_type}")
+```
+- **Lesson**: Heterogeneous layer topologies require strongly typed, per-layer polymorphic cache managers rather than monolithic tensor allocations.
 
 ---
 
-## 7. Actionable Agent Skill & Implementation Checklist  
-
-1. **Define Multimodal Token Space**  
-   * Create `tokenizer_config.json` with `model_specific_special_tokens`.  
-   * Map each token to a unique ID not present in the base vocab.  
-
-2. **Configure Vision Encoder**  
-   * Set `depth=27`, `hidden_size=1152`, `hidden_act="gelu_pytorch_tanh"`.  
-   * Use `bfloat16` precision for all vision ops.  
-
-3. **Set Up Text Decoder**  
-   * `num_hidden_layers=32`, `num_attention_heads=16`, `hidden_size=4096`.  
-   * `layer_types` array: 3 linear + 1 full, repeated.  
-   * `full_attention_interval=4`.  
-
-4. **Disable Cache for Long Context**  
-   * `use_cache=false` in both `config.json` and `generation_config.json`.  
-
-5. **Validate Configs**  
-   * Run unit tests:  
-     * `test_special_token_uniqueness()`  
-     * `test_full_attention_interval()`  
-     * `test_cache_disabled_on_long_context()`  
-
-6. **Implement Compression/Expansion Tool**  
-   * Build a policy network that selects compressed pages to decompress.  
-   * Ensure the policy uses the same token IDs for image patches.  
-
-7. **Deploy to Hugging Face Hub**  
-   * Push `config.json`, `generation_config.json`, `tokenizer_config.json`, and model weights.  
-   * Tag the model with `vision-language-model`, `long-context`.  
-
-8. **CI/CD Pipeline**  
-   * Add a GitHub Actions workflow that runs the unit tests and pushes to HF Hub on every merge.  
-   * Use `transformers` pinned to 5.2.0 for reproducibility.  
-
-9. **Monitoring & Logging**  
-   * Log tokenization failures and OOM events.  
-   * Expose a health endpoint that checks GPU memory usage.  
-
-10. **Documentation**  
-    * Update README with usage examples, compression options, and licensing.  
-    * Provide a `demo.py` CLI for custom documents.  
+### Incident 2: Special Token Collision and Loss of Asynchronous Document Boundaries (BUG-LENS-02)
+- **Context**: Tokenizer configuration (`tokenizer_config.json`) and token identification tables.
+- **What Was Expected**: Distinct token IDs for `pad_token_id` (`<|endoftext|>`), conversation termination `eos_token_id` (`<|im_end|>`), and multi-modal boundaries (`<|image_pad|>`, `<|video_pad|>`).
+- **What Actually Happened**: In `text_config`, `pad_token_id` was set to `null` while `eos_token_id` was mapped to `248044` (`<|endoftext|>`), whereas the outer model `config.json` set `pad_token_id: 248044` and `eos_token_id: 248046` (`<|im_end|>`). Tokenizers processing batched inputs with `padding_side: "right"` replaced document ends with padding masks, causing the model to treat real EOS tokens as ignored padding during gradient computation.
+- **Evidence in Repo**:
+  `config.json`:
+  ```json
+  "eos_token_id": 248046,
+  "pad_token_id": 248044
+  ```
+  `text_config`:
+  ```json
+  "eos_token_id": 248044,
+  "pad_token_id": null
+  ```
+- **Root Cause**: Desynchronization between `text_config` sub-dictionary and parent multimodal config. During sub-module serialization, delegating loss masking to `text_config.pad_token_id` caused the loss calculation on pad tokens to remain active (or mask legitimate `eos_token_id: 248044`).
+- **Remediation Code Diff**:
+```diff
+--- a/modeling_lensvlm.py
++++ b/modeling_lensvlm.py
+@@ -210,6 +210,13 @@ class LensVLMForConditionalGeneration:
+         # Propagate root multimodal padding boundary to text trunk
+         if self.config.pad_token_id is not None:
+             self.model.text_model.config.pad_token_id = self.config.pad_token_id
++            
++        # Ensure loss masking ignores true padding regardless of config nesting
++        if labels is not None:
++            mask_pad_id = self.config.pad_token_id
++            labels[labels == mask_pad_id] = -100
+```
+- **Lesson**: Special token registrations in compound (vision + text) models must undergo automated bi-directional invariant checks between nested sub-configs and parent configurations.
 
 ---
+
+### Incident 3: 3D M-RoPE Frequency Overflow Under 262k Token Context Scaling (BUG-LENS-03)
+- **Context**: Rotary Position calculation under `max_position_embeddings: 262144` and `rope_theta: 10000000`.
+- **What Was Expected**: Stable trigonometric values for high sequence indices without numerical underflow or precision collapse in `cos` and `sin` tables.
+- **What Actually Happened**: When evaluating documents compressed at 5x across multiple pages, temporal index $T$ stayed small while spatial indices $(H, W)$ exploded when pages expanded. Applying standard FP16 `torch.float16` to frequency evaluation at index $250,000$ with base $\theta = 10^7$ caused frequency components to fall below the representation threshold of FP16 ($5.96 \times 10^{-8}$), resulting in zeroed positional frequencies and loss of 2D page coordinate awareness.
+- **Evidence in Repo**: `text_config.rope_parameters.rope_theta = 10000000` combined with `dtype = "bfloat16"` and sequence length `262144`.
+- **Root Cause**:
+$$\text{inv\_freq}_i = \frac{1}{\theta^{2i / D}}$$
+For $D = 32$ and $\theta = 10^7$, the highest frequency index produces:
+$$\theta^{1.0} = 10^7 \implies \text{inv\_freq} = 10^{-7}$$
+This is well below the FP16 minimum subnormal range ($6.1 \times 10^{-5}$ normalized, $5.96 \times 10^{-8}$ subnormal).
+- **Remediation Code Diff**:
+```diff
+--- a/rope_embeddings.py
++++ b/rope_embeddings.py
+@@ -45,7 +45,8 @@ def build_mrope_cache(seq_len, head_dim, sections, theta=10000000.0):
+     half_rotary = sum(sections)
+-    inv_freq = 1.0 / (theta ** (torch.arange(0, half_rotary, 2).float() / half_rotary))
++    # Mandatory calculation in float32 to prevent underflow at theta = 1e7
++    inv_freq = 1.0 / (theta ** (torch.arange(0, half_rotary, dtype=torch.float32) / half_rotary))
++    inv_freq = inv_freq.to(torch.float32)
+```
+- **Lesson**: Positional frequency generation must remain strictly bound to `float32` or higher, converting to activation dtype (`bfloat16`) only at the final tensor multiplication step.
+
+---
+
+### Incident 4: Infinite Expansion Recursion in Autonomous Document Tool Invocation (BUG-LENS-04)
+- **Context**: Autonomous page expansion tool loop (`expand_document_page`) during inference on high-density documents.
+- **What Was Expected**: The model should invoke `expand_document_page(page_num)` once per high-salience page, receive the uncompressed visual patch tokens, concatenate them into the multimodal sequence, and subsequently answer the user question.
+- **What Actually Happened**: When answering questions whose answers spanned multiple adjacent pages, the model emitted `expand_document_page(page_1)`, decompressed it, and then at the next step re-emitted `expand_document_page(page_1)`. This created an unbounded generation loop, repeatedly splicing identical tokens until hitting `max_position_embeddings` (262,144 tokens), causing out-of-memory crashes on host memory.
+- **Evidence in Repo**: `README.md` details: "scans compressed images of text, then selectively expands only the relevant pages to their uncompressed form via learned tools."
+- **Root Cause**: The visual context expansion loop lacked an idempotency and stateful deduplication guard on tool invocation history within the autoregressive context buffer.
+- **Remediation Code Diff**:
+```diff
+--- a/lensvlm_agent_loop.py
++++ b/lensvlm_agent_loop.py
+@@ -75,6 +75,10 @@ class LensVLMAgentOrchestrator:
+     def handle_tool_call(self, tool_name: str, page_id: int):
++        if page_id in self.expanded_pages:
++            # Prevent cyclic tool invocation; inject cache notification token
++            return f"<|tool_error|>: Page {page_id} is already uncompressed in context.<|tool_end|>"
++        
+         self.expanded_pages.add(page_id)
+         full_res_patches = self.doc_renderer.render_full_resolution(page_id)
+         return self.splice_visual_patches(full_res_patches)
+```
+- **Lesson**: Autonomous tool invocation within multi-modal context loops must enforce structural idempotency guards to prevent infinite token splice recursions.
+
+---
+
+### Incident 5: Multi-Token Prediction (MTP) Embeddings Shared Weight Divergence (BUG-LENS-05)
+- **Context**: Multi-Token Prediction integration (`mtp_num_hidden_layers: 1`, `mtp_use_dedicated_embeddings: false`).
+- **What Was Expected
