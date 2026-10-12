@@ -4603,5 +4603,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-EAFY",
+    "timestamp": "2026-10-12T00:51:46.654Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc",
+    "contentHash": "049de2656f2b9a6ac8ce13241125eb6eb10dcf7c1cfee4d75c2d7ccf6db835c1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

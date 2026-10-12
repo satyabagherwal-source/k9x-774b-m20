@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T00:48:35.301Z",
-  "total_cycles_completed": 310,
-  "total_learnings_persisted": 310,
+  "last_updated": "2026-10-12T00:51:46.656Z",
+  "total_cycles_completed": 311,
+  "total_learnings_persisted": 311,
   "total_rules_promoted": 136,
   "history": [
-    {
-      "timestamp": "2026-10-11T14:22:31.891Z",
-      "repository": "colinhacks/zod",
-      "learningId": "learn-github-colinhacks-zod-mv3wx2in",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T14:23:27.655Z",
       "repository": "test-org/gateway-verifier",
@@ -1403,6 +1396,13 @@
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T00:51:46.656Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
