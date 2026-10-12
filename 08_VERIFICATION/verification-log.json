@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-2JH7",
-    "timestamp": "2026-10-11T16:46:45.019Z",
-    "repository": "autonomous-ai/openharness",
-    "learningId": "learn-github-autonomous-ai-openharness-mv422jff",
-    "contentHash": "cca6e6e0602b39fd0c7d797f986eeab44458db6abaad6075bdf926917248f0fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-KQB4",
     "timestamp": "2026-10-11T17:00:53.680Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv5o27jy",
     "contentHash": "06498cd0fae08f9edc46d64104dfbc246f0c46dd862fce597c5c0b6cb54da082",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-61SA",
+    "timestamp": "2026-10-12T19:53:06.442Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv5o61pg",
+    "contentHash": "56f82b9684a58448f97b579422c19e74550acd008fb66adde3d6d32a779ebd01",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
