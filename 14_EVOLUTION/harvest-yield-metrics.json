@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:15:06.480Z",
-  "total_cycles_completed": 412,
-  "total_learnings_persisted": 412,
+  "last_updated": "2026-10-12T06:18:04.226Z",
+  "total_cycles_completed": 413,
+  "total_learnings_persisted": 413,
   "total_rules_promoted": 181,
   "history": [
-    {
-      "timestamp": "2026-10-11T19:55:33.016Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T19:58:37.526Z",
       "repository": "google/electra-base-discriminator",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T06:15:06.480Z",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4uy3dq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:18:04.226Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4v1wik",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -3,8 +3,8 @@
 > **Source Version**: `hf-autotrust`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-11T23:45:02.308Z  
-> **Learning ID**: `learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4`  
+> **Timestamp**: 2026-10-12T06:18:04.124Z  
+> **Learning ID**: `learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4v1wik`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4](https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-11T23:45:01.537Z  
+> **Harvest Timestamp**: 2026-10-12T06:18:03.303Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

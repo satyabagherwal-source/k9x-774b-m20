@@ -6133,5 +6133,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-1WLB",
+    "timestamp": "2026-10-12T06:18:04.223Z",
+    "repository": "autotrust/GEV-26B-Decide-NVFP4",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4v1wik",
+    "contentHash": "34654a99bfa523f66badb04d56955c4cff57adc91cd83a269ee4efa291dddfb8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
