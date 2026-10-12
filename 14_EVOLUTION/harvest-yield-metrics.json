@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T04:10:01.676Z",
-  "total_cycles_completed": 375,
-  "total_learnings_persisted": 375,
+  "last_updated": "2026-10-12T04:12:46.707Z",
+  "total_cycles_completed": 376,
+  "total_learnings_persisted": 376,
   "total_rules_promoted": 164,
   "history": [
-    {
-      "timestamp": "2026-10-11T18:04:11.000Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T18:07:06.527Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T04:10:01.676Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4qh8nk",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T04:12:46.707Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4qkrzs",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

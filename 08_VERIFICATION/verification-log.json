@@ -5578,5 +5578,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-KS1D",
+    "timestamp": "2026-10-12T04:12:46.705Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4qkrzs",
+    "contentHash": "8ad0789c786f726bcd3b0573edec82864275b1045be44a5c3ec96f353d8b420c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
