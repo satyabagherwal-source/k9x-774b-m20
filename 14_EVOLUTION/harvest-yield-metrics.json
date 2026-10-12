@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T04:19:47.767Z",
-  "total_cycles_completed": 378,
-  "total_learnings_persisted": 378,
+  "last_updated": "2026-10-12T04:22:33.831Z",
+  "total_cycles_completed": 379,
+  "total_learnings_persisted": 379,
   "total_rules_promoted": 167,
   "history": [
-    {
-      "timestamp": "2026-10-11T18:13:09.995Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv455o5m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T18:16:00.734Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -1403,6 +1396,13 @@
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4qtstq",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T04:22:33.831Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv4qxczq",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

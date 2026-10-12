@@ -437,3 +437,4 @@
 | `CYCLE-20261012-KS1D` | `2026-10-12T04:12:46.705Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`8ad0789c...`) |
 | `CYCLE-20261012-OOH5` | `2026-10-12T04:15:48.713Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`44f47ee2...`) |
 | `CYCLE-20261012-TSXG` | `2026-10-12T04:19:47.764Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 421, Rule 422, Rule 423` | Yes (`1e11afbf...`) |
+| `CYCLE-20261012-XD2C` | `2026-10-12T04:22:33.828Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`25382c06...`) |
