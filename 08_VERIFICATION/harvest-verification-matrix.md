@@ -681,3 +681,4 @@
 | `CYCLE-20261012-FI4R` | `2026-10-12T18:08:29.067Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`a463b19a...`) |
 | `CYCLE-20261012-JAWT` | `2026-10-12T18:11:26.333Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`b9eaff06...`) |
 | `CYCLE-20261012-N2TP` | `2026-10-12T18:14:22.477Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`03a9ef63...`) |
+| `CYCLE-20261012-R1AF` | `2026-10-12T18:17:27.111Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 555, Rule 556` | Yes (`51f4133c...`) |

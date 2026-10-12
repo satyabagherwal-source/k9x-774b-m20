@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T18:14:22.480Z",
-  "total_cycles_completed": 622,
-  "total_learnings_persisted": 622,
-  "total_rules_promoted": 301,
+  "last_updated": "2026-10-12T18:17:27.115Z",
+  "total_cycles_completed": 623,
+  "total_learnings_persisted": 623,
+  "total_rules_promoted": 303,
   "history": [
-    {
-      "timestamp": "2026-10-12T06:48:09.002Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv4w4l3l",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T06:51:10.195Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1403,6 +1396,13 @@
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv5kn2rb",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T18:17:27.115Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv5kr16r",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
