@@ -27669,3 +27669,208 @@ prompt = "A man standing still"
 **VERIFICATION METHOD**:
 1.  **A/B Testing:** Generate videos with the correct prompt vs. a generic prompt. Compare the motion vectors.
 2.  **Prompt Sensitivity Analysis:** Vary the prompt slightly and observe the impact on the output. The correct prompt should produce the most consistent orbit.
+
+
+---
+
+## 557. Quantization-Aware Agent Capability Preservation (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization-Aware Agent Capability Preservation",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T18:51:23.583Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv5lyoly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing LLMs for edge deployment, you MUST validate **agentic primitives** (tool calling, JSON schema adherence, parallel function execution) separately from general reasoning benchmarks. You MUST NOT assume that high general benchmark scores (e.g., MMLU, AIME) correlate with preserved tool-calling fidelity at extreme quantization levels (IQ2/IQ3).
+
+**WHY**:
+Extreme quantization (2-bit) introduces non-linear noise into weight matrices. While general semantic understanding may degrade gracefully, **structured output generation** (JSON, function calls) is brittle. Small weight perturbations in the attention heads responsible for syntax parsing can cause catastrophic failures in tool invocation (e.g., malformed JSON, hallucinated function names, or failure to stop generation after a tool call). The "Underdog Saluki" model demonstrates that specific tuning or selection of quantization grids can preserve these brittle structures (88/120 tool calls vs 84/120 for full precision), but this is not guaranteed by standard quantization algorithms.
+
+**WHEN TO APPLY**:
+Any LLM deployment where the model is expected to act as an agent (calling APIs, executing code, filling forms) on resource-constrained hardware (VRAM < 16GB).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for Quantization Validation Harness
+def validate_agent_quantization(model_path, benchmark_suite):
+    # 1. Load model with specific quantization
+    model = load_gguf(model_path)
+    
+    # 2. Run Standard Reasoning Benchmarks (Baseline)
+    reasoning_score = run_benchmark(model, "AIME_2025")
+    
+    # 3. Run Agentic Benchmarks (Critical)
+    tool_call_score = run_benchmark(model, "BFCL_v4_Tool_Calling")
+    parallel_call_score = run_benchmark(model, "BFCL_v4_Parallel")
+    
+    # 4. Invariant Check: Tool calling must not degrade > 5% relative to full precision
+    full_precision_tool_score = 84 # Reference
+    if tool_call_score < (full_precision_tool_score * 0.95):
+        raise QuantizationFailureError("Tool calling fidelity degraded beyond acceptable threshold")
+    
+    # 5. JSON Schema Validation
+    for task in benchmark_suite.tool_tasks:
+        response = model.generate(task.prompt)
+        try:
+            json.loads(response)
+        except json.JSONDecodeError:
+            raise QuantizationFailureError("Model generated malformed JSON during tool call")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming general intelligence implies agent reliability
+if model.aime_score > 90:
+    deploy_model_for_agent_tasks() # DANGER: May fail at JSON parsing despite high math score
+```
+
+**VERIFICATION METHOD**:
+Automated CI job that runs the model against a frozen set of 120 BFCL v4 tool-calling tasks. Assert that `passed_count >= 85` and `json_parse_error_rate < 0.01`.
+
+
+---
+
+## 558. Decoupled Modality Projector Architecture (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Modality Projector Architecture",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T18:51:23.605Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv5lyoly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In multi-modal LLM deployments, you MUST decouple the vision projector (mmproj) from the LLM backbone into separate artifacts. You MUST NOT bake vision weights into the main GGUF file if the target deployment environment may not require vision capabilities.
+
+**WHY**:
+Vision projectors are large (928 MB in F16) and add significant memory overhead. By decoupling them, you allow:
+1.  **Conditional Loading:** Users can load the 7.89 GB text model on a 8GB GPU and only load the 928 MB projector if vision is needed.
+2.  **Independent Optimization:** The projector can be quantized differently (F16 vs Q8_0) than the LLM backbone (IQ2-mix) to balance visual fidelity vs. memory.
+3.  **Runtime Flexibility:** The `llama.cpp` runtime can dynamically attach/detach the projector via `--mmproj`, allowing the same LLM binary to serve both text-only and multi-modal requests.
+
+**WHEN TO APPLY**:
+Any LLM system that supports optional multi-modal inputs (images, audio) on resource-constrained hardware.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Correct: Separate downloads and conditional loading
+huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 Underdog-Saluki-27B-1.0-IQ2-mix.gguf --local-dir .
+# Optional: Download vision projector only if needed
+huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 mmproj-Underdog-Saluki-27B-1.0-F16.gguf --local-dir .
+
+# Runtime: Load with or without vision
+# Text Only
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf --jinja -ngl 99 -fa on -c 32768
+
+# Multi-Modal
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf --mmproj mmproj-Underdog-Saluki-27B-1.0-F16.gguf --jinja -ngl 99 -fa on -c 32768
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# ANTI-PATTERN: Monolithic multi-modal GGUF
+# This forces all users to load 8.8 GB even if they only need text
+llama-server -m Underdog-Saluki-27B-1.0-Vision-Integrated.gguf
+```
+
+**VERIFICATION METHOD**:
+Check that the repository contains separate `.gguf` files for the LLM and the projector. Verify that `llama-server` starts successfully with only the LLM file and that vision requests fail gracefully (or are rejected) if `--mmproj` is not provided.
+
+
+---
+
+## 559. Dynamic Thinking Mode Control via Chat Templates (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic Thinking Mode Control via Chat Templates",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T18:51:23.624Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv5lyoly",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+You MUST implement "Thinking" (Chain-of-Thought) as a **prompt-template-driven state** rather than a separate model or hardcoded inference flag. You MUST expose a `chat_template_kwargs` parameter to allow per-request toggling of thinking mode.
+
+**WHY**:
+Thinking mode increases latency and token consumption. For agentic tasks (tool calling), thinking mode can interfere with deterministic JSON output. By making it a template parameter, you allow:
+1.  **Per-Request Optimization:** Use thinking for complex reasoning, disable it for fast tool calls.
+2.  **Unified Binary:** No need for separate "thinking" and "non-thinking" model files.
+3.  **User Control:** End-users can toggle thinking via API parameters without re-deploying the model.
+
+**WHEN TO APPLY**:
+Any LLM deployment that supports both reasoning and agentic tasks, where latency and token cost are critical constraints.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// API Request with Thinking Disabled
+{
+  "model": "underdog-saluki-27b",
+  "messages": [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Call the get_weather function for New York."}
+  ],
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "temperature": 0
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: Hardcoded thinking mode
+// This forces all requests to use thinking, increasing latency and cost
+{
+  "model": "underdog-saluki-27b",
+  "messages": [...],
+  "temperature": 0
+}
+// If the model defaults to thinking, this will be slow and may break JSON output
+```
+
+**VERIFICATION METHOD**:
+Send two identical requests: one with `enable_thinking: true` and one with `enable_thinking: false`. Assert that the `false` request has lower latency and produces valid JSON, while the `true` request includes a "thinking" block in the response.

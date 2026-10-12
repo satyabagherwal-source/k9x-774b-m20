@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T18:48:12.085Z",
-  "total_verified_learnings": 4588,
+  "last_updated": "2026-10-12T18:51:23.650Z",
+  "total_verified_learnings": 4589,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -111692,6 +111692,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T18:48:12.085Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv5lyoly": {
+      "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv5lyoly",
+      "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "slug": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "content_hash": "03fd4846aef458dc0d9f21a926bdd91817a1bf34485c45add7aeadcd77607afc",
+      "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 557,
+          "title": "Quantization-Aware Agent Capability Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 558,
+          "title": "Decoupled Modality Projector Architecture",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 559,
+          "title": "Dynamic Thinking Mode Control via Chat Templates",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T18:51:23.650Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
