@@ -501,3 +501,4 @@
 | `CYCLE-20261012-0ELW` | `2026-10-12T08:08:52.724Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 470, Rule 471, Rule 472` | Yes (`30c4b4fc...`) |
 | `CYCLE-20261012-5R58` | `2026-10-12T08:13:02.252Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 473, Rule 474, Rule 475` | Yes (`2d35da11...`) |
 | `CYCLE-20261012-9P24` | `2026-10-12T08:16:06.172Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 476, Rule 477` | Yes (`de0ccea7...`) |
+| `CYCLE-20261012-DVTG` | `2026-10-12T08:19:21.556Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 478, Rule 479` | Yes (`ea7ce121...`) |

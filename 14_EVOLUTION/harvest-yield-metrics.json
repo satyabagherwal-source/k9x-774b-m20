@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:16:06.176Z",
-  "total_cycles_completed": 442,
-  "total_learnings_persisted": 442,
-  "total_rules_promoted": 222,
+  "last_updated": "2026-10-12T08:19:21.558Z",
+  "total_cycles_completed": 443,
+  "total_learnings_persisted": 443,
+  "total_rules_promoted": 224,
   "history": [
-    {
-      "timestamp": "2026-10-11T21:25:29.226Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T21:28:36.889Z",
       "repository": "speridlabs/iris-3b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T08:16:06.176Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4z9oyn",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T08:19:21.558Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4zdvqn",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
