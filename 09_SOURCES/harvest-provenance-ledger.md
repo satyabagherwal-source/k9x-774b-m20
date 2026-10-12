@@ -513,3 +513,4 @@ Every entry in this ledger must capture:
 | `learn-github-duty1g-x64dbg-mcp-server-mv52xkxd` | `https://github.com/duty1g/x64dbg-mcp-server` | `18be30ab` | Multi-dimensional audit evidence | 2026-10-12T09:58:39.532Z |
 | `learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv53cxto` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-12T10:10:36.046Z |
 | `learn-huggingface-hf-amazon-chronos-2-mv53gmfl` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-12T10:13:27.889Z |
+| `learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv53kz3n` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-12T10:16:51.009Z |

@@ -23347,3 +23347,62 @@ test "getAddrField formats integer addresses as hex" {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `04da8933` are properly handled with clean fallback behavior.
+
+
+---
+
+## 493. License-Gated Access & Legal Boundary Enforcement (Harvested from CompVis/stable-diffusion-v1-4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "License-Gated Access & Legal Boundary Enforcement",
+  "source": "CompVis/stable-diffusion-v1-4",
+  "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+  "source_version": "hf-compvis-stable-diffusion-v1-4",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T10:16:50.908Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv53kz3n",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) (Revision: `hf-compvis`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For models with restrictive licenses (e.g., OpenRAIL-M), the repository MUST implement a "gated" access mechanism where the weights are not publicly downloadable until the user explicitly accepts the license terms. The `README.md` MUST contain the full text or a direct link to the license, and the `config.json` or metadata MUST flag the model as `gated: true`.
+
+**WHY**:
+Without gated access, users can download and use the weights without accepting the legal terms, leading to potential legal liability for the authors and the platform. The "OpenRAIL-M" license specifically restricts the use of the model to generate illegal or harmful content. If the weights are freely accessible, this restriction is unenforceable.
+
+**WHEN TO APPLY**:
+Any model with a non-permissive license (e.g., OpenRAIL, CC-BY-NC, proprietary).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```yaml
+# Hugging Face Repository Settings
+gated: true
+gated_prompt: |
+  This model is open access and available to all, with a CreativeML OpenRAIL-M license...
+  1. You can't use the model to deliberately produce nor share illegal or harmful outputs...
+  2. The authors claim no rights on the outputs...
+  3. You may re-distribute the weights...
+```
+
+**NEGATIVE CONSTRAINT**:
+```yaml
+# BAD: Public access with restrictive license
+gated: false
+license: creativeml-openrail-m
+# Users can download without accepting terms -> Legal violation
+```
+
+**VERIFICATION METHOD**:
+1.  **API Check:** Query the Hugging Face API for the model's `gated` status.
+2.  **Download Test:** Attempt to download the weights without authentication. It MUST fail with a 401/403 error.
+3.  **License Text Check:** Verify that the `README.md` contains the exact license text or a valid link.
