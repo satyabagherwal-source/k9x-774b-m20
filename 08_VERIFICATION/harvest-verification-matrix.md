@@ -400,3 +400,4 @@
 | `CYCLE-20261012-M4G7` | `2026-10-12T02:21:50.983Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`c3f78540...`) |
 | `CYCLE-20261012-PV8L` | `2026-10-12T02:24:45.669Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`2aa986d8...`) |
 | `CYCLE-20261012-TXSC` | `2026-10-12T02:27:55.597Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`20800735...`) |
+| `CYCLE-20261012-XOSN` | `2026-10-12T02:30:50.567Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`836882f8...`) |
