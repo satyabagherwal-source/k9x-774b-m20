@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T02:39:57.255Z",
+  "last_updated": "2026-10-12T02:42:44.206Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1728,15 +1728,15 @@
       "repository": "microsoft/FrogNano-4B-2609",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv49zxkw",
-      "content_hash": "ec42f504a4cffdcdb594d6b3464ca0dbf5c78158c7a6cd554498d7d552efe92f",
-      "verified_at": "2026-10-11T20:28:40.353Z",
+      "learning_id": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv4nczd5",
+      "content_hash": "1d7caf386b683c036006d8d93641465bb2e4b3993cd2bbc3b77bbbdcbc028097",
+      "verified_at": "2026-10-12T02:42:44.206Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T20:28:40.353Z"
+      "last_updated": "2026-10-12T02:42:44.206Z"
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
