@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:13:02.256Z",
+  "last_updated": "2026-10-12T08:16:06.177Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -608,15 +608,15 @@
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95",
-      "content_hash": "2093b7073539a65f18b52689a155150e8ddce556ee6fad73f852bc06d3179d11",
-      "verified_at": "2026-10-12T01:09:48.668Z",
+      "learning_id": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4z9oyn",
+      "content_hash": "de0ccea774d52f9550c43cb9e3b03c0b505193efdb9f3cfd84ff91190e6a4d1b",
+      "verified_at": "2026-10-12T08:16:06.177Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T01:09:48.668Z"
+      "last_updated": "2026-10-12T08:16:06.177Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
