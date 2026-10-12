@@ -354,3 +354,4 @@
 | `CYCLE-20261012-K7UN` | `2026-10-12T00:00:23.999Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 377, Rule 378, Rule 379` | Yes (`e477c277...`) |
 | `CYCLE-20261012-NSTH` | `2026-10-12T00:03:11.141Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`11ee874f...`) |
 | `CYCLE-20261012-RS9U` | `2026-10-12T00:06:17.058Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`15f9ebd5...`) |
+| `CYCLE-20261012-VKYR` | `2026-10-12T00:09:14.211Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`8d185c29...`) |
