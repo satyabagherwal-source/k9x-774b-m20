@@ -593,3 +593,4 @@
 | `CYCLE-20261012-8M64` | `2026-10-12T13:23:11.548Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`cf465bf6...`) |
 | `CYCLE-20261012-CFDP` | `2026-10-12T13:26:09.373Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`1e8a7646...`) |
 | `CYCLE-20261012-GCLR` | `2026-10-12T13:29:12.399Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`76de533f...`) |
+| `CYCLE-20261012-KA88` | `2026-10-12T13:32:15.944Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`13ea9d0b...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-F5VU",
-    "timestamp": "2026-10-11T10:24:39.306Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-hf-francisring-prism-mv3of5tu",
-    "contentHash": "905b04222d37ded93474a7439ee9fad95bf6910f105c15e5d145bcf6c41f8319",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-J7YE",
     "timestamp": "2026-10-11T10:27:48.614Z",
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Cactus-Compute/whistle",
     "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv5agcji",
     "contentHash": "76de533fbd7aae2312dbf1e8758c9201de0905d2100528e6792ca5c247b98eb1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-KA88",
+    "timestamp": "2026-10-12T13:32:15.944Z",
+    "repository": "Qwen/Qwen3.8-27B",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv5aka5e",
+    "contentHash": "13ea9d0bd917918ac1d32db4f197a618672ac4def2f0df930781640740e4baea",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
