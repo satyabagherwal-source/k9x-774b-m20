@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:13:47.347Z",
-  "total_verified_learnings": 4665,
+  "last_updated": "2026-10-12T23:16:56.054Z",
+  "total_verified_learnings": 4666,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -113745,6 +113745,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T23:13:47.347Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-mv5vg64h": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv5vg64h",
+      "source": "Cloudflare/clef",
+      "repository": "Cloudflare/clef",
+      "slug": "hf-cloudflare-clef",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "content_hash": "0e3b5456e1b0722955622cc96bb9825eca2c8d1e44871a0fae74cbe0493ec687",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 593,
+          "title": "Consistent Numerical Precision Across Backbone and Joint Head",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 594,
+          "title": "Uniform Padding Strategy for All Modalities",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 595,
+          "title": "Inference‑Only Mode for Production Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T23:16:56.054Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
