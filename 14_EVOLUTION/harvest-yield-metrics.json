@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T04:41:07.169Z",
-  "total_cycles_completed": 385,
-  "total_learnings_persisted": 385,
-  "total_rules_promoted": 172,
+  "last_updated": "2026-10-12T04:47:30.654Z",
+  "total_cycles_completed": 386,
+  "total_learnings_persisted": 386,
+  "total_rules_promoted": 173,
   "history": [
-    {
-      "timestamp": "2026-10-11T18:33:42.063Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T18:36:42.936Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -1403,6 +1396,13 @@
       "repository": "argmaxinc/whisperkit-coreml",
       "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4rl81r",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T04:47:30.654Z",
+      "repository": "Fei2411/DeepSeek-Bot",
+      "learningId": "learn-github-fei2411-deepseek-bot-mv4rtfyk",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

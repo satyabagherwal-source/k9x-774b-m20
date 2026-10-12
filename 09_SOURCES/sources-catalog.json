@@ -1308,5 +1308,15 @@
     "contentHash": "cca6e6e0602b39fd0c7d797f986eeab44458db6abaad6075bdf926917248f0fd",
     "lastHarvestedAt": "2026-10-11T16:46:45.020Z",
     "learningId": "learn-github-autonomous-ai-openharness-mv422jff"
+  },
+  "fei2411-deepseek-bot": {
+    "repository": "Fei2411/DeepSeek-Bot",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Fei2411/DeepSeek-Bot",
+    "sourceVersion": "62394312",
+    "license": "Apache-2.0",
+    "contentHash": "3d033e108b8b932f013f6401dd3cc9ea26e969f11599ff8b24a152f47e9ab32f",
+    "lastHarvestedAt": "2026-10-12T04:47:30.653Z",
+    "learningId": "learn-github-fei2411-deepseek-bot-mv4rtfyk"
   }
 }

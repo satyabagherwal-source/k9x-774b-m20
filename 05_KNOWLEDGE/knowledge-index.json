@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T04:41:07.134Z",
-  "total_verified_learnings": 4340,
+  "last_updated": "2026-10-12T04:47:30.619Z",
+  "total_verified_learnings": 4341,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -105033,6 +105033,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T04:41:07.133Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-fei2411-deepseek-bot-mv4rtfyk": {
+      "learning_id": "learn-github-fei2411-deepseek-bot-mv4rtfyk",
+      "source": "Fei2411/DeepSeek-Bot",
+      "repository": "Fei2411/DeepSeek-Bot",
+      "slug": "fei2411-deepseek-bot",
+      "platform": "github",
+      "source_url": "https://github.com/Fei2411/DeepSeek-Bot",
+      "source_version": "62394312",
+      "content_hash": "3d033e108b8b932f013f6401dd3cc9ea26e969f11599ff8b24a152f47e9ab32f",
+      "dossier_path": "07_PROJECT_LEARNING/fei2411-deepseek-bot-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/fei2411-deepseek-bot-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 429,
+          "title": "Merge pull request #18 from FeiZhuLulu/devin/bot-relay-and-exchange-ui",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T04:47:30.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
