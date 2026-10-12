@@ -645,9 +645,9 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "d45cc0ad37aa40a00802eb1d9e2848462f274053af3f6aa56818ae3fefeebd03",
-    "lastHarvestedAt": "2026-10-12T15:58:29.580Z",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5fsbxi"
+    "contentHash": "e37ecf324371f58aadfd806bf0fad78ece315aad7cbfa349b8d403913a99de4e",
+    "lastHarvestedAt": "2026-10-12T22:54:16.869Z",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5un1ch"
   },
   "hf-facebook-sam3": {
     "repository": "facebook/sam3",

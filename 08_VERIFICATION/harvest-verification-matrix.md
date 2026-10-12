@@ -762,3 +762,4 @@
 | `CYCLE-20261012-URHF` | `2026-10-12T22:32:17.571Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | Yes (`50954c82...`) |
 | `CYCLE-20261012-YO2Q` | `2026-10-12T22:35:19.778Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`7e069a61...`) |
 | `CYCLE-20261012-7QN5` | `2026-10-12T22:42:23.009Z` | `Ebony-Vinyl/dsh-our-free-model` | Commit diff / Patch analysis | `VERIFIED` | `Rule 590` | Yes (`27bbe78c...`) |
+| `CYCLE-20261012-N1GH` | `2026-10-12T22:54:16.865Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 591, Rule 592` | Yes (`e37ecf32...`) |

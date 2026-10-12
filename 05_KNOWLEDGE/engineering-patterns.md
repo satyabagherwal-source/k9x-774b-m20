@@ -30281,3 +30281,169 @@ _audit/
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ddb451c2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 591. Non-Uniform Quantization Metadata Integrity (Harvested from ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Uniform Quantization Metadata Integrity",
+  "source": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T22:54:16.768Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5un1ch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating non-uniformly quantized models in standard container formats (like GGUF), the metadata mapping from tensor name to quantization type MUST be atomically consistent with the serialized tensor data. A mismatch between the declared quantization type in the header and the actual bit-width of the stored data will cause silent corruption or crashes in inference engines.
+
+**WHY**:
+In uniform quantization, the engine assumes all tensors share the same type. In non-uniform quantization, the engine must look up the type for each tensor. If the header says `Q4_K` but the data is `Q8_0`, the deserializer will misinterpret the binary layout, leading to garbage outputs or segmentation faults. This is a critical data integrity invariant.
+
+**WHEN TO APPLY**:
+Any system that serializes machine learning models with heterogeneous precision levels into a standard binary format.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for GGUF Serialization with Non-Uniform Quantization
+def serialize_gguf_non_uniform(tensors, quant_map):
+    header = GGUFHeader()
+    # 1. Write Header with Tensor Count
+    header.tensor_count = len(tensors)
+    
+    # 2. Write Tensor Metadata (Name, Shape, Quant Type)
+    for name, tensor in tensors.items():
+        q_type = quant_map[name]  # e.g., 'Q4_K', 'Q8_0'
+        header.add_tensor_meta(name, tensor.shape, q_type)
+    
+    # 3. Write Tensor Data
+    for name, tensor in tensors.items():
+        q_type = quant_map[name]
+        # CRITICAL: The serialization function MUST use the SAME q_type
+        # that was written to the header.
+        serialized_data = quantize_and_serialize(tensor, q_type)
+        header.write_tensor_data(serialized_data)
+        
+    return header.to_bytes()
+
+# Verification Check
+def verify_gguf_integrity(file_path):
+    header = parse_gguf_header(file_path)
+    for tensor_meta in header.tensors:
+        expected_size = calculate_size(tensor_meta.shape, tensor_meta.q_type)
+        actual_size = get_tensor_data_size(file_path, tensor_meta.name)
+        if expected_size != actual_size:
+            raise IntegrityError(f"Mismatch for {tensor_meta.name}: Expected {expected_size}, Got {actual_size}")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoding quantization type in serialization without checking metadata
+def serialize_gguf_buggy(tensors):
+    header = GGUFHeader()
+    for name, tensor in tensors.items():
+        header.add_tensor_meta(name, tensor.shape, 'Q4_K') # Always Q4_K in header
+        # But here we might accidentally serialize as Q8_0 if logic is flawed
+        serialized_data = quantize_and_serialize(tensor, 'Q8_0') 
+        header.write_tensor_data(serialized_data)
+    return header.to_bytes()
+# Result: Header says Q4_K, Data is Q8_0. Inference engine crashes or produces garbage.
+```
+
+**VERIFICATION METHOD**:
+Automated post-serialization check: Parse the generated GGUF file, iterate through all tensors, calculate the expected byte size based on the declared quantization type and shape, and compare it with the actual byte offset difference in the file. Any mismatch triggers a build failure.
+
+
+---
+
+## 592. MoE Expert Precision Allocation Strategy (Harvested from ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "MoE Expert Precision Allocation Strategy",
+  "source": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T22:54:16.788Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5un1ch",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In Mixture-of-Experts models, quantization precision allocation MUST account for the sparsity of expert activation. Since only a subset of experts is active per token, the system MUST prioritize higher precision for experts that are statistically more likely to be selected (based on router weights) or for layers where expert diversity is critical for accuracy.
+
+**WHY**:
+Uniformly quantizing all 512 experts to the same low bit-width (e.g., Q2_K) will degrade performance because the "active" experts carry the bulk of the information. If the router selects a low-precision expert, the output quality drops. By allocating more bits to high-impact experts, the overall model quality is preserved within the size budget.
+
+**WHEN TO APPLY**:
+Quantization of any MoE model where the number of experts is large and the activation sparsity is high.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def allocate_precision_moe(experts, router_weights, budget):
+    # 1. Calculate importance score for each expert
+    # Importance = Frequency of selection * Sensitivity to quantization
+    importance_scores = []
+    for i, expert in enumerate(experts):
+        freq = router_weights[i].mean()  # Average probability of being selected
+        sensitivity = calculate_sensitivity(expert)  # e.g., via Hessian trace
+        importance_scores.append(freq * sensitivity)
+    
+    # 2. Sort experts by importance
+    sorted_indices = np.argsort(importance_scores)[::-1]
+    
+    # 3. Allocate precision greedily under budget
+    allocation = {}
+    remaining_budget = budget
+    for idx in sorted_indices:
+        # Try highest precision first, then lower
+        for q_type in ['Q8_0', 'Q6_K', 'Q4_K', 'Q2_K']:
+            size = calculate_size(experts[idx], q_type)
+            if size <= remaining_budget:
+                allocation[idx] = q_type
+                remaining_budget -= size
+                break
+        else:
+            # If even Q2_K doesn't fit, skip or fail
+            raise BudgetExceededError(f"Cannot fit expert {idx}")
+            
+    return allocation
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniform allocation ignoring sparsity
+def allocate_precision_uniform(experts, budget):
+    # Simply divide budget by number of experts
+    bits_per_expert = budget / len(experts)
+    q_type = select_closest_qtype(bits_per_expert)
+    return {i: q_type for i in range(len(experts))}
+# Result: High-impact experts get same low precision as low-impact ones, leading to significant accuracy loss.
+```
+
+**VERIFICATION METHOD**:
+Ablation study: Compare the perplexity of the model with non-uniform allocation vs. uniform allocation at the same total bit-width. The non-uniform version MUST show lower perplexity (better accuracy).
