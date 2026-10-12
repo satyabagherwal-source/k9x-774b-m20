@@ -1094,8 +1094,8 @@
     "sourceType": "github",
     "technology": "Go",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-12T18:35:43.817Z",
-    "lastVerified": "2026-10-12T18:35:43.817Z",
+    "lastChecked": "2026-10-12T19:56:07.658Z",
+    "lastVerified": "2026-10-12T19:56:07.658Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -2118,8 +2118,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-12T13:35:19.582Z",
-    "lastVerified": "2026-10-12T13:35:19.582Z",
+    "lastChecked": "2026-10-12T19:56:10.166Z",
+    "lastVerified": "2026-10-12T19:56:10.166Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17514,8 +17514,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-12T19:41:03.987Z",
-    "lastVerified": "2026-10-12T19:41:03.987Z",
+    "lastChecked": "2026-10-12T19:56:12.652Z",
+    "lastVerified": "2026-10-12T19:56:12.653Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -21596,5 +21596,12 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cosscom-ui": {
+    "name": "ui",
+    "officialUrl": "https://github.com/cosscom/ui",
+    "lastChecked": "2026-10-12T19:56:00.174Z",
+    "revisionIdentifier": "98a1fe67b",
+    "lastVerified": "2026-10-12T19:56:00.174Z"
   }
 }

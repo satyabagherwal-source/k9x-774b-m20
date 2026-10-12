@@ -3888,3 +3888,7 @@ https://github.com/duty1g/x64dbg-mcp-server
 # --- Automatically Discovered by AI Scout Engine [2026-10-12T13:47:31.106Z] ---
 # [AI-AGENTS] paperclipai/paperclip (55882 score) - The open-source app everyone uses to manage agents at work
 https://github.com/paperclipai/paperclip
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T19:55:51.338Z] ---
+# [FULLSTACK-UI] cosscom/ui (5770 score) - coss.com/ui is the official design system of Cal.com
+https://github.com/cosscom/ui
