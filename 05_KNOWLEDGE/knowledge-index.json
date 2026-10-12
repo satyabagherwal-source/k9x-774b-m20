@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T12:08:20.474Z",
-  "total_verified_learnings": 4463,
+  "last_updated": "2026-10-12T12:11:29.143Z",
+  "total_verified_learnings": 4464,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -108386,6 +108386,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T12:08:20.474Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv57oecg": {
+      "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv57oecg",
+      "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "slug": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "content_hash": "c70842bf0ab7bd994527ab4eb3408c821d4efe0d6606fb2afe33e3bb386c9352",
+      "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 502,
+          "title": "Agentic Fidelity Preservation in Mixed-Precision Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 503,
+          "title": "Decoupled Modality Loading for Memory Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 504,
+          "title": "Chat Template as the Primary Control Plane for Agent Behavior",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T12:11:29.143Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
