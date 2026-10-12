@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T20:57:17.521Z",
-  "total_cycles_completed": 671,
-  "total_learnings_persisted": 671,
+  "last_updated": "2026-10-12T21:00:15.659Z",
+  "total_cycles_completed": 672,
+  "total_learnings_persisted": 672,
   "total_rules_promoted": 320,
   "history": [
-    {
-      "timestamp": "2026-10-12T10:16:51.012Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv53kz3n",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T10:19:48.346Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T20:57:17.521Z",
       "repository": "XingChen-AGI/TeleOCR",
       "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv5qgl7q",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:00:15.659Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv5qkenx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T20:57:17.522Z",
+  "last_updated": "2026-10-12T21:00:15.660Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -342,15 +342,15 @@
       "repository": "Qwen/Qwen-Image-2.1",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-mv5ccj3d",
-      "content_hash": "22574e3f1dec6134163107fe210579739347c948ec9cc9fa0aafa2b3667fbee3",
-      "verified_at": "2026-10-12T14:22:13.527Z",
+      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-mv5qkenx",
+      "content_hash": "f6d1433ef2243898b55663500b30b6ba496d9adf659eaeef125580a15ef88ea4",
+      "verified_at": "2026-10-12T21:00:15.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T14:22:13.527Z"
+      "last_updated": "2026-10-12T21:00:15.660Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
