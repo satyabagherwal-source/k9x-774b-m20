@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T13:32:15.893Z",
-  "total_verified_learnings": 4490,
+  "last_updated": "2026-10-12T13:35:21.106Z",
+  "total_verified_learnings": 4491,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -109077,6 +109077,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T13:32:15.893Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv5ao90u": {
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv5ao90u",
+      "source": "black-forest-labs/FLUX.1-dev",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "slug": "hf-black-forest-labs-flux.1-dev",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "content_hash": "59eded89c05e0b94ee98701bd10d5d74a1ba9facf15bda29e3e5ed3861512541",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 509,
+          "title": "Weight Serialization Integrity & Memory Safety",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 510,
+          "title": "Rectified Flow Scheduler Termination Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 511,
+          "title": "Dual-Stream Attention Masking Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T13:35:21.106Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

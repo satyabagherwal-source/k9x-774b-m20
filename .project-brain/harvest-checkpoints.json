@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T13:32:15.948Z",
+  "last_updated": "2026-10-12T13:35:21.154Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -216,15 +216,15 @@
       "repository": "black-forest-labs/FLUX.1-dev",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4upyz3",
-      "content_hash": "596c73f7be2ff36de6c781d14626c4538ced0588290a9988874d233bfd173f26",
-      "verified_at": "2026-10-12T06:08:47.575Z",
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv5ao90u",
+      "content_hash": "59eded89c05e0b94ee98701bd10d5d74a1ba9facf15bda29e3e5ed3861512541",
+      "verified_at": "2026-10-12T13:35:21.154Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T06:08:47.575Z"
+      "last_updated": "2026-10-12T13:35:21.154Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
