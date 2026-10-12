@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:42:14.805Z",
-  "total_cycles_completed": 421,
-  "total_learnings_persisted": 421,
+  "last_updated": "2026-10-12T06:45:04.779Z",
+  "total_cycles_completed": 422,
+  "total_learnings_persisted": 422,
   "total_rules_promoted": 184,
   "history": [
-    {
-      "timestamp": "2026-10-11T20:22:49.191Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T20:25:32.403Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T06:42:14.805Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
       "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4vwztn",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:45:04.779Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4w0mz1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
