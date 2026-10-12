@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:51:21.601Z",
-  "total_verified_learnings": 4391,
+  "last_updated": "2026-10-12T07:56:48.738Z",
+  "total_verified_learnings": 4392,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106440,6 +106440,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T07:51:21.601Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ykvwe": {
+      "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ykvwe",
+      "source": "Comfy-Org/Qwen-Image-2.1",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "slug": "hf-comfy-org-qwen-image-2.1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "content_hash": "23937602db3f087b9ee8c1b53b66d3c71f24d02fa83a0a53ad63308cda162c47",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 462,
+          "title": "Invariant Header-Aligned Memory-Mapped Model Serialization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 463,
+          "title": "Rotational Transformation Outlier Suppression (ConvRot) Quantization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 464,
+          "title": "Asymmetric Rank Decoupling Invariant for Distilled LoRA Adapters",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T07:56:48.738Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
