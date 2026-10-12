@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-41T4",
-    "timestamp": "2026-10-11T17:15:55.048Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv4341q9",
-    "contentHash": "3cbf40cd173269e48a75de12335736e01d00885c137f8058282e1a862bda2328",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-7SD3",
     "timestamp": "2026-10-11T17:18:49.431Z",
     "repository": "Cactus-Compute/whistle",
@@ -7492,6 +7477,21 @@
     "contentHash": "b4e87b4c004b485bc9cfa11cea2f16c16570fb63fbc41edd84aacfdb661916dc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-9BMC",
+    "timestamp": "2026-10-12T20:23:38.772Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv5p9bi6",
+    "contentHash": "fbff2b1c1d70fb091c55e0537a324b1901a9f13513935e8198aab7d5794fb93c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
