@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:11:54.553Z",
-  "total_cycles_completed": 411,
-  "total_learnings_persisted": 411,
+  "last_updated": "2026-10-12T06:15:06.480Z",
+  "total_cycles_completed": 412,
+  "total_learnings_persisted": 412,
   "total_rules_promoted": 181,
   "history": [
-    {
-      "timestamp": "2026-10-11T19:52:45.224Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T19:55:33.016Z",
       "repository": "google-bert/bert-base-uncased",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T06:11:54.553Z",
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-hf-francisring-prism-mv4utz9u",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:15:06.480Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4uy3dq",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
