@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T19:28:31.809Z",
-  "total_cycles_completed": 646,
-  "total_learnings_persisted": 646,
+  "last_updated": "2026-10-12T19:31:30.617Z",
+  "total_cycles_completed": 647,
+  "total_learnings_persisted": 647,
   "total_rules_promoted": 308,
   "history": [
-    {
-      "timestamp": "2026-10-12T08:38:18.765Z",
-      "repository": "iliyami/MacSai",
-      "learningId": "learn-github-iliyami-macsai-mv50297p",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T08:50:17.766Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T19:28:31.809Z",
       "repository": "zai-org/GLM-5.3",
       "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv5nafvw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T19:31:30.617Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv5ne9uq",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
