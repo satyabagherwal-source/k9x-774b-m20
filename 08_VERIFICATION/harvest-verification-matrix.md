@@ -693,3 +693,4 @@
 | `CYCLE-20261012-QC62` | `2026-10-12T18:44:54.170Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`dfdca08f...`) |
 | `CYCLE-20261012-UKXB` | `2026-10-12T18:48:12.143Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`7e8dc96a...`) |
 | `CYCLE-20261012-YOQ5` | `2026-10-12T18:51:23.693Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 557, Rule 558, Rule 559` | Yes (`03fd4846...`) |
+| `CYCLE-20261012-2EJU` | `2026-10-12T18:54:17.130Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`7b0b0fb8...`) |

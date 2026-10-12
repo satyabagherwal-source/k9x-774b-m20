@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T18:51:23.650Z",
-  "total_verified_learnings": 4589,
+  "last_updated": "2026-10-12T18:54:17.076Z",
+  "total_verified_learnings": 4590,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -111732,6 +111732,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T18:51:23.650Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv5m2egv": {
+      "learning_id": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv5m2egv",
+      "source": "google/gemma-4-26B-A4B-it",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "slug": "hf-google-gemma-4-26b-a4b-it",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+      "source_version": "hf-google-gemma-4-26b-a4b-it",
+      "content_hash": "7b0b0fb8cb309757e6e227fe9ffdec5a0378957215fac98996534d241fd696a8",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T18:54:17.075Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
