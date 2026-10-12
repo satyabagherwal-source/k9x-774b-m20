@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:02:20.448Z",
-  "total_cycles_completed": 487,
-  "total_learnings_persisted": 487,
-  "total_rules_promoted": 241,
+  "last_updated": "2026-10-12T11:05:30.937Z",
+  "total_cycles_completed": 488,
+  "total_learnings_persisted": 488,
+  "total_rules_promoted": 244,
   "history": [
-    {
-      "timestamp": "2026-10-11T23:42:15.737Z",
-      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T23:45:02.370Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -1403,6 +1396,13 @@
       "repository": "openai/gpt-oss-20b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv557h5p",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T11:05:30.937Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv55bk44",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -7258,5 +7258,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-BK8J",
+    "timestamp": "2026-10-12T11:05:30.931Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv55bk44",
+    "contentHash": "947798b6a21250c4cfbd9a1b430e7a83d322b01120499663566ee5126c32c16c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
