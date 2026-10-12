@@ -485,3 +485,4 @@
 | `CYCLE-20261012-8GZ3` | `2026-10-12T06:51:10.191Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`2c9a8734...`) |
 | `CYCLE-20261012-C7IA` | `2026-10-12T06:54:04.546Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`4cf7e416...`) |
 | `CYCLE-20261012-G2AF` | `2026-10-12T06:57:04.407Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`270ab4a9...`) |
+| `CYCLE-20261012-JO6U` | `2026-10-12T06:59:52.758Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`39aa34c5...`) |
