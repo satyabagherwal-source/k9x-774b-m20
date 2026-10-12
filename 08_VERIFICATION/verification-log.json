@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-AKCK",
-    "timestamp": "2026-10-11T08:29:06.308Z",
-    "repository": "colinhacks/zod",
-    "learningId": "learn-github-colinhacks-zod-mv3kabi9",
-    "contentHash": "17cb722a221964b5fb65eec5f148d4a8c015c673abcce44e15f3c18448e1cf2f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-GO9V",
     "timestamp": "2026-10-11T08:33:51.331Z",
     "repository": "Bingsu/adetailer",
@@ -7490,6 +7475,21 @@
     "repository": "google/vit-base-patch16-224",
     "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv587rz1",
     "contentHash": "61d88283f57c60f6d0c00ae67ea489a7f15aed6bd1a9def70f52cc9af75ac881",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-C4M0",
+    "timestamp": "2026-10-12T12:29:56.184Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv58c4j4",
+    "contentHash": "2435e16bf9d7c091341136e83e627f4b15aadbb529c7969ea619336d9afa15f4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
