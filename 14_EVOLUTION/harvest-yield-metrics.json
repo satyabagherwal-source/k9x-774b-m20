@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:39:49.813Z",
-  "total_cycles_completed": 685,
-  "total_learnings_persisted": 685,
+  "last_updated": "2026-10-12T21:42:39.484Z",
+  "total_cycles_completed": 686,
+  "total_learnings_persisted": 686,
   "total_rules_promoted": 328,
   "history": [
-    {
-      "timestamp": "2026-10-12T10:59:18.208Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-hf-bigscience-bloom-mv553kl8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T11:02:20.448Z",
       "repository": "openai/gpt-oss-20b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T21:39:49.813Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv5rzalc",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:42:39.484Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv5s2xj0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
