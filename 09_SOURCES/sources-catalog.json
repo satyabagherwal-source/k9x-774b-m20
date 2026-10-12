@@ -675,9 +675,9 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "f4bd8840105c1461518001807b4d87341be3be71511279b771584edeebe0e77c",
-    "lastHarvestedAt": "2026-10-12T01:45:45.677Z",
-    "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
+    "contentHash": "be878a6f6276b14f0eef8e0f77f350415ec7f3ad88e3be08ce8a8b81822694dc",
+    "lastHarvestedAt": "2026-10-12T09:11:39.376Z",
+    "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv5194w8"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "repository": "canberkkkkkk/ema-lightning",
