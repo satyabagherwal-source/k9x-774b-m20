@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-5XZT",
-    "timestamp": "2026-10-11T11:13:28.409Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv3q5xxw",
-    "contentHash": "3542477bf1375e82460275223ebd819982c056636c60f2cf33a24d2f38906a6c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-ACEY",
     "timestamp": "2026-10-11T11:16:53.722Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "eb8a4955d295c445ff6917fbb08a2c9d8914d378f9f0bb9e6c749aa011f9b0c2",
     "status": "VERIFIED",
     "promotedRulesCount": 4,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-RNVR",
+    "timestamp": "2026-10-12T14:33:59.463Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv5crnu7",
+    "contentHash": "78f39bd9e3071baaed459826f95838e26be872394730a5b6b0c2566ed4cea07f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
