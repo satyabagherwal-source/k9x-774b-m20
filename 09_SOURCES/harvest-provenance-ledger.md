@@ -746,3 +746,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv5tynzw` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-12T22:35:19.781Z |
 | `learn-github-ebony-vinyl-dsh-our-free-model-mv5u7qjj` | `https://github.com/Ebony-Vinyl/dsh-our-free-model` | `ddb451c2` | Multi-dimensional audit evidence | 2026-10-12T22:42:23.011Z |
 | `learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5un1ch` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-12T22:54:16.869Z |
+| `learn-huggingface-hf-facebook-sam3-mv5uqpyl` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-12T22:57:08.703Z |
