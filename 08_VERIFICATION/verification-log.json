@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-0ENY",
-    "timestamp": "2026-10-11T17:13:05.086Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv430elb",
-    "contentHash": "fb2f675837a66a09169a9087c6109e900e79632d9e2a273f4d181d81985ded6d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-41T4",
     "timestamp": "2026-10-11T17:15:55.048Z",
     "repository": "LiquidAI/d1-3B",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv5p0ze6",
     "contentHash": "04d48f4761f170cdf90a79e6030d65d290ddf22cec8d1e08b128859b3cfb2670",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-4VNH",
+    "timestamp": "2026-10-12T20:20:11.453Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv5p4vka",
+    "contentHash": "b4e87b4c004b485bc9cfa11cea2f16c16570fb63fbc41edd84aacfdb661916dc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

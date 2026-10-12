@@ -3,8 +3,8 @@
 > **Source Version**: `hf-liquidai-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T13:26:09.275Z  
-> **Learning ID**: `learn-huggingface-hf-liquidai-d1-3b-mv5acfaz`  
+> **Timestamp**: 2026-10-12T20:20:11.338Z  
+> **Learning ID**: `learn-huggingface-hf-liquidai-d1-3b-mv5p4vka`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/LiquidAI/d1-3B](https://huggingface.co/LiquidAI/d1-3B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T13:26:08.511Z  
+> **Harvest Timestamp**: 2026-10-12T20:20:10.609Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 11866 downloads | 326 likes
+- **Stars / Engagement**: 11866 downloads | 336 likes
 
 ---
 
