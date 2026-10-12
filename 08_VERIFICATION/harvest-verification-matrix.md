@@ -445,3 +445,4 @@
 | `CYCLE-20261012-HEZG` | `2026-10-12T04:38:09.436Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`8d4be3c7...`) |
 | `CYCLE-20261012-L84C` | `2026-10-12T04:41:07.164Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 427, Rule 428` | Yes (`a7d40fb5...`) |
 | `CYCLE-20261012-TG0R` | `2026-10-12T04:47:30.651Z` | `Fei2411/DeepSeek-Bot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 429` | Yes (`3d033e10...`) |
+| `CYCLE-20261012-94Y2` | `2026-10-12T04:59:42.794Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`7beffa7c...`) |
