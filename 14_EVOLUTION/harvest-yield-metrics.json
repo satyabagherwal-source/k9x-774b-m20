@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T15:52:19.244Z",
-  "total_cycles_completed": 576,
-  "total_learnings_persisted": 576,
+  "last_updated": "2026-10-12T15:55:24.584Z",
+  "total_cycles_completed": 577,
+  "total_learnings_persisted": 577,
   "total_rules_promoted": 281,
   "history": [
-    {
-      "timestamp": "2026-10-12T04:15:48.715Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4qoofg",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T04:19:47.767Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1403,6 +1396,13 @@
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-hf-psrben-visionhope-mv5fke6e",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T15:55:24.584Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv5fod75",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
