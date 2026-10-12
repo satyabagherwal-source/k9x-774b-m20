@@ -764,3 +764,4 @@
 | `CYCLE-20261012-7QN5` | `2026-10-12T22:42:23.009Z` | `Ebony-Vinyl/dsh-our-free-model` | Commit diff / Patch analysis | `VERIFIED` | `Rule 590` | Yes (`27bbe78c...`) |
 | `CYCLE-20261012-N1GH` | `2026-10-12T22:54:16.865Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 591, Rule 592` | Yes (`e37ecf32...`) |
 | `CYCLE-20261012-QQ1P` | `2026-10-12T22:57:08.701Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`3edf12c7...`) |
+| `CYCLE-20261012-UN8Y` | `2026-10-12T23:00:11.698Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`5ad38401...`) |
