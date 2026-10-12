@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:07:25.856Z",
-  "total_cycles_completed": 708,
-  "total_learnings_persisted": 708,
+  "last_updated": "2026-10-12T23:10:49.435Z",
+  "total_cycles_completed": 709,
+  "total_learnings_persisted": 709,
   "total_rules_promoted": 341,
   "history": [
-    {
-      "timestamp": "2026-10-12T12:11:29.181Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv57oecg",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T12:14:32.211Z",
       "repository": "google/gemma-4-26B-A4B-it",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T23:07:25.856Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv5v3y5w",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T23:10:49.435Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv5v8b8n",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
