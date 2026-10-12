@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:51:10.195Z",
-  "total_cycles_completed": 424,
-  "total_learnings_persisted": 424,
+  "last_updated": "2026-10-12T06:54:04.549Z",
+  "total_cycles_completed": 425,
+  "total_learnings_persisted": 425,
   "total_rules_promoted": 184,
   "history": [
-    {
-      "timestamp": "2026-10-11T20:31:51.209Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv4a40uh",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T20:34:42.924Z",
       "repository": "openai/whisper-large-v3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T06:51:10.195Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4w8gwa",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:54:04.549Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4wc7g1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

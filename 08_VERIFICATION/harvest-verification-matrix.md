@@ -483,3 +483,4 @@
 | `CYCLE-20261012-0N0P` | `2026-10-12T06:45:04.777Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`f55d3e2c...`) |
 | `CYCLE-20261012-4L5Z` | `2026-10-12T06:48:08.999Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`868b05f7...`) |
 | `CYCLE-20261012-8GZ3` | `2026-10-12T06:51:10.191Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`2c9a8734...`) |
+| `CYCLE-20261012-C7IA` | `2026-10-12T06:54:04.546Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`4cf7e416...`) |
