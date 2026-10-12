@@ -6823,5 +6823,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-OCRM",
+    "timestamp": "2026-10-12T09:23:29.314Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-mv51ocnr",
+    "contentHash": "4fbbe223ea042a42e0d36735ba60f9e8e7d03840376afc429a9d6fd68c5c23bb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

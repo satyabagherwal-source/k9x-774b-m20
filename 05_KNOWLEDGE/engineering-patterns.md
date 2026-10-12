@@ -22869,3 +22869,165 @@ def bad_load(model_path: str, enable_vision: bool = False):
 4.  Load the model with `enable_vision=True`.
 5.  Assert that vision tensors are present.
 6.  Measure memory usage and assert that `memory_usage(enable_vision=False) < memory_usage(enable_vision=True)`.
+
+
+---
+
+## 485. **Strict Pad‑Token Consistency Across All Components** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Strict Pad‑Token Consistency Across All Components**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T09:23:29.213Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv51ocnr",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+All modules that consume or produce tokenized sequences MUST use the same `pad_token_id` value defined in `tokenizer_config.json`.  
+**WHY**:  
+Inconsistent pad tokens cause shape mismatches, silent truncation, and incorrect attention masking, leading to NaNs or out‑of‑range indices during inference.  
+**WHEN TO APPLY**:  
+During tokenizer initialization, dataset preprocessing, model loading, and batch collation in any language that interfaces with the Hugging Face `transformers` library.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Python – tokenizer and batch collation
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("Cloudflare/clef")
+PAD_ID = tokenizer.pad_token_id  # 248044
+
+def collate_records(records, pad_id, device):
+    # records: List[EncodedRecord]
+    max_len = max(len(r.input_ids) for r in records)
+    batch_input_ids = torch.full((len(records), max_len), pad_id, dtype=torch.long, device=device)
+    for i, r in enumerate(records):
+        batch_input_ids[i, :len(r.input_ids)] = torch.tensor(r.input_ids, device=device)
+    return batch_input_ids
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: hard‑coded pad id that diverges from tokenizer
+PAD_ID = 0  # wrong pad token
+```
+**VERIFICATION METHOD**:  
+Run a unit test that asserts `tokenizer.pad_token_id == expected_pad_id` and that `collate_records` produces a tensor where all padding positions equal `tokenizer.pad_token_id`.
+
+---
+
+
+---
+
+## 486. **Enforce Linear‑Attention Layer Shape Compatibility** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Enforce Linear‑Attention Layer Shape Compatibility**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T09:23:29.232Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv51ocnr",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+Every linear‑attention block MUST receive a query/key/value tensor where the head dimension (`head_dim`) divides the hidden size (`hidden_size`) evenly.  
+**WHY**:  
+If `hidden_size % head_dim != 0`, the reshaping logic in the linear‑attention implementation will produce mismatched shapes, causing runtime errors or silent broadcasting that corrupts logits.  
+**WHEN TO APPLY**:  
+During model configuration validation, before training or inference, in any language that constructs the attention modules.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Python – validation in config loader
+config = json.load(open("config.json"))
+hidden_size = config["text_config"]["hidden_size"]
+head_dim = config["text_config"]["linear_key_head_dim"]
+assert hidden_size % head_dim == 0, (
+    f"hidden_size ({hidden_size}) must be divisible by head_dim ({head_dim})"
+)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: no validation, leading to silent shape mismatch
+```
+**VERIFICATION METHOD**:  
+Add a pre‑training hook that runs the above assertion; integrate it into CI so that any config change that violates the invariant fails the build.
+
+---
+
+
+---
+
+## 487. **Guarantee Per‑Question Softmax Normalization** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Guarantee Per‑Question Softmax Normalization**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T09:23:29.248Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv51ocnr",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The joint schema head MUST apply a softmax over the logits of each question separately, not over the entire logits tensor.  
+**WHY**:  
+A global softmax would mix probabilities across different questions, producing invalid decision scores and violating the contract that each question’s options sum to 1.  
+**WHEN TO APPLY**:  
+During the forward pass of the joint head, in any language that implements the head logic.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Python – joint head forward
+def forward(self, hidden_states, question_masks):
+    # hidden_states: [B, T, H]
+    # question_masks: [B, Q, O] where O is options per question
+    logits = self.transformer(hidden_states)  # [B, T, H]
+    logits = self.routed_logits(logits, question_masks)  # [B, Q, O]
+    probs = torch.softmax(logits, dim=-1)  # per‑question softmax
+    return probs
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: global softmax
+probs = torch.softmax(logits.view(-1), dim=-1)
+```
+**VERIFICATION METHOD**:  
+Unit test that verifies `probs.sum(-1)` equals 1 for each question across a batch of random logits.
+
+---

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:20:32.820Z",
+  "last_updated": "2026-10-12T09:23:29.320Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -804,15 +804,15 @@
       "repository": "Cloudflare/clef",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
-      "content_hash": "21386929be69faf01a4fae36312e5710c7af66a7692ea59432e4ae7f82808853",
-      "verified_at": "2026-10-12T02:01:11.338Z",
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv51ocnr",
+      "content_hash": "4fbbe223ea042a42e0d36735ba60f9e8e7d03840376afc429a9d6fd68c5c23bb",
+      "verified_at": "2026-10-12T09:23:29.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T02:01:11.338Z"
+      "last_updated": "2026-10-12T09:23:29.320Z"
     },
     "Cloudflare/clef-flash": {
       "repository": "Cloudflare/clef-flash",
