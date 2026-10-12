@@ -631,3 +631,4 @@
 | `CYCLE-20261012-X6HI` | `2026-10-12T15:34:16.086Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`0b550faf...`) |
 | `CYCLE-20261012-13EZ` | `2026-10-12T15:37:18.731Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`ee5c54af...`) |
 | `CYCLE-20261012-4PU4` | `2026-10-12T15:40:07.756Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`f933f8c2...`) |
+| `CYCLE-20261012-8GT9` | `2026-10-12T15:43:02.685Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`21f59c72...`) |
