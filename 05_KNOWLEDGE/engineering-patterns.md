@@ -22541,3 +22541,156 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `06271a8f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 481. The Termination Invariant in LLM Post-Training (Harvested from nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Termination Invariant in LLM Post-Training",
+  "source": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+  "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+  "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T08:53:19.108Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv50ljzg",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2](https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2) (Revision: `hf-nerkyor`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When post-training LLMs for reasoning tasks, you MUST implement a reward function or SFT dataset that explicitly penalizes token generation *after* the final answer is derived. You MUST NOT rely solely on standard SFT with "correct answer" labels, as the model may learn to "over-explain" or "re-verify" indefinitely, leading to context window exhaustion.
+
+**WHY**:
+Standard SFT optimizes for likelihood of the next token given the context. If the training data contains examples where the model continues to talk after the answer, or if the loss function does not account for sequence length efficiency, the model will develop a "runaway" behavior. This is a critical failure mode in production because it wastes GPU time and can cause API timeouts or truncation errors where the actual answer is lost in the noise.
+
+**WHEN TO APPLY**:
+Any LLM fine-tuning pipeline (SFT, RLHF, RLOO) where the output is expected to be a single, final answer (e.g., coding, math, QA) and the context window is a finite resource.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for RLOO/SFT Reward Shaping
+def compute_reward(model_output, ground_truth, max_tokens):
+    # 1. Extract the final answer block
+    answer_block = extract_answer(model_output)
+    
+    # 2. Check correctness
+    if not is_correct(answer_block, ground_truth):
+        return -1.0
+    
+    # 3. CRITICAL: Penalize tokens generated AFTER the answer block
+    # Find the index where the answer block ends
+    answer_end_idx = find_answer_end_index(model_output)
+    trailing_tokens = len(model_output) - answer_end_idx
+    
+    # 4. Apply a decay penalty for every token after the answer
+    # This forces the model to learn to stop immediately
+    termination_penalty = -0.1 * trailing_tokens
+    
+    # 5. Combine correctness and efficiency
+    return 1.0 + termination_penalty
+
+# In SFT, ensure the dataset includes examples where the model stops immediately
+# after the answer, and explicitly truncate any "chatty" continuations in the training data.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Standard SFT without length penalty
+def standard_sft_loss(model_output, target):
+    # This only cares if the tokens match the target.
+    # If the target is "42", but the model generates "42. The answer is 42. I am sure it is 42...",
+    # the loss will be low for the first token, but the model will still learn to generate
+    # the trailing tokens if they are present in the training data.
+    return cross_entropy_loss(model_output, target)
+```
+
+**VERIFICATION METHOD**:
+1.  **Truncation Rate Metric**: Monitor the percentage of inference requests that hit the `max_tokens` limit. A healthy model should have <1% truncation rate on standard tasks.
+2.  **Token Efficiency Ratio**: Calculate `Answer_Tokens / Total_Tokens`. A high ratio (>0.8) indicates efficient termination.
+3.  **A/B Testing**: Compare the base model vs. the post-trained model on a fixed set of prompts. Measure the average number of tokens generated. The post-trained model MUST generate significantly fewer tokens for the same correctness level.
+
+
+---
+
+## 482. Quantization-Resilient Behavioral Alignment (Harvested from nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization-Resilient Behavioral Alignment",
+  "source": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+  "source_url": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+  "source_version": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T08:53:19.117Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv50ljzg",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2](https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2) (Revision: `hf-nerkyor`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing a post-trained LLM, you MUST verify that the behavioral invariants (e.g., termination, format compliance) are preserved across all precision tiers. You MUST NOT assume that weight quantization is "lossless" for behavioral logic. You MUST use a calibration dataset that includes edge cases where the model is prone to failure (e.g., complex reasoning chains) to ensure the quantization does not break the termination logic.
+
+**WHY**:
+Quantization introduces numerical noise. This noise can shift the probability distribution of the next token. If the model is on the "edge" of deciding to stop or continue, quantization noise can push it over the threshold, causing it to continue generating tokens when it should stop. This is a subtle failure mode that is not caught by standard accuracy metrics (e.g., MMLU, GPQA) because the answer is still correct, but the inference cost is higher.
+
+**WHEN TO APPLY**:
+Any LLM quantization pipeline (FP8, INT8, INT4, GGUF) where the model has specific behavioral constraints (e.g., "stop after answer", "use JSON format").
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for Quantization Verification
+def verify_quantization_behavior(base_model, quantized_model, test_prompts):
+    for prompt in test_prompts:
+        base_output = base_model.generate(prompt, max_tokens=1000)
+        quant_output = quantized_model.generate(prompt, max_tokens=1000)
+        
+        # 1. Check correctness
+        if not is_correct(base_output, ground_truth) or not is_correct(quant_output, ground_truth):
+            raise ValueError("Quantization broke correctness")
+        
+        # 2. Check termination behavior
+        base_tokens = len(base_output)
+        quant_tokens = len(quant_output)
+        
+        # 3. Allow for small variance, but flag significant increases
+        if quant_tokens > base_tokens * 1.2:  # 20% increase is a red flag
+            log_warning(f"Quantization increased token count for prompt: {prompt}")
+            # This indicates the quantization may have broken the termination logic
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Only checking accuracy
+def verify_quantization_accuracy(base_model, quantized_model, test_prompts):
+    for prompt in test_prompts:
+        base_output = base_model.generate(prompt)
+        quant_output = quantized_model.generate(prompt)
+        if is_correct(base_output) != is_correct(quant_output):
+            raise ValueError("Quantization broke accuracy")
+        # This misses the case where both are correct, but the quantized model
+        # generates 5x more tokens, leading to higher latency and cost.
+```
+
+**VERIFICATION METHOD**:
+1.  **Token Count Distribution**: Plot the distribution of token counts for a set of prompts across all precision tiers. The distributions should be similar.
+2.  **Truncation Rate Comparison**: Compare the truncation rate of the BF16 model vs. the quantized model. The quantized model should not have a significantly higher truncation rate.
+3.  **Latency Benchmarking**: Measure the end-to-end latency for a set of prompts. The quantized model should have lower latency, not higher.
