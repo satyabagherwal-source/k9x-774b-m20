@@ -4918,5 +4918,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-NHWE",
+    "timestamp": "2026-10-12T01:54:55.454Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts",
+    "contentHash": "24d0e3acbb7366bd52050a79e938ef024ead58447f78e440567a629c46c97251",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

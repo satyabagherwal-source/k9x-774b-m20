@@ -705,9 +705,9 @@
     "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
     "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
     "license": "Open-Source",
-    "contentHash": "8ad79b2450e4c854ffb1fd69d369527f7d87b821d03f3a1ff330f43fafd2e47f",
-    "lastHarvestedAt": "2026-10-11T19:43:28.989Z",
-    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3"
+    "contentHash": "24d0e3acbb7366bd52050a79e938ef024ead58447f78e440567a629c46c97251",
+    "lastHarvestedAt": "2026-10-12T01:54:55.456Z",
+    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
   },
   "hf-cloudflare-clef": {
     "repository": "Cloudflare/clef",
