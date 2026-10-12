@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T00:15:22.221Z",
-  "total_cycles_completed": 299,
-  "total_learnings_persisted": 299,
+  "last_updated": "2026-10-12T00:18:18.481Z",
+  "total_cycles_completed": 300,
+  "total_learnings_persisted": 300,
   "total_rules_promoted": 124,
   "history": [
-    {
-      "timestamp": "2026-10-11T13:51:58.512Z",
-      "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv3vtrzd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T13:55:10.445Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T00:15:22.221Z",
       "repository": "Lightricks/LTX-2.5",
       "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T00:18:18.481Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
