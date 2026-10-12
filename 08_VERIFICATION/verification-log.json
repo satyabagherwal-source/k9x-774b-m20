@@ -5653,5 +5653,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-5PGB",
+    "timestamp": "2026-10-12T04:29:03.131Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4r5pdv",
+    "contentHash": "3d4a475203799fb7a63fd0f07caf62116c587907e2c6681347df6b3a9eb3e4cf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

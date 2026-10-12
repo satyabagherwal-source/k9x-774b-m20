@@ -439,3 +439,4 @@
 | `CYCLE-20261012-TSXG` | `2026-10-12T04:19:47.764Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `VERIFIED` | `Rule 421, Rule 422, Rule 423` | Yes (`1e11afbf...`) |
 | `CYCLE-20261012-XD2C` | `2026-10-12T04:22:33.828Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`25382c06...`) |
 | `CYCLE-20261012-23RK` | `2026-10-12T04:26:15.056Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 424, Rule 425, Rule 426` | Yes (`ada77ba6...`) |
+| `CYCLE-20261012-5PGB` | `2026-10-12T04:29:03.131Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`3d4a4752...`) |
