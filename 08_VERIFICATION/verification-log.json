@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-WN5M",
-    "timestamp": "2026-10-11T10:10:15.226Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv3nwn3d",
-    "contentHash": "cb026f1ee27954b253d5faf883e6939925ae083edcf80eb08a5be69b8eba7e0d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-6PCL",
     "timestamp": "2026-10-11T10:18:04.629Z",
     "repository": "Qwen/Qwen3.8-27B",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-small-en-v1.5",
     "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv5a4adr",
     "contentHash": "d418053f2497952e5204a2cfb7633c370e56473c05fec687d37d8e2828d8618d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-8M64",
+    "timestamp": "2026-10-12T13:23:11.548Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv5a8m3c",
+    "contentHash": "cf465bf650b1038dbee15c0ab34c35e82aa2de11272e386fa18c8390fa94b1b8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

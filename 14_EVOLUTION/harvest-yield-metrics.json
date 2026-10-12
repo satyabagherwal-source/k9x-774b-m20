@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T13:19:49.751Z",
-  "total_cycles_completed": 531,
-  "total_learnings_persisted": 531,
+  "last_updated": "2026-10-12T13:23:11.551Z",
+  "total_cycles_completed": 532,
+  "total_learnings_persisted": 532,
   "total_rules_promoted": 254,
   "history": [
-    {
-      "timestamp": "2026-10-12T01:54:55.457Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T02:01:11.337Z",
       "repository": "Cloudflare/clef",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T13:19:49.751Z",
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv5a4adr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T13:23:11.551Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv5a8m3c",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
