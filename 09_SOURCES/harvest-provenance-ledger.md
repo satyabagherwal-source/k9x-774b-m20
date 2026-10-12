@@ -480,3 +480,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4ydvid` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-12T07:51:21.656Z |
 | `learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ykvwe` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-12T07:56:48.791Z |
 | `learn-huggingface-hf-akhilaaa3-jev-omni-mv4yq2uh` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-12T08:00:51.055Z |
+| `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4yveax` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-12T08:04:59.223Z |

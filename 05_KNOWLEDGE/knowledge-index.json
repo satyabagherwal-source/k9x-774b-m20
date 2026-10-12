@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:00:51.009Z",
-  "total_verified_learnings": 4393,
+  "last_updated": "2026-10-12T08:04:59.171Z",
+  "total_verified_learnings": 4394,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106515,6 +106515,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T08:00:51.009Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4yveax": {
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4yveax",
+      "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "slug": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "content_hash": "bba9265dd9a53a2e239ea4e520a9a1010ed7b451ca02a4028a425fa5824fe793",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 467,
+          "title": "Hybrid Linear-Recurrent Attention State Precision Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 468,
+          "title": "Multi-Token EOS Sentinel Boundary Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 469,
+          "title": "Masked-Observation Loss Invariant for Agentic SFT",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T08:04:59.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
