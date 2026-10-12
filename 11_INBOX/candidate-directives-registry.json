@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T13:54:15.591Z",
+  "last_updated": "2026-10-12T14:56:16.940Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1201,6 +1201,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-github-paperclipai-paperclip-mv5bckez"
+    },
+    {
+      "id": "CD-KBVW",
+      "directive_title": "Consistent Special Token Alignment",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Altworld/Hemmingway-1",
+      "source_commit": "hf-altworld-",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8"
+    },
+    {
+      "id": "CD-KBVW",
+      "directive_title": "Alignment of Generation Config EOS Tokens",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Altworld/Hemmingway-1",
+      "source_commit": "hf-altworld-",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8"
     }
   ]
 }

@@ -25186,3 +25186,131 @@ A linter rule that flags any `use_cache: true` when `max_position_embeddings` > 
 ```
 
 ---
+
+
+---
+
+## 520. Consistent Special Token Alignment Across Tokenizer and Model Config (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Special Token Alignment Across Tokenizer and Model Config",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T14:56:16.880Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**  
+The tokenizer’s special token IDs must be identical to the IDs specified in the model’s configuration for `bos_token_id`, `eos_token_id`, `pad_token_id`, and any custom tokens.
+
+**WHY**  
+If the tokenizer and model disagree on a token ID, the model will interpret a token as a different semantic element, leading to silent truncation, corrupted outputs, or infinite decoding loops.
+
+**WHEN TO APPLY**  
+During packaging of any causal language model that uses custom special tokens, before publishing the artifact.
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# Load both artifacts
+tokenizer = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
+cfg = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+
+# Core special tokens
+assert tokenizer.bos_token_id == cfg.bos_token_id, "bos_token_id mismatch"
+assert tokenizer.eos_token_id == cfg.eos_token_id, "eos_token_id mismatch"
+assert tokenizer.pad_token_id == cfg.pad_token_id, "pad_token_id mismatch"
+
+# Custom tokens (audio, image, vision)
+custom = {
+    "<|audio_start|>": tokenizer.convert_tokens_to_ids("<|audio_start|>"),
+    "<|audio_end|>": tokenizer.convert_tokens_to_ids("<|audio_end|>"),
+    "<|image_pad|>": tokenizer.convert_tokens_to_ids("<|image_pad|>"),
+}
+for name, id_ in custom.items():
+    assert id_ == getattr(cfg, name), f"{name} ID mismatch"
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# Bad: hard‑coding numeric IDs that diverge from the tokenizer
+cfg.bos_token_id = 101
+cfg.eos_token_id = 102
+```
+
+**VERIFICATION METHOD**  
+*Unit test* that loads both files and asserts equality.  
+*Lint rule* that flags any numeric literal assigned to a token‑ID field in a config file.
+
+---
+
+
+---
+
+## 521. Alignment of Generation Config EOS Tokens with Model’s EOS Token Set (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Alignment of Generation Config EOS Tokens with Model’s EOS Token Set",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T14:56:16.893Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**  
+The generation configuration’s `eos_token_id` list must be a subset of the model’s defined EOS token set; no extraneous EOS IDs may be present.
+
+**WHY**  
+Generation loops terminate on any EOS token. An unexpected EOS ID can cause premature truncation or an incomplete response.
+
+**WHEN TO APPLY**  
+When creating or publishing a `generation_config.json` for a model that supports multiple EOS tokens (e.g., chat vs. completion).
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+cfg = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+gen_cfg = GenerationConfig.from_pretrained("Altworld/Hemmingway-1")
+
+valid_eos = {cfg.eos_token_id}
+if hasattr(cfg, "additional_eos_token_ids"):
+    valid_eos.update(cfg.additional_eos_token_ids)
+
+for eos in gen_cfg.eos_token_ids:
+    assert eos in valid_eos, f"Invalid EOS token ID {eos} in generation config"
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# Bad: adding an EOS token that the model never emits
+gen_cfg.eos_token_ids = [248046, 999999]  # 999999 not defined in model
+```
+
+**VERIFICATION METHOD**  
+Automated test that loads `GenerationConfig` and checks each EOS ID against the model’s EOS set. Static analysis to detect hard‑coded invalid EOS IDs.
+
+---

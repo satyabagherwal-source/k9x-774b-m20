@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T14:53:21.892Z",
-  "total_verified_learnings": 4512,
+  "last_updated": "2026-10-12T14:56:16.909Z",
+  "total_verified_learnings": 4513,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -109664,6 +109664,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T14:53:21.892Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8": {
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8",
+      "source": "Altworld/Hemmingway-1",
+      "repository": "Altworld/Hemmingway-1",
+      "slug": "hf-altworld-hemmingway-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "content_hash": "72409a25f602c5e12577a5cbf4b1b7997d2e5462e39fb084150a0d866f6bfc5f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 520,
+          "title": "Consistent Special Token Alignment Across Tokenizer and Model Config",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 521,
+          "title": "Alignment of Generation Config EOS Tokens with Model’s EOS Token Set",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T14:56:16.909Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
