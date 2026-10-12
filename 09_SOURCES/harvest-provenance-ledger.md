@@ -582,3 +582,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv5aw2eq` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-12T13:41:25.786Z |
 | `learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv5azuy9` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-12T13:44:22.749Z |
 | `learn-github-paperclipai-paperclip-mv5bckez` | `https://github.com/paperclipai/paperclip` | `fb21a3f3` | Multi-dimensional audit evidence | 2026-10-12T13:54:15.590Z |
+| `learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv5bocuh` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-12T14:03:25.711Z |

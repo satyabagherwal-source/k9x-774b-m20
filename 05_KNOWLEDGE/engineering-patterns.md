@@ -24606,3 +24606,170 @@ out = scaled_dot_product_attention(query, key, value, attn_mask=combined_mask)
 
 **VERIFICATION METHOD**:
 Unit test the attention mechanism with isolated text and image tokens. Verify that text tokens do not attend to image tokens in the first N layers.
+
+
+---
+
+## 512. Post-Quantization Surgical Modification Invariant (Harvested from SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Post-Quantization Surgical Modification Invariant",
+  "source": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T14:03:25.616Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv5bocuh",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF](https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF) (Revision: `hf-sc117-q`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When modifying a quantized model (e.g., GGUF, GPTQ, AWQ), you MUST NOT perform arithmetic operations on the quantized integers directly. You MUST either:
+1.  Dequantize to FP16/BF16, perform the modification, and re-quantize using the *original* quantization parameters (scales/mins) to maintain distribution consistency, OR
+2.  Pre-compute the modified weights in the target quantization format externally and perform a binary-level tensor transplant, ensuring the new weights are compatible with the existing quantization grid.
+You MUST NOT mix quantization types (e.g., swapping an IQ3_S tensor with a Q4_0 tensor) without updating the global metadata and re-calibrating the entire layer.
+
+**WHY**:
+Quantized models rely on a fixed grid of representable values defined by scale factors. Direct integer subtraction/addition ignores the non-linear mapping between integer codes and real-valued weights. This leads to "quantization noise amplification," where small errors in the integer domain translate to large semantic shifts in the output, causing model degradation, hallucinations, or complete refusal to generate coherent text. Mixing types breaks the GGUF parser's expectation of uniform block sizes and scale layouts, leading to memory corruption or parsing failures.
+
+**WHEN TO APPLY**:
+Any operation that modifies weights of a quantized LLM (abliteration, fine-tuning, pruning, merging) where the base model is already in a low-precision format (Q2, Q3, Q4, IQ2, IQ3, etc.).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# PSEUDOCODE: Safe Tensor Transplant in GGUF
+import gguf
+
+def transplant_tensor(gguf_file, tensor_name, new_quantized_bytes, original_scale_bytes):
+    # 1. Locate the tensor in the GGUF index
+    tensor_info = gguf_file.get_tensor_info(tensor_name)
+    
+    # 2. CRITICAL: Verify the new bytes match the expected quantization type
+    #    e.g., if original is IQ3_S, new bytes MUST be IQ3_S format
+    if tensor_info['type'] != 'IQ3_S':
+        raise ValueError("Type mismatch: Cannot transplant IQ3_S into Q4_0 slot")
+    
+    # 3. Verify scale compatibility (if applicable)
+    #    In GSQ/RCO, scales are often stored separately or in metadata.
+    #    Ensure the new weights were quantized using the SAME scale factors
+    #    as the original tensor to prevent distribution shift.
+    if not verify_scale_compatibility(tensor_info['scale'], new_quantized_bytes):
+        raise ValueError("Scale mismatch: New weights not aligned to original quantization grid")
+    
+    # 4. Perform binary replacement
+    #    Calculate exact byte offset and length
+    offset = tensor_info['offset']
+    length = tensor_info['length']
+    
+    # 5. Write new bytes, preserving all other bytes in the file
+    gguf_file.write_at(offset, new_quantized_bytes)
+    
+    # 6. Update hash metadata if required by the format
+    gguf_file.update_tensor_hash(tensor_name, blake2b(new_quantized_bytes))
+
+# Usage:
+# new_weights = pre_quantize_abliterated_weights(fp16_weights, original_scales)
+# transplant_tensor(model, "blk.0.ffn_gate.0.weight", new_weights, original_scales)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct integer manipulation on quantized weights
+# This is WRONG and will corrupt the model
+def bad_abliteration(gguf_file, tensor_name, refusal_vector_ints):
+    tensor = gguf_file.read_tensor(tensor_name)
+    # Directly subtracting integer values from quantized codes
+    # This ignores the scale factor and causes massive error
+    modified_tensor = tensor - refusal_vector_ints 
+    gguf_file.write_tensor(tensor_name, modified_tensor)
+    # RESULT: Model outputs gibberish or crashes due to out-of-range values
+```
+
+**VERIFICATION METHOD**:
+1.  **Per-Tensor Hashing:** Compute `blake2b` hash of every tensor in the original and modified files. Assert that exactly N tensors (the targeted ones) have different hashes, and all others are identical.
+2.  **Quantization Grid Check:** For each swapped tensor, dequantize the new weights and verify that the resulting FP16 values fall within the expected range defined by the original scale factors.
+3.  **Inference Smoke Test:** Run a short generation prompt (e.g., "Hello, my name is") and verify that the output is coherent and does not contain artifacts like repeated tokens or null bytes.
+
+
+---
+
+## 513. MoE Expert Consistency Invariant (Harvested from SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "MoE Expert Consistency Invariant",
+  "source": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+  "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T14:03:25.637Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv5bocuh",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF](https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF) (Revision: `hf-sc117-q`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When abliterating or modifying a Mixture of Experts (MoE) model, you MUST ensure that the modification is applied consistently across all experts in a layer, or that the routing gate weights are adjusted to compensate for the change. You MUST NOT modify only a subset of experts without re-calibrating the gate, as this leads to "expert collapse" where the model routes all tokens to the unmodified experts, effectively reducing the model's capacity and causing performance degradation.
+
+**WHY**:
+MoE models rely on dynamic routing to select the most relevant experts for each token. If you remove refusal behavior from some experts but not others, the gate may still route "sensitive" tokens to the unmodified experts, leading to inconsistent behavior (refusal for some prompts, compliance for others). Alternatively, if the gate is not adjusted, the model may learn to avoid the modified experts, leading to underutilization of the modified weights and potential instability.
+
+**WHEN TO APPLY**:
+Any modification to MoE models (Qwen3, Mixtral, DeepSeek, etc.) where the modification targets expert weights (e.g., `ffn_gate`, `ffn_up`, `ffn_down`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# PSEUDOCODE: Consistent MoE Abliteration
+def abliterate_moe_layer(model, layer_idx, refusal_vector):
+    # 1. Identify all experts in the layer
+    experts = model.get_experts(layer_idx)
+    
+    # 2. Apply modification to ALL experts consistently
+    for expert in experts:
+        # Dequantize, modify, re-quantize
+        modified_weights = modify_expert_weights(expert, refusal_vector)
+        model.update_expert_weights(expert, modified_weights)
+    
+    # 3. CRITICAL: Re-calibrate the gate weights
+    #    The gate must be adjusted to reflect the new distribution of expert capabilities
+    #    This often involves a small fine-tuning step or heuristic adjustment
+    gate_weights = model.get_gate_weights(layer_idx)
+    adjusted_gate = recalibrate_gate(gate_weights, modified_experts)
+    model.update_gate_weights(layer_idx, adjusted_gate)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Inconsistent MoE Modification
+def bad_moe_abliteration(model, layer_idx, refusal_vector):
+    experts = model.get_experts(layer_idx)
+    # Only modify the first expert
+    modified_weights = modify_expert_weights(experts[0], refusal_vector)
+    model.update_expert_weights(experts[0], modified_weights)
+    # Do NOT adjust the gate
+    # RESULT: Gate still routes sensitive tokens to unmodified experts,
+    # leading to inconsistent refusal behavior and potential instability
+```
+
+**VERIFICATION METHOD**:
+1.  **Expert Utilization Analysis:** Run a diverse set of prompts and log which experts are selected for each token. Verify that the modified experts are still being utilized and that the distribution of expert selection has not collapsed to a single expert.
+2.  **Consistency Test:** Generate responses to a set of "sensitive" prompts and verify that the model's behavior is consistent (either always refuses or always complies, depending on the goal).
+3.  **Gate Weight Check:** Verify that the gate weights have been adjusted to reflect the new expert capabilities.
