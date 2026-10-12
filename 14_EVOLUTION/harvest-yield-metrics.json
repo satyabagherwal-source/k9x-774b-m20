@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T02:52:13.121Z",
-  "total_cycles_completed": 350,
-  "total_learnings_persisted": 350,
+  "last_updated": "2026-10-12T02:54:59.773Z",
+  "total_cycles_completed": 351,
+  "total_learnings_persisted": 351,
   "total_rules_promoted": 155,
   "history": [
-    {
-      "timestamp": "2026-10-11T16:34:33.239Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T16:37:33.649Z",
       "repository": "convaiinnovations/laya",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T02:52:13.121Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T02:54:59.773Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
