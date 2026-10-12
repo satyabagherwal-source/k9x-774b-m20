@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T05:29:50.235Z",
-  "total_cycles_completed": 397,
-  "total_learnings_persisted": 397,
+  "last_updated": "2026-10-12T05:32:43.509Z",
+  "total_cycles_completed": 398,
+  "total_learnings_persisted": 398,
   "total_rules_promoted": 175,
   "history": [
-    {
-      "timestamp": "2026-10-11T19:09:50.625Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T19:13:04.093Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T05:29:50.235Z",
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv4tbvi0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T05:32:43.509Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv4tfl7k",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
