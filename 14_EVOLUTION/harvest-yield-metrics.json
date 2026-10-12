@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T19:40:54.998Z",
-  "total_cycles_completed": 650,
-  "total_learnings_persisted": 650,
-  "total_rules_promoted": 308,
+  "last_updated": "2026-10-12T19:43:57.180Z",
+  "total_cycles_completed": 651,
+  "total_learnings_persisted": 651,
+  "total_rules_promoted": 311,
   "history": [
-    {
-      "timestamp": "2026-10-12T08:59:21.194Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv50tbb9",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T09:02:44.675Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "autotrust/GEV-26B-Decide",
       "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv5nqdbd",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T19:43:57.180Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv5nu9v3",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
