@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T12:11:29.181Z",
-  "total_cycles_completed": 509,
-  "total_learnings_persisted": 509,
+  "last_updated": "2026-10-12T12:14:32.211Z",
+  "total_cycles_completed": 510,
+  "total_learnings_persisted": 510,
   "total_rules_promoted": 249,
   "history": [
-    {
-      "timestamp": "2026-10-12T00:48:35.301Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T00:51:46.656Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -1403,6 +1396,13 @@
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv57oecg",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T12:14:32.211Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv57sbl4",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -551,3 +551,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv57grle` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-12T12:05:33.079Z |
 | `learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv57kct9` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-12T12:08:20.506Z |
 | `learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv57oecg` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-12T12:11:29.180Z |
+| `learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv57sbl4` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-12T12:14:32.210Z |
