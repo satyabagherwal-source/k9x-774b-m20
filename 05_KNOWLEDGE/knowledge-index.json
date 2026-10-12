@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T16:43:45.036Z",
-  "total_verified_learnings": 4547,
+  "last_updated": "2026-10-12T16:47:02.371Z",
+  "total_verified_learnings": 4548,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -110633,6 +110633,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T16:43:45.036Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-comfy-org-minimax-h3-mv5hirg8": {
+      "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv5hirg8",
+      "source": "Comfy-Org/MiniMax-H3",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "slug": "hf-comfy-org-minimax-h3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "content_hash": "ad7bafbc9b988780c2f3d7222aff861ca8d7fdb40ef1e12b598d44528ba3f932",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 544,
+          "title": "Quantization-Format Decoupling via Artifact Separation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 545,
+          "title": "Modality-Specific VAE Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 546,
+          "title": "Embedding Injection via Prompt Syntax",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T16:47:02.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
