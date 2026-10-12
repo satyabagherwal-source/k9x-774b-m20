@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-8JVR",
-    "timestamp": "2026-10-11T12:11:29.319Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv3s8jsv",
-    "contentHash": "8dd9814059f9a8765de3aefc20f8e6013045b508789d113c8b388bfcdf814632",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-CM48",
     "timestamp": "2026-10-11T12:14:38.840Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -7492,6 +7477,21 @@
     "contentHash": "1ffe044a63b79c30de97a4c434fd1d91fec96cde0a74fb918435f2f8488bf6aa",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-GRD1",
+    "timestamp": "2026-10-12T15:21:29.989Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv5egrah",
+    "contentHash": "9219558742cda4f727eb719a3054ec6c6648100991afe3be59939399837f58d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

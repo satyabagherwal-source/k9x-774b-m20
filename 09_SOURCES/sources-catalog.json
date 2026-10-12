@@ -525,9 +525,9 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
     "license": "Open-Source",
-    "contentHash": "bba9265dd9a53a2e239ea4e520a9a1010ed7b451ca02a4028a425fa5824fe793",
-    "lastHarvestedAt": "2026-10-12T08:04:59.223Z",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4yveax"
+    "contentHash": "9219558742cda4f727eb719a3054ec6c6648100991afe3be59939399837f58d7",
+    "lastHarvestedAt": "2026-10-12T15:21:29.991Z",
+    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv5egrah"
   },
   "hf-inclusionai-ming-image-0.1-design": {
     "repository": "inclusionAI/Ming-Image-0.1-Design",
