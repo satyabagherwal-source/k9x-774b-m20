@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:48:09.002Z",
-  "total_cycles_completed": 423,
-  "total_learnings_persisted": 423,
+  "last_updated": "2026-10-12T06:51:10.195Z",
+  "total_cycles_completed": 424,
+  "total_learnings_persisted": 424,
   "total_rules_promoted": 184,
   "history": [
-    {
-      "timestamp": "2026-10-11T20:28:40.352Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv49zxkw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T20:31:51.209Z",
       "repository": "hexgrad/Kokoro-82M",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T06:48:09.002Z",
       "repository": "Lightricks/LTX-2.5",
       "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv4w4l3l",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:51:10.195Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4w8gwa",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

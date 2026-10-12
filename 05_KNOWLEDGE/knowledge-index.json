@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:48:08.958Z",
-  "total_verified_learnings": 4378,
+  "last_updated": "2026-10-12T06:51:10.138Z",
+  "total_verified_learnings": 4379,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106010,6 +106010,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T06:48:08.958Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4w8gwa": {
+      "learning_id": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4w8gwa",
+      "source": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "slug": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
+      "content_hash": "2c9a87349faaa396124e56157f18b8bdb530e0e2e7a174729e5bec8e511a9648",
+      "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T06:51:10.138Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
