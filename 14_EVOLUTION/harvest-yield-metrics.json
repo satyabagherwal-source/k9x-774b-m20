@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:33:45.270Z",
-  "total_cycles_completed": 363,
-  "total_learnings_persisted": 363,
+  "last_updated": "2026-10-12T03:36:57.222Z",
+  "total_cycles_completed": 364,
+  "total_learnings_persisted": 364,
   "total_rules_promoted": 161,
   "history": [
-    {
-      "timestamp": "2026-10-11T17:28:13.577Z",
-      "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-hf-francisring-prism-mv43jvl8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T17:31:18.136Z",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T03:33:45.270Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
       "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4p6lav",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T03:36:57.222Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4papes",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
