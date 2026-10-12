@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T01:45:45.677Z",
-  "total_cycles_completed": 329,
-  "total_learnings_persisted": 329,
+  "last_updated": "2026-10-12T01:48:32.236Z",
+  "total_cycles_completed": 330,
+  "total_learnings_persisted": 330,
   "total_rules_promoted": 144,
   "history": [
-    {
-      "timestamp": "2026-10-11T15:19:11.341Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T15:21:58.964Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T01:45:45.677Z",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T01:48:32.236Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
