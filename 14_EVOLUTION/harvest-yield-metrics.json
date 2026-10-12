@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T18:41:54.119Z",
-  "total_cycles_completed": 631,
-  "total_learnings_persisted": 631,
+  "last_updated": "2026-10-12T18:44:54.174Z",
+  "total_cycles_completed": 632,
+  "total_learnings_persisted": 632,
   "total_rules_promoted": 303,
   "history": [
-    {
-      "timestamp": "2026-10-12T07:33:11.631Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv4xqif2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T07:38:00.641Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T18:41:54.119Z",
       "repository": "openai-community/gpt2",
       "learningId": "learn-huggingface-hf-openai-community-gpt2-mv5lmh5f",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T18:44:54.174Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv5lqc39",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
