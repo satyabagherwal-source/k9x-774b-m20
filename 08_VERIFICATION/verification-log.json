@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-WVN0",
-    "timestamp": "2026-10-11T17:10:20.460Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
-    "contentHash": "23ad8bb4378f86d3e1d0e3d8f7f0fb6a2f62c4f34db6b8f69115f8f57a559670",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-0ENY",
     "timestamp": "2026-10-11T17:13:05.086Z",
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-small-en-v1.5",
     "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv5ox6g1",
     "contentHash": "b7df502ca58aa42e48ca4d9d3fcf153f0d1ee4860035a725f5d5c9357d880104",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-0ZH9",
+    "timestamp": "2026-10-12T20:17:09.789Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv5p0ze6",
+    "contentHash": "04d48f4761f170cdf90a79e6030d65d290ddf22cec8d1e08b128859b3cfb2670",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
