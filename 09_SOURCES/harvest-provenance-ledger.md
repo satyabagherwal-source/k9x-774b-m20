@@ -334,3 +334,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-11T23:51:12.153Z |
 | `learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-11T23:54:05.928Z |
 | `learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-11T23:57:18.987Z |
+| `learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-12T00:00:24.000Z |
