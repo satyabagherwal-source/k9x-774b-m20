@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T10:28:45.898Z",
-  "total_cycles_completed": 476,
-  "total_learnings_persisted": 476,
+  "last_updated": "2026-10-12T10:32:06.084Z",
+  "total_cycles_completed": 477,
+  "total_learnings_persisted": 477,
   "total_rules_promoted": 238,
   "history": [
-    {
-      "timestamp": "2026-10-11T23:08:31.421Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T23:11:35.953Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T10:28:45.898Z",
       "repository": "openai/whisper-large-v3",
       "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv540aqr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T10:32:06.084Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv544l7i",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
