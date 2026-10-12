@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T17:44:06.895Z",
-  "total_cycles_completed": 612,
-  "total_learnings_persisted": 612,
-  "total_rules_promoted": 298,
+  "last_updated": "2026-10-12T17:47:24.297Z",
+  "total_cycles_completed": 613,
+  "total_learnings_persisted": 613,
+  "total_rules_promoted": 301,
   "history": [
-    {
-      "timestamp": "2026-10-12T06:18:04.226Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4v1wik",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T06:21:01.236Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "openai/gpt-oss-20b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv5jk5tu",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T17:47:24.297Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv5joe5x",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
