@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:17:59.772Z",
-  "total_verified_learnings": 4385,
+  "last_updated": "2026-10-12T07:28:42.334Z",
+  "total_verified_learnings": 4386,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106221,6 +106221,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T07:17:59.772Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-altworld-hemmingway-1-mv4xkqo7": {
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv4xkqo7",
+      "source": "Altworld/Hemmingway-1",
+      "repository": "Altworld/Hemmingway-1",
+      "slug": "hf-altworld-hemmingway-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "content_hash": "41ec35f6a17ac6535f52f40ef068f96a8c0231c73f512574e22e2b63246199c5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 448,
+          "title": "Precision Safeguarding for Hybrid SSM/Linear Attention State Kernels",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 449,
+          "title": "Multi-Token Prediction (MTP) Speculative Tree Verification Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 450,
+          "title": "Multi-Axis Interleaved RoPE Decomposition Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T07:28:42.334Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

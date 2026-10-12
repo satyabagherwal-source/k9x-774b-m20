@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:17:59.822Z",
-  "total_cycles_completed": 430,
-  "total_learnings_persisted": 430,
-  "total_rules_promoted": 192,
+  "last_updated": "2026-10-12T07:28:42.401Z",
+  "total_cycles_completed": 431,
+  "total_learnings_persisted": 431,
+  "total_rules_promoted": 195,
   "history": [
-    {
-      "timestamp": "2026-10-11T20:49:49.405Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4ar4th",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T20:52:44.392Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T07:17:59.822Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv4x6yv0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T07:28:42.401Z",
+      "repository": "Altworld/Hemmingway-1",
+      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv4xkqo7",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
