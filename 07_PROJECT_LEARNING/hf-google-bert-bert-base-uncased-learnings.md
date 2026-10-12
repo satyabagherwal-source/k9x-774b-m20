@@ -3,8 +3,8 @@
 > **Source Version**: `hf-google-be`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-11T19:55:32.920Z  
-> **Learning ID**: `learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54`  
+> **Timestamp**: 2026-10-12T02:09:46.776Z  
+> **Learning ID**: `learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-11T19:55:31.961Z  
+> **Harvest Timestamp**: 2026-10-12T02:09:46.103Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

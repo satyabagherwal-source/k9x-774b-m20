@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T02:06:47.393Z",
-  "total_cycles_completed": 335,
-  "total_learnings_persisted": 335,
+  "last_updated": "2026-10-12T02:09:46.876Z",
+  "total_cycles_completed": 336,
+  "total_learnings_persisted": 336,
   "total_rules_promoted": 150,
   "history": [
-    {
-      "timestamp": "2026-10-11T15:42:30.036Z",
-      "repository": "test-org/rule-verifier",
-      "learningId": "learn-github-test-org-rule-verifier-mv3zrwqz",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T15:49:20.635Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T02:06:47.393Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T02:09:46.876Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
