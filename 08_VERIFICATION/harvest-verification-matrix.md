@@ -464,3 +464,4 @@
 | `CYCLE-20261012-YXAY` | `2026-10-12T05:47:45.562Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`85933783...`) |
 | `CYCLE-20261012-2GYC` | `2026-10-12T05:50:30.996Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`cf7752a2...`) |
 | `CYCLE-20261012-6KAE` | `2026-10-12T05:53:41.942Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`b0df3abb...`) |
+| `CYCLE-20261012-APHG` | `2026-10-12T05:56:55.300Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`6248e8f0...`) |

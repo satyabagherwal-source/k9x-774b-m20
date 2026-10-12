@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T05:53:41.944Z",
-  "total_cycles_completed": 405,
-  "total_learnings_persisted": 405,
+  "last_updated": "2026-10-12T05:56:55.303Z",
+  "total_cycles_completed": 406,
+  "total_learnings_persisted": 406,
   "total_rules_promoted": 178,
   "history": [
-    {
-      "timestamp": "2026-10-11T19:34:24.734Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T19:37:16.691Z",
       "repository": "canberkkkkkk/ema-lightning",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T05:53:41.944Z",
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4u6k80",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T05:56:55.303Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4uapf7",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
