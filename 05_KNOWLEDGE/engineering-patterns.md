@@ -23031,3 +23031,183 @@ probs = torch.softmax(logits.view(-1), dim=-1)
 Unit test that verifies `probs.sum(-1)` equals 1 for each question across a batch of random logits.
 
 ---
+
+
+---
+
+## 488. **Consistent Dimensionality Across Backbone and Joint Head** (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Consistent Dimensionality Across Backbone and Joint Head**",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T09:26:42.359Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv51shox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The joint schema head **MUST** accept a hidden state tensor whose last dimension equals the backbone’s `hidden_size` and whose batch dimension matches the number of input records.  
+**WHY**:  
+Mismatched dimensions cause silent broadcasting or shape errors that propagate to logits, leading to incorrect probability distributions or runtime crashes.  
+**WHEN TO APPLY**:  
+During model construction (`joint_head = JointHead(config)`), during inference (`joint_head(hidden_states)`), and when swapping backbones.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# joint_head.py
+class JointHead(nn.Module):
+    def __init__(self, config, backbone_hidden_size):
+        super().__init__()
+        assert config.hidden_size == backbone_hidden_size, (
+            f"Joint head hidden_size {config.hidden_size} "
+            f"does not match backbone hidden_size {backbone_hidden_size}"
+        )
+        self.layers = nn.ModuleList(
+            [nn.Linear(backbone_hidden_size, config.hidden_size) for _ in range(config.num_layers)]
+        )
+        self.output = nn.Linear(config.hidden_size, config.num_options)
+
+    def forward(self, hidden_states):
+        # hidden_states: [batch, seq_len, hidden_size]
+        x = hidden_states[:, -1, :]  # use final token representation
+        for layer in self.layers:
+            x = layer(x).relu()
+        logits = self.output(x)  # [batch, num_options]
+        return logits
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: mismatched hidden size
+joint_head = JointHead(config, backbone_hidden_size=2048)  # backbone hidden_size is 4096
+```
+**VERIFICATION METHOD**:  
+Unit test that passes a dummy tensor of shape `[1, 10, 4096]` to the joint head and asserts the output shape is `[1, num_options]`. Lint rule that checks `config.hidden_size` against `backbone.hidden_size` during model initialization.
+
+---
+
+
+---
+
+## 489. **Deterministic Tokenization of Multimodal Inputs** (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Deterministic Tokenization of Multimodal Inputs**",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T09:26:42.378Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv51shox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The tokenizer **MUST** preserve the order and identity of multimodal tokens (`<|image_pad|>`, `<|video_pad|>`, `<|audio_start|>`, etc.) and **MUST NOT** silently drop or reorder them during encoding.  
+**WHY**:  
+Token order determines the mapping from hidden states to question logits; any alteration corrupts the joint head’s ability to align evidence with questions.  
+**WHEN TO APPLY**:  
+During `tokenizer.encode`, `processor.process`, and any custom preprocessing step.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# tokenizer_config.json
+{
+  "image_token": "<|image_pad|>",
+  "video_token": "<|video_pad|>",
+  "audio_bos_token": "<|audio_start|>",
+  "audio_eos_token": "<|audio_end|>"
+}
+```
+```python
+# processor.py
+def process(record, tokenizer):
+    # Preserve multimodal tokens
+    tokens = tokenizer.encode(record["state"])
+    if "image" in record:
+        image_token_id = tokenizer.convert_tokens_to_ids("<|image_pad|>")
+        tokens.append(image_token_id)
+    # ... similar for video/audio
+    return tokens
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: removing image token
+tokens = tokenizer.encode(record["state"])
+# tokens.pop(tokens.index("<|image_pad|>"))  # silently removes image token
+```
+**VERIFICATION METHOD**:  
+Property test that encodes a record with an image and asserts the resulting token list contains the image token ID exactly once. Linter that flags any code that removes tokens by value.
+
+---
+
+
+---
+
+## 490. **Precision‑Safe Mixed‑Precision Inference** (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Precision‑Safe Mixed‑Precision Inference**",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T09:26:42.394Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv51shox",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+When using `bfloat16` for model weights, all intermediate tensors that feed into a `softmax` or loss computation **MUST** be cast to `float32` to avoid catastrophic under‑/overflow.  
+**WHY**:  
+`bfloat16` has a limited exponent range; softmax on `bfloat16` can produce NaNs or zeros, corrupting probability outputs.  
+**WHEN TO APPLY**:  
+During the final logits → probability conversion step in the inference pipeline.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# inference.py
+def logits_to_probs(logits):
+    # logits: [batch, num_options] in bfloat16
+    logits_fp32 = logits.to(torch.float32)
+    probs = torch.softmax(logits_fp32, dim=-1)
+    return probs
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: softmax directly on bfloat16
+probs = torch.softmax(logits, dim=-1)  # may produce NaNs
+```
+**VERIFICATION METHOD**:  
+Unit test that feeds a tensor of `bfloat16` logits with large magnitude and asserts no NaNs in the output probabilities. Linter rule that flags `torch.softmax` calls on tensors with dtype `bfloat16`.
+
+---

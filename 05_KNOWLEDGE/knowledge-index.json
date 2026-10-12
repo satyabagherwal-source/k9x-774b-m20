@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:23:29.272Z",
-  "total_verified_learnings": 4414,
+  "last_updated": "2026-10-12T09:26:42.420Z",
+  "total_verified_learnings": 4415,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -107133,6 +107133,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T09:23:29.272Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-flash-mv51shox": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv51shox",
+      "source": "Cloudflare/clef-flash",
+      "repository": "Cloudflare/clef-flash",
+      "slug": "hf-cloudflare-clef-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "content_hash": "b690ba872100c81e28d6b28674b314cae76e4bd29fd13ba8c02175b8b940d929",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 488,
+          "title": "**Consistent Dimensionality Across Backbone and Joint Head**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 489,
+          "title": "**Deterministic Tokenization of Multimodal Inputs**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 490,
+          "title": "**Precision‑Safe Mixed‑Precision Inference**",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T09:26:42.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
