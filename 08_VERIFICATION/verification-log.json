@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-UKJI",
-    "timestamp": "2026-10-11T14:48:34.686Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
-    "contentHash": "a9830abce40b2d92ff5445b4e15091638e16e0b612634f85f2700ff6a7475c8e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-YBHO",
     "timestamp": "2026-10-11T14:51:29.580Z",
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-4B",
     "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv5kfi1z",
     "contentHash": "a463b19a91d3998b78667751d26f58ce544a266bccf080f44ac9fd0fe4594c4d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-JAWT",
+    "timestamp": "2026-10-12T18:11:26.333Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv5kjaug",
+    "contentHash": "b9eaff06aaccb02d296f600d6a5cebdf3ca8cab83467f2636635a8d5b00acfd3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
