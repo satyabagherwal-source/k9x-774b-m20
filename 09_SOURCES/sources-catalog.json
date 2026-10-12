@@ -895,9 +895,9 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceVersion": "hf-minimaxai-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "234ca70d27f04b13c771a34e8489bbaf6338a9f1ae7ae654002769398da8db9c",
-    "lastHarvestedAt": "2026-10-12T10:35:24.449Z",
-    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv548u9m"
+    "contentHash": "2ec9471eb4b4d98b582033ec8bc935308df7ac353867112e78b0793f509069b6",
+    "lastHarvestedAt": "2026-10-12T17:17:26.028Z",
+    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv5ilulj"
   },
   "hf-qwen-qwen3.8-flash-next": {
     "repository": "Qwen/Qwen3.8-Flash-Next",
