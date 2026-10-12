@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T00:51:46.656Z",
-  "total_cycles_completed": 311,
-  "total_learnings_persisted": 311,
-  "total_rules_promoted": 136,
+  "last_updated": "2026-10-12T00:54:52.378Z",
+  "total_cycles_completed": 312,
+  "total_learnings_persisted": 312,
+  "total_rules_promoted": 138,
   "history": [
-    {
-      "timestamp": "2026-10-11T14:23:27.655Z",
-      "repository": "test-org/gateway-verifier",
-      "learningId": "learn-github-test-org-gateway-verifier-mv3wy9hl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T14:24:31.067Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1403,6 +1396,13 @@
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
       "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T00:54:52.378Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
