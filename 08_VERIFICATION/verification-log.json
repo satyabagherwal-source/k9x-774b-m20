@@ -4663,5 +4663,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-TAYW",
+    "timestamp": "2026-10-12T01:03:27.176Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws",
+    "contentHash": "522d2df24b7cc146cfe63c7cee04b33fd5b11762873f141a0c0dfc8a8167f2b7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
