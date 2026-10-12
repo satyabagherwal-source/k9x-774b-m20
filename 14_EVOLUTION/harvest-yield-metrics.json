@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T19:31:30.617Z",
-  "total_cycles_completed": 647,
-  "total_learnings_persisted": 647,
+  "last_updated": "2026-10-12T19:34:47.206Z",
+  "total_cycles_completed": 648,
+  "total_learnings_persisted": 648,
   "total_rules_promoted": 308,
   "history": [
-    {
-      "timestamp": "2026-10-12T08:50:17.766Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv50ho00",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T08:53:19.167Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T19:31:30.617Z",
       "repository": "mudler/locate-anything.cpp-gguf",
       "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv5ne9uq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T19:34:47.206Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv5nihj0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
