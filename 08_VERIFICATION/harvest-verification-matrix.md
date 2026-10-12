@@ -697,3 +697,4 @@
 | `CYCLE-20261012-64RF` | `2026-10-12T18:57:11.067Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`f349e0fe...`) |
 | `CYCLE-20261012-9VTB` | `2026-10-12T19:00:06.095Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`535a6f5c...`) |
 | `CYCLE-20261012-E6KQ` | `2026-10-12T19:03:26.666Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`1e40fd35...`) |
+| `CYCLE-20261012-JCO5` | `2026-10-12T19:07:27.845Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`ea9c71e3...`) |

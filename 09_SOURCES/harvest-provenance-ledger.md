@@ -680,3 +680,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-intfloat-multilingual-e5-small-mv5m64pf` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-12T18:57:11.070Z |
 | `learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv5m9vrc` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-12T19:00:06.096Z |
 | `learn-huggingface-hf-qwen-qwen3-8b-mv5me6hv` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-12T19:03:26.668Z |
+| `learn-huggingface-hf-google-vit-base-patch16-224-mv5mjcl8` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-12T19:07:27.848Z |
