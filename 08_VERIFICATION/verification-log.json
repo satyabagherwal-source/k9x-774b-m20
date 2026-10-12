@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-A1LL",
-    "timestamp": "2026-10-11T08:56:41.625Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv3la1jq",
-    "contentHash": "a8a1dd1ba3b9381b311da261fd748e20d0d07712db3dd3a30540276bf2b02a22",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-FCYZ",
     "timestamp": "2026-10-11T09:00:49.643Z",
     "repository": "convaiinnovations/laya",
@@ -7490,6 +7475,21 @@
     "repository": "mudler/locate-anything.cpp-gguf",
     "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv593rxl",
     "contentHash": "2cbda2173edd30b1ef76e7a321c0f3ac1da716b0b790f333659b1679775bc848",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-7LF5",
+    "timestamp": "2026-10-12T12:54:24.305Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv597lcd",
+    "contentHash": "fd48e5743c800f44fe089f344969441c2d775d11bc33349733e4387678d783a3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
