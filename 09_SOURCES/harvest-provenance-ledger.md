@@ -430,3 +430,4 @@ Every entry in this ledger must capture:
 | `learn-github-fei2411-deepseek-bot-mv4rtfyk` | `https://github.com/Fei2411/DeepSeek-Bot` | `62394312` | Multi-dimensional audit evidence | 2026-10-12T04:47:30.653Z |
 | `learn-huggingface-hf-qwen-qwen3-8b-mv4s94vb` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-12T04:59:42.796Z |
 | `learn-huggingface-hf-google-vit-base-patch16-224-mv4scrzr` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-12T05:02:32.728Z |
+| `learn-huggingface-hf-google-gemma-4-31b-it-mv4sgk6j` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-12T05:05:29.228Z |
