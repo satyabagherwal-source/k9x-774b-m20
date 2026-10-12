@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T14:28:09.977Z",
-  "total_cycles_completed": 549,
-  "total_learnings_persisted": 549,
-  "total_rules_promoted": 259,
+  "last_updated": "2026-10-12T14:31:17.525Z",
+  "total_cycles_completed": 550,
+  "total_learnings_persisted": 550,
+  "total_rules_promoted": 263,
   "history": [
-    {
-      "timestamp": "2026-10-12T02:52:13.121Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T02:54:59.773Z",
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -1403,6 +1396,13 @@
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv5ck64s",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T14:31:17.525Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv5co6su",
+      "promotedRulesCount": 4,
       "status": "PROMOTED"
     }
   ]

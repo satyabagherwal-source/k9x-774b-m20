@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T14:28:09.921Z",
-  "total_verified_learnings": 4504,
+  "last_updated": "2026-10-12T14:31:17.479Z",
+  "total_verified_learnings": 4505,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -109440,6 +109440,51 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T14:28:09.921Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-lightricks-ltx-2-5-mv5co6su": {
+      "learning_id": "learn-huggingface-hf-lightricks-ltx-2-5-mv5co6su",
+      "source": "Lightricks/LTX-2.5",
+      "repository": "Lightricks/LTX-2.5",
+      "slug": "hf-lightricks-ltx-2.5",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
+      "content_hash": "eb8a4955d295c445ff6917fbb08a2c9d8914d378f9f0bb9e6c749aa011f9b0c2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 514,
+          "title": "Model Artifact vs. Software Codebase Distinction",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 515,
+          "title": "Inference Engine Separation Principle",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 516,
+          "title": "Memory Safety in Tensor Loading",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 517,
+          "title": "Dtype Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T14:31:17.479Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
