@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T15:43:02.687Z",
-  "total_cycles_completed": 573,
-  "total_learnings_persisted": 573,
+  "last_updated": "2026-10-12T15:46:01.980Z",
+  "total_cycles_completed": 574,
+  "total_learnings_persisted": 574,
   "total_rules_promoted": 279,
   "history": [
-    {
-      "timestamp": "2026-10-12T04:07:20.543Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4qds9r",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T04:10:01.676Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T15:43:02.687Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv5f8grg",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T15:46:01.980Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv5fcb2i",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
