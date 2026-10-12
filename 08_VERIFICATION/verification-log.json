@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-EJOB",
-    "timestamp": "2026-10-11T13:40:07.835Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv3vejmd",
-    "contentHash": "a62df5c8d99f4a6b86c9eede1486bb778d5849a5b32712d172163ea807a5714e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-IN0W",
     "timestamp": "2026-10-11T13:43:18.800Z",
     "repository": "openai/whisper-large-v3",
@@ -7490,6 +7475,21 @@
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
     "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv5hq7oz",
     "contentHash": "d073f4a747b6b49fbd8cb544056456a57ace0d1f8d7e0068d45158ea69c7805b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-UJ2R",
+    "timestamp": "2026-10-12T16:56:11.283Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv5huj0c",
+    "contentHash": "0740a81db842fe59e1ac5ac95aeac2188728157730404d811021b2cd6c5f150d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
