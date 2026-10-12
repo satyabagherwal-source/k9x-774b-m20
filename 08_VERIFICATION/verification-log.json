@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-U4C6",
-    "timestamp": "2026-10-11T18:04:10.998Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
-    "contentHash": "422b6a3f78efceaae7995deccc6af68509cd1efd8f6d2c9346c2039bc17bd085",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-XVRX",
     "timestamp": "2026-10-11T18:07:06.525Z",
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -7490,6 +7475,21 @@
     "repository": "Lightricks/LTX-2.5",
     "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv5qw6ic",
     "contentHash": "83339651819b0defbb6f3c55f17b3afb514047e20a3e8fad6bf29915a36246b5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-01DM",
+    "timestamp": "2026-10-12T21:12:24.826Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv5r01ao",
+    "contentHash": "2221e072f296e8dbffd8178c42699d717072cbc3b6f6f15be64c3fd7c1d53844",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

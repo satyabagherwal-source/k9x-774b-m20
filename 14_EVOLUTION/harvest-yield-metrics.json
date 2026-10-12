@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:09:24.964Z",
-  "total_cycles_completed": 675,
-  "total_learnings_persisted": 675,
+  "last_updated": "2026-10-12T21:12:24.830Z",
+  "total_cycles_completed": 676,
+  "total_learnings_persisted": 676,
   "total_rules_promoted": 320,
   "history": [
-    {
-      "timestamp": "2026-10-12T10:28:45.898Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv540aqr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T10:32:06.084Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T21:09:24.964Z",
       "repository": "Lightricks/LTX-2.5",
       "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv5qw6ic",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:12:24.830Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv5r01ao",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
