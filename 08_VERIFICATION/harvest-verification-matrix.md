@@ -554,3 +554,4 @@
 | `CYCLE-20261012-UXQW` | `2026-10-12T11:20:34.904Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`5376304e...`) |
 | `CYCLE-20261012-Z5ZA` | `2026-10-12T11:23:52.198Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`108dc1dd...`) |
 | `CYCLE-20261012-37BT` | `2026-10-12T11:27:00.569Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`4682c551...`) |
+| `CYCLE-20261012-706P` | `2026-10-12T11:29:57.937Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`d13b102b...`) |

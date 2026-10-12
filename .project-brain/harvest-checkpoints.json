@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:27:00.572Z",
+  "last_updated": "2026-10-12T11:29:57.942Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1280,15 +1280,15 @@
       "repository": "FermionResearch/Phonon-2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-fermionresearch-phonon-2-mv4ptv8c",
-      "content_hash": "3c336ddaa7ccc933fc07d1be13f2e190a3d1880c0c1d62f1d48bacd71fa0e439",
-      "verified_at": "2026-10-12T03:51:51.213Z",
+      "learning_id": "learn-huggingface-hf-fermionresearch-phonon-2-mv56703t",
+      "content_hash": "d13b102b850313327d84f861141c25436d1b127b6ce5bec1049c438eb429da8f",
+      "verified_at": "2026-10-12T11:29:57.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T03:51:51.213Z"
+      "last_updated": "2026-10-12T11:29:57.942Z"
     },
     "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw": {
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",

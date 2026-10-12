@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:27:00.571Z",
-  "total_cycles_completed": 495,
-  "total_learnings_persisted": 495,
+  "last_updated": "2026-10-12T11:29:57.941Z",
+  "total_cycles_completed": 496,
+  "total_learnings_persisted": 496,
   "total_rules_promoted": 244,
   "history": [
-    {
-      "timestamp": "2026-10-12T00:06:17.060Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T00:09:14.214Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T11:27:00.571Z",
       "repository": "Qwen/Qwen3-4B",
       "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv5637a7",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T11:29:57.941Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv56703t",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
