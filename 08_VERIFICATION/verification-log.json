@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-QQ1B",
-    "timestamp": "2026-10-11T16:37:33.647Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
-    "contentHash": "e82f298a1cd3d66430b30ed1eb7d3347176c61069a683389c7503112eb78cb9e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-U2YZ",
     "timestamp": "2026-10-11T16:40:10.379Z",
     "repository": "Edge0/Audio8-ASR-Infinite",
@@ -7492,6 +7477,21 @@
     "contentHash": "b66648a29fda553c43a7d6c0afd6633a978d5c82cc932d2909510ddee244af7b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-Y0HD",
+    "timestamp": "2026-10-12T19:46:51.505Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv5ny0f0",
+    "contentHash": "2d2c84a118d0ca04eb3dbd7378906042d097768dea54e5534bc86ad03be170fb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
