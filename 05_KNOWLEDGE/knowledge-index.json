@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T04:38:09.389Z",
-  "total_verified_learnings": 4339,
+  "last_updated": "2026-10-12T04:41:07.134Z",
+  "total_verified_learnings": 4340,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -104998,6 +104998,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T04:38:09.389Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4rl81r": {
+      "learning_id": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4rl81r",
+      "source": "argmaxinc/whisperkit-coreml",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "slug": "hf-argmaxinc-whisperkit-coreml",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+      "source_version": "hf-argmaxinc-whisperkit-coreml",
+      "content_hash": "a7d40fb5bdaaae5a87ad16d5ba9230a8f7dde8b86d5c5198e8d178b987cab591",
+      "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 427,
+          "title": "Hardware-Aware Model Routing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 428,
+          "title": "Quantized Model Naming & Size Transparency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T04:41:07.133Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
