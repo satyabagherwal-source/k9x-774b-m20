@@ -3,8 +3,8 @@
 > **Source Version**: `hf-francisri`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T13:38:30.199Z  
-> **Learning ID**: `learn-huggingface-hf-francisring-prism-mv5asb07`  
+> **Timestamp**: 2026-10-12T20:33:04.652Z  
+> **Learning ID**: `learn-huggingface-hf-francisring-prism-mv5plg98`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/FrancisRing/Prism](https://huggingface.co/FrancisRing/Prism))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T13:38:29.384Z  
+> **Harvest Timestamp**: 2026-10-12T20:33:04.025Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-to-video
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 0 downloads | 172 likes
+- **Stars / Engagement**: 0 downloads | 175 likes
 
 ---
 
