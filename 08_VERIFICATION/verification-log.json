@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-KPOO",
-    "timestamp": "2026-10-11T18:24:51.720Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
-    "contentHash": "b3e0ca83ef376231748ec60c17e274bf430f55309e6c1be149f128e450eebe2b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-OMXE",
     "timestamp": "2026-10-11T18:27:54.770Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7492,6 +7477,21 @@
     "contentHash": "9e932fa81f6e6e8ce8cd79326eda981cc9a223ef42422530fb5259e9e3011aef",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-RYVS",
+    "timestamp": "2026-10-12T21:34:07.960Z",
+    "repository": "Altworld/Hemmingway-1",
+    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv5rryra",
+    "contentHash": "c5cbe846f2b5fe6a4e568f0754d26cb7fc420916a9ed75bd778f3314eeea59b8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
