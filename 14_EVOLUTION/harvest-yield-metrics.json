@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T15:09:29.865Z",
-  "total_cycles_completed": 562,
-  "total_learnings_persisted": 562,
+  "last_updated": "2026-10-12T15:12:25.792Z",
+  "total_cycles_completed": 563,
+  "total_learnings_persisted": 563,
   "total_rules_promoted": 273,
   "history": [
-    {
-      "timestamp": "2026-10-12T03:33:45.270Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4p6lav",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T03:36:57.222Z",
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -1403,6 +1396,13 @@
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5e1bli",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T15:12:25.792Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv5e53dk",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
