@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-7M63",
-    "timestamp": "2026-10-11T10:46:46.779Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv3p7m42",
-    "contentHash": "689afaf335a062c9afb6efac4b37d4e7978ec81cedc7a1a9c029adbd5190f2e8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-BKS5",
     "timestamp": "2026-10-11T10:49:51.605Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7492,6 +7477,21 @@
     "contentHash": "9d130cdbac508500299938af403d3da051f66e765e1ff60633a3223629e0d38f",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-S6KJ",
+    "timestamp": "2026-10-12T14:06:24.067Z",
+    "repository": "deepseek-ai/DeepSeek-R1",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv5bs6hr",
+    "contentHash": "a34ebf92ce16ecce9b6796883f681a0af7a9eec50a2dda56fe14258760581333",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
