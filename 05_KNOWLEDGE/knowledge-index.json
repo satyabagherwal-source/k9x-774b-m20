@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T05:35:38.614Z",
-  "total_verified_learnings": 4354,
+  "last_updated": "2026-10-12T05:39:02.462Z",
+  "total_verified_learnings": 4355,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -105386,6 +105386,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T05:35:38.614Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-convaiinnovations-laya-mv4tnpls": {
+      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv4tnpls",
+      "source": "convaiinnovations/laya",
+      "repository": "convaiinnovations/laya",
+      "slug": "hf-convaiinnovations-laya",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/convaiinnovations/laya",
+      "source_version": "hf-convaiinnovations-laya",
+      "content_hash": "55d9c80e7e3c676cf7e282377860c1aee42944840227773e1fa7e6302f62210d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 431,
+          "title": "Non-Autoregressive Structured Output Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 432,
+          "title": "Calibrated Probability Reporting Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 433,
+          "title": "Context Length Boundary Enforcement Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T05:39:02.462Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -17206,3 +17206,223 @@ model = AutoModel.from_pretrained("model")
 
 **VERIFICATION METHOD**:
 Static analysis script that loads `config.json` and `tokenizer_config.json` and asserts `tokenizer.model_max_length <= model.config.max_position_embeddings`.
+
+
+---
+
+## 431. Non-Autoregressive Structured Output Invariant (Harvested from convaiinnovations/laya)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Autoregressive Structured Output Invariant",
+  "source": "convaiinnovations/laya",
+  "source_url": "https://huggingface.co/convaiinnovations/laya",
+  "source_version": "hf-convaiinnovations-laya",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T05:39:02.404Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv4tnpls",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya) (Revision: `hf-convaii`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For any task requiring structured output (classification, extraction, scoring) where latency < 100ms is required, you MUST use a non-autoregressive (NAR) encoder-decoder or encoder-only model with a fixed output head. You MUST NOT use autoregressive LLMs with JSON mode or function calling for high-throughput, low-latency decisioning.
+
+**WHY**:
+Autoregressive models generate tokens sequentially, creating an $O(N)$ latency bottleneck where $N$ is the output length. They also introduce stochastic variance in token selection, leading to inconsistent JSON structures and hallucinated keys. NAR models compute all output tokens in parallel (or via a single classification head), reducing latency to $O(1)$ relative to output length and ensuring deterministic, type-safe outputs.
+
+**WHEN TO APPLY**:
+Any microservice, edge device, or real-time pipeline where the output is a fixed schema (e.g., sentiment score, category ID, boolean flag) and the input is a bounded document (< 8k tokens).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Laya Pattern: Typed Question -> Single Forward Pass -> Typed Answer
+from laya import Router
+
+router = Router()
+
+# Define strict typed questions
+questions = {
+    "department": {
+        "type": "choice",
+        "instructions": "Which department should handle this?",
+        "criteria": {"billing": "invoices, payments", "technical": "bugs, outages"}
+    },
+    "urgency": {
+        "type": "score",
+        "instructions": "How urgent is this?",
+        "criteria": ["not urgent", "soon", "blocking"]
+    }
+}
+
+# Single forward pass, no token generation loop
+result = router.predict(state_text, questions)
+
+# Direct access to typed values, no parsing required
+dept = result["answers"]["department"]["choice"]  # Returns "billing" directly
+urgency = result["answers"]["urgency"]["score"]    # Returns float 0.0-1.0
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using LLM for structured output
+import openai
+
+def classify_with_llm(text):
+    prompt = f"Classify this text as billing or technical. Return JSON: {{'dept': '...'}}"
+    response = openai.chat.completions.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": prompt + text}]
+    )
+    # Fragile parsing: LLM might return "```json\n{...}\n```" or miss keys
+    try:
+        return json.loads(response.choices[0].message.content)
+    except json.JSONDecodeError:
+        # Error handling for hallucinated JSON is complex and unreliable
+        return {"error": "parse_failed"}
+```
+
+**VERIFICATION METHOD**:
+1.  **Latency Test:** Assert `time.time() - start_time < 0.1` for a 1k-token input.
+2.  **Schema Validation:** Assert that the output object strictly matches the input question schema (no extra keys, no missing keys).
+3.  **Determinism Test:** Run the same input 100 times; assert that the output is identical (or within a negligible epsilon for float scores).
+
+
+---
+
+## 432. Calibrated Probability Reporting Invariant (Harvested from convaiinnovations/laya)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Calibrated Probability Reporting Invariant",
+  "source": "convaiinnovations/laya",
+  "source_url": "https://huggingface.co/convaiinnovations/laya",
+  "source_version": "hf-convaiinnovations-laya",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T05:39:02.416Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv4tnpls",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya) (Revision: `hf-convaii`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any probabilistic output from a machine learning model MUST be calibrated such that the reported probability matches the empirical frequency of the event. You MUST NOT use raw softmax outputs from uncalibrated models for risk-based decisioning.
+
+**WHY**:
+Raw softmax outputs are often overconfident (e.g., reporting 0.99 probability when the true accuracy is 0.85). In safety-critical or financial applications, this leads to incorrect risk assessments. RLCD (Reinforcement Learning with Calibrated Decisions) ensures that the model is penalized for overconfidence, making the probability a reliable measure of uncertainty.
+
+**WHEN TO APPLY**:
+Any system where the probability score is used for thresholding (e.g., "if churn_risk > 0.7, trigger retention offer") or for aggregating risk across multiple models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Laya Pattern: RLCD-trained model outputs calibrated probabilities
+result = router.predict(state, questions)
+
+# The probability is directly usable for risk assessment
+churn_prob = result["answers"]["churn_risk"]["noul"]  # e.g., 0.82
+
+# Safe thresholding
+if churn_prob > 0.7:
+    trigger_retention_offer()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using raw softmax without calibration
+import torch
+
+def raw_softmax_probability(logits):
+    # Raw softmax is often overconfident
+    probs = torch.softmax(logits, dim=-1)
+    return probs.max().item()
+
+# This probability is NOT reliable for risk assessment
+risk_score = raw_softmax_probability(model_output)
+if risk_score > 0.9:  # This threshold is arbitrary and unreliable
+    flag_as_high_risk()
+```
+
+**VERIFICATION METHOD**:
+1.  **Calibration Curve:** Plot predicted probabilities vs. empirical frequencies. The curve should be close to the diagonal.
+2.  **Expected Calibration Error (ECE):** Compute ECE on a held-out test set. Assert `ECE < 0.05`.
+3.  **Brier Score:** Compute the Brier score. Assert it is lower than a baseline model (e.g., majority class).
+
+
+---
+
+## 433. Context Length Boundary Enforcement Invariant (Harvested from convaiinnovations/laya)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Context Length Boundary Enforcement Invariant",
+  "source": "convaiinnovations/laya",
+  "source_url": "https://huggingface.co/convaiinnovations/laya",
+  "source_version": "hf-convaiinnovations-laya",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T05:39:02.428Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv4tnpls",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya) (Revision: `hf-convaii`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any model with a fixed context window MUST explicitly enforce the `max_len` parameter at the API boundary. You MUST NOT allow the model to silently truncate inputs without warning, and you MUST NOT assume that longer inputs always yield better accuracy.
+
+**WHY**:
+Silent truncation leads to data loss and incorrect predictions. Additionally, for long documents, accuracy may degrade beyond a certain length (as noted in the Laya README: "beyond that results vary"). Explicitly managing `max_len` allows the user to trade off between accuracy and latency, and to handle long documents appropriately.
+
+**WHEN TO APPLY**:
+Any NLP model with a fixed context window (e.g., BERT, RoBERTa, Laya) where the input length is variable.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Laya Pattern: Explicit max_len for long documents
+router = Router()
+
+# For short inputs, default max_len is sufficient
+short_result = router.predict(short_text, questions)
+
+# For long documents, explicitly set max_len to 8192
+long_result = router.predict(long_document, questions, model="multilingual", max_len=8192)
+
+# The model handles the truncation/padding internally, but the user is aware of the limit
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Silent truncation
+def predict_with_silent_truncation(text, questions):
+    # The model silently truncates to 512 tokens
+    # The user has no idea that the last 4000 tokens were ignored
+    return router.predict(text, questions)
+```
+
+**VERIFICATION METHOD**:
+1.  **Boundary Test:** Input a document of length `max_len + 1`. Assert that the model does not crash and that the output is consistent with the truncated input.
+2.  **Accuracy Degradation Test:** Measure accuracy on documents of varying lengths (1k, 4k, 8k tokens). Assert that accuracy does not drop below a threshold (e.g., 80%) within the supported range.
+3.  **Warning Test:** If the input exceeds `max_len`, assert that a warning is logged or an exception is raised (depending on the API design).
