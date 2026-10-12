@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:45:04.779Z",
-  "total_cycles_completed": 422,
-  "total_learnings_persisted": 422,
+  "last_updated": "2026-10-12T06:48:09.002Z",
+  "total_cycles_completed": 423,
+  "total_learnings_persisted": 423,
   "total_rules_promoted": 184,
   "history": [
-    {
-      "timestamp": "2026-10-11T20:25:32.403Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv49vwk3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T20:28:40.352Z",
       "repository": "microsoft/FrogNano-4B-2609",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T06:45:04.779Z",
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4w0mz1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:48:09.002Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv4w4l3l",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
