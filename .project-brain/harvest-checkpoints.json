@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:42:50.167Z",
+  "last_updated": "2026-10-12T07:47:01.024Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -524,15 +524,15 @@
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo",
-      "content_hash": "bcae827d6e7fe80cefec2c2036346656c57b185e7faafdffc27af677670e0373",
-      "verified_at": "2026-10-12T00:48:35.302Z",
+      "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4y8adc",
+      "content_hash": "ac9f4cfb1fc814a3ca73097013db1d9e50db2ae203f3ef73c4c5ac2944b6786d",
+      "verified_at": "2026-10-12T07:47:01.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T00:48:35.302Z"
+      "last_updated": "2026-10-12T07:47:01.024Z"
     },
     "Comfy-Org/Qwen-Image-2.1": {
       "repository": "Comfy-Org/Qwen-Image-2.1",

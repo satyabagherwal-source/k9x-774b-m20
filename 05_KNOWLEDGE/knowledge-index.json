@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:42:50.128Z",
-  "total_verified_learnings": 4389,
+  "last_updated": "2026-10-12T07:47:00.967Z",
+  "total_verified_learnings": 4390,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106376,6 +106376,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T07:42:50.128Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4y8adc": {
+      "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4y8adc",
+      "source": "TaichuAI/ZDTaichu5.0-9B",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "slug": "hf-taichuai-zdtaichu5.0-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "content_hash": "ac9f4cfb1fc814a3ca73097013db1d9e50db2ae203f3ef73c4c5ac2944b6786d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 459,
+          "title": "Interleaved 3D Multimodal RoPE Boundary and Tensor Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 460,
+          "title": "Hybrid Linear-Full Attention KV-Cache Dual State Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 461,
+          "title": "Multi-EOS Token Termination and Padding Disambiguation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T07:47:00.967Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
