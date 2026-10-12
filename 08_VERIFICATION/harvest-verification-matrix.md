@@ -379,3 +379,4 @@
 | `CYCLE-20261012-8XHV` | `2026-10-12T01:15:36.211Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`f1982168...`) |
 | `CYCLE-20261012-CZZX` | `2026-10-12T01:18:46.077Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 397, Rule 398, Rule 399` | Yes (`4cb9a993...`) |
 | `CYCLE-20261012-GWXR` | `2026-10-12T01:21:48.735Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`484097e6...`) |
+| `CYCLE-20261012-KYYF` | `2026-10-12T01:24:57.975Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`843f3476...`) |
