@@ -578,3 +578,4 @@
 | `CYCLE-20261012-K6YD` | `2026-10-12T12:36:12.469Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`d745a3e2...`) |
 | `CYCLE-20261012-O9OJ` | `2026-10-12T12:39:22.627Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 505, Rule 506` | Yes (`e5a278ae...`) |
 | `CYCLE-20261012-RXXD` | `2026-10-12T12:42:14.017Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`e0081af1...`) |
+| `CYCLE-20261012-VS4H` | `2026-10-12T12:45:13.121Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`d0bdfe5f...`) |
