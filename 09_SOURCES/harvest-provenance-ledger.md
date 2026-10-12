@@ -404,3 +404,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-openai-gpt-oss-20b-mv4ose2s` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-12T03:22:42.725Z |
 | `learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4owhkh` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-12T03:25:53.901Z |
 | `learn-huggingface-hf-meta-llama-llama-2-7b-mv4p2qlv` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-12T03:30:45.507Z |
+| `learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4p6lav` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-12T03:33:45.269Z |

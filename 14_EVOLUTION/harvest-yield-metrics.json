@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:30:45.508Z",
-  "total_cycles_completed": 362,
-  "total_learnings_persisted": 362,
+  "last_updated": "2026-10-12T03:33:45.270Z",
+  "total_cycles_completed": 363,
+  "total_learnings_persisted": 363,
   "total_rules_promoted": 161,
   "history": [
-    {
-      "timestamp": "2026-10-11T17:25:17.348Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T17:28:13.577Z",
       "repository": "FrancisRing/Prism",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T03:30:45.508Z",
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv4p2qlv",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T03:33:45.270Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4p6lav",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
