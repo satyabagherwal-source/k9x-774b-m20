@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:52:23.514Z",
-  "total_verified_learnings": 4423,
+  "last_updated": "2026-10-12T09:58:39.489Z",
+  "total_verified_learnings": 4424,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -107371,6 +107371,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T09:52:23.513Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-duty1g-x64dbg-mcp-server-mv52xkxd": {
+      "learning_id": "learn-github-duty1g-x64dbg-mcp-server-mv52xkxd",
+      "source": "duty1g/x64dbg-mcp-server",
+      "repository": "duty1g/x64dbg-mcp-server",
+      "slug": "duty1g-x64dbg-mcp-server",
+      "platform": "github",
+      "source_url": "https://github.com/duty1g/x64dbg-mcp-server",
+      "source_version": "18be30ab",
+      "content_hash": "5a62b5e227d874691f28643800e99a028f300dcea3d6b6c81ce81f5242901138",
+      "dossier_path": "07_PROJECT_LEARNING/duty1g-x64dbg-mcp-server-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/duty1g-x64dbg-mcp-server-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 492,
+          "title": "mcp): accept integer values for address-style params",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T09:58:39.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

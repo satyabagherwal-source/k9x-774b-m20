@@ -1338,5 +1338,15 @@
     "contentHash": "7aab75b7616976bb3a59cedbf160d872b117959d7affab447edfbc6839441961",
     "lastHarvestedAt": "2026-10-12T08:38:18.764Z",
     "learningId": "learn-github-iliyami-macsai-mv50297p"
+  },
+  "duty1g-x64dbg-mcp-server": {
+    "repository": "duty1g/x64dbg-mcp-server",
+    "platform": "github",
+    "sourceUrl": "https://github.com/duty1g/x64dbg-mcp-server",
+    "sourceVersion": "18be30ab",
+    "license": "MIT",
+    "contentHash": "5a62b5e227d874691f28643800e99a028f300dcea3d6b6c81ce81f5242901138",
+    "lastHarvestedAt": "2026-10-12T09:58:39.532Z",
+    "learningId": "learn-github-duty1g-x64dbg-mcp-server-mv52xkxd"
   }
 }

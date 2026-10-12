@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:52:23.568Z",
+  "last_updated": "2026-10-12T09:58:39.534Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1919,6 +1919,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-12T08:38:18.766Z"
+    },
+    "duty1g/x64dbg-mcp-server": {
+      "repository": "duty1g/x64dbg-mcp-server",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-duty1g-x64dbg-mcp-server-mv52xkxd",
+      "content_hash": "5a62b5e227d874691f28643800e99a028f300dcea3d6b6c81ce81f5242901138",
+      "verified_at": "2026-10-12T09:58:39.534Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-12T09:58:39.534Z"
     }
   }
 }
