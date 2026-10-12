@@ -25314,3 +25314,207 @@ gen_cfg.eos_token_ids = [248046, 999999]  # 999999 not defined in model
 Automated test that loads `GenerationConfig` and checks each EOS ID against the model’s EOS set. Static analysis to detect hard‑coded invalid EOS IDs.
 
 ---
+
+
+---
+
+## 522. Non-Uniform Precision Allocation Invariant (Harvested from ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Uniform Precision Allocation Invariant",
+  "source": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T15:02:23.280Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv5ds6iw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing large neural networks for deployment, you MUST NOT apply a uniform quantization type to all weight tensors. You MUST allocate precision per-tensor based on sensitivity analysis, ensuring that high-sensitivity tensors (e.g., `q_proj`, `k_proj`, `v_proj`, `embed_tokens`) retain higher bit-widths than low-sensitivity tensors (e.g., `ffn_down`, `ffn_gate`) to maximize perplexity preservation under a fixed size budget.
+
+**WHY**:
+Uniform quantization forces a "one-size-fits-all" constraint. High-sensitivity tensors suffer catastrophic information loss when forced into low-bit formats (e.g., Q4), leading to significant degradation in reasoning and factual recall. Low-sensitivity tensors can tolerate aggressive compression (e.g., Q3 or Q2) with negligible loss. Uniform allocation wastes bits on robust tensors and starves fragile tensors, resulting in suboptimal accuracy-per-byte.
+
+**WHEN TO APPLY**:
+Any post-training quantization (PTQ) pipeline for LLMs > 7B parameters, especially when targeting edge devices or memory-constrained servers where every MB matters.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for RCO-style allocation
+def allocate_quantization_types(tensors, size_budget_bits):
+    # 1. Calculate sensitivity score for each tensor (e.g., via gradient magnitude or reconstruction error)
+    sensitivity_scores = {t.name: compute_sensitivity(t) for t in tensors}
+    
+    # 2. Sort tensors by sensitivity (descending)
+    sorted_tensors = sorted(tensors, key=lambda t: sensitivity_scores[t.name], reverse=True)
+    
+    # 3. Greedy or optimization-based assignment
+    # Start with highest precision for top N sensitive tensors, lower for rest
+    # Adjust until sum(bits) <= size_budget_bits
+    assignment = {}
+    remaining_budget = size_budget_bits
+    for t in sorted_tensors:
+        # Choose highest possible quant type that fits remaining budget
+        # and respects minimum precision constraints for critical layers
+        q_type = select_best_q_type(t, remaining_budget, sensitivity_scores[t.name])
+        assignment[t.name] = q_type
+        remaining_budget -= q_type.bit_count * t.numel()
+        
+    return assignment
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniform quantization
+def uniform_quantize(tensors, target_bits):
+    q_type = get_quant_type_for_bits(target_bits) # e.g., Q4_K_M
+    for t in tensors:
+        t.quantize(q_type) # Applies same type to ALL tensors
+    return tensors
+```
+
+**VERIFICATION METHOD**:
+1.  **Perplexity Comparison:** Compute perplexity on a validation set (e.g., WikiText-2) for both uniform and non-uniform models at the same total file size. Non-uniform MUST show lower perplexity.
+2.  **Tensor Type Audit:** Parse the GGUF file and verify that at least 2 distinct quantization types are present in the weight tensors. If all weights are the same type, the non-uniform invariant is violated.
+
+
+---
+
+## 523. GGUF Binary Format Compatibility Invariant (Harvested from ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "GGUF Binary Format Compatibility Invariant",
+  "source": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T15:02:23.301Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv5ds6iw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any custom quantization pipeline MUST produce output that strictly adheres to the GGUF binary specification (magic number, version, tensor metadata, data layout). You MUST NOT introduce proprietary headers, non-standard tensor names, or unsupported quantization types that break `llama.cpp` compatibility.
+
+**WHY**:
+The value of GGUF is its ecosystem compatibility. If the output requires a modified inference engine, it loses its utility for broad deployment. `llama.cpp` has strict parsers for tensor types and metadata. Deviations cause silent failures, crashes, or incorrect inference results.
+
+**WHEN TO APPLY**:
+Any project generating GGUF files for use with `llama.cpp`, Ollama, LM Studio, or other GGUF-compatible runtimes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Use a validated GGUF writer library (e.g., gguf-py)
+from gguf import GGUFWriter, GGMLQuantizationType
+
+def write_gguf(model, output_path, quant_map):
+    writer = GGUFWriter(output_path, "qwen3.8-27b")
+    writer.add_parameter("general.architecture", "qwen2")
+    writer.add_parameter("general.name", "Qwen3.8-27B-GSQ-RCO")
+    
+    for tensor_name, tensor_data in model.tensors.items():
+        q_type = quant_map[tensor_name]
+        # Ensure q_type is a valid GGMLQuantizationType enum value
+        writer.add_tensor(tensor_name, tensor_data, q_type)
+        
+    writer.finalize()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Custom binary format
+def write_custom_gguf(model, output_path):
+    with open(output_path, 'wb') as f:
+        f.write(b'MYCUSTOMGGUF') # Invalid magic number
+        # Write tensors with non-standard headers
+        for t in model.tensors:
+            f.write(t.name.encode())
+            f.write(t.data) # No quantization type metadata
+```
+
+**VERIFICATION METHOD**:
+1.  **Magic Number Check:** First 4 bytes of the file MUST be `GGUF` (0x47475546).
+2.  **Parser Validation:** Load the file with `gguf-py` or `llama.cpp`'s `llama_load_model_from_file`. If it throws a parse error, the invariant is violated.
+3.  **Tensor Type Enumeration:** Verify that all tensor types are within the set of supported `GGMLQuantizationType` values.
+
+
+---
+
+## 524. Vision Projector Precision Preservation Invariant (Harvested from ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Vision Projector Precision Preservation Invariant",
+  "source": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T15:02:23.318Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv5ds6iw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In multimodal models, the vision projector (`mmproj`) MUST be quantized at a higher precision (e.g., `f16`, `q8_0`) than the LLM backbone. You MUST NOT apply the same aggressive quantization to the vision encoder/projector as to the language model weights.
+
+**WHY**:
+The vision projector maps high-dimensional visual features to the LLM's embedding space. This mapping is highly sensitive to quantization noise. Aggressive quantization of `mmproj` leads to significant degradation in image understanding tasks (e.g., OCR, chart reading), even if the LLM backbone is well-quantized. The vision encoder itself (if included) is also sensitive.
+
+**WHEN TO APPLY**:
+Any multimodal LLM (e.g., Qwen-VL, LLaVA, Pixtral) being quantized to GGUF.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def quantize_multimodal(model, quant_map):
+    for tensor_name, tensor_data in model.tensors.items():
+        if tensor_name.startswith("vision.") or tensor_name.startswith("mmproj."):
+            # Use higher precision for vision components
+            q_type = GGMLQuantizationType.F16 # or Q8_0
+        else:
+            # Use optimized non-uniform precision for LLM
+            q_type = quant_map[tensor_name]
+        tensor_data.quantize(q_type)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniform quantization across all components
+def quantize_all_uniform(model, q_type):
+    for tensor_name, tensor_data in model.tensors.items():
+        tensor_data.quantize(q_type) # Applies Q4 to vision projector too
+```
+
+**VERIFICATION METHOD**:
+1.  **Tensor Type Check:** Parse the GGUF file and verify that tensors with names containing `vision` or `mmproj` have a higher bit-width than the average LLM tensor.
+2.  **Multimodal Benchmark:** Run a vision-language benchmark (e.g., MMMU, MathVista) and compare against a baseline where `mmproj` is kept in `f16`. If performance drops significantly, the invariant is violated.

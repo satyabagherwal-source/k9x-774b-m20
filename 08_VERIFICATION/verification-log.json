@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-LNHR",
-    "timestamp": "2026-10-11T11:53:40.911Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv3rlnex",
-    "contentHash": "0d802a4b63d4fdf27795cc6210ed419ed4b1b903178a7c2a0c2e0c4fc3372613",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-PMZ1",
     "timestamp": "2026-10-11T11:56:46.861Z",
     "repository": "akhilaaa3/Jev-Omni",
@@ -7492,6 +7477,21 @@
     "contentHash": "3dfea16b4beb50bf073566577baff2141fac6cd9b4eaebca5ef9cd3900a08154",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-S6N4",
+    "timestamp": "2026-10-12T15:02:23.392Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv5ds6iw",
+    "contentHash": "452e7d3f2412e6c5f5b55628818b0b098f08b397fc63fe99d4a7a30a2244f285",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
