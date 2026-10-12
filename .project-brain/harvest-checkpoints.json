@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T04:34:54.999Z",
+  "last_updated": "2026-10-12T04:38:09.440Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1476,15 +1476,15 @@
       "repository": "intfloat/multilingual-e5-small",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0",
-      "content_hash": "edad5c5fd192b35d1dc039ee8e24f2fe2ccf5a8a1f847d6cfb7b2ab2ad0803d1",
-      "verified_at": "2026-10-11T22:20:01.587Z",
+      "learning_id": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4rhewt",
+      "content_hash": "8d4be3c7a2abfcad41a4abe531ca263839558578dcd5e314c5cf9089dd3df160",
+      "verified_at": "2026-10-12T04:38:09.440Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T22:20:01.587Z"
+      "last_updated": "2026-10-12T04:38:09.440Z"
     },
     "argmaxinc/whisperkit-coreml": {
       "repository": "argmaxinc/whisperkit-coreml",

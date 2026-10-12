@@ -5698,5 +5698,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-HEZG",
+    "timestamp": "2026-10-12T04:38:09.436Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4rhewt",
+    "contentHash": "8d4be3c7a2abfcad41a4abe531ca263839558578dcd5e314c5cf9089dd3df160",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
