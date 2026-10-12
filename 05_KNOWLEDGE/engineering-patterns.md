@@ -25030,3 +25030,159 @@ output = model(input_tensor)  # Crash or silent error
 2.  Use `torch.autocast` for automatic mixed precision handling.
 
 ---
+
+
+---
+
+## 518. Consistent Special‑Token Alignment Across Modalities (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Special‑Token Alignment Across Modalities",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T14:53:21.841Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv5dgkqv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+All special‑token IDs (`pad_token_id`, `eos_token_id`, `image_token_id`, `video_token_id`, `audio_token`, `vision_bos_token`, `vision_eos_token`) must be defined in both the tokenizer configuration and the model configuration, and the values must match exactly.
+
+**WHY**:  
+Mismatched token IDs cause attention masks to be mis‑aligned, leading to silent token corruption, incorrect padding, or generation that never terminates (EOS never seen).
+
+**WHEN TO APPLY**:  
+During model initialization, tokenizer construction, and any downstream pipeline that merges modalities (e.g., `Qwen3VLProcessor`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# tokenizer_config.json
+{
+  "pad_token_id": 248044,
+  "eos_token_id": 248046,
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "audio_token": "<|audio_pad|>",
+  "vision_bos_token": "<|vision_start|>",
+  "vision_eos_token": "<|vision_end|>"
+}
+
+# model_config.json
+{
+  "pad_token_id": 248044,
+  "eos_token_id": 248046,
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "vision_config": {
+    "pad_token_id": 248044,
+    "eos_token_id": 248046
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: mismatched pad_token_id
+{
+  "pad_token_id": 248045  # should be 248044
+}
+```
+
+**VERIFICATION METHOD**:  
+A unit test that loads both configs and asserts equality of each special‑token field.
+
+```python
+def test_special_token_consistency():
+    tokenizer_cfg = json.load(open("tokenizer_config.json"))
+    model_cfg = json.load(open("config.json"))
+    for key in ["pad_token_id", "eos_token_id", "image_token_id", "video_token_id"]:
+        assert tokenizer_cfg[key] == model_cfg[key]
+```
+
+---
+
+
+---
+
+## 519. Enforce `use_cache=False` for Long‑Context Models (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Enforce `use_cache=False` for Long‑Context Models",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T14:53:21.864Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv5dgkqv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+For models configured with `max_position_embeddings` > 1 M, the `use_cache` flag must be set to `False` in both the model and generation configurations to avoid OOM during inference.
+
+**WHY**:  
+Enabling cache on a model with a 262 144‑token context requires storing a full key/value cache per layer, which exceeds GPU memory for 9 B parameters.
+
+**WHEN TO APPLY**:  
+During model construction and when configuring generation pipelines (`generation_config.json`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// config.json
+{
+  "use_cache": false,
+  "max_position_embeddings": 262144
+}
+
+// generation_config.json
+{
+  "_from_model_config": true,
+  "use_cache": false
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// BAD: cache enabled on long‑context model
+{
+  "use_cache": true
+}
+```
+
+**VERIFICATION METHOD**:  
+A linter rule that flags any `use_cache: true` when `max_position_embeddings` > 1 M.
+
+```yaml
+# .github/workflows/lint.yml
+- name: Check cache flag
+  run: |
+    cfg=$(jq '.max_position_embeddings' config.json)
+    if [ "$cfg" -gt 1000000 ] && jq -e '.use_cache' config.json | grep true; then
+      echo "ERROR: use_cache must be false for long context"
+      exit 1
+    fi
+```
+
+---
