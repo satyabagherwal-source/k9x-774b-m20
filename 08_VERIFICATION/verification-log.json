@@ -6223,5 +6223,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-P3G6",
+    "timestamp": "2026-10-12T06:36:06.199Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv4vp3df",
+    "contentHash": "89148d2ba2c54f03b3a0ed671002b89729be37ebeb7e378d87ffa43aebe76cf9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
