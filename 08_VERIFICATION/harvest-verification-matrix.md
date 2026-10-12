@@ -714,3 +714,4 @@
 | `CYCLE-20261012-27MZ` | `2026-10-12T19:50:07.403Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`06498cd0...`) |
 | `CYCLE-20261012-61SA` | `2026-10-12T19:53:06.442Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`56f82b96...`) |
 | `CYCLE-20261012-EGFI` | `2026-10-12T19:59:38.670Z` | `cosscom/ui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/cosscom-ui-learnings.md` | Yes (`b0b6b233...`) |
+| `CYCLE-20261012-T6KU` | `2026-10-12T20:11:05.742Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`810f23f2...`) |
