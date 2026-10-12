@@ -825,9 +825,9 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "4628d9016bd7def60117da21e28beec857b4a8617245a4693458347b83e9ccb1",
-    "lastHarvestedAt": "2026-10-11T20:19:34.444Z",
-    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv49o8cx"
+    "contentHash": "3be9a782d97e42944190e6e57e0df66f0b354d18d9eac643c5e41fd3f924a43c",
+    "lastHarvestedAt": "2026-10-12T02:34:04.274Z",
+    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n"
   },
   "hf-compvis-stable-diffusion-v1-4": {
     "repository": "CompVis/stable-diffusion-v1-4",
