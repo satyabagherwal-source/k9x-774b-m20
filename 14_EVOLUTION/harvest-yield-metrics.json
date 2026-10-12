@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T14:33:59.465Z",
-  "total_cycles_completed": 551,
-  "total_learnings_persisted": 551,
+  "last_updated": "2026-10-12T14:37:01.276Z",
+  "total_cycles_completed": 552,
+  "total_learnings_persisted": 552,
   "total_rules_promoted": 263,
   "history": [
-    {
-      "timestamp": "2026-10-12T02:57:52.431Z",
-      "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T03:01:09.726Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T14:33:59.465Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv5crnu7",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T14:37:01.276Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv5cvk34",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
