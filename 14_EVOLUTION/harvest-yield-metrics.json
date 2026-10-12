@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:59:21.194Z",
-  "total_cycles_completed": 451,
-  "total_learnings_persisted": 451,
+  "last_updated": "2026-10-12T09:02:44.675Z",
+  "total_cycles_completed": 452,
+  "total_learnings_persisted": 452,
   "total_rules_promoted": 227,
   "history": [
-    {
-      "timestamp": "2026-10-11T21:52:33.307Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T21:55:48.910Z",
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T08:59:21.194Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv50tbb9",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:02:44.675Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv50xobk",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
