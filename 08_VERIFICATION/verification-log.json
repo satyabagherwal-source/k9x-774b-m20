@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-GO9V",
-    "timestamp": "2026-10-11T08:33:51.331Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv3kgo7h",
-    "contentHash": "a9c1ede9de7fa7f1fe4f12dfd6f3ee48de17b533ae6217f19d418f7cacc46b88",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-K1DR",
     "timestamp": "2026-10-11T08:36:28.287Z",
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-31B-it",
     "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv58c4j4",
     "contentHash": "2435e16bf9d7c091341136e83e627f4b15aadbb529c7969ea619336d9afa15f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-GHT1",
+    "timestamp": "2026-10-12T12:33:19.909Z",
+    "repository": "BAAI/bge-base-en-v1.5",
+    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv58ghq2",
+    "contentHash": "8aacbb27beaaa56f48e345b35a18d7855d50c9707a8384b8924fc255677c68ca",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
