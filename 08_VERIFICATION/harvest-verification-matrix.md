@@ -491,3 +491,4 @@
 | `CYCLE-20261012-6YYY` | `2026-10-12T07:17:59.818Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 445, Rule 446, Rule 447` | Yes (`8221cd6f...`) |
 | `CYCLE-20261012-KQSD` | `2026-10-12T07:28:42.397Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 448, Rule 449, Rule 450` | Yes (`41ec35f6...`) |
 | `CYCLE-20261012-QIIY` | `2026-10-12T07:33:11.626Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 451, Rule 452, Rule 453` | Yes (`e483661f...`) |
+| `CYCLE-20261012-WPJ2` | `2026-10-12T07:38:00.638Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 454, Rule 455, Rule 456` | Yes (`13df572d...`) |

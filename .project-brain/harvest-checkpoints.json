@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:33:11.640Z",
+  "last_updated": "2026-10-12T07:38:00.642Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -496,15 +496,15 @@
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v",
-      "content_hash": "fdb6ee1e42cacbf1e6900dcd078d217bcff4a53422d3b42615b30728257b1bff",
-      "verified_at": "2026-10-12T00:42:36.831Z",
+      "learning_id": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4xwpep",
+      "content_hash": "13df572de04079c2f5654a03e316e6610047f5044554dc74dbcd14ae4d7d44c2",
+      "verified_at": "2026-10-12T07:38:00.642Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T00:42:36.831Z"
+      "last_updated": "2026-10-12T07:38:00.642Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",

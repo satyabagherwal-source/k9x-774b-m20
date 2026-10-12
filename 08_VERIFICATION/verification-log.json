@@ -6433,5 +6433,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-WPJ2",
+    "timestamp": "2026-10-12T07:38:00.638Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4xwpep",
+    "contentHash": "13df572de04079c2f5654a03e316e6610047f5044554dc74dbcd14ae4d7d44c2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
