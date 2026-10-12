@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-BR5T",
-    "timestamp": "2026-10-11T18:45:53.345Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv46br3m",
-    "contentHash": "4c93ec9521960ab8eaf26f1366a88663a2aafc6f5dbb4ec758aef62485842b62",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-FO9B",
     "timestamp": "2026-10-11T18:48:56.207Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -7492,6 +7477,21 @@
     "contentHash": "143bac1b43d6444d92e4c0b21bff2a7a0d99045cd49555c6473d5e99f2ff17e0",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-KJKR",
+    "timestamp": "2026-10-12T21:56:21.147Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv5skjht",
+    "contentHash": "beea0a80a7d18625f1dae9c0aae7f1a786dafee00472c1e216ec899a232cd594",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
