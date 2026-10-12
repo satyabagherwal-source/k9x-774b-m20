@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T01:40:06.977Z",
-  "total_cycles_completed": 327,
-  "total_learnings_persisted": 327,
+  "last_updated": "2026-10-12T01:42:59.967Z",
+  "total_cycles_completed": 328,
+  "total_learnings_persisted": 328,
   "total_rules_promoted": 144,
   "history": [
-    {
-      "timestamp": "2026-10-11T15:12:38.359Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T15:16:31.510Z",
       "repository": "openai-community/gpt2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T01:40:06.977Z",
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-hf-facebook-sam3-mv4l4ga1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T01:42:59.967Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
