@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T18:57:11.070Z",
-  "total_cycles_completed": 636,
-  "total_learnings_persisted": 636,
+  "last_updated": "2026-10-12T19:00:06.097Z",
+  "total_cycles_completed": 637,
+  "total_learnings_persisted": 637,
   "total_rules_promoted": 306,
   "history": [
-    {
-      "timestamp": "2026-10-12T07:56:48.792Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ykvwe",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T08:00:51.057Z",
       "repository": "akhilaaa3/Jev-Omni",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T18:57:11.070Z",
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv5m64pf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T19:00:06.097Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv5m9vrc",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -695,3 +695,4 @@
 | `CYCLE-20261012-YOQ5` | `2026-10-12T18:51:23.693Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 557, Rule 558, Rule 559` | Yes (`03fd4846...`) |
 | `CYCLE-20261012-2EJU` | `2026-10-12T18:54:17.130Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`7b0b0fb8...`) |
 | `CYCLE-20261012-64RF` | `2026-10-12T18:57:11.067Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`f349e0fe...`) |
+| `CYCLE-20261012-9VTB` | `2026-10-12T19:00:06.095Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`535a6f5c...`) |
