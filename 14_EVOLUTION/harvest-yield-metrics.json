@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T17:26:18.142Z",
-  "total_cycles_completed": 606,
-  "total_learnings_persisted": 606,
-  "total_rules_promoted": 295,
+  "last_updated": "2026-10-12T17:29:45.447Z",
+  "total_cycles_completed": 607,
+  "total_learnings_persisted": 607,
+  "total_rules_promoted": 298,
   "history": [
-    {
-      "timestamp": "2026-10-12T05:59:50.394Z",
-      "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv4uegia",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T06:02:44.858Z",
       "repository": "Cactus-Compute/whistle",
@@ -1403,6 +1396,13 @@
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv5ix968",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T17:29:45.447Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv5j1p1b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T14:56:16.940Z",
+  "last_updated": "2026-10-12T17:29:45.446Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1223,6 +1223,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8"
+    },
+    {
+      "id": "CD-1P7Q",
+      "directive_title": "Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "source_commit": "hf-meta-llam",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Invalid or missing rule title",
+      "learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv5j1p1b"
     }
   ]
 }

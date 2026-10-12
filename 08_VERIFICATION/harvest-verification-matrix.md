@@ -665,3 +665,4 @@
 | `CYCLE-20261012-PO0L` | `2026-10-12T17:20:24.021Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`21ad2f68...`) |
 | `CYCLE-20261012-TFLR` | `2026-10-12T17:23:19.744Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`d908280c...`) |
 | `CYCLE-20261012-X996` | `2026-10-12T17:26:18.138Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`79e443cf...`) |
+| `CYCLE-20261012-1P7K` | `2026-10-12T17:29:45.440Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 550, Rule 551, Rule 552` | Yes (`ca1ce922...`) |
