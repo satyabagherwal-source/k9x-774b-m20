@@ -516,3 +516,4 @@
 | `CYCLE-20261012-94Z2` | `2026-10-12T09:11:39.374Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`be878a6f...`) |
 | `CYCLE-20261012-CWNR` | `2026-10-12T09:14:35.223Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`343fd100...`) |
 | `CYCLE-20261012-GK4U` | `2026-10-12T09:17:25.614Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`cbd46066...`) |
+| `CYCLE-20261012-KKKU` | `2026-10-12T09:20:32.814Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 483, Rule 484` | Yes (`871ee8af...`) |

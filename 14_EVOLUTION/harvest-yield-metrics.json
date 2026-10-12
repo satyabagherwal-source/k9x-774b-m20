@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:17:25.618Z",
-  "total_cycles_completed": 457,
-  "total_learnings_persisted": 457,
-  "total_rules_promoted": 227,
+  "last_updated": "2026-10-12T09:20:32.818Z",
+  "total_cycles_completed": 458,
+  "total_learnings_persisted": 458,
+  "total_rules_promoted": 229,
   "history": [
-    {
-      "timestamp": "2026-10-11T22:10:52.380Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T22:13:49.436Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -1403,6 +1396,13 @@
       "repository": "google/embeddinggemma-2",
       "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv51gk24",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:20:32.818Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv51kkh5",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
