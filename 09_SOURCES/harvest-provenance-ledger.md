@@ -514,3 +514,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv53cxto` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-12T10:10:36.046Z |
 | `learn-huggingface-hf-amazon-chronos-2-mv53gmfl` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-12T10:13:27.889Z |
 | `learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv53kz3n` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-12T10:16:51.009Z |
+| `learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv53orzx` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-12T10:19:48.346Z |

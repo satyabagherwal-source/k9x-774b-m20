@@ -845,9 +845,9 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "267dfe484debebf50e6be90fdfa37a33ed9525c95ccc70ff5d2234db05b73202",
-    "lastHarvestedAt": "2026-10-12T02:39:57.248Z",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx"
+    "contentHash": "5711dfdd9d0fe00b609edce345460af321742fe5a6646f4db585220c3ce5a04a",
+    "lastHarvestedAt": "2026-10-12T10:19:48.346Z",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv53orzx"
   },
   "hf-microsoft-frognano-4b-2609": {
     "repository": "microsoft/FrogNano-4B-2609",
