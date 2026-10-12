@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T12:23:45.244Z",
-  "total_cycles_completed": 513,
-  "total_learnings_persisted": 513,
+  "last_updated": "2026-10-12T12:26:33.240Z",
+  "total_cycles_completed": 514,
+  "total_learnings_persisted": 514,
   "total_rules_promoted": 249,
   "history": [
-    {
-      "timestamp": "2026-10-12T01:00:36.669Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T01:03:27.184Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T12:23:45.244Z",
       "repository": "Qwen/Qwen3-8B",
       "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv5846bq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T12:26:33.240Z",
+      "repository": "google/vit-base-patch16-224",
+      "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv587rz1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
