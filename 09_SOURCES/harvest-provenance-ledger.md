@@ -520,3 +520,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-openai-whisper-large-v3-mv540aqr` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-12T10:28:45.897Z |
 | `learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv544l7i` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-12T10:32:06.083Z |
 | `learn-huggingface-hf-minimaxai-minimax-h3-mv548u9m` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-12T10:35:24.449Z |
+| `learn-huggingface-hf-qwen-qwen3-8-flash-next-mv54cnt1` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-12T10:38:22.700Z |

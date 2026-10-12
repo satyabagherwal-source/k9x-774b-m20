@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T10:35:24.450Z",
-  "total_cycles_completed": 478,
-  "total_learnings_persisted": 478,
+  "last_updated": "2026-10-12T10:38:22.701Z",
+  "total_cycles_completed": 479,
+  "total_learnings_persisted": 479,
   "total_rules_promoted": 238,
   "history": [
-    {
-      "timestamp": "2026-10-11T23:14:39.605Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T23:17:25.753Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T10:35:24.450Z",
       "repository": "MiniMaxAI/MiniMax-H3",
       "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv548u9m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T10:38:22.701Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv54cnt1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
