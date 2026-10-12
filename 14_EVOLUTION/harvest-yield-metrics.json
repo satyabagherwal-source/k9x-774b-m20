@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T18:35:39.678Z",
-  "total_cycles_completed": 629,
-  "total_learnings_persisted": 629,
+  "last_updated": "2026-10-12T18:38:34.826Z",
+  "total_cycles_completed": 630,
+  "total_learnings_persisted": 630,
   "total_rules_promoted": 303,
   "history": [
-    {
-      "timestamp": "2026-10-12T07:17:59.822Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv4x6yv0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T07:28:42.401Z",
       "repository": "Altworld/Hemmingway-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T18:35:39.678Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv5leg8x",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T18:38:34.826Z",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv5li7en",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
