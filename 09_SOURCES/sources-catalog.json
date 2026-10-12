@@ -915,9 +915,9 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "bb60761ed8faa0f372d0e00eb184ebdffef3ec9ee6b6fb061fdf8d891d1a21cc",
-    "lastHarvestedAt": "2026-10-12T03:01:09.725Z",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx"
+    "contentHash": "523b4070b94af59d6eaf2bcb45b7b74be1379e4c1f848e6e647d4bef37b98105",
+    "lastHarvestedAt": "2026-10-12T10:41:18.508Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv54gfgi"
   },
   "hf-tongyi-mai-z-image-turbo": {
     "repository": "Tongyi-MAI/Z-Image-Turbo",

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T10:38:22.701Z",
-  "total_cycles_completed": 479,
-  "total_learnings_persisted": 479,
+  "last_updated": "2026-10-12T10:41:18.509Z",
+  "total_cycles_completed": 480,
+  "total_learnings_persisted": 480,
   "total_rules_promoted": 238,
   "history": [
-    {
-      "timestamp": "2026-10-11T23:17:25.753Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T23:20:33.758Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T10:38:22.701Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
       "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv54cnt1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T10:41:18.509Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv54gfgi",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
