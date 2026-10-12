@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:11:39.377Z",
-  "total_cycles_completed": 455,
-  "total_learnings_persisted": 455,
+  "last_updated": "2026-10-12T09:14:35.226Z",
+  "total_cycles_completed": 456,
+  "total_learnings_persisted": 456,
   "total_rules_promoted": 227,
   "history": [
-    {
-      "timestamp": "2026-10-11T22:04:43.534Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv4dfghb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T22:07:39.096Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T09:11:39.377Z",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv5194w8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:14:35.226Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv51cwlf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

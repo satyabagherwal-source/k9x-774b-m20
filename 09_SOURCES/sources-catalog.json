@@ -685,9 +685,9 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "d51c50f73b15acdbcd027ff451a035ffebd30448722b3a2801e348888177b1d9",
-    "lastHarvestedAt": "2026-10-12T01:48:32.236Z",
-    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g"
+    "contentHash": "343fd100a158f80852e0c21357b9131761752c0372dddd7a7dc371122eae5665",
+    "lastHarvestedAt": "2026-10-12T09:14:35.225Z",
+    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv51cwlf"
   },
   "hf-google-embeddinggemma-2": {
     "repository": "google/embeddinggemma-2",
