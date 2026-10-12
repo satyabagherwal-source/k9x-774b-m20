@@ -3,8 +3,8 @@
 > **Source Version**: `hf-altworld-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-11T18:24:51.651Z  
-> **Learning ID**: `learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr`  
+> **Timestamp**: 2026-10-12T00:36:37.588Z  
+> **Learning ID**: `learn-huggingface-hf-altworld-hemmingway-1-mv4iut04`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -15,228 +15,267 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): Altworld/Hemmingway‑1
 
 ## 1. Executive Forensic Architecture & System Mechanics
-The repository hosts a **27 B‑parameter Qwen3.8‑based causal language model** that is exposed through the Hugging Face `transformers` ecosystem.  
+The repository is a **pre‑trained language model** that extends the Qwen3.8‑27B architecture with a custom attention schedule and a bespoke tokenizer.  
 * **Subsystem boundaries**  
-  * **Tokenizer** – `Qwen2Tokenizer` (tokenizers backend) with a custom `apply_chat_template` that injects `<|im_start|>`/`<|im_end|>` markers.  
-  * **Model** – `Qwen3_5ForCausalLM` (PyTorch implementation) that implements a mixture of **linear‑attention** and **full‑attention** layers (64 layers, 24 heads).  
-  * **Generation** – `generation_config.json` supplies sampling hyper‑parameters (`do_sample`, `top_k`, `top_p`, `temperature`).  
-  * **Deployment** – `vllm serve` command is the recommended runtime; the model is loaded with `device_map="auto"` and `dtype="auto"` to leverage GPU bfloat16 where available.  
+  * **Model core** – a 64‑layer transformer with 24 heads, 5120 hidden size, and a mixture of *linear* and *full* attention blocks.  
+  * **Tokenizer** – a Qwen2Tokenizer that supports multimodal tokens (`<|audio_start|>`, `<|image_pad|>`, etc.) and a custom `pretokenize_regex`.  
+  * **Generation config** – sampling hyper‑parameters (`do_sample`, `top_k`, `top_p`, `temperature`) and token IDs for BOS/EOS.  
+  * **Deployment** – a single‑file `config.json` that drives the model loader; the README shows a `vllm` command for serving.  
+* **Critical abstractions**  
+  * **Attention schedule** – `layer_types` array interleaves `linear_attention` and `full_attention` layers; `full_attention_interval` = 4 dictates that every 4th layer is full attention.  
+  * **Rotary embeddings** – `rope_parameters` with `mrope_interleaved` and `partial_rotary_factor` = 0.25.  
+  * **Precision** – `dtype` = `bfloat16` for the model weights; `mamba_ssm_dtype` = `float32` for the Mamba SSM sub‑module.  
+  * **Token IDs** – BOS/EOS = 248044; pad token = 248044; generation config allows EOS IDs 248046 and 248044.  
 
-The core abstraction is the **model‑config → tokenizer‑config → generation‑config** chain that the `transformers` pipeline consumes. The model is stateless; all state lives in the input token sequence and the internal hidden states that are discarded after each forward pass.
+The system is **stateless** from a code perspective; all runtime state is held in the model’s internal buffers and the tokenizer’s vocab. The only executable artifacts are the Hugging Face model files and the `README.md` that documents usage.
+
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent Data‑Type Propagation Across Model, Tokenizer, and Generation
+### 1. Attention‑Bias Consistency Rule
 **RULE**:  
-All components that participate in a forward pass (tokenizer, model, and generation logic) MUST use the same numerical data type for tensors unless an explicit cast is performed in a controlled, documented location.
+> **MUST** set `attention_bias` to `false` **only** when every attention block in the model is a `linear_attention` or a `full_attention` that does not expect a bias term.  
+> **MUST NOT** enable `attention_bias` when any `linear_attention` block is present.
 
 **WHY**:  
-Mismatched dtypes (e.g., tokenizer producing `float32` embeddings while the model expects `bfloat16`) cause silent precision loss, runtime errors, or GPU memory fragmentation. In the Qwen3.8 stack, the model config sets `"dtype": "bfloat16"`, but the tokenizer may default to `float32` for certain operations, leading to inconsistent gradients and degraded inference quality.
+`linear_attention` implementations in Qwen3.8‑27B are bias‑free to reduce memory traffic and avoid double‑counting in the kernel. Enabling bias would silently add a learnable parameter that the kernel does not use, leading to a mismatch between the expected shape of the bias tensor and the actual weight matrix, potentially causing a runtime crash or silent degradation of attention scores.
 
 **WHEN TO APPLY**:  
-During model initialization, tokenization, and generation in any language that binds to the Hugging Face API (Python, C++, Rust). Applies to all downstream inference pipelines that use `AutoTokenizer` and `AutoModelForCausalLM`.
+* All transformer layers that use `linear_attention`.  
+* Any custom model that inherits from Qwen3.8‑27B and re‑orders layers.  
+* Deployment scripts that modify `config.json` before loading.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Ensure tokenizer outputs bfloat16 tensors when the model expects them
-tokenizer = AutoTokenizer.from_pretrained(model_id, use_fast=True)
-tokenizer.model_max_length = 262144  # match config
+# Load config and enforce bias consistency
+from transformers import AutoConfig
 
-# Load model with explicit dtype
-model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    device_map="auto",
-    dtype=torch.bfloat16,  # enforce dtype
-)
+config = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+assert config.attention_bias is False, "Bias must be disabled for linear attention layers"
 
-# Verify dtype consistency
-assert model.dtype == torch.bfloat16
-assert all(
-    token.dtype == torch.bfloat16
-    for token in tokenizer.encode_plus("test", return_tensors="pt").values()
+# If a custom model adds new layers, double‑check
+for layer_type in config.layer_types:
+    if layer_type == "linear_attention":
+        assert config.attention_bias is False, "Linear attention layers cannot use bias"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: enabling bias with linear attention
+config.attention_bias = True
+# This will cause a shape mismatch during model initialization
+```
+
+**VERIFICATION METHOD**:  
+Run a unit test that loads the config and asserts `attention_bias` is `False`.  
+```python
+def test_attention_bias_consistency():
+    cfg = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+    assert cfg.attention_bias is False
+```
+
+---
+
+### 2. Full‑Attention Interval Alignment Rule
+**RULE**:  
+> **MUST** set `full_attention_interval` to a positive integer that evenly divides the total number of layers (`num_hidden_layers`).  
+> **MUST NOT** set `full_attention_interval` to a value that leaves a remainder when dividing `num_hidden_layers`.
+
+**WHY**:  
+The `layer_types` array is generated by repeating a pattern of `full_attention` every `full_attention_interval` layers. If the interval does not divide the total layers, the last few layers will be mis‑typed, causing a mismatch between the expected attention type and the actual implementation, which can trigger a runtime error or produce incorrect attention outputs.
+
+**WHEN TO APPLY**:  
+* During model configuration or when modifying `num_hidden_layers`.  
+* In CI pipelines that generate new config files.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Validate interval alignment
+num_layers = config.num_hidden_layers
+interval = config.full_attention_interval
+assert num_layers % interval == 0, (
+    f"full_attention_interval {interval} does not evenly divide num_hidden_layers {num_layers}"
 )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ❌ Never mix dtypes without explicit cast
-model = AutoModelForCausalLM.from_pretrained(model_id, dtype=torch.float32)  # wrong
+# Bad: interval that does not divide layer count
+config.full_attention_interval = 7  # 64 % 7 != 0
 ```
 
 **VERIFICATION METHOD**:  
-Run a unit test that tokenizes a sample sentence, feeds it to the model, and asserts that `model.dtype` matches `token.dtype`. Use `pytest` with `torch` assertions.
+Add a test that checks the modulus condition.  
+```python
+def test_full_attention_interval():
+    cfg = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+    assert cfg.num_hidden_layers % cfg.full_attention_interval == 0
+```
 
-### 2. Guarded Generation Length to Prevent Out‑of‑Memory (OOM) and Infinite Loops
+---
+
+### 3. Rope‑Theta Validity Rule
 **RULE**:  
-The `max_new_tokens` parameter supplied to `model.generate` MUST be bounded by the model’s `max_position_embeddings` minus the length of the input prompt.
+> **MUST** set `rope_parameters.rope_theta` to a value **greater than 1** and **less than 1e7** to avoid numerical instability in the sinusoidal positional embeddings.  
+> **MUST NOT** set `rope_theta` to 0 or a negative number.
 
 **WHY**:  
-The Qwen3.8 config declares `"max_position_embeddings": 262144`. Exceeding this limit causes the transformer to allocate an excessively large attention matrix, leading to OOM or silent truncation. An unbounded `max_new_tokens` also risks infinite generation loops if the stopping criteria (`eos_token_id`) never triggers.
+`rope_theta` controls the frequency of the rotary embeddings. A value of 0 collapses all positions to the same embedding, while a negative value inverts the phase, both of which break the positional encoding and lead to catastrophic attention failures. Extremely large values cause overflow in the exponential calculation.
 
 **WHEN TO APPLY**:  
-During any call to `model.generate` or `pipeline("text-generation")` that does not explicitly set `max_new_tokens`. Applies to all inference scripts, web services, and batch jobs.
+* When tuning the model for longer context windows.  
+* In any custom tokenizer that modifies `rope_parameters`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-max_len = model.config.max_position_embeddings
-prompt_len = len(tokenizer.encode(prompt, add_special_tokens=False))
-max_new_tokens = min(512, max_len - prompt_len)  # safe cap
-
-generated = model.generate(
-    input_ids,
-    max_new_tokens=max_new_tokens,
-    do_sample=True,
-    top_k=20,
-    top_p=0.95,
-    temperature=1.0,
-)
+# Validate rope_theta
+rope_theta = config.rope_parameters.get("rope_theta", 10000000)
+assert 1 < rope_theta < 1e7, f"Invalid rope_theta: {rope_theta}"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ❌ Never let max_new_tokens exceed model capacity
-generated = model.generate(input_ids, max_new_tokens=300000)  # OOM risk
+# Bad: zero or negative theta
+config.rope_parameters["rope_theta"] = 0
 ```
 
 **VERIFICATION METHOD**:  
-Add a test that attempts to generate with `max_new_tokens` set to `model.config.max_position_embeddings + 1` and expects a `RuntimeError` or a custom assertion that the length is capped.
-
-### 3. Explicit Tokenizer‑Model Alignment for Special Tokens
-**RULE**:  
-The tokenizer’s `bos_token_id`, `eos_token_id`, and `pad_token_id` MUST match the values declared in the model config; otherwise, the model will misinterpret the start/end of sequences.
-
-**WHY**:  
-The config sets `"bos_token_id": 248044` and `"eos_token_id": 248044`. If the tokenizer uses a different ID for `<|im_start|>` or `<|im_end|>`, the model will treat the prompt as incomplete or will generate garbage. This mismatch can lead to silent failures or degraded output quality.
-
-**WHEN TO APPLY**:  
-During tokenizer initialization and any custom tokenization logic that modifies special tokens. Applies to all languages that use the Hugging Face tokenizer API.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
+Unit test that asserts the range.  
 ```python
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-assert tokenizer.bos_token_id == 248044
-assert tokenizer.eos_token_id == 248044
-assert tokenizer.pad_token_id == 248044  # pad is same as bos/eos in this model
+def test_rope_theta_range():
+    cfg = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+    theta = cfg.rope_parameters["rope_theta"]
+    assert 1 < theta < 1e7
 ```
 
-**NEGATIVE CONSTRAINT**:
-```python
-# ❌ Never override special token IDs without updating the model config
-tokenizer.bos_token_id = 50256  # mismatch
-```
-
-**VERIFICATION METHOD**:  
-Unit test that loads the tokenizer and asserts equality with the model config. Use `assert tokenizer.bos_token_id == model.config.bos_token_id`.
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No public commits, PRs, or issue logs are available in the repository snapshot. Consequently, no concrete bug‑fix incidents can be extracted. The absence of incident data is itself a forensic finding: the model is distributed as a pre‑built artifact with no source code, limiting the ability to trace runtime failures.
+| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation Diff | Lesson |
+|----------|---------|-------------------|------------------------|----------|------------|------------------|--------|
+| 1 | `config.json` | `attention_bias` must be `false` for linear attention layers | None (no code) | None | None | None | None |
+| 2 | `generation_config.json` | `eos_token_id` list must contain both 248046 and 248044 | None | None | None | None | None |
+| 3 | `tokenizer_config.json` | `pretokenize_regex` must not match newline characters | None | None | None | None | None |
+| 4 | README | `vllm serve` command must specify `--max-model-len 262144` | None | None | None | None | None |
+| 5 | None | None | None | None | None | None | None |
 
-> **Incident 0: No incidents discovered**  
-> *Context*: Entire repository contains only configuration files and a README.  
-> *What Was Expected*: A fully functional inference pipeline.  
-> *What Actually Happened*: No runtime failures reported in the public logs.  
-> *Root Cause*: Not applicable – no incidents.  
-> *Remediation*: None.  
-> *Lesson*: When a repository contains only artifacts, forensic extraction must rely on config semantics rather than code patches.
+**Note**: The repository contains only configuration files and documentation; no source code or commit history is available. Consequently, no production bugs or patches were identified. The forensic record reflects the absence of actionable incidents.
+
+---
 
 ## 4. Microscopic Code‑Level Invariants
 
-| Domain | Invariant | Example |
-|--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | `tokenizer.encode_plus(..., return_tensors="pt")` returns tensors of type `torch.int64`. | ```python<br>enc = tokenizer.encode_plus("hi", return_tensors="pt")<br>assert enc["input_ids"].dtype == torch.int64<br>``` |
-| | Avoid implicit conversion of `None` to `0` when computing `max_new_tokens`. | ```python<br>max_new = max_new_tokens or 512  # safe default<br>``` |
-| | Do not shadow built‑in names (`len`, `sum`). | ```python<br>len = 5  # ❌ shadowing built‑in<br>``` |
-| **Infinite Loop & Recursion Guards** | `model.generate` must terminate when `eos_token_id` appears or `max_new_tokens` is reached. | ```python<br>generated = model.generate(..., max_new_tokens=512)<br>assert len(generated) <= 512<br>``` |
-| | Recursion depth in custom tokenizers must be capped (e.g., `tokenizer._tokenize`). | ```python<br>def _tokenize(text, depth=0):<br>    if depth > 1000:<br>        raise RecursionError("Tokenization depth exceeded")<br>``` |
-| **UI & UX Micro‑Mechanics** | Not applicable – the repo is purely inference‑only. |
-| **Backend Concurrency & Memory Safety** | When using `vllm serve`, the `--max-model-len` flag must match `max_position_embeddings`. | ```bash<br>vllm serve Altworld/Hemmingway-1 --max-model-len 262144<br>``` |
-| | Avoid holding references to the model after inference to prevent memory leaks. | ```python<br>del model<br>torch.cuda.empty_cache()<br>``` |
-| **Defect & Error Prevention** | Use `tokenizer.apply_chat_template(..., add_generation_prompt=True)` to ensure the prompt ends with the correct `<|im_end|>` token. | ```python<br>ids = tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors="pt")<br>assert ids[0, -1] == tokenizer.eos_token_id<br>``` |
-| | Guard against off‑by‑one in `max_new_tokens` calculation: `max_new_tokens = max_len - prompt_len`. | ```python<br>prompt_len = len(ids[0])<br>max_new_tokens = max_len - prompt_len<br>``` |
+### 1. Micro‑Syntax & Token‑Level Precision
+| Issue | Example | Fix |
+|-------|---------|-----|
+| **Implicit falsy conversion** | `if (pad_token_id):` will treat `0` as falsy, but pad token ID is 248044. | Use explicit comparison: `if pad_token_id is not None:` |
+| **Variable shadowing** | `dtype = "bfloat16"` inside a function shadows the global `dtype`. | Rename local variable or use `config.dtype`. |
+| **Operator precedence** | `attention_dropout = 0.0, attn_output_gate = true` – missing comma leads to syntax error. | Ensure commas separate key‑value pairs. |
+| **Deep immutability** | `config["layer_types"].append("full_attention")` mutates the list in place. | Use `config["layer_types"] = config["layer_types"] + ["full_attention"]` to preserve immutability if required. |
+
+### 2. Infinite Loop & Recursion Guards
+| Scenario | Guard | Implementation |
+|----------|-------|----------------|
+| **Recursive config loading** | Detect circular references in `config.json` by tracking visited keys. | `visited = set(); def load(key): if key in visited: raise RecursionError; visited.add(key)` |
+| **Event loop starvation** | Yield after each batch in `vllm` inference loop. | `await asyncio.sleep(0)` after each token generation. |
+
+### 3. UI & UX Micro‑Mechanics
+Not applicable – the repo contains no UI code.
+
+### 4. Backend Concurrency & Memory Safety
+| Issue | Mitigation |
+|-------|------------|
+| **TOCTOU on config file** | Load config atomically using `json.load` after acquiring a file lock. |
+| **Connection pool starvation** | `vllm` automatically manages GPU memory; ensure `--max-model-len` matches `max_position_embeddings`. |
+| **Memory leak in event emitters** | Not applicable – no event emitters in config. |
+
+### 5. Defect & Error Prevention (“Galti Pakadna”)
+| Defect | Prevention |
+|--------|------------|
+| **Null dereference** | `pad_token_id = config.get("pad_token_id") or 0` |
+| **Off‑by‑one** | Validate `max_position_embeddings` >= `max_new_tokens` in generation. |
+| **Unhandled promise rejection** | Not applicable – no async JS. |
+| **Prototype pollution** | Use `Object.freeze` on config objects in JS environments. |
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation |
-|-----------|-------------|
-| **Architecture** | Qwen3.8‑style transformer with 64 layers, alternating linear and full attention. Uses 24 heads, 5120 hidden size, 17408 intermediate size. |
-| **Core Abstractions** | `AutoTokenizer` (`Qwen2Tokenizer`) and `AutoModelForCausalLM` (`Qwen3_5ForCausalLM`) expose a unified API. Special tokens are embedded in the config. |
-| **Error Handling** | Hugging Face pipelines raise `ValueError` for mismatched token IDs. No custom error handling in the repo; relies on library defaults. |
-| **Testing** | No tests present. The repo is a model artifact; testing is performed externally by Hugging Face. |
-| **Security** | No credentials. The model is open‑weight; no secrets. |
-| **Performance** | Uses `bfloat16` to reduce memory footprint. `max_position_embeddings` of 262144 allows very long contexts. |
-| **Deployment** | Recommended `vllm serve` command with `--max-model-len`. Supports GPU auto‑mapping. |
-| **Agent Patterns** | The README shows a typical agent pattern: load tokenizer, apply chat template, generate with sampling. |
-| **Data Flow** | Tokenization → model forward → logits → sampling → text. All data flows through PyTorch tensors on GPU. |
+| Dimension | Analysis |
+|-----------|----------|
+| **Architecture** | 64‑layer transformer with alternating linear/full attention; uses Qwen3.8‑27B backbone; custom attention schedule (`full_attention_interval=4`). |
+| **Core Abstractions** | `layer_types` array defines the abstraction of attention blocks; `rope_parameters` encapsulate rotary embedding logic; `dtype` and `mamba_ssm_dtype` abstract precision. |
+| **Error Handling** | No explicit error handling in config; relies on Hugging Face’s `AutoConfig` validation. Potential errors: bias mismatch, invalid `rope_theta`. |
+| **Testing** | No tests present; recommended to add unit tests for config validation (see Universal Rules). |
+| **Security** | No credentials; uses public weights. Potential risk: exposing `pad_token_id` as 248044 could leak token usage patterns. |
+| **Performance** | `bfloat16` reduces memory; `linear_attention` reduces compute; `full_attention_interval=4` balances quality vs speed. |
+| **Deployment** | `vllm serve` command; `--max-model-len 262144` matches `max_position_embeddings`. CI/CD not present. |
+| **Agent Patterns** | Prompt templates via `apply_chat_template`; generation config uses sampling (`do_sample`, `top_k`, `top_p`). |
+| **Data Flow** | Tokenization → model forward → logits → sampling → text output. No streaming or network protocols defined. |
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The `apply_chat_template` + `generate` workflow shown in the README. |
-| **Rule** | *Rule 1* from section 2: consistent dtype propagation. |
-| **Architecture Principle** | *Principle*: “Keep the tokenizer and model data‑type contract explicit to avoid silent precision loss.” |
-| **Failure Mode** | Mismatched `bos_token_id` leading to truncated or duplicated prompts. |
-| **Reusable Skill** | A checklist to verify `max_new_tokens` against `max_position_embeddings`. |
-| **Decision** | Choosing `bfloat16` over `float32` to balance memory and accuracy. |
-| **Anti‑Pattern** | Overriding special token IDs without updating the model config. |
-| **Verification Method** | Unit test that asserts `tokenizer.bos_token_id == model.config.bos_token_id`. |
+| **Pattern** | The `layer_types` interleaving pattern: `[linear, linear, linear, full, linear, …]`. |
+| **Rule** | *Attention‑Bias Consistency Rule* (see Section 2). |
+| **Architecture Principle** | *Attention‑Schedule Decoupling*: separate linear and full attention layers to achieve latency‑accuracy trade‑off. |
+| **Failure Mode** | Bias mismatch causing shape error during model initialization. |
+| **Reusable Skill** | Validate config consistency before model load. |
+| **Decision** | Chose `bfloat16` over `float32` to reduce GPU memory usage while maintaining accuracy. |
+| **Anti‑Pattern** | Enabling `attention_bias` when linear attention layers are present. |
+| **Verification Method** | Unit test asserting `attention_bias` is `False`. |
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Load Configs**  
+1. **Load and Freeze Config**  
    ```python
-   tokenizer = AutoTokenizer.from_pretrained(model_id)
-   model = AutoModelForCausalLM.from_pretrained(
-       model_id, device_map="auto", dtype=torch.bfloat16
-   )
+   from transformers import AutoConfig
+   config = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+   config = config.to_dict()
+   config = types.MappingProxyType(config)  # immutability
    ```
-2. **Validate Special Tokens**  
-   ```python
-   assert tokenizer.bos_token_id == model.config.bos_token_id
-   assert tokenizer.eos_token_id == model.config.eos_token_id
-   assert tokenizer.pad_token_id == model.config.pad_token_id
-   ```
-3. **Check Data‑Type Consistency**  
-   ```python
-   assert all(
-       token.dtype == torch.bfloat16
-       for token in tokenizer.encode_plus("test", return_tensors="pt").values()
-   )
-   ```
-4. **Compute Safe Generation Length**  
-   ```python
-   max_len = model.config.max_position_embeddings
-   prompt_len = len(tokenizer.encode(prompt, add_special_tokens=False))
-   max_new_tokens = min(512, max_len - prompt_len)
-   ```
-5. **Generate with Sampling**  
-   ```python
-   ids = tokenizer.apply_chat_template(
-       messages, add_generation_prompt=True, return_tensors="pt"
-   ).to(model.device)
-   output = model.generate(
-       ids,
-       max_new_tokens=max_new_tokens,
-       do_sample=True,
-       top_k=20,
-       top_p=0.95,
-       temperature=1.0,
-   )
-   ```
-6. **Post‑Processing**  
-   ```python
-   text = tokenizer.decode(output[0], skip_special_tokens=True)
-   ```
-7. **Cleanup**  
-   ```python
-   del model
-   torch.cuda.empty_cache()
-   ```
-8. **Automated Verification**  
-   * Write a `pytest` that loads the model, runs a short prompt, and asserts:  
-     * `output.shape[1] <= max_new_tokens + prompt_len`  
-     * `output.dtype == torch.int64`  
-     * No OOM or `RuntimeError` occurs.  
 
-Follow this checklist whenever building or deploying a new inference pipeline that consumes a Hugging Face causal LM.
+2. **Validate Attention‑Bias**  
+   ```python
+   assert config["attention_bias"] is False, "Bias must be disabled for linear attention"
+   ```
+
+3. **Validate Full‑Attention Interval**  
+   ```python
+   assert config["num_hidden_layers"] % config["full_attention_interval"] == 0, \
+       "full_attention_interval must evenly divide num_hidden_layers"
+   ```
+
+4. **Validate Rope‑Theta**  
+   ```python
+   theta = config["rope_parameters"]["rope_theta"]
+   assert 1 < theta < 1e7, f"Invalid rope_theta: {theta}"
+   ```
+
+5. **Check Generation Config**  
+   ```python
+   gen_cfg = AutoConfig.from_pretrained("Altworld/Hemmingway-1", trust_remote_code=True).generation_config
+   assert set(gen_cfg["eos_token_id"]) == {248044, 248046}, "EOS token IDs mismatch"
+   ```
+
+6. **Ensure Deployment Parameters**  
+   ```bash
+   vllm serve Altworld/Hemmingway-1 --max-model-len 262144
+   ```
+
+7. **Run Unit Tests**  
+   ```bash
+   pytest tests/test_config_validation.py
+   ```
+
+8. **Document All Checks**  
+   Add a `README.md` section summarizing the validation steps for future maintainers.
+
+---

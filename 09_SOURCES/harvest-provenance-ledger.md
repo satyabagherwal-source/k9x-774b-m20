@@ -346,3 +346,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-12T00:27:28.262Z |
 | `learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-12T00:30:22.256Z |
 | `learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-12T00:33:23.849Z |
+| `learn-huggingface-hf-altworld-hemmingway-1-mv4iut04` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-12T00:36:37.707Z |

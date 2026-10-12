@@ -363,3 +363,4 @@
 | `CYCLE-20261012-J150` | `2026-10-12T00:27:28.260Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`7970cb5a...`) |
 | `CYCLE-20261012-MRE6` | `2026-10-12T00:30:22.254Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`b3e57691...`) |
 | `CYCLE-20261012-QNIF` | `2026-10-12T00:33:23.847Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 383, Rule 384, Rule 385` | Yes (`c3c6aab9...`) |
+| `CYCLE-20261012-UT3D` | `2026-10-12T00:36:37.705Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 386, Rule 387, Rule 388` | Yes (`835ddb7f...`) |
