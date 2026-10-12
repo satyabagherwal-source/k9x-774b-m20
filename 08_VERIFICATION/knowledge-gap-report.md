@@ -1,6 +1,6 @@
 # EVIDENCE-BASED KNOWLEDGE GAP & TARGETED RESEARCH REPORT
 > **Verification Status**: EMPIRICALLY DISCOVERED & PRIORITIZED
-> **Generated At**: `2026-10-11T16:21:54.417Z`
+> **Generated At**: `2026-10-12T02:37:58.042Z`
 > **Authority**: AI-Builder-Brain Universal Governance Substrate
 
 ---
@@ -9,12 +9,12 @@
 
 | Metric | Measured Value | Denominator | Rate | Interpretation |
 | :--- | :--- | :--- | :--- | :--- |
-| **Total Evidence-Backed Gaps** | `67` | 67 Gaps | 100% | Discovered via probes, audits & memory |
-| **Gaps Closed via Research** | `3` | 67 Gaps | **4.5%** | Verified via retrieval & empirical test |
-| **Open Gaps Remaining** | `64` | 67 Gaps | 95.5% | Prioritized for next research cycles |
-| **High-Severity Gaps** | `3` | 67 Gaps | 4.5% | Split-brain, DoS, Auth compromise hazards |
-| **Medium-Severity Gaps** | `62` | 67 Gaps | 92.5% | Sandbox bounds, transaction consistency |
-| **Low-Severity Gaps** | `2` | 67 Gaps | 3.0% | Unpromoted candidate directive syntax |
+| **Total Evidence-Backed Gaps** | `97` | 97 Gaps | 100% | Discovered via probes, audits & memory |
+| **Gaps Closed via Research** | `3` | 97 Gaps | **3.1%** | Verified via retrieval & empirical test |
+| **Open Gaps Remaining** | `94` | 97 Gaps | 96.9% | Prioritized for next research cycles |
+| **High-Severity Gaps** | `3` | 97 Gaps | 3.1% | Split-brain, DoS, Auth compromise hazards |
+| **Medium-Severity Gaps** | `92` | 97 Gaps | 94.8% | Sandbox bounds, transaction consistency |
+| **Low-Severity Gaps** | `2` | 97 Gaps | 2.1% | Unpromoted candidate directive syntax |
 
 > [!NOTE]
 > **Disciplined Targeted Research vs Indiscriminate Scraping**: The Brain does not harvest repositories based on popularity or raw stars. Every research task originates from an empirical retrieval deficit, missing verification method, or production incident autopsy.
@@ -108,6 +108,36 @@ $$\text{Priority} = \frac{(I \times 0.25) + (R \times 0.25) + (E \times 0.20) + 
 | `GAP-VERIFY-RULE-58` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
 | `GAP-VERIFY-RULE-59` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
 | `GAP-VERIFY-RULE-60` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-61` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-62` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-63` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-64` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-65` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-66` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-67` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-68` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-69` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-70` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-71` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-72` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-73` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-74` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-75` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-76` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-77` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-78` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-79` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-80` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-81` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-82` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-83` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-84` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-85` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-86` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-87` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-88` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-89` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-90` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
 | `GAP-INBOX-CD-WV6E` | INBOX_CANDIDATES | `UNRESOLVED_CANDIDATE` | **LOW** | 4 | 3.5 | 8.5 | **4** | `OPEN` |
 | `GAP-INBOX-CD-SPIP` | INBOX_CANDIDATES | `UNRESOLVED_CANDIDATE` | **LOW** | 4 | 3.5 | 8.5 | **4** | `OPEN` |
 
@@ -490,6 +520,186 @@ $$\text{Priority} = \frac{(I \times 0.25) + (R \times 0.25) + (E \times 0.20) + 
 - **Impact Area**: Empirical Verification Governance
 - **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
 - **Target Research Objective**: Formulate concrete verification probe for Rule 60.
+
+### `[GAP-VERIFY-RULE-61]` Rule 61 (Non-Blocking TryLock with Volatile Attribute Omission for Diagnostic Introspection / Structured Logging) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 61.
+
+### `[GAP-VERIFY-RULE-62]` Rule 62 (Upstream Context Cancellation and Pipeline Draining on Mid-Stream Callback Parsing Failure) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 62.
+
+### `[GAP-VERIFY-RULE-63]` Rule 63 (Boundary-Crossing Integer Division over Exact Modulo in Multi-Token / Variable-Stride Batch Pipelines) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 63.
+
+### `[GAP-VERIFY-RULE-64]` Rule 64 (Non-Colliding Monotonic Security Flag Accumulation across Shared Multi-Part Deserialization (Anti-SSRF Verification Bypass)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 64.
+
+### `[GAP-VERIFY-RULE-65]` Rule 65 (Associative Name-Based Hardware Matching over Positional Index Mapping across Heterogeneous Driver Layers) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 65.
+
+### `[GAP-VERIFY-RULE-66]` Rule 66 (Same-Host Redirection Containment with Sibling CDN Allowlisting in Distributed Asset Fetchers) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 66.
+
+### `[GAP-VERIFY-RULE-67]` Rule 67 (Hierarchical Prefix Canonicalization over Disjoint Field Matching in Multi-Part Composite Identifiers) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 67.
+
+### `[GAP-VERIFY-RULE-68]` Rule 68 (Single-Pass Delayed-Grammar Activation on Thinking & Reasoning Model Generations) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 68.
+
+### `[GAP-VERIFY-RULE-69]` Rule 69 (Fresh Parser Instance Per Batch Choice Branch in Concurrent Completion Handlers) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 69.
+
+### `[GAP-VERIFY-RULE-70]` Rule 70 (Proactive Disconnect Eviction over Passive TTL Expiration in Distributed Cache Peers) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 70.
+
+### `[GAP-VERIFY-RULE-71]` Rule 71 (Directory-Boundary Pruning in File-Watcher Rebuild and Scan Pipelines) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 71.
+
+### `[GAP-VERIFY-RULE-72]` Rule 72 (Executive Forensic Architecture & System Mechanics (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 72.
+
+### `[GAP-VERIFY-RULE-73]` Rule 73 (Deep Micro-Learnings & Runtime Gotchas (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 73.
+
+### `[GAP-VERIFY-RULE-74]` Rule 74 (8-Dimensional Multi-Axis Forensic Analysis (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 74.
+
+### `[GAP-VERIFY-RULE-75]` Rule 75 (Net-New Universal Engineering Rules (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 75.
+
+### `[GAP-VERIFY-RULE-76]` Rule 76 (Actionable Agent Skill & Implementation Checklist (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 76.
+
+### `[GAP-VERIFY-RULE-77]` Rule 77 (The "Orchestrator-Lifecycle" Invariant (Harvested from iii-hq/iii)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 77.
+
+### `[GAP-VERIFY-RULE-78]` Rule 78 (The External Dependency Invariant (Link Rot Defense) (Harvested from justjavac/free-programming-books-zh_CN)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 78.
+
+### `[GAP-VERIFY-RULE-79]` Rule 79 (The "Opaque Mutation" Rule (Harvested from meilisearch/meilisearch)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 79.
+
+### `[GAP-VERIFY-RULE-80]` Rule 80 (The "RAII Permit" Invariant (Harvested from meilisearch/meilisearch)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 80.
+
+### `[GAP-VERIFY-RULE-81]` Rule 81 (The "Concurrent Map Initialization" Invariant (Harvested from bitnami/sealed-secrets)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 81.
+
+### `[GAP-VERIFY-RULE-82]` Rule 82 (Distributed Index Build Deadlocks from Node Crashes (Harvested from surrealdb/surrealdb)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 82.
+
+### `[GAP-VERIFY-RULE-83]` Rule 83 (Enforce Socket-Level IP Verification for Outbound Network Capabilities (Harvested from surrealdb/surrealdb)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 83.
+
+### `[GAP-VERIFY-RULE-84]` Rule 84 (Zero-Allocation Traversal via Borrowed Copy-on-Write (CoW) Projections (Harvested from surrealdb/surrealdb)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 84.
+
+### `[GAP-VERIFY-RULE-85]` Rule 85 (The JNI-Boundary Parity Rule (Harvested from react/react-native)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 85.
+
+### `[GAP-VERIFY-RULE-86]` Rule 86 (The "Functional Preset" Lifecycle Invariant (Harvested from tusen-ai/naive-ui)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 86.
+
+### `[GAP-VERIFY-RULE-87]` Rule 87 (The "Re-exec" Determinism Rule (Harvested from Graphify-Labs/graphify)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 87.
+
+### `[GAP-VERIFY-RULE-88]` Rule 88 (The "Shadow-Aware Event" Rule (Harvested from adobe/react-spectrum)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 88.
+
+### `[GAP-VERIFY-RULE-89]` Rule 89 (The "Secret-State" Mutex Invariant (Harvested from gravitl/netmaker)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 89.
+
+### `[GAP-VERIFY-RULE-90]` Rule 90 (The "Fail-Closed" Security Default (Harvested from gravitl/netmaker)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 90.
 
 ### `[GAP-INBOX-CD-WV6E]` Candidate CD-WV6E unpromoted: Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**
 - **Category**: `UNRESOLVED_CANDIDATE` | **Severity**: **LOW** | **Priority Score**: `4`

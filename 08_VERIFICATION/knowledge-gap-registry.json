@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:28:10.193Z",
-  "total_gaps": 67,
-  "open_gaps": 63,
+  "last_updated": "2026-10-12T02:40:59.818Z",
+  "total_gaps": 97,
+  "open_gaps": 93,
   "closed_gaps": 4,
   "gaps": [
     {
@@ -33,7 +33,7 @@
       "status": "CLOSED",
       "discovered_at": "2026-10-11T15:27:09.821Z",
       "verified_rule": "Rule 311",
-      "closed_at": "2026-10-11T16:21:54.303Z",
+      "closed_at": "2026-10-12T02:37:57.925Z",
       "priority_evaluation": {
         "factors": {
           "engineering_impact": 9.5,
@@ -104,7 +104,7 @@
         "probe_query": "jwt token revocation distributed blacklist replay defense zero trust",
         "retrieval_confirmed": true,
         "empirical_test_passed": true,
-        "test_details": "Verified monotonic storage fencing token rejection & atomic ownership check."
+        "test_details": "Verified distributed JWT token blacklist revocation, expiration enforcement, and replay attack rejection."
       }
     },
     {
@@ -134,7 +134,7 @@
       "status": "CLOSED",
       "discovered_at": "2026-10-11T15:27:09.827Z",
       "verified_rule": "Rule 313",
-      "closed_at": "2026-10-11T16:21:54.408Z",
+      "closed_at": "2026-10-12T02:37:58.030Z",
       "priority_evaluation": {
         "factors": {
           "engineering_impact": 8.5,
@@ -154,7 +154,7 @@
         "probe_query": "distributed rate limiter sliding window token bucket concurrency race",
         "retrieval_confirmed": true,
         "empirical_test_passed": true,
-        "test_details": "Verified monotonic storage fencing token rejection & atomic ownership check."
+        "test_details": "Verified atomic sliding-window rate limiting rejection under concurrent bursts."
       }
     },
     {
@@ -198,13 +198,13 @@
         "priority_score": 7.19
       },
       "priority_score": 7.19,
-      "closed_at": "2026-10-11T16:28:10.193Z",
+      "closed_at": "2026-10-12T02:40:59.817Z",
       "verified_rule": "Rule 319",
       "closure_evidence": {
         "probe_query": "saga distributed transaction compensating action rollback failure recovery",
         "retrieval_confirmed": true,
         "empirical_test_passed": true,
-        "test_details": "Verified monotonic storage fencing token rejection & atomic ownership check."
+        "test_details": "Verified durable idempotency key reservation, duplicate retransmission suppression, external timeout reconciliation, and transactional outbox staging under simulated network partitions."
       }
     },
     {
@@ -2455,6 +2455,1116 @@
       "status": "OPEN",
       "discovered_at": "2026-10-11T16:21:54.372Z",
       "verified_rule": "Rule 60",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-61",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 61 (Non-Blocking TryLock with Volatile Attribute Omission for Diagnostic Introspection / Structured Logging) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 61",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          796,
+          808
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 61.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:16.790Z",
+      "verified_rule": "Rule 61",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-62",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 62 (Upstream Context Cancellation and Pipeline Draining on Mid-Stream Callback Parsing Failure) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 62",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          809,
+          821
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 62.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:16.790Z",
+      "verified_rule": "Rule 62",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-63",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 63 (Boundary-Crossing Integer Division over Exact Modulo in Multi-Token / Variable-Stride Batch Pipelines) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 63",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          822,
+          834
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 63.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:16.790Z",
+      "verified_rule": "Rule 63",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-64",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 64 (Non-Colliding Monotonic Security Flag Accumulation across Shared Multi-Part Deserialization (Anti-SSRF Verification Bypass)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 64",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          835,
+          847
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 64.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:16.904Z",
+      "verified_rule": "Rule 64",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-65",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 65 (Associative Name-Based Hardware Matching over Positional Index Mapping across Heterogeneous Driver Layers) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 65",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          848,
+          860
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 65.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:16.905Z",
+      "verified_rule": "Rule 65",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-66",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 66 (Same-Host Redirection Containment with Sibling CDN Allowlisting in Distributed Asset Fetchers) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 66",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          861,
+          873
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 66.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:16.905Z",
+      "verified_rule": "Rule 66",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-67",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 67 (Hierarchical Prefix Canonicalization over Disjoint Field Matching in Multi-Part Composite Identifiers) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 67",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          874,
+          886
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 67.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:26.726Z",
+      "verified_rule": "Rule 67",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-68",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 68 (Single-Pass Delayed-Grammar Activation on Thinking & Reasoning Model Generations) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 68",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          887,
+          899
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 68.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:26.726Z",
+      "verified_rule": "Rule 68",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-69",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 69 (Fresh Parser Instance Per Batch Choice Branch in Concurrent Completion Handlers) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 69",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          900,
+          912
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 69.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:26.726Z",
+      "verified_rule": "Rule 69",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-70",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 70 (Proactive Disconnect Eviction over Passive TTL Expiration in Distributed Cache Peers) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 70",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          913,
+          925
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 70.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:26.833Z",
+      "verified_rule": "Rule 70",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-71",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 71 (Directory-Boundary Pruning in File-Watcher Rebuild and Scan Pipelines) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 71",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          926,
+          945
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 71.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:26.833Z",
+      "verified_rule": "Rule 71",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-72",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 72 (Executive Forensic Architecture & System Mechanics (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 72",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          946,
+          959
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 72.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:09:26.833Z",
+      "verified_rule": "Rule 72",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-73",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 73 (Deep Micro-Learnings & Runtime Gotchas (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 73",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          960,
+          969
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 73.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:24:45.296Z",
+      "verified_rule": "Rule 73",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-74",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 74 (8-Dimensional Multi-Axis Forensic Analysis (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 74",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          970,
+          980
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 74.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:24:45.296Z",
+      "verified_rule": "Rule 74",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-75",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 75 (Net-New Universal Engineering Rules (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 75",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          981,
+          998
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 75.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:24:45.296Z",
+      "verified_rule": "Rule 75",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-76",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 76 (Actionable Agent Skill & Implementation Checklist (Harvested from Mintplex-Labs/anything-llm)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 76",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          999,
+          1005
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 76.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:24:45.416Z",
+      "verified_rule": "Rule 76",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-77",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 77 (The \"Orchestrator-Lifecycle\" Invariant (Harvested from iii-hq/iii)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 77",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1006,
+          1016
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 77.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:24:45.416Z",
+      "verified_rule": "Rule 77",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-78",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 78 (The External Dependency Invariant (Link Rot Defense) (Harvested from justjavac/free-programming-books-zh_CN)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 78",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1017,
+          1030
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 78.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:24:45.416Z",
+      "verified_rule": "Rule 78",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-79",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 79 (The \"Opaque Mutation\" Rule (Harvested from meilisearch/meilisearch)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 79",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1031,
+          1046
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 79.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:42.608Z",
+      "verified_rule": "Rule 79",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-80",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 80 (The \"RAII Permit\" Invariant (Harvested from meilisearch/meilisearch)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 80",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1047,
+          1060
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 80.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:42.608Z",
+      "verified_rule": "Rule 80",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-81",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 81 (The \"Concurrent Map Initialization\" Invariant (Harvested from bitnami/sealed-secrets)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 81",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1061,
+          1068
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 81.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:42.608Z",
+      "verified_rule": "Rule 81",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-82",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 82 (Distributed Index Build Deadlocks from Node Crashes (Harvested from surrealdb/surrealdb)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 82",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1069,
+          1079
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 82.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:42.747Z",
+      "verified_rule": "Rule 82",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-83",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 83 (Enforce Socket-Level IP Verification for Outbound Network Capabilities (Harvested from surrealdb/surrealdb)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 83",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1080,
+          1090
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 83.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:42.747Z",
+      "verified_rule": "Rule 83",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-84",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 84 (Zero-Allocation Traversal via Borrowed Copy-on-Write (CoW) Projections (Harvested from surrealdb/surrealdb)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 84",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1091,
+          1101
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 84.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:42.747Z",
+      "verified_rule": "Rule 84",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-85",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 85 (The JNI-Boundary Parity Rule (Harvested from react/react-native)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 85",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1102,
+          1112
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 85.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:57.884Z",
+      "verified_rule": "Rule 85",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-86",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 86 (The \"Functional Preset\" Lifecycle Invariant (Harvested from tusen-ai/naive-ui)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 86",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1113,
+          1128
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 86.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:57.884Z",
+      "verified_rule": "Rule 86",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-87",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 87 (The \"Re-exec\" Determinism Rule (Harvested from Graphify-Labs/graphify)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 87",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1129,
+          1139
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 87.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:57.884Z",
+      "verified_rule": "Rule 87",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-88",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 88 (The \"Shadow-Aware Event\" Rule (Harvested from adobe/react-spectrum)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 88",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1140,
+          1155
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 88.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:57.988Z",
+      "verified_rule": "Rule 88",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-89",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 89 (The \"Secret-State\" Mutex Invariant (Harvested from gravitl/netmaker)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 89",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1156,
+          1169
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 89.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:57.988Z",
+      "verified_rule": "Rule 89",
+      "closed_at": null,
+      "priority_evaluation": {
+        "factors": {
+          "engineering_impact": 6,
+          "security_reliability_risk": 5,
+          "task_frequency": 7,
+          "reuse_potential": 6,
+          "evidence_strength": 9,
+          "expected_value": 6.5,
+          "research_cost": 3,
+          "confidence_of_insufficiency": 8.5
+        },
+        "weighted_benefit": 6.42,
+        "priority_score": 5.59
+      },
+      "priority_score": 5.59
+    },
+    {
+      "gap_id": "GAP-VERIFY-RULE-90",
+      "category": "MISSING_VERIFICATION_METHOD",
+      "domain": "QUALITY_ASSURANCE",
+      "severity": "MEDIUM",
+      "impact_area": "Empirical Verification Governance",
+      "title": "Rule 90 (The \"Fail-Closed\" Security Default (Harvested from gravitl/netmaker)) lacks empirical verification method",
+      "evidence": {
+        "rule_id": "Rule 90",
+        "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+        "line_range": [
+          1170,
+          1183
+        ],
+        "diagnosis": "Rule contains invariant but lacks concrete empirical verification method."
+      },
+      "research_objective": "Formulate concrete verification probe for Rule 90.",
+      "status": "OPEN",
+      "discovered_at": "2026-10-12T02:37:57.988Z",
+      "verified_rule": "Rule 90",
       "closed_at": null,
       "priority_evaluation": {
         "factors": {

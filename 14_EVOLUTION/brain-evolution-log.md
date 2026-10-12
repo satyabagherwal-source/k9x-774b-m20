@@ -15,7 +15,7 @@ This file records canonical promotion events, knowledge integration milestones, 
      - Investigated high-priority open gap `GAP-PROBE-RESILIENT_TRANSACTIONS` (Microservice Transaction Consistency).
      - Formulated research question on Saga compensating action idempotency and transactional outbox.
      - Researched authoritative sources: `temporalio/sdk-typescript`, `uber/cadence`, `microservices-patterns/ftgo-application`.
-     - Codified **Rule 316**: `Idempotent Saga Compensation & Transactional Outbox Invariant` in `05_KNOWLEDGE/engineering-patterns.md`.
+     - Codified **Rule 319**: `Idempotent Saga Compensation & Transactional Outbox Invariant` in `05_KNOWLEDGE/engineering-patterns.md`.
      - Executed SHA-256 read-back barrier, updated indices, and verified empirical invariant test against duplicate rollback retransmissions.
      - Transitioned gap status from `OPEN` to `CLOSED`.
   3. **Phase 4: Real Cloud Autonomy & Concurrency Audit**:
@@ -25,8 +25,8 @@ This file records canonical promotion events, knowledge integration milestones, 
      - Confirmed git concurrency conflict resolution via automatic pull --rebase retry on push attempt 2.
      - Pulled cloud fleet commits `21367ad8a` and `11c38e199` codifying Rules 314 & 315 from `intfloat/multilingual-e5-small`.
   4. **Phase 6: Cross-Project Transfer Proof**:
-     - Applied Rule 316 to `project-saas-billing` (Multi-Tenant SaaS Subscription Engine).
-     - Successfully resolved Rule 316 in task context.
+     - Applied Rule 319 to `project-saas-billing` (Multi-Tenant SaaS Subscription Engine).
+     - Successfully resolved Rule 319 in task context.
      - In simulated network timeout and retry, idempotency barrier detected existing receipt, returned `ALREADY_COMPENSATED`, and ensured Stripe refund executed exactly once (0 duplicate refunds, $45 financial drift avoided).
      - Logged verification outcome into cross-session memory `.project-brain/session-memory.json`.
   5. **Phase 7: Durable Report Persisted**:
@@ -594,3 +594,17 @@ This file records canonical promotion events, knowledge integration milestones, 
 - **2026-10-11T16:21:54.411Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-DISTRIBUTED_RATE_LIMITING (DISTRIBUTED_RATE_LIMITING) by codifying **Rule 313** (Distributed Sliding-Window Atomic Rate Limiting Invariant).
 
 - **2026-10-11T16:21:54.953Z**: [FEEDBACK LOOP] Rule 306 updated with traceable note: When handling streaming iterables or async generators, .length is undefined.
+
+- **2026-10-12T02:09:16.939Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-DISTRIBUTED_RATE_LIMITING (DISTRIBUTED_RATE_LIMITING) by codifying **Rule 313** (Distributed Sliding-Window Atomic Rate Limiting Invariant).
+
+- **2026-10-12T02:09:17.752Z**: [FEEDBACK LOOP] Rule 306 updated with traceable note: When handling streaming iterables or async generators, .length is undefined.
+
+- **2026-10-12T02:09:26.870Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-DISTRIBUTED_RATE_LIMITING (DISTRIBUTED_RATE_LIMITING) by codifying **Rule 313** (Distributed Sliding-Window Atomic Rate Limiting Invariant).
+
+- **2026-10-12T02:24:45.458Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-DISTRIBUTED_RATE_LIMITING (DISTRIBUTED_RATE_LIMITING) by codifying **Rule 313** (Distributed Sliding-Window Atomic Rate Limiting Invariant).
+
+- **2026-10-12T02:37:42.792Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-DISTRIBUTED_RATE_LIMITING (DISTRIBUTED_RATE_LIMITING) by codifying **Rule 313** (Distributed Sliding-Window Atomic Rate Limiting Invariant).
+
+- **2026-10-12T02:37:43.355Z**: [FEEDBACK LOOP] Rule 306 updated with traceable note: When handling streaming iterables or async generators, .length is undefined.
+
+- **2026-10-12T02:37:58.035Z**: [TARGETED RESEARCH] Closed gap GAP-PROBE-DISTRIBUTED_RATE_LIMITING (DISTRIBUTED_RATE_LIMITING) by codifying **Rule 313** (Distributed Sliding-Window Atomic Rate Limiting Invariant).

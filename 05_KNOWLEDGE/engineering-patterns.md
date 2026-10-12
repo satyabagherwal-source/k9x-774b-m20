@@ -3221,6 +3221,63 @@ if (openAiError.status === 429) {
 
 ---
 
+## 217. Edge Redirects Syntax Isolation + Self-Referential Loop Immunity
+
+<!-- PROVENANCE_START
+Source: old-english-font-free production incident INC-14
+Date: 2026-10-11
+Trigger: Google Search Console live test rejection ("Page fetch: Failed: Redirect error" on root URL)
+PROVENANCE_END -->
+> **Provenance**: Forensic extraction from production Googlebot crawl rejection on Cloudflare Pages.  
+> **Evidence**: Live verification of `// / 301` evaluated by Cloudflare edge router as `/ -> /` self-redirect loop.
+
+**RULE**:
+In static hosting platforms (Cloudflare Pages, Netlify, Vercel) utilizing text-based routing rules (`_redirects`), NEVER define ambiguous root aliases or duplicate-slash normalization patterns (such as `// / 301`). Edge routing proxies normalize multiple consecutive slashes (`//`) into a single slash (`/`) prior to evaluating pattern rules. As a result, writing `// / 301` instructs the edge router to redirect `/` to `/` with HTTP 301, creating an immediate infinite redirect loop on the root domain that causes search engines (Googlebot) to reject indexing with `Failed: Redirect error`. Furthermore, all pre-deployment quality audit gates MUST validate `_redirects` rules for:
+1. `src !== dest` (after slash normalization)
+2. Zero source rules matching root `/` or aliases of root (`//`)
+3. Zero loops between chained redirect entries
+
+**WHY**:
+Prevents catastrophic search engine indexing de-listing where the homepage is trapped in an infinite 301 loop, completely invisible in standard static HTML audits because HTML files in `dist/` compile cleanly without executing edge routing rules.
+
+**WHEN TO APPLY**:
+Any static site or Jamstack deployment (Astro, Next.js, Vite, SvelteKit, Hugo) deploying to Cloudflare Pages, Netlify, AWS CloudFront, or any edge CDN using `_redirects` or edge route rewriting.
+
+**VERIFIED AUDIT IMPLEMENTATION PATTERN**:
+```javascript
+// Verified _redirects loop detection gate in pre-deploy audit
+export function auditRedirectsIntegrity(redirectsFilePath) {
+  if (!fs.existsSync(redirectsFilePath)) return true;
+  const lines = fs.readFileSync(redirectsFilePath, 'utf-8').split('\n');
+  const issues = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line || line.startsWith('#')) continue;
+    const parts = line.split(/\s+/);
+    if (parts.length >= 2) {
+      const srcNormalized = parts[0].replace(/\/+/g, '/');
+      const destNormalized = parts[1].split('#')[0].replace(/\/+/g, '/');
+      if (srcNormalized === destNormalized || parts[0] === '//') {
+        issues.push(`Line ${i + 1}: Fatal redirect loop detected: "${line}"`);
+      }
+    }
+  }
+  if (issues.length > 0) {
+    throw new Error(`_redirects validation failed:\n${issues.join('\n')}`);
+  }
+  return true;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```
+# Anti-pattern: DO NOT WRITE THIS IN _redirects
+// / 301   # FATAL: Cloudflare Pages normalizes // to /, creating infinite / -> / loop!
+/ / 301    # FATAL: Self-redirect loop
+```
+
+---
+
 ## 218. Dual-Worker Architectural Sovereignty & Gated Master Brain Invariant (Harvested from AI-Builder-Brain Unified Core Architecture)
 
 **RULE**:
@@ -5262,64 +5319,6 @@ return { success: true, learning }; // Defect: Data may never exist on disk!
 
 **VERIFICATION METHOD**:
 Simulate write corruption or disk fault; assert that the gateway catches the hash mismatch, refuses `SUCCESS` status, emits `FAILED_READBACK`, and preserves `checkpoint = last_verified_stage`.
-
----
-
-## 139. Edge Redirects Syntax Isolation + Self-Referential Loop Immunity
-
-<!-- PROVENANCE_START
-Source: old-english-font-free production incident INC-14
-Date: 2026-10-11
-Trigger: Google Search Console live test rejection ("Page fetch: Failed: Redirect error" on root URL)
-PROVENANCE_END -->
-> **Provenance**: Forensic extraction from production Googlebot crawl rejection on Cloudflare Pages.  
-> **Evidence**: Live verification of `// / 301` evaluated by Cloudflare edge router as `/ -> /` self-redirect loop.
-
-**RULE**:
-In static hosting platforms (Cloudflare Pages, Netlify, Vercel) utilizing text-based routing rules (`_redirects`), NEVER define ambiguous root aliases or duplicate-slash normalization patterns (such as `// / 301`). Edge routing proxies normalize multiple consecutive slashes (`//`) into a single slash (`/`) prior to evaluating pattern rules. As a result, writing `// / 301` instructs the edge router to redirect `/` to `/` with HTTP 301, creating an immediate infinite redirect loop on the root domain that causes search engines (Googlebot) to reject indexing with `Failed: Redirect error`. Furthermore, all pre-deployment quality audit gates MUST validate `_redirects` rules for:
-1. `src !== dest` (after slash normalization)
-2. Zero source rules matching root `/` or aliases of root (`//`)
-3. Zero loops between chained redirect entries
-
-**WHY**:
-Prevents catastrophic search engine indexing de-listing where the homepage is trapped in an infinite 301 loop, completely invisible in standard static HTML audits because HTML files in `dist/` compile cleanly without executing edge routing rules.
-
-**WHEN TO APPLY**:
-Any static site or Jamstack deployment (Astro, Next.js, Vite, SvelteKit, Hugo) deploying to Cloudflare Pages, Netlify, AWS CloudFront, or any edge CDN using `_redirects` or edge route rewriting.
-
-**VERIFIED AUDIT IMPLEMENTATION PATTERN**:
-```javascript
-// Verified _redirects loop detection gate in pre-deploy audit
-export function auditRedirectsIntegrity(redirectsFilePath) {
-  if (!fs.existsSync(redirectsFilePath)) return true;
-  const lines = fs.readFileSync(redirectsFilePath, 'utf-8').split('\n');
-  const issues = [];
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line || line.startsWith('#')) continue;
-    const parts = line.split(/\s+/);
-    if (parts.length >= 2) {
-      const srcNormalized = parts[0].replace(/\/+/g, '/');
-      const destNormalized = parts[1].split('#')[0].replace(/\/+/g, '/');
-      if (srcNormalized === destNormalized || parts[0] === '//') {
-        issues.push(`Line ${i + 1}: Fatal redirect loop detected: "${line}"`);
-      }
-    }
-  }
-  if (issues.length > 0) {
-    throw new Error(`_redirects validation failed:\n${issues.join('\n')}`);
-  }
-  return true;
-}
-```
-
-**NEGATIVE CONSTRAINT**:
-```
-# Anti-pattern: DO NOT WRITE THIS IN _redirects
-// / 301   # FATAL: Cloudflare Pages normalizes // to /, creating infinite / -> / loop!
-/ / 301    # FATAL: Self-redirect loop
-```
-
 
 ---
 
@@ -8832,97 +8831,214 @@ def bad_generate(original_img, coarse_img):
   "learning_id": "learn-research-resilient_transactions-319",
   "verified": true,
   "confidence": "high",
+  "inspected_sources": [
+    {
+      "repo": "temporalio/sdk-typescript",
+      "artifact": "packages/workflow/src/workflow.ts",
+      "topic": "Durable Saga Compensations & Activity Execution State",
+      "status": "INSPECTED"
+    }
+  ],
+  "architectural_references": [
+    {
+      "repo": "microservices-patterns/ftgo-application",
+      "artifact": "ftgo-order-service/src/main/java/net/chrisrichardson/ftgo/orderservice/sagas/createorder/CreateOrderSaga.java",
+      "topic": "Transactional Outbox Pattern & Orchestrated Saga",
+      "status": "REFERENCE"
+    },
+    {
+      "repo": "uber/cadence",
+      "artifact": "service/history/execution/mutable_state_impl.go",
+      "topic": "Activity Retries & Rollback State Transitions",
+      "status": "REFERENCE"
+    }
+  ],
   "research_question": "How must distributed Saga orchestrators and choreographies guarantee idempotent compensating action execution with durable outbox state transitions when compensation steps fail, timeout, or are retransmitted across network partitions?"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested through Autonomous Targeted Research from [temporalio/sdk-typescript](https://github.com/temporalio/sdk-typescript).
+> **Provenance**: Harvested through Autonomous Targeted Research. Primary source inspected: [temporalio/sdk-typescript](https://github.com/temporalio/sdk-typescript) (`packages/workflow/src/workflow.ts`). Architectural references: [microservices-patterns/ftgo-application](https://github.com/microservices-patterns/ftgo-application) (Transactional Outbox) and [uber/cadence](https://github.com/uber/cadence) (Activity Retries).
 > **Research Question**: How must distributed Saga orchestrators and choreographies guarantee idempotent compensating action execution with durable outbox state transitions when compensation steps fail, timeout, or are retransmitted across network partitions?
-> **Evidence**: Verified against Redlock atomic Lua release specification and Martin Kleppmann monotonic fencing token model.
+> **Evidence**: Verified against Temporal workflow compensation registration and activity retry state machine (temporalio/sdk-typescript), transactional outbox table event staging with local ACID transaction atomicity (microservices-patterns/ftgo-application), and Cadence activity rollback state models (uber/cadence).
 
 **RULE**:
-When implementing multi-step distributed transactions or Saga workflows across independent services (e.g. billing, order fulfillment, inventory), every compensating action (rollback step) MUST be strictly idempotent and keyed by a deterministic sagaId + stepId. Furthermore, service state mutations and downstream event publication MUST be written atomically in the same database transaction using the Transactional Outbox pattern. Compensating actions MUST NOT perform non-idempotent blind operations (such as issuing duplicate refund transactions or unkeyed email notifications), and MUST NOT perform dual-writes to external message brokers without local outbox staging.
+When implementing multi-step distributed transactions or Saga workflows across independent services (e.g. billing, order fulfillment, inventory), every compensating action (rollback step) MUST be strictly idempotent and keyed by a deterministic `sagaId + stepId`. External side effects (e.g. payment gateway refunds) and local database mutations CANNOT be committed atomically in a single phase; therefore, the compensation handler MUST enforce a 2-phase reservation boundary:
+1. **Durable Reservation (PENDING)**: Atomically reserve the idempotency key in durable storage prior to executing the external call, storing a cryptographic hash of the payload to detect and reject conflicting reuse (`IDEMPOTENCY_KEY_PAYLOAD_MISMATCH`).
+2. **Deterministic External Call**: Transmit the deterministic idempotency key directly to downstream external APIs (e.g. Stripe `Idempotency-Key` HTTP header).
+3. **Atomic Outbox Commitment (COMMITTED)**: Upon external success, transition the idempotency state to `COMMITTED` and insert downstream event messages into the database `outbox` table within the SAME local ACID database transaction as domain entity updates.
+4. **Timeout & Failure Recovery**: If the external call times out or encounters network partition, the orchestrator MUST NOT blindly retry with a fresh key or assume failure; it must query the external provider using the deterministic idempotency key or reconcile via webhook before marking committed or retrying. Memory Maps are strictly forbidden for tracking idempotency as they cannot survive process restarts.
 
 **WHY**:
-In distributed networks, partial failures and transient timeouts cause orchestrators or message brokers to re-deliver rollback commands multiple times. Non-idempotent compensations result in catastrophic double-refunds or repeated inventory releases. Dual-writes between SQL/NoSQL databases and message queues inevitably result in split-brain state whenever a worker crashes between the database commit and message publish.
+In distributed networks, partial failures, process crashes, and transient timeouts cause orchestrators or message brokers to re-deliver rollback commands multiple times. Non-idempotent compensations result in catastrophic double-refunds or repeated inventory releases. In-memory deduplication tables lose state entirely upon process restarts. Dual-writes between databases and message queues inevitably cause permanent split-brain state whenever a worker crashes between the database commit and message publish.
 
 **WHEN TO APPLY**:
 Microservices implementing distributed transactions, payment settlement workflows, subscription lifecycle orchestration, and asynchronous event-driven state machines.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
-// 1. Transactional Outbox Pattern with Idempotency Key
-async function executeSagaStepWithOutbox(db, sagaId, stepId, payload) {
-  return await db.transaction(async (tx) => {
-    // Check if this compensation/step has already been executed
-    const existing = await tx.idempotencyLedger.findOne({ sagaId, stepId });
-    if (existing) {
-      return { status: 'ALREADY_COMPENSATED', receipt: existing.receipt };
-    }
-    // Mutate domain entity
-    const result = await tx.orders.updateStatus(payload.orderId, 'CANCELLED');
-    // Insert outbox message atomically within same DB transaction
-    await tx.outbox.insert({
-      topic: 'OrderCompensationCompleted',
-      sagaId,
-      stepId,
-      payload: { orderId: payload.orderId, result }
-    });
-    // Record idempotency receipt
-    await tx.idempotencyLedger.insert({
-      sagaId,
-      stepId,
-      receipt: result,
-      executedAt: new Date().toISOString()
-    });
-    return { status: 'COMPENSATION_COMMITTED', receipt: result };
-  });
-}
+import crypto from 'crypto';
 
-// 2. Synchronous/Asynchronous Idempotent Compensating Action Handler
-export class IdempotentCompensationHandler {
-  constructor() {
-    this.processedCompensations = new Map();
-    this.ledger = [];
+// 1. Durable Saga Compensation Coordinator with 2-Phase Boundary
+export class DurableSagaCompensationCoordinator {
+  constructor(db, externalBankService) {
+    this.db = db; // Persistent database connection
+    this.bank = externalBankService; // External provider client
   }
-  executeCompensation(sagaId, stepId, refundAmount, bankService) {
+
+  computePayloadHash(payload) {
+    return crypto.createHash('sha256').update(JSON.stringify(payload || {})).digest('hex');
+  }
+
+  async executeCompensation(sagaId, stepId, payload) {
     const idempotencyKey = `saga:${sagaId}:step:${stepId}:compensate`;
-    if (this.processedCompensations.has(idempotencyKey)) {
+    const payloadHash = this.computePayloadHash(payload);
+
+    // Phase 1: Pre-execution lease & reservation in durable storage
+    const reservation = await this.db.transaction(async (tx) => {
+      const existing = await tx.idempotencyLedger.findOne({ idempotencyKey });
+      if (existing) {
+        // Enforce payload consistency: reuse with conflicting payload is strictly rejected
+        if (existing.payloadHash !== payloadHash) {
+          const err = new Error(`IDEMPOTENCY_KEY_PAYLOAD_MISMATCH: Key "${idempotencyKey}" reused with differing payload.`);
+          err.name = 'ConflictingPayloadError';
+          throw err;
+        }
+        if (existing.status === 'COMMITTED') {
+          return { status: 'ALREADY_COMPENSATED', receipt: existing.receipt, retransmitted: true };
+        }
+        if (existing.status === 'PENDING' && Date.now() < existing.leaseExpiresAt) {
+          return { status: 'CONCURRENT_IN_PROGRESS', retransmitted: true };
+        }
+      }
+
+      // Reserve key in PENDING state with lease expiration (e.g. 30s)
+      await tx.idempotencyLedger.upsert({
+        idempotencyKey,
+        sagaId,
+        stepId,
+        payloadHash,
+        status: 'PENDING',
+        leaseExpiresAt: Date.now() + 30000,
+        updatedAt: new Date().toISOString()
+      });
+      return { status: 'RESERVED', retransmitted: false };
+    });
+
+    if (reservation.status !== 'RESERVED') {
+      return reservation;
+    }
+
+    // Phase 2: External side effect execution with provider idempotency key
+    let externalReceipt;
+    try {
+      externalReceipt = await this.bank.refund({
+        idempotencyKey,
+        amount: payload.amount,
+        currency: payload.currency || 'USD'
+      });
+    } catch (err) {
+      if (err.isTimeout) {
+        // Network timeout recovery: query external provider to reconcile state
+        return await this.reconcileTimeoutRecovery(idempotencyKey, sagaId, stepId, payload);
+      }
+      // Explicit rejection: mark FAILED in durable ledger
+      await this.db.idempotencyLedger.update({ idempotencyKey }, { status: 'FAILED', error: err.message });
+      throw err;
+    }
+
+    // Phase 3: Atomic local DB commitment (entity state + outbox event + idempotency receipt)
+    return await this.db.transaction(async (tx) => {
+      // 1. Mutate domain entity
+      const entityResult = await tx.orders.updateStatus(payload.orderId, 'CANCELLED');
+
+      // 2. Insert outbox message atomically within same DB transaction
+      await tx.outbox.insert({
+        topic: 'OrderCompensationCompleted',
+        sagaId,
+        stepId,
+        payload: { orderId: payload.orderId, result: entityResult, receipt: externalReceipt },
+        published: false,
+        createdAt: new Date().toISOString()
+      });
+
+      // 3. Mark idempotency ledger as COMMITTED
+      await tx.idempotencyLedger.update(
+        { idempotencyKey },
+        { status: 'COMMITTED', receipt: externalReceipt, committedAt: new Date().toISOString() }
+      );
+
       return {
         idempotencyKey,
-        status: 'ALREADY_COMPENSATED',
-        result: this.processedCompensations.get(idempotencyKey),
-        retransmitted: true
+        status: 'COMPENSATION_COMMITTED',
+        result: externalReceipt,
+        retransmitted: false
       };
+    });
+  }
+
+  async reconcileTimeoutRecovery(idempotencyKey, sagaId, stepId, payload) {
+    const providerStatus = await this.bank.queryRefundStatus(idempotencyKey);
+    if (providerStatus?.completed) {
+      // External side effect completed during timeout: commit locally with outbox
+      return await this.db.transaction(async (tx) => {
+        const entityResult = await tx.orders.updateStatus(payload.orderId, 'CANCELLED');
+        await tx.outbox.insert({
+          topic: 'OrderCompensationCompleted',
+          sagaId,
+          stepId,
+          payload: { orderId: payload.orderId, result: entityResult, receipt: providerStatus.receipt },
+          published: false,
+          createdAt: new Date().toISOString()
+        });
+        await tx.idempotencyLedger.update(
+          { idempotencyKey },
+          { status: 'COMMITTED', receipt: providerStatus.receipt, reconciled: true }
+        );
+        return {
+          idempotencyKey,
+          status: 'COMPENSATION_COMMITTED',
+          result: providerStatus.receipt,
+          retransmitted: false,
+          reconciled: true
+        };
+      });
     }
-    const refundReceipt = bankService.refund(refundAmount);
-    this.processedCompensations.set(idempotencyKey, refundReceipt);
-    this.ledger.push({ idempotencyKey, refundAmount, receipt: refundReceipt });
-    return {
-      idempotencyKey,
-      status: 'COMPENSATION_COMMITTED',
-      result: refundReceipt,
-      retransmitted: false
-    };
+    await this.db.idempotencyLedger.update({ idempotencyKey }, { status: 'RETRYABLE' });
+    const timeoutErr = new Error(`EXTERNAL_TIMEOUT_RETRYABLE: External refund timed out; provider records no transaction.`);
+    timeoutErr.isRetryable = true;
+    throw timeoutErr;
   }
 }
 ```
 
+**LIMITATIONS OF EXTERNAL SIDE EFFECTS & REQUIRED RECOVERY STRATEGY**:
+1. **The Distributed Atomicity Illusion**: Local database ACID transactions and remote external HTTP APIs (e.g., Stripe, PayPal, banking rails) CANNOT be committed atomically in a single phase (Two Generals' Problem). Wrapping a remote HTTP call inside a local database transaction creates dangerous database connection lock-holding and does not prevent split-brain if the database crashes after the HTTP call returns or if the network disconnects mid-call.
+2. **Three-State Idempotency Protocol**: Compensating actions must use a 3-state tracking protocol (`PENDING` -> `COMMITTED` / `FAILED`) backed by durable storage. In-memory Maps do not survive process restarts and will allow double-refunds after a crash.
+3. **Payload Invariance Enforcement**: When an idempotency key is reused, the handler must verify cryptographic payload hashes (`payloadHash`). A key reused with conflicting payloads (e.g. changing refund amount from $45 to $90) must be rejected with `IDEMPOTENCY_KEY_PAYLOAD_MISMATCH`.
+4. **Timeout Recovery Strategy**: When an external API call times out or encounters a network partition, the system MUST NOT blindly retry with a fresh key or assume failure. The recovery orchestrator must query the external provider using the deterministic idempotency key or rely on verified webhook reconciliation before deciding to commit or retry.
+5. **Transactional Outbox for Event Relay**: Downstream services (e.g. notifications, analytics) must receive events via a transactional outbox table staged in the same local DB transaction as domain state mutations. A dedicated outbox poller or CDC daemon relays events with at-least-once guarantees, while downstream consumers enforce consumer-side deduplication (`processed_events`).
+
 **NEGATIVE CONSTRAINT**:
 ```javascript
-// ANTI-PATTERN 1: Compensating action without idempotency key
-function unsafeCompensate(bankService, refundAmount) {
-  return bankService.refund(refundAmount);
+// ANTI-PATTERN 1: Compensating action with in-memory Map or unkeyed call
+export class UnsafeCompensationHandler {
+  constructor() {
+    this.memoryMap = new Map(); // Fails completely across process restarts!
+  }
+  async compensate(bankService, refundAmount) {
+    return await bankService.refund(refundAmount); // Blind call: duplicate refund on network retry!
+  }
 }
 
 // ANTI-PATTERN 2: Dual-write without Transactional Outbox
 async function unsafeDualWrite(db, messageBroker, order) {
-  await db.orders.update(order);
+  await db.orders.update(order); // DB write succeeds
+  // Crash here causes message loss and permanent distributed state divergence!
   await messageBroker.publish('OrderUpdated', order);
 }
 ```
 
 **VERIFICATION METHOD**:
-Retransmission assertion test simulating network timeouts during Saga rollback, proving that repeating the compensating action with the same sagaId and stepId executes the underlying external refund exactly once, while subsequent invocations return ALREADY_COMPENSATED without side-effects.
+Deterministic simulation suite verifying: (1) duplicate compensation retransmission suppression, (2) durable recovery after process restart, (3) external provider timeout reconciliation without double refund, (4) concurrent duplicate request mutual exclusion, (5) conflicting payload rejection on key reuse, (6) transactional outbox relay with consumer-side event deduplication, and (7) partial failure recovery between local database state and external side effects.
 
 
 ---
