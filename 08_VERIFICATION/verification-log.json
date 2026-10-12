@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-5YZO",
-    "timestamp": "2026-10-11T09:49:30.852Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv3n5yx7",
-    "contentHash": "3807cf5738c81e50eb91cd65d859170bdbcb32fe23e170ccfbb68dff9c75bed0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-RMN4",
     "timestamp": "2026-10-11T10:06:21.280Z",
     "repository": "LiquidAI/d1-3B",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
     "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv59wjxj",
     "contentHash": "fb9a7eeadec94d8e12e6290c1fa688c8efb11d96a6ef689d277ce1333bf4b975",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-0DVQ",
+    "timestamp": "2026-10-12T13:16:47.558Z",
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv5a0dt0",
+    "contentHash": "0a680c10df709da34b91539d9d7032e1379af0a16c896eb4e7e0d49af283a529",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
