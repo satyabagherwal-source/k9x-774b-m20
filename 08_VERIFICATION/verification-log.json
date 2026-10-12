@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-FVVB",
-    "timestamp": "2026-10-11T13:13:10.679Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv3ufvt7",
-    "contentHash": "bc5661c6a995404efb23a6e536fd27fe2ab5f4428ccfd756df72ba79ef03c7a0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-JNSJ",
     "timestamp": "2026-10-11T13:16:06.835Z",
     "repository": "google-t5/t5-small",
@@ -7492,6 +7477,21 @@
     "contentHash": "392164be40ae595c0943cf770a471f0f1b7c738eb2a840ce729abe934df854ab",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-UR6G",
+    "timestamp": "2026-10-12T16:28:22.168Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv5gur4o",
+    "contentHash": "ae0be8819b4ba64d46e77b15b9dfd12550933f596a8e8e476c85af5e96ff38eb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

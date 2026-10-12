@@ -645,3 +645,4 @@
 | `CYCLE-20261012-JO25` | `2026-10-12T16:19:44.909Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 536, Rule 537` | Yes (`92d5de57...`) |
 | `CYCLE-20261012-NGDY` | `2026-10-12T16:22:41.591Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 538, Rule 539, Rule 540` | Yes (`9d2b3dc7...`) |
 | `CYCLE-20261012-R6F4` | `2026-10-12T16:25:35.296Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 541, Rule 542, Rule 543` | Yes (`392164be...`) |
+| `CYCLE-20261012-UR6G` | `2026-10-12T16:28:22.168Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`ae0be881...`) |
