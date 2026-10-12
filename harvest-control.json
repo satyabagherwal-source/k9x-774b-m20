@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-12T15:24:34.910Z",
+  "lastUpdated": "2026-10-12T15:27:43.186Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:24:49.427Z",
-        "lastHarvestedAt": "2026-10-12T15:24:49.427Z",
-        "totalHarvested": 2704,
+        "lastActiveAt": "2026-10-12T15:27:44.220Z",
+        "lastHarvestedAt": "2026-10-12T15:27:44.220Z",
+        "totalHarvested": 2705,
         "lastError": null
       },
       {
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:24:35.736Z",
+        "lastActiveAt": "2026-10-12T15:27:43.682Z",
         "lastHarvestedAt": "2026-10-12T13:54:18.108Z",
         "totalHarvested": 1092,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:24:38.239Z",
+        "lastActiveAt": "2026-10-12T15:27:46.161Z",
         "lastHarvestedAt": "2026-10-12T09:58:42.055Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:24:40.740Z",
+        "lastActiveAt": "2026-10-12T15:27:48.691Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:24:43.242Z",
+        "lastActiveAt": "2026-10-12T15:27:51.158Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -297,7 +297,7 @@
       "remaining": 0,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-12T15:24:18.549Z",
+      "trippedAt": "2026-10-12T15:27:27.138Z",
       "reason": null,
       "consecutiveBlocks": 1
     },

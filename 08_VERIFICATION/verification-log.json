@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-GBCY",
-    "timestamp": "2026-10-11T12:17:31.522Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv3sgbac",
-    "contentHash": "1ea13e7cc3efa26e3f964df446909b28b56e7ef6c6bf6cd371cf630de075c81d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-JX3P",
     "timestamp": "2026-10-11T12:20:19.669Z",
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7492,6 +7477,21 @@
     "contentHash": "95364368f75c8e6db5d2d3022ae66883c291992f145b93bb79e30dd32cd9e61e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-OQ65",
+    "timestamp": "2026-10-12T15:27:41.693Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv5eoq3s",
+    "contentHash": "85656bc5168c2b22853e906fcf1d2049cfcceb95e89e49546ec99ae4e64efc07",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
