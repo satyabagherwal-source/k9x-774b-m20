@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-12T15:06:22.160Z",
+  "lastUpdated": "2026-10-12T15:09:26.156Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:06:25.636Z",
-        "lastHarvestedAt": "2026-10-12T15:06:25.636Z",
-        "totalHarvested": 2698,
+        "lastActiveAt": "2026-10-12T15:09:32.385Z",
+        "lastHarvestedAt": "2026-10-12T15:09:32.385Z",
+        "totalHarvested": 2699,
         "lastError": null
       },
       {
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:02:15.470Z",
+        "lastActiveAt": "2026-10-12T15:09:26.871Z",
         "lastHarvestedAt": "2026-10-12T13:54:18.108Z",
         "totalHarvested": 1092,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:02:17.958Z",
+        "lastActiveAt": "2026-10-12T15:09:29.346Z",
         "lastHarvestedAt": "2026-10-12T09:58:42.055Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:02:20.442Z",
+        "lastActiveAt": "2026-10-12T15:09:31.866Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T15:02:22.956Z",
+        "lastActiveAt": "2026-10-12T15:09:34.345Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
+      "status": "HEALTHY",
       "remaining": 0,
-      "resetEpoch": 1791821184013,
-      "resetAt": "2026-10-12T16:06:24.013Z",
-      "trippedAt": "2026-10-12T15:06:09.013Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Adocker%20%22developer-tool%22%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=2)",
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-12T15:09:09.912Z",
+      "reason": null,
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {

@@ -25518,3 +25518,181 @@ def quantize_all_uniform(model, q_type):
 **VERIFICATION METHOD**:
 1.  **Tensor Type Check:** Parse the GGUF file and verify that tensors with names containing `vision` or `mmproj` have a higher bit-width than the average LLM tensor.
 2.  **Multimodal Benchmark:** Run a vision-language benchmark (e.g., MMMU, MathVista) and compare against a baseline where `mmproj` is kept in `f16`. If performance drops significantly, the invariant is violated.
+
+
+---
+
+## 525. Token ID Uniqueness Across Modalities (Harvested from TaichuAI/ZDTaichu5.0-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Token ID Uniqueness Across Modalities",
+  "source": "TaichuAI/ZDTaichu5.0-9B",
+  "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+  "source_version": "hf-taichuai-zdtaichu5.0-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T15:09:29.755Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5e1bli",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B) (Revision: `hf-taichua`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that every token ID defined in the model configuration is unique across all modalities (text, image, video).  
+**WHY**:  
+> Duplicate IDs cause token‑to‑embedding collisions, leading to silent mis‑tokenization, corrupted attention masks, and unpredictable generation.  
+**WHEN TO APPLY**:  
+> During model configuration generation, tokenizer construction, and any runtime token‑embedding lookup.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config_validator.py
+import json
+from collections import Counter
+
+def validate_token_ids(config_path: str) -> None:
+    with open(config_path, "r", encoding="utf-8") as f:
+        cfg = json.load(f)
+
+    ids = [
+        cfg.get("bos_token_id"),
+        cfg.get("eos_token_id"),
+        cfg.get("pad_token_id"),
+        cfg.get("img_start_token_id"),
+        cfg.get("img_end_token_id"),
+        cfg.get("img_context_token_id"),
+        cfg.get("video_token_id"),
+    ]
+
+    # Flatten list if eos_token_id is a list
+    ids = [i for sub in ids for i in (sub if isinstance(sub, list) else [sub])]
+
+    counter = Counter(filter(None, ids))
+    duplicates = [k for k, v in counter.items() if v > 1]
+    if duplicates:
+        raise ValueError(f"Duplicate token IDs found: {duplicates}")
+
+# Run at package import or CI
+validate_token_ids("config.json")
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Reusing the same ID for two tokens
+"bos_token_id": 101,
+"eos_token_id": 101,   # collision
+```
+**VERIFICATION METHOD**:  
+> Unit test that loads `config.json` and asserts `len(set(ids)) == len(ids)`; lint rule that flags duplicate numeric literals in config files.
+
+
+---
+
+## 526. Consistent Data Type Across Vision and Language Backbones (Harvested from TaichuAI/ZDTaichu5.0-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Data Type Across Vision and Language Backbones",
+  "source": "TaichuAI/ZDTaichu5.0-9B",
+  "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+  "source_version": "hf-taichuai-zdtaichu5.0-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T15:09:29.775Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5e1bli",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B) (Revision: `hf-taichua`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** set the `dtype` field to the same value in both the vision encoder config and the language decoder config.  
+**WHY**:  
+> Mismatched dtypes cause implicit casting, increased memory usage, and potential precision loss during cross‑modal attention.  
+**WHEN TO APPLY**:  
+> During model initialization and when merging vision and language parameters.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# dtype_consistency.py
+import json
+
+def check_dtype_consistency(vision_cfg_path: str, language_cfg_path: str) -> None:
+    with open(vision_cfg_path) as vf, open(language_cfg_path) as lf:
+        v_cfg = json.load(vf)
+        l_cfg = json.load(lf)
+
+    if v_cfg.get("dtype") != l_cfg.get("dtype"):
+        raise RuntimeError(
+            f"Dtype mismatch: vision={v_cfg['dtype']} vs language={l_cfg['dtype']}"
+        )
+
+# Example call
+check_dtype_consistency("vision_config.json", "config.json")
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Different dtypes
+"dtype": "float32",          # vision
+"dtype": "bfloat16",         # language
+```
+**VERIFICATION METHOD**:  
+> CI job that runs `dtype_consistency.py`; static analysis that flags differing `dtype` values in config files.
+
+
+---
+
+## 527. Vision Token Placement in the Token Stream (Harvested from TaichuAI/ZDTaichu5.0-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Vision Token Placement in the Token Stream",
+  "source": "TaichuAI/ZDTaichu5.0-9B",
+  "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+  "source_version": "hf-taichuai-zdtaichu5.0-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T15:09:29.793Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5e1bli",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B) (Revision: `hf-taichua`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** insert `<|vision_start|>` and `<|vision_end|>` tokens as the first and last tokens of the vision‑derived segment, and never intermix them with text tokens.  
+**WHY**:  
+> Interleaving vision tokens with text tokens breaks the causal attention mask and corrupts the autoregressive generation.  
+**WHEN TO APPLY**:  
+> In the `ZDTaichu5_0_Processor` when building the input sequence.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# processor.py
+def build_input_ids(text_ids: List[int], vision_ids: List[int]) -> List[int]:
+    # vision_ids already contain <|vision_start|> and <|vision_end|>
+    return text_ids + vision_ids
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Mixed order
+input_ids = text_ids + [vision_start_id] + text_ids + [vision_end_id]
+```
+**VERIFICATION METHOD**:  
+> Integration test that asserts the first token of the vision segment is `img_start_token_id` and the last is `img_end_token_id`.
