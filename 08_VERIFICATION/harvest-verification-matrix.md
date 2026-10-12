@@ -700,3 +700,4 @@
 | `CYCLE-20261012-JCO5` | `2026-10-12T19:07:27.845Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`ea9c71e3...`) |
 | `CYCLE-20261012-N7RU` | `2026-10-12T19:10:28.122Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`62198483...`) |
 | `CYCLE-20261012-QUOE` | `2026-10-12T19:13:17.774Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`9e3710e4...`) |
+| `CYCLE-20261012-URYW` | `2026-10-12T19:16:20.888Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`e98f2a50...`) |

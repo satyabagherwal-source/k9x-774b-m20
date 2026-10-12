@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T19:13:17.777Z",
+  "last_updated": "2026-10-12T19:16:20.893Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1560,15 +1560,15 @@
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv58k6w6",
-      "content_hash": "d745a3e2dbf1dcf9ea1c74c848b87d0fb88f4282d40ebfd01b830a9eaa75fb12",
-      "verified_at": "2026-10-12T12:36:12.473Z",
+      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv5murvp",
+      "content_hash": "e98f2a50223af034d91305c04f9a5414d67a6772e9eb547af7bfb560055caf8c",
+      "verified_at": "2026-10-12T19:16:20.893Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T12:36:12.473Z"
+      "last_updated": "2026-10-12T19:16:20.893Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
