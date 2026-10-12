@@ -738,3 +738,4 @@
 | `CYCLE-20261012-3YAH` | `2026-10-12T21:15:27.449Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`79a04ccd...`) |
 | `CYCLE-20261012-7LW4` | `2026-10-12T21:18:18.004Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`25d6742b...`) |
 | `CYCLE-20261012-BRP0` | `2026-10-12T21:21:32.148Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`602df1e6...`) |
+| `CYCLE-20261012-FK5T` | `2026-10-12T21:24:29.009Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 572, Rule 573, Rule 574` | Yes (`effc1799...`) |

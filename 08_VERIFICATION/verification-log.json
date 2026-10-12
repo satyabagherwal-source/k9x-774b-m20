@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-9BZ0",
-    "timestamp": "2026-10-11T18:16:00.732Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
-    "contentHash": "5ce54a445824970160d29862f0b1f647323e7f10d323867c24b94652b4161bcb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-D8DT",
     "timestamp": "2026-10-11T18:19:02.705Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "602df1e69355c9baf08cec03b6719b119469ba804b351ceffa16df80f1b96d8c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-FK5T",
+    "timestamp": "2026-10-12T21:24:29.009Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv5rfk31",
+    "contentHash": "effc1799798d70c7cefe79ccfc456654108bd3d64c785078ed39e96827f33e7b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

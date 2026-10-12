@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:21:32.104Z",
-  "total_verified_learnings": 4634,
+  "last_updated": "2026-10-12T21:24:28.976Z",
+  "total_verified_learnings": 4635,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -112887,6 +112887,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T21:21:32.104Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-supersoniclabs-julia-1-mv5rfk31": {
+      "learning_id": "learn-huggingface-hf-supersoniclabs-julia-1-mv5rfk31",
+      "source": "SupersonicLabs/Julia-1",
+      "repository": "SupersonicLabs/Julia-1",
+      "slug": "hf-supersoniclabs-julia-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
+      "source_version": "hf-supersoniclabs-julia-1",
+      "content_hash": "effc1799798d70c7cefe79ccfc456654108bd3d64c785078ed39e96827f33e7b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 572,
+          "title": "The Finite-Candidate Decision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 573,
+          "title": "The Multilingual Tokenization Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 574,
+          "title": "The Benchmark Protocol Rigor Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T21:24:28.976Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
