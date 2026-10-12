@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T17:11:20.119Z",
-  "total_cycles_completed": 601,
-  "total_learnings_persisted": 601,
-  "total_rules_promoted": 292,
+  "last_updated": "2026-10-12T17:14:30.850Z",
+  "total_cycles_completed": 602,
+  "total_learnings_persisted": 602,
+  "total_rules_promoted": 295,
   "history": [
-    {
-      "timestamp": "2026-10-12T05:44:53.205Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4tv88f",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T05:47:45.565Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1403,6 +1396,13 @@
       "repository": "openai/whisper-large-v3",
       "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv5ie099",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T17:14:30.850Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv5ii3e3",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

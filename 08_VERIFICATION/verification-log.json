@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-1TJR",
-    "timestamp": "2026-10-11T13:58:13.719Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv3w1tib",
-    "contentHash": "7891ae250f446b092cbf6abcf0773ca6f748678273a24fd771e737b276eb3367",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-5S9K",
     "timestamp": "2026-10-11T14:01:18.680Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7492,6 +7477,21 @@
     "contentHash": "9a18aebb6a547fed91842b7041002624c8300f211a66d793eba3506845deb46d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-I3I6",
+    "timestamp": "2026-10-12T17:14:30.846Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv5ii3e3",
+    "contentHash": "e8f974b21e93537546cf886c16f6abc238abfc093c01e2331eb6e60b571fc594",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

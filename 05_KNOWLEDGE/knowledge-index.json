@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T17:11:20.063Z",
-  "total_verified_learnings": 4556,
+  "last_updated": "2026-10-12T17:14:30.803Z",
+  "total_verified_learnings": 4557,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -110865,6 +110865,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T17:11:20.063Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv5ii3e3": {
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv5ii3e3",
+      "source": "black-forest-labs/FLUX.1-schnell",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "slug": "hf-black-forest-labs-flux.1-schnell",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "content_hash": "e8f974b21e93537546cf886c16f6abc238abfc093c01e2331eb6e60b571fc594",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 547,
+          "title": "Latent Space Memory Bandwidth Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 548,
+          "title": "Deterministic Inference via Seeded Noise Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 549,
+          "title": "Attention Masking for Variable-Length Text Conditioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T17:14:30.803Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
