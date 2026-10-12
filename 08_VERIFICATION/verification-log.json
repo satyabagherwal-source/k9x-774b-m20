@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-YP7F",
-    "timestamp": "2026-10-11T10:39:50.811Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv3oyp5u",
-    "contentHash": "a878c735df9b505d67638119e6565242cde13896870acf0245a4c695edff53b8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-3M2R",
     "timestamp": "2026-10-11T10:43:40.035Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
     "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv5azuy9",
     "contentHash": "38f620543e32e5681f552fffe18b00fc0f1abfa3f7fde907e0891d349374ad11",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-CKH1",
+    "timestamp": "2026-10-12T13:54:15.589Z",
+    "repository": "paperclipai/paperclip",
+    "learningId": "learn-github-paperclipai-paperclip-mv5bckez",
+    "contentHash": "4b05325c29df6e1f9888cc1a978c8d9fc9976e2c0fca993b15a4a1f4180996f2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

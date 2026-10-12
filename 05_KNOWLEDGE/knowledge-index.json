@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T13:44:22.694Z",
-  "total_verified_learnings": 4494,
+  "last_updated": "2026-10-12T13:54:15.555Z",
+  "total_verified_learnings": 4495,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -109189,6 +109189,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T13:44:22.693Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-paperclipai-paperclip-mv5bckez": {
+      "learning_id": "learn-github-paperclipai-paperclip-mv5bckez",
+      "source": "paperclipai/paperclip",
+      "repository": "paperclipai/paperclip",
+      "slug": "paperclipai-paperclip",
+      "platform": "github",
+      "source_url": "https://github.com/paperclipai/paperclip",
+      "source_version": "fb21a3f3",
+      "content_hash": "4b05325c29df6e1f9888cc1a978c8d9fc9976e2c0fca993b15a4a1f4180996f2",
+      "dossier_path": "07_PROJECT_LEARNING/paperclipai-paperclip-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/paperclipai-paperclip-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T13:54:15.555Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

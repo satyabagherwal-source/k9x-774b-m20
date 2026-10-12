@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T13:44:22.753Z",
+  "last_updated": "2026-10-12T13:54:15.593Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1933,6 +1933,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-12T09:58:39.534Z"
+    },
+    "paperclipai/paperclip": {
+      "repository": "paperclipai/paperclip",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-paperclipai-paperclip-mv5bckez",
+      "content_hash": "4b05325c29df6e1f9888cc1a978c8d9fc9976e2c0fca993b15a4a1f4180996f2",
+      "verified_at": "2026-10-12T13:54:15.593Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-12T13:54:15.593Z"
     }
   }
 }

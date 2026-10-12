@@ -581,3 +581,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-francisring-prism-mv5asb07` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-12T13:38:30.309Z |
 | `learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv5aw2eq` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-12T13:41:25.786Z |
 | `learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv5azuy9` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-12T13:44:22.749Z |
+| `learn-github-paperclipai-paperclip-mv5bckez` | `https://github.com/paperclipai/paperclip` | `fb21a3f3` | Multi-dimensional audit evidence | 2026-10-12T13:54:15.590Z |

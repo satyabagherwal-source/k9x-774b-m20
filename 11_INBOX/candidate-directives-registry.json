@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T10:16:51.010Z",
+  "last_updated": "2026-10-12T13:54:15.591Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1190,6 +1190,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv53kz3n"
+    },
+    {
+      "id": "CD-CKH3",
+      "directive_title": "ui): upload files directly in task artifacts (#15964)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "paperclipai/paperclip",
+      "source_commit": "fb21a3f3",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-paperclipai-paperclip-mv5bckez"
     }
   ]
 }

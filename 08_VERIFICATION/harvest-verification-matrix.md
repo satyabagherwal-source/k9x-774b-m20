@@ -598,3 +598,4 @@
 | `CYCLE-20261012-SB37` | `2026-10-12T13:38:30.307Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`68b1a00c...`) |
 | `CYCLE-20261012-W2HK` | `2026-10-12T13:41:25.784Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`2683896a...`) |
 | `CYCLE-20261012-ZV17` | `2026-10-12T13:44:22.747Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`38f62054...`) |
+| `CYCLE-20261012-CKH1` | `2026-10-12T13:54:15.589Z` | `paperclipai/paperclip` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/paperclipai-paperclip-learnings.md` | Yes (`4b05325c...`) |

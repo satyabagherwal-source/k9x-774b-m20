@@ -1348,5 +1348,15 @@
     "contentHash": "5a62b5e227d874691f28643800e99a028f300dcea3d6b6c81ce81f5242901138",
     "lastHarvestedAt": "2026-10-12T09:58:39.532Z",
     "learningId": "learn-github-duty1g-x64dbg-mcp-server-mv52xkxd"
+  },
+  "paperclipai-paperclip": {
+    "repository": "paperclipai/paperclip",
+    "platform": "github",
+    "sourceUrl": "https://github.com/paperclipai/paperclip",
+    "sourceVersion": "fb21a3f3",
+    "license": "MIT",
+    "contentHash": "4b05325c29df6e1f9888cc1a978c8d9fc9976e2c0fca993b15a4a1f4180996f2",
+    "lastHarvestedAt": "2026-10-12T13:54:15.590Z",
+    "learningId": "learn-github-paperclipai-paperclip-mv5bckez"
   }
 }
