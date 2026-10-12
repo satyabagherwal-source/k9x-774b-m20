@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T00:12:27.123Z",
-  "total_cycles_completed": 298,
-  "total_learnings_persisted": 298,
+  "last_updated": "2026-10-12T00:15:22.221Z",
+  "total_cycles_completed": 299,
+  "total_learnings_persisted": 299,
   "total_rules_promoted": 124,
   "history": [
-    {
-      "timestamp": "2026-10-11T13:49:07.664Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv3vq45h",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T13:51:58.512Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T00:12:27.123Z",
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T00:15:22.221Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

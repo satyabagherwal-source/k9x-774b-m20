@@ -4423,5 +4423,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-3GX6",
+    "timestamp": "2026-10-12T00:15:22.218Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub",
+    "contentHash": "659f2a6be465dad84bc2f1f4425a0473ef9ff5916f5ae4ab574c677b386a2c5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

@@ -356,3 +356,4 @@
 | `CYCLE-20261012-RS9U` | `2026-10-12T00:06:17.058Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`15f9ebd5...`) |
 | `CYCLE-20261012-VKYR` | `2026-10-12T00:09:14.211Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`8d185c29...`) |
 | `CYCLE-20261012-ZPTC` | `2026-10-12T00:12:27.120Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`4c241116...`) |
+| `CYCLE-20261012-3GX6` | `2026-10-12T00:15:22.218Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`659f2a6b...`) |
