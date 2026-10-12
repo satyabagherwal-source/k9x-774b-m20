@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-RDAF",
-    "timestamp": "2026-10-11T17:34:03.015Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
-    "contentHash": "0e3da3fb35f9894ee6827162b976eb5847e73fdf0b0e058a791c4215c36af144",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-VE8P",
     "timestamp": "2026-10-11T17:37:10.873Z",
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
     "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv5pt9gt",
     "contentHash": "ee748338901b5944dcd18888203ce3c4ac8868e0ebd3de99818e896f33b33e61",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-X54M",
+    "timestamp": "2026-10-12T20:42:10.102Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv5px51m",
+    "contentHash": "f9ce912cf1d23eb7045b7e5b44c16cd2e08ed4161ee86f9f4ca687a7966db581",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
