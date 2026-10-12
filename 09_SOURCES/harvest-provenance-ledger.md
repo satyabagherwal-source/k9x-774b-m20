@@ -715,3 +715,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-xingchen-agi-teleocr-mv5qgl7q` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-12T20:57:17.520Z |
 | `learn-huggingface-hf-qwen-qwen-image-2-1-mv5qkenx` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-12T21:00:15.657Z |
 | `learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv5qojtl` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-12T21:03:28.960Z |
+| `learn-huggingface-hf-nvidia-nemotron-3-diarization-mv5qsbav` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-12T21:06:24.523Z |
