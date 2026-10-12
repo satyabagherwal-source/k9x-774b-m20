@@ -17389,5 +17389,17 @@
     "qualityScore": 813,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-12T04:43:09.218Z"
+  },
+  {
+    "name": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "fullName": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: abenzerps/Qwen-Image-2.1-Uncensored-Quantized (4016 likes, 2188658 downloads)",
+    "likes": 4016,
+    "downloads": 2188658,
+    "qualityScore": 42160,
+    "discoveredAt": "2026-10-12T07:12:22.705Z"
   }
 ]

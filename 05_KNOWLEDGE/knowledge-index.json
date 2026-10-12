@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:08:50.579Z",
-  "total_verified_learnings": 4383,
+  "last_updated": "2026-10-12T07:13:36.463Z",
+  "total_verified_learnings": 4384,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106141,6 +106141,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T07:08:50.579Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv4x1bos": {
+      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv4x1bos",
+      "source": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "slug": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "content_hash": "fcdd33fb0de224fceebb5ae344b46c62c837f85cceb0ca42cde61bb2a83c7647",
+      "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 442,
+          "title": "Weight Quantization Block Scale Alignment and Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 443,
+          "title": "Heterogeneous Diffusion Pipeline Component Precision Floor Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 444,
+          "title": "Safetensors Metadata Header Byte-Length and Zero-Copy Slice Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T07:13:36.463Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

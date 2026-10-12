@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:08:50.630Z",
+  "last_updated": "2026-10-12T07:13:36.511Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1891,6 +1891,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-12T04:47:30.655Z"
+    },
+    "abenzerps/Qwen-Image-2.1-Uncensored-Quantized": {
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv4x1bos",
+      "content_hash": "fcdd33fb0de224fceebb5ae344b46c62c837f85cceb0ca42cde61bb2a83c7647",
+      "verified_at": "2026-10-12T07:13:36.511Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-12T07:13:36.511Z"
     }
   }
 }

@@ -1318,5 +1318,15 @@
     "contentHash": "3d033e108b8b932f013f6401dd3cc9ea26e969f11599ff8b24a152f47e9ab32f",
     "lastHarvestedAt": "2026-10-12T04:47:30.653Z",
     "learningId": "learn-github-fei2411-deepseek-bot-mv4rtfyk"
+  },
+  "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+    "license": "Open-Source",
+    "contentHash": "fcdd33fb0de224fceebb5ae344b46c62c837f85cceb0ca42cde61bb2a83c7647",
+    "lastHarvestedAt": "2026-10-12T07:13:36.507Z",
+    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv4x1bos"
   }
 }
