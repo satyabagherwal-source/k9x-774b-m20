@@ -392,3 +392,4 @@
 | `CYCLE-20261012-NHWE` | `2026-10-12T01:54:55.454Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`24d0e3ac...`) |
 | `CYCLE-20261012-VJXI` | `2026-10-12T02:01:11.334Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 401, Rule 402, Rule 403` | Yes (`21386929...`) |
 | `CYCLE-20261012-Z6YR` | `2026-10-12T02:04:01.155Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 404, Rule 405, Rule 406` | Yes (`3181bdfb...`) |
+| `CYCLE-20261012-2R8F` | `2026-10-12T02:06:47.391Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`ff4074c5...`) |
