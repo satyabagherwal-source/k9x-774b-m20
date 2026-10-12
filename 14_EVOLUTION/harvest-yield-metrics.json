@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:56:14.835Z",
-  "total_cycles_completed": 450,
-  "total_learnings_persisted": 450,
+  "last_updated": "2026-10-12T08:59:21.194Z",
+  "total_cycles_completed": 451,
+  "total_learnings_persisted": 451,
   "total_rules_promoted": 227,
   "history": [
-    {
-      "timestamp": "2026-10-11T21:49:22.884Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T21:52:33.307Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T08:56:14.835Z",
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-hf-psrben-visionhope-mv50pbil",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T08:59:21.194Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv50tbb9",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

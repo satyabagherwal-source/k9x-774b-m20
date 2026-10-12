@@ -635,9 +635,9 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "57f265f2581f16613b2f8f027aac921ab856c92576c410bed2e2dce91678ac3d",
-    "lastHarvestedAt": "2026-10-12T01:33:36.593Z",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
+    "contentHash": "83bf3f1e81550980a974bc2142b09f5d16e416517cd710514586095ed846e07f",
+    "lastHarvestedAt": "2026-10-12T08:59:21.193Z",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv50tbb9"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
