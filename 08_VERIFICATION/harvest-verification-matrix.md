@@ -648,3 +648,4 @@
 | `CYCLE-20261012-UR6G` | `2026-10-12T16:28:22.168Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`ae0be881...`) |
 | `CYCLE-20261012-YQ1E` | `2026-10-12T16:31:27.314Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`99b34d37...`) |
 | `CYCLE-20261012-2FDF` | `2026-10-12T16:34:20.115Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`27818140...`) |
+| `CYCLE-20261012-6OF8` | `2026-10-12T16:37:38.468Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`29d129f7...`) |
