@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-RI4B",
-    "timestamp": "2026-10-11T08:14:16.955Z",
-    "repository": "test-org/test-idempotent-repo",
-    "learningId": "learn-github-test-e2e-idempotent-slug-mv3jrhym",
-    "contentHash": "70fd8c659452c5ceec98d18e42a75962fbebc45d0701fbd26c8c29c188f59b32",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-RI7Q",
     "timestamp": "2026-10-11T08:14:17.078Z",
     "repository": "test-org/test-idempotent-repo",
@@ -7490,6 +7475,21 @@
     "repository": "intfloat/multilingual-e5-small",
     "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv57wkuj",
     "contentHash": "371dd81c3ba224f763177caadf60a1e8a5405bab1555f6dec0ea304064401b4f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-09TK",
+    "timestamp": "2026-10-12T12:20:43.064Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv5809rt",
+    "contentHash": "d5ee83c593e51cbf6c0d30e7160da39b079b4fc8e3228fa1f3f6fe5e77a7f482",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
