@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-JX3P",
-    "timestamp": "2026-10-11T12:20:19.669Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv3sjx1h",
-    "contentHash": "dc0aeca660828f57ec854250d85d9abbd3b9fc79c58eab4595ea12e509839535",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-NIG8",
     "timestamp": "2026-10-11T12:23:07.304Z",
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv5eoq3s",
     "contentHash": "85656bc5168c2b22853e906fcf1d2049cfcceb95e89e49546ec99ae4e64efc07",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-ST3A",
+    "timestamp": "2026-10-12T15:30:52.102Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv5est0d",
+    "contentHash": "72bf0d135d487a173128677a413456a8e8a00ad62b5e67ad4f0274b8805edae2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
