@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-RWX3",
-    "timestamp": "2026-10-11T15:42:29.991Z",
-    "repository": "test-org/rule-verifier",
-    "learningId": "learn-github-test-org-rule-verifier-mv3zrwqz",
-    "contentHash": "b918a8e3e48e92ce4f5ed184cc467fc2675e74f1ecaec0411528382569dcd751",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-0PRT",
     "timestamp": "2026-10-11T15:49:20.633Z",
     "repository": "intfloat/multilingual-e5-small",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-26B-A4B-it",
     "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv5m2egv",
     "contentHash": "7b0b0fb8cb309757e6e227fe9ffdec5a0378957215fac98996534d241fd696a8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-64RF",
+    "timestamp": "2026-10-12T18:57:11.067Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv5m64pf",
+    "contentHash": "f349e0fe19e1061dc6b85d769450d496021aa1f2f3a1d6d1ba7bc3572614c40d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
