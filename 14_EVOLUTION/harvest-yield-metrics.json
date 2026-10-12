@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:29:58.466Z",
-  "total_cycles_completed": 417,
-  "total_learnings_persisted": 417,
-  "total_rules_promoted": 181,
+  "last_updated": "2026-10-12T06:33:15.701Z",
+  "total_cycles_completed": 418,
+  "total_learnings_persisted": 418,
+  "total_rules_promoted": 184,
   "history": [
-    {
-      "timestamp": "2026-10-11T20:10:34.818Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T20:13:46.246Z",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
       "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4vh7np",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:33:15.701Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4vlft5",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
