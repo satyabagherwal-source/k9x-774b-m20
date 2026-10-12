@@ -503,3 +503,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-cloudflare-clef-mv51ocnr` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-12T09:23:29.317Z |
 | `learn-huggingface-hf-cloudflare-clef-flash-mv51shox` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-12T09:26:42.464Z |
 | `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv51wd2c` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-12T09:29:43.018Z |
+| `learn-huggingface-hf-google-bert-bert-base-uncased-mv5205ab` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-12T09:32:39.594Z |

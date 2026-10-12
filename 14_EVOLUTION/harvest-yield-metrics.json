@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:29:43.021Z",
-  "total_cycles_completed": 461,
-  "total_learnings_persisted": 461,
+  "last_updated": "2026-10-12T09:32:39.595Z",
+  "total_cycles_completed": 462,
+  "total_learnings_persisted": 462,
   "total_rules_promoted": 235,
   "history": [
-    {
-      "timestamp": "2026-10-11T22:22:52.926Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T22:26:02.711Z",
       "repository": "Qwen/Qwen3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T09:29:43.021Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv51wd2c",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:32:39.595Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv5205ab",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
