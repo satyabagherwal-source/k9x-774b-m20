@@ -5323,5 +5323,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-O1FQ",
+    "timestamp": "2026-10-12T03:19:19.622Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-hf-bigscience-bloom-mv4oo1d4",
+    "contentHash": "2728d9dd05dea37354bec025921368248f4324b6fb74962ac6cc666be8ae176a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
