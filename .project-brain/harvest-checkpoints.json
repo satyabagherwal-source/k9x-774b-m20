@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:02:30.944Z",
+  "last_updated": "2026-10-12T22:05:44.775Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -594,15 +594,15 @@
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv5eoq3s",
-      "content_hash": "85656bc5168c2b22853e906fcf1d2049cfcceb95e89e49546ec99ae4e64efc07",
-      "verified_at": "2026-10-12T15:27:41.700Z",
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv5swmeb",
+      "content_hash": "20f995b1e0fde1163cfe1216dc8c9195b147f919bbbe47665c126a0caeb00c1f",
+      "verified_at": "2026-10-12T22:05:44.775Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T15:27:41.700Z"
+      "last_updated": "2026-10-12T22:05:44.775Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
