@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:37:26.212Z",
+  "last_updated": "2026-10-12T09:40:26.791Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -874,15 +874,15 @@
       "repository": "BAAI/bge-m3",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-baai-bge-m3-mv4meu5h",
-      "content_hash": "763d16ddc8bdc21566f383c78c7dfa721d90ce996e4a5128a5581605364d7ecc",
-      "verified_at": "2026-10-12T02:16:11.115Z",
+      "learning_id": "learn-huggingface-hf-baai-bge-m3-mv52a5s0",
+      "content_hash": "6baf86eaf37595f3dbb193dcfe33d110eab0b9e6361be0f3982444510b34eb7e",
+      "verified_at": "2026-10-12T09:40:26.791Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T02:16:11.115Z"
+      "last_updated": "2026-10-12T09:40:26.791Z"
     },
     "Qwen/Qwen3-0.6B": {
       "repository": "Qwen/Qwen3-0.6B",

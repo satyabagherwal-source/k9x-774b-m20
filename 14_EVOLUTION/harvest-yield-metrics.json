@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:37:26.211Z",
-  "total_cycles_completed": 463,
-  "total_learnings_persisted": 463,
+  "last_updated": "2026-10-12T09:40:26.790Z",
+  "total_cycles_completed": 464,
+  "total_learnings_persisted": 464,
   "total_rules_promoted": 235,
   "history": [
-    {
-      "timestamp": "2026-10-11T22:28:52.936Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T22:31:38.182Z",
       "repository": "google/gemma-4-31B-it",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T09:37:26.211Z",
       "repository": "google/electra-base-discriminator",
       "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv526ah0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:40:26.790Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-m3-mv52a5s0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
