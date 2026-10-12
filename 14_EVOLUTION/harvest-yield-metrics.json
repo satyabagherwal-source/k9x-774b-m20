@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:00:15.659Z",
-  "total_cycles_completed": 672,
-  "total_learnings_persisted": 672,
+  "last_updated": "2026-10-12T21:03:28.961Z",
+  "total_cycles_completed": 673,
+  "total_learnings_persisted": 673,
   "total_rules_promoted": 320,
   "history": [
-    {
-      "timestamp": "2026-10-12T10:19:48.346Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv53orzx",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T10:22:47.500Z",
       "repository": "microsoft/FrogNano-4B-2609",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T21:00:15.659Z",
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv5qkenx",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:03:28.961Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv5qojtl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

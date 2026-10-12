@@ -731,3 +731,4 @@
 | `CYCLE-20261012-CVC7` | `2026-10-12T20:54:23.911Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 569, Rule 570, Rule 571` | Yes (`0e8da9cf...`) |
 | `CYCLE-20261012-GLAM` | `2026-10-12T20:57:17.518Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`37da7956...`) |
 | `CYCLE-20261012-KEQV` | `2026-10-12T21:00:15.655Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`f6d1433e...`) |
+| `CYCLE-20261012-OJWE` | `2026-10-12T21:03:28.958Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`c20a3efa...`) |
