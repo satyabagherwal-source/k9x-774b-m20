@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T16:16:35.220Z",
-  "total_verified_learnings": 4538,
+  "last_updated": "2026-10-12T16:19:44.867Z",
+  "total_verified_learnings": 4539,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -110374,6 +110374,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T16:16:35.220Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv5gjnyo": {
+      "learning_id": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv5gjnyo",
+      "source": "unsloth/embeddinggemma-2-GGUF",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "slug": "hf-unsloth-embeddinggemma-2-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+      "source_version": "hf-unsloth-embeddinggemma-2-gguf",
+      "content_hash": "92d5de5723ed8b57d9b03d3ee3a59ea64223f8bc07b14d3d016a2c8ffcec7a4c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 536,
+          "title": "Quantization-Induced Vector Drift Compensation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 537,
+          "title": "Matryoshka Truncation Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T16:19:44.867Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

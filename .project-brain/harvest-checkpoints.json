@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T16:16:35.266Z",
+  "last_updated": "2026-10-12T16:19:44.914Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -790,15 +790,15 @@
       "repository": "unsloth/embeddinggemma-2-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv51kkh5",
-      "content_hash": "871ee8afb04614372c9a89b44ee376ea101060c04845949e9a9632f1abc57ede",
-      "verified_at": "2026-10-12T09:20:32.820Z",
+      "learning_id": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv5gjnyo",
+      "content_hash": "92d5de5723ed8b57d9b03d3ee3a59ea64223f8bc07b14d3d016a2c8ffcec7a4c",
+      "verified_at": "2026-10-12T16:19:44.914Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T09:20:32.820Z"
+      "last_updated": "2026-10-12T16:19:44.914Z"
     },
     "Cloudflare/clef": {
       "repository": "Cloudflare/clef",
