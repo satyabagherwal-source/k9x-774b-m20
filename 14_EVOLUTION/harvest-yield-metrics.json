@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:14:35.226Z",
-  "total_cycles_completed": 456,
-  "total_learnings_persisted": 456,
+  "last_updated": "2026-10-12T09:17:25.618Z",
+  "total_cycles_completed": 457,
+  "total_learnings_persisted": 457,
   "total_rules_promoted": 227,
   "history": [
-    {
-      "timestamp": "2026-10-11T22:07:39.096Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T22:10:52.380Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T09:14:35.226Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv51cwlf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:17:25.618Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv51gk24",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
