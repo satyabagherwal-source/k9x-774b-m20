@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T16:28:22.136Z",
-  "total_verified_learnings": 4542,
+  "last_updated": "2026-10-12T16:31:27.262Z",
+  "total_verified_learnings": 4543,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -110513,6 +110513,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T16:28:22.136Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-google-bert-bert-base-uncased-mv5gypyg": {
+      "learning_id": "learn-huggingface-hf-google-bert-bert-base-uncased-mv5gypyg",
+      "source": "google-bert/bert-base-uncased",
+      "repository": "google-bert/bert-base-uncased",
+      "slug": "hf-google-bert-bert-base-uncased",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
+      "content_hash": "99b34d370fd38c3c8329414da8d95833702620f4ae56f453d15c23c21199d0f5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T16:31:27.261Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
