@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:32:39.596Z",
+  "last_updated": "2026-10-12T09:37:26.212Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -860,15 +860,15 @@
       "repository": "google/electra-base-discriminator",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt",
-      "content_hash": "fd567dcb871f46cb7570fed315f2ed26edf8b9d71da2c2756cb985a58249cb2e",
-      "verified_at": "2026-10-12T02:13:09.961Z",
+      "learning_id": "learn-huggingface-hf-google-electra-base-discriminator-mv526ah0",
+      "content_hash": "df542c87962a45dd7e3e0e0042ee65506e2790022c01c7ff165fd574d72569c5",
+      "verified_at": "2026-10-12T09:37:26.212Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T02:13:09.961Z"
+      "last_updated": "2026-10-12T09:37:26.212Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
