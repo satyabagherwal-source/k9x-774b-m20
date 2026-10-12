@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-V139",
-    "timestamp": "2026-10-11T12:28:58.053Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-hf-psrben-visionhope-mv3sv11p",
-    "contentHash": "d25d1b04dd02a7554434990a8ca51353ca82b183853a743a19a37d53a922a2f7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-Z21N",
     "timestamp": "2026-10-11T12:32:05.915Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv5f13c5",
     "contentHash": "ee5c54afd2b1fab13d9ae25a65010bbd93b253ccd8f20baef583a5a993bbe4e9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-4PU4",
+    "timestamp": "2026-10-12T15:40:07.756Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv5f4psg",
+    "contentHash": "f933f8c206cd047e003e5f7cdbd099c38c7e6b2601807690e4c0d05f639e1cd6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
