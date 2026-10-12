@@ -774,3 +774,4 @@
 | `CYCLE-20261012-NUEG` | `2026-10-12T23:22:53.992Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`078e8885...`) |
 | `CYCLE-20261012-S8D6` | `2026-10-12T23:26:18.714Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule 599, Rule 600, Rule 601` | Yes (`0bb43cf9...`) |
 | `CYCLE-20261012-VO8F` | `2026-10-12T23:28:59.247Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`4524a2c8...`) |
+| `CYCLE-20261012-ZD1V` | `2026-10-12T23:31:51.379Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`9bb5697d...`) |

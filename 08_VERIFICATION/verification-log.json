@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-4RQT",
-    "timestamp": "2026-10-11T20:04:26.357Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv494roa",
-    "contentHash": "799fa20767fe575aeeee521b6b91b4fbabf3e4131ecb56d52a8017c352d37825",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-8VYG",
     "timestamp": "2026-10-11T20:07:38.440Z",
     "repository": "google-t5/t5-small",
@@ -7490,6 +7475,21 @@
     "repository": "google/electra-base-discriminator",
     "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv5vvo6l",
     "contentHash": "4524a2c84dee3670d440e15fd746c400628dd07b3043bf5d03616a394e6fba18",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-ZD1V",
+    "timestamp": "2026-10-12T23:31:51.379Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-m3-mv5vzczk",
+    "contentHash": "9bb5697df618e2422753ef140e03be60c3ef66a48483281bc4007d96a264e8f5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

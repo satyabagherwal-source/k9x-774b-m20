@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:28:59.249Z",
-  "total_cycles_completed": 715,
-  "total_learnings_persisted": 715,
+  "last_updated": "2026-10-12T23:31:51.382Z",
+  "total_cycles_completed": 716,
+  "total_learnings_persisted": 716,
   "total_rules_promoted": 350,
   "history": [
-    {
-      "timestamp": "2026-10-12T12:33:19.912Z",
-      "repository": "BAAI/bge-base-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv58ghq2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T12:36:12.472Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T23:28:59.249Z",
       "repository": "google/electra-base-discriminator",
       "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv5vvo6l",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T23:31:51.382Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-m3-mv5vzczk",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
