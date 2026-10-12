@@ -1368,5 +1368,15 @@
     "contentHash": "b0b6b233b446e06ab95e6410d88046819990fb657168f77596bdbddfcd6ac60b",
     "lastHarvestedAt": "2026-10-12T19:59:38.672Z",
     "learningId": "learn-github-cosscom-ui-mv5oegcc"
+  },
+  "ebony-vinyl-dsh-our-free-model": {
+    "repository": "Ebony-Vinyl/dsh-our-free-model",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Ebony-Vinyl/dsh-our-free-model",
+    "sourceVersion": "ddb451c2",
+    "license": "MIT",
+    "contentHash": "27bbe78cd23740f523edbe38e6c4a2a931d3d7ebc4c3a2107cca2979c1d3e036",
+    "lastHarvestedAt": "2026-10-12T22:42:23.011Z",
+    "learningId": "learn-github-ebony-vinyl-dsh-our-free-model-mv5u7qjj"
   }
 }

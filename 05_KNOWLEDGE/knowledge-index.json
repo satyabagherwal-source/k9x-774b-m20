@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:35:19.727Z",
-  "total_verified_learnings": 4657,
+  "last_updated": "2026-10-12T22:42:22.968Z",
+  "total_verified_learnings": 4658,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -113536,6 +113536,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T22:35:19.727Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-ebony-vinyl-dsh-our-free-model-mv5u7qjj": {
+      "learning_id": "learn-github-ebony-vinyl-dsh-our-free-model-mv5u7qjj",
+      "source": "Ebony-Vinyl/dsh-our-free-model",
+      "repository": "Ebony-Vinyl/dsh-our-free-model",
+      "slug": "ebony-vinyl-dsh-our-free-model",
+      "platform": "github",
+      "source_url": "https://github.com/Ebony-Vinyl/dsh-our-free-model",
+      "source_version": "ddb451c2",
+      "content_hash": "27bbe78cd23740f523edbe38e6c4a2a931d3d7ebc4c3a2107cca2979c1d3e036",
+      "dossier_path": "07_PROJECT_LEARNING/ebony-vinyl-dsh-our-free-model-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ebony-vinyl-dsh-our-free-model-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 590,
+          "title": "Merge pull request #233 from look-back-lysj/ui-worlds-v5.1-pr",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T22:42:22.968Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

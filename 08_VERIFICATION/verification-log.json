@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-Q2CO",
-    "timestamp": "2026-10-11T19:25:00.648Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv47q2a0",
-    "contentHash": "22bf54a78ab39f2c644dee2376618de7cf4e8332a0c800b17d472cb2b2c7ef14",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-U513",
     "timestamp": "2026-10-11T19:28:10.743Z",
     "repository": "facebook/sam3",
@@ -7492,6 +7477,21 @@
     "contentHash": "7e069a61fd1516540cfd2c6c411567b26037930c4f34196ee34f3a453a324145",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-7QN5",
+    "timestamp": "2026-10-12T22:42:23.009Z",
+    "repository": "Ebony-Vinyl/dsh-our-free-model",
+    "learningId": "learn-github-ebony-vinyl-dsh-our-free-model-mv5u7qjj",
+    "contentHash": "27bbe78cd23740f523edbe38e6c4a2a931d3d7ebc4c3a2107cca2979c1d3e036",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
