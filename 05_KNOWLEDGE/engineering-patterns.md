@@ -14626,3 +14626,93 @@ def load_model(model_path: str):
 -   **Stress Test**: Load a model with insufficient memory and verify graceful failure.
 
 ---
+
+## 400. Deep Component & Specimen i18n Localization Invariant (UI vs Font Specimen Separation)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Deep Component & Specimen i18n Localization Invariant (UI vs Font Specimen Separation)",
+  "source": "satyabagherwal-source/old-english-font-free",
+  "source_url": "https://oldenglishfontfree.com",
+  "source_version": "v1.0.0-multilingual-core",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T01:45:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-old-english-font-free-deep-i18n-specimen-invariant",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [satyabagherwal-source/old-english-font-free](https://oldenglishfontfree.com).  
+> **Evidence**: Verified against production static compilation (632 HTML routes) and cross-locale UI audit.
+
+**RULE**:
+In internationalized (i18n) static web architectures, subpages (`about`, `contact`, `privacy`, `terms`), deep accordions (`FAQItem[]`), interactive modals (`GlyphModal`), and utility footers MUST consume structured locale-bound translation stores with 100% key parity across all routes; static subpage cloning with hardcoded text is strictly forbidden. 
+HOWEVER, when demonstrating script-affine typographic typefaces (such as Latin-only Blackletter fonts) or programming language syntax samples, domain specimens (sample headlines, pangrams, character maps) MUST preserve the authentic target script (Latin `A-Z`) while localizing all surrounding UI chrome (badges, chapter headers, tooltips, metadata). Translating Latin-only font specimens into non-Latin scripts (Kanji, Devanagari, Arabic) causes catastrophic glyph rendering failure (fallback to browser system sans-serif / Tofu) and destroys the visual utility of the demonstrator.
+Furthermore, all client-side `<script>` tags that trigger user-facing text mutations (copy-to-clipboard badges, toasts, modal titles) MUST read from a reactive globally serialized translation object (`window.__I18N__`) or HTML5 `data-*` attributes to ensure zero stray English strings in dynamic states.
+
+**WHY**:
+1. Eliminates the "Landing Page vs Inner Page Discrepancy" where top-level hero sections appear translated, but deep accordions, FAQ questions, About pages, and contact forms remain in raw fallback English.
+2. Prevents the "Tofu / Font Fallback Trap" where attempting to translate typographic specimen text into languages not supported by the underlying typeface causes browser font substitution, ruining font pairing and preview tools.
+3. Ensures reactive client feedback (toast notifications, copy buttons) stays strictly synchronized with the active route's locale without requiring client-side hydration frameworks.
+
+**WHEN TO APPLY**:
+- Any multi-language web application or SSG platform (Astro, Next.js, Nuxt, SvelteKit).
+- Font specimen libraries, font pairing tools, typography showcases, and calligraphy studios.
+- Code snippet viewers, syntax highlighting demonstrators, and developer documentation portals.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// 1. Separation of UI Chrome from Script-Affine Specimen Text
+// src/components/TypographySpecimenCard.astro
+interface Props {
+  lang: SupportedLang;
+  font: FontMetadata;
+}
+const { lang, font } = Astro.props;
+const t = useTranslations(lang);
+
+// UI Chrome is 100% Localized into the user's native tongue
+const chapterBadge = t('specimen.chapterOne'); // e.g. "第1章 • 歴史的碑文" (JA)
+const liveLabel = t('specimen.liveLabel');     // e.g. "リアルタイム組版見本" (JA)
+
+// Domain Specimen Text is preserved in Latin to exercise authentic font glyphs
+// (Translating this into Kanji/Devanagari would break Unifraktur font rendering)
+const latinHeadline = "The Chronicles of Antiquity & Honor";
+const latinPullQuote = "Omnia Vincit Amor et Veritas";
+
+// 2. Client-side Reactive Toast & State Localization via HTML5 Data Attributes
+// Avoid hardcoding 'Copied!' inside client scripts
+<button 
+  id="copyButton" 
+  data-copy-label={t('btn.copy')}
+  data-copied-label={t('btn.copied')}
+>
+  {t('btn.copy')}
+</button>
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN 1: Hardcoding English subpages while only translating landing page
+// src/pages/[lang]/about.astro
+<h1>About Us</h1> // FAILS: Hardcoded English on /ja/about/ or /es/about/
+
+// ANTI-PATTERN 2: Translating Latin font specimen text into non-supported scripts
+const headline = t('specimen.headline'); // If '古代と名誉の年代記' is passed to Unifraktur,
+// font has NO kanji glyphs -> falls back to Meiryo/Arial -> Blackletter preview is destroyed!
+
+// ANTI-PATTERN 3: Hardcoded fallback in client scripts
+navigator.clipboard.writeText(text).then(() => {
+  toast('Copied to clipboard!'); // FAILS: Displays English toast to Japanese/Spanish user
+});
+```
+
+**VERIFICATION METHOD**:
+1. Static Dist HTML Audit: Execute regex inspection over all `dist/[lang]/**/*.html` pages to assert zero forbidden English phrases in UI containers.
+2. Specimen Glyph Audit: Verify that sample headline containers maintain font-family styles with Latin pangrams for Latin-only typefaces.
+3. Client Interaction Audit: Emulate copy actions and modal clicks across all 14 locales to verify that all toast notifications and dynamic DOM text match the current URL locale.

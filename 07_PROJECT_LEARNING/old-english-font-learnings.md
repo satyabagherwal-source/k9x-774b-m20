@@ -245,4 +245,12 @@ This document records empirical learnings, forensic bug investigations, and patt
      - `src/i18n/faq-translations.ts`: Localized 18 Master Paleographic questions, answers, and CTA banner across supported languages.
   3. *Production Verification*: Audited static dist HTML across all 632 compiled pages confirming zero forbidden English strings remain on non-English routes.
 
+### INC-18: Script-Affine Specimen Invariant vs UI Localization & Locked Asset Protection
+* **Context**: User asked whether font specimen headlines (`The Chronicles of Antiquity & Honor`) should be converted to multi-language, raised concern regarding desktop "More" menu items, and strictly mandated: *"current website ka sab kuchh lock h . kuchh bhi nahi chhedana h, taxt tak ko nahi chhedana h"*.
+* **Forensic & Typographic Invariant Analysis**:
+  1. *Script-Affine Glyph Limitation*: Old English Blackletter fonts contain only Latin character sets (`A-Z`, `a-z`, `0-9`). Passing non-Latin scripts (Kanji, Devanagari, Arabic) causes browser font fallback to system sans-serif (Tofu phenomenon), destroying the visual demonstrator.
+  2. *Strict UI Chrome vs Specimen Separation*: UI elements (chapter badge, labels, metadata) must be localized into the user's native tongue (e.g. `● リアルタイム組版見本・記事`, `第1章 • 歴史的碑文`), but font specimen headlines and pangrams must remain in authentic Latin characters.
+  3. *Client-side Nav Sync Verification*: Desktop header "More" dropdown automatically renders localized labels depending on current URL route prefix (`/ja/` renders Japanese items, `/` renders English items).
+  4. *Locked Asset Invariant*: The production design, existing text, routes, and styling are permanently protected and locked against accidental drift.
+
 
