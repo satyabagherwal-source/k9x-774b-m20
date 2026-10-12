@@ -7243,5 +7243,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-7H8W",
+    "timestamp": "2026-10-12T11:02:20.432Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv557h5p",
+    "contentHash": "2ce1c74d0807ea967a84f1eb6cf75708f3f82e0977f4fd698f5c197a9419fd44",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
