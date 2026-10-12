@@ -452,3 +452,4 @@
 | `CYCLE-20261012-OTGW` | `2026-10-12T05:11:54.416Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 430` | Yes (`d3bad0ed...`) |
 | `CYCLE-20261012-SAQE` | `2026-10-12T05:14:36.758Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`69bfb61a...`) |
 | `CYCLE-20261012-W4DO` | `2026-10-12T05:17:35.148Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`59e92c1d...`) |
+| `CYCLE-20261012-ZUO6` | `2026-10-12T05:20:29.190Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`0c8cdd2a...`) |
