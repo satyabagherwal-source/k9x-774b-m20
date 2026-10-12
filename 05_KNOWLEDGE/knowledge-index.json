@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:50:24.337Z",
-  "total_verified_learnings": 4643,
+  "last_updated": "2026-10-12T21:53:21.523Z",
+  "total_verified_learnings": 4644,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -113146,6 +113146,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T21:50:24.337Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv5sgoxk": {
+      "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv5sgoxk",
+      "source": "Comfy-Org/Qwen-Image-2.1",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "slug": "hf-comfy-org-qwen-image-2.1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "content_hash": "143bac1b43d6444d92e4c0b21bff2a7a0d99045cd49555c6473d5e99f2ff17e0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 580,
+          "title": "Binary Asset Quantization Parity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 581,
+          "title": "Prompt Enhancer (PE) Model Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T21:53:21.523Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

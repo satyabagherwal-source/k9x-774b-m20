@@ -747,3 +747,4 @@
 | `CYCLE-20261012-2XKP` | `2026-10-12T21:42:39.481Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`0586d3ea...`) |
 | `CYCLE-20261012-8V31` | `2026-10-12T21:47:16.189Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`289c5017...`) |
 | `CYCLE-20261012-CWAU` | `2026-10-12T21:50:24.390Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`198916f2...`) |
+| `CYCLE-20261012-GOZY` | `2026-10-12T21:53:21.550Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 580, Rule 581` | Yes (`143bac1b...`) |
