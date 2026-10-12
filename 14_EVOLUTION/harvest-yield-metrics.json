@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:46:21.860Z",
-  "total_cycles_completed": 466,
-  "total_learnings_persisted": 466,
-  "total_rules_promoted": 235,
+  "last_updated": "2026-10-12T09:49:28.752Z",
+  "total_cycles_completed": 467,
+  "total_learnings_persisted": 467,
+  "total_rules_promoted": 236,
   "history": [
-    {
-      "timestamp": "2026-10-11T22:38:02.313Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T22:41:25.364Z",
       "repository": "Bingsu/adetailer",
@@ -1403,6 +1396,13 @@
       "repository": "google-t5/t5-small",
       "learningId": "learn-huggingface-hf-google-t5-t5-small-mv52hrqy",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:49:28.752Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv52lrx9",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

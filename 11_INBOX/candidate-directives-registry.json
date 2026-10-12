@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:51:21.657Z",
+  "last_updated": "2026-10-12T09:49:28.751Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1157,6 +1157,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4ydvid"
+    },
+    {
+      "id": "CD-LS1B",
+      "directive_title": "Quantization Fallback Hierarchy Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Comfy-Org/MiniMax-H3",
+      "source_commit": "hf-comfy-org",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv52lrx9"
     }
   ]
 }

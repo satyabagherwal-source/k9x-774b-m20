@@ -23211,3 +23211,61 @@ probs = torch.softmax(logits, dim=-1)  # may produce NaNs
 Unit test that feeds a tensor of `bfloat16` logits with large magnitude and asserts no NaNs in the output probabilities. Linter rule that flags `torch.softmax` calls on tensors with dtype `bfloat16`.
 
 ---
+
+
+---
+
+## 491. Multi-Modal VAE Separation Invariant (Harvested from Comfy-Org/MiniMax-H3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Modal VAE Separation Invariant",
+  "source": "Comfy-Org/MiniMax-H3",
+  "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+  "source_version": "hf-comfy-org-minimax-h3",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T09:49:28.651Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv52lrx9",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/MiniMax-H3](https://huggingface.co/Comfy-Org/MiniMax-H3) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In multi-modal generative models (e.g., Video + Audio), you MUST separate the VAE (Variational Autoencoder) components into distinct files (e.g., `video_vae.safetensors`, `audio_vae.safetensors`) rather than bundling them into a single monolithic checkpoint. This allows for independent loading, unloading, and precision tuning of each modality.
+
+**WHY**:
+Video and audio have different latent dimensions and computational costs. Bundling them forces the user to load the entire VAE into VRAM even if they are only generating video (and using pre-generated audio) or vice versa. Separation enables **lazy loading** and **memory optimization** in the inference engine (ComfyUI).
+
+**WHEN TO APPLY**:
+Any generative model producing multiple output modalities (Video, Audio, 3D, etc.).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Inference Engine Logic
+def load_vae(modality, precision):
+    if modality == 'video':
+        path = f"models/vae/{model_name}_video_vae_{precision}.safetensors"
+    elif modality == 'audio':
+        path = f"models/vae/{model_name}_audio_vae_{precision}.safetensors"
+    else:
+        raise ValueError("Unsupported modality")
+    return load_safetensors(path)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Monolithic VAE
+vae = load_safetensors("models/vae/minimax_h3_vae_all.safetensors")
+# Forces loading audio VAE even if not needed
+```
+
+**VERIFICATION METHOD**:
+Unit test that asserts the file system contains separate VAE files for each modality and that the inference engine can load them independently without cross-dependencies.

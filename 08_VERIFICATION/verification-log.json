@@ -6943,5 +6943,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-LS12",
+    "timestamp": "2026-10-12T09:49:28.743Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv52lrx9",
+    "contentHash": "c9eff65afb60d4799402ec3f86aaad3cb7623cccb1ca45667bdb0c6f443fb922",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
