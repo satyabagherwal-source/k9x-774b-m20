@@ -360,3 +360,4 @@
 | `CYCLE-20261012-78XA` | `2026-10-12T00:18:18.478Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`fc8a2f0c...`) |
 | `CYCLE-20261012-BCHX` | `2026-10-12T00:21:29.733Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`44358a9c...`) |
 | `CYCLE-20261012-F4VX` | `2026-10-12T00:24:26.493Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 380, Rule 381, Rule 382` | Yes (`ad8c016e...`) |
+| `CYCLE-20261012-J150` | `2026-10-12T00:27:28.260Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`7970cb5a...`) |
