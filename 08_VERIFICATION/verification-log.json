@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-Y9P0",
-    "timestamp": "2026-10-11T14:23:27.636Z",
-    "repository": "test-org/gateway-verifier",
-    "learningId": "learn-github-test-org-gateway-verifier-mv3wy9hl",
-    "contentHash": "e39f8bae266141dd70733e9f5a77c11a19684571aa9f7de9222bf7d29aa094e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-ZMMX",
     "timestamp": "2026-10-11T14:24:31.065Z",
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -7490,6 +7475,21 @@
     "repository": "bigscience/bloom",
     "learningId": "learn-huggingface-hf-bigscience-bloom-mv5jgd8i",
     "contentHash": "2b17be61fe9b5f483a02bbd0228d296ae18e9aa2ce3c9a07f434738fd17c6aab",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-K5WS",
+    "timestamp": "2026-10-12T17:44:06.892Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv5jk5tu",
+    "contentHash": "767a933634bfe9c13f413a42fdd7dd9e8c74562b85bef3759171260034f1c0a7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
