@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T12:05:33.081Z",
+  "last_updated": "2026-10-12T12:08:20.507Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1448,15 +1448,15 @@
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4r5pdv",
-      "content_hash": "3d4a475203799fb7a63fd0f07caf62116c587907e2c6681347df6b3a9eb3e4cf",
-      "verified_at": "2026-10-12T04:29:03.135Z",
+      "learning_id": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv57kct9",
+      "content_hash": "a9982254bc20be5012d95092f9d26c7557f94dedd9b867a7653a6f7d2ba6680a",
+      "verified_at": "2026-10-12T12:08:20.507Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T04:29:03.135Z"
+      "last_updated": "2026-10-12T12:08:20.507Z"
     },
     "google/gemma-4-26B-A4B-it": {
       "repository": "google/gemma-4-26B-A4B-it",

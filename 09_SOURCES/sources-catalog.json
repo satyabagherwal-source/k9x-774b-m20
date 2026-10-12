@@ -1195,9 +1195,9 @@
     "sourceUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceVersion": "hf-nomic-ai-nomic-embed-text-v1.5",
     "license": "Open-Source",
-    "contentHash": "3d4a475203799fb7a63fd0f07caf62116c587907e2c6681347df6b3a9eb3e4cf",
-    "lastHarvestedAt": "2026-10-12T04:29:03.133Z",
-    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4r5pdv"
+    "contentHash": "a9982254bc20be5012d95092f9d26c7557f94dedd9b867a7653a6f7d2ba6680a",
+    "lastHarvestedAt": "2026-10-12T12:08:20.506Z",
+    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv57kct9"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
