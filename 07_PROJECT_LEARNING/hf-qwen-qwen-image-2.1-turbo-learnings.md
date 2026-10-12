@@ -3,8 +3,8 @@
 > **Source Version**: `hf-qwen-qwen`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T06:57:04.299Z  
-> **Learning ID**: `learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4wg27g`  
+> **Timestamp**: 2026-10-12T14:39:55.872Z  
+> **Learning ID**: `learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv5czaw0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo](https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T06:57:03.594Z  
+> **Harvest Timestamp**: 2026-10-12T14:39:55.335Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4702 downloads | 559 likes
+- **Stars / Engagement**: 6787 downloads | 598 likes
 
 ---
 
