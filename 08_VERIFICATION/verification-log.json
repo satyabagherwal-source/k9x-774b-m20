@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-BABI",
-    "timestamp": "2026-10-11T14:33:34.974Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
-    "contentHash": "64dfad1ec27b2d0f354ac7c6b5700d9292d436ff2ab597d5f806cbe4260b573e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-F4HP",
     "timestamp": "2026-10-11T14:36:34.045Z",
     "repository": "speridlabs/iris-3b",
@@ -7490,6 +7475,21 @@
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
     "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv5jvqaf",
     "contentHash": "0e9b7b0b9e4a2795468e4d732906b1dfe6eba70b1a3bbf709e1dc9df44fd149c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-ZMTU",
+    "timestamp": "2026-10-12T17:56:08.658Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv5jzmqw",
+    "contentHash": "e59f0d0ba845041a0775b42d0ea3a31d6269dae380d9c773ac3ab4bda79c62ac",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
