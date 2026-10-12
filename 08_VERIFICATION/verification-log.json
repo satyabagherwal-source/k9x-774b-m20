@@ -6043,5 +6043,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-EGL3",
+    "timestamp": "2026-10-12T05:59:50.391Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv4uegia",
+    "contentHash": "6a7b9d7180418834f366d1aac851ddf6353157a157ea914e138f8726953fe050",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
