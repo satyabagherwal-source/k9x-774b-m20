@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:00:11.701Z",
-  "total_cycles_completed": 706,
-  "total_learnings_persisted": 706,
+  "last_updated": "2026-10-12T23:03:27.926Z",
+  "total_cycles_completed": 707,
+  "total_learnings_persisted": 707,
   "total_rules_promoted": 341,
   "history": [
-    {
-      "timestamp": "2026-10-12T12:05:33.080Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv57grle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T12:08:20.507Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T23:00:11.701Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv5uun64",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T23:03:27.926Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv5uyukm",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
