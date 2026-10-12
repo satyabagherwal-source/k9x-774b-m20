@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T04:31:59.892Z",
-  "total_cycles_completed": 382,
-  "total_learnings_persisted": 382,
+  "last_updated": "2026-10-12T04:34:54.998Z",
+  "total_cycles_completed": 383,
+  "total_learnings_persisted": 383,
   "total_rules_promoted": 170,
   "history": [
-    {
-      "timestamp": "2026-10-11T18:24:51.721Z",
-      "repository": "Altworld/Hemmingway-1",
-      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T18:27:54.773Z",
       "repository": "fastino/GLiNER2.5-Decide",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T04:31:59.892Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4r9hrh",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T04:34:54.998Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4rd8vo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
