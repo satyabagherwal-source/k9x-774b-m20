@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-X2HW",
-    "timestamp": "2026-10-11T14:22:31.652Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv3wx2aw",
-    "contentHash": "8154331ba5da0c7a9b601398eb64bd415ab3ed6a347fa6f29c45fdcd42f81b3f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-X2O5",
     "timestamp": "2026-10-11T14:22:31.877Z",
     "repository": "colinhacks/zod",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.2",
     "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv5j8ww9",
     "contentHash": "7c202537490d31b453d187988b930039072cbd7628b2e9c6c32f7e6698af8186",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-CP5P",
+    "timestamp": "2026-10-12T17:38:18.589Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv5jcp2u",
+    "contentHash": "38552a56e8d9dc540fa968f7ababab4cb6353bfbc4151a09f3ff293c12f24f33",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
