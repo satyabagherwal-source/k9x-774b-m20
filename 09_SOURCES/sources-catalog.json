@@ -425,9 +425,9 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "b3e576915c81e2c11bd22b7f45bb7a0ec67e1af3c1251446a08bffaf105b3cba",
-    "lastHarvestedAt": "2026-10-12T00:30:22.256Z",
-    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
+    "contentHash": "6ae04e3771cd5b8825f15d4622032b1404acb6293ea8c545e2027aec32ca954a",
+    "lastHarvestedAt": "2026-10-12T07:08:50.628Z",
+    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv4wv74u"
   },
   "hf-apple-lensvlm-9b": {
     "repository": "apple/LensVLM-9B",
