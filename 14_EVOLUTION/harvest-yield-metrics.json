@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T20:48:06.665Z",
-  "total_cycles_completed": 668,
-  "total_learnings_persisted": 668,
+  "last_updated": "2026-10-12T20:51:07.574Z",
+  "total_cycles_completed": 669,
+  "total_learnings_persisted": 669,
   "total_rules_promoted": 317,
   "history": [
-    {
-      "timestamp": "2026-10-12T09:58:39.533Z",
-      "repository": "duty1g/x64dbg-mcp-server",
-      "learningId": "learn-github-duty1g-x64dbg-mcp-server-mv52xkxd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T10:10:36.047Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T20:48:06.665Z",
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv5q4s5l",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T20:51:07.574Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv5q8nr7",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

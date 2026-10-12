@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-38EC",
-    "timestamp": "2026-10-11T17:43:16.548Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv4438bt",
-    "contentHash": "b0f8075eba734b5c7e6821dbc9486a059908d8e265d734dc9edef62a42c22788",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-6Z84",
     "timestamp": "2026-10-11T17:46:11.284Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "moonshotai/Kimi-K3",
     "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv5q4s5l",
     "contentHash": "b8b90d1857aa7145e63969c64f0d96cb56c32df47912b4a1419cca3632836dcf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-8NUA",
+    "timestamp": "2026-10-12T20:51:07.570Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv5q8nr7",
+    "contentHash": "dcab2914b2b30a9bed6f4408a25524b74d89e6c9b4d2b89927bf3031e15c650c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
