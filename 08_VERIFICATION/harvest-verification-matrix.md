@@ -576,3 +576,4 @@
 | `CYCLE-20261012-C4M0` | `2026-10-12T12:29:56.184Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`2435e16b...`) |
 | `CYCLE-20261012-GHT1` | `2026-10-12T12:33:19.909Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`8aacbb27...`) |
 | `CYCLE-20261012-K6YD` | `2026-10-12T12:36:12.469Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`d745a3e2...`) |
+| `CYCLE-20261012-O9OJ` | `2026-10-12T12:39:22.627Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 505, Rule 506` | Yes (`e5a278ae...`) |

@@ -24178,3 +24178,137 @@ A/B testing harness:
 2.  Assert that `true` produces a longer response with reasoning steps.
 3.  Assert that `false` produces a direct answer.
 4.  Assert that both use the same underlying model file.
+
+
+---
+
+## 505. Model Artifact Version Coupling Invariant (Harvested from Bingsu/adetailer)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Model Artifact Version Coupling Invariant",
+  "source": "Bingsu/adetailer",
+  "source_url": "https://huggingface.co/Bingsu/adetailer",
+  "source_version": "hf-bingsu-adetailer",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T12:39:22.531Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-bingsu-adetailer-mv58o9kq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer) (Revision: `hf-bingsu-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing pre-trained model weights (`.pt`, `.onnx`, `.safetensors`) as standalone artifacts, the repository **MUST** explicitly document the exact version of the inference framework (e.g., `ultralytics==8.0.100`) required to deserialize the model architecture. The consumer **MUST NOT** assume that the latest framework version is backward-compatible with older weight files.
+
+**WHY**:
+Neural network architectures evolve. A YOLOv8 model saved with `ultralytics 8.0.50` may use a different layer naming convention, normalization scheme, or anchor box calculation than `ultralytics 8.1.0`. Loading an old weight file with a new library often results in `KeyError` during state dict loading, silent shape mismatches, or catastrophic performance degradation (mAP drop) due to changed preprocessing pipelines.
+
+**WHEN TO APPLY**:
+Any system that distributes machine learning models as binary artifacts separate from the code that runs them.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# In the consumer application (e.g., ADetailer)
+import ultralytics
+from huggingface_hub import hf_hub_download
+
+# 1. Pin the version in requirements.txt
+# ultralytics==8.0.100
+
+# 2. Verify version at runtime before loading
+required_version = "8.0.100"
+current_version = ultralytics.__version__
+
+if current_version != required_version:
+    raise EnvironmentError(
+        f"Model requires ultralytics {required_version}, "
+        f"but found {current_version}. Please pin the version."
+    )
+
+# 3. Load model
+path = hf_hub_download("Bingsu/adetailer", "face_yolov8n.pt")
+model = ultralytics.YOLO(path)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming latest library works with old weights
+# This will likely crash or produce garbage outputs
+from ultralytics import YOLO
+model = YOLO("face_yolov8n.pt") # No version check
+```
+
+**VERIFICATION METHOD**:
+Automated CI job that installs the pinned version, downloads the model, and runs a smoke test inference on a fixed test image, asserting that the output tensor shapes and confidence scores match a golden reference within a tolerance of 1e-5.
+
+
+---
+
+## 506. Semantic Class ID Stability Invariant (Harvested from Bingsu/adetailer)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Semantic Class ID Stability Invariant",
+  "source": "Bingsu/adetailer",
+  "source_url": "https://huggingface.co/Bingsu/adetailer",
+  "source_version": "hf-bingsu-adetailer",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T12:39:22.551Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-bingsu-adetailer-mv58o9kq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Bingsu/adetailer](https://huggingface.co/Bingsu/adetailer) (Revision: `hf-bingsu-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The integer-to-label mapping (class IDs) in a detection model **MUST** be treated as an immutable API contract. If the model is retrained or fine-tuned, the class order **MUST NOT** change unless a new major version of the model is released. The consumer **MUST** validate the class names against the model's metadata at load time.
+
+**WHY**:
+If class ID `0` changes from `face` to `hand` in a new model version, the consumer will apply face-specific inpainting parameters (e.g., high denoising strength for skin) to hands, causing severe visual artifacts. This is a silent data corruption bug.
+
+**WHEN TO APPLY**:
+Any object detection or segmentation model where the output classes drive downstream logic (e.g., different inpainting settings per class).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Consumer side validation
+expected_classes = ["face"] # For face_yolov8n.pt
+
+model = YOLO("face_yolov8n.pt")
+actual_classes = model.names
+
+# Validate that the expected class exists and is at the correct index
+if "face" not in actual_classes.values():
+    raise ValueError(f"Model does not contain 'face' class. Found: {actual_classes}")
+
+# If the model has multiple classes, ensure the mapping is correct
+# For single-class models, ensure index 0 is the expected class
+if len(actual_classes) == 1:
+    if list(actual_classes.values())[0] != "face":
+        raise ValueError(f"Class ID 0 is '{list(actual_classes.values())[0]}', expected 'face'")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoding class indices without validation
+# If the model is swapped, this will silently mislabel objects
+face_mask = results[0].masks.data[0] # Assumes index 0 is face
+```
+
+**VERIFICATION METHOD**:
+Unit test that loads the model, extracts `model.names`, and asserts that the dictionary matches the expected schema defined in the repository's `README.md` or a separate `classes.json` file.

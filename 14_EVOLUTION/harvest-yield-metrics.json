@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T12:36:12.472Z",
-  "total_cycles_completed": 517,
-  "total_learnings_persisted": 517,
-  "total_rules_promoted": 249,
+  "last_updated": "2026-10-12T12:39:22.631Z",
+  "total_cycles_completed": 518,
+  "total_learnings_persisted": 518,
+  "total_rules_promoted": 251,
   "history": [
-    {
-      "timestamp": "2026-10-12T01:12:41.022Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T01:15:36.213Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1403,6 +1396,13 @@
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv58k6w6",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T12:39:22.631Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv58o9kq",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
