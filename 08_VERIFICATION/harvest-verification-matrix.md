@@ -619,3 +619,4 @@
 | `CYCLE-20261012-KBVR` | `2026-10-12T14:56:16.935Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 520, Rule 521` | Yes (`72409a25...`) |
 | `CYCLE-20261012-O2LF` | `2026-10-12T14:59:11.523Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`3dfea16b...`) |
 | `CYCLE-20261012-S6N4` | `2026-10-12T15:02:23.392Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 522, Rule 523, Rule 524` | Yes (`452e7d3f...`) |
+| `CYCLE-20261012-XBM0` | `2026-10-12T15:06:23.112Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`f6bad7e0...`) |
