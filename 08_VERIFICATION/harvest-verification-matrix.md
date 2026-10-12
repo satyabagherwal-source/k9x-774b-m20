@@ -505,3 +505,4 @@
 | `CYCLE-20261012-IAUP` | `2026-10-12T08:22:47.665Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`32283f97...`) |
 | `CYCLE-20261012-M10R` | `2026-10-12T08:25:41.547Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`1077255c...`) |
 | `CYCLE-20261012-STQT` | `2026-10-12T08:30:58.709Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`91b4e422...`) |
+| `CYCLE-20261012-29AI` | `2026-10-12T08:38:18.762Z` | `iliyami/MacSai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 480` | Yes (`7aab75b7...`) |

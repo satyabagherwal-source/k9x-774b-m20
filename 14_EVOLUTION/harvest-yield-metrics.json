@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:30:58.712Z",
-  "total_cycles_completed": 446,
-  "total_learnings_persisted": 446,
-  "total_rules_promoted": 224,
+  "last_updated": "2026-10-12T08:38:18.765Z",
+  "total_cycles_completed": 447,
+  "total_learnings_persisted": 447,
+  "total_rules_promoted": 225,
   "history": [
-    {
-      "timestamp": "2026-10-11T21:37:29.854Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T21:40:37.002Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1403,6 +1396,13 @@
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4zsto3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T08:38:18.765Z",
+      "repository": "iliyami/MacSai",
+      "learningId": "learn-github-iliyami-macsai-mv50297p",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

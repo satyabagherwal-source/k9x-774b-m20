@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:30:58.661Z",
-  "total_verified_learnings": 4401,
+  "last_updated": "2026-10-12T08:38:18.732Z",
+  "total_verified_learnings": 4402,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106777,6 +106777,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T08:30:58.661Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-iliyami-macsai-mv50297p": {
+      "learning_id": "learn-github-iliyami-macsai-mv50297p",
+      "source": "iliyami/MacSai",
+      "repository": "iliyami/MacSai",
+      "slug": "iliyami-macsai",
+      "platform": "github",
+      "source_url": "https://github.com/iliyami/MacSai",
+      "source_version": "06271a8f",
+      "content_hash": "7aab75b7616976bb3a59cedbf160d872b117959d7affab447edfbc6839441961",
+      "dossier_path": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/iliyami-macsai-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 480,
+          "title": "Lead release notes with the DMG and fix the changelog link (#219)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T08:38:18.732Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1328,5 +1328,15 @@
     "contentHash": "fcdd33fb0de224fceebb5ae344b46c62c837f85cceb0ca42cde61bb2a83c7647",
     "lastHarvestedAt": "2026-10-12T07:13:36.507Z",
     "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv4x1bos"
+  },
+  "iliyami-macsai": {
+    "repository": "iliyami/MacSai",
+    "platform": "github",
+    "sourceUrl": "https://github.com/iliyami/MacSai",
+    "sourceVersion": "06271a8f",
+    "license": "BSD-3-Clause",
+    "contentHash": "7aab75b7616976bb3a59cedbf160d872b117959d7affab447edfbc6839441961",
+    "lastHarvestedAt": "2026-10-12T08:38:18.764Z",
+    "learningId": "learn-github-iliyami-macsai-mv50297p"
   }
 }
