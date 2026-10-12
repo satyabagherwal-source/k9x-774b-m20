@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-48OR",
-    "timestamp": "2026-10-11T12:08:08.187Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv3s48mc",
-    "contentHash": "5266865066c86a4e58d762c802204c482e1dd3841153b4ff0ff82209ae69b226",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-8JVR",
     "timestamp": "2026-10-11T12:11:29.319Z",
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/Qwen-Image-2.1",
     "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv5e93mf",
     "contentHash": "7994eafa25b8c1bc48bbb987d0a22b4e6022b9c63e134b55243f399d1e6a8304",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-CVSO",
+    "timestamp": "2026-10-12T15:18:29.112Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv5ecvqf",
+    "contentHash": "1ffe044a63b79c30de97a4c434fd1d91fec96cde0a74fb918435f2f8488bf6aa",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
