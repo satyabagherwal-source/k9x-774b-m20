@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-D8DT",
-    "timestamp": "2026-10-11T18:19:02.705Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
-    "contentHash": "2893b874c6638c9c83df6f1e625676d59b7b50715a110cc71a8fb24c90a1e067",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-GRP2",
     "timestamp": "2026-10-11T18:21:47.702Z",
     "repository": "apple/LensVLM-9B",
@@ -7492,6 +7477,21 @@
     "contentHash": "effc1799798d70c7cefe79ccfc456654108bd3d64c785078ed39e96827f33e7b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-JPCF",
+    "timestamp": "2026-10-12T21:27:42.351Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv5rjp9w",
+    "contentHash": "46c2f5d61c2576b85cd1b564565aef0a205764c0b91721e7d37e5f6e6c809de7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

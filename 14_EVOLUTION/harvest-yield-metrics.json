@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:24:29.012Z",
-  "total_cycles_completed": 680,
-  "total_learnings_persisted": 680,
+  "last_updated": "2026-10-12T21:27:42.354Z",
+  "total_cycles_completed": 681,
+  "total_learnings_persisted": 681,
   "total_rules_promoted": 323,
   "history": [
-    {
-      "timestamp": "2026-10-12T10:44:22.690Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv54kdjr",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T10:47:14.940Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -1403,6 +1396,13 @@
       "repository": "SupersonicLabs/Julia-1",
       "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv5rfk31",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:27:42.354Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv5rjp9w",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
