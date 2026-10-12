@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T15:12:25.792Z",
-  "total_cycles_completed": 563,
-  "total_learnings_persisted": 563,
+  "last_updated": "2026-10-12T15:15:32.739Z",
+  "total_cycles_completed": 564,
+  "total_learnings_persisted": 564,
   "total_rules_promoted": 273,
   "history": [
-    {
-      "timestamp": "2026-10-12T03:36:57.222Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4papes",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T03:39:51.393Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T15:12:25.792Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
       "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv5e53dk",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T15:15:32.739Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv5e93mf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
