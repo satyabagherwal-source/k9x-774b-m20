@@ -583,3 +583,4 @@
 | `CYCLE-20261012-3S0E` | `2026-10-12T12:51:26.222Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`2cbda217...`) |
 | `CYCLE-20261012-7LF5` | `2026-10-12T12:54:24.305Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`fd48e574...`) |
 | `CYCLE-20261012-BK4W` | `2026-10-12T12:57:29.264Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`32a209fd...`) |
+| `CYCLE-20261012-F7R1` | `2026-10-12T13:00:19.837Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`7aec7564...`) |
