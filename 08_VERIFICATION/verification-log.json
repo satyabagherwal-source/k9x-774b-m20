@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-6K67",
-    "timestamp": "2026-10-11T19:09:50.623Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
-    "contentHash": "4992f44a680c15645b0989e89771c997759b6b7a95da1b8126584974e1cc8bba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-APGB",
     "timestamp": "2026-10-11T19:13:04.091Z",
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "be9d83c0af599b909e940e7d03501012e62e23947e87c7773db0a38457ab2f3b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-JIUB",
+    "timestamp": "2026-10-12T22:23:33.155Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv5tjirf",
+    "contentHash": "878a50e56a34619ee2eeb575d5460580776a5afccd2403ba7afd8368c48e7733",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:20:25.145Z",
-  "total_cycles_completed": 697,
-  "total_learnings_persisted": 697,
+  "last_updated": "2026-10-12T22:23:33.158Z",
+  "total_cycles_completed": 698,
+  "total_learnings_persisted": 698,
   "total_rules_promoted": 338,
   "history": [
-    {
-      "timestamp": "2026-10-12T11:36:39.543Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv56flya",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T11:39:22.731Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv5tfho8",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T22:23:33.158Z",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
+      "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv5tjirf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
