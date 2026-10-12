@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:26:42.465Z",
-  "total_cycles_completed": 460,
-  "total_learnings_persisted": 460,
+  "last_updated": "2026-10-12T09:29:43.021Z",
+  "total_cycles_completed": 461,
+  "total_learnings_persisted": 461,
   "total_rules_promoted": 235,
   "history": [
-    {
-      "timestamp": "2026-10-11T22:20:01.586Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T22:22:52.926Z",
       "repository": "argmaxinc/whisperkit-coreml",
@@ -1403,6 +1396,13 @@
       "repository": "Cloudflare/clef-flash",
       "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv51shox",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:29:43.021Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv51wd2c",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -6853,5 +6853,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-WD48",
+    "timestamp": "2026-10-12T09:29:43.016Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv51wd2c",
+    "contentHash": "405cca62eac25525b56f3616acb84d2bb02b590b834d53c5f8bd8af1d95dd8fc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

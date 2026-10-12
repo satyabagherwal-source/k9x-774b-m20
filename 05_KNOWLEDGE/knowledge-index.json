@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:26:42.420Z",
-  "total_verified_learnings": 4415,
+  "last_updated": "2026-10-12T09:29:42.983Z",
+  "total_verified_learnings": 4416,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -107173,6 +107173,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T09:26:42.420Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv51wd2c": {
+      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv51wd2c",
+      "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "slug": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "content_hash": "405cca62eac25525b56f3616acb84d2bb02b590b834d53c5f8bd8af1d95dd8fc",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T09:29:42.983Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

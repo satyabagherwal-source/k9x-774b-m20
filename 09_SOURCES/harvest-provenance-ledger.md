@@ -502,3 +502,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv51kkh5` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-12T09:20:32.817Z |
 | `learn-huggingface-hf-cloudflare-clef-mv51ocnr` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-12T09:23:29.317Z |
 | `learn-huggingface-hf-cloudflare-clef-flash-mv51shox` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-12T09:26:42.464Z |
+| `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv51wd2c` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-12T09:29:43.018Z |
