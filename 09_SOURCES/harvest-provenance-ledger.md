@@ -760,3 +760,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-baai-bge-m3-mv5vzczk` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-12T23:31:51.381Z |
 | `learn-huggingface-hf-qwen-qwen3-0-6b-mv5w381k` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-12T23:34:51.624Z |
 | `learn-huggingface-hf-google-t5-t5-small-mv5w6uyt` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-12T23:37:41.258Z |
+| `learn-huggingface-hf-comfy-org-minimax-h3-mv5wb4i8` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-12T23:41:00.279Z |
