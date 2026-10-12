@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T10:41:18.452Z",
-  "total_verified_learnings": 4435,
+  "last_updated": "2026-10-12T10:44:22.644Z",
+  "total_verified_learnings": 4436,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -107671,6 +107671,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T10:41:18.452Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv54kdjr": {
+      "learning_id": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv54kdjr",
+      "source": "Tongyi-MAI/Z-Image-Turbo",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "slug": "hf-tongyi-mai-z-image-turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "content_hash": "5e2d47285083fb5190abdc0235ea23ed3e4b097afc850dd8da4e7405e83e365f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 494,
+          "title": "VRAM-Bounded Inference Memory Management",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 495,
+          "title": "Distilled Scheduler Step Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 496,
+          "title": "Bilingual Tokenization Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T10:44:22.644Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

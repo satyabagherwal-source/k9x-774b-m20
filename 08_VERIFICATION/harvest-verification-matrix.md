@@ -539,3 +539,4 @@
 | `CYCLE-20261012-8UCF` | `2026-10-12T10:35:24.447Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`234ca70d...`) |
 | `CYCLE-20261012-CNVT` | `2026-10-12T10:38:22.697Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`8d9ad023...`) |
 | `CYCLE-20261012-GFJD` | `2026-10-12T10:41:18.505Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`523b4070...`) |
+| `CYCLE-20261012-KDNJ` | `2026-10-12T10:44:22.687Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 494, Rule 495, Rule 496` | Yes (`5e2d4728...`) |

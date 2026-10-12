@@ -7153,5 +7153,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-KDNJ",
+    "timestamp": "2026-10-12T10:44:22.687Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv54kdjr",
+    "contentHash": "5e2d47285083fb5190abdc0235ea23ed3e4b097afc850dd8da4e7405e83e365f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
