@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-7PJL",
-    "timestamp": "2026-10-11T14:30:48.081Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv3x7ph4",
-    "contentHash": "a3e1fbfbc63affe43b2bfab19cc72f1f30b7eb56b4d8bd9fd9cf2445753fbf55",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-BABI",
     "timestamp": "2026-10-11T14:33:34.974Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Llama-2-7b",
     "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv5js4pa",
     "contentHash": "41a30036d0b3c808345bcaa449ec67d1000a8c189e36b89a62168e000927f4be",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-VQC1",
+    "timestamp": "2026-10-12T17:53:06.577Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv5jvqaf",
+    "contentHash": "0e9b7b0b9e4a2795468e4d732906b1dfe6eba70b1a3bbf709e1dc9df44fd149c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
