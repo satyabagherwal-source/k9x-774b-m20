@@ -96,6 +96,16 @@ When catalogs load technical font metadata from a canonical database (`fonts.jso
 3. **Client-Side Modal Dynamic Titles:** DOM manipulation in script tags must read localized labels via `dataset.charMapLabel` rather than hardcoding `${name} — Character Map`.
 4. **Nested Studio Presets & Controls:** Inner tabs (aesthetic presets, background modes, curve sliders, alignment options) are mapped through `t(...)` dictionaries.
 
+### Pattern 6: Deep Content Engine & Elimination of Duplicate FAQs
+1. **Full-Length Educational Localization (`src/i18n/handbook-translations.ts`):** Long-form editorial guides, historical chapters, paleographic analyses, and calligraphic principles cannot be left in English; they must be generated through a structured multi-language content module providing complete native translations across all 14 locales.
+2. **Single Canonical FAQ Architecture:** Embedded sub-FAQs in secondary components must be eliminated to prevent duplicate or conflicting FAQs. The site maintains a single master searchable FAQ component (`OldEnglishFaq.astro`).
+3. **Dynamic Canvas Slider Localization:** Interactive sliders (e.g. arch curvature) must supply localized state labels (`data-flat`, `data-arch-up`, `data-arch-down`) via dataset attributes rather than hardcoding English strings in script logic.
+
+### Pattern 7: Bulletproof Viewport Stability (`overflow-x: clip`)
+In multilingual websites, translated strings often expand significantly (e.g. German, Russian, Japanese), causing horizontal containers to widen.
+1. **Use `overflow-x: clip` on `html` and `body`:** Unlike `overflow-x: hidden` (which permits trackpad/touch gesture inertial scrolling to shift the document horizontally), `overflow-x: clip` completely eliminates horizontal viewport drift.
+2. **Container-Isolated Horizontal Scrolling:** Touch-scrollable filter bars and pill lists must employ `overscroll-behavior-x: contain`, `overflow-x: auto`, and resilient grid breakpoints (`md:grid-cols-12`) so user swiping never shifts parent page coordinates.
+
 ---
 
 ## 3. Supported Locales (14 Languages Verified)
@@ -117,7 +127,9 @@ When catalogs load technical font metadata from a canonical database (`fonts.jso
 ---
 
 ## 4. Verification Protocol
-Run `node scripts/verify-all-locales.mjs` to test:
+Run `node scripts/verify-all-locales.mjs` and `node scripts/audit-dist-translations.cjs` to test:
 - SSR 200 HTTP response across all 14 locale routes.
 - Presence of deep tool keys across FrakturGenerator, TattooCanvasStudio, MedievalTranslator, AlphabetChart, PairingAssistant, and MedievalDecorator.
+- Complete absence of untranslated English paragraphs, duplicate FAQ accordions, and slider labels.
 - Zero missing keys across all 14 dictionaries.
+
