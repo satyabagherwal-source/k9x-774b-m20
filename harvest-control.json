@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-12T11:53:25.392Z",
+  "lastUpdated": "2026-10-12T11:56:25.170Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T11:53:28.789Z",
-        "lastHarvestedAt": "2026-10-12T11:53:28.789Z",
-        "totalHarvested": 2641,
+        "lastActiveAt": "2026-10-12T11:56:24.499Z",
+        "lastHarvestedAt": "2026-10-12T11:56:24.499Z",
+        "totalHarvested": 2642,
         "lastError": null
       },
       {
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T11:48:29.835Z",
+        "lastActiveAt": "2026-10-12T11:56:25.888Z",
         "lastHarvestedAt": "2026-10-12T09:58:42.055Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T11:48:32.337Z",
+        "lastActiveAt": "2026-10-12T11:56:28.341Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T11:48:34.840Z",
+        "lastActiveAt": "2026-10-12T11:56:30.857Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
+      "status": "HEALTHY",
       "remaining": 0,
-      "resetEpoch": 1791809607809,
-      "resetAt": "2026-10-12T12:53:27.809Z",
-      "trippedAt": "2026-10-12T11:53:12.809Z",
-      "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Akey-value-store%20language%3Ago%20OR%20language%3Arust%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=1)",
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-12T11:56:06.389Z",
+      "reason": null,
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
