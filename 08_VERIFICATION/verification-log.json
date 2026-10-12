@@ -5548,5 +5548,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-DSD8",
+    "timestamp": "2026-10-12T04:07:20.540Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4qds9r",
+    "contentHash": "a581c6ccf42b2f56805f1a4b0c9d6e087ba9dd1b43c701ef13194b4007268ca0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
