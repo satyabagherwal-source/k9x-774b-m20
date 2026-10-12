@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:03:27.926Z",
-  "total_cycles_completed": 707,
-  "total_learnings_persisted": 707,
+  "last_updated": "2026-10-12T23:07:25.856Z",
+  "total_cycles_completed": 708,
+  "total_learnings_persisted": 708,
   "total_rules_promoted": 341,
   "history": [
-    {
-      "timestamp": "2026-10-12T12:08:20.507Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv57kct9",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T12:11:29.181Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T23:03:27.926Z",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv5uyukm",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T23:07:25.856Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv5v3y5w",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
