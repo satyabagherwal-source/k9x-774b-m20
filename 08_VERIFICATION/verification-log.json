@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-FWAT",
-    "timestamp": "2026-10-11T16:01:08.933Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
-    "contentHash": "eadbcf540658f842a15b8ae355f2b88b34604d5fe4e30ee947a381eff2a5e1de",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-JXF1",
     "timestamp": "2026-10-11T16:04:17.005Z",
     "repository": "BAAI/bge-base-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-31B-it",
     "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv5mn7q3",
     "contentHash": "62198483e1f37fa6dafaa9080cace06cd953f37f3e960b1b988240757366377f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-QUOE",
+    "timestamp": "2026-10-12T19:13:17.774Z",
+    "repository": "BAAI/bge-base-en-v1.5",
+    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv5mqumq",
+    "contentHash": "9e3710e47dd30925f0c700ac5e830c48bd9383fba881f44475bf9fc691136d63",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
