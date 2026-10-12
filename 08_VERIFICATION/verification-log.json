@@ -6613,5 +6613,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-M10R",
+    "timestamp": "2026-10-12T08:25:41.547Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4zm0yc",
+    "contentHash": "1077255c1f8ad3e85dc7ccb3ef858b77bc5e2035cfbe46f2ce5edbe2cfc5b5b5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
