@@ -735,3 +735,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv5solec` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-12T21:59:30.295Z |
 | `learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv5ssgu4` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-12T22:02:30.942Z |
 | `learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv5swmeb` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-12T22:05:44.773Z |
+| `learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv5t0flt` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-12T22:08:42.606Z |

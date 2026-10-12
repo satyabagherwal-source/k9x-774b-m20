@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:05:44.774Z",
-  "total_cycles_completed": 693,
-  "total_learnings_persisted": 693,
+  "last_updated": "2026-10-12T22:08:42.607Z",
+  "total_cycles_completed": 694,
+  "total_learnings_persisted": 694,
   "total_rules_promoted": 333,
   "history": [
-    {
-      "timestamp": "2026-10-12T11:23:52.202Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv55z5we",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T11:27:00.571Z",
       "repository": "Qwen/Qwen3-4B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T22:05:44.774Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv5swmeb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T22:08:42.607Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv5t0flt",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
