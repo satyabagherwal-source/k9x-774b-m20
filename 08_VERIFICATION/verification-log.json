@@ -5473,5 +5473,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-TVAH",
+    "timestamp": "2026-10-12T03:51:51.209Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv4ptv8c",
+    "contentHash": "3c336ddaa7ccc933fc07d1be13f2e190a3d1880c0c1d62f1d48bacd71fa0e439",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
