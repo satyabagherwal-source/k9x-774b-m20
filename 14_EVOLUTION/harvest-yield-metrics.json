@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T20:23:38.776Z",
-  "total_cycles_completed": 660,
-  "total_learnings_persisted": 660,
-  "total_rules_promoted": 314,
+  "last_updated": "2026-10-12T20:27:23.898Z",
+  "total_cycles_completed": 661,
+  "total_learnings_persisted": 661,
+  "total_rules_promoted": 317,
   "history": [
-    {
-      "timestamp": "2026-10-12T09:29:43.021Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv51wd2c",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T09:32:39.595Z",
       "repository": "google-bert/bert-base-uncased",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T20:23:38.776Z",
       "repository": "Cactus-Compute/whistle",
       "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv5p9bi6",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T20:27:23.898Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv5pe573",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

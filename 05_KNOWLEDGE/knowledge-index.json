@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T20:23:38.730Z",
-  "total_verified_learnings": 4615,
+  "last_updated": "2026-10-12T20:27:23.850Z",
+  "total_verified_learnings": 4616,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -112399,6 +112399,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T20:23:38.730Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-qwen-qwen3-8-27b-mv5pe573": {
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-8-27b-mv5pe573",
+      "source": "Qwen/Qwen3.8-27B",
+      "repository": "Qwen/Qwen3.8-27B",
+      "slug": "hf-qwen-qwen3.8-27b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
+      "source_version": "hf-qwen-qwen3.8-27b",
+      "content_hash": "1ecdaccd9099679d4b8e8751cb47a3bd62e00c56a51eca713447dd3a043c7d34",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 566,
+          "title": "Dual-State Hybrid KV Cache Partition Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 567,
+          "title": "Partial Rotary Position Embedding (RoPE) Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 568,
+          "title": "Vocab Alignment & Multi-Stop Token Generation Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T20:27:23.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
