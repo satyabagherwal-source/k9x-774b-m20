@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:39:51.393Z",
-  "total_cycles_completed": 365,
-  "total_learnings_persisted": 365,
+  "last_updated": "2026-10-12T03:42:44.184Z",
+  "total_cycles_completed": 366,
+  "total_learnings_persisted": 366,
   "total_rules_promoted": 161,
   "history": [
-    {
-      "timestamp": "2026-10-11T17:34:03.018Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T17:37:10.875Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T03:39:51.393Z",
       "repository": "baidu/Unlimited-OCR",
       "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv4pefsx",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T03:42:44.184Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4pi54n",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
