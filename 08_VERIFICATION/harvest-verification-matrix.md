@@ -783,3 +783,4 @@
 | `CYCLE-20261012-MTN0` | `2026-10-12T23:50:05.964Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`bda16da2...`) |
 | `CYCLE-20261012-QUWP` | `2026-10-12T23:53:14.233Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 602, Rule 603` | Yes (`8b01eb95...`) |
 | `CYCLE-20261012-UNS3` | `2026-10-12T23:56:11.619Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`deb68c4d...`) |
+| `CYCLE-20261012-YU51` | `2026-10-12T23:59:26.485Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`10a53ced...`) |
