@@ -698,3 +698,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv5o61pg` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-12T19:53:06.444Z |
 | `learn-github-cosscom-ui-mv5oegcc` | `https://github.com/cosscom/ui` | `28645cd8` | Multi-dimensional audit evidence | 2026-10-12T19:59:38.672Z |
 | `learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv5ot6hu` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-12T20:11:05.744Z |
+| `learn-huggingface-hf-baai-bge-small-en-v1-5-mv5ox6g1` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-12T20:14:12.306Z |

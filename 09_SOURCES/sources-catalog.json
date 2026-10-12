@@ -195,9 +195,9 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "d418053f2497952e5204a2cfb7633c370e56473c05fec687d37d8e2828d8618d",
-    "lastHarvestedAt": "2026-10-12T13:19:49.750Z",
-    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv5a4adr"
+    "contentHash": "b7df502ca58aa42e48ca4d9d3fcf153f0d1ee4860035a725f5d5c9357d880104",
+    "lastHarvestedAt": "2026-10-12T20:14:12.306Z",
+    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv5ox6g1"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
