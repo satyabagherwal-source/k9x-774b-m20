@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:05:44.893Z",
-  "total_cycles_completed": 453,
-  "total_learnings_persisted": 453,
+  "last_updated": "2026-10-12T09:08:39.401Z",
+  "total_cycles_completed": 454,
+  "total_learnings_persisted": 454,
   "total_rules_promoted": 227,
   "history": [
-    {
-      "timestamp": "2026-10-11T21:58:38.122Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T22:01:38.915Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T09:05:44.893Z",
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-hf-facebook-sam3-mv511jdi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:08:39.401Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv515a1h",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

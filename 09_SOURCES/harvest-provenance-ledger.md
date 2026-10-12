@@ -495,3 +495,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv50tbb9` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-12T08:59:21.193Z |
 | `learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv50xobk` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-12T09:02:44.674Z |
 | `learn-huggingface-hf-facebook-sam3-mv511jdi` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-12T09:05:44.892Z |
+| `learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv515a1h` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-12T09:08:39.400Z |
