@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T00:27:28.263Z",
-  "total_cycles_completed": 303,
-  "total_learnings_persisted": 303,
+  "last_updated": "2026-10-12T00:30:22.257Z",
+  "total_cycles_completed": 304,
+  "total_learnings_persisted": 304,
   "total_rules_promoted": 127,
   "history": [
-    {
-      "timestamp": "2026-10-11T14:04:08.066Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv3w9ew3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T14:06:58.743Z",
       "repository": "zai-org/GLM-5.2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T00:27:28.263Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T00:30:22.257Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

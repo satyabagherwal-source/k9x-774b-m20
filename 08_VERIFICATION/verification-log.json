@@ -4498,5 +4498,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-MRE6",
+    "timestamp": "2026-10-12T00:30:22.254Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh",
+    "contentHash": "b3e576915c81e2c11bd22b7f45bb7a0ec67e1af3c1251446a08bffaf105b3cba",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
