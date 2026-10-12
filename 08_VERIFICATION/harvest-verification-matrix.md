@@ -494,3 +494,4 @@
 | `CYCLE-20261012-WPJ2` | `2026-10-12T07:38:00.638Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 454, Rule 455, Rule 456` | Yes (`13df572d...`) |
 | `CYCLE-20261012-2WXF` | `2026-10-12T07:42:50.163Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 457, Rule 458` | Yes (`be5be59f...`) |
 | `CYCLE-20261012-8AHO` | `2026-10-12T07:47:01.020Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 459, Rule 460, Rule 461` | Yes (`ac9f4cfb...`) |
+| `CYCLE-20261012-DVLH` | `2026-10-12T07:51:21.653Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`e52164f4...`) |

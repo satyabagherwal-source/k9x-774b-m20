@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:47:01.024Z",
+  "last_updated": "2026-10-12T07:51:21.659Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1714,15 +1714,15 @@
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc",
-      "content_hash": "049de2656f2b9a6ac8ce13241125eb6eb10dcf7c1cfee4d75c2d7ccf6db835c1",
-      "verified_at": "2026-10-12T00:51:46.657Z",
+      "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4ydvid",
+      "content_hash": "e52164f458dc6842066619d5029f8a648bfc7bb5f0777668d15c40c823ed24c8",
+      "verified_at": "2026-10-12T07:51:21.659Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T00:51:46.657Z"
+      "last_updated": "2026-10-12T07:51:21.659Z"
     },
     "microsoft/FrogNano-4B-2609": {
       "repository": "microsoft/FrogNano-4B-2609",

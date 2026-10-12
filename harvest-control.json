@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-12T07:46:06.559Z",
+  "lastUpdated": "2026-10-12T07:50:07.256Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T07:47:03.545Z",
-        "lastHarvestedAt": "2026-10-12T07:47:03.545Z",
-        "totalHarvested": 2575,
+        "lastActiveAt": "2026-10-12T07:51:24.179Z",
+        "lastHarvestedAt": "2026-10-12T07:51:24.179Z",
+        "totalHarvested": 2576,
         "lastError": null
       },
       {
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T07:41:40.149Z",
+        "lastActiveAt": "2026-10-12T07:50:07.965Z",
         "lastHarvestedAt": "2026-10-12T04:47:33.172Z",
         "totalHarvested": 1095,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T07:41:42.635Z",
+        "lastActiveAt": "2026-10-12T07:50:10.445Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T07:41:45.127Z",
+        "lastActiveAt": "2026-10-12T07:50:12.933Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
+      "status": "HEALTHY",
       "remaining": 0,
-      "resetEpoch": 1791794766612,
-      "resetAt": "2026-10-12T08:46:06.612Z",
-      "trippedAt": "2026-10-12T07:45:51.613Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aweb-framework%20language%3Atypescript%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=1)",
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-12T07:49:48.551Z",
+      "reason": null,
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
