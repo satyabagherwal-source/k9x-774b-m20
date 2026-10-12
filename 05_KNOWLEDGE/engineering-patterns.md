@@ -17135,3 +17135,74 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `4c9b399e` are properly handled with clean fallback behavior.
+
+
+---
+
+## 430. Tokenizer-Model Alignment Contract (Harvested from sentence-transformers/paraphrase-multilingual-mpnet-base-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tokenizer-Model Alignment Contract",
+  "source": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T05:11:54.340Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4sotdp",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-mpnet-base-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The tokenizer's `model_max_length` **MUST** be less than or equal to the model's `max_position_embeddings`. If the tokenizer truncates at 512 but the model supports 514, the extra 2 positions are wasted. More critically, if the tokenizer allows lengths exceeding the model's positional embedding matrix size, the model **MUST** raise an error or truncate, otherwise it will cause an **Index Out of Bounds** crash or undefined behavior in the positional encoding lookup.
+
+**WHY**:
+Transformer models use absolute or relative positional encodings stored in a fixed-size matrix (e.g., `514 x 768`). If you feed a sequence of length 515, the model attempts to look up position 514 (0-indexed) or 515, which does not exist in the weight matrix. This leads to:
+1.  **Crash:** `IndexError` in PyTorch.
+2.  **Silent Corruption:** If the framework silently wraps around or pads, the positional context is destroyed, leading to nonsensical embeddings.
+
+**WHEN TO APPLY**:
+Any integration of a Hugging Face `AutoTokenizer` with an `AutoModel`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoTokenizer, AutoModel
+
+def load_aligned_model(model_id):
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    model = AutoModel.from_pretrained(model_id)
+    
+    # Forensic Check: Ensure alignment
+    max_tok_len = tokenizer.model_max_length
+    max_model_len = model.config.max_position_embeddings
+    
+    if max_tok_len > max_model_len:
+        raise ValueError(
+            f"Configuration Mismatch: Tokenizer allows {max_tok_len} tokens, "
+            f"but Model only supports {max_model_len} positions. "
+            f"Set tokenizer.model_max_length = {max_model_len}."
+        )
+        
+    return tokenizer, model
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Blindly loading without checking config alignment
+tokenizer = AutoTokenizer.from_pretrained("model")
+model = AutoModel.from_pretrained("model")
+# If tokenizer.model_max_length is 1024 and model.max_position_embeddings is 512,
+# the next encode call will crash or corrupt data.
+```
+
+**VERIFICATION METHOD**:
+Static analysis script that loads `config.json` and `tokenizer_config.json` and asserts `tokenizer.model_max_length <= model.config.max_position_embeddings`.

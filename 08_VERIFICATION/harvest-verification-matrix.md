@@ -449,3 +449,4 @@
 | `CYCLE-20261012-CS2D` | `2026-10-12T05:02:32.725Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`f106366d...`) |
 | `CYCLE-20261012-GK96` | `2026-10-12T05:05:29.226Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`43d1d72a...`) |
 | `CYCLE-20261012-KU58` | `2026-10-12T05:08:48.668Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`9b0ef2e9...`) |
+| `CYCLE-20261012-OTGW` | `2026-10-12T05:11:54.416Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 430` | Yes (`d3bad0ed...`) |
