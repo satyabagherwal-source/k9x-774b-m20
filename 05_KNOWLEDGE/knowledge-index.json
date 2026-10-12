@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T05:59:50.341Z",
-  "total_verified_learnings": 4362,
+  "last_updated": "2026-10-12T06:02:44.807Z",
+  "total_verified_learnings": 4363,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -105594,6 +105594,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T05:59:50.341Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cactus-compute-whistle-mv4ui74m": {
+      "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv4ui74m",
+      "source": "Cactus-Compute/whistle",
+      "repository": "Cactus-Compute/whistle",
+      "slug": "hf-cactus-compute-whistle",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+      "source_version": "hf-cactus-compute-whistle",
+      "content_hash": "481dc9769b5ae95901e447c1086b08eb0bdc65f222d205778b2a53cb7bdec879",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T06:02:44.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
