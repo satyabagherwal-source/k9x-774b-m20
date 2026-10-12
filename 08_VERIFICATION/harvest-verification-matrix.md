@@ -490,3 +490,4 @@
 | `CYCLE-20261012-1BSP` | `2026-10-12T07:13:36.505Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 442, Rule 443, Rule 444` | Yes (`fcdd33fb...`) |
 | `CYCLE-20261012-6YYY` | `2026-10-12T07:17:59.818Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 445, Rule 446, Rule 447` | Yes (`8221cd6f...`) |
 | `CYCLE-20261012-KQSD` | `2026-10-12T07:28:42.397Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 448, Rule 449, Rule 450` | Yes (`41ec35f6...`) |
+| `CYCLE-20261012-QIIY` | `2026-10-12T07:33:11.626Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 451, Rule 452, Rule 453` | Yes (`e483661f...`) |

@@ -6418,5 +6418,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-QIIY",
+    "timestamp": "2026-10-12T07:33:11.626Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv4xqif2",
+    "contentHash": "e483661f2d5fbcdd41ab573140ff6ec6c5d3a1d3e8067ee66a2be8ff29612913",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
