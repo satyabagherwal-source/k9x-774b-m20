@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-6PAW",
-    "timestamp": "2026-10-11T11:42:03.416Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv3r6p89",
-    "contentHash": "74066af1aac658c2c2d0fcafb1dd2787162531cadba8e61026c1c79b7397fd95",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-AA30",
     "timestamp": "2026-10-11T11:44:50.316Z",
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -7490,6 +7475,21 @@
     "repository": "SupersonicLabs/Julia-1",
     "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv5d7fof",
     "contentHash": "9907249ade770e2639bac5e301365473e8db2ffee2d4fdd4be9bda76245c6e52",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-BDCE",
+    "timestamp": "2026-10-12T14:49:18.926Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv5dbd9o",
+    "contentHash": "78c73edf02ccb24ef9a190118adfecfeee5a38d6be4f7378eb429715d5f64eb9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

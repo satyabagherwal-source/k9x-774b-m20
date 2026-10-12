@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T14:46:15.435Z",
+  "last_updated": "2026-10-12T14:49:18.930Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1896,15 +1896,15 @@
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv59so9i",
-      "content_hash": "712d92233dce117857f7540fc534f6db079a39c0f46e6af9446184389a6268fb",
-      "verified_at": "2026-10-12T13:10:47.869Z",
+      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv5dbd9o",
+      "content_hash": "78c73edf02ccb24ef9a190118adfecfeee5a38d6be4f7378eb429715d5f64eb9",
+      "verified_at": "2026-10-12T14:49:18.930Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T13:10:47.869Z"
+      "last_updated": "2026-10-12T14:49:18.930Z"
     },
     "iliyami/MacSai": {
       "repository": "iliyami/MacSai",
