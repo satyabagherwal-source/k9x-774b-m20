@@ -652,3 +652,4 @@
 | `CYCLE-20261012-AV7R` | `2026-10-12T16:40:53.895Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`28a50fea...`) |
 | `CYCLE-20261012-EJAK` | `2026-10-12T16:43:45.068Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`e54b9c90...`) |
 | `CYCLE-20261012-IRKE` | `2026-10-12T16:47:02.414Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 544, Rule 545, Rule 546` | Yes (`ad7bafbc...`) |
+| `CYCLE-20261012-MCKK` | `2026-10-12T16:49:49.604Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`e3155959...`) |

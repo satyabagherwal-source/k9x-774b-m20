@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T16:47:02.371Z",
-  "total_verified_learnings": 4548,
+  "last_updated": "2026-10-12T16:49:49.569Z",
+  "total_verified_learnings": 4549,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -110673,6 +110673,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T16:47:02.371Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv5hmcii": {
+      "learning_id": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv5hmcii",
+      "source": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "slug": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "source_version": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
+      "content_hash": "e3155959f938bcd17f33465e36bdc19cad9d890aeba5e094d710b6991dfd241a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T16:49:49.569Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
