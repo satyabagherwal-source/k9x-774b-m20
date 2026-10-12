@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T18:29:41.304Z",
-  "total_cycles_completed": 627,
-  "total_learnings_persisted": 627,
+  "last_updated": "2026-10-12T18:32:43.141Z",
+  "total_cycles_completed": 628,
+  "total_learnings_persisted": 628,
   "total_rules_promoted": 303,
   "history": [
-    {
-      "timestamp": "2026-10-12T07:08:50.629Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv4wv74u",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T07:13:36.509Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T18:29:41.304Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv5l6rqy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T18:32:43.141Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv5lao0r",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
