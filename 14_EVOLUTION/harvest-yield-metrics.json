@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T01:33:36.594Z",
-  "total_cycles_completed": 325,
-  "total_learnings_persisted": 325,
+  "last_updated": "2026-10-12T01:36:51.975Z",
+  "total_cycles_completed": 326,
+  "total_learnings_persisted": 326,
   "total_rules_promoted": 144,
   "history": [
-    {
-      "timestamp": "2026-10-11T15:03:12.765Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T15:06:26.620Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T01:33:36.594Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T01:36:51.975Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
