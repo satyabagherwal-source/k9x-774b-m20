@@ -703,3 +703,4 @@
 | `CYCLE-20261012-URYW` | `2026-10-12T19:16:20.888Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`e98f2a50...`) |
 | `CYCLE-20261012-Z6SR` | `2026-10-12T19:19:46.731Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 560, Rule 561` | Yes (`9013f85a...`) |
 | `CYCLE-20261012-2RU1` | `2026-10-12T19:22:33.961Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`f4c1bf06...`) |
+| `CYCLE-20261012-6MLD` | `2026-10-12T19:25:33.793Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`137ad13a...`) |

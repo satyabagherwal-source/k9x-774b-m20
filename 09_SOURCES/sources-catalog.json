@@ -85,9 +85,9 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "d0bdfe5fd9c4e6e6c1f0b2884aa59e8feacdbaab823a25f38ad104f773bde632",
-    "lastHarvestedAt": "2026-10-12T12:45:13.124Z",
-    "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv58vs1r"
+    "contentHash": "137ad13a52d320b6c3df8812647a282265d648c6bc4c3909b35dc53e67a0d2ab",
+    "lastHarvestedAt": "2026-10-12T19:25:33.796Z",
+    "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv5n6mij"
   },
   "hf-zai-org-glm-5.3": {
     "repository": "zai-org/GLM-5.3",
