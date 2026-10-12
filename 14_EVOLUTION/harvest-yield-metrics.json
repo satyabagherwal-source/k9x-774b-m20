@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:53:19.167Z",
-  "total_cycles_completed": 449,
-  "total_learnings_persisted": 449,
+  "last_updated": "2026-10-12T08:56:14.835Z",
+  "total_cycles_completed": 450,
+  "total_learnings_persisted": 450,
   "total_rules_promoted": 227,
   "history": [
-    {
-      "timestamp": "2026-10-11T21:46:18.948Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv4crs6s",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T21:49:22.884Z",
       "repository": "openai/clip-vit-base-patch32",
@@ -1403,6 +1396,13 @@
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv50ljzg",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T08:56:14.835Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-hf-psrben-visionhope-mv50pbil",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
