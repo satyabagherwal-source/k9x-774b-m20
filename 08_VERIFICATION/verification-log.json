@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-TC7Q",
-    "timestamp": "2026-10-11T19:55:33.014Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
-    "contentHash": "f03f4cf04d12a2097c8291635c794ec6fb6113ff9c99fa3cec48533fe423bb97",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-XAL1",
     "timestamp": "2026-10-11T19:58:37.525Z",
     "repository": "google/electra-base-discriminator",
@@ -7492,6 +7477,21 @@
     "contentHash": "1eedb4a6a88e33411b973101d17c976b216ca42888eda787579b6e7ec9f641db",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-NUEG",
+    "timestamp": "2026-10-12T23:22:53.992Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv5vnubj",
+    "contentHash": "078e88850b3615c7b6e8ee24fcac3ec89dfdba550647b5788cfe5f75244c9cdd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
