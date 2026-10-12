@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T19:25:33.797Z",
-  "total_cycles_completed": 645,
-  "total_learnings_persisted": 645,
+  "last_updated": "2026-10-12T19:28:31.809Z",
+  "total_cycles_completed": 646,
+  "total_learnings_persisted": 646,
   "total_rules_promoted": 308,
   "history": [
-    {
-      "timestamp": "2026-10-12T08:30:58.712Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4zsto3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T08:38:18.765Z",
       "repository": "iliyami/MacSai",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T19:25:33.797Z",
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv5n6mij",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T19:28:31.809Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv5nafvw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
