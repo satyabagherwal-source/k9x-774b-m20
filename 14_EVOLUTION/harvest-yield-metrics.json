@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T19:46:51.508Z",
-  "total_cycles_completed": 652,
-  "total_learnings_persisted": 652,
+  "last_updated": "2026-10-12T19:50:07.407Z",
+  "total_cycles_completed": 653,
+  "total_learnings_persisted": 653,
   "total_rules_promoted": 311,
   "history": [
-    {
-      "timestamp": "2026-10-12T09:05:44.893Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-hf-facebook-sam3-mv511jdi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T09:08:39.401Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T19:46:51.508Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
       "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv5ny0f0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T19:50:07.407Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv5o27jy",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
