@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T05:41:55.779Z",
-  "total_cycles_completed": 401,
-  "total_learnings_persisted": 401,
+  "last_updated": "2026-10-12T05:44:53.205Z",
+  "total_cycles_completed": 402,
+  "total_learnings_persisted": 402,
   "total_rules_promoted": 178,
   "history": [
-    {
-      "timestamp": "2026-10-11T19:22:08.254Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T19:25:00.650Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T05:41:55.779Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
       "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4trfd3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T05:44:53.205Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4tv88f",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
