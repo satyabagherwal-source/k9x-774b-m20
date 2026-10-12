@@ -542,3 +542,4 @@
 | `CYCLE-20261012-KDNJ` | `2026-10-12T10:44:22.687Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 494, Rule 495, Rule 496` | Yes (`5e2d4728...`) |
 | `CYCLE-20261012-O2K8` | `2026-10-12T10:47:14.937Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`a7748509...`) |
 | `CYCLE-20261012-SDQN` | `2026-10-12T10:50:36.047Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`dc34f47d...`) |
+| `CYCLE-20261012-WA6K` | `2026-10-12T10:53:38.060Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`5eeb9571...`) |
