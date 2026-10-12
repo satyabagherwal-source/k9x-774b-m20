@@ -3868,3 +3868,7 @@ https://github.com/Infisical/infisical
 # --- Automatically Discovered by AI Scout Engine [2026-10-11T16:42:55.167Z] ---
 # [AI-AGENTS] autonomous-ai/openharness (979 score) - The ultimate harness for coding agents and beyond. All your agents. All your mac
 https://github.com/autonomous-ai/openharness
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T04:43:42.963Z] ---
+# [AI-AGENTS] Fei2411/DeepSeek-Bot (813 score) - A team of long-lived bots for DeepSeek Harness, with main bots, bot-to-bot messa
+https://github.com/Fei2411/DeepSeek-Bot

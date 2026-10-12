@@ -17374,5 +17374,20 @@
     "qualityScore": 979,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-11T16:42:06.130Z"
+  },
+  {
+    "name": "DeepSeek-Bot",
+    "fullName": "Fei2411/DeepSeek-Bot",
+    "url": "https://github.com/Fei2411/DeepSeek-Bot",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "A team of long-lived bots for DeepSeek Harness, with main bots, bot-to-bot messages and group chats.",
+    "stars": 996,
+    "forks": 89,
+    "openIssues": 19,
+    "language": "JavaScript",
+    "qualityScore": 813,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-12T04:43:09.218Z"
   }
 ]
