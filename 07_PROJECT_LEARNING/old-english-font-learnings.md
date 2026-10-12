@@ -225,3 +225,24 @@ This document records empirical learnings, forensic bug investigations, and patt
   3. *100% Dictionary Key Parity*: Expanded `src/i18n/ui.ts` to 336 keys across all 14 supported languages (`en`, `es`, `ja`, `fr`, `de`, `pt`, `ko`, `it`, `no`, `sv`, `da`, `fi`, `ar`, `he`), localizing legal trust sections, character inspector modals (`GlyphModal`), FAQ search & counters, compact tool ribbons, theme toggles, and cross-tool routes.
   4. *Verified Static Build*: All 632 static HTML pages compile cleanly with `npm run build` in exit code 0.
 
+### INC-17: Deep Inner Pages & Component Translation Failure (Landing Page vs Inner Pages Discrepancy)
+* **Context**: User uploaded 5 screenshots demonstrating that while the landing page converted to Japanese, inner pages, accordions, and subpages remained in raw English:
+  - *Photos 1, 2, 3*: Master FAQ header badge, title, subtitle, 18 accordion questions (`How to write in Old English font?`), answers, and bottom CTA banner remained in raw English.
+  - *Photo 4*: About Us page (`/ja/about/`) displayed raw English headings: `ABOUT OLD ENGLISH FONT FREE`, `OUR MISSION: ZERO COPYRIGHT PENALTIES`, and English protocol steps.
+  - *Photo 5*: Quick links bar on utility pages showed raw English: `Privacy Policy • Terms of Service • About Us • Contact Us`.
+* **Forensic Root Cause Analysis**:
+  1. *Static Subpage Cloning Anti-Pattern*: `src/pages/[lang]/about.astro` was originally created as a static clone with hardcoded English H1 and H2 tags instead of pulling from localized content structures.
+  2. *Isolated FAQ Store Fallbacks*: `src/i18n/faq-translations.ts` originally only populated `en` and partial `ja`, while `OldEnglishFaq.astro` template read raw English header properties before falling back to `ui.ts`.
+  3. *Unlocalized Subpage Navigation Footers*: In `contact.astro`, bottom navigation links were plain static HTML strings `<a ...>About Us</a>` rather than Astro `{t('nav.about')}` tokens.
+  4. *Specimen Detail & Comparator Isolation*: `fonts/[slug].astro`, `compare.astro`, `compatibility.astro`, and `category/[category].astro` had isolated hardcoded section tables, taxonomy matrix labels, and device compatibility scorecard text that bypassed the i18n system.
+* **Architectural Remediation**:
+  1. *Subpage Architecture Refactoring*: Converted all utility subpages (`about.astro`, `contact.astro`, `license.astro`, `privacy.astro`, `terms.astro`) to consume dynamic legal and institutional translation modules (`src/i18n/legal-translations.ts`).
+  2. *Dedicated Subpage Translation Engines*:
+     - `src/i18n/category-translations.ts`: Localized all 9 Blackletter subcategories (Fraktur, Textura, Tattoo/Chicano, Medieval Script, Schwabacher, Ornamental Swash, Rotunda, Calligraphy, Victorian Woodblock).
+     - `src/i18n/compare-translations.ts`: Localized comparison matrix, pangrams, column badges, and comparator FAQs.
+     - `src/i18n/compat-translations.ts`: Localized the 1-click live device test, 6-platform scorecard (Apple, Android, Windows, Instagram, Discord, Gaming Clans), and screen reader advisory.
+     - `src/i18n/specimen-translations.ts`: Localized font application guidelines (best/poor use cases), technical specs table, and font-specific FAQs.
+     - `src/i18n/faq-translations.ts`: Localized 18 Master Paleographic questions, answers, and CTA banner across supported languages.
+  3. *Production Verification*: Audited static dist HTML across all 632 compiled pages confirming zero forbidden English strings remain on non-English routes.
+
+
