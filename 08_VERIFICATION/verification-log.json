@@ -4633,5 +4633,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-LVWS",
+    "timestamp": "2026-10-12T00:57:41.068Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj",
+    "contentHash": "1c2fc639478cb7432a2176bfd3dc66bccbd8467fe9d705aecbbe6479c0917c66",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
