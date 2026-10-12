@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T18:23:27.262Z",
+  "last_updated": "2026-10-12T18:26:46.104Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1350,15 +1350,15 @@
       "repository": "openai/clip-vit-base-patch32",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv56qwsj",
-      "content_hash": "4b52ed909fe701849f873f28cc777a0822f365e52e1d76930a06bbde2611bd4f",
-      "verified_at": "2026-10-12T11:45:26.760Z",
+      "learning_id": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv5l30j2",
+      "content_hash": "0347e7d73c1f520869ab48fe8656738d6b00cdfbbbf5ca823272305a501573ef",
+      "verified_at": "2026-10-12T18:26:46.104Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T11:45:26.760Z"
+      "last_updated": "2026-10-12T18:26:46.104Z"
     },
     "sentence-transformers/all-mpnet-base-v2": {
       "repository": "sentence-transformers/all-mpnet-base-v2",
