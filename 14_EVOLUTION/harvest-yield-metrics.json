@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T09:02:44.675Z",
-  "total_cycles_completed": 452,
-  "total_learnings_persisted": 452,
+  "last_updated": "2026-10-12T09:05:44.893Z",
+  "total_cycles_completed": 453,
+  "total_learnings_persisted": 453,
   "total_rules_promoted": 227,
   "history": [
-    {
-      "timestamp": "2026-10-11T21:55:48.910Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T21:58:38.122Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T09:02:44.675Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv50xobk",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T09:05:44.893Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-hf-facebook-sam3-mv511jdi",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
