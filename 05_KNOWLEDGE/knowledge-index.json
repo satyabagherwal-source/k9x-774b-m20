@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T02:18:56.943Z",
-  "total_verified_learnings": 4294,
+  "last_updated": "2026-10-12T02:21:50.936Z",
+  "total_verified_learnings": 4295,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -103822,6 +103822,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T02:18:56.943Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm": {
+      "learning_id": "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm",
+      "source": "google-t5/t5-small",
+      "repository": "google-t5/t5-small",
+      "slug": "hf-google-t5-t5-small",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "content_hash": "c3f7854035fc6df077f8acd1a5de9f24c4eb37360933eb6ed15e54315da2b839",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T02:21:50.936Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -5038,5 +5038,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-M4G7",
+    "timestamp": "2026-10-12T02:21:50.983Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm",
+    "contentHash": "c3f7854035fc6df077f8acd1a5de9f24c4eb37360933eb6ed15e54315da2b839",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

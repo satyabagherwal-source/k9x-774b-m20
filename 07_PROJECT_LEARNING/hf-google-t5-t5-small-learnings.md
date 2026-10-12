@@ -3,8 +3,8 @@
 > **Source Version**: `hf-google-t5`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-11T20:07:38.347Z  
-> **Learning ID**: `learn-huggingface-hf-google-t5-t5-small-mv498vvv`  
+> **Timestamp**: 2026-10-12T02:21:50.890Z  
+> **Learning ID**: `learn-huggingface-hf-google-t5-t5-small-mv4mm4dm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google-t5/t5-small](https://huggingface.co/google-t5/t5-small))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-11T20:07:37.719Z  
+> **Harvest Timestamp**: 2026-10-12T02:21:49.395Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
