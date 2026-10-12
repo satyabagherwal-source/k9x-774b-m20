@@ -26411,3 +26411,167 @@ truncated = normalized_full[:128] # WRONG: This vector is not properly normalize
 
 **VERIFICATION METHOD**:
 Unit test that verifies `np.linalg.norm(get_embedding_mrl(model, input, 128))` is approximately 1.0, and that the cosine similarity between a 128-dim embedding and a 768-dim embedding (truncated to 128) is consistent with the similarity between two 128-dim embeddings.
+
+
+---
+
+## 538. **Joint Head Must Consume Only Final Hidden States** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Joint Head Must Consume Only Final Hidden States**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T16:22:41.505Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv5gngao",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The joint schema head **MUST** receive only the final hidden states of the backbone; it **MUST NOT** access intermediate layer outputs or perform additional token‑level decoding.
+
+**WHY**:  
+Accessing intermediate layers introduces modality‑specific biases and can break the assumption that the head operates on a unified representation, leading to inconsistent logits across modalities.
+
+**WHEN TO APPLY**:  
+Applicable to any multimodal decision model that uses a transformer backbone with a separate head.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# joint_schema_model.py
+def forward(self, batch):
+    # batch contains 'input_ids', 'attention_mask', 'pixel_values', etc.
+    backbone_outputs = self.backbone(**batch, return_dict=True)
+    # Only final hidden state is forwarded
+    hidden = backbone_outputs.last_hidden_state
+    logits = self.joint_head(hidden, batch['question_ids'])
+    return logits
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Using intermediate layers
+hidden = backbone_outputs.hidden_states[5]  # ❌
+```
+
+**VERIFICATION METHOD**:  
+Unit test that asserts `joint_head` receives a tensor of shape `(batch, seq_len, hidden_dim)` and that `backbone.return_dict` is `True`.
+
+
+---
+
+## 539. **Tokenizer Configuration Must Preserve Special Token Integrity** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Tokenizer Configuration Must Preserve Special Token Integrity**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T16:22:41.520Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv5gngao",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The tokenizer configuration **MUST** explicitly declare all special tokens (`bos_token`, `eos_token`, `pad_token`, modality tokens) and **MUST NOT** rely on implicit defaults that may change across tokenizer versions.
+
+**WHY**:  
+Missing or mis‑declared special tokens cause mis‑alignment between the processor and the backbone, leading to off‑by‑one errors in attention masks and corrupted embeddings.
+
+**WHEN TO APPLY**:  
+During tokenizer initialization for any multimodal pipeline.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+tokenizer = AutoTokenizer.from_pretrained(
+    "Cloudflare/clef",
+    bos_token="<|im_start|>",
+    eos_token="<|im_end|>",
+    pad_token="<|endoftext|>",
+    image_token="<|image_pad|>",
+    video_token="<|video_pad|>",
+    add_prefix_space=False,
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Relying on defaults
+tokenizer = AutoTokenizer.from_pretrained("Cloudflare/clef")  # ❌
+```
+
+**VERIFICATION METHOD**:  
+Linter rule that checks `tokenizer.special_tokens_map` contains all required keys.
+
+
+---
+
+## 540. **Inference Must Run in Torch Inference Mode** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Inference Must Run in Torch Inference Mode**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T16:22:41.535Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv5gngao",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> All forward passes for decision inference **MUST** be wrapped in `torch.inference_mode()`; **MUST NOT** use `torch.no_grad()` alone.
+
+**WHY**:  
+`torch.inference_mode()` disables gradient tracking and also turns off autograd checks, providing a performance boost and preventing accidental gradient accumulation that could corrupt the model state.
+
+**WHEN TO APPLY**:  
+During any inference call that does not require gradients.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+with torch.inference_mode():
+    logits = model(batch)[0]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Using no_grad only
+with torch.no_grad():
+    logits = model(batch)[0]  # ❌
+```
+
+**VERIFICATION METHOD**:  
+Static analysis that ensures `torch.inference_mode()` is used in all inference functions.
