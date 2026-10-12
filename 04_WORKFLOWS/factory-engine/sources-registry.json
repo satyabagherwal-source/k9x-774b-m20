@@ -2582,8 +2582,8 @@
     "sourceType": "github",
     "technology": "Rust",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-12T13:38:37.122Z",
-    "lastVerified": "2026-10-12T13:38:37.122Z",
+    "lastChecked": "2026-10-12T19:59:07.554Z",
+    "lastVerified": "2026-10-12T19:59:07.554Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -17530,8 +17530,8 @@
     "sourceType": "github",
     "technology": "Python",
     "revisionIdentifier": "HEAD",
-    "lastChecked": "2026-10-12T19:44:00.825Z",
-    "lastVerified": "2026-10-12T19:44:00.825Z",
+    "lastChecked": "2026-10-12T19:59:10.044Z",
+    "lastVerified": "2026-10-12T19:59:10.044Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": null,
@@ -21598,10 +21598,20 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cosscom-ui": {
-    "name": "ui",
+    "name": "cosscom/ui",
     "officialUrl": "https://github.com/cosscom/ui",
-    "lastChecked": "2026-10-12T19:56:00.174Z",
-    "revisionIdentifier": "98a1fe67b",
-    "lastVerified": "2026-10-12T19:56:00.174Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-10-12T19:59:37.373Z",
+    "lastVerified": "2026-10-12T19:59:37.373Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-cosscom-ui-mv5oegcc",
+    "contentHash": "b0b6b233b446e06ab95e6410d88046819990fb657168f77596bdbddfcd6ac60b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 52,
+    "closedIssuesCount": 8,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

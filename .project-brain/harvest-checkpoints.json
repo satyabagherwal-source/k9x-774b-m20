@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T19:53:06.447Z",
+  "last_updated": "2026-10-12T19:59:38.674Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1947,6 +1947,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-12T13:54:15.593Z"
+    },
+    "cosscom/ui": {
+      "repository": "cosscom/ui",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-cosscom-ui-mv5oegcc",
+      "content_hash": "b0b6b233b446e06ab95e6410d88046819990fb657168f77596bdbddfcd6ac60b",
+      "verified_at": "2026-10-12T19:59:38.674Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-12T19:59:38.674Z"
     }
   }
 }

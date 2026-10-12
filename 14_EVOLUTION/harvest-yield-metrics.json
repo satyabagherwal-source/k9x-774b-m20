@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T19:53:06.446Z",
-  "total_cycles_completed": 654,
-  "total_learnings_persisted": 654,
+  "last_updated": "2026-10-12T19:59:38.673Z",
+  "total_cycles_completed": 655,
+  "total_learnings_persisted": 655,
   "total_rules_promoted": 311,
   "history": [
-    {
-      "timestamp": "2026-10-12T09:11:39.377Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv5194w8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T09:14:35.226Z",
       "repository": "canberkkkkkk/ema-lightning",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T19:53:06.446Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv5o61pg",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T19:59:38.673Z",
+      "repository": "cosscom/ui",
+      "learningId": "learn-github-cosscom-ui-mv5oegcc",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

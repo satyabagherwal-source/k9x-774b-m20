@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T19:53:06.390Z",
-  "total_verified_learnings": 4609,
+  "last_updated": "2026-10-12T19:59:38.619Z",
+  "total_verified_learnings": 4610,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -112239,6 +112239,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T19:53:06.390Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-cosscom-ui-mv5oegcc": {
+      "learning_id": "learn-github-cosscom-ui-mv5oegcc",
+      "source": "cosscom/ui",
+      "repository": "cosscom/ui",
+      "slug": "cosscom-ui",
+      "platform": "github",
+      "source_url": "https://github.com/cosscom/ui",
+      "source_version": "28645cd8",
+      "content_hash": "b0b6b233b446e06ab95e6410d88046819990fb657168f77596bdbddfcd6ac60b",
+      "dossier_path": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/cosscom-ui-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T19:59:38.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

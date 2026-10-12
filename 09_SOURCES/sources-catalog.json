@@ -1358,5 +1358,15 @@
     "contentHash": "4b05325c29df6e1f9888cc1a978c8d9fc9976e2c0fca993b15a4a1f4180996f2",
     "lastHarvestedAt": "2026-10-12T13:54:15.590Z",
     "learningId": "learn-github-paperclipai-paperclip-mv5bckez"
+  },
+  "cosscom-ui": {
+    "repository": "cosscom/ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cosscom/ui",
+    "sourceVersion": "28645cd8",
+    "license": "AGPL-3.0",
+    "contentHash": "b0b6b233b446e06ab95e6410d88046819990fb657168f77596bdbddfcd6ac60b",
+    "lastHarvestedAt": "2026-10-12T19:59:38.672Z",
+    "learningId": "learn-github-cosscom-ui-mv5oegcc"
   }
 }
