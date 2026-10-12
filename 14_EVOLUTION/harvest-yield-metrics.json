@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T16:13:38.632Z",
-  "total_cycles_completed": 582,
-  "total_learnings_persisted": 582,
+  "last_updated": "2026-10-12T16:16:35.265Z",
+  "total_cycles_completed": 583,
+  "total_learnings_persisted": 583,
   "total_rules_promoted": 281,
   "history": [
-    {
-      "timestamp": "2026-10-12T04:34:54.998Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4rd8vo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T04:38:09.439Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T16:13:38.632Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv5gbtcu",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T16:16:35.265Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv5gflnt",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
