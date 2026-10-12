@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:08:52.727Z",
-  "total_cycles_completed": 440,
-  "total_learnings_persisted": 440,
-  "total_rules_promoted": 217,
+  "last_updated": "2026-10-12T08:13:02.255Z",
+  "total_cycles_completed": 441,
+  "total_learnings_persisted": 441,
+  "total_rules_promoted": 220,
   "history": [
-    {
-      "timestamp": "2026-10-11T21:19:33.230Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4btd7d",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T21:22:35.383Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T08:08:52.727Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4z0ehk",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T08:13:02.255Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4z5r0u",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

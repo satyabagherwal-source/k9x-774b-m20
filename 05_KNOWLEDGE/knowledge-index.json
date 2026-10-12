@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T08:08:52.672Z",
-  "total_verified_learnings": 4395,
+  "last_updated": "2026-10-12T08:13:02.208Z",
+  "total_verified_learnings": 4396,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106595,6 +106595,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T08:08:52.672Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4z5r0u": {
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4z5r0u",
+      "source": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "slug": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "content_hash": "2d35da11b50f020caddfe4879db8a7fd21e1c4b777fde336de2703c1fabdc74b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 473,
+          "title": "Invariant SwiGLU Activation Capping for Low-Precision GEMM Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 474,
+          "title": "SqrtSoftplus Routing Invariant for Auxiliary-Loss-Free Expert Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 475,
+          "title": "SWA Bounded Replay Isolation for Ephemeral Attention States",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T08:13:02.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
