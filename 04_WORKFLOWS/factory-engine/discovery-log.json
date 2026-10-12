@@ -17401,5 +17401,20 @@
     "downloads": 2188658,
     "qualityScore": 42160,
     "discoveredAt": "2026-10-12T07:12:22.705Z"
+  },
+  {
+    "name": "MacSai",
+    "fullName": "iliyami/MacSai",
+    "url": "https://github.com/iliyami/MacSai",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Mac Sai: the open-source Mac cleaner, optimizer, and malware scanner. A free, Apple-notarized alternative to CleanMyMac, built with Swift 6 and SwiftUI.",
+    "stars": 1820,
+    "forks": 107,
+    "openIssues": 19,
+    "language": "Swift",
+    "qualityScore": 1230,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-12T08:34:20.121Z"
   }
 ]
