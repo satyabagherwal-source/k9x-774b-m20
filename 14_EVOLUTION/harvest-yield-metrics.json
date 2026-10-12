@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T14:22:13.526Z",
-  "total_cycles_completed": 547,
-  "total_learnings_persisted": 547,
+  "last_updated": "2026-10-12T14:25:12.626Z",
+  "total_cycles_completed": 548,
+  "total_learnings_persisted": 548,
   "total_rules_promoted": 259,
   "history": [
-    {
-      "timestamp": "2026-10-12T02:45:54.429Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv4nh25q",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T02:49:00.643Z",
       "repository": "openai/whisper-large-v3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T14:22:13.526Z",
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv5ccj3d",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T14:25:12.626Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv5cgdac",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
