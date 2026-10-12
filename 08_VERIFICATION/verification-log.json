@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-2VZ2",
-    "timestamp": "2026-10-11T19:06:59.294Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
-    "contentHash": "f159c59cab8a323eac85ecfe4088ce996121f2819f61621acc408c698fff7bee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-6K67",
     "timestamp": "2026-10-11T19:09:50.623Z",
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7492,6 +7477,21 @@
     "contentHash": "f9f42618a021e1fd50bdb4b9d8e58041d992aed17042e7993262b28223730341",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-FHRQ",
+    "timestamp": "2026-10-12T22:20:25.142Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv5tfho8",
+    "contentHash": "be9d83c0af599b909e940e7d03501012e62e23947e87c7773db0a38457ab2f3b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

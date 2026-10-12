@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:17:17.327Z",
-  "total_verified_learnings": 4651,
+  "last_updated": "2026-10-12T22:20:25.107Z",
+  "total_verified_learnings": 4652,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -113376,6 +113376,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T22:17:17.327Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv5tfho8": {
+      "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv5tfho8",
+      "source": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "slug": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "content_hash": "be9d83c0af599b909e940e7d03501012e62e23947e87c7773db0a38457ab2f3b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 587,
+          "title": "GGUF Tensor Alignment & Memory Safety Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 588,
+          "title": "Uncensored Model Safety Layer Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 589,
+          "title": "Binary Asset Integrity & Reproducibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T22:20:25.107Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
