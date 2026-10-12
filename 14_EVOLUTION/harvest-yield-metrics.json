@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T01:03:27.184Z",
-  "total_cycles_completed": 315,
-  "total_learnings_persisted": 315,
+  "last_updated": "2026-10-12T01:06:39.171Z",
+  "total_cycles_completed": 316,
+  "total_learnings_persisted": 316,
   "total_rules_promoted": 141,
   "history": [
-    {
-      "timestamp": "2026-10-11T14:33:34.975Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T14:36:34.047Z",
       "repository": "speridlabs/iris-3b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T01:03:27.184Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T01:06:39.171Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
