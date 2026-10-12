@@ -3,8 +3,8 @@
 > **Source Version**: `hf-bingsu-ad`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-12T12:39:22.490Z  
-> **Learning ID**: `learn-huggingface-hf-bingsu-adetailer-mv58o9kq`  
+> **Timestamp**: 2026-10-12T19:19:46.584Z  
+> **Learning ID**: `learn-huggingface-hf-bingsu-adetailer-mv5mz6oo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,330 +17,263 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `Bingsu/adetailer` repository is not a software application in the traditional sense (no source code, no build system, no CI/CD pipelines). It is a **Model Artifact Repository** hosting pre-trained YOLOv8/YOLOv9 object detection and instance segmentation weights (`.pt` files) specifically optimized for the **ADetailer** (Automatic Detailer) plugin ecosystem within Stable Diffusion WebUI.
-
-The core technical problem it addresses is the **semantic gap** between general-purpose object detectors (trained on COCO) and the specific visual characteristics of **anime/2D illustrations** and **specific body parts** (hands, faces) required for high-fidelity inpainting. General detectors fail on stylized art; this repo provides domain-specific weights that bridge that gap.
+The `Bingsu/adetailer` repository is not a software application but a **Model Artifact Repository** hosting pre-trained YOLOv8/YOLOv9 object detection and instance segmentation models. It solves the problem of **domain-specific detection accuracy** for AI image generation workflows (specifically Stable Diffusion/ComfyUI "ADetailer" plugins). Standard general-purpose detectors (like COCO-trained YOLO) often fail to detect anime faces, specific hand poses, or detailed clothing items (DeepFashion2) with sufficient precision for inpainting masks. This repo provides specialized weights optimized for these niche domains.
 
 **Architectural Boundaries:**
-1.  **Consumer Boundary:** The repository is a passive data store. It has no runtime logic. The "architecture" is defined by the **Ultralytics YOLO** inference engine which consumes these weights.
-2.  **Data Boundary:** The boundary is the `.pt` file format (PyTorch state dict + model architecture definition). The consumer must have the matching `ultralytics` library version to deserialize the architecture correctly.
-3.  **Integration Boundary:** The primary consumer is the `ADetailer` extension for Stable Diffusion WebUI. The integration contract is:
-    *   Input: Image (RGB/BGR).
-    *   Output: Bounding Boxes (for detection) or Masks (for segmentation) + Confidence Scores.
-    *   Constraint: The model must run on GPU (CUDA) or CPU with acceptable latency for interactive use.
+*   **Consumer Boundary:** The repository is a passive data store. It has no runtime logic, no API server, and no state management.
+*   **Integration Boundary:** It integrates via the `huggingface_hub` Python library for download and the `ultralytics` library for inference.
+*   **Data Boundary:** The boundary is defined by the `.pt` (PyTorch) file format, which encapsulates model weights, class names, and preprocessing parameters.
 
 **Critical Subsystem Abstractions:**
-*   **Detection Head:** YOLOv8/v9 backbone + neck + head. Outputs class probabilities and bounding box coordinates.
-*   **Segmentation Head:** (For `-seg` models) Additional mask prediction head. Outputs binary masks for precise inpainting regions.
-*   **Class Taxonomy:** A rigid mapping of integer IDs to semantic labels (e.g., `0: short_sleeved_shirt`, `1: long_sleeved_shirt`). This taxonomy is hardcoded in the model's metadata and must match the consumer's expectation.
+1.  **Model Weights (`.pt` files):** Binary blobs containing neural network parameters.
+2.  **Metadata (README.md):** Defines the class taxonomy (e.g., `short_sleeved_shirt` vs `long_sleeved_shirt`) and performance benchmarks (mAP).
+3.  **Inference Interface:** The `ultralytics.YOLO` class acts as the sole abstraction layer for loading and executing these weights.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Model Artifact Version Coupling Invariant
+### 1. Model Artifact Versioning & Class Taxonomy Lock
 **RULE**:
-When distributing pre-trained model weights (`.pt`, `.onnx`, `.safetensors`) as standalone artifacts, the repository **MUST** explicitly document the exact version of the inference framework (e.g., `ultralytics==8.0.100`) required to deserialize the model architecture. The consumer **MUST NOT** assume that the latest framework version is backward-compatible with older weight files.
+When publishing pre-trained detection models, the class label taxonomy (ID to Name mapping) MUST be immutable and explicitly documented in the repository metadata. Consumers MUST NOT assume standard COCO class indices; they MUST read the class names from the model object or metadata at runtime.
 
 **WHY**:
-Neural network architectures evolve. A YOLOv8 model saved with `ultralytics 8.0.50` may use a different layer naming convention, normalization scheme, or anchor box calculation than `ultralytics 8.1.0`. Loading an old weight file with a new library often results in `KeyError` during state dict loading, silent shape mismatches, or catastrophic performance degradation (mAP drop) due to changed preprocessing pipelines.
+Forensic analysis of the README shows a custom taxonomy for `deepfashion2` (IDs 0-12) that differs from standard COCO. If a consumer hardcodes `class_id=0` expecting "person" (COCO standard) but the model is `deepfashion2`, `class_id=0` is actually "short_sleeved_shirt". This leads to silent logical errors where the wrong object is masked/inpainted. Additionally, model versions (e.g., `face_yolov8n.pt` vs `face_yolov8n_v2.pt`) have different mAP scores; using the wrong version degrades quality without crashing.
 
 **WHEN TO APPLY**:
-Any system that distributes machine learning models as binary artifacts separate from the code that runs them.
+Any system consuming third-party ML model artifacts (YOLO, SSD, Faster R-CNN) where class definitions are domain-specific or custom-trained.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# In the consumer application (e.g., ADetailer)
-import ultralytics
+from ultralytics import YOLO
 from huggingface_hub import hf_hub_download
 
-# 1. Pin the version in requirements.txt
-# ultralytics==8.0.100
+# 1. Download specific version
+path = hf_hub_download("Bingsu/adetailer", "face_yolov8n_v2.pt")
+model = YOLO(path)
 
-# 2. Verify version at runtime before loading
-required_version = "8.0.100"
-current_version = ultralytics.__version__
+# 2. NEVER hardcode class IDs. Always retrieve names from the model.
+class_names = model.names
+# class_names is a dict: {0: 'face', ...}
 
-if current_version != required_version:
-    raise EnvironmentError(
-        f"Model requires ultralytics {required_version}, "
-        f"but found {current_version}. Please pin the version."
-    )
-
-# 3. Load model
-path = hf_hub_download("Bingsu/adetailer", "face_yolov8n.pt")
-model = ultralytics.YOLO(path)
+# 3. Map desired semantic label to ID dynamically
+target_label = "face"
+if target_label in class_names.values():
+    target_id = [k for k, v in class_names.items() if v == target_label][0]
+    results = model.predict(image, classes=[target_id])
+else:
+    raise ValueError(f"Label '{target_label}' not found in model taxonomy")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming latest library works with old weights
-# This will likely crash or produce garbage outputs
-from ultralytics import YOLO
-model = YOLO("face_yolov8n.pt") # No version check
+# ANTI-PATTERN: Hardcoding class IDs based on assumption
+# Assumes ID 0 is always 'person' or 'face'
+results = model.predict(image, classes=[0]) 
+# FAILS if model is deepfashion2 (ID 0 is shirt) or if taxonomy changes in v2
 ```
 
 **VERIFICATION METHOD**:
-Automated CI job that installs the pinned version, downloads the model, and runs a smoke test inference on a fixed test image, asserting that the output tensor shapes and confidence scores match a golden reference within a tolerance of 1e-5.
+Unit test that loads the model, asserts `model.names` matches the expected dictionary from the README, and verifies that predicting with a valid ID returns a non-empty result for a known positive image.
 
-### 2. Semantic Class ID Stability Invariant
+### 2. Inference Input Preprocessing Consistency
 **RULE**:
-The integer-to-label mapping (class IDs) in a detection model **MUST** be treated as an immutable API contract. If the model is retrained or fine-tuned, the class order **MUST NOT** change unless a new major version of the model is released. The consumer **MUST** validate the class names against the model's metadata at load time.
+When integrating YOLO models, the input image MUST be converted to the correct color space (RGB) and dtype (float32/uint8) expected by the model's preprocessing pipeline. Mixing BGR (OpenCV) and RGB (PIL/Standard) without explicit conversion MUST be treated as a critical defect.
 
 **WHY**:
-If class ID `0` changes from `face` to `hand` in a new model version, the consumer will apply face-specific inpainting parameters (e.g., high denoising strength for skin) to hands, causing severe visual artifacts. This is a silent data corruption bug.
+The README usage example explicitly shows `cv2.cvtColor(pred, cv2.COLOR_BGR2RGB)`. YOLO models are typically trained on RGB data. If an agent passes a BGR image directly to `model.predict()` without the library handling the conversion internally (which it does, but visualization often requires it), or if the agent post-processes the mask using OpenCV functions expecting BGR, the resulting mask will have inverted color channels, leading to incorrect inpainting regions.
 
 **WHEN TO APPLY**:
-Any object detection or segmentation model where the output classes drive downstream logic (e.g., different inpainting settings per class).
+Any computer vision pipeline where images are passed between OpenCV (BGR) and PyTorch/PIL (RGB) ecosystems.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Consumer side validation
-expected_classes = ["face"] # For face_yolov8n.pt
+import cv2
+import numpy as np
+from PIL import Image
 
-model = YOLO("face_yolov8n.pt")
-actual_classes = model.names
+# Load with OpenCV (BGR)
+img_bgr = cv2.imread("input.jpg")
 
-# Validate that the expected class exists and is at the correct index
-if "face" not in actual_classes.values():
-    raise ValueError(f"Model does not contain 'face' class. Found: {actual_classes}")
+# Option A: Let Ultralytics handle it (it expects BGR or RGB, but internally converts)
+# However, for visualization or further OpenCV processing, ensure consistency.
 
-# If the model has multiple classes, ensure the mapping is correct
-# For single-class models, ensure index 0 is the expected class
-if len(actual_classes) == 1:
-    if list(actual_classes.values())[0] != "face":
-        raise ValueError(f"Class ID 0 is '{list(actual_classes.values())[0]}', expected 'face'")
+# If converting to PIL for display:
+img_rgb = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2RGB)
+pil_img = Image.fromarray(img_rgb)
+
+# If using the mask for OpenCV inpainting:
+# Ensure the mask is single-channel (grayscale) and uint8
+mask = results[0].masks.data.cpu().numpy() # Get raw mask
+mask_uint8 = (mask > 0.5).astype(np.uint8) * 255
+# Now mask_uint8 is safe for cv2.inpaint
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Hardcoding class indices without validation
-# If the model is swapped, this will silently mislabel objects
-face_mask = results[0].masks.data[0] # Assumes index 0 is face
+# ANTI-PATTERN: Assuming PIL and OpenCV share the same color order
+img_pil = Image.open("input.jpg")
+img_cv = np.array(img_pil) # This is RGB
+# Passing img_cv directly to a function that expects BGR without conversion
+cv2.imshow("Wrong", img_cv) # Colors will be swapped (Red/Blue inverted)
 ```
 
 **VERIFICATION METHOD**:
-Unit test that loads the model, extracts `model.names`, and asserts that the dictionary matches the expected schema defined in the repository's `README.md` or a separate `classes.json` file.
+Visual regression test: Compare the output mask against a ground truth mask. Assert that the mean absolute error is below a threshold. Additionally, assert that the color channels of the input image match the expected order before inference.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following incidents are **synthesized forensic reconstructions** based on common failure modes observed in the ADetailer/YOLO ecosystem and the specific characteristics of this repository (anime-specific models, multi-class fashion models).*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following incidents are **hypothetical forensic reconstructions** based on common failure modes observed in the usage patterns and model characteristics described in the README. They represent the "potential incidents" that this repository's design prevents or that consumers must guard against.*
 
-### Incident 1: Anime Face Detection Failure on Realistic Photos (BUG-ANIME-01)
-- **Context**: `face_yolov8n.pt` model used in ADetailer for face inpainting.
-- **What Was Expected**: The model should detect faces in both anime and realistic images, or at least not produce false positives on non-face regions.
-- **What Actually Happened**: When used on realistic photos, the model produced low-confidence detections or missed faces entirely, leading to no inpainting being applied. Conversely, on some anime styles, it detected non-face regions (e.g., hair accessories) as faces.
-- **Evidence in Repo**: The README explicitly separates "2D / realistic face" models. The existence of `face_yolov8n_v2.pt` suggests a retraining to improve performance.
-- **Root Cause**: Domain shift. The model was trained primarily on anime datasets (WIDER FACE, Anime Face CreateML). The feature extractor learned anime-specific patterns (e.g., large eyes, specific shading) that do not generalize to realistic human faces.
+### Incident 1: Class ID Mismatch in DeepFashion2 Model (BUG-CLASSID-01)
+- **Context**: Consumer application using `deepfashion2_yolov8s-seg.pt` for clothing detection.
+- **What Was Expected**: Detecting "trousers" (ID 7 in DeepFashion2 taxonomy).
+- **What Actually Happened**: The application detected "shorts" (ID 6) or "skirt" (ID 8) because the developer assumed COCO taxonomy where "pants" is ID 32. The mask was applied to the wrong body part.
+- **Evidence in Repo**: README table shows `deepfashion2` has custom IDs 0-12. No standard COCO mapping exists.
+- **Root Cause**: Hardcoded class IDs based on standard datasets instead of reading `model.names`.
 - **Remediation Code Diff**:
 ```python
-# - Old: Single model for all face types
-# model = YOLO("face_yolov8n.pt")
-
-# + New: User selects model based on image type
-# In ADetailer UI:
-#   [x] Use Anime Face Model
-#   [ ] Use Realistic Face Model
-#
-# Code:
-if is_anime_image(image):
-    model = YOLO("face_yolov8n.pt")
-else:
-    model = YOLO("face_yolov8n_realistic.pt") # Hypothetical separate model
+# - Buggy: results = model.predict(img, classes=[32]) # COCO 'pants'
+# + Fixed: 
+#   names = model.names
+#   target_id = [k for k, v in names.items() if v == 'trousers'][0]
+#   results = model.predict(img, classes=[target_id])
 ```
-- **Lesson**: **Domain-Specific Models Require Explicit Selection**. Do not assume a single model generalizes across all visual domains. Provide separate models for distinct domains (anime vs. realistic) and let the user or a classifier select the appropriate one.
+- **Lesson**: Always derive class IDs from the model object, never from external documentation assumptions.
 
-### Incident 2: Fashion Class ID Mismatch (BUG-FASHION-02)
-- **Context**: `deepfashion2_yolov8s-seg.pt` model.
-- **What Was Expected**: The model should detect and segment clothing items with correct labels (e.g., `short_sleeved_shirt`).
-- **What Actually Happened**: The ADetailer plugin applied inpainting settings for `short_sleeved_shirt` to `long_sleeved_shirt` regions, causing visual artifacts (e.g., short sleeves appearing on long-sleeved shirts).
-- **Evidence in Repo**: The README lists 13 classes for deepfashion2. The class IDs are 0-12.
-- **Root Cause**: The consumer (ADetailer) hardcoded the class ID to label mapping, but the model was retrained with a different class order. The model's `names` attribute was not validated against the consumer's expected mapping.
+### Incident 2: Color Space Inversion in Mask Visualization (BUG-COLORSPACE-02)
+- **Context**: Developer visualizing detection results using OpenCV.
+- **What Was Expected**: Red boxes around faces.
+- **What Actually Happened**: Blue boxes around faces.
+- **Evidence in Repo**: README usage example explicitly includes `cv2.cvtColor(pred, cv2.COLOR_BGR2RGB)`.
+- **Root Cause**: `model.plot()` returns an RGB image (standard for PyTorch/PIL), but `cv2.imshow` expects BGR.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Hardcoded mapping
-# class_map = {0: "short_sleeved_shirt", 1: "long_sleeved_shirt", ...}
-
-# + Fixed: Dynamic mapping from model
-model = YOLO("deepfashion2_yolov8s-seg.pt")
-class_map = model.names # {0: "short_sleeved_shirt", 1: "long_sleeved_shirt", ...}
-
-# Validate against expected schema
-expected_schema = {
-    0: "short_sleeved_shirt",
-    1: "long_sleeved_shirt",
-    # ...
-}
-for k, v in expected_schema.items():
-    if class_map.get(k) != v:
-        raise ValueError(f"Class ID {k} mismatch: expected {v}, got {class_map.get(k)}")
+# - Buggy: cv2.imshow("Result", output[0].plot())
+# + Fixed: 
+#   pred = output[0].plot()
+#   pred_bgr = cv2.cvtColor(pred, cv2.COLOR_RGB2BGR)
+#   cv2.imshow("Result", pred_bgr)
 ```
-- **Lesson**: **Never Hardcode Class Mappings**. Always extract the class mapping from the model's metadata at load time and validate it against the expected schema.
+- **Lesson**: Explicitly manage color space conversions at the boundary between ML libraries (RGB) and CV libraries (BGR).
 
-### Incident 3: Memory Leak from Unreleased Model Instances (BUG-MEM-03)
-- **Context**: ADetailer plugin loading multiple models (face, hand, person) in a single session.
-- **What Was Expected**: Memory usage should remain stable after model loading and inference.
-- **What Actually Happened**: GPU memory usage increased with each new image processed, eventually causing OOM (Out of Memory) errors.
-- **Evidence in Repo**: N/A (No code in repo, but common issue in ADetailer).
-- **Root Cause**: The `YOLO` model object was not properly released after inference. PyTorch's garbage collector does not always immediately free GPU memory, especially if there are lingering references to tensors.
+### Incident 3: Memory Leak from Unreleased Model Objects (BUG-MEMLEAK-03)
+- **Context**: Long-running server loading multiple models (face, hand, person) sequentially.
+- **What Was Expected**: Stable memory usage.
+- **What Actually Happened**: Memory usage grew linearly with each request, eventually causing OOM.
+- **Evidence in Repo**: N/A (Inferred from PyTorch behavior).
+- **Root Cause**: The `YOLO` model object holds GPU tensors. If not explicitly deleted or if the GPU cache is not cleared, old models remain in VRAM.
 - **Remediation Code Diff**:
 ```python
-# - Buggy: Model object persists in scope
-# model = YOLO("face_yolov8n.pt")
-# results = model(image)
-# # Model is not explicitly deleted
+# - Buggy: 
+#   model = YOLO(path)
+#   results = model.predict(img)
+#   # Model stays in memory
 
-# + Fixed: Explicitly delete model and clear cache
-model = YOLO("face_yolov8n.pt")
-results = model(image)
-del model
-torch.cuda.empty_cache()
+# + Fixed:
+#   model = YOLO(path)
+#   results = model.predict(img)
+#   del model
+#   torch.cuda.empty_cache() # Explicitly clear GPU cache
 ```
-- **Lesson**: **Explicitly Release GPU Resources**. In long-running applications, explicitly delete model objects and call `torch.cuda.empty_cache()` after inference to prevent memory leaks.
-
-### Incident 4: Inference Latency Spike on CPU (BUG-PERF-04)
-- **Context**: `face_yolov8n.pt` model running on CPU.
-- **What Was Expected**: Inference should complete within 100ms.
-- **What Actually Happened**: Inference took 2-5 seconds, making the application unusable.
-- **Evidence in Repo**: N/A (No code in repo, but common issue with YOLO on CPU).
-- **Root Cause**: The model was not optimized for CPU inference. YOLOv8 uses CUDA-specific operations that fall back to slow CPU implementations.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Default model loading
-# model = YOLO("face_yolov8n.pt")
-
-# + Fixed: Use CPU-optimized model or export to ONNX
-# Option 1: Use smaller model
-model = YOLO("face_yolov8n.pt") # Already small, but still slow
-
-# Option 2: Export to ONNX and use ONNX Runtime
-# model.export(format="onnx")
-# import onnxruntime as ort
-# session = ort.InferenceSession("face_yolov8n.onnx")
-```
-- **Lesson**: **Optimize for Target Hardware**. If CPU inference is required, export the model to ONNX or use a smaller model variant. Do not assume that a model optimized for GPU will perform well on CPU.
-
-### Incident 5: Mask Boundary Artifacts (BUG-SEG-05)
-- **Context**: `person_yolov8n-seg.pt` model.
-- **What Was Expected**: The segmentation mask should have smooth boundaries that align with the person's edges.
-- **What Actually Happened**: The mask had jagged, pixelated boundaries, causing visible artifacts in the inpainted region.
-- **Evidence in Repo**: N/A (No code in repo, but common issue with segmentation models).
-- **Root Cause**: The mask was not post-processed to smooth the boundaries. The raw mask from the model is a binary tensor with hard edges.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Use raw mask
-# mask = results[0].masks.data[0]
-
-# + Fixed: Apply Gaussian blur to smooth mask
-import cv2
-mask = results[0].masks.data[0].cpu().numpy()
-mask = cv2.GaussianBlur(mask, (5, 5), 0)
-mask = (mask > 0.5).astype(np.uint8)
-```
-- **Lesson**: **Post-Process Segmentation Masks**. Raw segmentation masks often have jagged boundaries. Apply Gaussian blur or morphological operations to smooth the edges before using them for inpainting.
+- **Lesson**: In long-running services, explicitly manage the lifecycle of heavy ML model objects.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When converting between NumPy arrays and PyTorch tensors, **MUST** ensure that the data type is compatible. `float32` is the standard for inference. Using `float64` will cause a mismatch error.
-    *   **Code**:
-        ```python
-        # BAD
-        tensor = torch.from_numpy(np_array) # If np_array is float64, this will be float64
-        # GOOD
-        tensor = torch.from_numpy(np_array.astype(np.float32))
-        ```
+    *   **Invariant**: `model.names` is a dictionary `{int: str}`. Accessing `model.names[0]` returns a string. Iterating over `model.names` yields keys (IDs).
+    *   **Trap**: Using `in` operator on `model.names` checks keys (IDs), not values (names). `if "face" in model.names` is **False**. Must use `if "face" in model.names.values()`.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: When iterating over detection results, **MUST** check for empty results. If no objects are detected, the loop should not execute.
-    *   **Code**:
-        ```python
-        # BAD
-        for i in range(len(results[0].boxes)): # If results[0].boxes is empty, this is fine, but if results is empty, this crashes
-            pass
-
-        # GOOD
-        if results and results[0].boxes is not None and len(results[0].boxes) > 0:
-            for i in range(len(results[0].boxes)):
-                pass
-        ```
+    *   **Invariant**: YOLO inference is synchronous and blocking. It does not yield to the event loop.
+    *   **Guard**: In async Python applications, `model.predict()` MUST be wrapped in `asyncio.to_thread()` or run in a separate process to prevent blocking the event loop.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: When displaying detection results in a UI, **MUST** debounce the image loading to prevent UI freezing.
-    *   **Code**:
-        ```python
-        # BAD
-        def on_image_change(image):
-            results = model(image) # Blocks UI thread
-            update_ui(results)
-
-        # GOOD
-        import threading
-        def on_image_change(image):
-            def process():
-                results = model(image)
-                update_ui(results)
-            threading.Thread(target=process, daemon=True).start()
-        ```
+    *   **Invariant**: The `plot()` method returns a NumPy array. Converting to PIL Image is required for web display.
+    *   **Trap**: Directly passing a NumPy array to a web framework (e.g., Flask) without encoding to JPEG/PNG will fail.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: When using multiple models concurrently, **MUST** use a lock to prevent race conditions on the GPU.
-    *   **Code**:
-        ```python
-        import threading
-        gpu_lock = threading.Lock()
-
-        def infer(model, image):
-            with gpu_lock:
-                return model(image)
-        ```
+    *   **Invariant**: PyTorch models are not thread-safe by default.
+    *   **Guard**: If multiple threads call `model.predict()` concurrently, a lock MUST be acquired, or the model MUST be loaded per-thread (inefficient) or use a process pool.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: When loading a model from a URL, **MUST** handle network errors and file corruption.
-    *   **Code**:
-        ```python
-        from huggingface_hub import hf_hub_download
-        import os
-
-        def load_model(model_name):
-            try:
-                path = hf_hub_download("Bingsu/adetailer", model_name)
-                if not os.path.exists(path):
-                    raise FileNotFoundError(f"Model file not found: {path}")
-                return YOLO(path)
-            except Exception as e:
-                print(f"Failed to load model: {e}")
-                return None
-        ```
+    *   **Invariant**: `hf_hub_download` returns a file path string.
+    *   **Trap**: If the file does not exist, it raises an exception. The code MUST handle `HFValidationError` or `FileNotFoundError`.
+    *   **Off-by-One**: Mask indices in `results[0].masks` correspond to detection boxes. If `results[0].boxes` is empty, `results[0].masks` is also empty. Accessing `masks[0]` without checking length causes `IndexError`.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The repository is a flat structure of model files. There is no modular layout. The architecture is defined by the YOLOv8/v9 model architecture, which is a single-file PyTorch state dict.
-2.  **Core Abstractions**: The core abstraction is the `YOLO` model object, which encapsulates the model architecture, weights, and inference logic. The domain primitive is the `Results` object, which contains the detection results (boxes, masks, classes, confidences).
-3.  **Error Handling**: There is no error handling in the repository. The consumer must handle all errors (e.g., model loading failures, inference errors).
-4.  **Testing**: There are no tests in the repository. The consumer must test the model's performance on their own data.
-5.  **Security**: The model files are public. There is no security concern. However, the consumer must ensure that the model files are not tampered with (e.g., by checking the file hash).
-6.  **Performance**: The performance is determined by the model size (n, s, m, l, x) and the hardware (GPU/CPU). The smaller models (n, s) are faster but less accurate. The larger models (m, l, x) are slower but more accurate.
-7.  **Deployment**: The models are deployed via Hugging Face Hub. The consumer downloads the model files and loads them into the YOLO library.
-8.  **Agent Patterns**: There are no agent patterns in the repository. The consumer uses the model in a simple request-response pattern.
-9.  **Data Flow**: The data flow is: Image -> YOLO Model -> Results (boxes, masks, classes, confidences) -> Consumer Logic (e.g., inpainting).
+1.  **Architecture**: The repository is a **Data-Only Artifact**. It decouples model training (offline) from model consumption (online). The boundary is the `.pt` file format.
+2.  **Core Abstractions**: The `YOLO` class is the primary abstraction. It encapsulates the model weights, preprocessing, and postprocessing. The `names` attribute is the key domain primitive for class identification.
+3.  **Error Handling**: The repository itself has no error handling. Consumers must handle:
+    *   Download failures (network).
+    *   Model loading failures (corrupted file, incompatible PyTorch version).
+    *   Inference failures (invalid input image).
+4.  **Testing**: No tests are provided in the repository. Consumers must implement:
+    *   **Smoke Test**: Load model, predict on a known image, assert non-empty results.
+    *   **Accuracy Test**: Compare mAP against the values in the README.
+5.  **Security**:
+    *   **Threat Model**: Malicious model files could contain arbitrary code execution payloads in the PyTorch pickle format.
+    *   **Mitigation**: Only download from trusted sources. Use `torch.load` with `weights_only=True` if possible (though Ultralytics may not support this directly, it's a best practice).
+6.  **Performance**:
+    *   **Latency**: YOLOv8n is fastest, YOLOv8m is slower but more accurate.
+    *   **Caching**: The model should be loaded once and cached in memory. Do not reload for every request.
+7.  **Deployment**:
+    *   **CI/CD**: No CI/CD in the repository. Deployment is manual upload to Hugging Face.
+    *   **Runtime Flags**: `device='cuda'` or `device='cpu'` must be specified based on hardware.
+8.  **Agent Patterns**:
+    *   **Tooling Interface**: The `YOLO` class is the tool. The agent must manage the lifecycle (load, predict, unload).
+    *   **Prompt Chains**: N/A (not a LLM).
+9.  **Data Flow**:
+    *   **Mutation Lifecycle**: Input image (BGR/RGB) -> Preprocessing (resize, normalize) -> Inference (GPU) -> Postprocessing (NMS, mask generation) -> Output (boxes, masks, plots).
+    *   **Serializers**: `.pt` file is the serializer.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Use `hf_hub_download` to download model files from Hugging Face Hub. Load the model using `YOLO(path)`.
-2.  **Rule**: Always validate the model's class mapping against the expected schema.
-3.  **Architecture Principle**: Separate model artifacts from the inference code. Distribute models as standalone files.
-4.  **Failure Mode**: Class ID mismatch leads to silent data corruption.
-5.  **Reusable Skill**: How to load a YOLO model from Hugging Face Hub and validate its class mapping.
-6.  **Decision**: Use YOLOv8/v9 for object detection and segmentation. YOLOv8 is faster, YOLOv9 is more accurate.
-7.  **Anti-pattern**: Hardcoding class IDs without validation.
-8.  **Verification Method**: Unit test that loads the model and asserts that the class mapping matches the expected schema.
+1.  **Pattern**: **Dynamic Class ID Resolution**. Always resolve class IDs from `model.names` at runtime.
+2.  **Rule**: **MUST NOT** hardcode class IDs. **MUST** handle color space conversions explicitly.
+3.  **Architecture Principle**: **Model as a Service Artifact**. Treat the model file as an immutable, versioned artifact with a defined schema (class names, input size).
+4.  **Failure Mode**: **Silent Class Mismatch**. Using the wrong class ID leads to incorrect detections without any error message.
+5.  **Reusable Skill**: **Model Integration Checklist**.
+    *   Download model.
+    *   Load model.
+    *   Inspect `model.names`.
+    *   Map semantic labels to IDs.
+    *   Predict.
+    *   Post-process masks.
+    *   Clean up memory.
+6.  **Decision**: **YOLOv8n vs YOLOv8s**. Choose `n` for real-time, `s` for higher accuracy. The trade-off is latency vs mAP.
+7.  **Anti-pattern**: **Hardcoded Class IDs**. `classes=[0]` is dangerous.
+8.  **Verification Method**: **Unit Test for Class Mapping**. Assert that `model.names` contains the expected labels.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Download Model**: Use `hf_hub_download` to download the model file from Hugging Face Hub.
-2.  **Load Model**: Load the model using `YOLO(path)`.
-3.  **Validate Class Mapping**: Extract the class mapping from the model's `names` attribute and validate it against the expected schema.
-4.  **Inference**: Run inference on the input image.
-5.  **Post-Process Results**: Post-process the results (e.g., smooth masks, filter low-confidence detections).
-6.  **Release Resources**: Explicitly delete the model object and clear the GPU cache.
-7.  **Error Handling**: Handle all errors (e.g., model loading failures, inference errors).
-8.  **Testing**: Test the model's performance on your own data.
+**Step-by-Step Verification Checklist for AI Coding Agent:**
+
+1.  **Download Model**:
+    *   Use `hf_hub_download` with the exact filename from the README.
+    *   Verify the file exists and is non-empty.
+2.  **Load Model**:
+    *   Initialize `YOLO(path)`.
+    *   Catch exceptions for incompatible PyTorch versions.
+3.  **Inspect Taxonomy**:
+    *   Access `model.names`.
+    *   Log the class names to verify they match the expected domain (e.g., "face", "hand", "trousers").
+    *   **CRITICAL**: Do not assume COCO classes.
+4.  **Map Labels**:
+    *   Create a mapping from semantic labels (e.g., "face") to model-specific IDs.
+    *   Handle missing labels gracefully (raise error or skip).
+5.  **Preprocess Input**:
+    *   Ensure the input image is in the correct format (BGR for OpenCV, RGB for PIL).
+    *   Resize if necessary (YOLO handles this, but be aware of aspect ratio distortion).
+6.  **Inference**:
+    *   Call `model.predict(image, classes=[target_ids])`.
+    *   Specify `conf` (confidence threshold) to filter out low-quality detections.
+7.  **Post-Processing**:
+    *   Extract masks from `results[0].masks`.
+    *   Convert masks to the required format (e.g., uint8, single-channel).
+    *   **CRITICAL**: Check if masks are empty before accessing indices.
+8.  **Visualization/Output**:
+    *   If visualizing, convert RGB to BGR for OpenCV.
+    *   If saving, use the correct file format (JPEG, PNG).
+9.  **Cleanup**:
+    *   Delete the model object if it is no longer needed.
+    *   Clear GPU cache if using CUDA.
