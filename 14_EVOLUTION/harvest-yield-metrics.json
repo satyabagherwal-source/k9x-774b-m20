@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T02:37:01.448Z",
-  "total_cycles_completed": 345,
-  "total_learnings_persisted": 345,
-  "total_rules_promoted": 152,
+  "last_updated": "2026-10-12T02:39:57.251Z",
+  "total_cycles_completed": 346,
+  "total_learnings_persisted": 346,
+  "total_rules_promoted": 155,
   "history": [
-    {
-      "timestamp": "2026-10-11T16:16:20.747Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv40zfsc",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T16:19:31.687Z",
       "repository": "zai-org/GLM-5.3",
@@ -1403,6 +1396,13 @@
       "repository": "CompVis/stable-diffusion-v1-4",
       "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T02:39:57.251Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
