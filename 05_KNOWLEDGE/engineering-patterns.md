@@ -26575,3 +26575,203 @@ with torch.no_grad():
 
 **VERIFICATION METHOD**:  
 Static analysis that ensures `torch.inference_mode()` is used in all inference functions.
+
+
+---
+
+## 541. [Consistent Data‑Type Propagation Across Backbone and Joint Head] (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Consistent Data‑Type Propagation Across Backbone and Joint Head]",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T16:25:35.229Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv5gr6cj",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** enforce that all tensors flowing from the backbone to the joint head share the same `dtype` (e.g., `bfloat16` or `float32`).  
+> **MUST NOT** cast or convert tensors between dtypes without explicit, documented conversion.  
+
+**WHY**:  
+- Mixed‑dtype tensors trigger implicit conversions that can degrade precision or trigger silent truncation, leading to inconsistent logits.  
+- The Qwen3.5 backbone is configured for `bfloat16`; the joint head must match to preserve the model’s numerical stability.  
+
+**WHEN TO APPLY**:  
+- During model construction (`load_release_model`) and when creating the joint head (`JointSchemaHead`).  
+- In any custom inference wrapper that manipulates tensors before feeding them to the joint head.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# load_release_model.py
+def load_release_model(path: str, device: str = "cpu") -> Tuple[torch.nn.Module, Processor]:
+    # Load backbone
+    backbone = AutoModelForCausalLM.from_pretrained(
+        path,
+        torch_dtype=torch.bfloat16,
+        device_map=device,
+        use_cache=True,
+    )
+    # Load joint head
+    joint_head_cfg = JointSchemaHeadConfig.from_json(
+        os.path.join(path, "joint_head_config.json")
+    )
+    joint_head = JointSchemaHead(joint_head_cfg).to(device)
+    # Ensure dtype consistency
+    assert backbone.dtype == joint_head.dtype, (
+        f"Dtype mismatch: backbone {backbone.dtype} vs joint_head {joint_head.dtype}"
+    )
+    # Wrap into a single model
+    model = ClefFlashModel(backbone, joint_head)
+    return model, Processor.from_pretrained(path)
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Implicit dtype conversion
+joint_logits = joint_head(backbone_output.float())  # Converts to float32 silently
+```
+
+**VERIFICATION METHOD**  
+- Unit test that asserts `model.backbone.dtype == model.joint_head.dtype`.  
+- Linter rule that flags any `.float()` or `.to(torch.float32)` calls on tensors that originate from the backbone.
+
+---
+
+
+---
+
+## 542. [Deterministic Padding Token Usage] (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Deterministic Padding Token Usage]",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T16:25:35.241Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv5gr6cj",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** use the same `pad_token_id` for all modalities (text, image, video) when constructing the input sequence.  
+> **MUST NOT** mix `pad_token_id` values across modalities or rely on implicit defaults.  
+
+**WHY**:  
+- The joint head expects a uniform padding token to correctly mask out padding positions.  
+- Mixing pad tokens causes the attention mask to misalign, leading to spurious logits or NaNs.  
+
+**WHEN TO APPLY**:  
+- In `Processor.encode_image`, `Processor.encode_video`, and `Tokenizer.encode`.  
+- When building the attention mask in `collate_records`.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# processor.py
+def encode_image(self, image: PIL.Image.Image) -> List[int]:
+    # Always use the tokenizer's pad_token_id for image padding
+    pad_id = self.tokenizer.pad_token_id
+    # ... encode image into tokens ...
+    return image_tokens + [pad_id] * self.image_padding_len
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Using a hard‑coded pad id for images
+image_tokens = self.image_encoder.encode(image) + [0] * self.image_padding_len
+```
+
+**VERIFICATION METHOD**  
+- Static analysis rule that ensures all `pad_token_id` references come from `tokenizer.pad_token_id`.  
+- Runtime assertion that `all(token == tokenizer.pad_token_id for token in image_tokens)`.
+
+---
+
+
+---
+
+## 543. [Strict Question‑Logit Alignment] (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Strict Question‑Logit Alignment]",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T16:25:35.253Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv5gr6cj",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** guarantee that the number of logits returned by the joint head equals the total number of options across all questions in the batch.  
+> **MUST NOT** reorder or truncate logits arbitrarily before returning them to the caller.  
+
+**WHY**:  
+- The API contract requires a one‑to‑one mapping between question options and logits; any misalignment corrupts downstream probability calculations.  
+- Hidden state mis‑routing can silently shift logits, producing incorrect decision probabilities.  
+
+**WHEN TO APPLY**:  
+- Inside `ClefFlashModel.forward` after the joint head produces logits.  
+- In any custom wrapper that reshapes or slices the logits tensor.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# clef_flash_model.py
+def forward(self, batch: Batch) -> Tuple[torch.Tensor, List[Question]]:
+    backbone_output = self.backbone(batch.input_ids, attention_mask=batch.attn_mask)
+    # Extract the last hidden state for each example
+    last_hidden = backbone_output.last_hidden_state[:, -1, :]
+    logits = self.joint_head(last_hidden, batch.question_ids)
+    # logits shape: [batch, total_options]
+    assert logits.shape[1] == batch.total_options, (
+        f"Logit count {logits.shape[1]} != expected {batch.total_options}"
+    )
+    return logits, batch.questions
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Slicing logits to a fixed size
+logits = logits[:, :batch.total_options]  # silently discards extra logits
+```
+
+**VERIFICATION METHOD**  
+- Unit test that verifies `logits.shape[1] == sum(len(q.options) for q in batch.questions)`.  
+- Runtime check that raises `ValueError` if the shape mismatch occurs.
+
+---

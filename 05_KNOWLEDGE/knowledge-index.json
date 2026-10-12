@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T16:22:41.556Z",
-  "total_verified_learnings": 4540,
+  "last_updated": "2026-10-12T16:25:35.271Z",
+  "total_verified_learnings": 4541,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -110449,6 +110449,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T16:22:41.556Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-flash-mv5gr6cj": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv5gr6cj",
+      "source": "Cloudflare/clef-flash",
+      "repository": "Cloudflare/clef-flash",
+      "slug": "hf-cloudflare-clef-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "content_hash": "392164be40ae595c0943cf770a471f0f1b7c738eb2a840ce729abe934df854ab",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 541,
+          "title": "[Consistent Data‑Type Propagation Across Backbone and Joint Head]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 542,
+          "title": "[Deterministic Padding Token Usage]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 543,
+          "title": "[Strict Question‑Logit Alignment]",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T16:25:35.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

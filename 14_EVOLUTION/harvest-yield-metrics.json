@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T16:22:41.594Z",
-  "total_cycles_completed": 585,
-  "total_learnings_persisted": 585,
-  "total_rules_promoted": 286,
+  "last_updated": "2026-10-12T16:25:35.299Z",
+  "total_cycles_completed": 586,
+  "total_learnings_persisted": 586,
+  "total_rules_promoted": 289,
   "history": [
-    {
-      "timestamp": "2026-10-12T04:47:30.654Z",
-      "repository": "Fei2411/DeepSeek-Bot",
-      "learningId": "learn-github-fei2411-deepseek-bot-mv4rtfyk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T04:59:42.797Z",
       "repository": "Qwen/Qwen3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T16:22:41.594Z",
       "repository": "Cloudflare/clef",
       "learningId": "learn-huggingface-hf-cloudflare-clef-mv5gngao",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T16:25:35.299Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv5gr6cj",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
