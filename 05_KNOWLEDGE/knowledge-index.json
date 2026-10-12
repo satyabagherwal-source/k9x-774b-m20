@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:08:42.550Z",
-  "total_verified_learnings": 4649,
+  "last_updated": "2026-10-12T22:14:20.492Z",
+  "total_verified_learnings": 4650,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -113317,6 +113317,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T22:08:42.550Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv5t7oc7": {
+      "learning_id": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv5t7oc7",
+      "source": "unsloth/Qwen-Image-2.1-GGUF",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "slug": "hf-unsloth-qwen-image-2.1-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
+      "source_version": "hf-unsloth-qwen-image-2.1-gguf",
+      "content_hash": "03af71cff3ddc2e578572200b3bcbb04a303fadb27737fe09f8b8a6a27712457",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 585,
+          "title": "Tri-Modular Diffusion Pipeline Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 586,
+          "title": "Sensitivity-Calibrated Non-Uniform Quantization Selection",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T22:14:20.492Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
