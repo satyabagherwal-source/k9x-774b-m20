@@ -413,3 +413,4 @@
 | `CYCLE-20261012-0OGR` | `2026-10-12T03:01:09.723Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`bb60761e...`) |
 | `CYCLE-20261012-4VAD` | `2026-10-12T03:04:25.189Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`36193f2c...`) |
 | `CYCLE-20261012-8NH5` | `2026-10-12T03:07:21.689Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 412, Rule 413, Rule 414` | Yes (`fa8b726d...`) |
+| `CYCLE-20261012-C8JO` | `2026-10-12T03:10:08.964Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`3bef4bb5...`) |
