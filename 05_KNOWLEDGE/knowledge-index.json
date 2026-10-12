@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:50:05.912Z",
-  "total_verified_learnings": 4677,
+  "last_updated": "2026-10-12T23:53:14.189Z",
+  "total_verified_learnings": 4678,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -114081,6 +114081,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T23:50:05.911Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv5wqusz": {
+      "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv5wqusz",
+      "source": "CompVis/stable-diffusion-v1-4",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "slug": "hf-compvis-stable-diffusion-v1-4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+      "source_version": "hf-compvis-stable-diffusion-v1-4",
+      "content_hash": "8b01eb95bbd2fe8b3445137c2a4f78a463fc02ed27a6d4dce2b07b272b41193e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 602,
+          "title": "Weight-Code Version Coupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 603,
+          "title": "Numerical Precision Boundary Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T23:53:14.189Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

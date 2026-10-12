@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-VWMP",
-    "timestamp": "2026-10-11T20:25:32.401Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv49vwk3",
-    "contentHash": "daae77660d2660d10adb8874921cbf041d38454853aa66e7cb40e76dfd73458a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-ZXNH",
     "timestamp": "2026-10-11T20:28:40.349Z",
     "repository": "microsoft/FrogNano-4B-2609",
@@ -7492,6 +7477,21 @@
     "contentHash": "bda16da2e358e5047175ac770efa75d98bcad4324b56960dbe054b5ce72a4697",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-QUWP",
+    "timestamp": "2026-10-12T23:53:14.233Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv5wqusz",
+    "contentHash": "8b01eb95bbd2fe8b3445137c2a4f78a463fc02ed27a6d4dce2b07b272b41193e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
