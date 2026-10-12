@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:18:04.226Z",
-  "total_cycles_completed": 413,
-  "total_learnings_persisted": 413,
+  "last_updated": "2026-10-12T06:21:01.236Z",
+  "total_cycles_completed": 414,
+  "total_learnings_persisted": 414,
   "total_rules_promoted": 181,
   "history": [
-    {
-      "timestamp": "2026-10-11T19:58:37.526Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv48xaja",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T20:01:31.510Z",
       "repository": "BAAI/bge-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T06:18:04.226Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4v1wik",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:21:01.236Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4v5p3k",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
