@@ -708,3 +708,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv5pp662` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-12T20:35:58.287Z |
 | `learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv5pt9gt` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-12T20:39:09.171Z |
 | `learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv5px51m` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-12T20:42:10.105Z |
+| `learn-huggingface-hf-deepseek-ai-deepseek-r1-mv5q0w2w` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-12T20:45:05.087Z |
