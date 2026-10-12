@@ -720,3 +720,4 @@
 | `CYCLE-20261012-4VNH` | `2026-10-12T20:20:11.453Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`b4e87b4c...`) |
 | `CYCLE-20261012-9BMC` | `2026-10-12T20:23:38.772Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 563, Rule 564, Rule 565` | Yes (`fbff2b1c...`) |
 | `CYCLE-20261012-E5BQ` | `2026-10-12T20:27:23.894Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 566, Rule 567, Rule 568` | Yes (`1ecdaccd...`) |
+| `CYCLE-20261012-HN7D` | `2026-10-12T20:30:07.033Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`8dbc7eda...`) |

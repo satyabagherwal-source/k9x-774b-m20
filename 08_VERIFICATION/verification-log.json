@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-C20S",
-    "timestamp": "2026-10-11T17:22:08.572Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv43c1y3",
-    "contentHash": "8586b5bcd6c997ab5b6ab2be552a91bda46dd6bc0e50fa803a17d8b169dce556",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-G3OH",
     "timestamp": "2026-10-11T17:25:17.345Z",
     "repository": "black-forest-labs/FLUX.1-dev",
@@ -7492,6 +7477,21 @@
     "contentHash": "1ecdaccd9099679d4b8e8751cb47a3bd62e00c56a51eca713447dd3a043c7d34",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-HN7D",
+    "timestamp": "2026-10-12T20:30:07.033Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv5phn5n",
+    "contentHash": "8dbc7edad6a99aca8f7ee79e49ea0d0f39764f5f8d97c65c6f034406b9e086db",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
