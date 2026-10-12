@@ -750,3 +750,4 @@
 | `CYCLE-20261012-GOZY` | `2026-10-12T21:53:21.550Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 580, Rule 581` | Yes (`143bac1b...`) |
 | `CYCLE-20261012-KJKR` | `2026-10-12T21:56:21.147Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`beea0a80...`) |
 | `CYCLE-20261012-OLIT` | `2026-10-12T21:59:30.293Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 582, Rule 583, Rule 584` | Yes (`cb69e5ea...`) |
+| `CYCLE-20261012-SGWR` | `2026-10-12T22:02:30.939Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`1c1fe5a3...`) |
