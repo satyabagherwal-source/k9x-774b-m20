@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-K7AG",
-    "timestamp": "2026-10-11T08:08:36.328Z",
-    "repository": "expressjs/cors",
-    "learningId": "learn-github-e2e-expressjs-cors-real-mv3jk707",
-    "contentHash": "a23344a6f6265f41eed607c18adf7c30558c20be6805e0eeca5ab459784b6c8f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-NDIK",
     "timestamp": "2026-10-11T08:11:04.364Z",
     "repository": "test-org/test-idempotent-repo",
@@ -7490,6 +7475,21 @@
     "repository": "openai-community/gpt2",
     "learningId": "learn-huggingface-hf-openai-community-gpt2-mv57ctxv",
     "contentHash": "f8d32a01930db88d2f153888ae5769878c2da72c5397f966e363d841c5f27929",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-GRO5",
+    "timestamp": "2026-10-12T12:05:33.077Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv57grle",
+    "contentHash": "e9e869cf377f999a406c620f6ac9f601cc4cb7fd110de7e38467cdaaba5b5a23",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
