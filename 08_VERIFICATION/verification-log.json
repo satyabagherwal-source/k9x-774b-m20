@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-9DBC",
-    "timestamp": "2026-10-11T15:28:04.777Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l",
-    "contentHash": "f479aebef8ec285ece361f10233234e81168d847db85653231dc8ad274912e9d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-HKD0",
     "timestamp": "2026-10-11T15:34:27.156Z",
     "repository": "Infisical/infisical",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
     "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv5lqc39",
     "contentHash": "dfdca08f23c0feb2c3de357957ce8286ee154733a0d2f65a45aaba925752758f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-UKXB",
+    "timestamp": "2026-10-12T18:48:12.143Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv5luku6",
+    "contentHash": "7e8dc96adcc08134976d0f62d01d8c94a3d95ecf013e383496d9eac10c1fb90a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
