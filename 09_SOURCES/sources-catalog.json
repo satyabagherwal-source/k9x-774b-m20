@@ -1205,9 +1205,9 @@
     "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceVersion": "hf-conwayresearch-underdog-saluki-27b-1.0",
     "license": "Open-Source",
-    "contentHash": "218b4e6b376dc59ad058d24b5f6be737f46aaa5782c0b574edd57c833546ab6f",
-    "lastHarvestedAt": "2026-10-11T22:13:49.435Z",
-    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
+    "contentHash": "f905ed82a2b96289342a9fc8342420c863f6092c83831c42d0a01904949aeea4",
+    "lastHarvestedAt": "2026-10-12T04:31:59.891Z",
+    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4r9hrh"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "repository": "google/gemma-4-26B-A4B-it",

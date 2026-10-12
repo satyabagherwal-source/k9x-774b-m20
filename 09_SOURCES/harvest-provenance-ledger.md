@@ -423,3 +423,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-openai-community-gpt2-mv4qxczq` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-12T04:22:33.830Z |
 | `learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4r23mz` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-12T04:26:15.058Z |
 | `learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4r5pdv` | `https://huggingface.co/nomic-ai/nomic-embed-text-v1.5` | `hf-nomic-a` | Multi-dimensional audit evidence | 2026-10-12T04:29:03.133Z |
+| `learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4r9hrh` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-12T04:31:59.891Z |
