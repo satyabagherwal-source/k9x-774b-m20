@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T01:42:59.967Z",
-  "total_cycles_completed": 328,
-  "total_learnings_persisted": 328,
+  "last_updated": "2026-10-12T01:45:45.677Z",
+  "total_cycles_completed": 329,
+  "total_learnings_persisted": 329,
   "total_rules_promoted": 144,
   "history": [
-    {
-      "timestamp": "2026-10-11T15:16:31.510Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T15:19:11.341Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T01:42:59.967Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T01:45:45.677Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
