@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:01:09.726Z",
-  "total_cycles_completed": 353,
-  "total_learnings_persisted": 353,
+  "last_updated": "2026-10-12T03:04:25.192Z",
+  "total_cycles_completed": 354,
+  "total_learnings_persisted": 354,
   "total_rules_promoted": 155,
   "history": [
-    {
-      "timestamp": "2026-10-11T16:46:45.020Z",
-      "repository": "autonomous-ai/openharness",
-      "learningId": "learn-github-autonomous-ai-openharness-mv422jff",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T17:00:53.683Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T03:01:09.726Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T03:04:25.192Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
