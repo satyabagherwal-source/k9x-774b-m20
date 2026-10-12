@@ -600,3 +600,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv5dbd9o` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-12T14:49:18.928Z |
 | `learn-huggingface-hf-apple-lensvlm-9b-mv5dgkqv` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-12T14:53:21.942Z |
 | `learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-12T14:56:16.937Z |
+| `learn-huggingface-hf-fastino-gliner2-5-decide-mv5do2io` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-12T14:59:11.525Z |
