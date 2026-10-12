@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T20:33:04.693Z",
-  "total_verified_learnings": 4618,
+  "last_updated": "2026-10-12T20:35:58.244Z",
+  "total_verified_learnings": 4619,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -112487,6 +112487,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T20:33:04.692Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv5pp662": {
+      "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv5pp662",
+      "source": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "slug": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "content_hash": "a7f9f913be04d34b5d5645d9586c2f84fcd7cb3a748ea139e706c6bae6904723",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T20:35:58.244Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
