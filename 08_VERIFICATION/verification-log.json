@@ -5923,5 +5923,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-JCFS",
+    "timestamp": "2026-10-12T05:35:38.680Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv4tjcco",
+    "contentHash": "7db4cc9286b5961eddd9cc03b2a9707545c979516200bf44bd4d5801ba82147b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
