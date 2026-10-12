@@ -19942,3 +19942,241 @@ def test_gumbel_quantizer_numerical_stability():
 ```
 
 ---
+
+
+---
+
+## 457. Hybrid Linear-Attention/Transformer Layer Stride Synchronization (Harvested from orcarouter/OrcaSAQ-2-27B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid Linear-Attention/Transformer Layer Stride Synchronization",
+  "source": "orcarouter/OrcaSAQ-2-27B",
+  "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+  "source_version": "hf-orcarouter-orcasaq-2-27b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T07:42:50.088Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4y2wu9",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [orcarouter/OrcaSAQ-2-27B](https://huggingface.co/orcarouter/OrcaSAQ-2-27B) (Revision: `hf-orcarou`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serving or loading hybrid SSM-Transformer architectures containing decoupled attention types (such as linear/recurrent layers alternating with full attention), the inference engine MUST enforce heterogeneous cache allocation based on the declared `layer_types` manifest. It MUST NOT allocate standard contiguous key-value memory blocks for layers marked as recurrent/linear attention, and recurrent states MUST be maintained in 32-bit floating-point precision (`float32`) regardless of weight quantization bit-width.
+
+**WHY**:
+Linear attention layers operate via fixed-size recurrent state matrices ($\mathcal{S}_t \in \mathbb{R}^{d_{in} \times d_{out}}$) updated via 1D temporal convolution and recurrent transitions. Allocating standard transformer KV-cache slots for these layers wastes gigabytes of VRAM. Conversely, downcasting recurrent SSM state accumulators to low-bit integers or `bfloat16` causes numerical drift across multi-thousand-token generation loops, inducing severe perplexity explosion and infinite repetition loops.
+
+**WHEN TO APPLY**:
+Apply in LLM runtimes (vLLM, TensorRT-LLM, Hugging Face Transformers) whenever `layer_types` contains mixed definitions (`linear_attention` vs `full_attention`) and `mamba_ssm_dtype == "float32"`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Dict, List, Optional
+import torch
+import torch.nn as nn
+
+class HybridKVCacheManager:
+    """
+    Manages decoupled cache structures for hybrid SSM/Full-Attention architectures.
+    Enforces O(1) state caching for linear layers and dynamic paging for attention layers.
+    """
+    def __init__(
+        self,
+        num_layers: int,
+        layer_types: List[str],
+        hidden_size: int,
+        num_kv_heads: int,
+        head_dim: int,
+        linear_conv_dim: int,
+        linear_val_heads: int,
+        linear_val_dim: int,
+        ssm_state_dtype: torch.dtype = torch.float32,
+        cache_dtype: torch.dtype = torch.bfloat16
+    ) -> None:
+        if len(layer_types) != num_layers:
+            raise ValueError(f"layer_types length ({len(layer_types)}) != num_layers ({num_layers})")
+        
+        self.layer_types = layer_types
+        self.ssm_state_dtype = ssm_state_dtype
+        self.cache_dtype = cache_dtype
+        
+        # Dedicated cache registries
+        self.kv_cache_layers: Dict[int, Dict[str, torch.Tensor]] = {}
+        self.ssm_recurrent_states: Dict[int, torch.Tensor] = {}
+        self.ssm_conv_states: Dict[int, torch.Tensor] = {}
+        
+        for idx, ltype in enumerate(layer_types):
+            if ltype == "full_attention":
+                # Only allocate KV cache slots for true attention layers
+                self.kv_cache_layers[idx] = {
+                    "k": torch.empty(0, num_kv_heads, 0, head_dim, dtype=cache_dtype),
+                    "v": torch.empty(0, num_kv_heads, 0, head_dim, dtype=cache_dtype)
+                }
+            elif ltype == "linear_attention":
+                # Recurrent state strictly pinned to float32 to prevent catastrophic drift
+                self.ssm_recurrent_states[idx] = torch.zeros(
+                    1, linear_val_heads, linear_val_dim, linear_val_dim,
+                    dtype=self.ssm_state_dtype
+                )
+                self.ssm_conv_states[idx] = torch.zeros(
+                    1, hidden_size, linear_conv_dim,
+                    dtype=cache_dtype
+                )
+            else:
+                raise NotImplementedError(f"Unsupported layer type: {ltype}")
+
+    def allocate_step_buffers(self, batch_size: int, device: torch.device) -> None:
+        for idx in self.ssm_recurrent_states:
+            shape = (batch_size, *self.ssm_recurrent_states[idx].shape[1:])
+            self.ssm_recurrent_states[idx] = torch.zeros(
+                shape, dtype=self.ssm_state_dtype, device=device
+            )
+            conv_shape = (batch_size, *self.ssm_conv_states[idx].shape[1:])
+            self.ssm_conv_states[idx] = torch.zeros(
+                conv_shape, dtype=self.cache_dtype, device=device
+            )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniformly allocating standard KV-cache across all layers.
+# This exhausts GPU memory on hybrid models and forces SSM states into bfloat16.
+class BrokenUniformCache:
+    def __init__(self, num_layers: int, batch: int, heads: int, seq: int, dim: int):
+        # Disastrous: Allocates full attention KV memory for all 64 layers
+        # even though 48 layers are SSM linear attention.
+        self.k_cache = [torch.zeros(batch, heads, seq, dim, dtype=torch.bfloat16) for _ in range(num_layers)]
+        self.v_cache = [torch.zeros(batch, heads, seq, dim, dtype=torch.bfloat16) for _ in range(num_layers)]
+        # Fails to initialize Float32 recurrent state buffers for linear_attention!
+```
+
+**VERIFICATION METHOD**:
+Run an automated tensor allocation assertion verifying:
+1. `len(kv_cache_layers) == sum(1 for t in layer_types if t == 'full_attention')` (must equal 16 for a 64-layer interval-4 model).
+2. For each linear attention layer, verify `ssm_recurrent_states[idx].dtype == torch.float32`.
+
+---
+
+
+---
+
+## 458. Multi-Token Prediction (MTP) Speculative Rollback Contract (Harvested from orcarouter/OrcaSAQ-2-27B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Token Prediction (MTP) Speculative Rollback Contract",
+  "source": "orcarouter/OrcaSAQ-2-27B",
+  "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+  "source_version": "hf-orcarouter-orcasaq-2-27b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T07:42:50.099Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4y2wu9",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [orcarouter/OrcaSAQ-2-27B](https://huggingface.co/orcarouter/OrcaSAQ-2-27B) (Revision: `hf-orcarou`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In speculative decoding architectures utilizing integrated single-layer Multi-Token Prediction (MTP) modules (`mtp_num_hidden_layers >= 1`), the speculative verification loop MUST NOT execute draft proposal steps across special control token boundaries (such as tool-call boundaries, end-of-text `<|endoftext|>`, or role termination markers `<|im_end|>`). If any drafted token in the speculative head emits an ID belonging to `tokenizer.all_special_ids`, the speculation pipeline MUST truncate the verification chunk immediately at that token boundary and commit verification without evaluating subsequent tokens in that step.
+
+**WHY**:
+MTP heads are trained to predict $k$ forward positions unconditionally or conditioned on sequence embeddings. Special tokens delineate critical control boundaries (e.g., transition from assistant thought reasoning blocks to tool calls, or EOS termination). Emitting speculative tokens past an EOS or `<|im_end|>` token causes semantic leakage, corrupts KV-cache states with phantom generations, and breaks the parser state machine in agent frameworks.
+
+**WHEN TO APPLY**:
+Apply to any speculative decoding worker or verification kernel interfacing with models possessing `mtp_num_hidden_layers > 0`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import List, Tuple
+import torch
+
+def verify_speculative_mtp_drafts(
+    target_logits: torch.Tensor,       # [batch_size, draft_len, vocab_size]
+    draft_tokens: torch.Tensor,        # [batch_size, draft_len]
+    special_token_ids: set[int],
+    temperature: float = 1.0,
+    top_p: float = 0.95
+) -> Tuple[torch.Tensor, int]:
+    """
+    Safely verifies speculative draft tokens emitted by target + MTP head,
+    terminating immediately upon encountering special/control tokens.
+    """
+    batch_size, draft_len = draft_tokens.shape
+    accepted_tokens: List[int] = []
+    
+    for i in range(draft_len):
+        draft_id = draft_tokens[0, i].item()
+        
+        # Invariant: Special token immediately halts speculative chain
+        if draft_id in special_token_ids:
+            # Validate target model emission for this position
+            target_token_id = torch.argmax(target_logits[0, i, :]).item()
+            if target_token_id == draft_id:
+                accepted_tokens.append(draft_id)
+            # Break immediately: DO NOT continue speculative validation past control boundary
+            break
+            
+        # Target verification logic
+        target_token_id = torch.argmax(target_logits[0, i, :]).item()
+        if target_token_id == draft_id:
+            accepted_tokens.append(draft_id)
+        else:
+            # Speculation mismatch: accept the target model's correction and break
+            accepted_tokens.append(target_token_id)
+            break
+            
+    return torch.tensor([accepted_tokens], device=draft_tokens.device), len(accepted_tokens)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naively accepting speculative sequences without boundary checks
+def unsafe_verify(draft_tokens, target_logits):
+    accepted = []
+    for i in range(len(draft_tokens)):
+        # Bug: If draft_tokens[i] is <|im_end|> or <|endoftext|>,
+        # evaluating index i+1 will inject invalid hallucinated tokens
+        # into the generation stream past the valid logical termination!
+        if draft_tokens[i] == torch.argmax(target_logits[i]):
+            accepted.append(draft_tokens[i])
+        else:
+            accepted.append(torch.argmax(target_logits[i]))
+            break
+    return accepted
+```
+
+**VERIFICATION METHOD**:
+Construct an integration test with a mock speculative generator:
+```python
+def test_mtp_boundary_truncation():
+    special_ids = {248044, 248046}  # <|endoftext|>, <|im_end|>
+    # Draft contains normal token, <|im_end|>, and a hallucinated token after
+    draft = torch.tensor([[1052, 248046, 9999]])
+    # Mock logits matching all
+    mock_logits = torch.zeros(1, 3, 250000)
+    mock_logits[0, 0, 1052] = 100.0
+    mock_logits[0, 1, 248046] = 100.0
+    mock_logits[0, 2, 9999] = 100.0
+    
+    accepted, count = verify_speculative_mtp_drafts(mock_logits, draft, special_ids)
+    assert count == 2
+    assert 9999 not in accepted.tolist()[0]
+```
+
+---

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:38:00.642Z",
+  "last_updated": "2026-10-12T07:42:50.167Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -510,15 +510,15 @@
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm",
-      "content_hash": "76acce05c73dd4aa5e0df1fd2c95e983da870aa7cf0a543afdbf9e6341b1db3c",
-      "verified_at": "2026-10-12T00:45:31.478Z",
+      "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4y2wu9",
+      "content_hash": "be5be59f8ee695b2df8c98ab1d76a27c2a7303fa96bd8cc80dbd0c62218d9087",
+      "verified_at": "2026-10-12T07:42:50.167Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T00:45:31.478Z"
+      "last_updated": "2026-10-12T07:42:50.167Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",

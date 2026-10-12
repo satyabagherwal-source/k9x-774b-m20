@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:38:00.583Z",
-  "total_verified_learnings": 4388,
+  "last_updated": "2026-10-12T07:42:50.128Z",
+  "total_verified_learnings": 4389,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106341,6 +106341,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T07:38:00.583Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4y2wu9": {
+      "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4y2wu9",
+      "source": "orcarouter/OrcaSAQ-2-27B",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "slug": "hf-orcarouter-orcasaq-2-27b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "content_hash": "be5be59f8ee695b2df8c98ab1d76a27c2a7303fa96bd8cc80dbd0c62218d9087",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 457,
+          "title": "Hybrid Linear-Attention/Transformer Layer Stride Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 458,
+          "title": "Multi-Token Prediction (MTP) Speculative Rollback Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T07:42:50.128Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
