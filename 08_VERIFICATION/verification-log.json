@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-USCT",
-    "timestamp": "2026-10-11T09:12:49.421Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv3lusad",
-    "contentHash": "3aebdecedbb19f46914f62832ff91762eb880952d3139ae777d11fe4a375e18c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-ZNNB",
     "timestamp": "2026-10-11T09:16:36.599Z",
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "7aec75648fec68b6efcc59a0af88be0955d1050c6e0027da036c950a9553fa01",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-KWST",
+    "timestamp": "2026-10-12T13:04:45.581Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv59kwp4",
+    "contentHash": "48b3d37b3f7d1ad181ce08594935d943eaec5481998a76bc471c03d06db6b02c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

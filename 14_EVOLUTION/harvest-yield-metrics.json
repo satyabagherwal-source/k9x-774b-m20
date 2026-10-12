@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T13:00:19.839Z",
-  "total_cycles_completed": 525,
-  "total_learnings_persisted": 525,
-  "total_rules_promoted": 251,
+  "last_updated": "2026-10-12T13:04:45.584Z",
+  "total_cycles_completed": 526,
+  "total_learnings_persisted": 526,
+  "total_rules_promoted": 254,
   "history": [
-    {
-      "timestamp": "2026-10-12T01:36:51.975Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T01:40:06.977Z",
       "repository": "facebook/sam3",
@@ -1403,6 +1396,13 @@
       "repository": "autotrust/GEV-26B-Decide",
       "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv59f7pg",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T13:04:45.584Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv59kwp4",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
