@@ -1,6 +1,6 @@
 # EVIDENCE-BASED KNOWLEDGE GAP & TARGETED RESEARCH REPORT
 > **Verification Status**: EMPIRICALLY DISCOVERED & PRIORITIZED
-> **Generated At**: `2026-10-12T02:37:58.042Z`
+> **Generated At**: `2026-10-12T03:03:07.797Z`
 > **Authority**: AI-Builder-Brain Universal Governance Substrate
 
 ---
@@ -9,12 +9,12 @@
 
 | Metric | Measured Value | Denominator | Rate | Interpretation |
 | :--- | :--- | :--- | :--- | :--- |
-| **Total Evidence-Backed Gaps** | `97` | 97 Gaps | 100% | Discovered via probes, audits & memory |
-| **Gaps Closed via Research** | `3` | 97 Gaps | **3.1%** | Verified via retrieval & empirical test |
-| **Open Gaps Remaining** | `94` | 97 Gaps | 96.9% | Prioritized for next research cycles |
-| **High-Severity Gaps** | `3` | 97 Gaps | 3.1% | Split-brain, DoS, Auth compromise hazards |
-| **Medium-Severity Gaps** | `92` | 97 Gaps | 94.8% | Sandbox bounds, transaction consistency |
-| **Low-Severity Gaps** | `2` | 97 Gaps | 2.1% | Unpromoted candidate directive syntax |
+| **Total Evidence-Backed Gaps** | `109` | 109 Gaps | 100% | Discovered via probes, audits & memory |
+| **Gaps Closed via Research** | `3` | 109 Gaps | **2.8%** | Verified via retrieval & empirical test |
+| **Open Gaps Remaining** | `106` | 109 Gaps | 97.2% | Prioritized for next research cycles |
+| **High-Severity Gaps** | `3` | 109 Gaps | 2.8% | Split-brain, DoS, Auth compromise hazards |
+| **Medium-Severity Gaps** | `104` | 109 Gaps | 95.4% | Sandbox bounds, transaction consistency |
+| **Low-Severity Gaps** | `2` | 109 Gaps | 1.8% | Unpromoted candidate directive syntax |
 
 > [!NOTE]
 > **Disciplined Targeted Research vs Indiscriminate Scraping**: The Brain does not harvest repositories based on popularity or raw stars. Every research task originates from an empirical retrieval deficit, missing verification method, or production incident autopsy.
@@ -138,6 +138,18 @@ $$\text{Priority} = \frac{(I \times 0.25) + (R \times 0.25) + (E \times 0.20) + 
 | `GAP-VERIFY-RULE-88` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
 | `GAP-VERIFY-RULE-89` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
 | `GAP-VERIFY-RULE-90` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-91` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-92` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-93` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-94` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-95` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-96` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-97` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-98` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-99` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-100` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-101` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
+| `GAP-VERIFY-RULE-102` | QUALITY_ASSURANCE | `MISSING_VERIFICATION_METHOD` | **MEDIUM** | 6 | 5 | 9 | **5.59** | `OPEN` |
 | `GAP-INBOX-CD-WV6E` | INBOX_CANDIDATES | `UNRESOLVED_CANDIDATE` | **LOW** | 4 | 3.5 | 8.5 | **4** | `OPEN` |
 | `GAP-INBOX-CD-SPIP` | INBOX_CANDIDATES | `UNRESOLVED_CANDIDATE` | **LOW** | 4 | 3.5 | 8.5 | **4** | `OPEN` |
 
@@ -700,6 +712,78 @@ $$\text{Priority} = \frac{(I \times 0.25) + (R \times 0.25) + (E \times 0.20) + 
 - **Impact Area**: Empirical Verification Governance
 - **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
 - **Target Research Objective**: Formulate concrete verification probe for Rule 90.
+
+### `[GAP-VERIFY-RULE-91]` Rule 91 (The Immutable Dependency Invariant (Harvested from microsoft/Security-101)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 91.
+
+### `[GAP-VERIFY-RULE-92]` Rule 92 (The "Normalization-First" Invariant (Harvested from browser-use/browser-use)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 92.
+
+### `[GAP-VERIFY-RULE-93]` Rule 93 (The "Optimistic-Sync" Invariant (Harvested from assistant-ui/assistant-ui)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 93.
+
+### `[GAP-VERIFY-RULE-94]` Rule 94 (The Reactive Schema Invariant (Harvested from pathwaycom/llm-app)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 94.
+
+### `[GAP-VERIFY-RULE-95]` Rule 95 (Provider-Adapter Decoupling (Harvested from pathwaycom/llm-app)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 95.
+
+### `[GAP-VERIFY-RULE-96]` Rule 96 (The "External-Internal State Decoupling" Rule (Harvested from actions/actions-runner-controller)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 96.
+
+### `[GAP-VERIFY-RULE-97]` Rule 97 (The "Constructor-Override" Prohibition (Harvested from run-llama/llama_index)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 97.
+
+### `[GAP-VERIFY-RULE-98]` Rule 98 (The "Schema-as-Code" Invariant (Harvested from run-llama/llama_index)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 98.
+
+### `[GAP-VERIFY-RULE-99]` Rule 99 (The Proxy-Composition Invariant (Harvested from tamagui/tamagui)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 99.
+
+### `[GAP-VERIFY-RULE-100]` Rule 100 ([The Atomic Audit Invariant] (Harvested from microsoft/agent-governance-toolkit)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 100.
+
+### `[GAP-VERIFY-RULE-101]` Rule 101 ([The Fail-Closed Readiness Pattern] (Harvested from microsoft/agent-governance-toolkit)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 101.
+
+### `[GAP-VERIFY-RULE-102]` Rule 102 (Stdin Stream Freezing During Terminal Capability Probing (Harvested from google-gemini/gemini-cli)) lacks empirical verification method
+- **Category**: `MISSING_VERIFICATION_METHOD` | **Severity**: **MEDIUM** | **Priority Score**: `5.59`
+- **Impact Area**: Empirical Verification Governance
+- **Diagnosis**: Rule contains invariant but lacks concrete empirical verification method.
+- **Target Research Objective**: Formulate concrete verification probe for Rule 102.
 
 ### `[GAP-INBOX-CD-WV6E]` Candidate CD-WV6E unpromoted: Missing mandatory **VERIFIED IMPLEMENTATION PATTERN**
 - **Category**: `UNRESOLVED_CANDIDATE` | **Severity**: **LOW** | **Priority Score**: `4`

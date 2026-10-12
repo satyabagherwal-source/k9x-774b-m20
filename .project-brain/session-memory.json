@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T02:41:01.927Z",
+  "last_updated": "2026-10-12T03:03:01.230Z",
   "memories": [
     {
       "memory_id": "mem-1791568984337-695191",
@@ -407,6 +407,40 @@
         "idempotency",
         "compensation",
         "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791774139158-afb265",
+      "timestamp": "2026-10-12T03:02:19.158Z",
+      "task_context": "project-saas-billing refund flow",
+      "defect_observed": "Duplicate refund issue under network retry without idempotency key",
+      "user_critique": null,
+      "invariant_lesson": "Successfully applied Rule 319: Idempotent Saga Compensation & Transactional Outbox Invariant preventing $45 duplicate refund.",
+      "negative_warning": "NEVER execute Stripe refund or compensation without deterministic idempotency key and outbox lease.",
+      "keywords": [
+        "billing",
+        "refund",
+        "saga",
+        "idempotency",
+        "compensation",
+        "stripe"
+      ]
+    },
+    {
+      "memory_id": "mem-1791774180966-62f233",
+      "timestamp": "2026-10-12T03:03:00.967Z",
+      "task_context": "Fix Windows CRLF line ending regex in parser without altering DOM math",
+      "defect_observed": "Build failed or missing: exit code was 1",
+      "user_critique": null,
+      "invariant_lesson": "",
+      "negative_warning": "Verification Barrier Blocked: Build failed or missing: exit code was 1",
+      "keywords": [
+        "MICRO_FIX",
+        "fix",
+        "windows",
+        "crlf",
+        "line",
+        "ending"
       ]
     }
   ]

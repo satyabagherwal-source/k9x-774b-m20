@@ -12,7 +12,7 @@
 | :--- | :--- | :--- | :--- | :--- |
 | **Phase 1: Remote Git State** | **PASS** | `origin/main` HEAD `55caf2081` & ancestors `5b01ddfed`, `161900009` | 3/3 commits verified | Working tree clean, fast-forward tracking confirmed |
 | **Phase 2: Evidence Correction** | **PASS** | Source-specific evidence for Rule 319 (Replaced fencing tokens) | 3/3 sources verified | Inspected vs reference distinction established |
-| **Phase 3: Universal Promotion** | **PASS** | Promoted to **Rule 319** in canonical knowledge | 1/1 rule codified | 403 rules strictly contiguous (1..403, 0 duplicates, 0 gaps) |
+| **Phase 3: Universal Promotion** | **PASS** | Promoted to **Rule 319** in canonical knowledge | 1/1 rule codified | 411 rules strictly contiguous (1..411, 0 duplicates, 0 gaps) |
 | **Phase 4: Cloud Run Audit** | **PASS** | Reconciled 5 recent GitHub Actions cloud harvester runs | 4/5 successful runs | Honest 4/5 denominator; Run 38193811472 push conflict autopsied |
 | **Phase 5: Concurrency Safety** | **PASS** | Git atomic rebase retry confirmed on push conflict | 1/1 conflict resolved | Cloud commits pulled safely; child projects uncommitted |
 | **Phase 6: Invariant Verification** | **PASS** | Applied Rule 319 to `project-saas-billing` | 7/7 scenarios passed | 37 unit assertions + 70 master assertions passing |
@@ -98,7 +98,7 @@ Inspection of GitHub Actions run logs reveals exact stage statuses across 6 life
 
 ### Canonical Rule Numbering & Gap Audit
 - **Defect Repaired**: Discovered duplicate Rule 139 in `05_KNOWLEDGE/engineering-patterns.md` (Original: `Integer Overflow in HNSW Derived Layer Boundaries (#10546)`; Duplicate: `Edge Redirects Syntax Isolation + Self-Referential Loop Immunity`).
-- **Correction**: Renumbered duplicate to **Rule 217** (the single unallocated slot in the 1..403 sequence). All **403 rules** are now strictly ascending, contiguous, with **0 duplicate rule numbers and 0 gaps**.
+- **Correction**: Renumbered duplicate to **Rule 217** (the single unallocated slot in the sequence). Following integration of remote cloud fleet commits, all **411 rules** are now strictly ascending, contiguous, with **0 duplicate rule numbers and 0 gaps**.
 - **Table Formatting Repaired**: Fixed concatenated markdown rows in `09_SOURCES/harvest-provenance-ledger.md` (lines 189-190) and `08_VERIFICATION/harvest-verification-matrix.md` (lines 206-207).
 - **JSON Registry Consistency**: Validated `08_VERIFICATION/knowledge-gap-registry.json` and `05_KNOWLEDGE/knowledge-index.json`. Leaking fencing tokens in gap records `GAP-PROBE-ZERO_TRUST_AUTH` and `GAP-PROBE-RESILIENT_TRANSACTIONS` replaced with domain-specific evidence.
 
