@@ -406,3 +406,4 @@
 | `CYCLE-20261012-9EM7` | `2026-10-12T02:39:57.247Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 409, Rule 410, Rule 411` | Yes (`267dfe48...`) |
 | `CYCLE-20261012-CZFU` | `2026-10-12T02:42:44.202Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`1d7caf38...`) |
 | `CYCLE-20261012-H27U` | `2026-10-12T02:45:54.426Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`46a3db03...`) |
+| `CYCLE-20261012-L1WH` | `2026-10-12T02:49:00.641Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`e304598d...`) |
