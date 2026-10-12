@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T15:21:29.964Z",
-  "total_verified_learnings": 4521,
+  "last_updated": "2026-10-12T15:24:46.860Z",
+  "total_verified_learnings": 4522,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -109939,6 +109939,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T15:21:29.964Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv5ekz6i": {
+      "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv5ekz6i",
+      "source": "inclusionAI/Ming-Image-0.1-Design",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "slug": "hf-inclusionai-ming-image-0.1-design",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "content_hash": "95364368f75c8e6db5d2d3022ae66883c291992f145b93bb79e30dd32cd9e61e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 531,
+          "title": "Strict Resolution Bucketing for Diffusion Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 532,
+          "title": "RGBA Transparency Preview Separation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 533,
+          "title": "CFG Scale Calibration for Text-Rich Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T15:24:46.860Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

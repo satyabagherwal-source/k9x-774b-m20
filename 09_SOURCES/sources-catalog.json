@@ -535,9 +535,9 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "30c4b4fc19def52bd810895924271f2b5c71fec3fb6238a6f9f773c576eaee8c",
-    "lastHarvestedAt": "2026-10-12T08:08:52.726Z",
-    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4z0ehk"
+    "contentHash": "95364368f75c8e6db5d2d3022ae66883c291992f145b93bb79e30dd32cd9e61e",
+    "lastHarvestedAt": "2026-10-12T15:24:46.908Z",
+    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv5ekz6i"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
