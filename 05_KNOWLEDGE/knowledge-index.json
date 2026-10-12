@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T07:56:48.738Z",
-  "total_verified_learnings": 4392,
+  "last_updated": "2026-10-12T08:00:51.009Z",
+  "total_verified_learnings": 4393,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -106480,6 +106480,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T07:56:48.738Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-akhilaaa3-jev-omni-mv4yq2uh": {
+      "learning_id": "learn-huggingface-hf-akhilaaa3-jev-omni-mv4yq2uh",
+      "source": "akhilaaa3/Jev-Omni",
+      "repository": "akhilaaa3/Jev-Omni",
+      "slug": "hf-akhilaaa3-jev-omni",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "content_hash": "a92c3178971066782defb46c498826fc7114eb9983b4bf91ab9258800db89c0e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 465,
+          "title": "Zero-Generation Logit Normalization for Multimodal Option Scoring",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 466,
+          "title": "Temporal Audio Sequence Invariant and Frame Bounding Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T08:00:51.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -515,9 +515,9 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "1c2fc639478cb7432a2176bfd3dc66bccbd8467fe9d705aecbbe6479c0917c66",
-    "lastHarvestedAt": "2026-10-12T00:57:41.073Z",
-    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj"
+    "contentHash": "a92c3178971066782defb46c498826fc7114eb9983b4bf91ab9258800db89c0e",
+    "lastHarvestedAt": "2026-10-12T08:00:51.055Z",
+    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv4yq2uh"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
     "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
