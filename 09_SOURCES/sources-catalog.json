@@ -485,9 +485,9 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "325dfa09872b2f9d392037d80b56ce255fd8a1b09a542e2339485166df373e8b",
-    "lastHarvestedAt": "2026-10-12T15:09:29.864Z",
-    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5e1bli"
+    "contentHash": "289c5017621b257e0a82a1ffd1e814a649c1dba8143776acfca3e215a9765519",
+    "lastHarvestedAt": "2026-10-12T21:47:16.191Z",
+    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5s8v03"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "repository": "Phocinae/Phocinae-Largha-150M-v1",

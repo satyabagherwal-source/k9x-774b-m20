@@ -745,3 +745,4 @@
 | `CYCLE-20261012-VIES` | `2026-10-12T21:36:53.236Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`c51f0c23...`) |
 | `CYCLE-20261012-ZANM` | `2026-10-12T21:39:49.810Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`f181ea38...`) |
 | `CYCLE-20261012-2XKP` | `2026-10-12T21:42:39.481Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`0586d3ea...`) |
+| `CYCLE-20261012-8V31` | `2026-10-12T21:47:16.189Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`289c5017...`) |

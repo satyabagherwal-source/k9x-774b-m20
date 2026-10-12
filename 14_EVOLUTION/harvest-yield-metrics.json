@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:42:39.484Z",
-  "total_cycles_completed": 686,
-  "total_learnings_persisted": 686,
+  "last_updated": "2026-10-12T21:47:16.194Z",
+  "total_cycles_completed": 687,
+  "total_learnings_persisted": 687,
   "total_rules_promoted": 328,
   "history": [
-    {
-      "timestamp": "2026-10-12T11:02:20.448Z",
-      "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv557h5p",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T11:05:30.937Z",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T21:42:39.484Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv5s2xj0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:47:16.194Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5s8v03",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

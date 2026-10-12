@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T17:29:45.446Z",
+  "last_updated": "2026-10-12T21:47:16.193Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1234,6 +1234,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Invalid or missing rule title",
       "learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv5j1p1b"
+    },
+    {
+      "id": "CD-8V35",
+      "directive_title": "**Token ID Uniqueness Rule**",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "TaichuAI/ZDTaichu5.0-9B",
+      "source_commit": "hf-taichuai-",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5s8v03"
     }
   ]
 }
