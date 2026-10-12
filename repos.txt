@@ -3880,3 +3880,7 @@ https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized
 # --- Automatically Discovered by AI Scout Engine [2026-10-12T08:34:42.333Z] ---
 # [MOBILE-CROSS-PLATFORM] iliyami/MacSai (1230 score) - Mac Sai: the open-source Mac cleaner, optimizer, and malware scanner. A free, Ap
 https://github.com/iliyami/MacSai
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T09:55:09.816Z] ---
+# [AI-AGENTS] duty1g/x64dbg-mcp-server (1562 score) - x64dbg-MCP Server is a native MCP (Model Context Protocol) plugin for x64dbg tha
+https://github.com/duty1g/x64dbg-mcp-server

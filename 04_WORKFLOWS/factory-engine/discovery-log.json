@@ -17416,5 +17416,20 @@
     "qualityScore": 1230,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-12T08:34:20.121Z"
+  },
+  {
+    "name": "x64dbg-mcp-server",
+    "fullName": "duty1g/x64dbg-mcp-server",
+    "url": "https://github.com/duty1g/x64dbg-mcp-server",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "x64dbg-MCP Server is a native MCP (Model Context Protocol) plugin for x64dbg that exposes the debugger's full functionality over HTTP. Connect any MCP-compatible AI assistant and control x64dbg programmatically: set breakpoints, step through code, read memory, dump registers, and more.  Built with Zig — zero dependencies, single-binary output, cros",
+    "stars": 2464,
+    "forks": 266,
+    "openIssues": 0,
+    "language": "Zig",
+    "qualityScore": 1562,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-12T09:54:33.817Z"
   }
 ]
