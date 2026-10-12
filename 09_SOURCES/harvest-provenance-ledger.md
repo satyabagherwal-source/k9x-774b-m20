@@ -620,3 +620,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-psrben-visionhope-mv5fke6e` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-10-12T15:52:19.243Z |
 | `learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv5fod75` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-12T15:55:24.583Z |
 | `learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5fsbxi` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-12T15:58:29.580Z |
+| `learn-huggingface-hf-facebook-sam3-mv5fw487` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-12T16:01:26.229Z |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-LSAN",
-    "timestamp": "2026-10-11T12:49:46.367Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv3tls88",
-    "contentHash": "9af990d1726855b6bdc17fdb4dad65fa562099c525ede0d3e32d88d3d9cc876e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-PC2R",
     "timestamp": "2026-10-11T12:52:31.971Z",
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5fsbxi",
     "contentHash": "d45cc0ad37aa40a00802eb1d9e2848462f274053af3f6aa56818ae3fefeebd03",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-W4B7",
+    "timestamp": "2026-10-12T16:01:26.227Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-hf-facebook-sam3-mv5fw487",
+    "contentHash": "c47e8811d81d5438cb55c6d873e3c7f56483901623a2d9b7fb3220684f1a4d4f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
