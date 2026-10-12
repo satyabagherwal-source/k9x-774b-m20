@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:26:27.600Z",
-  "total_cycles_completed": 699,
-  "total_learnings_persisted": 699,
+  "last_updated": "2026-10-12T22:29:23.947Z",
+  "total_cycles_completed": 700,
+  "total_learnings_persisted": 700,
   "total_rules_promoted": 338,
   "history": [
-    {
-      "timestamp": "2026-10-12T11:42:11.119Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv56mpv2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T11:45:26.759Z",
       "repository": "openai/clip-vit-base-patch32",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T22:26:27.600Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv5tn9cx",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T22:29:23.947Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv5tr1fi",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:26:27.601Z",
+  "last_updated": "2026-10-12T22:29:23.948Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1756,15 +1756,15 @@
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv5fgkjb",
-      "content_hash": "95d6f34d8efd01d127a1689bb200fc1123039b1d2e14873135ab4a7fd1e93efd",
-      "verified_at": "2026-10-12T15:49:20.867Z",
+      "learning_id": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv5tr1fi",
+      "content_hash": "861129b0d530a011c9ac648156375abb67262f8038eb7c6dba25b605d911efd1",
+      "verified_at": "2026-10-12T22:29:23.948Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T15:49:20.867Z"
+      "last_updated": "2026-10-12T22:29:23.948Z"
     },
     "ZHangZHengEric/Sage": {
       "repository": "ZHangZHengEric/Sage",
