@@ -628,3 +628,4 @@
 | `CYCLE-20261012-KZAY` | `2026-10-12T15:24:46.906Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 531, Rule 532, Rule 533` | Yes (`95364368...`) |
 | `CYCLE-20261012-OQ65` | `2026-10-12T15:27:41.693Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`85656bc5...`) |
 | `CYCLE-20261012-ST3A` | `2026-10-12T15:30:52.102Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`72bf0d13...`) |
+| `CYCLE-20261012-X6HI` | `2026-10-12T15:34:16.086Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`0b550faf...`) |
