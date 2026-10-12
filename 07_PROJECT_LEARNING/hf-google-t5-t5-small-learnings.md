@@ -3,8 +3,8 @@
 > **Source Version**: `hf-google-t5`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T09:46:21.754Z  
-> **Learning ID**: `learn-huggingface-hf-google-t5-t5-small-mv52hrqy`  
+> **Timestamp**: 2026-10-12T16:43:45.001Z  
+> **Learning ID**: `learn-huggingface-hf-google-t5-t5-small-mv5hej8p`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google-t5/t5-small](https://huggingface.co/google-t5/t5-small))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T09:46:20.904Z  
+> **Harvest Timestamp**: 2026-10-12T16:43:44.314Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: translation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 23757554 downloads | 658 likes
+- **Stars / Engagement**: 23757554 downloads | 670 likes
 
 ---
 
