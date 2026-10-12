@@ -558,3 +558,4 @@
 | `CYCLE-20261012-ARUT` | `2026-10-12T11:32:53.765Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`bccd69af...`) |
 | `CYCLE-20261012-FM2A` | `2026-10-12T11:36:39.538Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 500, Rule 501` | Yes (`4f8de801...`) |
 | `CYCLE-20261012-J3ZD` | `2026-10-12T11:39:22.729Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`1448b298...`) |
+| `CYCLE-20261012-MPWT` | `2026-10-12T11:42:11.117Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`de223d2b...`) |
