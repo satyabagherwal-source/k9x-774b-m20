@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:59:29.343Z",
-  "total_cycles_completed": 505,
-  "total_learnings_persisted": 505,
+  "last_updated": "2026-10-12T12:02:29.497Z",
+  "total_cycles_completed": 506,
+  "total_learnings_persisted": 506,
   "total_rules_promoted": 246,
   "history": [
-    {
-      "timestamp": "2026-10-12T00:36:37.708Z",
-      "repository": "Altworld/Hemmingway-1",
-      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T00:39:23.622Z",
       "repository": "fastino/GLiNER2.5-Decide",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T11:59:29.343Z",
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv578yxz",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T12:02:29.497Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv57ctxv",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

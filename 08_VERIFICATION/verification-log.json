@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-0419",
-    "timestamp": "2026-10-11T07:52:58.989Z",
-    "repository": "shadcn-ui/ui",
-    "learningId": "learn-github-shadcn-ui-ui-mv3j0403",
-    "contentHash": "a158393a932aec0175bab2de19fe111133eadf45c8623901fc33d356ad3ff077",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-K7AG",
     "timestamp": "2026-10-11T08:08:36.328Z",
     "repository": "expressjs/cors",
@@ -7490,6 +7475,21 @@
     "repository": "FacebookAI/xlm-roberta-base",
     "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv578yxz",
     "contentHash": "51bd888ddf0fd23b1e7c2f33471e18d937940bdbb99d6ca9f326e4b49d04acb2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-CU0M",
+    "timestamp": "2026-10-12T12:02:29.494Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv57ctxv",
+    "contentHash": "f8d32a01930db88d2f153888ae5769878c2da72c5397f966e363d841c5f27929",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
