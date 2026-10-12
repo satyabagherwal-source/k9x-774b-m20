@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:23:33.158Z",
-  "total_cycles_completed": 698,
-  "total_learnings_persisted": 698,
+  "last_updated": "2026-10-12T22:26:27.600Z",
+  "total_cycles_completed": 699,
+  "total_learnings_persisted": 699,
   "total_rules_promoted": 338,
   "history": [
-    {
-      "timestamp": "2026-10-12T11:39:22.731Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv56j3xp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T11:42:11.119Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T22:23:33.158Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv5tjirf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T22:26:27.600Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv5tn9cx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -757,3 +757,4 @@
 | `CYCLE-20261012-BGW3` | `2026-10-12T22:17:17.379Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`f9f42618...`) |
 | `CYCLE-20261012-FHRQ` | `2026-10-12T22:20:25.142Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 587, Rule 588, Rule 589` | Yes (`be9d83c0...`) |
 | `CYCLE-20261012-JIUB` | `2026-10-12T22:23:33.155Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`878a50e5...`) |
+| `CYCLE-20261012-N9FX` | `2026-10-12T22:26:27.597Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`8db96a33...`) |

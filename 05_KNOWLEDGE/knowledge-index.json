@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T22:23:33.104Z",
-  "total_verified_learnings": 4653,
+  "last_updated": "2026-10-12T22:26:27.544Z",
+  "total_verified_learnings": 4654,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -113440,6 +113440,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T22:23:33.104Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv5tn9cx": {
+      "learning_id": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv5tn9cx",
+      "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "slug": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "content_hash": "8db96a33debd5e25f9bc38a5e656e79921c31cdfaa78b5feea802bbf6174bf43",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T22:26:27.544Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
