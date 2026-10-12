@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-1VUG",
-    "timestamp": "2026-10-11T18:10:13.240Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv451vsw",
-    "contentHash": "bd9abfede07f328da9543edb818d1fd97972dd74f0f162e748d4f58a522335a7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-5O89",
     "timestamp": "2026-10-11T18:13:09.993Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7490,6 +7475,21 @@
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
     "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv5r3y7i",
     "contentHash": "79a04ccd0119fb45e142f97be2505bd0533d27f59429a93f6b048d9b1a9de327",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-7LW4",
+    "timestamp": "2026-10-12T21:18:18.004Z",
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv5r7lub",
+    "contentHash": "25d6742bcfd2849d61a0e15be4947aedc3bdac8f4a4b8ef0b290a978db68d7e9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
