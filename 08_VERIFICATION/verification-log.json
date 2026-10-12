@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-3KTY",
-    "timestamp": "2026-10-11T18:39:31.894Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
-    "contentHash": "8bc273fc928b9c6e1ee19eda2955e1dea626246fbc8099287c428d17b89da6ec",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-7OOC",
     "timestamp": "2026-10-11T18:42:43.500Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "TaichuAI/ZDTaichu5.0-9B",
     "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5s8v03",
     "contentHash": "289c5017621b257e0a82a1ffd1e814a649c1dba8143776acfca3e215a9765519",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-CWAU",
+    "timestamp": "2026-10-12T21:50:24.390Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv5scw7u",
+    "contentHash": "198916f2e419d01a3b87dc3cd78fb08c55feaa5a7c708b6f3adfe8842ce53e8f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

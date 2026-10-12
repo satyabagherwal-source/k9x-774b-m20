@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:47:16.194Z",
-  "total_cycles_completed": 687,
-  "total_learnings_persisted": 687,
+  "last_updated": "2026-10-12T21:50:24.393Z",
+  "total_cycles_completed": 688,
+  "total_learnings_persisted": 688,
   "total_rules_promoted": 328,
   "history": [
-    {
-      "timestamp": "2026-10-12T11:05:30.937Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv55bk44",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T11:08:40.121Z",
       "repository": "meta-llama/Llama-2-7b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T21:47:16.194Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5s8v03",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:50:24.393Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv5scw7u",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
