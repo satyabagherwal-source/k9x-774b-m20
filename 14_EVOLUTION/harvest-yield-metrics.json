@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:04:25.192Z",
-  "total_cycles_completed": 354,
-  "total_learnings_persisted": 354,
-  "total_rules_promoted": 155,
+  "last_updated": "2026-10-12T03:07:21.694Z",
+  "total_cycles_completed": 355,
+  "total_learnings_persisted": 355,
+  "total_rules_promoted": 158,
   "history": [
-    {
-      "timestamp": "2026-10-11T17:00:53.683Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T17:04:06.990Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1403,6 +1396,13 @@
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T03:07:21.694Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

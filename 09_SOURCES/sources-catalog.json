@@ -935,9 +935,9 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "730c4103e73f0fa67d559f6eca7ff06b40f62b1501ff1c3d3218aeaf97f8d36d",
-    "lastHarvestedAt": "2026-10-11T20:52:44.391Z",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz"
+    "contentHash": "fa8b726de6dc78872c63e4a00a5d69aa2fa31cfd71c1563a710d9086b3bbcb53",
+    "lastHarvestedAt": "2026-10-12T03:07:21.693Z",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
   },
   "hf-openai-gpt-oss-120b": {
     "repository": "openai/gpt-oss-120b",

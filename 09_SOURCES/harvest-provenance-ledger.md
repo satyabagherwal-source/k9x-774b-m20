@@ -395,3 +395,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-12T02:57:52.430Z |
 | `learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-12T03:01:09.725Z |
 | `learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-12T03:04:25.191Z |
+| `learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-12T03:07:21.693Z |

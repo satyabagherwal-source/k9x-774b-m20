@@ -412,3 +412,4 @@
 | `CYCLE-20261012-WG8D` | `2026-10-12T02:57:52.429Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`ec578ef9...`) |
 | `CYCLE-20261012-0OGR` | `2026-10-12T03:01:09.723Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`bb60761e...`) |
 | `CYCLE-20261012-4VAD` | `2026-10-12T03:04:25.189Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`36193f2c...`) |
+| `CYCLE-20261012-8NH5` | `2026-10-12T03:07:21.689Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 412, Rule 413, Rule 414` | Yes (`fa8b726d...`) |
