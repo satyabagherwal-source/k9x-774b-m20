@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T01:15:36.163Z",
-  "total_verified_learnings": 4274,
+  "last_updated": "2026-10-12T01:18:46.028Z",
+  "total_verified_learnings": 4275,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -103283,6 +103283,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T01:15:36.163Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh": {
+      "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh",
+      "source": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "slug": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "content_hash": "4cb9a993e8828d60c422d37607b9a380bdff561fc9a5c67051dc40c9d3ecea4e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 397,
+          "title": "GGUF Metadata Integrity & Schema Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 398,
+          "title": "Uncensored Model Security Boundary & Output Sanitization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 399,
+          "title": "GGUF Memory Allocation & Quantization Safety",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T01:18:46.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

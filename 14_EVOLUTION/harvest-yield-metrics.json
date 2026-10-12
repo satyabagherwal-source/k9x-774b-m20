@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T01:15:36.213Z",
-  "total_cycles_completed": 319,
-  "total_learnings_persisted": 319,
-  "total_rules_promoted": 141,
+  "last_updated": "2026-10-12T01:18:46.079Z",
+  "total_cycles_completed": 320,
+  "total_learnings_persisted": 320,
+  "total_rules_promoted": 144,
   "history": [
-    {
-      "timestamp": "2026-10-11T14:45:22.352Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T14:48:34.688Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1403,6 +1396,13 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T01:18:46.079Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
