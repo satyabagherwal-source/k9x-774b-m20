@@ -4588,5 +4588,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-A6SI",
+    "timestamp": "2026-10-12T00:48:35.298Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo",
+    "contentHash": "bcae827d6e7fe80cefec2c2036346656c57b185e7faafdffc27af677670e0373",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
