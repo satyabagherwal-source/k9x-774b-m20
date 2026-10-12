@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T10:10:36.047Z",
-  "total_cycles_completed": 470,
-  "total_learnings_persisted": 470,
+  "last_updated": "2026-10-12T10:13:27.890Z",
+  "total_cycles_completed": 471,
+  "total_learnings_persisted": 471,
   "total_rules_promoted": 237,
   "history": [
-    {
-      "timestamp": "2026-10-11T22:50:08.321Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T22:53:17.532Z",
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T10:10:36.047Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv53cxto",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T10:13:27.890Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-hf-amazon-chronos-2-mv53gmfl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
