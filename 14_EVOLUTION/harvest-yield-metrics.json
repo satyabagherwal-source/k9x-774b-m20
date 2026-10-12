@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:02:44.858Z",
-  "total_cycles_completed": 408,
-  "total_learnings_persisted": 408,
+  "last_updated": "2026-10-12T06:05:38.391Z",
+  "total_cycles_completed": 409,
+  "total_learnings_persisted": 409,
   "total_rules_promoted": 178,
   "history": [
-    {
-      "timestamp": "2026-10-11T19:43:28.990Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T19:46:33.696Z",
       "repository": "Cloudflare/clef",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T06:02:44.858Z",
       "repository": "Cactus-Compute/whistle",
       "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv4ui74m",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:05:38.391Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv4ulx0t",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
