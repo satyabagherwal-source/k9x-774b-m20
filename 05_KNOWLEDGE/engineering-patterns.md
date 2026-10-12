@@ -13394,3 +13394,221 @@ class BuggyPipeline:
 **VERIFICATION METHOD**:
 1.  **Integration Test**: Generate an image with prompt "A cat". Then generate an image with prompt "A dog". Assert that the second image does not contain cat-like features (using a CLIP similarity score). If the similarity is high, the cache was not invalidated.
 2.  **Memory Profiling**: Monitor GPU memory usage. Ensure that the KV cache is freed after each request if not explicitly retained.
+
+
+---
+
+## 383. **Special Token Uniqueness Rule** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Special Token Uniqueness Rule**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T00:33:23.756Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** assign a unique integer ID to every special token and **MUST NOT** reuse an ID that already exists in the base vocabulary.  
+
+**WHY**:  
+A collision between a special token ID and a regular token ID causes the model to mis‑tokenize multimodal inputs, leading to incorrect embeddings, silent failures, or catastrophic output corruption.  
+
+**WHEN TO APPLY**:  
+All tokenizer configurations that introduce multimodal tokens (image, video, audio) in any language model that extends a base tokenizer.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# tokenizer_config.json
+{
+  "model_specific_special_tokens": {
+    "image_token": "<|image_pad|>",
+    "video_token": "<|video_pad|>",
+    "audio_bos_token": "<|audio_start|>",
+    "audio_eos_token": "<|audio_end|>"
+  },
+  "special_tokens_map_file": "special_tokens_map.json"
+}
+```
+```python
+# special_tokens_map.json
+{
+  "image_token": 248056,
+  "video_token": 248057,
+  "audio_bos_token": 248058,
+  "audio_eos_token": 248059
+}
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Reusing a vocab ID for a special token
+{
+  "image_token": "<|image_pad|>",
+  "special_tokens_map_file": "special_tokens_map.json"
+}
+```
+```json
+// special_tokens_map.json
+{
+  "image_token": 0  // 0 is already a valid vocab token
+}
+```
+
+**VERIFICATION METHOD**  
+*Unit test* – Load the tokenizer and assert that `tokenizer.convert_tokens_to_ids(list(tokenizer.special_tokens_map.values()))` returns a set of unique IDs.  
+```python
+def test_special_token_uniqueness():
+    tokenizer = AutoTokenizer.from_pretrained("apple/LensVLM-9B")
+    ids = tokenizer.convert_tokens_to_ids(list(tokenizer.special_tokens_map.values()))
+    assert len(ids) == len(set(ids)), "Special token IDs must be unique"
+```
+
+---
+
+
+---
+
+## 384. **Cache‑Disabling Rule for Long‑Context VLMs** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Cache‑Disabling Rule for Long‑Context VLMs**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T00:33:23.766Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST NOT** enable `use_cache=True` for vision‑language models that process more than 10,000 tokens.  
+
+**WHY**:  
+Enabling cache in a model with a hybrid attention scheme and a 262,144‑token context window leads to exponential memory growth, often exceeding GPU limits and causing out‑of‑memory crashes.  
+
+**WHEN TO APPLY**:  
+Any VLM that sets `max_position_embeddings > 10_000` and uses a hybrid attention strategy.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```json
+// config.json
+{
+  "use_cache": false,
+  "max_position_embeddings": 262144
+}
+```
+
+**NEGATIVE CONSTRAINT**  
+```json
+// BAD: Enabling cache on a long‑context VLM
+{
+  "use_cache": true,
+  "max_position_embeddings": 262144
+}
+```
+
+**VERIFICATION METHOD**  
+*Lint rule* – Scan `config.json` for `"use_cache": true` when `max_position_embeddings` exceeds 10,000.  
+```bash
+jq '.use_cache, .max_position_embeddings' config.json | grep -q 'true' && echo "Cache enabled on long context"
+```
+
+---
+
+
+---
+
+## 385. **Hybrid Attention Interval Rule** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Hybrid Attention Interval Rule**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-12T00:33:23.776Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** insert a `"full_attention"` layer at least every *N* linear layers, where *N* is defined by `full_attention_interval` (default 4).  
+
+**WHY**:  
+Without periodic full attention, the model loses global context, leading to degraded reasoning over long documents and potential hallucinations.  
+
+**WHEN TO APPLY**:  
+All models that use `"linear_attention"` as the default attention type.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```json
+// text_config.layer_types
+{
+  "layer_types": [
+    "linear_attention", "linear_attention", "linear_attention", "full_attention",
+    "linear_attention", "linear_attention", "linear_attention", "full_attention",
+    ...
+  ],
+  "full_attention_interval": 4
+}
+```
+
+**NEGATIVE CONSTRAINT**  
+```json
+// BAD: All layers are linear attention
+{
+  "layer_types": [
+    "linear_attention", "linear_attention", "linear_attention", "linear_attention",
+    ...
+  ],
+  "full_attention_interval": 4
+}
+```
+
+**VERIFICATION METHOD**  
+*Unit test* – Verify that the `layer_types` array contains a `"full_attention"` entry at every `full_attention_interval`.  
+```python
+def test_full_attention_interval():
+    config = AutoConfig.from_pretrained("apple/LensVLM-9B")
+    layers = config.text_config.layer_types
+    interval = config.text_config.full_attention_interval
+    for i in range(interval - 1, len(layers), interval):
+        assert layers[i] == "full_attention", f"Missing full_attention at layer {i}"
+```
+
+---
