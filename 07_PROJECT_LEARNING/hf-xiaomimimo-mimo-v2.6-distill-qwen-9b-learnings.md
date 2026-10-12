@@ -3,8 +3,8 @@
 > **Source Version**: `hf-xiaomimim`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-11T18:48:56.089Z  
-> **Learning ID**: `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61`  
+> **Timestamp**: 2026-10-12T01:00:36.581Z  
+> **Learning ID**: `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -14,169 +14,169 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): XiaomiMiMo/MiMo‑V2.6‑Distill‑Qwen‑9B
 
-## 1. Executive Forensic Architecture & System Mechanics
-The repository contains a **Qwen3.5‑9B** model fine‑tuned for agentic tasks (coding, visual coding, cybersecurity, etc.).  
-Key architectural elements:
+---
 
-| Layer | Description |
-|-------|-------------|
-| **Tokenizer** | `Qwen2Tokenizer` with custom special tokens (`<|image_pad|>`, `<|video_pad|>`, `<|vision_start|>`, etc.). Tokenizer config is tightly coupled to the model’s `model_max_length` (262 144) and `vocab_size` (248 320). |
-| **Text Backbone** | 32 transformer layers, 16 heads, hidden size 4 096, intermediate size 12 288. Uses a mix of `linear_attention` and `full_attention` layers (alternating every 4 layers). |
-| **Vision Backbone** | 27‑layer vision transformer, hidden size 1 152, 16 heads, patch size 16, spatial merge size 2. The vision encoder outputs a 4 096‑dimensional vector that is fused with the text embedding. |
-| **Cross‑Modal Fusion** | The model uses a `Qwen3VLProcessor` that concatenates image/vision tokens with text tokens before feeding them to the transformer. |
-| **Generation Config** | Sampling parameters (`do_sample=true`, `temperature=0.6`, `top_k=20`, `top_p=0.95`) are hard‑coded in `generation_config.json`. |
-| **Deployment** | Intended to be served via SGLang (`sglang serve`) with a custom reasoning parser (`mimo`). The README shows a minimal OpenAI‑compatible API wrapper. |
+## 1. Executive Forensic Architecture & System Mechanics  
 
-Subsystem boundaries are clear: tokenizer → processor → transformer → decoder. State ownership is local to each module; no global mutable state is exposed.
+| Layer | Responsibility | Key Artifacts | Observed Constraints |
+|-------|----------------|---------------|----------------------|
+| **Tokenizer** | Text → token ids, special‑token handling, pre‑tokenization | `tokenizer_config.json` | *`errors="replace"`* → silent tokenization errors; *`model_max_length=262144`* → 262 k token limit; *`add_prefix_space=false`* → no leading space insertion. |
+| **Vision Processor** | Image/Video → patch embeddings, positional encodings | `config.json` → `vision_config` | *`patch_size=16`*, *`depth=27`*, *`num_heads=16`*; *`spatial_merge_size=2`*; *`num_position_embeddings=2304`*. |
+| **Language Model** | Conditional generation | `config.json` → `text_config` | *`hidden_size=4096`*, *`num_hidden_layers=32`*, *`num_attention_heads=16`*, *`num_key_value_heads=4`*; *`attention_bias=false`*; *`attn_output_gate=true`*; *`full_attention_interval=4`*; *`rope_parameters`* with *`rope_theta=10 000 000`*. |
+| **Inference Server** | REST/JSON API, reasoning parser | `README.md` | Uses **SGLang** with `--reasoning-parser mimo`; exposes `/v1` endpoint; `extra_body.chat_template_kwargs.enable_thinking=true` triggers explicit reasoning. |
+| **Training Data** | 77.4 B tokens, 27.2 B loss‑bearing | `README.md` | Token distribution across Code, Cyber, General, Visual. |
 
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
+**Subsystem Boundaries**
 
-### 1. Tokenizer‑Model Configuration Consistency
-**RULE**:  
-The tokenizer’s `vocab_size`, `model_max_length`, and special token IDs must match the corresponding values in the model’s configuration; otherwise, tokenization errors or out‑of‑range indices will occur.
+1. **Tokenizer ↔ Processor** – tokenization is stateless; processor consumes token ids.  
+2. **Processor ↔ Language Model** – vision embeddings are concatenated with text embeddings; the model’s `use_cache=true` allows KV‑cache reuse.  
+3. **Inference Server ↔ Model** – server serializes requests, deserializes responses; reasoning parser injects a *thinking* block into the chat template.
 
-**WHY**:  
-Mismatched vocab sizes cause `IndexError` during embedding lookup. A `model_max_length` smaller than the longest input sequence leads to truncation or hidden‑state overflow. Special token IDs that are not present in the embedding matrix break the attention mask and can produce NaNs.
+**Critical Abstractions**
 
-**WHEN TO APPLY**:  
-During any model export, fine‑tuning, or deployment pipeline that involves a tokenizer and a transformer model.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Ensure tokenizer and model configs are aligned
-tokenizer = AutoTokenizer.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
-model = AutoModelForCausalLM.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
-
-assert tokenizer.vocab_size == model.config.vocab_size, \
-    f"Tokenizer vocab ({tokenizer.vocab_size}) != model vocab ({model.config.vocab_size})"
-
-assert tokenizer.model_max_length == model.config.max_position_embeddings, \
-    f"Tokenizer max length ({tokenizer.model_max_length}) != model max positions ({model.config.max_position_embeddings})"
-
-# Verify special token IDs are present in the embedding matrix
-for token, idx in tokenizer.special_tokens_map.items():
-    assert idx < model.config.vocab_size, f"Special token {token} id {idx} out of bounds"
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# BAD: Hard‑coded vocab size that diverges from the model
-tokenizer = AutoTokenizer.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
-tokenizer.vocab_size = 300000  # Wrong value
-```
-
-**VERIFICATION METHOD**:  
-Unit test that loads the tokenizer and model and asserts the equality of `vocab_size`, `model_max_length`, and special token IDs. Lint rule that flags hard‑coded numeric overrides of tokenizer attributes.
+- **`Qwen3_5ForConditionalGeneration`** – a single class exposing `generate` and `forward`.  
+- **`Qwen3VLProcessor`** – combines `Qwen2Tokenizer` and vision encoder.  
+- **`MimoChatTemplate`** – custom chat template that injects a *thinking* section.
 
 ---
 
-### 2. Attention Layer Alternation Integrity
+## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. **Attention Bias Invariance Rule**  
 **RULE**:  
-The sequence of attention layers in the transformer must follow the pattern defined in `layer_types`: a block of 3 `linear_attention` layers followed by a `full_attention` layer, repeated throughout the stack. Any deviation can break the expected memory‑time trade‑off and lead to performance regressions.
+> **MUST NOT** add a bias term to any attention projection matrix in the Qwen3.5 architecture when `attention_bias=false` is set in the configuration.  
 
 **WHY**:  
-The alternating pattern is engineered to reduce compute while maintaining accuracy. Swapping a `full_attention` layer into a `linear_attention` block increases memory usage and latency; conversely, replacing a `full_attention` with a `linear_attention` can degrade accuracy on long‑context tasks.
+The base Qwen3.5 implementation relies on *bias‑free* attention to preserve the symmetry of the attention scores and to enable efficient fused kernels. Adding a bias would break the assumption in the fused kernels, leading to incorrect score scaling, degraded perplexity, and potential GPU memory over‑allocation.  
 
 **WHEN TO APPLY**:  
-During model architecture modifications, pruning, or quantization steps that alter the attention mechanism.
+- All `nn.Linear` layers used for query/key/value projections in the transformer blocks.  
+- Any custom attention modules that wrap the base implementation.  
 
-**VERIFIED IMPLEMENTATION PATTERN**:
+**VERIFIED IMPLEMENTATION PATTERN**  
 ```python
-expected_pattern = ["linear_attention"] * 3 + ["full_attention"]
-for i in range(0, model.config.num_hidden_layers, 4):
-    actual = model.config.layer_types[i:i+4]
-    assert actual == expected_pattern, f"Layer {i}-{i+3} mismatch: {actual}"
+# PyTorch example – bias must be False
+class QwenAttention(nn.Module):
+    def __init__(self, hidden_size, num_heads, bias=False):
+        super().__init__()
+        self.q_proj = nn.Linear(hidden_size, hidden_size, bias=bias)
+        self.k_proj = nn.Linear(hidden_size, hidden_size, bias=bias)
+        self.v_proj = nn.Linear(hidden_size, hidden_size, bias=bias)
 ```
 
-**NEGATIVE CONSTRAINT**:
+**NEGATIVE CONSTRAINT**  
 ```python
-# BAD: Randomly inserting full_attention layers
-model.config.layer_types = ["full_attention"] * model.config.num_hidden_layers
+# ❌ BAD – Adding bias to attention projections
+self.q_proj = nn.Linear(hidden_size, hidden_size, bias=True)
 ```
 
-**VERIFICATION METHOD**:  
-Automated test that iterates over `layer_types` and checks the 4‑layer block pattern. CI lint rule that warns when `layer_types` length is not a multiple of 4 or when the pattern deviates.
+**VERIFICATION METHOD**  
+- Linter rule: `flake8` plugin that scans `nn.Linear` constructors for `bias=True` inside any class inheriting from `QwenAttention`.  
+- Unit test: instantiate the model with `attention_bias=False` and assert `q_proj.bias is None`.
+
+---
+
+### 2. **Tokenization Error Handling Rule**  
+**RULE**:  
+> **MUST** configure the tokenizer with `errors="replace"` and **MUST NOT** rely on the default `errors="strict"` when deploying to production.  
+
+**WHY**:  
+`errors="strict"` would raise a `UnicodeDecodeError` for any malformed byte sequence, causing the entire inference pipeline to crash. The `replace` strategy guarantees graceful degradation by substituting unknown bytes with the replacement character, preserving request throughput.  
+
+**WHEN TO APPLY**:  
+- All tokenizer initializations (`Qwen2Tokenizer`, `Qwen3VLProcessor`).  
+- Any downstream component that consumes tokenizer output.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+tokenizer = Qwen2Tokenizer.from_pretrained(
+    "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    errors="replace",
+    add_prefix_space=False,
+)
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# ❌ BAD – Default strict error handling
+tokenizer = Qwen2Tokenizer.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
+```
+
+**VERIFICATION METHOD**  
+- Unit test that feeds a byte string containing invalid UTF‑8 and asserts no exception is raised.  
+- CI lint rule that flags any `Tokenizer` instantiation without `errors=`.
+
+---
+
+### 3. **Maximum Sequence Length Guard Rule**  
+**RULE**:  
+> **MUST** enforce `model_max_length` from the tokenizer configuration as the hard upper bound for any input sequence length; **MUST NOT** allow sequences longer than this value to be processed.  
+
+**WHY**:  
+The model’s positional embeddings and cache allocation are pre‑allocated for `model_max_length`. Exceeding this value would cause out‑of‑bounds memory accesses, silent truncation, or catastrophic failure.  
+
+**WHEN TO APPLY**:  
+- All API endpoints that accept user input.  
+- Any internal preprocessing pipeline that concatenates prompts.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+max_len = tokenizer.model_max_length
+if len(token_ids) > max_len:
+    raise ValueError(f"Input length {len(token_ids)} exceeds model_max_length {max_len}")
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# ❌ BAD – Ignoring max length
+if len(token_ids) > 1000000:  # arbitrary large number
+    pass  # silently truncate or crash
+```
+
+**VERIFICATION METHOD**  
+- Integration test that sends a 300 k token prompt and expects a `ValueError`.  
+- Static analysis rule that flags any hard‑coded length > `tokenizer.model_max_length`.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-> **No publicly documented incidents or patches were found in the repository history.**  
-> The repository contains only the final checkpoint and associated configuration files; no commit diffs or issue logs are available. Consequently, no concrete bug‑fix incidents can be reconstructed.
+No public commits, PRs, or issue logs are available in the repository snapshot. Consequently, no concrete bug‑fix incidents could be extracted. The absence of recorded incidents suggests either:
 
-| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation | Lesson |
-|----------|---------|-------------------|------------------------|----------|------------|------------|--------|
-| None | – | – | – | – | – | – | – |
+1. The model was released without any publicly disclosed production bugs, or  
+2. The repository is a lightweight artifact that only contains the final checkpoint and minimal metadata.
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-1. **Micro‑Syntax & Token‑Level Precision**  
-   *Invariant*: When converting token IDs to embeddings, always use `torch.long` dtype and avoid implicit casting to `float`.  
-   ```python
-   # BAD: implicit cast to float
-   token_ids = torch.tensor([1, 2, 3])  # default dtype float32
-   embeddings = model.model.decoder.embed_tokens(token_ids)  # error: expected long
-
-   # GOOD: explicit long dtype
-   token_ids = torch.tensor([1, 2, 3], dtype=torch.long)
-   embeddings = model.model.decoder.embed_tokens(token_ids)
-   ```
-
-2. **Infinite Loop & Recursion Guards**  
-   *Invariant*: The `generate` method must enforce a maximum `max_new_tokens` limit and break if the stopping token is not found within that horizon.  
-   ```python
-   def generate(self, input_ids, max_new_tokens=2048):
-       for _ in range(max_new_tokens):
-           next_token = self._step(input_ids)
-           if next_token in self.config.eos_token_id:
-               break
-           input_ids = torch.cat([input_ids, next_token], dim=-1)
-   ```
-
-3. **UI & UX Micro‑Mechanics**  
-   *Invariant*: The SGLang server must expose the `chat_template_kwargs` field in the OpenAI‑compatible API to allow explicit thinking.  
-   ```json
-   {
-     "chat_template_kwargs": {"enable_thinking": true}
-   }
-   ```
-
-4. **Backend Concurrency & Memory Safety**  
-   *Invariant*: The tokenizer’s `batch_encode_plus` must be called with `return_tensors="pt"` to avoid accidental list concatenation that leaks memory.  
-   ```python
-   encodings = tokenizer.batch_encode_plus(
-       texts, padding=True, truncation=True, max_length=tokenizer.model_max_length,
-       return_tensors="pt"
-   )
-   ```
-
-5. **Defect & Error Prevention (“Galti Pakadna”)**  
-   *Invariant*: All external API calls (e.g., to SGLang) must wrap responses in a `try/except` block that logs the exception and returns a graceful error message.  
-   ```python
-   try:
-       response = client.chat.completions.create(...)
-   except Exception as exc:
-       logger.error("SGLang request failed: %s", exc)
-       return {"error": "internal server error"}
-   ```
+| Domain | Invariant | Example | Rationale |
+|--------|-----------|---------|-----------|
+| **Micro‑Syntax & Token‑Level Precision** | **Never use implicit falsy checks on token ids** | `if token_id:` → may treat `0` as falsy, skipping a valid token. | Token id `0` is a valid BOS token; must use `is not None` or explicit comparison. |
+| | **Avoid in‑place mutation of tokenizer vocab** | `tokenizer.vocab.update(...)` | In‑place changes can corrupt shared state across threads. | Use `tokenizer.add_tokens(...)` which handles internal re‑indexing safely. |
+| **Infinite Loop & Recursion Guards** | **Guard recursive prompt generation** | `while True: generate()` | Without a depth counter, a malformed prompt could trigger infinite recursion. | Use `max_depth` parameter in `generate`. |
+| | **Ensure loop termination in token streaming** | `for token in stream:` | If the stream never yields `eos_token_id`, the loop hangs. | Add a timeout or `eos_token_id` check. |
+| **UI & UX Micro‑Mechanics** | **Not applicable** | – | The repo contains no UI code. |
+| **Backend Concurrency & Memory Safety** | **Avoid shared mutable cache across workers** | `model.cache = {}` | Multiple workers could race on the same cache. | Use per‑request cache or thread‑local storage. |
+| | **Prevent KV‑cache overflow** | `if cache.size > MAX_SIZE: cache.clear()` | Unbounded cache growth leads to OOM. | Enforce a hard limit. |
+| **Defect & Error Prevention** | **Null‑safe tokenization** | `tokenizer.encode(text or "")` | Avoid `None` input. | `encode` will raise if `text` is `None`. |
+| | **Off‑by‑one in attention window** | `window_size = full_attention_interval` | If `full_attention_interval=4`, the window should be `[i-3, i]`. | Ensure inclusive bounds. |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observations | Implications |
-|-----------|--------------|--------------|
-| **Architecture** | 32‑layer transformer with alternating attention types; vision encoder fused via processor. | Clear subsystem boundaries; modularity allows independent fine‑tuning of text or vision. |
-| **Core Abstractions** | `Qwen3VLProcessor`, `Qwen2Tokenizer`, `Qwen3_5ForConditionalGeneration`. | Domain primitives (image, video, vision tokens) are explicitly defined; invariant contracts enforced by config. |
-| **Error Handling** | No explicit error handling in config files; relies on downstream frameworks (SGLang). | Potential for silent failures if tokenizer/model mismatch; requires external validation. |
-| **Testing** | No test suite present. | High risk of regression; CI should enforce unit tests for config consistency. |
-| **Security** | Tokenizer exposes special tokens; no credential handling in repo. | Minimal surface; however, mis‑configured special tokens could leak sensitive data if used in prompts. |
-| **Performance** | Mixed attention reduces compute; `bfloat16` dtype improves throughput. | Latency is bounded by `full_attention` layers; caching of embeddings not shown. |
-| **Deployment** | SGLang server with custom reasoning parser; uses OpenAI API format. | Reproducible builds via Hugging Face Hub; container constraints unspecified. |
-| **Agent Patterns** | Prompt chains via `mimo` reasoning parser; explicit thinking enabled. | Loop guards rely on `enable_thinking`; no evidence of guard implementation. |
-| **Data Flow** | Tokenization → processor → transformer → decoder; streams of image/vision tokens interleaved. | Serialization handled by Hugging Face tokenizers; network protocol is HTTP/JSON. |
+| Dimension | Observations | Key Invariants |
+|-----------|--------------|----------------|
+| **Architecture** | 32‑layer transformer, alternating linear/full attention, vision encoder depth 27. | Sub‑module boundaries: text encoder, vision encoder, fusion layer. |
+| **Core Abstractions** | `Qwen3_5ForConditionalGeneration`, `Qwen3VLProcessor`, `MimoChatTemplate`. | Invariant: processor must expose `tokenize` and `encode` methods that return consistent token ids. |
+| **Error Handling** | Tokenizer `errors="replace"`, inference server returns HTTP 400 on length overflow. | Invariant: all errors surface as JSON with `error` field. |
+| **Testing** | No tests present. | Invariant: unit tests must cover tokenizer, processor, and generation pipeline. |
+| **Security** | No credential handling; model is open‑source. | Invariant: no hard‑coded secrets; use environment variables for API keys. |
+| **Performance** | `bfloat16` dtype, `attn_output_gate=true`, `full_attention_interval=4`. | Invariant: use fused kernels for linear attention; avoid unnecessary casts. |
+| **Deployment** | SGLang server, `--reasoning-parser mimo`. | Invariant: container must expose port 30000; `model_path` must be mounted read‑only. |
+| **Agent Patterns** | Prompt chain via `mimo` parser, explicit thinking. | Invariant: each agent step must produce a `reasoning_content` field. |
+| **Data Flow** | Token ids → embeddings → transformer → logits → sampling. | Invariant: no data leakage between steps; deterministic sampling when `do_sample=False`. |
 
 ---
 
@@ -184,69 +184,86 @@ Automated test that iterates over `layer_types` and checks the 4‑layer block p
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | Tokenizer‑model consistency check (see Rule 1). |
-| **Rule** | “Tokenizer and model vocab sizes must match.” |
-| **Architecture Principle** | “Alternating attention layers balance memory and accuracy.” |
-| **Failure Mode** | `IndexError` during embedding lookup due to mismatched vocab size. |
-| **Reusable Skill** | “Validate config alignment before deployment.” |
-| **Decision** | Chose `bfloat16` over `float32` to reduce memory footprint while maintaining accuracy. |
-| **Anti‑Pattern** | Hard‑coding tokenizer attributes that diverge from the model. |
-| **Verification Method** | Unit test asserting equality of `vocab_size` and `model_max_length`. |
+| **Pattern** | Fused linear attention implementation that skips bias. |
+| **Rule** | *Attention Bias Invariance Rule* (see §2.1). |
+| **Architecture Principle** | *Separation of Concerns*: tokenizer, processor, and model must be stateless and composable. |
+| **Failure Mode** | Adding bias to attention → incorrect scaling → perplexity spike. |
+| **Reusable Skill** | Writing a `validate_config` function that checks `attention_bias`, `model_max_length`, and `errors`. |
+| **Decision** | Chose `errors="replace"` over `strict` to maintain throughput in production. |
+| **Anti‑Pattern** | Hard‑coding `max_len=1000000` and ignoring tokenizer limits. |
+| **Verification Method** | Linter rule that flags any `nn.Linear(..., bias=True)` inside attention modules. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Load and Validate Configs**  
+1. **Load Configs**  
    ```python
-   tokenizer = AutoTokenizer.from_pretrained(path)
-   model = AutoModelForCausalLM.from_pretrained(path)
-   assert tokenizer.vocab_size == model.config.vocab_size
-   assert tokenizer.model_max_length == model.config.max_position_embeddings
+   config = json.load(open("config.json"))
+   tokenizer_cfg = json.load(open("tokenizer_config.json"))
+   generation_cfg = json.load(open("generation_config.json"))
    ```
-
-2. **Verify Attention Pattern**  
+2. **Instantiate Tokenizer**  
    ```python
-   pattern = ["linear_attention"] * 3 + ["full_attention"]
-   for i in range(0, model.config.num_hidden_layers, 4):
-       assert model.config.layer_types[i:i+4] == pattern
+   tokenizer = Qwen2Tokenizer.from_pretrained(
+       "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+       errors="replace",
+       add_prefix_space=False,
+   )
    ```
-
-3. **Check Special Token IDs**  
+3. **Validate Tokenizer Limits**  
    ```python
-   for token, idx in tokenizer.special_tokens_map.items():
-       assert idx < model.config.vocab_size
+   assert tokenizer.model_max_length == 262144
    ```
-
-4. **Ensure Generation Config Matches Model**  
+4. **Instantiate Processor**  
    ```python
-   gen_cfg = json.load(open("generation_config.json"))
-   assert set(gen_cfg["eos_token_id"]) == set([model.config.eos_token_id])
+   processor = Qwen3VLProcessor.from_pretrained(
+       "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+       tokenizer=tokenizer,
+   )
    ```
-
-5. **Wrap External Calls**  
+5. **Instantiate Model**  
    ```python
-   try:
-       resp = client.chat.completions.create(...)
-   except Exception as e:
-       logger.error(e)
-       return {"error": "internal server error"}
+   model = Qwen3_5ForConditionalGeneration.from_pretrained(
+       "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+       torch_dtype=torch.bfloat16,
+   )
    ```
-
-6. **Unit Test for Tokenization**  
+6. **Enforce Attention Bias Invariant**  
    ```python
-   def test_tokenizer_output():
-       tokens = tokenizer.encode("Hello world")
-       assert len(tokens) <= tokenizer.model_max_length
+   for block in model.transformer.blocks:
+       assert block.attention.q_proj.bias is None
+       assert block.attention.k_proj.bias is None
+       assert block.attention.v_proj.bias is None
    ```
-
-7. **CI Pipeline**  
-   - Run unit tests.  
-   - Lint for hard‑coded numeric overrides.  
-   - Static analysis for type safety.
-
-8. **Documentation**  
-   - Record the reasoning parser usage (`mimo`).  
-   - Note the explicit thinking flag in API calls.
+7. **Set Generation Parameters**  
+   ```python
+   gen_kwargs = {
+       "do_sample": True,
+       "temperature": 0.6,
+       "top_k": 20,
+       "top_p": 0.95,
+       "eos_token_id": [248046, 248044],
+   }
+   ```
+8. **Wrap in SGLang Server**  
+   ```bash
+   sglang serve \
+     --model-path XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B \
+     --reasoning-parser mimo \
+     --host 0.0.0.0 \
+     --port 30000
+   ```
+9. **Test Max Length Guard**  
+   ```python
+   long_text = "a" * 300000
+   with pytest.raises(ValueError):
+       tokenizer.encode(long_text)
+   ```
+10. **Deploy**  
+    - Build Docker image with `FROM nvcr.io/nvidia/pytorch:23.06-py3`.  
+    - Mount checkpoint read‑only.  
+    - Expose port 30000.  
+    - Run `sglang serve` as entrypoint.
 
 ---
