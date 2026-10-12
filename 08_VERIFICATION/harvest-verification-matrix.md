@@ -365,3 +365,4 @@
 | `CYCLE-20261012-QNIF` | `2026-10-12T00:33:23.847Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 383, Rule 384, Rule 385` | Yes (`c3c6aab9...`) |
 | `CYCLE-20261012-UT3D` | `2026-10-12T00:36:37.705Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 386, Rule 387, Rule 388` | Yes (`835ddb7f...`) |
 | `CYCLE-20261012-YD44` | `2026-10-12T00:39:23.620Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`5bd42483...`) |
+| `CYCLE-20261012-2I6Z` | `2026-10-12T00:42:36.827Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`fdb6ee1e...`) |

@@ -348,3 +348,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-12T00:33:23.849Z |
 | `learn-huggingface-hf-altworld-hemmingway-1-mv4iut04` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-12T00:36:37.707Z |
 | `learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-12T00:39:23.621Z |
+| `learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-12T00:42:36.829Z |
