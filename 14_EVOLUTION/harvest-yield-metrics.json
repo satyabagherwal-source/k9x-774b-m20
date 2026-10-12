@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T11:45:26.759Z",
-  "total_cycles_completed": 501,
-  "total_learnings_persisted": 501,
+  "last_updated": "2026-10-12T11:48:25.830Z",
+  "total_cycles_completed": 502,
+  "total_learnings_persisted": 502,
   "total_rules_promoted": 246,
   "history": [
-    {
-      "timestamp": "2026-10-12T00:24:26.495Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T00:27:28.263Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T11:45:26.759Z",
       "repository": "openai/clip-vit-base-patch32",
       "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv56qwsj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T11:48:25.830Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv56uqyo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
