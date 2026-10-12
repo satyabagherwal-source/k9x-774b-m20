@@ -775,9 +775,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "799fa20767fe575aeeee521b6b91b4fbabf3e4131ecb56d52a8017c352d37825",
-    "lastHarvestedAt": "2026-10-11T20:04:26.359Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv494roa"
+    "contentHash": "f0657bcb97555bfdf3b1f7e1cc6535bf9ffcce119edf85cdfd668ea335fa0254",
+    "lastHarvestedAt": "2026-10-12T02:18:56.977Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v"
   },
   "hf-google-t5-t5-small": {
     "repository": "google-t5/t5-small",

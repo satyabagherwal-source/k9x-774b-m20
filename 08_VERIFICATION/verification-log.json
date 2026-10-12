@@ -5023,5 +5023,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-IE6N",
+    "timestamp": "2026-10-12T02:18:56.975Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v",
+    "contentHash": "f0657bcb97555bfdf3b1f7e1cc6535bf9ffcce119edf85cdfd668ea335fa0254",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
