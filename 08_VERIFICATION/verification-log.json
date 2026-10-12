@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-D2NP",
-    "timestamp": "2026-10-11T14:06:58.741Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv3wd2l6",
-    "contentHash": "60c11b1579a31fa90b118dbfd0dcb4e052222095561efdd708a9336571d6f8f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-HBMX",
     "timestamp": "2026-10-11T14:10:17.001Z",
     "repository": "stabilityai/stable-diffusion-3-medium",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3.8-Flash-Next",
     "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv5ipnxv",
     "contentHash": "21ad2f68738c195d058b16a00cbead3d3f1fee6b1250df2832bc507dbbf68848",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-TFLR",
+    "timestamp": "2026-10-12T17:23:19.744Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv5itfit",
+    "contentHash": "d908280c37609efb1e50b1f3dca772c8bdbbe3f61c0f35a07d2f7badf945c689",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
