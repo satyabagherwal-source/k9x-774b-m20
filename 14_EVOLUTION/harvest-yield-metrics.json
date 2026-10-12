@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:10:08.967Z",
-  "total_cycles_completed": 356,
-  "total_learnings_persisted": 356,
+  "last_updated": "2026-10-12T03:13:11.800Z",
+  "total_cycles_completed": 357,
+  "total_learnings_persisted": 357,
   "total_rules_promoted": 158,
   "history": [
-    {
-      "timestamp": "2026-10-11T17:07:17.649Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv42syia",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T17:10:20.462Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T03:10:08.967Z",
       "repository": "openai/gpt-oss-120b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T03:13:11.800Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv4og5jo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
