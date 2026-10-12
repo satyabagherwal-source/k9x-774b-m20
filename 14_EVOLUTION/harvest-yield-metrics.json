@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T10:22:47.500Z",
-  "total_cycles_completed": 474,
-  "total_learnings_persisted": 474,
+  "last_updated": "2026-10-12T10:25:46.982Z",
+  "total_cycles_completed": 475,
+  "total_learnings_persisted": 475,
   "total_rules_promoted": 238,
   "history": [
-    {
-      "timestamp": "2026-10-11T23:02:20.780Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T23:05:35.769Z",
       "repository": "convaiinnovations/laya",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T10:22:47.500Z",
       "repository": "microsoft/FrogNano-4B-2609",
       "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv53sm75",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T10:25:46.982Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv53wgox",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
