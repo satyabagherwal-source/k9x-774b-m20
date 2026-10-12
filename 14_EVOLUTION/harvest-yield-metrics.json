@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T12:54:24.308Z",
-  "total_cycles_completed": 523,
-  "total_learnings_persisted": 523,
+  "last_updated": "2026-10-12T12:57:29.267Z",
+  "total_cycles_completed": 524,
+  "total_learnings_persisted": 524,
   "total_rules_promoted": 251,
   "history": [
-    {
-      "timestamp": "2026-10-12T01:30:43.455Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-hf-psrben-visionhope-mv4ksdgc",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T01:33:36.594Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T12:54:24.308Z",
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv597lcd",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T12:57:29.267Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv59bk20",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

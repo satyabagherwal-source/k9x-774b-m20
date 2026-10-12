@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-FCYZ",
-    "timestamp": "2026-10-11T09:00:49.643Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv3lfcux",
-    "contentHash": "a683c478d0609b8b79d986dc2a0b243e4d486c5fb11000229a390ea04dad97b9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-OR5S",
     "timestamp": "2026-10-11T09:08:07.936Z",
     "repository": "Edge0/Audio8-ASR-Infinite",
@@ -7490,6 +7475,21 @@
     "repository": "jialinyyzz/humanizer",
     "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv597lcd",
     "contentHash": "fd48e5743c800f44fe089f344969441c2d775d11bc33349733e4387678d783a3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-BK4W",
+    "timestamp": "2026-10-12T12:57:29.264Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv59bk20",
+    "contentHash": "32a209fd67f5cd39e74828e55bbed1efb2a96f183033fd54ddc2ce7e829f74dd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
