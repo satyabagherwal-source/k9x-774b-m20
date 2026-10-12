@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T18:32:43.141Z",
-  "total_cycles_completed": 628,
-  "total_learnings_persisted": 628,
+  "last_updated": "2026-10-12T18:35:39.678Z",
+  "total_cycles_completed": 629,
+  "total_learnings_persisted": 629,
   "total_rules_promoted": 303,
   "history": [
-    {
-      "timestamp": "2026-10-12T07:13:36.509Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv4x1bos",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T07:17:59.822Z",
       "repository": "apple/LensVLM-9B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T18:32:43.141Z",
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv5lao0r",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T18:35:39.678Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv5leg8x",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
