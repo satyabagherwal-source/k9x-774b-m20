@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T12:45:13.126Z",
+  "last_updated": "2026-10-12T12:48:31.601Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1616,15 +1616,15 @@
       "repository": "zai-org/GLM-5.3",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-zai-org-glm-5-3-mv4t3zjz",
-      "content_hash": "d9c6817847ebf0fabb9c504693dc915574b9ce027fef925ba2efdfe111a69336",
-      "verified_at": "2026-10-12T05:23:42.248Z",
+      "learning_id": "learn-huggingface-hf-zai-org-glm-5-3-mv590170",
+      "content_hash": "44a451759eb62f6dcfb251348843576670bf29a331f2b11cd772c2e03edee57d",
+      "verified_at": "2026-10-12T12:48:31.601Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T05:23:42.248Z"
+      "last_updated": "2026-10-12T12:48:31.601Z"
     },
     "mudler/locate-anything.cpp-gguf": {
       "repository": "mudler/locate-anything.cpp-gguf",
