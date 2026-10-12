@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T06:27:13.289Z",
-  "total_cycles_completed": 416,
-  "total_learnings_persisted": 416,
+  "last_updated": "2026-10-12T06:29:58.466Z",
+  "total_cycles_completed": 417,
+  "total_learnings_persisted": 417,
   "total_rules_promoted": 181,
   "history": [
-    {
-      "timestamp": "2026-10-11T20:07:38.445Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T20:10:34.818Z",
       "repository": "Comfy-Org/MiniMax-H3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T06:27:13.289Z",
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv4vdo6a",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T06:29:58.466Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4vh7np",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
