@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:22:53.941Z",
-  "total_verified_learnings": 4668,
+  "last_updated": "2026-10-12T23:26:18.671Z",
+  "total_verified_learnings": 4669,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -113849,6 +113849,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T23:22:53.941Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-google-bert-bert-base-uncased-mv5vs893": {
+      "learning_id": "learn-huggingface-hf-google-bert-bert-base-uncased-mv5vs893",
+      "source": "google-bert/bert-base-uncased",
+      "repository": "google-bert/bert-base-uncased",
+      "slug": "hf-google-bert-bert-base-uncased",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
+      "content_hash": "0bb43cf97bdb06aadfd6c8b989d57142d775bfbe63021019a2367328ab3270a9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 599,
+          "title": "Numerical Stability in Attention Scaling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 600,
+          "title": "Positional Encoding Boundary Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 601,
+          "title": "Dropout Application in Inference Mode",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T23:26:18.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

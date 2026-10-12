@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:22:53.996Z",
-  "total_cycles_completed": 713,
-  "total_learnings_persisted": 713,
-  "total_rules_promoted": 347,
+  "last_updated": "2026-10-12T23:26:18.718Z",
+  "total_cycles_completed": 714,
+  "total_learnings_persisted": 714,
+  "total_rules_promoted": 350,
   "history": [
-    {
-      "timestamp": "2026-10-12T12:26:33.240Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv587rz1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T12:29:56.187Z",
       "repository": "google/gemma-4-31B-it",
@@ -1403,6 +1396,13 @@
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv5vnubj",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T23:26:18.718Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv5vs893",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
