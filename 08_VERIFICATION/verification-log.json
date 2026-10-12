@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-4YX4",
-    "timestamp": "2026-10-11T08:52:44.872Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp",
-    "contentHash": "4d03a0672166323428bc2774dd3cf8b9d3bdf98d8f4783114b607ab080ebb725",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-A1LL",
     "timestamp": "2026-10-11T08:56:41.625Z",
     "repository": "autotrust/GEV-26B-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.3",
     "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv590170",
     "contentHash": "44a451759eb62f6dcfb251348843576670bf29a331f2b11cd772c2e03edee57d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-3S0E",
+    "timestamp": "2026-10-12T12:51:26.222Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv593rxl",
+    "contentHash": "2cbda2173edd30b1ef76e7a321c0f3ac1da716b0b790f333659b1679775bc848",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

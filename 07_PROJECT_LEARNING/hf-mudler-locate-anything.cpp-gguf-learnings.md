@@ -3,8 +3,8 @@
 > **Source Version**: `hf-mudler-lo`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T05:26:54.156Z  
-> **Learning ID**: `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4t83po`  
+> **Timestamp**: 2026-10-12T12:51:26.121Z  
+> **Learning ID**: `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv593rxl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T05:26:53.357Z  
+> **Harvest Timestamp**: 2026-10-12T12:51:25.416Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: object-detection
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 12332115 downloads | 28 likes
+- **Stars / Engagement**: 12333890 downloads | 33 likes
 
 ---
 
