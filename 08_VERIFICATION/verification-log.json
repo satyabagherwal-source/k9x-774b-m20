@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-ATPC",
-    "timestamp": "2026-10-11T16:25:11.904Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
-    "contentHash": "a099339a4a6d0ff55868c458352c6c726347cf39a9c2cdc224cf95bbb69c8d39",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-J8Z6",
     "timestamp": "2026-10-11T16:31:44.946Z",
     "repository": "autotrust/JEV-27B-VL",
@@ -7490,6 +7475,21 @@
     "repository": "jialinyyzz/humanizer",
     "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv5nihj0",
     "contentHash": "047ba6c87c8a29247479e5240605945c32f8508a3d277000904acdaa5aad63f1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-MCU7",
+    "timestamp": "2026-10-12T19:37:47.647Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv5nmcrd",
+    "contentHash": "5e6403c51f0f08042edc1820b5b7109efd1e79417b7bacd5223e4ce68b86d533",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
