@@ -7048,5 +7048,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-SMA1",
+    "timestamp": "2026-10-12T10:22:47.497Z",
+    "repository": "microsoft/FrogNano-4B-2609",
+    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv53sm75",
+    "contentHash": "4d51c7c5822486fcdd1b46125868e0d1ce2341ef577f218700947297eec07144",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

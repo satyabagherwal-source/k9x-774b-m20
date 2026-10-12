@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T10:19:48.346Z",
-  "total_cycles_completed": 473,
-  "total_learnings_persisted": 473,
+  "last_updated": "2026-10-12T10:22:47.500Z",
+  "total_cycles_completed": 474,
+  "total_learnings_persisted": 474,
   "total_rules_promoted": 238,
   "history": [
-    {
-      "timestamp": "2026-10-11T22:59:28.856Z",
-      "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-11T23:02:20.780Z",
       "repository": "autotrust/GEV-26B-Decide",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-12T10:19:48.346Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
       "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv53orzx",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T10:22:47.500Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv53sm75",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
