@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T13:26:09.378Z",
+  "last_updated": "2026-10-12T13:29:12.403Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -174,15 +174,15 @@
       "repository": "Cactus-Compute/whistle",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv4ui74m",
-      "content_hash": "481dc9769b5ae95901e447c1086b08eb0bdc65f222d205778b2a53cb7bdec879",
-      "verified_at": "2026-10-12T06:02:44.859Z",
+      "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv5agcji",
+      "content_hash": "76de533fbd7aae2312dbf1e8758c9201de0905d2100528e6792ca5c247b98eb1",
+      "verified_at": "2026-10-12T13:29:12.403Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T06:02:44.859Z"
+      "last_updated": "2026-10-12T13:29:12.403Z"
     },
     "Open-Source-Legal/OpenContracts": {
       "repository": "Open-Source-Legal/OpenContracts",
