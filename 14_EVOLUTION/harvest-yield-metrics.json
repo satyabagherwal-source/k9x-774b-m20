@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T21:34:07.963Z",
-  "total_cycles_completed": 683,
-  "total_learnings_persisted": 683,
+  "last_updated": "2026-10-12T21:36:53.241Z",
+  "total_cycles_completed": 684,
+  "total_learnings_persisted": 684,
   "total_rules_promoted": 328,
   "history": [
-    {
-      "timestamp": "2026-10-12T10:53:38.064Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv54wa3v",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T10:56:31.279Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -1403,6 +1396,13 @@
       "repository": "Altworld/Hemmingway-1",
       "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv5rryra",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-12T21:36:53.241Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv5rvid0",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

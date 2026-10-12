@@ -3,8 +3,8 @@
 > **Source Version**: `hf-fastino-g`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T14:59:11.424Z  
-> **Learning ID**: `learn-huggingface-hf-fastino-gliner2-5-decide-mv5do2io`  
+> **Timestamp**: 2026-10-12T21:36:53.172Z  
+> **Learning ID**: `learn-huggingface-hf-fastino-gliner2-5-decide-mv5rvid0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/fastino/GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T14:59:10.696Z  
+> **Harvest Timestamp**: 2026-10-12T21:36:52.366Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

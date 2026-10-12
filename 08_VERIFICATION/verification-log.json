@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-OMXE",
-    "timestamp": "2026-10-11T18:27:54.770Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
-    "contentHash": "3e90f904bf3865cc10e412255f52caeaf97756a4f82054f7a7e1668ae4201e8f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-SBCH",
     "timestamp": "2026-10-11T18:30:46.385Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "c5cbe846f2b5fe6a4e568f0754d26cb7fc420916a9ed75bd778f3314eeea59b8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-VIES",
+    "timestamp": "2026-10-12T21:36:53.236Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv5rvid0",
+    "contentHash": "c51f0c2342c8f4e22fd3bc2106b7139050d0f16f4949816324544536534b30f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
