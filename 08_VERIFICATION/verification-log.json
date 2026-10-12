@@ -5008,5 +5008,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-EU7C",
+    "timestamp": "2026-10-12T02:16:11.112Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-m3-mv4meu5h",
+    "contentHash": "763d16ddc8bdc21566f383c78c7dfa721d90ce996e4a5128a5581605364d7ecc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
