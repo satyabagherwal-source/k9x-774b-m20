@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-AZ4N",
-    "timestamp": "2026-10-11T17:49:17.783Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
-    "contentHash": "9f8e97704858816f20d3b6d7e80b1f447d5b96425c0831183a4f150c74ae2da2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-EU00",
     "timestamp": "2026-10-11T17:52:17.760Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7492,6 +7477,21 @@
     "contentHash": "0e8da9cf18ad25fcb482999ca3d555aaf4742cb3c0d935b27b060436f485e4a3",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-GLAM",
+    "timestamp": "2026-10-12T20:57:17.518Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv5qgl7q",
+    "contentHash": "37da79567315d63b6daae1e1d28b4d7b8726404a4e07ee26adc8c5d1e875c4ae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
