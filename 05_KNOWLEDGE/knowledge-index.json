@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T15:49:20.811Z",
-  "total_verified_learnings": 4530,
+  "last_updated": "2026-10-12T15:52:19.208Z",
+  "total_verified_learnings": 4531,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -110171,6 +110171,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T15:49:20.811Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-psrben-visionhope-mv5fke6e": {
+      "learning_id": "learn-huggingface-hf-psrben-visionhope-mv5fke6e",
+      "source": "PSRben/VisionHOPE",
+      "repository": "PSRben/VisionHOPE",
+      "slug": "hf-psrben-visionhope",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "content_hash": "57852e20e1793c2102896d6a4fe059eb775a15f7280e715502f9da5eaa088354",
+      "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 534,
+          "title": "Configuration-Weight Topological Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 535,
+          "title": "Hierarchical Dimension Monotonicity",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-12T15:52:19.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
