@@ -5368,5 +5368,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-2QO1",
+    "timestamp": "2026-10-12T03:30:45.505Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv4p2qlv",
+    "contentHash": "8ac836e6c263be20108e675dcdc8e270a8aaa25ce8a887c2d03ac8f90e70b385",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
