@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-I0Y9",
-    "timestamp": "2026-10-11T11:22:52.113Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv3qi0v0",
-    "contentHash": "087b5559b172f104d4c5c313b7c22c3a95ce2db273d2242fbd8d084b9597f421",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-2T59",
     "timestamp": "2026-10-11T11:39:01.773Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
     "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv5czaw0",
     "contentHash": "3671a90485633b8b307c2e86e4750b5ec2aa59d6c021d40ea972163c57682d23",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261012-3KI6",
+    "timestamp": "2026-10-12T14:43:14.958Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv5d3kf2",
+    "contentHash": "3f668742ada4d5ac32d8852d03ff321e81c489338a10df01ea15d5bd5da61437",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

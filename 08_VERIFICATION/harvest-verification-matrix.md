@@ -612,3 +612,4 @@
 | `CYCLE-20261012-RNVR` | `2026-10-12T14:33:59.463Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`78f39bd9...`) |
 | `CYCLE-20261012-VK60` | `2026-10-12T14:37:01.272Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`4d85cb2a...`) |
 | `CYCLE-20261012-ZAYB` | `2026-10-12T14:39:55.955Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`3671a904...`) |
+| `CYCLE-20261012-3KI6` | `2026-10-12T14:43:14.958Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`3f668742...`) |
