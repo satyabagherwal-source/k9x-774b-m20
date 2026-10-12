@@ -6958,5 +6958,20 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261012-PIX8",
+    "timestamp": "2026-10-12T09:52:23.564Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv52piuf",
+    "contentHash": "bab76115e93f2c6d759fefb977a296dcb967a9f8346b912318c564dff51b13b4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]
