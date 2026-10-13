@@ -3916,3 +3916,7 @@ https://github.com/ccfos/nightingale
 # --- Automatically Discovered by AI Scout Engine [2026-10-13T12:56:44.180Z] ---
 # [AI-AGENTS] trailhq/Trail-Code (5687 score) - Turbocharge Claude Code, Cursor, Codex, Gemini & every coding agent: faster, che
 https://github.com/trailhq/Trail-Code
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T14:41:26.868Z] ---
+# [AI-AGENTS] MaxMiksa/Autonomous-Company (1982 score) - An autonomous company working 24/7 on your own PC - Windows/Linux/macOS.
+https://github.com/MaxMiksa/Autonomous-Company

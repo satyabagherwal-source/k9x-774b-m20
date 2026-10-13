@@ -17542,5 +17542,20 @@
     "qualityScore": 5687,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-13T12:56:11.214Z"
+  },
+  {
+    "name": "Autonomous-Company",
+    "fullName": "MaxMiksa/Autonomous-Company",
+    "url": "https://github.com/MaxMiksa/Autonomous-Company",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An autonomous company working 24/7 on your own PC - Windows/Linux/macOS.",
+    "stars": 3128,
+    "forks": 493,
+    "openIssues": 10,
+    "language": "Python",
+    "qualityScore": 1982,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-13T14:40:51.661Z"
   }
 ]
