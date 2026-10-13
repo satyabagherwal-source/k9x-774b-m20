@@ -3,8 +3,8 @@
 > **Source Version**: `hf-bigscienc`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T17:41:09.762Z  
-> **Learning ID**: `learn-huggingface-hf-bigscience-bloom-mv5jgd8i`  
+> **Timestamp**: 2026-10-13T00:35:48.796Z  
+> **Learning ID**: `learn-huggingface-hf-bigscience-bloom-mv5y9m0s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/bigscience/bloom](https://huggingface.co/bigscience/bloom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T17:41:08.886Z  
+> **Harvest Timestamp**: 2026-10-13T00:35:47.803Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 13696 downloads | 5079 likes
+- **Stars / Engagement**: 13696 downloads | 5080 likes
 
 ---
 
