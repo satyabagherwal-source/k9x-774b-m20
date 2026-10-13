@@ -1040,3 +1040,4 @@
 | `CYCLE-20261013-TMUU` | `2026-10-13T15:19:11.094Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`89ac8b51...`) |
 | `CYCLE-20261013-XWGB` | `2026-10-13T15:22:30.155Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 721, Rule 722, Rule 723` | Yes (`90a0fefc...`) |
 | `CYCLE-20261013-1VDV` | `2026-10-13T15:25:35.395Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`59bbdc6f...`) |
+| `CYCLE-20261013-7JFA` | `2026-10-13T15:29:59.830Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`eb916a43...`) |
