@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T01:12:52.962Z",
-  "total_verified_learnings": 4704,
+  "last_updated": "2026-10-13T01:15:48.948Z",
+  "total_verified_learnings": 4705,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -114778,6 +114778,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T01:12:52.962Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv5zp1y8": {
+      "learning_id": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv5zp1y8",
+      "source": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "slug": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "content_hash": "d4e80497ddb872ae56ba18a4002fd7ed269646c0a0aa2892a1dbed12ae4203f3",
+      "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T01:15:48.948Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
