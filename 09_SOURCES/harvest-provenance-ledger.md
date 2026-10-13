@@ -855,3 +855,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-fastino-gliner2-5-decide-mv66drzk` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-13T04:23:00.193Z |
 | `learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv66hner` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-13T04:26:00.873Z |
 | `learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv66lzyz` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-13T04:29:23.785Z |
+| `learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv66pxdg` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-13T04:32:27.088Z |

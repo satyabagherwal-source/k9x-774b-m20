@@ -872,3 +872,4 @@
 | `CYCLE-20261013-DS2N` | `2026-10-13T04:23:00.191Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`d76d93c1...`) |
 | `CYCLE-20261013-HNHI` | `2026-10-13T04:26:00.870Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`535b98d4...`) |
 | `CYCLE-20261013-M01Z` | `2026-10-13T04:29:23.783Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`6f4c5cb3...`) |
+| `CYCLE-20261013-PXHQ` | `2026-10-13T04:32:27.086Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 635, Rule 636, Rule 341` | Yes (`67ae5db6...`) |

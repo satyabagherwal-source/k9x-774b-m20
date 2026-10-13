@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T04:29:23.786Z",
-  "total_cycles_completed": 813,
-  "total_learnings_persisted": 813,
-  "total_rules_promoted": 383,
+  "last_updated": "2026-10-13T04:32:27.092Z",
+  "total_cycles_completed": 814,
+  "total_learnings_persisted": 814,
+  "total_rules_promoted": 386,
   "history": [
-    {
-      "timestamp": "2026-10-12T17:50:18.678Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv5js4pa",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T17:53:06.579Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1403,6 +1396,13 @@
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv66lzyz",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T04:32:27.092Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv66pxdg",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

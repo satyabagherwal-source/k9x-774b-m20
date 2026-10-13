@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T04:29:23.728Z",
-  "total_verified_learnings": 4768,
+  "last_updated": "2026-10-13T04:32:27.038Z",
+  "total_verified_learnings": 4769,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -116443,6 +116443,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T04:29:23.728Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv66pxdg": {
+      "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv66pxdg",
+      "source": "TaichuAI/ZDTaichu5.0-9B",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "slug": "hf-taichuai-zdtaichu5.0-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "content_hash": "67ae5db69a83ee4adbdbc1e11dbde7410cc37067167594852560414a94e42521",
+      "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 635,
+          "title": "**Token‑ID Integrity Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 636,
+          "title": "**Image‑Token Placement Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 341,
+          "title": "**Context‑Length Guard Rule**",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T04:32:27.038Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

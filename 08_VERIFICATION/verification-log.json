@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-PNEJ",
-    "timestamp": "2026-10-12T01:00:36.667Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5",
-    "contentHash": "8f1717fe83e223b7556d07ff4e41b776182b5b2dd07b9ec0e7f2565eefba1897",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-TAYW",
     "timestamp": "2026-10-12T01:03:27.176Z",
     "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -7492,6 +7477,21 @@
     "contentHash": "6f4c5cb36a8a09614abbac7e688b94ca03a3398bad5e59173525d33448ffcf72",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-PXHQ",
+    "timestamp": "2026-10-13T04:32:27.086Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv66pxdg",
+    "contentHash": "67ae5db69a83ee4adbdbc1e11dbde7410cc37067167594852560414a94e42521",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
