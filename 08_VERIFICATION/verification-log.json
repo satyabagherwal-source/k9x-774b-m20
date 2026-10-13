@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-I9QV",
-    "timestamp": "2026-10-12T00:54:52.375Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no",
-    "contentHash": "1548b0500589f840de5ad7cf845a3ddf69fcf350a88b2acb949ea264668f4b07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-LVWS",
     "timestamp": "2026-10-12T00:57:41.068Z",
     "repository": "akhilaaa3/Jev-Omni",
@@ -7490,6 +7475,21 @@
     "repository": "fastino/GLiNER2.5-Decide",
     "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv66drzk",
     "contentHash": "d76d93c17181a7399ff7e9f5d654f5669b4cbcc525071c8a9cc13c64a745bfbe",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-HNHI",
+    "timestamp": "2026-10-13T04:26:00.870Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv66hner",
+    "contentHash": "535b98d48f834050b7ff614de9572ea52b2fbababb74f31785462643146d3659",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
