@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-TZCL",
-    "timestamp": "2026-10-12T06:11:54.549Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-hf-francisring-prism-mv4utz9u",
-    "contentHash": "99089c69f2301bb429179608abaaa862ef7186d48e5688273dfa9cc845c1f438",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-Y3FY",
     "timestamp": "2026-10-12T06:15:06.478Z",
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "268686fc8ad85ca1e5667bd5bd91dd54a0b51388a5f0ffcc04c3fddef2ffd8a0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-5ILF",
+    "timestamp": "2026-10-13T10:48:29.283Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv6k5igt",
+    "contentHash": "427a97eee997f852039a8c10a5750d70f87fdf770aea8c96f85d048a7c080089",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -37111,3 +37111,172 @@ output = model.generate(input_ids, pixel_values)
 1.  **Dependency Check:** Use `ldd` (Linux) or `otool` (macOS) on the compiled binary to ensure no `libpython` or `libtorch` dependencies.
 2.  **Latency Benchmark:** Measure time-to-first-token (TTFT) and total inference time. Compare with Python baseline.
 3.  **Invariant:** C++ engine must be > 2x faster than Python baseline on CPU.
+
+
+---
+
+## 679. Quantization-Native Inference Pipeline (Harvested from Cactus-Compute/whistle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization-Native Inference Pipeline",
+  "source": "Cactus-Compute/whistle",
+  "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+  "source_version": "hf-cactus-compute-whistle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T10:48:29.161Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv6k5igt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST design the inference engine to operate natively on quantized data types (int8/int4) throughout the forward pass, dequantizing only at the final output or when necessary for precision-critical operations. MUST NOT perform dequantization to float32 for every layer operation.
+**WHY**:
+Dequantizing to float32 at every layer incurs massive memory bandwidth overhead and CPU cycle costs for type conversion. On edge devices, memory bandwidth is often the bottleneck, not compute. By keeping data in quantized form, you leverage SIMD instructions that are optimized for integer arithmetic, reducing latency by 2-4x.
+**WHEN TO APPLY**:
+Any ML inference system targeting edge devices (mobile, IoT, microcontrollers) where memory bandwidth and power consumption are critical constraints.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudo-code for quantized matrix multiplication
+void quantized_matmul(const int8_t* A, const int8_t* B, const int8_t* scales, float* C) {
+    // 1. Load quantized blocks (128 elements)
+    // 2. Perform integer dot product using SIMD (e.g., _mm256_maddubs_epi16)
+    // 3. Scale the result using the pre-computed scale factors
+    // 4. Accumulate into float accumulator
+    // 5. Store result
+    // NO dequantization of A or B to float32 before multiplication
+}
+```
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Dequantizing before every operation
+void naive_matmul(const int8_t* A, const int8_t* B, float* C) {
+    float* A_float = new float[A_size];
+    float* B_float = new float[B_size];
+    for (int i = 0; i < A_size; i++) A_float[i] = A[i] * scale_A[i]; // Expensive
+    for (int i = 0; i < B_size; i++) B_float[i] = B[i] * scale_B[i]; // Expensive
+    // Perform float32 matmul
+    // This is 4x slower and uses 4x more memory bandwidth
+}
+```
+**VERIFICATION METHOD**:
+Profile the inference engine using a memory bandwidth profiler (e.g., Intel VTune, ARM Streamline). Verify that the majority of memory accesses are to `int8_t` or `int4_t` arrays, not `float32_t`. Assert that the number of float32 operations is less than 10% of the total operations.
+
+
+---
+
+## 680. Dynamic Model Depth Selection at Load Time (Harvested from Cactus-Compute/whistle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic Model Depth Selection at Load Time",
+  "source": "Cactus-Compute/whistle",
+  "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+  "source_version": "hf-cactus-compute-whistle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T10:48:29.187Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv6k5igt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST support loading different model depths (e.g., 2 layers, 4 layers, full depth) from the same binary file by selecting the appropriate subset of weights at load time. MUST NOT require separate binaries for different model sizes.
+**WHY**:
+Edge devices vary widely in memory and compute capabilities. A single binary that can adapt to the device's capabilities reduces deployment complexity and allows for graceful degradation. If a device runs out of memory, it can fall back to a shallower model without crashing.
+**WHEN TO APPLY**:
+Any ML system that needs to run on a heterogeneous fleet of devices with varying hardware capabilities.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudo-code for dynamic depth selection
+Model load_model(const std::string& path, int target_depth) {
+    // 1. Read the .cact file header
+    // 2. Identify the available depths (e.g., 2, 4, 8, 16)
+    // 3. Select the largest depth <= target_depth
+    // 4. Load only the weights for the selected depth
+    // 5. Initialize the model with the selected depth
+    return model;
+}
+```
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Separate binaries for each depth
+// whistle_2layer.cact
+// whistle_4layer.cact
+// whistle_8layer.cact
+// This requires the user to know which binary to download, increasing complexity
+```
+**VERIFICATION METHOD**:
+Write a test that loads the model with different `--audio-depth` values and verifies that the model's output changes accordingly (shallower models should have higher WER). Assert that the memory usage decreases as the depth decreases.
+
+
+---
+
+## 681. Zero-Dependency WebAssembly Packaging (Harvested from Cactus-Compute/whistle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Dependency WebAssembly Packaging",
+  "source": "Cactus-Compute/whistle",
+  "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+  "source_version": "hf-cactus-compute-whistle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T10:48:29.208Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv6k5igt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST package the inference engine as a self-contained WebAssembly module with no external dependencies (no libc, no libm, no OS calls). MUST NOT rely on host-provided libraries for core inference logic.
+**WHY**:
+WebAssembly modules that depend on external libraries are difficult to deploy across different platforms (browser, Node.js, Deno, Bun). A self-contained module ensures that the inference engine runs identically everywhere, reducing integration bugs and security risks.
+**WHEN TO APPLY**:
+Any ML inference system that needs to run in a WebAssembly environment (browser, server-side WASM).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```wasm
+// Pseudo-code for a self-contained WASM module
+(module
+  (memory 1)
+  (func (export "inference") (param i32 i32) (result i32)
+    ;; All logic is self-contained
+    ;; No calls to external functions
+  )
+)
+```
+**NEGATIVE CONSTRAINT**:
+```wasm
+// ANTI-PATTERN: Relying on host-provided libraries
+(module
+  (import "env" "malloc" (func $malloc (param i32) (result i32)))
+  (import "env" "free" (func $free (param i32)))
+  ;; This makes the module dependent on the host's memory management
+)
+```
+**VERIFICATION METHOD**:
+Use a WASM linter to verify that the module has no imports from `env` or other host modules. Run the module in a minimal WASM runtime (e.g., Wasmtime) and verify that it runs without any host-provided libraries.
