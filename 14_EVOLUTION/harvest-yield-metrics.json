@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T23:28:04.812Z",
-  "total_cycles_completed": 1113,
-  "total_learnings_persisted": 1113,
+  "last_updated": "2026-10-13T23:31:10.366Z",
+  "total_cycles_completed": 1114,
+  "total_learnings_persisted": 1114,
   "total_rules_promoted": 539,
   "history": [
-    {
-      "timestamp": "2026-10-13T10:57:16.248Z",
-      "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-hf-francisring-prism-mv6kgt5g",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T11:00:18.818Z",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T23:28:04.812Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv7bactj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T23:31:10.366Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv7bebzc",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

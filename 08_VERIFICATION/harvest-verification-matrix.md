@@ -1172,3 +1172,4 @@
 | `CYCLE-20261013-2M16` | `2026-10-13T23:22:03.402Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`f0c1642c...`) |
 | `CYCLE-20261013-6J2A` | `2026-10-13T23:25:06.178Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`58cf7a1a...`) |
 | `CYCLE-20261013-ACW9` | `2026-10-13T23:28:04.809Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`e4962b0e...`) |
+| `CYCLE-20261013-EC2F` | `2026-10-13T23:31:10.359Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`50e78221...`) |
