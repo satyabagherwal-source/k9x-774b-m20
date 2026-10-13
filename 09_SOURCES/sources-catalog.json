@@ -1428,5 +1428,15 @@
     "contentHash": "a3e3d17d1797f46c54475022aca228dc21bde024de195594897ae62ef8ab5156",
     "lastHarvestedAt": "2026-10-13T13:00:37.921Z",
     "learningId": "learn-github-trailhq-trail-code-mv6ovg9f"
+  },
+  "maxmiksa-autonomous-company": {
+    "repository": "MaxMiksa/Autonomous-Company",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MaxMiksa/Autonomous-Company",
+    "sourceVersion": "c7c60dbd",
+    "license": "MIT",
+    "contentHash": "24bfd9ae257d9c76196707d2994c223f9eacf8dfcefc8542498e09a11ffc9ffc",
+    "lastHarvestedAt": "2026-10-13T14:51:24.484Z",
+    "learningId": "learn-github-maxmiksa-autonomous-company-mv6stwsa"
   }
 }

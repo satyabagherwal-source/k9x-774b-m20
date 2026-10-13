@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-OS1K",
-    "timestamp": "2026-10-12T10:19:48.344Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv53orzx",
-    "contentHash": "5711dfdd9d0fe00b609edce345460af321742fe5a6646f4db585220c3ce5a04a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-SMA1",
     "timestamp": "2026-10-12T10:22:47.497Z",
     "repository": "microsoft/FrogNano-4B-2609",
@@ -7492,6 +7477,21 @@
     "contentHash": "ee82692024dd838b794be804ba189f48cd8427595b4a967865c078d5f2a20172",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-TWW2",
+    "timestamp": "2026-10-13T14:51:24.482Z",
+    "repository": "MaxMiksa/Autonomous-Company",
+    "learningId": "learn-github-maxmiksa-autonomous-company-mv6stwsa",
+    "contentHash": "24bfd9ae257d9c76196707d2994c223f9eacf8dfcefc8542498e09a11ffc9ffc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

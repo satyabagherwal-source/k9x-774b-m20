@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T14:38:35.482Z",
-  "total_verified_learnings": 4927,
+  "last_updated": "2026-10-13T14:51:24.436Z",
+  "total_verified_learnings": 4928,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -120755,6 +120755,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T14:38:35.482Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-maxmiksa-autonomous-company-mv6stwsa": {
+      "learning_id": "learn-github-maxmiksa-autonomous-company-mv6stwsa",
+      "source": "MaxMiksa/Autonomous-Company",
+      "repository": "MaxMiksa/Autonomous-Company",
+      "slug": "maxmiksa-autonomous-company",
+      "platform": "github",
+      "source_url": "https://github.com/MaxMiksa/Autonomous-Company",
+      "source_version": "c7c60dbd",
+      "content_hash": "24bfd9ae257d9c76196707d2994c223f9eacf8dfcefc8542498e09a11ffc9ffc",
+      "dossier_path": "07_PROJECT_LEARNING/maxmiksa-autonomous-company-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/maxmiksa-autonomous-company-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 719,
+          "title": "Expand product screenshots and distinguish explicit frontend redesign (#42)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T14:51:24.436Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

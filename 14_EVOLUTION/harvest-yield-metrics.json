@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T14:38:35.519Z",
-  "total_cycles_completed": 972,
-  "total_learnings_persisted": 972,
-  "total_rules_promoted": 475,
+  "last_updated": "2026-10-13T14:51:24.486Z",
+  "total_cycles_completed": 973,
+  "total_learnings_persisted": 973,
+  "total_rules_promoted": 476,
   "history": [
-    {
-      "timestamp": "2026-10-13T02:25:43.116Z",
-      "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv626y5b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T02:28:59.517Z",
       "repository": "jialinyyzz/humanizer",
@@ -1403,6 +1396,13 @@
       "repository": "Qwen/Qwen3-0.6B",
       "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv6sdfhz",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:51:24.486Z",
+      "repository": "MaxMiksa/Autonomous-Company",
+      "learningId": "learn-github-maxmiksa-autonomous-company-mv6stwsa",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

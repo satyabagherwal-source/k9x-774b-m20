@@ -39892,3 +39892,55 @@ inputs = tokenizer("Hello World", return_tensors="pt")
 *   **Performance Regression Test**: Compare accuracy on a small test set with and without lowercasing. Assert that lowercasing does not decrease accuracy (and often increases it for uncased models).
 
 ---
+
+
+---
+
+## 719. Expand product screenshots and distinguish explicit frontend redesign (#42) (Harvested from MaxMiksa/Autonomous-Company)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Expand product screenshots and distinguish explicit frontend redesign (#42)",
+  "source": "MaxMiksa/Autonomous-Company",
+  "source_url": "https://github.com/MaxMiksa/Autonomous-Company",
+  "source_version": "c7c60dbd",
+  "license": "MIT",
+  "extracted_at": "2026-10-13T14:51:24.398Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-maxmiksa-autonomous-company-mv6stwsa",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [MaxMiksa/Autonomous-Company](https://github.com/MaxMiksa/Autonomous-Company) (Revision: `c7c60dbd`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `.claude/agents/ui-duarte.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaxMiksa/Autonomous-Company. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f4a4a874`: Expand product screenshots and distinguish explicit frontend redesign (#42). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/agents/ui-duarte.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+UI 设计总监，负责从用户任务形成具体视觉方向、组件规范，并核对实现效果。涉及前端时先读取并使用 `.claude/skills/frontend-design.md`，按用户意图选择精修或重新设计/新建模式；设计决定须能落实到实际页面。
+- 精修复用现有技术栈并保留有效身份与结构；明确重新设计/新建时从任务重新决定布局、配色、字体、组件和交互流程，框架可按需要选择。已有代码不等于必须保留旧外观；业务、数据兼容、恢复与隐私边界继续有效
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+UI 设计总监，负责从用户任务形成具体视觉方向、组件规范，并核对实现效果。涉及前端时先读取并使用 `.claude/skills/frontend-design.md`；设计决定须能落实到实际页面。
+- 沿用技术栈，精修不强制迁移框架；已有产品先保留身份与有效结构
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f4a4a874` are properly handled with clean fallback behavior.
