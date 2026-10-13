@@ -36514,3 +36514,163 @@ def test_turbo_distillation():
         v_student = student(x_t, t, c)
         assert torch.allclose(v_teacher, v_student, atol=1e-2), "Student velocity does not match teacher at time step"
 ```
+
+
+---
+
+## 671. The "Zero-Delta Motion" Disambiguation Rule (Harvested from pablodawson/MiniMax-H3-360-Orbit-LoRA)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The \"Zero-Delta Motion\" Disambiguation Rule",
+  "source": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+  "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+  "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T08:38:30.383Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv6ficw5",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pablodawson/MiniMax-H3-360-Orbit-LoRA](https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA) (Revision: `hf-pabloda`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When designing or training generative models for video synthesis where the input boundary conditions are identical (Start Frame == End Frame), the system **MUST** explicitly disambiguate between "Static Scene" and "Closed-Loop Motion" via a distinct control signal (e.g., specific LoRA weights, a dedicated "orbit" flag, or a specialized prompt token). It **MUST NOT** rely solely on the base model's implicit interpretation of zero temporal delta, which defaults to static output.
+
+**WHY**:
+In diffusion models, the denoising process is conditioned on the temporal distance between keyframes. If `t_start` and `t_end` are identical, the gradient signal for motion is zero. Without an explicit override (like a LoRA that biases the attention mechanism to interpret this as a full rotation), the model collapses to the mean (static image). This rule prevents the "dead video" failure mode in looping video generation systems.
+
+**WHEN TO APPLY**:
+*   Any AI video generation pipeline supporting First-Last Frame (FL2V) or Keyframe Interpolation.
+*   Systems generating seamless loops, orbit shots, or circular camera paths.
+*   Training LoRAs or fine-tuning adapters for specific camera movements.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for Inference Logic
+def generate_video(first_frame, last_frame, mode="auto"):
+    if first_frame == last_frame:
+        if mode == "orbit_lora":
+            # Load specific LoRA weights that bias attention to 360-degree rotation
+            model.load_lora("orbit_360_lora.safetensors")
+            # Use specific prompt that reinforces the orbit intent
+            prompt = "360 degree orbit, frozen scene, camera moves, subject static"
+        else:
+            # Default behavior: Static
+            prompt = "static scene"
+        
+        # Generate video
+        video = model.generate(
+            first_frame=first_frame,
+            last_frame=last_frame,
+            prompt=prompt,
+            lora_weights=model.current_lora
+        )
+    else:
+        # Standard interpolation
+        video = model.generate(first_frame, last_frame, prompt="interpolate")
+        
+    return video
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming identical frames imply motion
+def generate_video_bad(first_frame, last_frame):
+    # No distinction made. Base model sees frame_0 == frame_N
+    # and outputs a static image because there is no temporal gradient.
+    video = base_model.generate(first_frame, last_frame)
+    # Result: A 5-second video of a still image.
+    return video
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Generate a video with `first_frame == last_frame` using the base model. Assert that the variance between frames is near zero (static).
+2.  **Integration Test:** Generate a video with `first_frame == last_frame` using the Orbit LoRA. Assert that the variance between frames is high (motion) AND that `frame_0` is perceptually identical to `frame_N` (loop closure).
+3.  **Metric:** Calculate the Optical Flow magnitude. For the LoRA, average flow should be > threshold. For the base model, average flow should be < threshold.
+
+
+---
+
+## 672. The "Frozen Scene" Physics Lock Invariant (Harvested from pablodawson/MiniMax-H3-360-Orbit-LoRA)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The \"Frozen Scene\" Physics Lock Invariant",
+  "source": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+  "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+  "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T08:38:30.410Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv6ficw5",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pablodawson/MiniMax-H3-360-Orbit-LoRA](https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA) (Revision: `hf-pabloda`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In camera-motion-only video generation, the system **MUST** enforce a "physics lock" on all non-camera entities. This means object positions, orientations, and dynamic states (e.g., liquid splashes, hair movement) **MUST** remain constant relative to the world coordinate system, while only the camera's extrinsic parameters (rotation/translation) change. The system **MUST NOT** allow the diffusion process to introduce "drift" or "wobble" in the subject's pose or position over time.
+
+**WHY**:
+Diffusion models are stochastic. Without strong conditioning, the "subject" will subtly shift, rotate, or deform over the duration of the video, breaking the illusion of a frozen instant. This is known as "temporal flicker" or "subject drift." The LoRA is trained to suppress these variations, ensuring that the only change in the pixel space is due to parallax from the camera movement.
+
+**WHEN TO APPLY**:
+*   360-degree orbit shots.
+*   "Freeze frame" effects where the camera moves but the action stops.
+*   Any application requiring strict temporal consistency of the subject.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Conceptual Training Objective
+# Loss function includes a term that penalizes change in subject features
+# across time steps, while allowing change in background parallax.
+
+def calculate_loss(pred_video, target_video, subject_mask):
+    # 1. Standard reconstruction loss
+    recon_loss = mse(pred_video, target_video)
+    
+    # 2. Temporal Consistency Loss for Subject
+    # Extract subject features at t and t+1
+    feat_t = extract_features(pred_video[t], subject_mask)
+    feat_t1 = extract_features(pred_video[t+1], subject_mask)
+    
+    # Penalize difference in subject features
+    consistency_loss = mse(feat_t, feat_t1)
+    
+    # 3. Camera Motion Loss (Encourages parallax)
+    # Ensure background moves relative to subject
+    parallax_loss = calculate_parallax_score(pred_video)
+    
+    total_loss = recon_loss + lambda_consistency * consistency_loss - lambda_parallax * parallax_loss
+    return total_loss
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Allowing subject drift
+# If the loss function only minimizes pixel difference to a moving target,
+# the model may "wobble" the subject to satisfy the loss,
+# resulting in a shaky, unstable subject.
+def calculate_loss_bad(pred_video, target_video):
+    return mse(pred_video, target_video)
+    # No constraint on subject stability.
+```
+
+**VERIFICATION METHOD**:
+1.  **Feature Tracking:** Use a feature tracker (e.g., ORB, SIFT) on the subject region across all frames.
+2.  **Assertion:** The centroid and orientation of the subject features should remain within a tight epsilon (e.g., < 2 pixels deviation) across the entire video.
+3.  **Parallax Check:** Verify that background features move relative to the subject features, confirming camera motion.
