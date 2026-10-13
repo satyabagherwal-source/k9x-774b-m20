@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T15:38:00.680Z",
-  "total_cycles_completed": 984,
-  "total_learnings_persisted": 984,
+  "last_updated": "2026-10-13T15:41:07.475Z",
+  "total_cycles_completed": 985,
+  "total_learnings_persisted": 985,
   "total_rules_promoted": 480,
   "history": [
-    {
-      "timestamp": "2026-10-13T03:02:06.108Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv63hql4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T03:05:23.877Z",
       "repository": "Qwen/Qwen3.8-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T15:38:00.680Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv6uhudo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T15:41:07.475Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv6uluhq",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

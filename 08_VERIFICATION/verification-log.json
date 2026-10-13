@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-ZZU5",
-    "timestamp": "2026-10-12T10:56:31.277Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv54zzru",
-    "contentHash": "68977256e9aa2842a6e6ba3512a335a25d0c2e8f28158a1b0d20d48ef6d3e496",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-3KN1",
     "timestamp": "2026-10-12T10:59:18.205Z",
     "repository": "bigscience/bloom",
@@ -7490,6 +7475,21 @@
     "repository": "black-forest-labs/FLUX.1-schnell",
     "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv6uhudo",
     "contentHash": "a0ab33dbfb5d135401a37711ab7a074679816d1a23d0d7277764f2905d60eebc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-LUKV",
+    "timestamp": "2026-10-13T15:41:07.471Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv6uluhq",
+    "contentHash": "11f5927b8e88221f4cf5d6f4587f18bbf9bea15cc6e8d7874a5a95aacb4e69d5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
