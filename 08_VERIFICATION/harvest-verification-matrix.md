@@ -1007,3 +1007,4 @@
 | `CYCLE-20261013-MH0V` | `2026-10-13T12:53:38.863Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 701, Rule 702, Rule 703` | Yes (`2b7eb7a2...`) |
 | `CYCLE-20261013-VGDA` | `2026-10-13T13:00:37.918Z` | `trailhq/Trail-Code` | Commit diff / Patch analysis | `VERIFIED` | `Rule 704` | Yes (`a3e3d17d...`) |
 | `CYCLE-20261013-DKXJ` | `2026-10-13T13:14:43.639Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 290, Rule 705, Rule 706` | Yes (`52f29eac...`) |
+| `CYCLE-20261013-HHF2` | `2026-10-13T13:17:45.710Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`7c352bd9...`) |
