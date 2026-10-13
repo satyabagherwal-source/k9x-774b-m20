@@ -545,9 +545,9 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "20f995b1e0fde1163cfe1216dc8c9195b147f919bbbe47665c126a0caeb00c1f",
-    "lastHarvestedAt": "2026-10-12T22:05:44.773Z",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv5swmeb"
+    "contentHash": "0b0cd2015cd74ee908563eb411e8c5f520e6d73b6eb5427b309a11c684ba894f",
+    "lastHarvestedAt": "2026-10-13T04:50:27.184Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv67d2u0"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
