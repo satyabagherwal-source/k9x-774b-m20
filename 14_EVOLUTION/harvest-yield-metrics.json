@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:39:10.506Z",
-  "total_cycles_completed": 908,
-  "total_learnings_persisted": 908,
+  "last_updated": "2026-10-13T10:42:18.305Z",
+  "total_cycles_completed": 909,
+  "total_learnings_persisted": 909,
   "total_rules_promoted": 431,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:10:49.435Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv5v8b8n",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T23:13:47.405Z",
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T10:39:10.506Z",
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv6jtjdt",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T10:42:18.305Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv6jxk9a",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
