@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:03:07.784Z",
+  "last_updated": "2026-10-12T03:18:44.993Z",
   "total_gaps": 109,
-  "open_gaps": 106,
-  "closed_gaps": 3,
+  "open_gaps": 105,
+  "closed_gaps": 4,
   "gaps": [
     {
       "gap_id": "GAP-PROBE-DISTRIBUTED_CONCURRENCY",
@@ -181,7 +181,7 @@
         "diagnosis": "Top retrieved rule (Rule 17: \"Boundedness of Recovery & Rollback Operations\") fails to satisfy domain concepts."
       },
       "research_objective": "Codify verified universal invariant for RESILIENT_TRANSACTIONS to satisfy probe query \"saga distributed transaction compensating action rollback failure recovery\".",
-      "status": "OPEN",
+      "status": "CLOSED",
       "discovered_at": "2026-10-11T15:27:09.844Z",
       "priority_evaluation": {
         "factors": {
@@ -198,8 +198,8 @@
         "priority_score": 7.19
       },
       "priority_score": 7.19,
-      "closed_at": null,
-      "verified_rule": null,
+      "closed_at": "2026-10-12T03:18:44.992Z",
+      "verified_rule": "Rule 319",
       "closure_evidence": {
         "probe_query": "saga distributed transaction compensating action rollback failure recovery",
         "retrieval_confirmed": true,

@@ -5323,5 +5323,65 @@
       "content_hash_verified": true,
       "index_read_back_verified": true
     }
+  },
+  {
+    "cycleId": "CYCLE-20261013-VTSX",
+    "timestamp": "2026-10-13T17:40:51.489Z",
+    "repository": "test-org/test-idempotent-repo",
+    "learningId": "learn-github-test-org-test-idempotent-repo",
+    "contentHash": "5c512dcf2d103103e8a81053b62ca0553541b608cc3993564a9d33f2dcad8f23",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-ZJIL",
+    "timestamp": "2026-10-13T17:43:44.781Z",
+    "repository": "test-idempotent-org/test-repo",
+    "learningId": "learn-github-test-idempotent-org-test-repo",
+    "contentHash": "4c36cfeedaa1b3392d90acb57622aed3a24f01c1349b5643ba709a98361e4d94",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-ZJPX",
+    "timestamp": "2026-10-13T17:43:45.045Z",
+    "repository": "test-update-org/test-update-repo",
+    "learningId": "learn-github-test-update-org-test-update-repo",
+    "contentHash": "1558721c4f816b3eebaf0da700c7de7255d49acaa629d1477121fbf61c843285",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-ZJYH",
+    "timestamp": "2026-10-13T17:43:45.353Z",
+    "repository": "test-update-org/test-update-repo",
+    "learningId": "learn-github-test-update-org-test-update-repo",
+    "contentHash": "19edfb6bfa6518959f063410111422fe6b03ac63689a0bfd099fdeeaaf71d0ce",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
   }
 ]

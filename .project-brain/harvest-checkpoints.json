@@ -1,20 +1,20 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T03:16:06.491Z",
+  "last_updated": "2026-10-13T17:43:45.497Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-github-e2e-expressjs-cors-real-mv3jrj6s",
-      "content_hash": "cb5f2dfe0afb04b23e390295e83ca08603735a16961d0a3ec03fefc57cc82162",
-      "verified_at": "2026-10-11T08:14:19.809Z",
+      "learning_id": "learn-github-expressjs-cors",
+      "content_hash": "9ad3693c8b0f599339272b60615c9a12b9be0053211bcc9756d4351ced7e868d",
+      "verified_at": "2026-10-13T17:40:53.028Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-11T08:14:19.809Z"
+      "last_updated": "2026-10-13T17:40:53.028Z"
     },
     "meta-llama/Llama-3.2-1B": {
       "repository": "meta-llama/Llama-3.2-1B",
@@ -1877,6 +1877,34 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-11T16:46:45.025Z"
+    },
+    "test-idempotent-org/test-repo": {
+      "repository": "test-idempotent-org/test-repo",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-test-idempotent-org-test-repo",
+      "content_hash": "4c36cfeedaa1b3392d90acb57622aed3a24f01c1349b5643ba709a98361e4d94",
+      "verified_at": "2026-10-13T17:43:44.803Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-13T17:43:44.803Z"
+    },
+    "test-update-org/test-update-repo": {
+      "repository": "test-update-org/test-update-repo",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-test-update-org-test-update-repo",
+      "content_hash": "19edfb6bfa6518959f063410111422fe6b03ac63689a0bfd099fdeeaaf71d0ce",
+      "verified_at": "2026-10-13T17:43:45.497Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-13T17:43:45.497Z"
     }
   }
 }

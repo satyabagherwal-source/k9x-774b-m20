@@ -235,28 +235,59 @@ export function parseKnowledgeIndex() {
     const docs = [];
 
     for (const item of selected) {
+      if (item.category === 'ENGINEERING_PATTERN' || item.rule_number) continue;
+      const relPath = item.dossier_path || `07_PROJECT_LEARNING/${item.slug}-learnings.md`;
+      const fullPath = path.isAbsolute(relPath) ? relPath : path.join(BRAIN_ROOT, relPath);
+      if (!fs.existsSync(fullPath)) continue;
+
       const repoName = item.repository || item.slug || item.learning_id;
       const title = `${repoName} (Harvested Intelligence Dossier)`;
       const rulesList = (item.promoted_rules || []).map(r => r.title || `Rule ${r.number}`).join(', ');
       const summary = `Harvested engineering intelligence for ${repoName}. Platform: ${item.platform || 'github'}. Revision: ${item.source_version || 'HEAD'}. Dossier: ${item.dossier_path || '07_PROJECT_LEARNING'}. Rules: ${rulesList || 'Recorded'}`;
       const fullContent = `## ${title}\n\n- Repository: ${repoName}\n- Platform: ${item.platform || 'github'}\n- Learning ID: ${item.learning_id}\n- Content Hash: ${item.content_hash}\n- Dossier: ${item.dossier_path}\n- Verified At: ${item.verified_at}\n\n${summary}`;
 
+      const unhyphenated = `${repoName} ${item.slug || ''}`.replace(/[-_/]/g, ' ');
+
       docs.push({
         id: `Dossier: ${item.slug || repoName}`,
         learningId: item.learning_id,
         title,
         category: 'HARVESTED_INTELLIGENCE_DOSSIER',
-        filePath: item.dossier_path || `07_PROJECT_LEARNING/${item.slug}-learnings.md`,
+        filePath: relPath,
         lineRange: [1, 50],
         summary,
         fullContent,
-        tokens: tokenize(`${repoName} ${item.slug || ''} ${item.platform || ''} ${rulesList} ${summary}`)
+        tokens: tokenize(`${repoName} ${unhyphenated} ${item.slug || ''} ${item.platform || ''} ${rulesList} ${summary}`)
       });
     }
 
     return docs;
   } catch (err) {
     return [];
+  }
+}
+
+/**
+ * Resolves a historical or canonical knowledge ID through the aliases dictionary
+ */
+export function resolveAlias(id, maxHops = 3) {
+  if (!fs.existsSync(KNOWLEDGE_INDEX_FILE)) return id;
+  try {
+    const raw = fs.readFileSync(KNOWLEDGE_INDEX_FILE, 'utf-8');
+    const data = JSON.parse(raw);
+    const aliases = data.aliases || {};
+    let current = id;
+    const visited = new Set();
+    let hops = 0;
+    while (aliases[current] && hops < maxHops) {
+      if (visited.has(current)) break;
+      visited.add(current);
+      current = aliases[current];
+      hops++;
+    }
+    return current;
+  } catch (e) {
+    return id;
   }
 }
 

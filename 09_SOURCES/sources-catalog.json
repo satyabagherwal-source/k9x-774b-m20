@@ -35,9 +35,9 @@
     "sourceUrl": "https://github.com/test-org/test-idempotent-repo",
     "sourceVersion": "abc12345",
     "license": "MIT",
-    "contentHash": "70fd8c659452c5ceec98d18e42a75962fbebc45d0701fbd26c8c29c188f59b32",
-    "lastHarvestedAt": "2026-10-11T08:14:17.084Z",
-    "learningId": "learn-github-test-e2e-idempotent-slug-mv3jrhym"
+    "contentHash": "5c512dcf2d103103e8a81053b62ca0553541b608cc3993564a9d33f2dcad8f23",
+    "lastHarvestedAt": "2026-10-13T17:40:51.587Z",
+    "learningId": "learn-github-test-org-test-idempotent-repo"
   },
   "slopus-happy": {
     "repository": "slopus/happy",
@@ -1308,5 +1308,25 @@
     "contentHash": "cca6e6e0602b39fd0c7d797f986eeab44458db6abaad6075bdf926917248f0fd",
     "lastHarvestedAt": "2026-10-11T16:46:45.020Z",
     "learningId": "learn-github-autonomous-ai-openharness-mv422jff"
+  },
+  "test-idempotent-slug": {
+    "repository": "test-idempotent-org/test-repo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/test-idempotent-org/test-repo",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "4c36cfeedaa1b3392d90acb57622aed3a24f01c1349b5643ba709a98361e4d94",
+    "lastHarvestedAt": "2026-10-13T17:43:44.789Z",
+    "learningId": "learn-github-test-idempotent-org-test-repo"
+  },
+  "test-update-slug": {
+    "repository": "test-update-org/test-update-repo",
+    "platform": "github",
+    "sourceUrl": "https://github.com/test-update-org/test-update-repo",
+    "sourceVersion": "HEAD",
+    "license": "Open-Source",
+    "contentHash": "19edfb6bfa6518959f063410111422fe6b03ac63689a0bfd099fdeeaaf71d0ce",
+    "lastHarvestedAt": "2026-10-13T17:43:45.427Z",
+    "learningId": "learn-github-test-update-org-test-update-repo"
   }
 }

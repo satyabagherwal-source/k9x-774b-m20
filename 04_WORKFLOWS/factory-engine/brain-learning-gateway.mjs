@@ -123,7 +123,7 @@ export function loadKnowledgeIndex() {
  */
 export function saveKnowledgeIndex(indexData) {
   indexData.last_updated = new Date().toISOString();
-  indexData.total_verified_learnings = Object.keys(indexData.items || {}).length;
+  indexData.total_verified_learnings = Object.values(indexData.items || {}).filter(i => i.verification_status === 'VERIFIED_LEARNING').length;
   fs.mkdirSync(path.dirname(INDEX_PATH), { recursive: true });
   fs.writeFileSync(INDEX_PATH, JSON.stringify(indexData, null, 2), 'utf-8');
   return indexData;
@@ -163,6 +163,25 @@ export function saveCheckpoints(checkpointData) {
 /**
  * Creates an immutable, structured Learning Package with cryptographic hash
  */
+export function deriveCanonicalPackageId(platform, repository, slug) {
+  if (platform === 'huggingface' || (slug && slug.startsWith('hf-'))) {
+    const cleanSlug = (slug || repository || '').toLowerCase().replace(/^hf-/, '').replace(/[^a-z0-9_-]/g, '-');
+    return `learn-huggingface-${cleanSlug}`;
+  }
+  if (platform === 'local' || (slug || '').startsWith('old-english-font')) {
+    const cleanSlug = (slug || repository || '').toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+    return `learn-local-${cleanSlug}`;
+  }
+  if (repository && repository.includes('/')) {
+    const [owner, repo] = repository.split('/');
+    const cleanOwner = owner.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+    const cleanRepo = repo.toLowerCase().replace(/\.git$/, '').replace(/[^a-z0-9_-]/g, '-');
+    return `learn-github-${cleanOwner}-${cleanRepo}`;
+  }
+  const cleanSlug = (slug || repository || '').toLowerCase().replace(/[^a-z0-9_-]/g, '-');
+  return `learn-github-${cleanSlug}`;
+}
+
 export function createLearningPackage({
   repository,
   platform = 'github',
@@ -178,7 +197,7 @@ export function createLearningPackage({
 }) {
   const normSlug = slug || repository.replace(/\//g, '-').toLowerCase();
   const timestamp = new Date().toISOString();
-  const learningId = `learn-${platform}-${normSlug.replace(/[^a-z0-9_-]/gi, '-')}-${Date.now().toString(36)}`;
+  const learningId = metadata.learning_id || deriveCanonicalPackageId(platform, repository, normSlug);
 
   // Header template with strict governance metadata
   const header = `> **Canonical Learning Artifact**: \`07_PROJECT_LEARNING/${normSlug}-learnings.md\`  
@@ -632,6 +651,26 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     errors: []
   };
 
+  // 0. Idempotency Invariant: If package has identical content hash and is already verified, return safely
+  const currentIndex = loadKnowledgeIndex();
+  const existingItem = currentIndex.items[learningPackage.learning_id] || 
+    Object.values(currentIndex.items || {}).find(i => (i.slug === learningPackage.slug || i.repository === learningPackage.repository) && i.content_hash === learningPackage.content_hash);
+
+  if (existingItem && existingItem.content_hash === learningPackage.content_hash && existingItem.verification_status === LEARNING_STATUS.VERIFIED_LEARNING) {
+    console.log(`ℹ️ [GATEWAY IDEMPOTENT] Package ${learningPackage.repository} (${learningPackage.learning_id}) already indexed with identical verified hash.`);
+    results.status = LEARNING_STATUS.VERIFIED_LEARNING;
+    results.stage = LEARNING_STAGES.PROMOTED;
+    results.extracted = true;
+    results.validated = true;
+    results.brain_write = true;
+    results.brain_readback = true;
+    results.knowledge_index_updated = true;
+    results.already_indexed = true;
+    results.dossier_path = path.join(LEARNING_DIR, `${learningPackage.slug}-learnings.md`);
+    results.promoted_rules = existingItem.promoted_rules || [];
+    return { success: true, already_indexed: true, ...results };
+  }
+
   // 1. Validation Gate
   const valResult = validateLearningPackage(learningPackage);
   if (!valResult.valid) {
@@ -703,8 +742,18 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
   // 5. Canonical Knowledge Index Update with Read-Back Verification Barrier
   try {
     const index = loadKnowledgeIndex();
+    const existing = index.items[learningPackage.learning_id];
+    const rulesMap = new Map();
+    for (const r of (existing?.promoted_rules || [])) {
+      rulesMap.set(r.number || r.title, r);
+    }
+    for (const r of results.promoted_rules) {
+      rulesMap.set(r.number || r.title, { number: r.number, title: r.title, status: r.status });
+    }
+
     index.items[learningPackage.learning_id] = {
       learning_id: learningPackage.learning_id,
+      category: 'HARVESTED_INTELLIGENCE_DOSSIER',
       source: learningPackage.repository,
       repository: learningPackage.repository,
       slug: learningPackage.slug,
@@ -714,10 +763,12 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
       content_hash: learningPackage.content_hash,
       dossier_path: `07_PROJECT_LEARNING/${filename}`,
       dossier_file: `07_PROJECT_LEARNING/${filename}`,
-      promoted_rules: results.promoted_rules.map(r => ({ number: r.number, title: r.title, status: r.status })),
+      promoted_rules: [...rulesMap.values()].sort((a, b) => (a.number || 0) - (b.number || 0)),
       status: LEARNING_STATUS.VERIFIED_LEARNING,
       verification_status: LEARNING_STATUS.VERIFIED_LEARNING,
       brain_readback: true,
+      historical_duplicate_count: existing ? (existing.historical_duplicate_count || 1) : 1,
+      historical_learning_ids: existing ? (existing.historical_learning_ids || []) : [],
       verified_at: new Date().toISOString(),
       verification_barriers: {
         storage_written: true,

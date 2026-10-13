@@ -417,3 +417,8 @@
 | `CYCLE-20261012-C8JO` | `2026-10-12T03:10:08.964Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`3bef4bb5...`) |
 | `CYCLE-20261012-G5ME` | `2026-10-12T03:13:11.798Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`ead0812b...`) |
 | `CYCLE-20261012-JWEV` | `2026-10-12T03:16:06.487Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`5706bdd2...`) |
+| `CYCLE-20261013-VTSX` | `2026-10-13T17:40:51.489Z` | `test-org/test-idempotent-repo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-e2e-idempotent-slug-learnings.md` | Yes (`5c512dcf...`) |
+| `CYCLE-20261013-VUYQ` | `2026-10-13T17:40:52.994Z` | `expressjs/cors` | Commit diff / Patch analysis | `VERIFIED` | `Rule 260` | Yes (`9ad3693c...`) |
+| `CYCLE-20261013-ZJIL` | `2026-10-13T17:43:44.781Z` | `test-idempotent-org/test-repo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-idempotent-slug-learnings.md` | Yes (`4c36cfee...`) |
+| `CYCLE-20261013-ZJPX` | `2026-10-13T17:43:45.045Z` | `test-update-org/test-update-repo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-update-slug-learnings.md` | Yes (`1558721c...`) |
+| `CYCLE-20261013-ZJYH` | `2026-10-13T17:43:45.353Z` | `test-update-org/test-update-repo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/test-update-slug-learnings.md` | Yes (`19edfb6b...`) |

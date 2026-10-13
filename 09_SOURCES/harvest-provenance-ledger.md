@@ -400,3 +400,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-12T03:10:08.966Z |
 | `learn-huggingface-hf-zai-org-glm-5-2-mv4og5jo` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-12T03:13:11.799Z |
 | `learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4ojwc0` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-12T03:16:06.489Z |
+| `learn-github-test-org-test-idempotent-repo` | `https://github.com/test-org/test-idempotent-repo` | `abc12345` | Multi-dimensional audit evidence | 2026-10-13T17:40:51.587Z |
+| `learn-github-expressjs-cors` | `https://github.com/expressjs/cors` | `5317ebe670` | Multi-dimensional audit evidence | 2026-10-13T17:40:53.011Z |
+| `learn-github-test-idempotent-org-test-repo` | `https://github.com/test-idempotent-org/test-repo` | `HEAD` | Multi-dimensional audit evidence | 2026-10-13T17:43:44.789Z |
+| `learn-github-test-update-org-test-update-repo` | `https://github.com/test-update-org/test-update-repo` | `HEAD` | Multi-dimensional audit evidence | 2026-10-13T17:43:45.053Z |
+| `learn-github-test-update-org-test-update-repo` | `https://github.com/test-update-org/test-update-repo` | `HEAD` | Multi-dimensional audit evidence | 2026-10-13T17:43:45.427Z |
