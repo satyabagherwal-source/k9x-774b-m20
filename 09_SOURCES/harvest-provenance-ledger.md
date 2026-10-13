@@ -878,3 +878,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-canberkkkkkk-ema-lightning-mv68wsqz` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-10-13T05:33:46.871Z |
 | `learn-huggingface-hf-google-embeddinggemma-2-mv690qve` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-13T05:36:51.064Z |
 | `learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv694lwi` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-13T05:39:51.247Z |
+| `learn-huggingface-hf-cloudflare-clef-mv698le8` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-13T05:42:57.260Z |

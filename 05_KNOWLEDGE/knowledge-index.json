@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T05:39:51.190Z",
-  "total_verified_learnings": 4791,
+  "last_updated": "2026-10-13T05:42:57.208Z",
+  "total_verified_learnings": 4792,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -117060,6 +117060,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T05:39:51.190Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-mv698le8": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv698le8",
+      "source": "Cloudflare/clef",
+      "repository": "Cloudflare/clef",
+      "slug": "hf-cloudflare-clef",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "content_hash": "0b88e3a917e08905c5ec094373e3551c489af8767cd0721957ae48054b9ba6d2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 646,
+          "title": "Consistent Tokenizer‑Model Pad Token Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Per‑Question Softmax Normalization",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 647,
+          "title": "Strict BFloat16 Casting for Mixed‑Precision Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T05:42:57.208Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
