@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T09:47:19.220Z",
-  "total_cycles_completed": 892,
-  "total_learnings_persisted": 892,
+  "last_updated": "2026-10-13T09:52:20.112Z",
+  "total_cycles_completed": 893,
+  "total_learnings_persisted": 893,
   "total_rules_promoted": 429,
   "history": [
-    {
-      "timestamp": "2026-10-12T22:05:44.774Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv5swmeb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T22:08:42.607Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T09:47:19.220Z",
       "repository": "google/gemma-4-31B-it",
       "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv6hyunz",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T09:52:20.112Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6i5au8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
