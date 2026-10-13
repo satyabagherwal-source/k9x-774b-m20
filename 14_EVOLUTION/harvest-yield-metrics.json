@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T02:13:48.680Z",
-  "total_cycles_completed": 769,
-  "total_learnings_persisted": 769,
+  "last_updated": "2026-10-13T02:16:42.700Z",
+  "total_cycles_completed": 770,
+  "total_learnings_persisted": 770,
   "total_rules_promoted": 364,
   "history": [
-    {
-      "timestamp": "2026-10-12T15:34:16.089Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv5ex6es",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T15:37:18.735Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1403,6 +1396,13 @@
       "repository": "Bingsu/adetailer",
       "learningId": "learn-huggingface-hf-bingsu-adetailer-mv61rmuk",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T02:16:42.700Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv61vd67",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
