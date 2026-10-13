@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T16:57:05.524Z",
-  "total_cycles_completed": 1008,
-  "total_learnings_persisted": 1008,
+  "last_updated": "2026-10-13T17:00:01.462Z",
+  "total_cycles_completed": 1009,
+  "total_learnings_persisted": 1009,
   "total_rules_promoted": 488,
   "history": [
-    {
-      "timestamp": "2026-10-13T04:17:05.590Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv6666bw",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T04:20:09.096Z",
       "repository": "Altworld/Hemmingway-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T16:57:05.524Z",
       "repository": "openai/clip-vit-base-patch32",
       "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv6xbjia",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:00:01.462Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6xfbaj",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

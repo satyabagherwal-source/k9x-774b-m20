@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-OEFU",
-    "timestamp": "2026-10-12T12:11:29.178Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv57oecg",
-    "contentHash": "c70842bf0ab7bd994527ab4eb3408c821d4efe0d6606fb2afe33e3bb386c9352",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-SBNZ",
     "timestamp": "2026-10-12T12:14:32.207Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7490,6 +7475,21 @@
     "repository": "openai/clip-vit-base-patch32",
     "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv6xbjia",
     "contentHash": "a3b37ba6ebde8b3aaf1dae45ed421302c62e65ed50cce83977c3a025bb9736fc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-FBCI",
+    "timestamp": "2026-10-13T17:00:01.458Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6xfbaj",
+    "contentHash": "bb0c65474425dcb921765143225da76fcc936954068b7e5ceb39112744665cc1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1135,9 +1135,9 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "215415289cc5a5ef2e52d020a9f5f26234a8fcdea0671c1510471480edb07560",
-    "lastHarvestedAt": "2026-10-13T09:03:45.821Z",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6geu4x"
+    "contentHash": "bb0c65474425dcb921765143225da76fcc936954068b7e5ceb39112744665cc1",
+    "lastHarvestedAt": "2026-10-13T17:00:01.461Z",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6xfbaj"
   },
   "hf-baai-bge-reranker-v2-m3": {
     "repository": "BAAI/bge-reranker-v2-m3",
