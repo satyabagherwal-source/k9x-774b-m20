@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T21:58:44.062Z",
-  "total_cycles_completed": 1084,
-  "total_learnings_persisted": 1084,
+  "last_updated": "2026-10-13T22:01:39.375Z",
+  "total_cycles_completed": 1085,
+  "total_learnings_persisted": 1085,
   "total_rules_promoted": 528,
   "history": [
-    {
-      "timestamp": "2026-10-13T09:24:17.221Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv6h58ba",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T09:27:28.079Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T21:58:44.062Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv783gfh",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T22:01:39.375Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv7877pl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
