@@ -857,3 +857,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv66lzyz` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-13T04:29:23.785Z |
 | `learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv66pxdg` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-10-13T04:32:27.088Z |
 | `learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv66tviz` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-13T04:35:31.298Z |
+| `learn-huggingface-hf-comfy-org-qwen-image-2-1-mv66xxl8` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-13T04:38:40.617Z |
