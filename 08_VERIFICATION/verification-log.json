@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-F4VX",
-    "timestamp": "2026-10-12T00:24:26.493Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl",
-    "contentHash": "ad8c016e43e47b07a6ab6b2ff8b29dc6a1f607682533aea308a203e14d5168a8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-J150",
     "timestamp": "2026-10-12T00:27:28.260Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7490,6 +7475,21 @@
     "repository": "nvidia/Nemotron-3-Diarization",
     "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv6592f2",
     "contentHash": "a34b0f9122bd48c825d90c1f8b31369d411cf470cd29cb21b76c97f61065f3b3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-CUSZ",
+    "timestamp": "2026-10-13T03:54:17.459Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv65cuqh",
+    "contentHash": "09c8bae61f2c2ee36faf1fd51dc382fc6e10e794694010bec0260bc88393f7f1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

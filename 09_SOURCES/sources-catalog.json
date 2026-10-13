@@ -375,9 +375,9 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "83339651819b0defbb6f3c55f17b3afb514047e20a3e8fad6bf29915a36246b5",
-    "lastHarvestedAt": "2026-10-12T21:09:24.963Z",
-    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv5qw6ic"
+    "contentHash": "09c8bae61f2c2ee36faf1fd51dc382fc6e10e794694010bec0260bc88393f7f1",
+    "lastHarvestedAt": "2026-10-13T03:54:17.461Z",
+    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv65cuqh"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
