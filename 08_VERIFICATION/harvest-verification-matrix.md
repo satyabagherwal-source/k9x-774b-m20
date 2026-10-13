@@ -1104,3 +1104,4 @@
 | `CYCLE-20261013-WJTH` | `2026-10-13T19:05:24.053Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 740, Rule 741, Rule 742` | Yes (`41fede63...`) |
 | `CYCLE-20261013-0D19` | `2026-10-13T19:08:21.885Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`c833d77a...`) |
 | `CYCLE-20261013-4BOP` | `2026-10-13T19:11:26.761Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`13601d3f...`) |
+| `CYCLE-20261013-8BH8` | `2026-10-13T19:14:33.116Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`5f51e071...`) |
