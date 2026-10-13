@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-6MIP",
-    "timestamp": "2026-10-11T21:01:52.129Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4b6mg5",
-    "contentHash": "f44b1b2cc4d86e7e17ac44c2f2b4019337642f2d86a1f46aed55c12d33791e43",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-A36A",
     "timestamp": "2026-10-11T21:04:33.682Z",
     "repository": "bigscience/bloom",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv5xy0no",
     "contentHash": "5acd79679299e8420d5b2ae03fdea2c3a01ba43f5c17bb9011a7dfc8082472a7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-1U4E",
+    "timestamp": "2026-10-13T00:29:46.046Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv5y1u21",
+    "contentHash": "66b40107351cdc95115ceae0691ab1a2ef55ed01962b613e6cf16541b6796996",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

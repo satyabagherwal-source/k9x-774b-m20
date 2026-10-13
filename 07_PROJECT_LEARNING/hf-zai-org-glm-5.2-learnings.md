@@ -3,8 +3,8 @@
 > **Source Version**: `hf-zai-org-g`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T17:35:21.993Z  
-> **Learning ID**: `learn-huggingface-hf-zai-org-glm-5-2-mv5j8ww9`  
+> **Timestamp**: 2026-10-13T00:29:45.961Z  
+> **Learning ID**: `learn-huggingface-hf-zai-org-glm-5-2-mv5y1u21`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/zai-org/GLM-5.2](https://huggingface.co/zai-org/GLM-5.2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T17:35:21.000Z  
+> **Harvest Timestamp**: 2026-10-13T00:29:45.222Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
