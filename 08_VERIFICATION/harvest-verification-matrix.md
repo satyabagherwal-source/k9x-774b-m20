@@ -896,3 +896,4 @@
 | `CYCLE-20261013-0QYD` | `2026-10-13T05:36:51.061Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`5dda9bd3...`) |
 | `CYCLE-20261013-4LZH` | `2026-10-13T05:39:51.245Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`a11677de...`) |
 | `CYCLE-20261013-8LIG` | `2026-10-13T05:42:57.256Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 646, Rule EXISTING, Rule 647` | Yes (`0b88e3a9...`) |
+| `CYCLE-20261013-CPUX` | `2026-10-13T05:46:09.513Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 648, Rule 649, Rule 650` | Yes (`9ec0be5c...`) |

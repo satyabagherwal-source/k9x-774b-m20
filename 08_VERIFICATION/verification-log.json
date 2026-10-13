@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-EU7C",
-    "timestamp": "2026-10-12T02:16:11.112Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-hf-baai-bge-m3-mv4meu5h",
-    "contentHash": "763d16ddc8bdc21566f383c78c7dfa721d90ce996e4a5128a5581605364d7ecc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-IE6N",
     "timestamp": "2026-10-12T02:18:56.975Z",
     "repository": "Qwen/Qwen3-0.6B",
@@ -7490,6 +7475,21 @@
     "repository": "Cloudflare/clef",
     "learningId": "learn-huggingface-hf-cloudflare-clef-mv698le8",
     "contentHash": "0b88e3a917e08905c5ec094373e3551c489af8767cd0721957ae48054b9ba6d2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-CPUX",
+    "timestamp": "2026-10-13T05:46:09.513Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv69cps1",
+    "contentHash": "9ec0be5cf65c3c2dc3dffcb376ef5a4be11e35b2c119495658571240b5fcb093",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

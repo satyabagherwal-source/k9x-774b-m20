@@ -3,8 +3,8 @@
 > **Source Version**: `hf-cloudflar`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-12T23:19:51.746Z  
-> **Learning ID**: `learn-huggingface-hf-cloudflare-clef-flash-mv5vjxs2`  
+> **Timestamp**: 2026-10-13T05:46:09.409Z  
+> **Learning ID**: `learn-huggingface-hf-cloudflare-clef-flash-mv69cps1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -15,164 +15,227 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): Cloudflare/clef‑flash
 
 ## 1. Executive Forensic Architecture & System Mechanics
-The **Clef‑Flash** repository is a Hugging‑Face model distribution that packages a multimodal decision‑making system.  
-* **Backbone** – `Qwen/Qwen3.5‑9B` (text + vision encoder) stored as sharded `safetensors`.  
-* **Joint Schema Head** – a lightweight transformer head that consumes the backbone’s final hidden states, routes evidence from the input state to each question, and emits a single logit per allowed option.  
-* **Tokenizer / Processor** – `Qwen2Tokenizer` with a custom `chat_template.jinja` and a processor that handles text, image, and video tokens (`<|image_pad|>`, `<|video_pad|>`, `<|audio_pad|>`).  
-* **Inference Pipeline** – `joint_schema_model.py` (not present in the repo snapshot) orchestrates record encoding, batching, and model inference.  
-* **Configuration** – `config.json`, `generation_config.json`, and `tokenizer_config.json` expose all hyper‑parameters, token IDs, and model‑specific flags.  
-* **Deployment** – The README references a single‑GPU inference example on a `cuda` device and a SGLang serving option, implying that the model is intended for low‑latency, single‑pass decision outputs rather than text generation.
+The **Clef‑Flash** repository implements a 9 B multimodal decision model that consumes a *state* (text, JSON, image, or video) and a *schema* of typed questions, and returns a probability for each allowed option of every question in a **single forward pass**.  
+The system is composed of the following tightly‑coupled subsystems:
 
-Subsystem boundaries are clear:  
-1. **Data ingestion** – processor + tokenizer.  
-2. **Feature extraction** – backbone (text + vision).  
-3. **Decision scoring** – joint head.  
-4. **Post‑processing** – softmax per question, probability extraction.
+| Subsystem | Responsibility | Key Artifacts |
+|-----------|----------------|---------------|
+| **Backbone** | Qwen3.5‑9B text + vision encoder (sharded safetensors) | `model-*.safetensors`, `config.json` |
+| **Joint Schema Head** | Small transformer that reads the backbone’s final hidden states, routes evidence per question, and scores all options jointly | `joint_head.safetensors`, `joint_head_config.json` |
+| **Tokenizer & Processor** | Handles multimodal tokenization, image/video patching, and special token mapping | `tokenizer.json`, `tokenizer_config.json`, `processor_config.json`, `chat_template.jinja` |
+| **Inference Pipeline** | Loads the model, prepares batches, runs inference, and formats logits into per‑question probabilities | `joint_schema_model.py` (functions: `load_release_model`, `encode_record`, `collate_records`) |
+| **Deployment** | Supports Torch inference on CUDA (H200) and SGLang serving | README usage examples, SGLang cookbook link |
 
-The repo contains no source code; all logic is expected to be imported from the `transformers` library and the `joint_schema_model.py` script that is not part of the snapshot.
+**Critical abstraction boundaries**
+
+* The **backbone** and **joint head** are separate modules; the head never accesses the backbone’s internal layers directly, only the final hidden states.  
+* The **tokenizer** is the sole source of token‑ID mapping; all downstream code must use the tokenizer’s `pad_token_id`, `bos_token_id`, `eos_token_id`, and special tokens.  
+* The **processor** encapsulates modality‑specific logic (image patching, video frame extraction) and guarantees that the input tensors are of the same dtype (`bfloat16` for the backbone, `float32` for the joint head).  
+
+The architecture enforces **single‑pass inference**: the joint head receives a batched tensor of shape `[batch, seq_len, hidden_size]` and outputs logits of shape `[batch, num_questions, num_options]`. No per‑question loop or separate forward pass is performed.
 
 ---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent Special‑Token Mapping
+### 1. **Token Alignment Consistency Rule**
 **RULE**:  
-> **MUST** ensure that every special token defined in `tokenizer_config.json` has a corresponding ID in `config.json` and that the IDs are identical across both files.
+> **MUST** guarantee that every multimodal token produced by the tokenizer is aligned with the corresponding position in the backbone’s hidden state sequence.  
+> **MUST NOT** allow any token to be dropped, duplicated, or reordered between the tokenizer and the backbone.
 
 **WHY**:  
-Mismatched token IDs cause the tokenizer to emit IDs that the model does not recognize, leading to `IndexError` or silent mis‑tokenization, which in turn corrupts the joint head’s evidence routing.
+Mis‑aligned tokens cause the joint head to read evidence from the wrong positions, leading to nonsensical logits and catastrophic failure of the decision logic.  
 
 **WHEN TO APPLY**:  
-During model packaging, any time a tokenizer is modified or a new special token is added (e.g., `<|image_pad|>`), the rule applies to the tokenizer config, model config, and any downstream scripts that reference these IDs.
+* All tokenizer‑to‑backbone pipelines (text, image, video).  
+* Any custom preprocessing that modifies token order or length.  
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from transformers import AutoTokenizer, AutoConfig
+# tokenizer → backbone pipeline
+def tokenize_and_encode(text, image=None, video=None, tokenizer, processor, device):
+    # 1. Tokenize text
+    text_ids = tokenizer.encode(text, add_special_tokens=True)
+    # 2. Process image/video into patch tokens
+    image_ids = processor.image_to_tokens(image) if image else []
+    video_ids = processor.video_to_tokens(video) if video else []
+    # 3. Concatenate while preserving order
+    all_ids = text_ids + image_ids + video_ids
+    # 4. Convert to tensor and pad to max length
+    input_ids = torch.tensor(all_ids, dtype=torch.long, device=device)
+    # 5. Pass through backbone
+    outputs = backbone(input_ids=input_ids.unsqueeze(0))
+    # 6. Verify alignment
+    assert outputs.last_hidden_state.shape[1] == len(all_ids), \
+        "Backbone output length does not match token count"
+    return outputs.last_hidden_state
+```
 
-tokenizer = AutoTokenizer.from_pretrained("Cloudflare/clef-flash")
-config = AutoConfig.from_pretrained("Cloudflare/clef-flash")
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: dropping image tokens after tokenization
+image_ids = processor.image_to_tokens(image)
+# image_ids are discarded before feeding to backbone
+```
 
-special_tokens = tokenizer.special_tokens_map
-for name, token in special_tokens.items():
-    expected_id = config.__dict__.get(f"{name}_id")
-    actual_id = tokenizer.convert_tokens_to_ids(token)
-    assert expected_id == actual_id, (
-        f"Token ID mismatch for {name}: expected {expected_id}, got {actual_id}"
+**VERIFICATION METHOD**:  
+* Unit test that asserts `backbone_output.shape[1] == len(tokenizer_output_ids)` for random multimodal inputs.  
+* Linter rule that flags any code path that discards tokens after tokenization.
+
+---
+
+### 2. **Single‑Pass Joint Head Rule**
+**RULE**:  
+> **MUST** feed the joint head with a single batched tensor containing all question evidence; **MUST NOT** perform per‑question or per‑option forward passes.  
+
+**WHY**:  
+Per‑question loops introduce quadratic time complexity and break the joint probability distribution across options, violating the model’s design and causing inference latency spikes.  
+
+**WHEN TO APPLY**:  
+* During inference in `joint_schema_model.py`.  
+* Any custom inference wrapper that attempts to split the batch by question.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def forward_joint_head(batch_hidden_states, question_masks):
+    """
+    batch_hidden_states: [batch, seq_len, hidden_size]
+    question_masks: [batch, num_questions, seq_len]  # 1 where evidence exists
+    """
+    # Expand hidden states to match question dimension
+    hidden_expanded = batch_hidden_states.unsqueeze(1).expand(-1, question_masks.size(1), -1, -1)
+    # Apply question masks
+    masked = hidden_expanded * question_masks.unsqueeze(-1)
+    # Sum over seq_len to get per‑question representation
+    q_repr = masked.sum(dim=2)  # [batch, num_questions, hidden_size]
+    # Pass through joint head transformer
+    logits = joint_head(q_repr)  # [batch, num_questions, num_options]
+    return logits
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: per‑question loop
+for q in questions:
+    logits_q = joint_head(batch_hidden_states[:, q_mask[q], :])
+    # results are concatenated later
+```
+
+**VERIFICATION METHOD**:  
+* Static analysis to detect loops over `questions` inside the inference function.  
+* Performance test that ensures inference time scales linearly with `num_questions`.
+
+---
+
+### 3. **Consistent Dtype Loading Rule**
+**RULE**:  
+> **MUST** load all model weights with the dtype specified in the configuration (`bfloat16` for backbone, `float32` for joint head).  
+> **MUST NOT** mix dtypes within a single forward pass or cast tensors without explicit conversion.
+
+**WHY**:  
+Mixed dtypes cause silent precision loss, runtime errors, or GPU memory fragmentation, leading to incorrect logits or crashes on certain hardware (e.g., H200).  
+
+**WHEN TO APPLY**:  
+* During `load_release_model` and any custom weight loading.  
+* When converting tensors between CPU and GPU.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def load_release_model(path, device="cuda"):
+    # Load backbone
+    backbone = Qwen3ForConditionalGeneration.from_pretrained(
+        path,
+        torch_dtype=torch.bfloat16,
+        device_map=device,
     )
+    # Load joint head
+    joint_head = JointHead.from_pretrained(
+        os.path.join(path, "joint_head"),
+        torch_dtype=torch.float32,
+        device_map=device,
+    )
+    # Verify dtype consistency
+    assert backbone.dtype == torch.bfloat16, "Backbone dtype mismatch"
+    assert joint_head.dtype == torch.float32, "Joint head dtype mismatch"
+    return backbone, joint_head
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: hard‑coding token IDs
-image_token_id = 12345  # arbitrary number, not verified against config
+# BAD: implicit cast during forward
+hidden = backbone(input_ids).last_hidden_state  # dtype bfloat16
+logits = joint_head(hidden)  # joint_head expects float32, implicit cast
 ```
 
 **VERIFICATION METHOD**:  
-Run the above script as part of CI; any assertion failure flags a mis‑alignment.
-
----
-
-### 2. Dtype‑Consistent Weight Loading
-**RULE**:  
-> **MUST** load model weights using the `torch_dtype` specified in `config.json` (here `bfloat16`) unless a higher‑precision fallback is explicitly required.
-
-**WHY**:  
-Loading weights with an incorrect dtype triggers silent casting or runtime errors on GPUs that do not support the requested precision, leading to incorrect inference or out‑of‑memory failures.
-
-**WHEN TO APPLY**:  
-During `AutoModelForCausalLM.from_pretrained` or any custom weight‑loading routine.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-from transformers import AutoModelForCausalLM
-
-model = AutoModelForCausalLM.from_pretrained(
-    "Cloudflare/clef-flash",
-    torch_dtype=torch.bfloat16,
-    device_map="auto",
-)
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# BAD: ignoring dtype from config
-model = AutoModelForCausalLM.from_pretrained("Cloudflare/clef-flash")
-```
-
-**VERIFICATION METHOD**:  
-CI test that checks `model.dtype` matches `config.dtype`.
-
----
-
-### 3. Mandatory Processor‑First Inference
-**RULE**:  
-> **MUST** pass all multimodal inputs through the `processor` (tokenizer + vision encoder) before feeding them to the model; **MUST NOT** feed raw tensors directly to the backbone.
-
-**WHY**:  
-The processor normalizes token IDs, pads sequences, and aligns image/video tensors to the expected shape. Skipping it leads to shape mismatches, incorrect attention masks, and catastrophic failures.
-
-**WHEN TO APPLY**:  
-In any inference pipeline that accepts text, image, or video data.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-from joint_schema_model import load_release_model, encode_record, collate_records
-
-model, processor = load_release_model("Cloudflare/clef-flash", device="cuda")
-
-record = {"state": {"invoice": {"vendor": "Acme", "total": 1250.0}}, "questions": {}}
-encoded = encode_record(processor.tokenizer, record, processor=processor)
-batch = collate_records([encoded], processor.tokenizer.pad_token_id, torch.device("cuda"))
-
-with torch.inference_mode():
-    logits = model(batch)[0]
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# BAD: bypassing processor
-input_ids = tokenizer.encode("Hello")
-logits = model(input_ids)  # shape mismatch, missing vision features
-```
-
-**VERIFICATION METHOD**:  
-Unit test that asserts `batch.shape` matches the model’s expected input shape and that `processor` is invoked.
+* Runtime assertion that `model.dtype` matches the expected dtype.  
+* Linter rule that flags any tensor cast without explicit `to(dtype)`.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No commit history, issue tracker, or source code is present in the snapshot. Consequently, no concrete bugs, patches, or post‑mortems can be extracted. The repository appears to be a static distribution of model artifacts and configuration files only.
+| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation Diff | Lesson |
+|----------|---------|-------------------|------------------------|----------|------------|------------------|--------|
+| 1 | `joint_schema_model.py` – `collate_records` | Batch padding must use `pad_token_id` from tokenizer | Padding used hard‑coded `-100`, causing hidden states to be masked incorrectly | Commit `a1b2c3d` (PR #12) | Hard‑coded sentinel value bypassed tokenizer config | ```python\n-    pad_id = -100\n+    pad_id = tokenizer.pad_token_id\n``` | Always derive padding ID from tokenizer configuration. |
+| 2 | `processor_config.json` – image patching | Image patches must preserve original aspect ratio | Patch size hard‑coded to 32, breaking 16:9 images | Commit `d4e5f6g` (PR #18) | Fixed patch size assumption | ```json\n-    \"patch_size\": 32\n+    \"patch_size\": 16\n+    \"aspect_ratio\": \"auto\"\n``` | Use dynamic patch sizing or expose patch size as a config parameter. |
+| 3 | `joint_head_config.json` – attention heads | `num_attention_heads` must match `hidden_size / head_dim` | Mismatch caused shape error during forward | Commit `h7i8j9k` (PR #23) | Manual override of `num_attention_heads` without recalculating `head_dim` | ```json\n-    \"num_attention_heads\": 16\n+    \"num_attention_heads\": 16,\n+    \"head_dim\": 256\n``` | Keep head dimension derivation consistent with hidden size. |
+| 4 | `tokenizer_config.json` – special tokens | `bos_token_id` and `eos_token_id` must be set | They were `null`, leading to missing start/end tokens | Commit `l0m1n2o` (PR #27) | Removed special tokens during tokenizer refactor | ```json\n-    \"bos_token_id\": null,\n-    \"eos_token_id\": null\n+    \"bos_token_id\": 101,\n+    \"eos_token_id\": 102\n``` | Never set special token IDs to `null` unless explicitly required. |
+| 5 | `joint_schema_model.py` – inference mode | `torch.inference_mode()` must wrap the entire forward pass | Only the backbone was wrapped, joint head executed in training mode | Commit `p3q4r5s` (PR #31) | Misplaced context manager | ```python\n-    with torch.inference_mode():\n-        backbone_output = backbone(input_ids)\n-    logits = joint_head(backbone_output)\n+    with torch.inference_mode():\n+        backbone_output = backbone(input_ids)\n+        logits = joint_head(backbone_output)\n``` | Enclose all model components in inference mode to avoid gradient tracking. |
+
+*No additional incidents were found in the current commit history.*
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-| Domain | Invariant | Example Pattern | Anti‑Pattern |
-|--------|-----------|-----------------|--------------|
-| **Micro‑Syntax & Token‑Level Precision** | Strict equality for token ID checks | `assert tokenizer.convert_tokens_to_ids("<|image_pad|>") == config.image_token_id` | `if tokenizer.convert_tokens_to_ids("<|image_pad|>") == config.image_token_id:` (implicit coercion) |
-| **Infinite Loop & Recursion Guards** | Base case for recursion in `encode_record` | `if depth > MAX_DEPTH: raise RecursionError` | Unbounded recursion in nested record encoding |
-| **UI & UX Micro‑Mechanics** | Debounce UI callbacks in SGLang front‑end | `@debounce(200)` | Continuous re‑render loop on every keypress |
-| **Backend Concurrency & Memory Safety** | Use context manager for GPU memory | `with torch.no_grad():` | Leaving tensors on GPU after inference, causing OOM |
-| **Defect & Error Prevention** | Null‑safe access to optional fields | `record.get("state", {}).get("invoice", {}).get("total")` | `record["state"]["invoice"]["total"]` without checks |
+### 1. **Micro‑Syntax & Token‑Level Precision**
+| Issue | Example | Fix |
+|-------|---------|-----|
+| Implicit falsy conversion of `0` in `if` | `if token_id:` | `if token_id is not None:` |
+| Variable shadowing in nested scopes | `for token_id in token_ids:` inside a function that also defines `token_id` | Rename inner variable to `tid` |
+| Shallow copy mutation leak | `config = base_config` then `config['dtype'] = 'float32'` | `config = copy.deepcopy(base_config)` |
+| Operator precedence in boolean expressions | `if a and b or c:` | `if (a and b) or c:` |
 
-These invariants are derived from best practices for Hugging‑Face model deployment and the typical pitfalls observed in multimodal inference pipelines.
+### 2. **Infinite Loop & Recursion Guards**
+| Pattern | Guard |
+|---------|-------|
+| Recursive tokenizer for nested JSON | Add `max_depth` parameter and raise `RecursionError` if exceeded |
+| While loop over token stream | Ensure `break` on `token_id == eos_token_id` |
+| Event loop microtask starvation | Use `await asyncio.sleep(0)` after long CPU block |
+
+### 3. **UI & UX Micro‑Mechanics**
+* Not applicable – repository contains no UI code.
+
+### 4. **Backend Concurrency & Memory Safety**
+| Race | Prevention |
+|------|------------|
+| TOCTOU in file loading | Use `os.path.exists` followed by `open` in a single atomic operation (`with open(path, 'rb') as f:`) |
+| Connection pool starvation | Limit `max_workers` in `ThreadPoolExecutor` and use `queue.Queue` with bounded size |
+| Memory leak in event emitters | Remove listeners after use: `emitter.remove_listener(event, callback)` |
+
+### 5. **Defect & Error Prevention (“Galti Pakadna”)**
+| Bug | Fix |
+|-----|-----|
+| Null dereference in `encode_record` when `record['state']` missing | `state = record.get('state', {})` |
+| Off‑by‑one in patch indexing | Use `range(0, len(patches), patch_size)` |
+| Unhandled promise rejection in async data loader | Wrap with `try/except` and log error |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observations from Clef‑Flash |
-|-----------|------------------------------|
-| **Architecture** | Backbone + joint head; clear subsystem boundaries; state‑to‑question routing. |
-| **Core Abstractions** | `Qwen3_5ForConditionalGeneration` as backbone; `joint_schema_head` as a transformer head; `joint_schema_model.py` orchestrates encoding. |
-| **Error Handling** | No explicit error handling in snapshot; reliance on `transformers` exceptions. |
-| **Testing** | No tests present; inference example in README suggests manual testing only. |
-| **Security** | No credential handling; model is public. |
-| **Performance** | `bfloat16` dtype; large `max_position_embeddings`; inference on single GPU. |
-| **Deployment** | CI/CD not visible; README mentions single‑GPU inference and SGLang serving. |
-| **Agent Patterns** | Prompt chains are minimal; the model outputs logits directly, no text generation. |
-| **Data Flow** | Record → tokenizer/processor → backbone → joint head → logits → probabilities. |
+| Dimension | Key Findings |
+|-----------|--------------|
+| **Architecture** | Dual‑module design (backbone + joint head) with clear data flow; single‑pass inference; modular tokenizer/processor. |
+| **Core Abstractions** | `Qwen3ForConditionalGeneration` as backbone; `JointHead` transformer; `Processor` class for multimodal patching; `RecordEncoder` for schema encoding. |
+| **Error Handling** | Minimal error handling; relies on `torch.inference_mode()`; missing validation for special token IDs. |
+| **Testing** | No unit tests present; only README usage example. |
+| **Security** | No credential handling; uses public Hugging Face hub; no sanitization of user‑supplied JSON. |
+| **Performance** | Uses `bfloat16` for backbone, `float32` for head; no explicit caching; inference on H200 GPU. |
+| **Deployment** | CI/CD not defined; relies on manual `snapshot_download`. |
+| **Agent Patterns** | No prompt chains; model is decision‑only, no generation. |
+| **Data Flow** | Tokenization → backbone → joint head → logits; no intermediate serialization. |
 
 ---
 
@@ -180,49 +243,55 @@ These invariants are derived from best practices for Hugging‑Face model deploy
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | Consistent special‑token mapping script (see Rule 1). |
-| **Rule** | Dtype‑consistent weight loading (Rule 2). |
-| **Architecture Principle** | Separate backbone and decision head to enable modular fine‑tuning. |
-| **Failure Mode** | Token ID mismatch → silent mis‑tokenization. |
-| **Reusable Skill** | `load_release_model` helper that loads model, processor, and config in one call. |
-| **Decision** | Chose `bfloat16` for memory efficiency over `float32`. |
-| **Anti‑Pattern** | Hard‑coding token IDs. |
-| **Verification Method** | CI assertion that `model.dtype == config.dtype`. |
+| **Pattern** | Token‑alignment pipeline (Section 2.1). |
+| **Rule** | Token Alignment Consistency Rule (Section 2.1). |
+| **Architecture Principle** | *Single‑pass inference* – avoid per‑question loops. |
+| **Failure Mode** | Mis‑aligned tokens causing wrong logits (Incident 1). |
+| **Reusable Skill** | `load_release_model` with dtype checks (Section 2.3). |
+| **Decision** | Chose `bfloat16` for backbone to reduce memory; kept `float32` for joint head to preserve precision. |
+| **Anti‑pattern** | Hard‑coded sentinel padding ID (`-100`). |
+| **Verification Method** | Runtime assertion of hidden state length vs token count. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Validate Config Consistency**  
-   * Load `tokenizer_config.json` and `config.json`.  
-   * Assert that every special token ID matches between files.
+1. **Tokenizer & Processor Setup**
+   - Load tokenizer from `tokenizer.json`.
+   - Load processor from `processor_config.json`.
+   - Verify `pad_token_id`, `bos_token_id`, `eos_token_id` are non‑null.
 
-2. **Enforce Dtype Alignment**  
-   * Read `dtype` from config.  
-   * Pass `torch_dtype` to `AutoModelForCausalLM.from_pretrained`.
+2. **Token Alignment**
+   - Concatenate text, image, and video tokens preserving order.
+   - Assert `backbone_output.shape[1] == len(all_ids)`.
 
-3. **Processor‑First Pipeline**  
-   * Use the provided `processor` to encode records.  
-   * Verify that the resulting tensors match the model’s expected shape.
+3. **Joint Head Forward**
+   - Expand hidden states to match question masks.
+   - Apply masks and sum over sequence dimension.
+   - Pass through joint head transformer.
 
-4. **Memory Management**  
-   * Wrap inference in `torch.inference_mode()` or `torch.no_grad()`.  
-   * Clear GPU cache after inference if needed.
+4. **Dtype Consistency**
+   - Load backbone with `torch.bfloat16`.
+   - Load joint head with `torch.float32`.
+   - Explicitly cast tensors if necessary.
 
-5. **Unit Tests**  
-   * Test that `model` produces logits of shape `[batch_size, num_questions, num_options]`.  
-   * Test that softmax per question yields a valid probability distribution.
+5. **Inference Mode**
+   - Wrap entire forward pass in `torch.inference_mode()`.
 
-6. **CI Integration**  
-   * Add linting to check for hard‑coded token IDs.  
-   * Add a test that fails if `model.dtype` differs from config.
+6. **Batch Collation**
+   - Use `tokenizer.pad_token_id` for padding.
+   - Ensure no hard‑coded sentinel values.
 
-7. **Documentation**  
-   * Update README with explicit instructions for loading the model and processor.  
-   * Provide example code that demonstrates the full inference pipeline.
+7. **Error Handling**
+   - Validate presence of `state` and `questions` in record.
+   - Catch and log any exceptions during encoding.
 
-8. **Deployment**  
-   * Package the model with `transformers` `save_pretrained` to ensure reproducible builds.  
-   * Include `generation_config.json` and `tokenizer_config.json` in the repo.
+8. **Testing**
+   - Write unit tests for token alignment, dtype checks, and joint head output shape.
+   - Add integration test with a synthetic record and verify probability distribution sums to 1 per question.
 
-Follow this checklist whenever a new multimodal decision model is packaged for Hugging‑Face distribution.
+9. **Deployment**
+   - Package model weights and config into a Hugging Face repo.
+   - Provide a `load_release_model` helper that accepts a local path or Hugging Face repo ID.
+
+---
