@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T14:07:17.242Z",
-  "total_cycles_completed": 964,
-  "total_learnings_persisted": 964,
+  "last_updated": "2026-10-13T14:10:22.090Z",
+  "total_cycles_completed": 965,
+  "total_learnings_persisted": 965,
   "total_rules_promoted": 467,
   "history": [
-    {
-      "timestamp": "2026-10-13T02:01:33.480Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv61bvlo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T02:04:22.768Z",
       "repository": "google/gemma-4-31B-it",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T14:07:17.242Z",
       "repository": "google/embeddinggemma-2",
       "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv6r967u",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:10:22.090Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv6rd4t2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
