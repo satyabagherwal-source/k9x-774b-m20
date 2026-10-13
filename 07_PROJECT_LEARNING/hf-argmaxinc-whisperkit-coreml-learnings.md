@@ -3,8 +3,8 @@
 > **Source Version**: `hf-argmaxinc`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T19:00:06.024Z  
-> **Learning ID**: `learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv5m9vrc`  
+> **Timestamp**: 2026-10-13T01:55:17.532Z  
+> **Learning ID**: `learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv613tlo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T19:00:05.315Z  
+> **Harvest Timestamp**: 2026-10-13T01:55:16.679Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
