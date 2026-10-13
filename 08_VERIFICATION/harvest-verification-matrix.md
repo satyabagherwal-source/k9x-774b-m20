@@ -1157,3 +1157,4 @@
 | `CYCLE-20261013-FC8S` | `2026-10-13T22:35:58.012Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 773, Rule 774` | Yes (`38b650fb...`) |
 | `CYCLE-20261013-JJFJ` | `2026-10-13T22:39:13.951Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | Yes (`373793cf...`) |
 | `CYCLE-20261013-NAU8` | `2026-10-13T22:42:09.440Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`484547e4...`) |
+| `CYCLE-20261013-R85P` | `2026-10-13T22:45:12.589Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`71ba1f77...`) |
