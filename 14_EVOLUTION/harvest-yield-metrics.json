@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T00:17:34.083Z",
-  "total_cycles_completed": 731,
-  "total_learnings_persisted": 731,
-  "total_rules_promoted": 352,
+  "last_updated": "2026-10-13T00:20:30.563Z",
+  "total_cycles_completed": 732,
+  "total_learnings_persisted": 732,
+  "total_rules_promoted": 354,
   "history": [
-    {
-      "timestamp": "2026-10-12T13:23:11.551Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv5a8m3c",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T13:26:09.377Z",
       "repository": "LiquidAI/d1-3B",
@@ -1403,6 +1396,13 @@
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv5xm58r",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T00:20:30.563Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv5xpxfk",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

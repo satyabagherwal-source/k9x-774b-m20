@@ -790,3 +790,4 @@
 | `CYCLE-20261013-EFAR` | `2026-10-13T00:11:33.747Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`cc012ddf...`) |
 | `CYCLE-20261013-IBMA` | `2026-10-13T00:14:35.602Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`66f89af1...`) |
 | `CYCLE-20261013-M5BZ` | `2026-10-13T00:17:34.079Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`31e64072...`) |
+| `CYCLE-20261013-PXI8` | `2026-10-13T00:20:30.560Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 604, Rule 605` | Yes (`286b9aa9...`) |

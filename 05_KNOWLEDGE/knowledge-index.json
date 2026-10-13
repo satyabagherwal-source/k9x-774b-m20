@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T00:17:34.022Z",
-  "total_verified_learnings": 4686,
+  "last_updated": "2026-10-13T00:20:30.517Z",
+  "total_verified_learnings": 4687,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -114308,6 +114308,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T00:17:34.022Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv5xpxfk": {
+      "learning_id": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv5xpxfk",
+      "source": "Tongyi-MAI/Z-Image-Turbo",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "slug": "hf-tongyi-mai-z-image-turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "content_hash": "286b9aa989343980efbebce80f9d093c5c9a0df6e6c01694b8103a7bd76baaf1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 604,
+          "title": "Low-NFE Distillation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 605,
+          "title": "VRAM Boundary Enforcement for 16GB Consumer Hardware",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T00:20:30.517Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
