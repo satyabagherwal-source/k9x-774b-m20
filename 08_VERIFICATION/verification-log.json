@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-YD44",
-    "timestamp": "2026-10-12T00:39:23.620Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f",
-    "contentHash": "5bd4248300cfa2afbd3fe0df648f48a57ad0440c70110eeb9b220b1a865124ce",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-2I6Z",
     "timestamp": "2026-10-12T00:42:36.827Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
     "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv65u279",
     "contentHash": "a8e978dbf31bb843695c068b4232267db59c6da1546f30aa4f9afb50920efdc7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-XXVI",
+    "timestamp": "2026-10-13T04:10:41.214Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv65xxsi",
+    "contentHash": "e492c7646791950b5d4212f4683351e814c29964a39292ec9fb08ed7f222473a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
