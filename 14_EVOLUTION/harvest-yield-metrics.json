@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:24:27.934Z",
-  "total_cycles_completed": 903,
-  "total_learnings_persisted": 903,
+  "last_updated": "2026-10-13T10:27:18.963Z",
+  "total_cycles_completed": 904,
+  "total_learnings_persisted": 904,
   "total_rules_promoted": 431,
   "history": [
-    {
-      "timestamp": "2026-10-12T22:54:16.870Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5un1ch",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T22:57:08.704Z",
       "repository": "facebook/sam3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T10:24:27.934Z",
       "repository": "convaiinnovations/laya",
       "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv6jamcu",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T10:27:18.963Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv6jeacz",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:24:27.935Z",
+  "last_updated": "2026-10-13T10:27:18.964Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -48,15 +48,15 @@
       "repository": "Edge0/Audio8-ASR-Infinite",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv62qkq8",
-      "content_hash": "857d292f02ed9d0a4ad41e9a3d67e222b6bdc49d27c7aff51d0d39c9bd416a6a",
-      "verified_at": "2026-10-13T02:40:58.845Z",
+      "learning_id": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv6jeacz",
+      "content_hash": "4d980b94d3022b3b5dcb1f4eef532e96efcc2996987910bfa35f643ad86948b2",
+      "verified_at": "2026-10-13T10:27:18.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T02:40:58.845Z"
+      "last_updated": "2026-10-13T10:27:18.964Z"
     },
     "abenzerps/Qwen-Image-2.1-Uncensored-GGUF": {
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
