@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-XOE8",
-    "timestamp": "2026-10-12T09:02:44.672Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv50xobk",
-    "contentHash": "7366295b8f0cedeef1245878533ee1863d68dfa21678b507d85fe231365865d7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-1JG9",
     "timestamp": "2026-10-12T09:05:44.889Z",
     "repository": "facebook/sam3",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
     "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv6pp5i4",
     "contentHash": "8173580cb1a5eba601479a0d6ddb125bc223425da23da930c15bba28b2fa905b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-T69C",
+    "timestamp": "2026-10-13T13:26:51.120Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv6pt65c",
+    "contentHash": "c2bf356598057b01d02f5e2a69f432e186bb473b6c1c1f3e564a41067c0e7b7a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:23:43.616Z",
-  "total_cycles_completed": 951,
-  "total_learnings_persisted": 951,
+  "last_updated": "2026-10-13T13:26:51.125Z",
+  "total_cycles_completed": 952,
+  "total_learnings_persisted": 952,
   "total_rules_promoted": 462,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:21:48.279Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv5zwr6n",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:24:53.571Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T13:23:43.616Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv6pp5i4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:26:51.125Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv6pt65c",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
