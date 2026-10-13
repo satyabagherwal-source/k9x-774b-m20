@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T06:19:43.261Z",
-  "total_cycles_completed": 849,
-  "total_learnings_persisted": 849,
-  "total_rules_promoted": 403,
+  "last_updated": "2026-10-13T06:22:54.252Z",
+  "total_cycles_completed": 850,
+  "total_learnings_persisted": 850,
+  "total_rules_promoted": 406,
   "history": [
-    {
-      "timestamp": "2026-10-12T19:40:54.998Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv5nqdbd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T19:43:57.180Z",
       "repository": "convaiinnovations/laya",
@@ -1403,6 +1396,13 @@
       "repository": "CompVis/stable-diffusion-v1-4",
       "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv6ajvld",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T06:22:54.252Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv6anyxa",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
