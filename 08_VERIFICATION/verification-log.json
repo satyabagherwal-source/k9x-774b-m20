@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-0GPO",
-    "timestamp": "2026-10-11T23:45:02.364Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4",
-    "contentHash": "16380150cb970f514f23f5c1f178af3fad6b7b95f575bf1e90f0cd934a438262",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-47XG",
     "timestamp": "2026-10-11T23:47:57.604Z",
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "aa03061af6d8260217dee502341cc46066fa7401d4f2d56ae424f21eda770d54",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-Y52L",
+    "timestamp": "2026-10-13T03:14:51.309Z",
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv63y4yg",
+    "contentHash": "59394ab60628cb6dcc0ea04afe076b876a593d23fb4ba1bdde3dddc4d224eb09",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
