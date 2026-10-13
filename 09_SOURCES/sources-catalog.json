@@ -1065,9 +1065,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "a463b19a91d3998b78667751d26f58ce544a266bccf080f44ac9fd0fe4594c4d",
-    "lastHarvestedAt": "2026-10-12T18:08:29.070Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv5kfi1z"
+    "contentHash": "a42c50c3d22fa8c6f55788c542f9074f2437699206a3f5213f514c459f9dd2ea",
+    "lastHarvestedAt": "2026-10-13T01:03:18.371Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv5z8yrd"
   },
   "hf-fermionresearch-phonon-2": {
     "repository": "FermionResearch/Phonon-2",

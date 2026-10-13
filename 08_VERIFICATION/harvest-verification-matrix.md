@@ -804,3 +804,4 @@
 | `CYCLE-20261013-X9WI` | `2026-10-13T00:54:12.834Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`2f2bb510...`) |
 | `CYCLE-20261013-1C9F` | `2026-10-13T00:57:22.515Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`64faa8fa...`) |
 | `CYCLE-20261013-558E` | `2026-10-13T01:00:20.030Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`7744b971...`) |
+| `CYCLE-20261013-8YU8` | `2026-10-13T01:03:18.368Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`a42c50c3...`) |
