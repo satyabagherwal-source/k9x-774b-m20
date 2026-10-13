@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-EJAK",
-    "timestamp": "2026-10-12T16:43:45.068Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv5hej8p",
-    "contentHash": "e54b9c9027d4d658c1b2d22a8839b83231f23f14c0d12b4a879f7ac4c5a8c7d5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-IRKE",
     "timestamp": "2026-10-12T16:47:02.414Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/Qwen3.8-27B-GGUF",
     "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv78v5ww",
     "contentHash": "13f720db417ca1108c6b648dc5ee74761dc8827c57b7c2c072d1702c4d997614",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-Z5ZU",
+    "timestamp": "2026-10-13T22:23:23.418Z",
+    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv78z5wi",
+    "contentHash": "3bc0e351e1c89ef04d8551c03b4b862b22bb2c5466ac79aa369fc2010b587781",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T22:20:16.769Z",
-  "total_cycles_completed": 1091,
-  "total_learnings_persisted": 1091,
+  "last_updated": "2026-10-13T22:23:23.422Z",
+  "total_cycles_completed": 1092,
+  "total_learnings_persisted": 1092,
   "total_rules_promoted": 531,
   "history": [
-    {
-      "timestamp": "2026-10-13T09:47:19.220Z",
-      "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv6hyunz",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T09:52:20.112Z",
       "repository": "BAAI/bge-base-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T22:20:16.769Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv78v5ww",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T22:23:23.422Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv78z5wi",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

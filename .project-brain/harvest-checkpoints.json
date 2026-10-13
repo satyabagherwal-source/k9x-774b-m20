@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T22:20:16.769Z",
+  "last_updated": "2026-10-13T22:23:23.423Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -748,15 +748,15 @@
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv6qyg6e",
-      "content_hash": "e9a323fe60b9b09c27abf5e3e84106cb672894e54745bfc9a8f552a93b46e537",
-      "verified_at": "2026-10-13T13:58:56.987Z",
+      "learning_id": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv78z5wi",
+      "content_hash": "3bc0e351e1c89ef04d8551c03b4b862b22bb2c5466ac79aa369fc2010b587781",
+      "verified_at": "2026-10-13T22:23:23.423Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T13:58:56.987Z"
+      "last_updated": "2026-10-13T22:23:23.423Z"
     },
     "canberkkkkkk/ema-lightning": {
       "repository": "canberkkkkkk/ema-lightning",
