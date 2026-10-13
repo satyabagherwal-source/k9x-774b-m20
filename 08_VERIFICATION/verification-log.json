@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-NSTH",
-    "timestamp": "2026-10-12T00:03:11.141Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw",
-    "contentHash": "11ee874fe71e76e37e1d6740963a0f1efa3106b98ea5502bbc6d1e5374e38569",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-RS9U",
     "timestamp": "2026-10-12T00:06:17.058Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B",
     "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv64hq0e",
     "contentHash": "08ddc625d07b8861c1f8a50b6e74340f469d99eb7c6fdaa36e2055761a22d2ca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-LM9R",
+    "timestamp": "2026-10-13T03:33:06.687Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv64lm6r",
+    "contentHash": "a61b613a257c8b83bb0ec108bbab9ac43a65bbae7740850312174cb0888a1dc7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
