@@ -907,3 +907,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-bigscience-bloom-mv6cl3jg` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-13T07:16:39.482Z |
 | `learn-huggingface-hf-openai-gpt-oss-20b-mv6cuhbr` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-13T07:23:57.312Z |
 | `learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv6d1iec` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-13T07:29:25.247Z |
+| `learn-huggingface-hf-meta-llama-llama-2-7b-mv6d6rnk` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-13T07:33:30.492Z |

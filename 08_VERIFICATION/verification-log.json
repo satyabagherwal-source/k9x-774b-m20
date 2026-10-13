@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-I579",
-    "timestamp": "2026-10-12T03:42:44.181Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4pi54n",
-    "contentHash": "3b10c5dd2c52ec9eba51835993f9e12fd6edc3e38fd2e77e92e7300b4edecbd6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-LTYN",
     "timestamp": "2026-10-12T03:45:36.239Z",
     "repository": "speridlabs/iris-3b",
@@ -7492,6 +7477,21 @@
     "contentHash": "368f35263ae3b5e22fb02c09cdd035ba84f9cc331520ac26aba0a57e22a78f9d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-6RQX",
+    "timestamp": "2026-10-13T07:33:30.489Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv6d6rnk",
+    "contentHash": "b0ac240b6195bc686186122950ea448bc925dfdf83bd26f8efde239ed6b7b1eb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
