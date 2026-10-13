@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-N2TP",
-    "timestamp": "2026-10-12T18:14:22.477Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv5kn2rb",
-    "contentHash": "03a9ef636ab35927fa1d91beb21672f8cf92fe073db0f0ec605382b1a17d4be7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-R1AF",
     "timestamp": "2026-10-12T18:17:27.111Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "stabilityai/stable-diffusion-3-medium",
     "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv7c6ea2",
     "contentHash": "68ee87dbbe5a22e972abf878220dd0981e77b5a71909213c742f90b5d1f5dc87",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-DBHC",
+    "timestamp": "2026-10-13T23:58:22.560Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-hf-bigscience-bloom-mv7cdbe9",
+    "contentHash": "1e5fc8ebc9a5c85988944aa3bb4032090828eecbf6901ee55a0b3dd729f3f1bf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

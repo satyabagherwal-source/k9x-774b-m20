@@ -1163,3 +1163,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-openai-gpt-oss-120b-mv7bys3f` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-13T23:47:04.323Z |
 | `learn-huggingface-hf-zai-org-glm-5-2-mv7c2t82` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-13T23:50:12.456Z |
 | `learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv7c6ea2` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-13T23:52:59.668Z |
+| `learn-huggingface-hf-bigscience-bloom-mv7cdbe9` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-10-13T23:58:22.562Z |
