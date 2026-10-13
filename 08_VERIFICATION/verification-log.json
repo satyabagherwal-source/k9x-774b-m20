@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-EFVI",
-    "timestamp": "2026-10-12T03:39:51.390Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv4pefsx",
-    "contentHash": "657faa588addb978ab2fb3afc49a6d4b7e06e583018d32d807a37f21e1e5790e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-I579",
     "timestamp": "2026-10-12T03:42:44.181Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-20b",
     "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv6cuhbr",
     "contentHash": "b97eb9065cb78bfbc59caf7c660e2348b8854a8a741cf173bc30aefced9901a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-1IIL",
+    "timestamp": "2026-10-13T07:29:25.245Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv6d1iec",
+    "contentHash": "368f35263ae3b5e22fb02c09cdd035ba84f9cc331520ac26aba0a57e22a78f9d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

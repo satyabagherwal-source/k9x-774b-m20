@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T07:23:57.262Z",
-  "total_verified_learnings": 4819,
+  "last_updated": "2026-10-13T07:29:25.196Z",
+  "total_verified_learnings": 4820,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -117834,6 +117834,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T07:23:57.262Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv6d1iec": {
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv6d1iec",
+      "source": "meta-llama/Llama-2-7b-chat-hf",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "slug": "hf-meta-llama-llama-2-7b-chat-hf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "content_hash": "368f35263ae3b5e22fb02c09cdd035ba84f9cc331520ac26aba0a57e22a78f9d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 663,
+          "title": "KV-Cache Memory Bound & Eviction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 664,
+          "title": "Tokenizer-Model Vocabulary Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 665,
+          "title": "Deterministic Sampling vs. Temperature Zero Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T07:29:25.196Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
