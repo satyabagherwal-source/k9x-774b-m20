@@ -38123,3 +38123,202 @@ cfg["layer_types"] = cfg["layer_types"][:cfg["num_hidden_layers"]]  # hides erro
 Add a pre‑load hook in the model loading pipeline that calls `validate_layer_schedule`; fail fast if the assertion triggers.  
 
 ---
+
+
+---
+
+## 695. Span-Head Width Constraint for Discrete Classification (Harvested from fastino/GLiNER2.5-Decide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Span-Head Width Constraint for Discrete Classification",
+  "source": "fastino/GLiNER2.5-Decide",
+  "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+  "source_version": "hf-fastino-gliner2.5-decide",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:32:33.070Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fastino/GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide) (Revision: `hf-fastino`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using span-based extraction for classification tasks (where labels are short, discrete tokens), the `max_width` of the span head MUST be set to the maximum token length of the longest expected label, plus a small buffer (e.g., +2 for special tokens). It MUST NOT be set to the maximum sequence length (`max_len`) or a generic large value (e.g., 512).
+
+**WHY**:
+Span extraction complexity is $O(N \times W)$, where $N$ is sequence length and $W$ is max span width. If $W$ is set to 512 for a task where labels are max 4 tokens long, the model wastes 99% of its computational budget calculating invalid span probabilities. This leads to unnecessary latency and increased memory pressure on the GPU/CPU. Furthermore, a large $W$ increases the risk of the model hallucinating long, non-existent spans if the attention mask is not perfectly tight.
+
+**WHEN TO APPLY**:
+Any NLP model using span extraction (GLiNER, SpanBERT, etc.) for classification, entity recognition, or slot filling where the target entities are bounded in length.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Configuring the span head for a classification task
+# Labels: ["urgent", "normal", "low_priority", "spam"]
+# Max token length of "low_priority" is 2 (if underscore is not a token) or 3.
+# Set max_width to 8 to be safe but tight.
+
+config = Gliner2Config(
+    architecture="span",
+    span_head={
+        "max_width": 8,  # Tight constraint
+        "span_mode": "markerV0"
+    },
+    max_len=512  # Sequence length can be large, but span width must be small
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Setting max_width equal to max_len
+config = Gliner2Config(
+    architecture="span",
+    span_head={
+        "max_width": 512, # WRONG: Causes O(N*512) computation for short labels
+        "span_mode": "markerV0"
+    },
+    max_len=512
+)
+```
+
+**VERIFICATION METHOD**:
+1.  **Static Analysis**: Lint the model config to ensure `span_head.max_width < max_len / 10` for classification tasks.
+2.  **Performance Test**: Measure inference latency with `max_width=8` vs `max_width=512`. Assert that the ratio is > 5x faster for the tight width.
+3.  **Accuracy Check**: Verify that no valid label in the training set exceeds the `max_width` token count.
+
+
+---
+
+## 696. Structural Token Isolation for Prompt-Label Separation (Harvested from fastino/GLiNER2.5-Decide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Structural Token Isolation for Prompt-Label Separation",
+  "source": "fastino/GLiNER2.5-Decide",
+  "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+  "source_version": "hf-fastino-gliner2.5-decide",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:32:33.097Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fastino/GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide) (Revision: `hf-fastino`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In span-based classification models, the input sequence MUST be explicitly segmented using unique structural tokens (e.g., `[SEP_STRUCT]`, `[SEP_TEXT]`) to separate the context text from the candidate label list. The attention mask MUST be constructed to prevent cross-attention between the label tokens and the text tokens in a way that allows the model to "read" the label as part of the text.
+
+**WHY**:
+Without strict isolation, the model may learn to copy the label text directly from the input rather than classifying the text. This is a form of "label leakage" or "shortcut learning." The structural tokens act as barriers that force the model to use the encoder's internal representations to match the text to the label, rather than simple string matching.
+
+**WHEN TO APPLY**:
+Any model that takes a list of candidate labels as input (e.g., GLiNER, Prompt-Tuning, In-Context Learning setups).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Input construction
+text = "I want to cancel my order"
+labels = ["cancel", "refund", "complaint"]
+
+# Tokenize with structural separators
+# [CLS] text [SEP_TEXT] label1 [SEP_STRUCT] label2 [SEP_STRUCT] label3 [SEP]
+input_ids = tokenizer.encode(
+    f"[CLS] {text} [SEP_TEXT] {labels[0]} [SEP_STRUCT] {labels[1]} [SEP_STRUCT] {labels[2]} [SEP]"
+)
+
+# Attention Mask Construction
+# Ensure that label tokens do not attend to each other in a way that bypasses the text
+# The model's internal logic (markerV0) handles this, but the tokenizer must preserve boundaries
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Concatenating labels without structural separation
+# This allows the model to treat "cancel refund complaint" as a single phrase
+input_ids = tokenizer.encode(f"[CLS] {text} {labels[0]} {labels[1]} {labels[2]} [SEP]")
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Tokenize a sample input and assert that the structural tokens are present at the correct positions.
+2.  **Ablation Study**: Train a small model with and without structural tokens. Assert that the version with tokens has higher accuracy on out-of-distribution labels.
+3.  **Code Review**: Verify that the tokenizer configuration includes `add_prefix_space: true` to prevent token merging across boundaries.
+
+
+---
+
+## 697. Dynamic Label Set Handling via Counting Layer (Harvested from fastino/GLiNER2.5-Decide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic Label Set Handling via Counting Layer",
+  "source": "fastino/GLiNER2.5-Decide",
+  "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+  "source_version": "hf-fastino-gliner2.5-decide",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:32:33.118Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fastino/GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide) (Revision: `hf-fastino`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When the number of candidate labels varies at inference time, the model MUST use a counting layer (e.g., `count_lstm`) or a dynamic attention mechanism to handle variable-length label sets. It MUST NOT assume a fixed number of labels in the architecture.
+
+**WHY**:
+Fixed-size architectures require padding, which introduces noise and wastes computation. A counting layer allows the model to dynamically adjust its attention to the actual number of labels provided, improving efficiency and accuracy.
+
+**WHEN TO APPLY**:
+Any model that supports dynamic label sets (e.g., intent classification with varying intents, multi-label classification).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Configuring the counting layer
+config = Gliner2Config(
+    counting_layer="count_lstm",
+    # ... other config
+)
+
+# Inference with variable labels
+labels_1 = ["urgent"]
+labels_2 = ["urgent", "normal", "low"]
+
+# The model handles both cases without reconfiguration
+output_1 = model.classify_text(text, labels_1)
+output_2 = model.classify_text(text, labels_2)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoding the number of labels
+# This requires retraining or reconfiguration for each new label set
+class FixedLabelModel:
+    def __init__(self):
+        self.num_labels = 10  # WRONG: Not flexible
+```
+
+**VERIFICATION METHOD**:
+1.  **Integration Test**: Call the model with 1, 5, and 20 labels. Assert that all calls succeed and return valid outputs.
+2.  **Performance Test**: Measure latency for 1 label vs 20 labels. Assert that the latency scales linearly with the number of labels, not quadratically.

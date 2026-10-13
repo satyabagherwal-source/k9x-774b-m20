@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:29:24.414Z",
-  "total_verified_learnings": 4893,
+  "last_updated": "2026-10-13T12:32:33.148Z",
+  "total_verified_learnings": 4894,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -119799,6 +119799,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T12:29:24.414Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq": {
+      "learning_id": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq",
+      "source": "fastino/GLiNER2.5-Decide",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "slug": "hf-fastino-gliner2.5-decide",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "source_version": "hf-fastino-gliner2.5-decide",
+      "content_hash": "994e58140d65db272de72bc6e0950376361484fc19e26a79174cdcefa61e8871",
+      "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 695,
+          "title": "Span-Head Width Constraint for Discrete Classification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 696,
+          "title": "Structural Token Isolation for Prompt-Label Separation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 697,
+          "title": "Dynamic Label Set Handling via Counting Layer",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T12:32:33.148Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:29:24.465Z",
-  "total_cycles_completed": 938,
-  "total_learnings_persisted": 938,
-  "total_rules_promoted": 449,
+  "last_updated": "2026-10-13T12:32:33.200Z",
+  "total_cycles_completed": 939,
+  "total_learnings_persisted": 939,
+  "total_rules_promoted": 452,
   "history": [
-    {
-      "timestamp": "2026-10-13T00:42:09.224Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv5yhrg5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T00:44:59.517Z",
       "repository": "meta-llama/Llama-2-7b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T12:29:24.465Z",
       "repository": "Altworld/Hemmingway-1",
       "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv6nrao5",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T12:32:33.200Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

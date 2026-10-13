@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-VEFP",
-    "timestamp": "2026-10-12T08:04:59.221Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4yveax",
-    "contentHash": "bba9265dd9a53a2e239ea4e520a9a1010ed7b451ca02a4028a425fa5824fe793",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-0ELW",
     "timestamp": "2026-10-12T08:08:52.724Z",
     "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -7490,6 +7475,21 @@
     "repository": "Altworld/Hemmingway-1",
     "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv6nrao5",
     "contentHash": "eada004a51e480df22aaed92842f72078d2c61713110584ce15b18ea21a501a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-VCFG",
+    "timestamp": "2026-10-13T12:32:33.196Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq",
+    "contentHash": "994e58140d65db272de72bc6e0950376361484fc19e26a79174cdcefa61e8871",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
