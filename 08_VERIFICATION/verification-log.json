@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-23RK",
-    "timestamp": "2026-10-12T04:26:15.056Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4r23mz",
-    "contentHash": "ada77ba64d638320c0992e531e1ec04922f04b208e64cb16df1571a1fb22b9be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-5PGB",
     "timestamp": "2026-10-12T04:29:03.131Z",
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "215415289cc5a5ef2e52d020a9f5f26234a8fcdea0671c1510471480edb07560",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-JXXS",
+    "timestamp": "2026-10-13T09:07:43.888Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6gjxum",
+    "contentHash": "5e8cfaf6b46da53080a7a68b678c4bab947614e7ef7190b9e081e300d6e60e87",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

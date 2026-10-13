@@ -938,3 +938,4 @@
 | `CYCLE-20261013-302R` | `2026-10-13T08:54:33.507Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`0e6b379a...`) |
 | `CYCLE-20261013-AMOG` | `2026-10-13T09:00:29.392Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`c7c82a7c...`) |
 | `CYCLE-20261013-EU8R` | `2026-10-13T09:03:45.819Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 372, Rule 673, Rule 674` | Yes (`21541528...`) |
+| `CYCLE-20261013-JXXS` | `2026-10-13T09:07:43.888Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`5e8cfaf6...`) |
