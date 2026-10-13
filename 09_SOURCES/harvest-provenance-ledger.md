@@ -826,3 +826,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-baai-bge-small-en-v1-5-mv636djn` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-13T02:53:16.062Z |
 | `learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv63a4js` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-13T02:56:10.953Z |
 | `learn-huggingface-hf-liquidai-d1-3b-mv63dqnz` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-13T02:58:59.583Z |
+| `learn-huggingface-hf-cactus-compute-whistle-mv63hql4` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-10-13T03:02:06.107Z |

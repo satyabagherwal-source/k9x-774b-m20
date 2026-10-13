@@ -843,3 +843,4 @@
 | `CYCLE-20261013-6DNF` | `2026-10-13T02:53:16.059Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 616, Rule 617` | Yes (`c03b5223...`) |
 | `CYCLE-20261013-A4LK` | `2026-10-13T02:56:10.952Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`a1db5948...`) |
 | `CYCLE-20261013-DQPQ` | `2026-10-13T02:58:59.582Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`d52ad06e...`) |
+| `CYCLE-20261013-HQMY` | `2026-10-13T03:02:06.106Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`8f73779a...`) |
