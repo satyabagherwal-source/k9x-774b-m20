@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T14:04:24.888Z",
+  "last_updated": "2026-10-13T14:07:17.243Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -776,15 +776,15 @@
       "repository": "google/embeddinggemma-2",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-google-embeddinggemma-2-mv690qve",
-      "content_hash": "5dda9bd3f8479ec568219d6aa383e3e56ea9613b7463a133386d7b449a588c09",
-      "verified_at": "2026-10-13T05:36:51.066Z",
+      "learning_id": "learn-huggingface-hf-google-embeddinggemma-2-mv6r967u",
+      "content_hash": "dfe06d96fdbe07ec726fbdf855205ab87d2ab1a9557cd4134167abbfce82dca4",
+      "verified_at": "2026-10-13T14:07:17.243Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T05:36:51.066Z"
+      "last_updated": "2026-10-13T14:07:17.243Z"
     },
     "unsloth/embeddinggemma-2-GGUF": {
       "repository": "unsloth/embeddinggemma-2-GGUF",

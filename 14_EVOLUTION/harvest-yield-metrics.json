@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T14:04:24.887Z",
-  "total_cycles_completed": 963,
-  "total_learnings_persisted": 963,
+  "last_updated": "2026-10-13T14:07:17.242Z",
+  "total_cycles_completed": 964,
+  "total_learnings_persisted": 964,
   "total_rules_promoted": 467,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:58:33.381Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv6180mw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T02:01:33.480Z",
       "repository": "google/vit-base-patch16-224",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T14:04:24.887Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv6r5h7b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:07:17.242Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv6r967u",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
