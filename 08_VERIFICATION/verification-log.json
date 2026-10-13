@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-CFDP",
-    "timestamp": "2026-10-12T13:26:09.373Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv5acfaz",
-    "contentHash": "1e8a764616cf38e77ae4790963738f9e881d2533749aadcb1e78c587ee1c8376",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-GCLR",
     "timestamp": "2026-10-12T13:29:12.399Z",
     "repository": "Cactus-Compute/whistle",
@@ -7492,6 +7477,21 @@
     "contentHash": "8adad22dbd2ffb77b5ca37c5e3cbe5504c315e66a3d42e2c0f99deab2d93f994",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-R4RO",
+    "timestamp": "2026-10-13T18:33:11.652Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv70r4om",
+    "contentHash": "186595e4b9f81e2f10b6a054c6ce86f6b93c897dcf5df47f85a0e588de6a78ae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

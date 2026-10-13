@@ -1074,3 +1074,4 @@ Every entry in this ledger must capture:
 | `learn-github-tickernelz-opencode-mem-mv707j1j` | `https://github.com/tickernelz/opencode-mem` | `a2072d75` | Multi-dimensional audit evidence | 2026-10-13T18:17:57.254Z |
 | `learn-huggingface-hf-jialinyyzz-humanizer-mv70jd7b` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-13T18:27:09.456Z |
 | `learn-huggingface-hf-autotrust-jev-27b-vl-mv70nbai` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-13T18:30:13.626Z |
+| `learn-huggingface-hf-autotrust-gev-26b-decide-mv70r4om` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-13T18:33:11.655Z |
