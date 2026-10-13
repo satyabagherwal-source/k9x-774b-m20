@@ -1105,3 +1105,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-lightricks-ltx-2-5-mv73zlgc` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-13T20:03:45.482Z |
 | `learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv743jxv` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-13T20:06:50.128Z |
 | `learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv747l36` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-13T20:09:58.264Z |
+| `learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv74bilw` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-13T20:13:01.674Z |

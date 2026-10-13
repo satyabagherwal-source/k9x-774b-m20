@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-93PB",
-    "timestamp": "2026-10-12T15:15:32.735Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv5e93mf",
-    "contentHash": "7994eafa25b8c1bc48bbb987d0a22b4e6022b9c63e134b55243f399d1e6a8304",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-CVSO",
     "timestamp": "2026-10-12T15:18:29.112Z",
     "repository": "akhilaaa3/Jev-Omni",
@@ -7490,6 +7475,21 @@
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
     "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv747l36",
     "contentHash": "5eea67a68b9823eb8e2feda140198b34a95048d15298b8bcf8fb4cf4866feeb2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-BIP3",
+    "timestamp": "2026-10-13T20:13:01.671Z",
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv74bilw",
+    "contentHash": "1750ec32e18162d4405ab1b8f18e54d854a7865404557108eaa52f27d9e8ab78",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
