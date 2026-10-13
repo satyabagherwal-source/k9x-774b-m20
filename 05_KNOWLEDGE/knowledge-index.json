@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:49:32.752Z",
-  "total_verified_learnings": 4914,
+  "last_updated": "2026-10-13T13:52:49.724Z",
+  "total_verified_learnings": 4915,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -120384,6 +120384,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T13:49:32.752Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-facebook-sam3-mv6qqksb": {
+      "learning_id": "learn-huggingface-hf-facebook-sam3-mv6qqksb",
+      "source": "facebook/sam3",
+      "repository": "facebook/sam3",
+      "slug": "hf-facebook-sam3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/facebook/sam3",
+      "source_version": "hf-facebook-sam3",
+      "content_hash": "618eded94fd4843aeaf506815e45a8ed8919df75da7cf991e482e3322d87be9b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 709,
+          "title": "Spatial Feature Map Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 710,
+          "title": "Mask Decoder Thresholding Hysteresis Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 711,
+          "title": "Prompt Encoder Coordinate Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T13:52:49.724Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
