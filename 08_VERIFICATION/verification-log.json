@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-HK6H",
-    "timestamp": "2026-10-11T23:02:20.777Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v",
-    "contentHash": "6f6709f1c794237031a127796f7b6e9e4fced36ce0ab194d9db0d8e3b2648bd7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-LQMU",
     "timestamp": "2026-10-11T23:05:35.766Z",
     "repository": "convaiinnovations/laya",
@@ -7490,6 +7475,21 @@
     "repository": "jialinyyzz/humanizer",
     "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv62b5oz",
     "contentHash": "0dd89f1a96f603fa0e51d05fd3ba26fa67feb3b668d800b5331e30bba5e66190",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-EZI2",
+    "timestamp": "2026-10-13T02:31:58.010Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv62ezf1",
+    "contentHash": "6a0df438584d2b07c73dad3363f5156f3a9ca79f5c75dbdc2b84cdfeeba4a0b1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

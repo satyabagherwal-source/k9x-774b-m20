@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T02:28:59.517Z",
-  "total_cycles_completed": 774,
-  "total_learnings_persisted": 774,
+  "last_updated": "2026-10-13T02:31:58.014Z",
+  "total_cycles_completed": 775,
+  "total_learnings_persisted": 775,
   "total_rules_promoted": 364,
   "history": [
-    {
-      "timestamp": "2026-10-12T15:49:20.866Z",
-      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-      "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv5fgkjb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T15:52:19.244Z",
       "repository": "PSRben/VisionHOPE",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T02:28:59.517Z",
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv62b5oz",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T02:31:58.014Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv62ezf1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
