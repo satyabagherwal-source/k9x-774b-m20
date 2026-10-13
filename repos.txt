@@ -3912,3 +3912,7 @@ https://huggingface.co/openbmb/MiniCPM-V-4.7-1B
 # --- Automatically Discovered by AI Scout Engine [2026-10-13T12:08:59.931Z] ---
 # [AI-AGENTS] ccfos/nightingale (7654 score) - Open-source, self-hosted alerting for metrics, logs, and databases. Includes a b
 https://github.com/ccfos/nightingale
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T12:56:44.180Z] ---
+# [AI-AGENTS] trailhq/Trail-Code (5687 score) - Turbocharge Claude Code, Cursor, Codex, Gemini & every coding agent: faster, che
+https://github.com/trailhq/Trail-Code

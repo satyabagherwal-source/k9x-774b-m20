@@ -17527,5 +17527,20 @@
     "qualityScore": 7654,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-13T12:08:02.204Z"
+  },
+  {
+    "name": "Trail-Code",
+    "fullName": "trailhq/Trail-Code",
+    "url": "https://github.com/trailhq/Trail-Code",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Turbocharge Claude Code, Cursor, Codex, Gemini & every coding agent: faster, cheaper, with contextual understanding specific to your codebase.",
+    "stars": 9947,
+    "forks": 879,
+    "openIssues": 242,
+    "language": "TypeScript",
+    "qualityScore": 5687,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-13T12:56:11.214Z"
   }
 ]
