@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:34:05.473Z",
-  "total_cycles_completed": 954,
-  "total_learnings_persisted": 954,
+  "last_updated": "2026-10-13T13:37:21.882Z",
+  "total_cycles_completed": 955,
+  "total_learnings_persisted": 955,
   "total_rules_promoted": 464,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:31:11.035Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv608te6",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:34:04.312Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T13:34:05.473Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv6q2hbp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:37:21.882Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv6q6ov5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
