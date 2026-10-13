@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-1BSP",
-    "timestamp": "2026-10-12T07:13:36.505Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv4x1bos",
-    "contentHash": "fcdd33fb0de224fceebb5ae344b46c62c837f85cceb0ca42cde61bb2a83c7647",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-6YYY",
     "timestamp": "2026-10-12T07:17:59.818Z",
     "repository": "apple/LensVLM-9B",
@@ -7490,6 +7475,21 @@
     "repository": "nvidia/Nemotron-3-Diarization",
     "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv6m4mpe",
     "contentHash": "10b59cbaff3ee24da986f3f5994d6b4b617bb3bdbf5d1ccef5b82804551ada33",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-8P7T",
+    "timestamp": "2026-10-13T11:46:57.065Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv6m8p2n",
+    "contentHash": "31da1dd8b21e38580e54d5b66a83cb4e53fa4d7a52e8022c37f69954c5779747",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
