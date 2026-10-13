@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-OCRM",
-    "timestamp": "2026-10-12T09:23:29.314Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-mv51ocnr",
-    "contentHash": "4fbbe223ea042a42e0d36735ba60f9e8e7d03840376afc429a9d6fd68c5c23bb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-SHSU",
     "timestamp": "2026-10-12T09:26:42.462Z",
     "repository": "Cloudflare/clef-flash",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv6qimse",
     "contentHash": "eabf96c6fbfa675dfefedd867cfb9bc6a8cdf45152367638f1178ff5d95d3f0f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-MCXD",
+    "timestamp": "2026-10-13T13:49:32.785Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv6qmcvj",
+    "contentHash": "f3d62dc906be9b8cc7a4dd147433019a67a6272f424b795f836535c4deb09f4c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

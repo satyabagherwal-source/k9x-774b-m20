@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:46:39.060Z",
-  "total_cycles_completed": 958,
-  "total_learnings_persisted": 958,
+  "last_updated": "2026-10-13T13:49:32.787Z",
+  "total_cycles_completed": 959,
+  "total_learnings_persisted": 959,
   "total_rules_promoted": 464,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:43:09.435Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv60o7pj",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:46:36.850Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T13:46:39.060Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv6qimse",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:49:32.787Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv6qmcvj",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
