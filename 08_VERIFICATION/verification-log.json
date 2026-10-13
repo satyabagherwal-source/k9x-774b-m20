@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-ARUT",
-    "timestamp": "2026-10-12T11:32:53.765Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv56ars3",
-    "contentHash": "bccd69afb85fedd90694c23e936fdaaa613c05b67ad4f654fb768a9a291b4c44",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-FM2A",
     "timestamp": "2026-10-12T11:36:39.538Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Llama-2-7b",
     "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv6vyyp3",
     "contentHash": "bf20f671588bf27214b59016e56b2bcc43d0fc0821fa956dc66db9951b404ffb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-2ZE5",
+    "timestamp": "2026-10-13T16:22:26.477Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv6w2zb2",
+    "contentHash": "7e1c899c5b268e68a168e37e2812f616b09cb07c090ca2c0b2ff54ce7f5a9123",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
