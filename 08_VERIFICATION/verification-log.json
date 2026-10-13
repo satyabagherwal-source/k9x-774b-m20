@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-E0C3",
-    "timestamp": "2026-10-12T17:11:20.115Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv5ie099",
-    "contentHash": "9a18aebb6a547fed91842b7041002624c8300f211a66d793eba3506845deb46d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-I3I6",
     "timestamp": "2026-10-12T17:14:30.846Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7492,6 +7477,21 @@
     "contentHash": "951c8f1657c82803ba2a4f55943773bde653966e9ec79e0a5837565e17b001f8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-YYMJ",
+    "timestamp": "2026-10-13T22:51:13.483Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-m3-mv79yykn",
+    "contentHash": "ddb4c3086e7097d7767fc456eba42b1195f7b75340a51b20344ca31dd5aadf1a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
