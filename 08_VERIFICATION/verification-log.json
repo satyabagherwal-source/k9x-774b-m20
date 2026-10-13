@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-FPLR",
-    "timestamp": "2026-10-11T20:40:56.415Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv4afpk5",
-    "contentHash": "ca1ee206b9772efbc99fb8b81ba0b8ca7010841bac61f267e7ddaef818179cad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-JTJ6",
     "timestamp": "2026-10-11T20:44:08.130Z",
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -7490,6 +7475,21 @@
     "repository": "openai/whisper-large-v3",
     "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv5x6if0",
     "contentHash": "6fee0780e7e949e7328aead8fc431768a17365c2044aecc4c543a68971b47113",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-A8EE",
+    "timestamp": "2026-10-13T00:08:18.182Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv5xa8cf",
+    "contentHash": "8e79ce5c8ca87c5300cc975a1e36967e723ed39da5f2e82c3d16c5f04587a42c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

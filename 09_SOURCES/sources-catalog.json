@@ -885,9 +885,9 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
     "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
     "license": "Open-Source",
-    "contentHash": "e8f974b21e93537546cf886c16f6abc238abfc093c01e2331eb6e60b571fc594",
-    "lastHarvestedAt": "2026-10-12T17:14:30.849Z",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv5ii3e3"
+    "contentHash": "8e79ce5c8ca87c5300cc975a1e36967e723ed39da5f2e82c3d16c5f04587a42c",
+    "lastHarvestedAt": "2026-10-13T00:08:18.184Z",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv5xa8cf"
   },
   "hf-minimaxai-minimax-h3": {
     "repository": "MiniMaxAI/MiniMax-H3",
