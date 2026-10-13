@@ -971,3 +971,4 @@
 | `CYCLE-20261013-1B8P` | `2026-10-13T10:45:13.129Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`268686fc...`) |
 | `CYCLE-20261013-5ILF` | `2026-10-13T10:48:29.283Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 679, Rule 680, Rule 681` | Yes (`427a97ee...`) |
 | `CYCLE-20261013-9BQ8` | `2026-10-13T10:51:27.008Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`9329e5dd...`) |
+| `CYCLE-20261013-D4D9` | `2026-10-13T10:54:24.093Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`f99c64c3...`) |
