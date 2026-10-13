@@ -3,8 +3,8 @@
 > **Source Version**: `hf-unsloth-e`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-13T14:10:21.974Z  
-> **Learning ID**: `learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv6rd4t2`  
+> **Timestamp**: 2026-10-13T22:32:47.405Z  
+> **Learning ID**: `learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv79b965`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/unsloth/embeddinggemma-2-GGUF](https://huggingface.co/unsloth/embeddinggemma-2-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-13T14:10:21.210Z  
+> **Harvest Timestamp**: 2026-10-13T22:32:46.841Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: feature-extraction
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 81504 downloads | 291 likes
+- **Stars / Engagement**: 81504 downloads | 298 likes
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T22:29:34.608Z",
-  "total_verified_learnings": 5049,
+  "last_updated": "2026-10-13T22:32:47.470Z",
+  "total_verified_learnings": 5050,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -123985,6 +123985,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T22:29:34.608Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv79b965": {
+      "learning_id": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv79b965",
+      "source": "unsloth/embeddinggemma-2-GGUF",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "slug": "hf-unsloth-embeddinggemma-2-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+      "source_version": "hf-unsloth-embeddinggemma-2-gguf",
+      "content_hash": "0a55b13b607a79944fb51287628a4609cdaecf6e0ad3f90f6ddd33c7a72a0d36",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T22:32:47.470Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
