@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-XSWK",
-    "timestamp": "2026-10-12T03:54:54.740Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4pxsuw",
-    "contentHash": "c4c25ccdb0c6fb512c663046e020dbcc0262764125eaa0ba99d52427ab89119b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-1KW7",
     "timestamp": "2026-10-12T03:57:50.983Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "baidu/Unlimited-OCR",
     "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv6dtli4",
     "contentHash": "0fe4dd4fd58395d3e77f9c90100c184b9a2ebe4aef37ab53860cd07ec14b13fb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-XTCJ",
+    "timestamp": "2026-10-13T07:54:32.275Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6dxt9f",
+    "contentHash": "c3077624d0e52d9ded6b2891aff6a4f41d6d41a71fa3124d9f8f6ceaa2db3542",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

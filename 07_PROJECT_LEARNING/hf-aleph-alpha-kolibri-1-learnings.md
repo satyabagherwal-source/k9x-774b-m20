@@ -3,8 +3,8 @@
 > **Source Version**: `hf-aleph-alp`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-13T00:57:22.447Z  
-> **Learning ID**: `learn-huggingface-hf-aleph-alpha-kolibri-1-mv5z1c7j`  
+> **Timestamp**: 2026-10-13T07:54:32.163Z  
+> **Learning ID**: `learn-huggingface-hf-aleph-alpha-kolibri-1-mv6dxt9f`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Aleph-Alpha/Kolibri-1](https://huggingface.co/Aleph-Alpha/Kolibri-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-13T00:57:21.670Z  
+> **Harvest Timestamp**: 2026-10-13T07:54:14.237Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 14018 downloads | 914 likes
+- **Stars / Engagement**: 14018 downloads | 917 likes
 
 ---
 

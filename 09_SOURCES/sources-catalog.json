@@ -1045,9 +1045,9 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1",
     "license": "Open-Source",
-    "contentHash": "64faa8fa40c80ef3afe659e4096947eb279c7e47232b170d68de76c253ea78ed",
-    "lastHarvestedAt": "2026-10-13T00:57:22.517Z",
-    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv5z1c7j"
+    "contentHash": "c3077624d0e52d9ded6b2891aff6a4f41d6d41a71fa3124d9f8f6ceaa2db3542",
+    "lastHarvestedAt": "2026-10-13T07:54:32.277Z",
+    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6dxt9f"
   },
   "hf-speridlabs-iris-3b": {
     "repository": "speridlabs/iris-3b",
