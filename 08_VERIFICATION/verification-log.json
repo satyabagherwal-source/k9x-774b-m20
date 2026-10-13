@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-SMA1",
-    "timestamp": "2026-10-12T10:22:47.497Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv53sm75",
-    "contentHash": "4d51c7c5822486fcdd1b46125868e0d1ce2341ef577f218700947297eec07144",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-WGRN",
     "timestamp": "2026-10-12T10:25:46.979Z",
     "repository": "hexgrad/Kokoro-82M",
@@ -7492,6 +7477,21 @@
     "contentHash": "24bfd9ae257d9c76196707d2994c223f9eacf8dfcefc8542498e09a11ffc9ffc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-1JKA",
+    "timestamp": "2026-10-13T14:57:20.458Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv6t1jig",
+    "contentHash": "5f729b164485ec682192e96a8634774b71dcd222ac53e0b16d8cfe81a54d8db3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

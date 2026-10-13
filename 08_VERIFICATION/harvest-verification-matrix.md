@@ -1032,3 +1032,4 @@
 | `CYCLE-20261013-9OIB` | `2026-10-13T14:35:40.499Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`55e8675e...`) |
 | `CYCLE-20261013-DFJW` | `2026-10-13T14:38:35.517Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`ee826920...`) |
 | `CYCLE-20261013-TWW2` | `2026-10-13T14:51:24.482Z` | `MaxMiksa/Autonomous-Company` | Commit diff / Patch analysis | `VERIFIED` | `Rule 719` | Yes (`24bfd9ae...`) |
+| `CYCLE-20261013-1JKA` | `2026-10-13T14:57:20.458Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`5f729b16...`) |

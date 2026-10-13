@@ -1015,3 +1015,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-baai-bge-m3-mv6s9ofa` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-13T14:35:40.501Z |
 | `learn-huggingface-hf-qwen-qwen3-0-6b-mv6sdfhz` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-13T14:38:35.518Z |
 | `learn-github-maxmiksa-autonomous-company-mv6stwsa` | `https://github.com/MaxMiksa/Autonomous-Company` | `c7c60dbd` | Multi-dimensional audit evidence | 2026-10-13T14:51:24.484Z |
+| `learn-huggingface-hf-google-t5-t5-small-mv6t1jig` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-13T14:57:20.460Z |

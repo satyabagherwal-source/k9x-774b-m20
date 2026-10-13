@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T14:51:24.486Z",
-  "total_cycles_completed": 973,
-  "total_learnings_persisted": 973,
+  "last_updated": "2026-10-13T14:57:20.461Z",
+  "total_cycles_completed": 974,
+  "total_learnings_persisted": 974,
   "total_rules_promoted": 476,
   "history": [
-    {
-      "timestamp": "2026-10-13T02:28:59.517Z",
-      "repository": "jialinyyzz/humanizer",
-      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv62b5oz",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T02:31:58.014Z",
       "repository": "autotrust/JEV-27B-VL",
@@ -1403,6 +1396,13 @@
       "repository": "MaxMiksa/Autonomous-Company",
       "learningId": "learn-github-maxmiksa-autonomous-company-mv6stwsa",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:57:20.461Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-hf-google-t5-t5-small-mv6t1jig",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
