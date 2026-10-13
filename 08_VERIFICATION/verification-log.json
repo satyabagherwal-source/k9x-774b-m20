@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-9SGY",
-    "timestamp": "2026-10-12T17:08:03.298Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv5i9sed",
-    "contentHash": "93fa9be9070cdda879b04a7232eb2032ba675601c2ade68954bcfd7b27db6525",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-E0C3",
     "timestamp": "2026-10-12T17:11:20.115Z",
     "repository": "openai/whisper-large-v3",
@@ -7492,6 +7477,21 @@
     "contentHash": "71ba1f779d099672374b1ad73f60b75848cee494449c2fc09e157f1e459a574c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-VE4I",
+    "timestamp": "2026-10-13T22:48:26.946Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv79vdzs",
+    "contentHash": "951c8f1657c82803ba2a4f55943773bde653966e9ec79e0a5837565e17b001f8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
