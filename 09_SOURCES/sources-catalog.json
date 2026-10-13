@@ -295,9 +295,9 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceVersion": "hf-deepseek-ai-deepseek-r1",
     "license": "Open-Source",
-    "contentHash": "86d369957573ce1f0f9ee049ff15ed0bbc48066c8c44ed77122c0e57d7532d3a",
-    "lastHarvestedAt": "2026-10-13T11:12:39.865Z",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv6l0lsa"
+    "contentHash": "810caec0f535ee82f7a288eb6c9a3e95f7df920056d0f905f8ac2b16dafb9054",
+    "lastHarvestedAt": "2026-10-13T19:28:40.053Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv72qgwk"
   },
   "hf-moonshotai-kimi-k3": {
     "repository": "moonshotai/Kimi-K3",
