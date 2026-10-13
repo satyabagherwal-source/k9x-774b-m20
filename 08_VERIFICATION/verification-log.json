@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-0ELW",
-    "timestamp": "2026-10-12T08:08:52.724Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4z0ehk",
-    "contentHash": "30c4b4fc19def52bd810895924271f2b5c71fec3fb6238a6f9f773c576eaee8c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-5R58",
     "timestamp": "2026-10-12T08:13:02.252Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "994e58140d65db272de72bc6e0950376361484fc19e26a79174cdcefa61e8871",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-YX0W",
+    "timestamp": "2026-10-13T12:35:19.856Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv6nywz1",
+    "contentHash": "c819b2ae35cfea2a9befcf3e269d489a7992c02407ae57547d8bde21fb75581c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
