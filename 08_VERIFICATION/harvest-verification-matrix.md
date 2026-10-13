@@ -831,3 +831,4 @@
 | `CYCLE-20261013-VD8P` | `2026-10-13T02:16:42.697Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`094a0957...`) |
 | `CYCLE-20261013-Z92Z` | `2026-10-13T02:19:43.931Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`e5ff993b...`) |
 | `CYCLE-20261013-31FR` | `2026-10-13T02:22:40.647Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`91bcb51a...`) |
+| `CYCLE-20261013-6Y88` | `2026-10-13T02:25:43.112Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`9e1edc25...`) |
