@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:57:16.248Z",
-  "total_cycles_completed": 914,
-  "total_learnings_persisted": 914,
+  "last_updated": "2026-10-13T11:00:18.818Z",
+  "total_cycles_completed": 915,
+  "total_learnings_persisted": 915,
   "total_rules_promoted": 434,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:28:59.249Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv5vvo6l",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T23:31:51.382Z",
       "repository": "BAAI/bge-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T10:57:16.248Z",
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-hf-francisring-prism-mv6kgt5g",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:00:18.818Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv6kkpzp",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
