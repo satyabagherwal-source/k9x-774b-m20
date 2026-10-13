@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-SC0A",
-    "timestamp": "2026-10-12T15:58:29.578Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5fsbxi",
-    "contentHash": "d45cc0ad37aa40a00802eb1d9e2848462f274053af3f6aa56818ae3fefeebd03",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-W4B7",
     "timestamp": "2026-10-12T16:01:26.227Z",
     "repository": "facebook/sam3",
@@ -7490,6 +7475,21 @@
     "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv779id8",
     "contentHash": "454a1a0ed93c0a9d684cdd6a25e8754a51180f67c6e12a807944902f219bbc59",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-DKYH",
+    "timestamp": "2026-10-13T21:38:36.761Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv77dktm",
+    "contentHash": "1a927ce7189aa663b9f7991e3ae81f9923010bab13b6035ae82cb16359a2f60a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

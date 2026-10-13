@@ -1136,3 +1136,4 @@
 | `CYCLE-20261013-H6M3` | `2026-10-13T21:13:25.179Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`4e51b8f9...`) |
 | `CYCLE-20261013-Z1KL` | `2026-10-13T21:27:18.453Z` | `Leonxlnx/taste-skill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 761` | Yes (`e7cdfc3a...`) |
 | `CYCLE-20261013-9II3` | `2026-10-13T21:35:26.955Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 762, Rule 763, Rule 764` | Yes (`454a1a0e...`) |
+| `CYCLE-20261013-DKYH` | `2026-10-13T21:38:36.761Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `VERIFIED` | `Rule 290, Rule 765, Rule 766` | Yes (`1a927ce7...`) |

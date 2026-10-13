@@ -43034,3 +43034,160 @@ tokenizer_cfg["dtype"] = "float32"
 Run `python dtype_consistency.py` in CI; any mismatch aborts the build.
 
 ---
+
+
+---
+
+## 765. RGBA Channel Integrity in Image Decoding (Harvested from inclusionAI/Ming-Image-0.1-Design)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "RGBA Channel Integrity in Image Decoding",
+  "source": "inclusionAI/Ming-Image-0.1-Design",
+  "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+  "source_version": "hf-inclusionai-ming-image-0.1-design",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T21:38:36.646Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv77dktm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [inclusionAI/Ming-Image-0.1-Design](https://huggingface.co/inclusionAI/Ming-Image-0.1-Design) (Revision: `hf-inclusi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When a model outputs RGBA images, the decoding pipeline MUST preserve the alpha channel through all post-processing steps (resizing, normalization, saving). It MUST NOT convert RGBA to RGB before saving, as this destroys transparency information.
+
+**WHY**:
+1.  **Data Loss:** Converting RGBA to RGB discards the alpha channel, making the image opaque. This is a critical failure for UI asset generation where transparency is a core feature.
+2.  **Color Shift:** Incorrect handling of the alpha channel during normalization (e.g., dividing by 255 without considering alpha) can cause color shifts in semi-transparent regions.
+3.  **File Size Bloat:** Saving as PNG with an unused alpha channel (if converted to RGB) increases file size unnecessarily.
+
+**WHEN TO APPLY**:
+Any image generation pipeline that supports transparent backgrounds (RGBA).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import numpy as np
+from PIL import Image
+
+def decode_latent_to_rgba(latent: np.ndarray) -> Image.Image:
+    """
+    Decodes latent tensor to RGBA PIL Image.
+    Assumes latent is in range [0, 1] and has shape (H, W, 4).
+    """
+    # Ensure data is in [0, 255] range for PIL
+    img_array = (latent * 255).astype(np.uint8)
+    
+    # Create PIL Image with RGBA mode
+    # Mode 'RGBA' is critical. Do NOT use 'RGB'.
+    pil_image = Image.fromarray(img_array, mode='RGBA')
+    
+    return pil_image
+
+def save_rgba_image(image: Image.Image, path: str):
+    """
+    Saves image preserving alpha channel.
+    """
+    # PNG is required for transparency. JPEG does not support alpha.
+    if not path.lower().endswith('.png'):
+        raise ValueError("RGBA images must be saved as PNG.")
+    
+    image.save(path, format='PNG')
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Converting to RGB before saving
+def save_rgba_image_bad(image: Image.Image, path: str):
+    # This destroys the alpha channel
+    image = image.convert('RGB')
+    image.save(path, format='PNG') # Alpha is now lost
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Create a synthetic RGBA image with a transparent center. Decode and save it. Load the saved file and assert that the center pixels have an alpha value of 0.
+2.  **Visual Inspection:** Generate an image with a transparent background. Open it in an image editor and verify that the background is transparent (checkerboard pattern).
+
+
+---
+
+## 766. Prompt Enhancement (PE) as a Separate, Optional Subsystem (Harvested from inclusionAI/Ming-Image-0.1-Design)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Prompt Enhancement (PE) as a Separate, Optional Subsystem",
+  "source": "inclusionAI/Ming-Image-0.1-Design",
+  "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+  "source_version": "hf-inclusionai-ming-image-0.1-design",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T21:38:36.678Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv77dktm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [inclusionAI/Ming-Image-0.1-Design](https://huggingface.co/inclusionAI/Ming-Image-0.1-Design) (Revision: `hf-inclusi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Prompt enhancement (rewriting user prompts using a VLM) MUST be implemented as a separate, optional step in the inference pipeline. It MUST NOT be hardcoded into the diffusion model's forward pass. The system MUST allow users to bypass PE and use raw prompts.
+
+**WHY**:
+1.  **Latency Control:** PE adds significant latency (VLM inference). Users who want fast generation should be able to skip it.
+2.  **Cost Control:** VLM inference is more expensive than diffusion inference. Making PE optional allows cost optimization.
+3.  **Flexibility:** Some users may have already optimized their prompts. Forcing PE can degrade quality if the VLM misinterprets the user's intent.
+4.  **Decoupling:** Allows independent scaling of the PE service and the diffusion service.
+
+**WHEN TO APPLY**:
+Any text-to-image system that uses a separate VLM for prompt rewriting.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class ImageGenerationService:
+    def __init__(self, diffusion_model, vlm_model=None):
+        self.diffusion_model = diffusion_model
+        self.vlm_model = vlm_model # Optional
+
+    def generate(self, prompt: str, use_pe: bool = False, **kwargs):
+        final_prompt = prompt
+        
+        if use_pe and self.vlm_model is not None:
+            # PE is a separate, optional step
+            final_prompt = self.vlm_model.rewrite_prompt(prompt)
+        
+        # Diffusion model receives the final prompt
+        return self.diffusion_model.generate(final_prompt, **kwargs)
+
+# Usage
+service = ImageGenerationService(diffusion_model, vlm_model)
+# Fast path: No PE
+img1 = service.generate("A red car", use_pe=False)
+# High-quality path: With PE
+img2 = service.generate("A red car", use_pe=True)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoding PE into the diffusion model
+class DiffusionModelWithPE:
+    def generate(self, prompt: str):
+        # PE is always executed, even if not needed
+        enhanced_prompt = self.vlm_model.rewrite_prompt(prompt)
+        return self.diffusion_model.generate(enhanced_prompt)
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Mock the VLM model. Call `generate` with `use_pe=False` and assert that the VLM model's `rewrite_prompt` method is NOT called.
+2.  **Latency Test:** Measure the latency of `generate` with `use_pe=False` and `use_pe=True`. Assert that the latency difference is significant (proving PE is a separate step).
