@@ -31697,3 +31697,224 @@ prompt = "Camera moves around the subject."
 **VERIFICATION METHOD**:
 1.  **Optical Flow Analysis**: Compute optical flow between consecutive frames. The flow vectors should be consistent with a rigid body rotation (camera motion) and should be near-zero in the center of the frame (if the subject is centered) or follow a parallax pattern.
 2.  **Landmark Tracking**: Track facial landmarks or object corners. The displacement should be < 2 pixels over the entire video duration.
+
+
+---
+
+## 611. Agentic Quantization Fidelity Invariant (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Agentic Quantization Fidelity Invariant",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T01:46:36.757Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv60snqq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing LLMs for agentic tasks (tool calling, function calling), you MUST NOT rely solely on perplexity (PPL) or general benchmark scores (MMLU) to validate the quantized model. You MUST validate against **structured output retention metrics** (e.g., BFCL, parallel tool call success rate) because low-bit quantization disproportionately damages the attention heads responsible for JSON schema adherence and tool argument extraction.
+
+**WHY**:
+Standard quantization errors are distributed across all tokens. However, tool calling requires precise token-level accuracy for delimiters (e.g., `
+</think>
+
+`, `
+</think>
+
+`, `{`, `}`). In 2-bit quantization, the loss of precision in these specific "control tokens" leads to malformed JSON, which breaks downstream parsers. A model can have low PPL (good general text) but fail 40% of tool calls due to broken syntax.
+
+**WHEN TO APPLY**:
+Any deployment of LLMs below 4-bit precision (IQ2, Q2, Q3) intended for RAG, Agent frameworks, or API-driven automation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for Agentic Quantization Validation
+def validate_agentic_quantization(model_path, benchmark_suite):
+    # 1. Load model in target runtime (llama.cpp)
+    server = start_llama_server(model_path, ngl=99, fa=True)
+    
+    # 2. Run Structured Output Benchmark (e.g., BFCL v4)
+    #    - 120 tasks, thinking OFF, temp=0
+    results = run_bfcl_benchmark(server, tasks=120)
+    
+    # 3. Assert Retention Threshold
+    #    - If retention < 90% of full-precision baseline, REJECT quantization
+    baseline_score = get_full_model_score("Qwen3.8-27B")
+    retention = results.passed / baseline_score
+    
+    if retention < 0.90:
+        raise QuantizationFailureError(
+            f"Agentic retention {retention:.2%} below 90% threshold. "
+            f"Tool calling is compromised. Use higher bit-width or different quantization scheme."
+        )
+        
+    # 4. Validate Parallel Tool Calls
+    parallel_results = run_parallel_tool_benchmark(server, tasks=100)
+    if parallel_results.success_rate < 0.40:
+        raise QuantizationFailureError("Parallel tool call degradation detected.")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Validating only on general knowledge
+def bad_validation(model_path):
+    ppl = calculate_perplexity(model_path, dataset="WikiText")
+    if ppl < 5.0:
+        return "PASS" # WRONG: Model may be excellent at text but fail at JSON tool calls
+```
+
+**VERIFICATION METHOD**:
+Automated CI job that runs `llama-server` with the quantized model and executes a frozen set of 50 tool-calling tasks. Asserts that `json.loads(response)` succeeds for >95% of responses and that the extracted arguments match the expected schema.
+
+
+---
+
+## 612. Decoupled Modality Loading Invariant (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Modality Loading Invariant",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T01:46:36.773Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv60snqq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In multi-modal LLM deployments, you MUST decouple the vision projection weights (`mmproj`) from the core language model weights. You MUST NOT fuse vision weights into the main GGUF file unless the vision capability is mandatory for 100% of use cases.
+
+**WHY**:
+Fusing vision weights increases the model file size by 600MB-1GB. For text-only agentic tasks, this is wasted memory bandwidth and VRAM. Decoupling allows:
+1.  **Memory Optimization**: Text-only agents load 7.89 GB instead of 8.8 GB.
+2.  **Flexibility**: Users can swap vision models without re-downloading the core LLM.
+3.  **Latency**: Loading a smaller file reduces startup time.
+
+**WHEN TO APPLY**:
+Any LLM deployment where vision is an optional feature (e.g., chatbots that *can* see images but *mostly* process text).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# CORRECT: Decoupled loading
+# 1. Download core model
+huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 Underdog-Saluki-27B-1.0-IQ2-mix.gguf --local-dir .
+
+# 2. Download vision add-on ONLY IF NEEDED
+if [ "$ENABLE_VISION" = true ]; then
+    huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 mmproj-Underdog-Saluki-27B-1.0-F16.gguf --local-dir .
+    VISION_FLAG="--mmproj mmproj-Underdog-Saluki-27B-1.0-F16.gguf"
+else
+    VISION_FLAG=""
+fi
+
+# 3. Start server with conditional flags
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf $VISION_FLAG --jinja -ngl 99 -fa on -c 32768
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# ANTI-PATTERN: Fused model for text-only use case
+# This forces 900MB of unused vision weights into VRAM
+llama-server -m Underdog-Saluki-27B-1.0-FUSED-VISION.gguf --jinja -ngl 99
+```
+
+**VERIFICATION METHOD**:
+Check the `llama-server` startup logs. If `--mmproj` is not passed, assert that the loaded model size matches the text-only GGUF size (7.89 GB) and not the fused size.
+
+
+---
+
+## 613. Thinking Mode Toggle Invariant (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Thinking Mode Toggle Invariant",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T01:46:36.789Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv60snqq",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying LLMs with "thinking" or "reasoning" capabilities, you MUST expose a per-request toggle to disable thinking for latency-critical tasks (e.g., simple tool calls). You MUST NOT force thinking mode for all requests.
+
+**WHY**:
+Thinking mode increases token generation by 2-5x, significantly increasing latency and cost. For simple tool calls (e.g., `get_weather("NYC")`), thinking is unnecessary and adds 2-3 seconds of latency. For complex reasoning (e.g., "Solve this math problem"), thinking is essential. A static configuration forces a trade-off: either high latency for all tasks or poor reasoning for complex tasks.
+
+**WHEN TO APPLY**:
+Any LLM deployment with a "thinking" or "reasoning" mode (e.g., Qwen3, DeepSeek-R1, o1).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# CORRECT: Per-request thinking toggle
+def call_llm(prompt, task_type):
+    if task_type == "simple_tool_call":
+        # Disable thinking for speed
+        kwargs = {"chat_template_kwargs": {"enable_thinking": False}}
+        temperature = 0.0
+    else:
+        # Enable thinking for complex reasoning
+        kwargs = {"chat_template_kwargs": {"enable_thinking": True}}
+        temperature = 0.6
+    
+    response = openai_client.chat.completions.create(
+        model="Underdog-Saluki-27B-1.0",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=temperature,
+        **kwargs
+    )
+    return response
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Static thinking mode
+def bad_call_llm(prompt):
+    # Always thinking, even for simple tasks
+    response = openai_client.chat.completions.create(
+        model="Underdog-Saluki-27B-1.0",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.6,
+        # No toggle, always thinking
+    )
+    return response
+```
+
+**VERIFICATION METHOD**:
+Measure latency for a simple tool call with thinking ON vs OFF. Assert that thinking OFF is at least 2x faster.

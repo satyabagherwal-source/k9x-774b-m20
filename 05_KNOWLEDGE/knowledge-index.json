@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T01:43:09.377Z",
-  "total_verified_learnings": 4714,
+  "last_updated": "2026-10-13T01:46:36.812Z",
+  "total_verified_learnings": 4715,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -115018,6 +115018,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T01:43:09.377Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv60snqq": {
+      "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv60snqq",
+      "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "slug": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "content_hash": "5aad8a6c6c345b18874ddb9bd345dc7e5d3cee1246e9ac8a5f36e81943eacef8",
+      "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 611,
+          "title": "Agentic Quantization Fidelity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 612,
+          "title": "Decoupled Modality Loading Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 613,
+          "title": "Thinking Mode Toggle Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T01:46:36.812Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

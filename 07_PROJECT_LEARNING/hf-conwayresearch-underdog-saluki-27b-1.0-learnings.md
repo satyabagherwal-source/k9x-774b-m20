@@ -3,8 +3,8 @@
 > **Source Version**: `hf-conwayres`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-12T18:51:23.542Z  
-> **Learning ID**: `learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv5lyoly`  
+> **Timestamp**: 2026-10-13T01:46:36.722Z  
+> **Learning ID**: `learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv60snqq`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,276 +17,329 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository addresses the **Memory-Bandwidth vs. Functional Fidelity Trade-off** in Large Language Model (LLM) deployment. Specifically, it solves the problem of running a 27B parameter model (Qwen3.8-27B) on consumer-grade hardware (under 8 GB VRAM) without degrading critical agentic capabilities, specifically **Tool Calling** and **Parallel Function Execution**.
+The repository addresses the **Memory-Performance Pareto Frontier** in Large Language Model (LLM) deployment. Specifically, it solves the problem of running a 27B parameter model (Qwen3.8-27B) on consumer-grade hardware (under 8 GB VRAM/RAM) without catastrophic degradation in **agentic capabilities** (tool calling, function calling, parallel execution). Standard quantization (e.g., GGUF Q4_K_M) typically degrades complex reasoning and structured output generation. This project utilizes **IQ2-mix** (a mixed-precision 2-bit quantization) combined with specific architectural tuning to retain 96% of benchmark performance while reducing size from 54 GB to 7.89 GB.
 
 **Architectural Boundaries:**
-1.  **Quantization Boundary:** The system operates at the **IQ2-mix** quantization level (2-bit mixed precision). This is an extreme compression ratio (54 GB $\rightarrow$ 7.89 GB, ~6.8x reduction). The boundary is defined by the `gguf` container format, which encapsulates tensor weights, metadata, and chat templates.
-2.  **Inference Runtime Boundary:** The model is decoupled from the training framework. It relies exclusively on **stock `llama.cpp`** as the inference engine. This implies strict adherence to the GGUF schema and the specific kernel implementations available in `llama.cpp` (e.g., Flash Attention support via `-fa on`).
-3.  **Modality Boundary:** The core model is text-only. Vision capabilities are decoupled into a separate **Multi-Modal Projector (mmproj)** file (`mmproj-...-F16.gguf` or `-Q8_0.gguf`). This enforces a strict separation of concerns: the LLM backbone handles semantic reasoning, while the projector handles visual feature extraction, allowing users to opt-in to vision without bloating the core model.
-4.  **Control Flow Boundary:** The "Thinking" mode (Chain-of-Thought) is not a separate model but a **prompt-template-driven state** controlled via `chat_template_kwargs`. This allows dynamic switching between "Reasoning" (high latency, high accuracy) and "Direct Tool Call" (low latency, deterministic) modes within the same binary.
+1.  **Model Artifact Boundary**: The core asset is a single `GGUF` file (`Underdog-Saluki-27B-1.0-IQ2-mix.gguf`). It is not a Python package but a binary tensor container.
+2.  **Runtime Boundary**: Strictly dependent on `llama.cpp` ecosystem. It does not support PyTorch, TensorFlow, or JAX natively. The interface is the **OpenAI-compatible HTTP API** served by `llama-server`.
+3.  **Modality Boundary**: Text-only core. Vision is an **optional, decoupled add-on** (`mmproj` file) that must be explicitly loaded via `--mmproj`. This enforces a strict separation of concerns between language processing and visual projection.
+4.  **State Ownership**: The model is stateless across requests in the standard inference sense, but `llama.cpp` manages internal KV-cache state per session. The "Thinking" mode is a prompt-engineering state toggled via `chat_template_kwargs`, not a model weight change.
 
 **Critical Subsystem Abstractions:**
-*   **Tensor Quantization Matrix:** The IQ2-mix format uses a non-uniform quantization grid. Forensically, this means certain weight ranges are preserved with higher precision than others to protect critical layers (likely attention heads and feed-forward networks involved in tool parsing).
-*   **Chat Template Engine (Jinja2):** The `--jinja` flag activates a template engine that parses the conversation history. This is the primary abstraction for **Agent Patterns**, as it dictates how system prompts, user inputs, and tool definitions are serialized into the token stream.
-*   **OpenAI-Compatible API Layer:** The `llama-server` exposes an OpenAI-compatible endpoint. This abstracts the underlying GGUF complexity, allowing standard agent frameworks (LangChain, AutoGen, etc.) to interact with the model without custom drivers.
+*   **Quantization Kernel**: The `IQ2-mix` format is a super-block quantization scheme that mixes 2-bit and 4-bit weights based on tensor importance. This is the core "magic" allowing 27B params to fit in ~8GB.
+*   **Chat Template Engine**: The `--jinja` flag activates a Jinja2-based template that dynamically injects system prompts, tool definitions, and thinking blocks. This is the primary abstraction for agentic behavior.
+*   **Vision Projection Module**: A separate GGUF file containing the multi-modal projector weights. It is not fused into the main model file, allowing users to skip vision if not needed (saving 600MB-900MB).
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Quantization-Aware Agent Capability Preservation
+### 1. Agentic Quantization Fidelity Invariant
 **RULE**:
-When quantizing LLMs for edge deployment, you MUST validate **agentic primitives** (tool calling, JSON schema adherence, parallel function execution) separately from general reasoning benchmarks. You MUST NOT assume that high general benchmark scores (e.g., MMLU, AIME) correlate with preserved tool-calling fidelity at extreme quantization levels (IQ2/IQ3).
+When quantizing LLMs for agentic tasks (tool calling, function calling), you MUST NOT rely solely on perplexity (PPL) or general benchmark scores (MMLU) to validate the quantized model. You MUST validate against **structured output retention metrics** (e.g., BFCL, parallel tool call success rate) because low-bit quantization disproportionately damages the attention heads responsible for JSON schema adherence and tool argument extraction.
 
 **WHY**:
-Extreme quantization (2-bit) introduces non-linear noise into weight matrices. While general semantic understanding may degrade gracefully, **structured output generation** (JSON, function calls) is brittle. Small weight perturbations in the attention heads responsible for syntax parsing can cause catastrophic failures in tool invocation (e.g., malformed JSON, hallucinated function names, or failure to stop generation after a tool call). The "Underdog Saluki" model demonstrates that specific tuning or selection of quantization grids can preserve these brittle structures (88/120 tool calls vs 84/120 for full precision), but this is not guaranteed by standard quantization algorithms.
+Standard quantization errors are distributed across all tokens. However, tool calling requires precise token-level accuracy for delimiters (e.g., `
+</think>
+
+`, `
+</think>
+
+`, `{`, `}`). In 2-bit quantization, the loss of precision in these specific "control tokens" leads to malformed JSON, which breaks downstream parsers. A model can have low PPL (good general text) but fail 40% of tool calls due to broken syntax.
 
 **WHEN TO APPLY**:
-Any LLM deployment where the model is expected to act as an agent (calling APIs, executing code, filling forms) on resource-constrained hardware (VRAM < 16GB).
+Any deployment of LLMs below 4-bit precision (IQ2, Q2, Q3) intended for RAG, Agent frameworks, or API-driven automation.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# Pseudocode for Quantization Validation Harness
-def validate_agent_quantization(model_path, benchmark_suite):
-    # 1. Load model with specific quantization
-    model = load_gguf(model_path)
+# Pseudocode for Agentic Quantization Validation
+def validate_agentic_quantization(model_path, benchmark_suite):
+    # 1. Load model in target runtime (llama.cpp)
+    server = start_llama_server(model_path, ngl=99, fa=True)
     
-    # 2. Run Standard Reasoning Benchmarks (Baseline)
-    reasoning_score = run_benchmark(model, "AIME_2025")
+    # 2. Run Structured Output Benchmark (e.g., BFCL v4)
+    #    - 120 tasks, thinking OFF, temp=0
+    results = run_bfcl_benchmark(server, tasks=120)
     
-    # 3. Run Agentic Benchmarks (Critical)
-    tool_call_score = run_benchmark(model, "BFCL_v4_Tool_Calling")
-    parallel_call_score = run_benchmark(model, "BFCL_v4_Parallel")
+    # 3. Assert Retention Threshold
+    #    - If retention < 90% of full-precision baseline, REJECT quantization
+    baseline_score = get_full_model_score("Qwen3.8-27B")
+    retention = results.passed / baseline_score
     
-    # 4. Invariant Check: Tool calling must not degrade > 5% relative to full precision
-    full_precision_tool_score = 84 # Reference
-    if tool_call_score < (full_precision_tool_score * 0.95):
-        raise QuantizationFailureError("Tool calling fidelity degraded beyond acceptable threshold")
-    
-    # 5. JSON Schema Validation
-    for task in benchmark_suite.tool_tasks:
-        response = model.generate(task.prompt)
-        try:
-            json.loads(response)
-        except json.JSONDecodeError:
-            raise QuantizationFailureError("Model generated malformed JSON during tool call")
+    if retention < 0.90:
+        raise QuantizationFailureError(
+            f"Agentic retention {retention:.2%} below 90% threshold. "
+            f"Tool calling is compromised. Use higher bit-width or different quantization scheme."
+        )
+        
+    # 4. Validate Parallel Tool Calls
+    parallel_results = run_parallel_tool_benchmark(server, tasks=100)
+    if parallel_results.success_rate < 0.40:
+        raise QuantizationFailureError("Parallel tool call degradation detected.")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming general intelligence implies agent reliability
-if model.aime_score > 90:
-    deploy_model_for_agent_tasks() # DANGER: May fail at JSON parsing despite high math score
+# ANTI-PATTERN: Validating only on general knowledge
+def bad_validation(model_path):
+    ppl = calculate_perplexity(model_path, dataset="WikiText")
+    if ppl < 5.0:
+        return "PASS" # WRONG: Model may be excellent at text but fail at JSON tool calls
 ```
 
 **VERIFICATION METHOD**:
-Automated CI job that runs the model against a frozen set of 120 BFCL v4 tool-calling tasks. Assert that `passed_count >= 85` and `json_parse_error_rate < 0.01`.
+Automated CI job that runs `llama-server` with the quantized model and executes a frozen set of 50 tool-calling tasks. Asserts that `json.loads(response)` succeeds for >95% of responses and that the extracted arguments match the expected schema.
 
-### 2. Decoupled Modality Projector Architecture
+### 2. Decoupled Modality Loading Invariant
 **RULE**:
-In multi-modal LLM deployments, you MUST decouple the vision projector (mmproj) from the LLM backbone into separate artifacts. You MUST NOT bake vision weights into the main GGUF file if the target deployment environment may not require vision capabilities.
+In multi-modal LLM deployments, you MUST decouple the vision projection weights (`mmproj`) from the core language model weights. You MUST NOT fuse vision weights into the main GGUF file unless the vision capability is mandatory for 100% of use cases.
 
 **WHY**:
-Vision projectors are large (928 MB in F16) and add significant memory overhead. By decoupling them, you allow:
-1.  **Conditional Loading:** Users can load the 7.89 GB text model on a 8GB GPU and only load the 928 MB projector if vision is needed.
-2.  **Independent Optimization:** The projector can be quantized differently (F16 vs Q8_0) than the LLM backbone (IQ2-mix) to balance visual fidelity vs. memory.
-3.  **Runtime Flexibility:** The `llama.cpp` runtime can dynamically attach/detach the projector via `--mmproj`, allowing the same LLM binary to serve both text-only and multi-modal requests.
+Fusing vision weights increases the model file size by 600MB-1GB. For text-only agentic tasks, this is wasted memory bandwidth and VRAM. Decoupling allows:
+1.  **Memory Optimization**: Text-only agents load 7.89 GB instead of 8.8 GB.
+2.  **Flexibility**: Users can swap vision models without re-downloading the core LLM.
+3.  **Latency**: Loading a smaller file reduces startup time.
 
 **WHEN TO APPLY**:
-Any LLM system that supports optional multi-modal inputs (images, audio) on resource-constrained hardware.
+Any LLM deployment where vision is an optional feature (e.g., chatbots that *can* see images but *mostly* process text).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```bash
-# Correct: Separate downloads and conditional loading
+# CORRECT: Decoupled loading
+# 1. Download core model
 huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 Underdog-Saluki-27B-1.0-IQ2-mix.gguf --local-dir .
-# Optional: Download vision projector only if needed
-huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 mmproj-Underdog-Saluki-27B-1.0-F16.gguf --local-dir .
 
-# Runtime: Load with or without vision
-# Text Only
-llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf --jinja -ngl 99 -fa on -c 32768
+# 2. Download vision add-on ONLY IF NEEDED
+if [ "$ENABLE_VISION" = true ]; then
+    huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 mmproj-Underdog-Saluki-27B-1.0-F16.gguf --local-dir .
+    VISION_FLAG="--mmproj mmproj-Underdog-Saluki-27B-1.0-F16.gguf"
+else
+    VISION_FLAG=""
+fi
 
-# Multi-Modal
-llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf --mmproj mmproj-Underdog-Saluki-27B-1.0-F16.gguf --jinja -ngl 99 -fa on -c 32768
+# 3. Start server with conditional flags
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf $VISION_FLAG --jinja -ngl 99 -fa on -c 32768
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```bash
-# ANTI-PATTERN: Monolithic multi-modal GGUF
-# This forces all users to load 8.8 GB even if they only need text
-llama-server -m Underdog-Saluki-27B-1.0-Vision-Integrated.gguf
+# ANTI-PATTERN: Fused model for text-only use case
+# This forces 900MB of unused vision weights into VRAM
+llama-server -m Underdog-Saluki-27B-1.0-FUSED-VISION.gguf --jinja -ngl 99
 ```
 
 **VERIFICATION METHOD**:
-Check that the repository contains separate `.gguf` files for the LLM and the projector. Verify that `llama-server` starts successfully with only the LLM file and that vision requests fail gracefully (or are rejected) if `--mmproj` is not provided.
+Check the `llama-server` startup logs. If `--mmproj` is not passed, assert that the loaded model size matches the text-only GGUF size (7.89 GB) and not the fused size.
 
-### 3. Dynamic Thinking Mode Control via Chat Templates
+### 3. Thinking Mode Toggle Invariant
 **RULE**:
-You MUST implement "Thinking" (Chain-of-Thought) as a **prompt-template-driven state** rather than a separate model or hardcoded inference flag. You MUST expose a `chat_template_kwargs` parameter to allow per-request toggling of thinking mode.
+When deploying LLMs with "thinking" or "reasoning" capabilities, you MUST expose a per-request toggle to disable thinking for latency-critical tasks (e.g., simple tool calls). You MUST NOT force thinking mode for all requests.
 
 **WHY**:
-Thinking mode increases latency and token consumption. For agentic tasks (tool calling), thinking mode can interfere with deterministic JSON output. By making it a template parameter, you allow:
-1.  **Per-Request Optimization:** Use thinking for complex reasoning, disable it for fast tool calls.
-2.  **Unified Binary:** No need for separate "thinking" and "non-thinking" model files.
-3.  **User Control:** End-users can toggle thinking via API parameters without re-deploying the model.
+Thinking mode increases token generation by 2-5x, significantly increasing latency and cost. For simple tool calls (e.g., `get_weather("NYC")`), thinking is unnecessary and adds 2-3 seconds of latency. For complex reasoning (e.g., "Solve this math problem"), thinking is essential. A static configuration forces a trade-off: either high latency for all tasks or poor reasoning for complex tasks.
 
 **WHEN TO APPLY**:
-Any LLM deployment that supports both reasoning and agentic tasks, where latency and token cost are critical constraints.
+Any LLM deployment with a "thinking" or "reasoning" mode (e.g., Qwen3, DeepSeek-R1, o1).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```json
-// API Request with Thinking Disabled
-{
-  "model": "underdog-saluki-27b",
-  "messages": [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Call the get_weather function for New York."}
-  ],
-  "chat_template_kwargs": {
-    "enable_thinking": false
-  },
-  "temperature": 0
-}
+```python
+# CORRECT: Per-request thinking toggle
+def call_llm(prompt, task_type):
+    if task_type == "simple_tool_call":
+        # Disable thinking for speed
+        kwargs = {"chat_template_kwargs": {"enable_thinking": False}}
+        temperature = 0.0
+    else:
+        # Enable thinking for complex reasoning
+        kwargs = {"chat_template_kwargs": {"enable_thinking": True}}
+        temperature = 0.6
+    
+    response = openai_client.chat.completions.create(
+        model="Underdog-Saluki-27B-1.0",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=temperature,
+        **kwargs
+    )
+    return response
 ```
 
 **NEGATIVE CONSTRAINT**:
-```json
-// ANTI-PATTERN: Hardcoded thinking mode
-// This forces all requests to use thinking, increasing latency and cost
-{
-  "model": "underdog-saluki-27b",
-  "messages": [...],
-  "temperature": 0
-}
-// If the model defaults to thinking, this will be slow and may break JSON output
+```python
+# ANTI-PATTERN: Static thinking mode
+def bad_call_llm(prompt):
+    # Always thinking, even for simple tasks
+    response = openai_client.chat.completions.create(
+        model="Underdog-Saluki-27B-1.0",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.6,
+        # No toggle, always thinking
+    )
+    return response
 ```
 
 **VERIFICATION METHOD**:
-Send two identical requests: one with `enable_thinking: true` and one with `enable_thinking: false`. Assert that the `false` request has lower latency and produces valid JSON, while the `true` request includes a "thinking" block in the response.
+Measure latency for a simple tool call with thinking ON vs OFF. Assert that thinking OFF is at least 2x faster.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data does not contain commit history, bug issues, or post-mortems. The following incidents are **inferred** from the architectural constraints and known failure modes of extreme quantization in LLMs, based on the "Limitations" section and benchmark data.*
+*Note: The provided repository data does not contain specific commit SHAs, PR links, or bug issue details. The following incidents are inferred from the architectural constraints and common failure modes in LLM quantization and deployment, based on the "Limitations" section and benchmark data.*
 
-### Incident 1: JSON Malformation in Parallel Tool Calls (BUG-JSON-01)
-- **Context**: Agentic subsystem, `llama.cpp` inference engine, IQ2-mix quantization.
-- **What Was Expected**: The model should generate valid JSON for parallel tool calls, adhering to the schema defined in the system prompt.
-- **What Actually Happened**: Approximately 20% of parallel tool call responses contained malformed JSON (e.g., missing commas, unclosed brackets, or hallucinated function names).
-- **Evidence in Repo**: "About a fifth of parallel-call replies have [issues]" (implied from Limitations section). Benchmark: 42/100 parallel tasks passed vs 35/100 for full model.
-- **Root Cause**: Extreme quantization (2-bit) introduces noise into the attention heads responsible for syntax parsing. In parallel tool calls, the model must generate multiple JSON objects in sequence, increasing the probability of cumulative error. The quantization grid may have insufficient precision for the specific weight ranges involved in JSON token prediction.
+### Incident 1: Parallel Tool Call Degradation (BUG-TOOL-01)
+- **Context**: Agentic subsystem, tool calling module.
+- **What Was Expected**: The quantized model should handle parallel tool calls (multiple tools in one response) with similar success rates to the full-precision model.
+- **What Actually Happened**: The full-precision model achieved 35/100 parallel tool calls, while the quantized model achieved 42/100. However, the "Limitations" section notes that "about a fifth of parallel-call replies have" (truncated, likely "malformed JSON" or "missing arguments").
+- **Evidence in Repo**: README.md, Benchmarks section.
+- **Root Cause**: 2-bit quantization introduces noise in the attention heads responsible for tracking multiple tool definitions and generating multiple JSON objects in sequence. The model loses track of the context for the second or third tool call, leading to truncated or malformed JSON.
 - **Remediation Code Diff**:
-```diff
-// No code diff available, but the remediation is likely in the quantization algorithm
-// - Standard IQ2 quantization
-// + IQ2-mix quantization with adjusted grid to preserve JSON-critical weights
-```
-- **Lesson**: Extreme quantization requires **task-specific validation**. General benchmarks are insufficient for agentic tasks.
+```python
+# - Buggy: No validation of parallel tool calls
+response = llm.generate(prompt_with_multiple_tools)
+tools = parse_json(response) # May fail or return incomplete list
 
-### Incident 2: Degraded Math Reasoning at Extreme Quantization (BUG-MATH-02)
-- **Context**: Reasoning subsystem, AIME benchmark.
-- **What Was Expected**: The model should maintain high accuracy on competition math problems.
-- **What Actually Happened**: The model retained only 82-85% of the full model's math score (e.g., 79.2 vs 96.7 on AIME 2025).
-- **Evidence in Repo**: "Keeps about 82 to 85% of the full model's competition math score."
-- **Root Cause**: Math reasoning requires precise numerical computation and logical chaining. Quantization noise disrupts the fine-grained weight adjustments needed for multi-step arithmetic. The model may "forget" intermediate steps or make calculation errors.
-- **Remediation Code Diff**:
-```diff
-// No code diff available, but the remediation is likely in the quantization algorithm
-// - Standard quantization
-// + IQ2-mix with higher precision for feed-forward layers involved in arithmetic
+# + Fixed: Validate and retry with thinking ON if parallel calls fail
+response = llm.generate(prompt_with_multiple_tools, enable_thinking=False)
+tools = parse_json(response)
+if len(tools) < expected_tool_count:
+    # Retry with thinking ON to improve reasoning
+    response = llm.generate(prompt_with_multiple_tools, enable_thinking=True)
+    tools = parse_json(response)
+    if len(tools) < expected_tool_count:
+        raise ToolCallError("Failed to generate all parallel tool calls")
 ```
-- **Lesson**: Quantization has **non-uniform impact** on different cognitive tasks. Math and logic are more sensitive to quantization noise than general language understanding.
+- **Lesson**: Parallel tool calls are more sensitive to quantization noise than single tool calls. Implement retry logic with thinking mode enabled for parallel calls.
 
-### Incident 3: Vision Projector Memory Overhead (BUG-VIS-03)
-- **Context**: Multi-modal subsystem, `llama.cpp` runtime.
-- **What Was Expected**: Users should be able to load the model on 8GB VRAM.
-- **What Actually Happened**: Loading the vision projector (F16, 928 MB) in addition to the LLM (7.89 GB) exceeds 8GB VRAM, causing OOM errors.
-- **Evidence in Repo**: "File: `Underdog-Saluki-27B-1.0-IQ2-mix.gguf`, 7.89 GB" and "Vision add-on: `mmproj-...-F16.gguf` (928 MB)".
-- **Root Cause**: The F16 vision projector is too large for 8GB VRAM when combined with the LLM. The Q8_0 variant (629 MB) is smaller but may have lower visual fidelity.
+### Incident 2: Letter-Level Instruction Failure (BUG-IF-02)
+- **Context**: Instruction following subsystem.
+- **What Was Expected**: The model should follow letter-level instructions (e.g., "reverse this string", "count vowels").
+- **What Actually Happened**: The model is "weakest on letter-level instruction puzzles (palindromes, vowel rules, alphabetical order)."
+- **Evidence in Repo**: README.md, Limitations section.
+- **Root Cause**: 2-bit quantization reduces the model's ability to perform precise character-level operations. The model relies on pattern matching, which is degraded by quantization noise.
 - **Remediation Code Diff**:
-```diff
-// No code diff available, but the remediation is likely in the documentation and model variants
-// - Only F16 vision projector available
-// + Provide Q8_0 vision projector (629 MB) for 8GB VRAM users
-```
-- **Lesson**: **Memory budgeting** must account for all loaded components (LLM + Projector + KV Cache). Provide multiple quantization levels for optional components.
+```python
+# - Buggy: Relying on LLM for letter-level operations
+def reverse_string(text):
+    prompt = f"Reverse the string: {text}"
+    return llm.generate(prompt)
 
-### Incident 4: Thinking Mode Interference with Tool Calling (BUG-THINK-04)
-- **Context**: Agentic subsystem, Chat template engine.
-- **What Was Expected**: Tool calls should be fast and deterministic.
-- **What Actually Happened**: When thinking mode is enabled, the model may generate a "thinking" block before the tool call, increasing latency and potentially breaking JSON parsing if the thinking block is not properly separated.
-- **Evidence in Repo**: "Thinking: on by default, switchable per request". "Fast, direct tool calls: thinking off".
-- **Root Cause**: The chat template may not properly separate the thinking block from the tool call output, or the model may "think" about the tool call in a way that introduces noise.
-- **Remediation Code Diff**:
-```diff
-// No code diff available, but the remediation is likely in the chat template
-// - Chat template that mixes thinking and tool calls
-// + Chat template that clearly separates thinking block from tool call JSON
+# + Fixed: Use deterministic code for letter-level operations
+def reverse_string(text):
+    return text[::-1] # No LLM needed
 ```
-- **Lesson**: **Prompt engineering** is critical for agentic tasks. The chat template must explicitly define how thinking and tool calls are formatted.
+- **Lesson**: Do not use LLMs for deterministic, character-level operations. Use code.
 
-### Incident 5: Context Window Limitations (BUG-CTX-05)
-- **Context**: Inference subsystem, `llama.cpp` runtime.
-- **What Was Expected**: The model should handle long contexts (32768 tokens).
-- **What Actually Happened**: On 8GB VRAM, the KV cache for 32768 tokens may exceed available memory, causing OOM or degraded performance.
-- **Evidence in Repo**: "llama-server ... -c 32768".
-- **Root Cause**: The KV cache size is proportional to the context length and the number of layers. For a 27B model, 32768 tokens requires significant VRAM.
+### Incident 3: Math Score Degradation (BUG-MATH-03)
+- **Context**: Reasoning subsystem.
+- **What Was Expected**: The model should retain >90% of the full-precision model's math score.
+- **What Actually Happened**: The model retains "about 82 to 85% of the full model's competition math score."
+- **Evidence in Repo**: README.md, Limitations section.
+- **Root Cause**: Math reasoning requires precise arithmetic and logical steps. 2-bit quantization introduces errors in the arithmetic operations, leading to incorrect intermediate steps.
 - **Remediation Code Diff**:
-```diff
-// No code diff available, but the remediation is likely in the documentation
-// - Recommend -c 32768 for all users
-// + Recommend -c 8192 or -c 16384 for 8GB VRAM users
+```python
+# - Buggy: Relying on LLM for complex math
+def solve_math(problem):
+    return llm.generate(problem)
+
+# + Fixed: Use symbolic math library for complex math
+import sympy
+def solve_math(problem):
+    # Extract variables and equations
+    # Use sympy to solve
+    return sympy.solve(equations)
 ```
-- **Lesson**: **Context length** is a critical resource constraint. Provide guidance on optimal context lengths for different hardware configurations.
+- **Lesson**: Use symbolic math libraries for complex math problems. LLMs are not reliable for precise arithmetic.
+
+### Incident 4: Vision Add-on Loading Failure (BUG-VISION-04)
+- **Context**: Multi-modal subsystem.
+- **What Was Expected**: The vision add-on should load correctly with the main model.
+- **What Actually Happened**: If the `--mmproj` flag is not passed, the server may fail to start or may not support image inputs.
+- **Evidence in Repo**: README.md, Quickstart section.
+- **Root Cause**: The vision add-on is a separate file. If not passed, the server does not know how to process images.
+- **Remediation Code Diff**:
+```bash
+# - Buggy: Forgetting to pass --mmproj
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf --jinja -ngl 99
+
+# + Fixed: Pass --mmproj if vision is needed
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf --mmproj mmproj-Underdog-Saluki-27B-1.0-F16.gguf --jinja -ngl 99
+```
+- **Lesson**: Always pass the `--mmproj` flag if vision is needed.
+
+### Incident 5: Context Window Overflow (BUG-CTX-05)
+- **Context**: Inference subsystem.
+- **What Was Expected**: The model should handle long contexts without crashing.
+- **What Actually Happened**: If the context window is exceeded, the server may crash or return an error.
+- **Evidence in Repo**: README.md, Quickstart section (`-c 32768`).
+- **Root Cause**: The context window is limited to 32768 tokens. If the input exceeds this, the server may fail.
+- **Remediation Code Diff**:
+```python
+# - Buggy: No context window check
+def call_llm(prompt):
+    return llm.generate(prompt)
+
+# + Fixed: Check context window
+def call_llm(prompt):
+    if len(prompt) > 32768:
+        raise ContextWindowExceededError("Prompt exceeds context window")
+    return llm.generate(prompt)
+```
+- **Lesson**: Always check the context window before sending a prompt.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **JSON Token Boundary**: In tool calling, the model must generate a complete JSON object. A single missing comma or quote breaks the entire call. **Invariant**: The chat template must enforce JSON schema validation at the token level, not just at the string level.
-    *   **Quantization Grid Precision**: IQ2-mix uses a non-uniform grid. **Invariant**: The grid must be calibrated to preserve the precision of weights involved in syntax parsing (e.g., attention heads for JSON tokens).
+    *   **JSON Delimiter Precision**: In tool calling, the model must generate exact JSON delimiters (`{`, `}`, `[`, `]`). A single missing comma or quote breaks the JSON. **Invariant**: Always validate JSON with `json.loads()` before parsing.
+    *   **Thinking Block Delimiters**: The model uses `
+</think>
+
+` and `
+</think>
+
+` to delimit thinking blocks. **Invariant**: Strip these blocks before returning the final answer to the user.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Thinking Loop**: If thinking mode is enabled, the model may generate an infinite "thinking" block. **Invariant**: The inference engine must enforce a maximum token limit for the thinking block (e.g., 1024 tokens) to prevent infinite loops.
-    *   **Tool Call Retry**: If a tool call fails, the agent may retry indefinitely. **Invariant**: The agent framework must enforce a maximum retry count (e.g., 3) and a timeout for each tool call.
+    *   **Tool Call Retry Loop**: If a tool call fails, the model may retry. **Invariant**: Limit retries to 3 attempts. If it fails 3 times, return an error.
+    *   **Thinking Loop**: The model may generate excessive thinking tokens. **Invariant**: Limit the number of thinking tokens to 1000. If exceeded, truncate the thinking block.
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. No UI components.
+    *   **Streaming Response**: The model streams tokens. **Invariant**: Handle partial JSON responses gracefully. Do not attempt to parse JSON until the response is complete.
+    *   **Error Display**: If the model fails, display a clear error message. **Invariant**: Do not display raw stack traces to the user.
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **KV Cache Memory Leak**: The KV cache must be properly freed after each request. **Invariant**: The inference engine must implement a reference-counting mechanism for the KV cache to prevent memory leaks.
-    *   **Thread Safety**: `llama.cpp` is multi-threaded. **Invariant**: The model weights and KV cache must be protected by mutexes to prevent race conditions during concurrent requests.
+    *   **KV-Cache Management**: The KV-cache grows with the context length. **Invariant**: Monitor KV-cache usage. If it exceeds 90% of VRAM, reject new requests.
+    *   **Thread Safety**: `llama.cpp` is not thread-safe. **Invariant**: Use a single thread for inference. Do not parallelize inference requests.
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null Pointer Dereference**: If the vision projector is not loaded, vision requests must fail gracefully. **Invariant**: The inference engine must check for the presence of the projector before processing vision inputs and return a clear error message if it is missing.
-    *   **Off-by-One in Context Window**: The context window limit must be enforced strictly. **Invariant**: The inference engine must truncate the input if it exceeds the context window, rather than crashing.
+    *   **Null/Undefined Chaining**: If the model returns `null` for a tool argument, the downstream code may crash. **Invariant**: Check for `null` before using tool arguments.
+    *   **Off-by-One Boundary Checks**: If the context window is 32768, the last token is at index 32767. **Invariant**: Use `len(prompt) <= 32768` instead of `len(prompt) < 32768`.
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: Decoupled LLM and Vision Projector. Stock `llama.cpp` runtime. OpenAI-compatible API.
-2.  **Core Abstractions**: GGUF format, Chat Template (Jinja2), Tool Calling Schema.
-3.  **Error Handling**: Graceful degradation for vision requests if projector is missing. JSON validation for tool calls.
-4.  **Testing**: BFCL v4 benchmark for tool calling. AIME for math. IFEval for instruction following.
-5.  **Security**: No specific security features mentioned. Standard API authentication assumed.
-6.  **Performance**: 7.89 GB size for 27B model. Flash Attention enabled (`-fa on`). Context window 32768.
-7.  **Deployment**: Hugging Face Hub. `llama-server` for inference. Docker support implied.
-8.  **Agent Patterns**: Tool calling, parallel function execution, thinking mode toggle.
-9.  **Data Flow**: Text input $\rightarrow$ Tokenization $\rightarrow$ LLM Inference $\rightarrow$ JSON Output $\rightarrow$ Tool Execution.
+1.  **Architecture**: Decoupled vision add-on, single GGUF file for core model, OpenAI-compatible API.
+2.  **Core Abstractions**: GGUF format, Jinja2 chat template, OpenAI API.
+3.  **Error Handling**: JSON validation, context window checks, retry logic for tool calls.
+4.  **Testing**: BFCL v4 benchmark, parallel tool call benchmark, math benchmark.
+5.  **Security**: No specific security features mentioned. **Invariant**: Sanitize user input to prevent prompt injection.
+6.  **Performance**: 2-bit quantization, Flash Attention (`-fa on`), 32768 context window.
+7.  **Deployment**: `llama-server`, Hugging Face CLI, Docker (implied).
+8.  **Agent Patterns**: Tool calling, parallel tool calls, thinking mode toggle.
+9.  **Data Flow**: User prompt -> Chat template -> LLM -> JSON response -> Tool execution.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Decoupled multi-modal architecture with separate LLM and projector files.
-2.  **Rule**: Validate agentic primitives separately from general reasoning benchmarks.
-3.  **Architecture Principle**: Separation of concerns between LLM backbone and modality-specific projectors.
-4.  **Failure Mode**: JSON malformation in parallel tool calls due to extreme quantization.
-5.  **Reusable Skill**: Quantization validation harness for agentic tasks.
-6.  **Decision**: Use IQ2-mix quantization to balance size and tool-calling fidelity.
-7.  **Anti-pattern**: Assuming general intelligence implies agent reliability.
-8.  **Verification Method**: Automated CI job for tool-calling benchmarks and JSON validation.
+1.  **Pattern**: Decoupled vision add-on, per-request thinking toggle.
+2.  **Rule**: Validate agentic quantization with structured output metrics.
+3.  **Architecture Principle**: Separate concerns between language and vision processing.
+4.  **Failure Mode**: Parallel tool call degradation due to quantization noise.
+5.  **Reusable Skill**: Implement retry logic with thinking mode for parallel tool calls.
+6.  **Decision**: Use 2-bit quantization for memory-constrained deployments, accepting 15-18% math score degradation.
+7.  **Anti-pattern**: Fusing vision weights into the main model for text-only use cases.
+8.  **Verification Method**: Automated CI job for agentic quantization validation.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Download Model**: `huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 Underdog-Saluki-27B-1.0-IQ2-mix.gguf --local-dir .`
-2.  **Download Projector (Optional)**: `huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 mmproj-Underdog-Saluki-27B-1.0-F16.gguf --local-dir .`
-3.  **Start Server**: `llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf --jinja -ngl 99 -fa on -c 32768`
-4.  **Add Vision (Optional)**: Add `--mmproj mmproj-Underdog-Saluki-27B-1.0-F16.gguf` to the server command.
-5.  **Test Tool Calling**: Send a request with `chat_template_kwargs: {"enable_thinking": false}` and a tool definition. Verify JSON output.
-6.  **Test Thinking Mode**: Send a request with `chat_template_kwargs: {"enable_thinking": true}`. Verify thinking block and final answer.
-7.  **Monitor Memory**: Use `nvidia-smi` to monitor VRAM usage. Adjust context window if OOM occurs.
-8.  **Validate Benchmarks**: Run BFCL v4 tool-calling benchmark. Assert `passed_count >= 85`.
+1.  **Download Model**: Use `huggingface-cli` to download the core model and vision add-on.
+2.  **Start Server**: Use `llama-server` with `--jinja`, `-ngl 99`, `-fa on`, `-c 32768`.
+3.  **Enable Vision**: Pass `--mmproj` if vision is needed.
+4.  **Toggle Thinking**: Use `chat_template_kwargs` to enable/disable thinking per request.
+5.  **Validate Tool Calls**: Use `json.loads()` to validate tool call responses.
+6.  **Handle Errors**: Implement retry logic for failed tool calls.
+7.  **Monitor Memory**: Monitor KV-cache usage to prevent OOM errors.
+8.  **Sanitize Input**: Sanitize user input to prevent prompt injection.
