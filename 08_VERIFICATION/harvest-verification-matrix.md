@@ -984,3 +984,4 @@
 | `CYCLE-20261013-KEPB` | `2026-10-13T11:28:03.695Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`08c79602...`) |
 | `CYCLE-20261013-OJG6` | `2026-10-13T11:31:16.470Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 686, Rule 687, Rule 688` | Yes (`3c2bb624...`) |
 | `CYCLE-20261013-SEQG` | `2026-10-13T11:34:16.984Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`2721e197...`) |
+| `CYCLE-20261013-WPDQ` | `2026-10-13T11:37:37.406Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`fcf91448...`) |

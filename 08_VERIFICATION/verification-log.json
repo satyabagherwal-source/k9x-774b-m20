@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-G2AF",
-    "timestamp": "2026-10-12T06:57:04.407Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4wg27g",
-    "contentHash": "270ab4a9235bcd08976f249e2f8e6204d2f31fb228fea7fbd65d716fabe781c6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-JO6U",
     "timestamp": "2026-10-12T06:59:52.758Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/TeleOCR",
     "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv6lsenc",
     "contentHash": "2721e19714ab29fcde131a36446b02b020933e58b8474537573af8b64397b049",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-WPDQ",
+    "timestamp": "2026-10-13T11:37:37.406Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv6lwpal",
+    "contentHash": "fcf91448f5b9be2ce384f63863cb2a72c0c169b643958e09396178fb99bf5650",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
