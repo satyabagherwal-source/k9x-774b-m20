@@ -987,3 +987,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv6oaq4r` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-10-13T12:44:30.907Z |
 | `learn-huggingface-hf-comfy-org-qwen-image-2-1-mv6oenyn` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-13T12:47:34.714Z |
 | `learn-huggingface-hf-akhilaaa3-jev-omni-mv6oingw` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-13T12:50:40.702Z |
+| `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv6omgxr` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-13T12:53:38.866Z |

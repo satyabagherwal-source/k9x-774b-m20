@@ -1004,3 +1004,4 @@
 | `CYCLE-20261013-AQ7T` | `2026-10-13T12:44:30.905Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`0df27d0d...`) |
 | `CYCLE-20261013-EO1K` | `2026-10-13T12:47:34.712Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`fcb3e2de...`) |
 | `CYCLE-20261013-INJW` | `2026-10-13T12:50:40.700Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`43a575c7...`) |
+| `CYCLE-20261013-MH0V` | `2026-10-13T12:53:38.863Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 701, Rule 702, Rule 703` | Yes (`2b7eb7a2...`) |

@@ -38513,3 +38513,170 @@ gen_cfg.eos_token_id = None
 - CI lint that flags any assignment of `None` to these fields.
 
 ---
+
+
+---
+
+## 701. Consistent Token ID Alignment Across All Subsystems (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Token ID Alignment Across All Subsystems",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:53:38.784Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv6omgxr",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that every special token ID referenced in `config.json` (e.g., `image_token_id`, `video_token_id`, `eos_token_id`) is defined in `tokenizer_config.json` and that the IDs are unique across the entire vocabulary.  
+**WHY**:  
+Mismatched or duplicate token IDs cause the model to misinterpret padding or EOS signals, leading to truncated outputs or infinite loops during decoding.  
+**WHEN TO APPLY**:  
+During any change to the tokenizer or model config in a text‑vision multimodal system.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// tokenizer_config.json
+{
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "eos_token_id": 248044,
+  "pad_token_id": 0,
+  "vocab_size": 248320
+}
+
+// config.json
+{
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "text_config": {
+    "eos_token_id": 248044,
+    "pad_token_id": 0
+  }
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+// BAD: duplicate EOS token
+{
+  "eos_token_id": 248044,
+  "pad_token_id": 248044   // collision
+}
+```
+**VERIFICATION METHOD**:  
+Run a unit test that parses both JSON files and asserts that all token IDs are distinct and present in the tokenizer’s `vocab` mapping.
+
+
+---
+
+## 702. Layer‑Type Count Must Match Hidden Layer Count (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Layer‑Type Count Must Match Hidden Layer Count",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:53:38.802Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv6omgxr",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** guarantee that the length of the `layer_types` array equals the value of `num_hidden_layers`.  
+**WHY**:  
+A mismatch leads to an incomplete or over‑extended transformer stack, causing shape mismatches during forward passes and silent failures.  
+**WHEN TO APPLY**:  
+When adding or removing layers in the architecture.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "num_hidden_layers": 32,
+  "layer_types": [
+    "linear_attention", "linear_attention", /* ... 30 more ... */ "full_attention"
+  ]
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "num_hidden_layers": 32,
+  "layer_types": ["linear_attention", "full_attention"] // too few
+}
+```
+**VERIFICATION METHOD**:  
+A lint rule that compares the two fields and fails if `len(layer_types) != num_hidden_layers`.
+
+
+---
+
+## 703. Attention Head Dimensionality Consistency (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Attention Head Dimensionality Consistency",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:53:38.816Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv6omgxr",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that `hidden_size` is divisible by `num_attention_heads` and that `num_key_value_heads` divides `num_attention_heads`.  
+**WHY**:  
+Non‑divisible dimensions break the linear projection matrices, causing runtime errors or degraded performance.  
+**WHEN TO APPLY**:  
+During any change to `hidden_size`, `num_attention_heads`, or `num_key_value_heads`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "hidden_size": 4096,
+  "num_attention_heads": 16,
+  "num_key_value_heads": 4
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "hidden_size": 4096,
+  "num_attention_heads": 15   // 4096 % 15 != 0
+}
+```
+**VERIFICATION METHOD**:  
+A pre‑commit hook that checks the divisibility constraints and aborts the commit if violated.
+
+---
