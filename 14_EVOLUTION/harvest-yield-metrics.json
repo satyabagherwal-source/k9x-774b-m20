@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:27:02.877Z",
-  "total_cycles_completed": 1017,
-  "total_learnings_persisted": 1017,
+  "last_updated": "2026-10-13T17:30:12.538Z",
+  "total_cycles_completed": 1018,
+  "total_learnings_persisted": 1018,
   "total_rules_promoted": 491,
   "history": [
-    {
-      "timestamp": "2026-10-13T04:44:45.919Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv675rgx",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T04:47:35.485Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T17:27:02.877Z",
       "repository": "google/gemma-4-26B-A4B-it",
       "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv6ye2da",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:30:12.538Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv6yi4pg",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
