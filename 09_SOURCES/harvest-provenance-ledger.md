@@ -946,3 +946,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-autotrust-gev-26b-decide-mv6j6qx2` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-13T10:21:27.224Z |
 | `learn-huggingface-hf-convaiinnovations-laya-mv6jamcu` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-13T10:24:27.933Z |
 | `learn-huggingface-hf-edge0-audio8-asr-infinite-mv6jeacz` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-13T10:27:18.963Z |
+| `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv6ji3nb` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-13T10:30:16.914Z |
