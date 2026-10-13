@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:40:49.410Z",
-  "total_verified_learnings": 4882,
+  "last_updated": "2026-10-13T11:43:47.230Z",
+  "total_verified_learnings": 4883,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -119497,6 +119497,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T11:40:49.410Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv6m4mpe": {
+      "learning_id": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv6m4mpe",
+      "source": "nvidia/Nemotron-3-Diarization",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "slug": "hf-nvidia-nemotron-3-diarization",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+      "source_version": "hf-nvidia-nemotron-3-diarization",
+      "content_hash": "10b59cbaff3ee24da986f3f5994d6b4b617bb3bdbf5d1ccef5b82804551ada33",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T11:43:47.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

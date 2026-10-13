@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:40:49.475Z",
-  "total_cycles_completed": 927,
-  "total_learnings_persisted": 927,
+  "last_updated": "2026-10-13T11:43:47.277Z",
+  "total_cycles_completed": 928,
+  "total_learnings_persisted": 928,
   "total_rules_promoted": 442,
   "history": [
-    {
-      "timestamp": "2026-10-13T00:08:18.187Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv5xa8cf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T00:11:33.750Z",
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T11:40:49.475Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
       "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv6m0thg",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:43:47.277Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv6m4mpe",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
