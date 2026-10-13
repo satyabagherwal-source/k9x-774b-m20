@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-4017",
-    "timestamp": "2026-10-11T21:55:48.907Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp",
-    "contentHash": "e8cddf25687528b69a6024401d3319e76617d9f31bbdbb71f26daaf28d9bf194",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-7MLJ",
     "timestamp": "2026-10-11T21:58:38.119Z",
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7490,6 +7475,21 @@
     "repository": "openai/clip-vit-base-patch32",
     "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv5zwr6n",
     "contentHash": "98e7e90b6db3155b45d51ca51b9fcef3689f5506aa3e95e81e627970aa915ea6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-0Q80",
+    "timestamp": "2026-10-13T01:24:53.568Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv600q4w",
+    "contentHash": "b6027129e0726fddc0fcce39be13ac4bd3c05f04e6a1a15413a4a22503ac1d95",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
