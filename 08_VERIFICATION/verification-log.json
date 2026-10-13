@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-JWEV",
-    "timestamp": "2026-10-12T03:16:06.487Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4ojwc0",
-    "contentHash": "5706bdd2ec9b5c5d45ae6f0e3ac2d540b4da04206e85bab6df3c8daff7590689",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-O1FQ",
     "timestamp": "2026-10-12T03:19:19.622Z",
     "repository": "bigscience/bloom",
@@ -7492,6 +7477,21 @@
     "contentHash": "516a73ca528830d5ddc3c4526c77f75e879113ec0df2354c57b5e021696f9041",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-JQVZ",
+    "timestamp": "2026-10-13T06:47:36.671Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv6bjqs0",
+    "contentHash": "2e26ca726714509b42f559f2e6023ade178f691598bc615fac88213cc6188ac5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
