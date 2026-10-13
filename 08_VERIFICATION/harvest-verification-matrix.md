@@ -1021,3 +1021,4 @@
 | `CYCLE-20261013-QKX6` | `2026-10-13T13:52:49.770Z` | `facebook/sam3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 709, Rule 710, Rule 711` | Yes (`618eded9...`) |
 | `CYCLE-20261013-UFQI` | `2026-10-13T13:55:49.674Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`5b53a9b3...`) |
 | `CYCLE-20261013-YG9I` | `2026-10-13T13:58:56.982Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`e9a323fe...`) |
+| `CYCLE-20261013-5H9W` | `2026-10-13T14:04:24.884Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`398cc2d1...`) |

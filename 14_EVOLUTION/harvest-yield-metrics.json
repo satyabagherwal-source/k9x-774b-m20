@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:58:56.986Z",
-  "total_cycles_completed": 962,
-  "total_learnings_persisted": 962,
+  "last_updated": "2026-10-13T14:04:24.887Z",
+  "total_cycles_completed": 963,
+  "total_learnings_persisted": 963,
   "total_rules_promoted": 467,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:55:17.642Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv613tlo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:58:33.381Z",
       "repository": "Qwen/Qwen3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T13:58:56.986Z",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv6qyg6e",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:04:24.887Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv6r5h7b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
