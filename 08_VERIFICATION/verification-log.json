@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-207K",
-    "timestamp": "2026-10-12T17:02:00.080Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv5i204l",
-    "contentHash": "55bc4aca5f68bfedf2a0fb275a6a950e7e492e39fbaa4a989fe19537d3a0ecf6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-5TR7",
     "timestamp": "2026-10-12T17:04:58.339Z",
     "repository": "microsoft/FrogNano-4B-2609",
@@ -7490,6 +7475,21 @@
     "repository": "Cloudflare/clef-flash",
     "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv79jjdb",
     "contentHash": "373793cf1a7f9a2dc04d3c65a3ed489cff1eec2e588cf900ec5b8477c24e2b14",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-NAU8",
+    "timestamp": "2026-10-13T22:42:09.440Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv79naro",
+    "contentHash": "484547e4e09eb692798197554d083e8cdf81b5ee709430311cc7e1c1b86e397d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
