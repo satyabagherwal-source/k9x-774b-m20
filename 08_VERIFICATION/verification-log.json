@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-706P",
-    "timestamp": "2026-10-12T11:29:57.937Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv56703t",
-    "contentHash": "d13b102b850313327d84f861141c25436d1b127b6ce5bec1049c438eb429da8f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-ARUT",
     "timestamp": "2026-10-12T11:32:53.765Z",
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7492,6 +7477,21 @@
     "contentHash": "1d62e042a25a57b08aa0202b7ab543b2bbbf7e558bb09f34b1456531ce68de55",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-YYS3",
+    "timestamp": "2026-10-13T16:19:19.060Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv6vyyp3",
+    "contentHash": "bf20f671588bf27214b59016e56b2bcc43d0fc0821fa956dc66db9951b404ffb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
