@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T08:41:34.889Z",
-  "total_cycles_completed": 876,
-  "total_learnings_persisted": 876,
+  "last_updated": "2026-10-13T08:54:33.511Z",
+  "total_cycles_completed": 877,
+  "total_learnings_persisted": 877,
   "total_rules_promoted": 424,
   "history": [
-    {
-      "timestamp": "2026-10-12T21:15:27.453Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv5r3y7i",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T21:18:18.007Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T08:41:34.889Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv6fmb82",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T08:54:33.511Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv6g2zzw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
