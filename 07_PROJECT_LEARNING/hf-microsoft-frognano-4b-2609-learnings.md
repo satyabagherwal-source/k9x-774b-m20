@@ -3,8 +3,8 @@
 > **Source Version**: `hf-microsoft`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T23:59:26.380Z  
-> **Learning ID**: `learn-huggingface-hf-microsoft-frognano-4b-2609-mv5wyu24`  
+> **Timestamp**: 2026-10-13T06:25:44.320Z  
+> **Learning ID**: `learn-huggingface-hf-microsoft-frognano-4b-2609-mv6arm9s`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/microsoft/FrogNano-4B-2609](https://huggingface.co/microsoft/FrogNano-4B-2609))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T23:59:25.355Z  
+> **Harvest Timestamp**: 2026-10-13T06:25:43.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

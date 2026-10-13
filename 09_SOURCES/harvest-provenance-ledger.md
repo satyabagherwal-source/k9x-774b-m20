@@ -892,3 +892,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-amazon-chronos-2-mv6afhgf` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-13T06:16:18.320Z |
 | `learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv6ajvld` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-13T06:19:43.260Z |
 | `learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv6anyxa` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-13T06:22:54.251Z |
+| `learn-huggingface-hf-microsoft-frognano-4b-2609-mv6arm9s` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-13T06:25:44.430Z |
