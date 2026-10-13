@@ -38322,3 +38322,194 @@ class FixedLabelModel:
 **VERIFICATION METHOD**:
 1.  **Integration Test**: Call the model with 1, 5, and 20 labels. Assert that all calls succeed and return valid outputs.
 2.  **Performance Test**: Measure latency for 1 label vs 20 labels. Assert that the latency scales linearly with the number of labels, not quadratically.
+
+
+---
+
+## 698. Token‑ID Consistency Across Tokenizer and Model (Harvested from TaichuAI/ZDTaichu5.0-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Token‑ID Consistency Across Tokenizer and Model",
+  "source": "TaichuAI/ZDTaichu5.0-9B",
+  "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+  "source_version": "hf-taichuai-zdtaichu5.0-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:41:36.256Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B) (Revision: `hf-taichua`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that every special token ID defined in the tokenizer configuration matches the corresponding ID used in the model configuration and generation configuration.  
+
+**WHY**:  
+A mismatch causes the model to treat a token as a different semantic entity (e.g., an image start token interpreted as a regular word), leading to corrupted embeddings, shape mismatches, or silent generation failures.  
+
+**WHEN TO APPLY**:  
+- During model initialization.  
+- When loading a new tokenizer or updating a model.  
+- In any pipeline that mixes text and vision modalities.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# load configs
+tokenizer = AutoTokenizer.from_pretrained("TaichuAI/ZDTaichu5.0-9B")
+model_cfg = AutoConfig.from_pretrained("TaichuAI/ZDTaichu5.0-9B")
+gen_cfg = GenerationConfig.from_pretrained("TaichuAI/ZDTaichu5.0-9B")
+
+# assert consistency
+assert tokenizer.convert_tokens_to_ids("<|vision_start|>") == model_cfg.img_start_token_id, \
+    "vision_start_token_id mismatch"
+assert tokenizer.convert_tokens_to_ids("<|vision_end|>") == model_cfg.img_end_token_id, \
+    "vision_end_token_id mismatch"
+assert tokenizer.convert_tokens_to_ids("<|image_pad|>") == model_cfg.img_context_token_id, \
+    "img_context_token_id mismatch"
+
+# propagate to generation config
+gen_cfg.bos_token_id = tokenizer.bos_token_id
+gen_cfg.eos_token_ids = [model_cfg.eos_token_id, tokenizer.eos_token_id]
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: hard‑coding token IDs
+vision_start_id = 123456  # arbitrary
+```
+
+**VERIFICATION METHOD**  
+- Unit test that loads tokenizer and config, then asserts equality of all special token IDs.  
+- CI lint rule that flags any hard‑coded numeric token IDs in source files.
+
+---
+
+
+---
+
+## 699. Vision Encoder Downsample Ratio Alignment (Harvested from TaichuAI/ZDTaichu5.0-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Vision Encoder Downsample Ratio Alignment",
+  "source": "TaichuAI/ZDTaichu5.0-9B",
+  "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+  "source_version": "hf-taichuai-zdtaichu5.0-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:41:36.282Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B) (Revision: `hf-taichua`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** pass the `downsample_ratio` value from the model configuration to the vision encoder constructor and verify that the resulting embedding shape matches the expected dimensionality.  
+
+**WHY**:  
+The vision encoder reduces spatial resolution; a mismatch between the configured ratio and the actual implementation leads to shape mismatches in cross‑attention, causing runtime errors or silent mis‑alignment of visual context.  
+
+**WHEN TO APPLY**:  
+- At vision encoder initialization.  
+- When changing the vision backbone.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+class VisionEncoderWrapper(nn.Module):
+    def __init__(self, cfg):
+        super().__init__()
+        self.encoder = CRADIOv4H(
+            downsample_ratio=cfg.downsample_ratio,
+            hidden_size=cfg.hidden_size,
+            # other params...
+        )
+
+    def forward(self, images):
+        feats = self.encoder(images)  # shape: (B, seq_len, hidden_size)
+        assert feats.shape[-1] == self.encoder.hidden_size, \
+            "Hidden size mismatch after downsampling"
+        return feats
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: ignoring config
+self.encoder = CRADIOv4H(downsample_ratio=0.25)  # hard‑coded
+```
+
+**VERIFICATION METHOD**  
+- Integration test that feeds a dummy image tensor and checks that the output shape equals `(batch, seq_len, hidden_size)` where `seq_len` is computed from the image size and `downsample_ratio`.  
+- CI lint that ensures `downsample_ratio` is not hard‑coded.
+
+---
+
+
+---
+
+## 700. BOS/EOS Token Integrity for Generation (Harvested from TaichuAI/ZDTaichu5.0-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "BOS/EOS Token Integrity for Generation",
+  "source": "TaichuAI/ZDTaichu5.0-9B",
+  "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+  "source_version": "hf-taichuai-zdtaichu5.0-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:41:36.304Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B) (Revision: `hf-taichua`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST NOT** set `bos_token_id` or `eos_token_id` to `None` in the generation configuration; they must be defined and match the tokenizer’s special tokens.  
+
+**WHY**:  
+Missing BOS/EOS tokens break the autoregressive generation loop, causing the model to generate until a random token is encountered or to produce empty outputs.  
+
+**WHEN TO APPLY**:  
+- When creating a `GenerationConfig` instance.  
+- When overriding defaults for fine‑tuning.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+gen_cfg = GenerationConfig.from_pretrained("TaichuAI/ZDTaichu5.0-9B")
+assert gen_cfg.bos_token_id is not None, "bos_token_id cannot be None"
+assert gen_cfg.eos_token_id is not None, "eos_token_id cannot be None"
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: disabling BOS/EOS
+gen_cfg.bos_token_id = None
+gen_cfg.eos_token_id = None
+```
+
+**VERIFICATION METHOD**  
+- Unit test that loads `generation_config.json` and asserts non‑null BOS/EOS IDs.  
+- CI lint that flags any assignment of `None` to these fields.
+
+---

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:38:27.978Z",
-  "total_verified_learnings": 4896,
+  "last_updated": "2026-10-13T12:41:36.335Z",
+  "total_verified_learnings": 4897,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -119887,6 +119887,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T12:38:27.978Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2": {
+      "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2",
+      "source": "TaichuAI/ZDTaichu5.0-9B",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "slug": "hf-taichuai-zdtaichu5.0-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "content_hash": "a1212cab9e31871305948f85315c224b6cc29fe57d2e8feb447a4454d7ce9cf1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 698,
+          "title": "Token‑ID Consistency Across Tokenizer and Model",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 699,
+          "title": "Vision Encoder Downsample Ratio Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 700,
+          "title": "BOS/EOS Token Integrity for Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T12:41:36.335Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

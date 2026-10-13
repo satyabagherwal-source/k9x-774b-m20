@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:38:28.040Z",
-  "total_cycles_completed": 941,
-  "total_learnings_persisted": 941,
-  "total_rules_promoted": 452,
+  "last_updated": "2026-10-13T12:41:36.385Z",
+  "total_cycles_completed": 942,
+  "total_learnings_persisted": 942,
+  "total_rules_promoted": 455,
   "history": [
-    {
-      "timestamp": "2026-10-13T00:50:47.870Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv5ysvny",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T00:54:12.841Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1403,6 +1396,13 @@
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv6o2y4v",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T12:41:36.385Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

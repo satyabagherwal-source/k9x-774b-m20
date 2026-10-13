@@ -1000,3 +1000,4 @@
 | `CYCLE-20261013-VCFG` | `2026-10-13T12:32:33.196Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 695, Rule 696, Rule 697` | Yes (`994e5814...`) |
 | `CYCLE-20261013-YX0W` | `2026-10-13T12:35:19.856Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`c819b2ae...`) |
 | `CYCLE-20261013-2Y84` | `2026-10-13T12:38:28.036Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`d553ff5d...`) |
+| `CYCLE-20261013-6ZJX` | `2026-10-13T12:41:36.381Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 698, Rule 699, Rule 700` | Yes (`a1212cab...`) |
