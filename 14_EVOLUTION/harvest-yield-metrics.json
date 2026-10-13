@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T20:24:23.205Z",
-  "total_cycles_completed": 1067,
-  "total_learnings_persisted": 1067,
-  "total_rules_promoted": 506,
+  "last_updated": "2026-10-13T20:28:32.218Z",
+  "total_cycles_completed": 1068,
+  "total_learnings_persisted": 1068,
+  "total_rules_promoted": 509,
   "history": [
-    {
-      "timestamp": "2026-10-13T07:46:50.103Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6dnwn0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T07:51:15.595Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1403,6 +1396,13 @@
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv74q4h9",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T20:28:32.218Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv74vgkb",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

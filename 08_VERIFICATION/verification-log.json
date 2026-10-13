@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-OQ65",
-    "timestamp": "2026-10-12T15:27:41.693Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv5eoq3s",
-    "contentHash": "85656bc5168c2b22853e906fcf1d2049cfcceb95e89e49546ec99ae4e64efc07",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-ST3A",
     "timestamp": "2026-10-12T15:30:52.102Z",
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7492,6 +7477,21 @@
     "contentHash": "587503944e16be82cdfd4d925cc76e0d3bf5775156fa430fe005d7a555a8bf09",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-VGPH",
+    "timestamp": "2026-10-13T20:28:32.213Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv74vgkb",
+    "contentHash": "19600433032c4dbf52e10cbb436d5f69aa2e80628f4d8df5c8e7a452628bedac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
