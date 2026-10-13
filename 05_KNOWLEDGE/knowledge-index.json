@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T18:49:57.106Z",
-  "total_verified_learnings": 4993,
+  "last_updated": "2026-10-13T18:53:00.062Z",
+  "total_verified_learnings": 4994,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -122459,6 +122459,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T18:49:57.106Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi": {
+      "learning_id": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi",
+      "source": "autotrust/JEV-35B-NVFP4",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "slug": "hf-autotrust-jev-35b-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+      "source_version": "hf-autotrust-jev-35b-nvfp4",
+      "content_hash": "13de9f4208db95d3b5bc34db6051806f43921720c1f6680ba614f302934753a5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T18:53:00.062Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-ZV17",
-    "timestamp": "2026-10-12T13:44:22.747Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv5azuy9",
-    "contentHash": "38f620543e32e5681f552fffe18b00fc0f1abfa3f7fde907e0891d349374ad11",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-CKH1",
     "timestamp": "2026-10-12T13:54:15.589Z",
     "repository": "paperclipai/paperclip",
@@ -7490,6 +7475,21 @@
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
     "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv71cok1",
     "contentHash": "64f26d9e46f76170a966467f31ff870e81fea59aecc0714992ed16c23c3768be",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-GLSN",
+    "timestamp": "2026-10-13T18:53:00.119Z",
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi",
+    "contentHash": "13de9f4208db95d3b5bc34db6051806f43921720c1f6680ba614f302934753a5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

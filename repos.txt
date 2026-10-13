@@ -3924,3 +3924,7 @@ https://github.com/MaxMiksa/Autonomous-Company
 # --- Automatically Discovered by AI Scout Engine [2026-10-13T18:09:11.775Z] ---
 # [DATABASE-STORAGE-ENGINES] tickernelz/opencode-mem (1083 score) - OpenCode plugin that gives coding agents persistent memory using local vector da
 https://github.com/tickernelz/opencode-mem
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T18:52:48.125Z] ---
+# [HUGGINGFACE-AI-MODELS] autotrust/JEV-35B-NVFP4 (4330 score) - Verified Hugging Face Model: autotrust/JEV-35B-NVFP4 (233 likes, 20494 downloads
+https://huggingface.co/autotrust/JEV-35B-NVFP4

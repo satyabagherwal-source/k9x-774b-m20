@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T18:49:57.143Z",
-  "total_cycles_completed": 1038,
-  "total_learnings_persisted": 1038,
+  "last_updated": "2026-10-13T18:53:00.122Z",
+  "total_cycles_completed": 1039,
+  "total_learnings_persisted": 1039,
   "total_rules_promoted": 497,
   "history": [
-    {
-      "timestamp": "2026-10-13T05:48:57.820Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv69gbo5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T05:51:56.540Z",
       "repository": "google-bert/bert-base-uncased",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T18:49:57.143Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv71cok1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:53:00.122Z",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
