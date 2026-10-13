@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:31:16.475Z",
+  "last_updated": "2026-10-13T11:34:16.989Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -328,15 +328,15 @@
       "repository": "XingChen-AGI/TeleOCR",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-xingchen-agi-teleocr-mv64xjua",
-      "content_hash": "c4b494da010bed5fe1fbb9fd9309cab6a76cae0f1f4e970fe25c5de8c1fbe77d",
-      "verified_at": "2026-10-13T03:42:23.494Z",
+      "learning_id": "learn-huggingface-hf-xingchen-agi-teleocr-mv6lsenc",
+      "content_hash": "2721e19714ab29fcde131a36446b02b020933e58b8474537573af8b64397b049",
+      "verified_at": "2026-10-13T11:34:16.989Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T03:42:23.494Z"
+      "last_updated": "2026-10-13T11:34:16.989Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",

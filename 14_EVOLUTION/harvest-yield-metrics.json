@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:31:16.474Z",
-  "total_cycles_completed": 924,
-  "total_learnings_persisted": 924,
+  "last_updated": "2026-10-13T11:34:16.988Z",
+  "total_cycles_completed": 925,
+  "total_learnings_persisted": 925,
   "total_rules_promoted": 442,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:59:26.488Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv5wyu24",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T00:02:25.440Z",
       "repository": "hexgrad/Kokoro-82M",
@@ -1403,6 +1396,13 @@
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
       "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv6lojb9",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:34:16.988Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv6lsenc",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

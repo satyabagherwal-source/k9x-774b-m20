@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-C7IA",
-    "timestamp": "2026-10-12T06:54:04.546Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4wc7g1",
-    "contentHash": "4cf7e416de43b17a683f13bd2360464c59171ff3a84881f0779cc27ba86abebd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-G2AF",
     "timestamp": "2026-10-12T06:57:04.407Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7492,6 +7477,21 @@
     "contentHash": "3c2bb62456b7ee756f4b9409ee13c3918c0b6688aee44f58031959db78c4cfc6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-SEQG",
+    "timestamp": "2026-10-13T11:34:16.984Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv6lsenc",
+    "contentHash": "2721e19714ab29fcde131a36446b02b020933e58b8474537573af8b64397b049",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
