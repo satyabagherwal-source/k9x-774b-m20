@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-EAFY",
-    "timestamp": "2026-10-12T00:51:46.654Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc",
-    "contentHash": "049de2656f2b9a6ac8ce13241125eb6eb10dcf7c1cfee4d75c2d7ccf6db835c1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-I9QV",
     "timestamp": "2026-10-12T00:54:52.375Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7492,6 +7477,21 @@
     "contentHash": "376c6781c5dca14d755609e84c042b7039f2aeb56d2bdbbc81d0c2b4cc8a7a03",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-DS2N",
+    "timestamp": "2026-10-13T04:23:00.191Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv66drzk",
+    "contentHash": "d76d93c17181a7399ff7e9f5d654f5669b4cbcc525071c8a9cc13c64a745bfbe",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

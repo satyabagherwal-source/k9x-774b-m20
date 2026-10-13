@@ -869,3 +869,4 @@
 | `CYCLE-20261013-26LO` | `2026-10-13T04:13:59.148Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`2ce7591d...`) |
 | `CYCLE-20261013-66GI` | `2026-10-13T04:17:05.586Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 629, Rule 630, Rule 631` | Yes (`e5691dfc...`) |
 | `CYCLE-20261013-A41W` | `2026-10-13T04:20:09.092Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 632, Rule 633, Rule 634` | Yes (`376c6781...`) |
+| `CYCLE-20261013-DS2N` | `2026-10-13T04:23:00.191Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`d76d93c1...`) |
