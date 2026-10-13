@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-WZV7",
-    "timestamp": "2026-10-12T06:42:14.803Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4vwztn",
-    "contentHash": "373af7bc4b613cb70940b006911ce94020f664cf647d19734597c21c0b649bd9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-0N0P",
     "timestamp": "2026-10-12T06:45:04.777Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7492,6 +7477,21 @@
     "contentHash": "f98f1d50be9ec448e85e47c0549761a0ac73eb516b047ba302ca3934b1102772",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-CRD4",
+    "timestamp": "2026-10-13T11:22:06.856Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv6lcra4",
+    "contentHash": "8bc4ce9efb9056ea3241387f7ac7f9e753af984970fa77d1842f86641c27bf7e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
