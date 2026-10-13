@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T03:20:45.822Z",
-  "total_cycles_completed": 791,
-  "total_learnings_persisted": 791,
+  "last_updated": "2026-10-13T03:23:51.688Z",
+  "total_cycles_completed": 792,
+  "total_learnings_persisted": 792,
   "total_rules_promoted": 368,
   "history": [
-    {
-      "timestamp": "2026-10-12T16:43:45.070Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-hf-google-t5-t5-small-mv5hej8p",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T16:47:02.418Z",
       "repository": "Comfy-Org/MiniMax-H3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T03:20:45.822Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv645qjn",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T03:23:51.688Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv649pxx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
