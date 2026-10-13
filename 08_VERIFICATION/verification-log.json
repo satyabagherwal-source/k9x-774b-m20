@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-8J7Q",
-    "timestamp": "2026-10-11T21:31:20.774Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv4c8j52",
-    "contentHash": "8a040370d61f2e4c09dd0bcc815734724882e15a013759dd0f7d555501f61be2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-CP2W",
     "timestamp": "2026-10-11T21:34:35.000Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7490,6 +7475,21 @@
     "repository": "Aleph-Alpha/Kolibri-1",
     "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv5z1c7j",
     "contentHash": "64faa8fa40c80ef3afe659e4096947eb279c7e47232b170d68de76c253ea78ed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-558E",
+    "timestamp": "2026-10-13T01:00:20.030Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv5z555k",
+    "contentHash": "7744b97173e24e29e126c51a3a3e21f0c2cfa91feb0712f5806a1ef68816eab0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
