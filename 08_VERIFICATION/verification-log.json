@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-FI4R",
-    "timestamp": "2026-10-12T18:08:29.067Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv5kfi1z",
-    "contentHash": "a463b19a91d3998b78667751d26f58ce544a266bccf080f44ac9fd0fe4594c4d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-JAWT",
     "timestamp": "2026-10-12T18:11:26.333Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv7bys3f",
     "contentHash": "ca7a947c8f7667a043b21ce532cb89adcb74e07b53112afe1747572cb27c51b0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-2TB9",
+    "timestamp": "2026-10-13T23:50:12.453Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv7c2t82",
+    "contentHash": "07af2e1195fcb3ff8dafc80375ed65e6df90bd3018a4801821abda71bcb4a8ec",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T23:47:04.324Z",
-  "total_cycles_completed": 1119,
-  "total_learnings_persisted": 1119,
+  "last_updated": "2026-10-13T23:50:12.458Z",
+  "total_cycles_completed": 1120,
+  "total_learnings_persisted": 1120,
   "total_rules_promoted": 541,
   "history": [
-    {
-      "timestamp": "2026-10-13T11:18:46.736Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv6l8gvf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T11:22:06.861Z",
       "repository": "autotrust/JEV-35B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T23:47:04.324Z",
       "repository": "openai/gpt-oss-120b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv7bys3f",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T23:50:12.458Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv7c2t82",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
