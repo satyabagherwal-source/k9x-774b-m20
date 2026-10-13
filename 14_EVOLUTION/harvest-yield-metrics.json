@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:06:35.103Z",
-  "total_cycles_completed": 916,
-  "total_learnings_persisted": 916,
+  "last_updated": "2026-10-13T11:09:34.223Z",
+  "total_cycles_completed": 917,
+  "total_learnings_persisted": 917,
   "total_rules_promoted": 434,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:34:51.625Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv5w381k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T23:37:41.259Z",
       "repository": "google-t5/t5-small",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T11:06:35.103Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv6kssbw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:09:34.223Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv6kwmk5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

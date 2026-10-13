@@ -975,3 +975,4 @@
 | `CYCLE-20261013-GT7A` | `2026-10-13T10:57:16.246Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`044b68f7...`) |
 | `CYCLE-20261013-KQ2M` | `2026-10-13T11:00:18.814Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`8377fc37...`) |
 | `CYCLE-20261013-SSEZ` | `2026-10-13T11:06:35.099Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`87269e61...`) |
+| `CYCLE-20261013-WMMJ` | `2026-10-13T11:09:34.219Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`2491003c...`) |

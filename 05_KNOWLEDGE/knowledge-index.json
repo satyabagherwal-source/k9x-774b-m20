@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:06:35.043Z",
-  "total_verified_learnings": 4871,
+  "last_updated": "2026-10-13T11:09:34.176Z",
+  "total_verified_learnings": 4872,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -119190,6 +119190,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T11:06:35.043Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv6kwmk5": {
+      "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv6kwmk5",
+      "source": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "slug": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
+      "content_hash": "2491003c22c7e10a456b14abf3db8ae1d7d9902e76f3dd9b2de6fa98416db46c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T11:09:34.176Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
