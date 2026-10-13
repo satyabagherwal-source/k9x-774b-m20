@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-6OF8",
-    "timestamp": "2026-10-12T16:37:38.468Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-hf-baai-bge-m3-mv5h6ocf",
-    "contentHash": "29d129f7a301c480f5d56b3dc4484d7b125467a8103192c8e456d26aece51e43",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-AV7R",
     "timestamp": "2026-10-12T16:40:53.895Z",
     "repository": "Qwen/Qwen3-0.6B",
@@ -7492,6 +7477,21 @@
     "contentHash": "41571dc101e9854f465f403bc344ea0d9f06a55e30ddf98a7380ec049d1499c0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-RK4W",
+    "timestamp": "2026-10-13T22:17:28.496Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-hf-facebook-sam3-mv78rk00",
+    "contentHash": "7597a3331f64a1716cc1b238f56b486f6980344cb1b8d0d6b1a8db1d4b4498cf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

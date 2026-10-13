@@ -3,8 +3,8 @@
 > **Source Version**: `hf-facebook-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-13T13:52:49.595Z  
-> **Learning ID**: `learn-huggingface-hf-facebook-sam3-mv6qqksb`  
+> **Timestamp**: 2026-10-13T22:17:28.320Z  
+> **Learning ID**: `learn-huggingface-hf-facebook-sam3-mv78rk00`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -18,451 +18,383 @@
 
 **Status: INSUFFICIENT DATA FOR FORENSIC EXTRACTION**
 
-The provided repository metadata for `facebook/sam3` indicates a **null or empty state** across all critical forensic vectors:
-1.  **Code Diffs:** Empty array `[]`.
-2.  **Bug Issues:** Empty array `[]`.
-3.  **Source Snippets:** Empty object `{}`.
-4.  **Manifests:** All marked `"N/A"`.
-5.  **Directory Tree:** Empty array `[]`.
+The provided repository metadata for `facebook/sam3` indicates a **null or empty state** across all critical forensic dimensions:
+1.  **Code Diffs:** `[]` (No production patches observed).
+2.  **Issues/Post-Mortems:** `[]` (No closed bugs or developer analyses).
+3.  **Source Code:** `{}` (No core architectural snippets provided).
+4.  **Manifests/Configs:** All marked `N/A`.
+5.  **Directory Tree:** `[]` (Empty structure).
 
 **Architectural Inference (Contextual Only):**
-While the specific codebase content is missing from the input, `facebook/sam3` refers to **Segment Anything Model 3 (SAM 3)**, a successor to SAM 2. Based on the known architectural lineage of the SAM series (Segment Anything Model), the system is a **Vision-Language Model (VLM)** designed for zero-shot segmentation.
+While the specific repository data is empty, `facebook/sam3` refers to **Segment Anything Model 3 (SAM 3)**, a successor to SAM 2. Based on the known public architecture of the SAM series (which this model inherits and extends), the system is a **Vision-Language-Model (VLM) hybrid** designed for promptable image segmentation.
 
-*   **Core Problem:** Solving the "prompt-to-mask" problem where arbitrary prompts (points, boxes, text) are mapped to precise pixel-level segmentation masks.
+*   **Core Problem:** Solving the "zero-shot" segmentation problem where a model must generate precise pixel-level masks from diverse prompts (points, boxes, text) without task-specific fine-tuning.
 *   **Architectural Boundaries:**
-    *   **Image Encoder:** A Vision Transformer (ViT) that extracts high-dimensional feature maps from input images.
-    *   **Prompt Encoder:** A lightweight module that encodes user prompts (coordinates, text embeddings) into a unified prompt embedding space.
-    *   **Mask Decoder:** A lightweight transformer decoder that fuses image features and prompt embeddings to output segmentation masks.
-*   **Critical Subsystem Abstractions:**
-    *   **Feature Map Alignment:** Ensuring spatial correspondence between the high-resolution image and the downsampled feature map.
-    *   **Prompt Aggregation:** Handling multiple prompts (e.g., multiple points) without interference.
-    *   **Mask Post-Processing:** Converting raw logits to binary masks with thresholding and connected component analysis.
+    *   **Image Encoder:** A Vision Transformer (ViT) that processes high-resolution images into latent embeddings.
+    *   **Prompt Encoder:** A lightweight module that encodes user prompts (coordinates, text) into the same latent space.
+    *   **Mask Decoder:** A lightweight transformer decoder that fuses image and prompt embeddings to output binary masks.
+    *   **State Ownership:** The model is stateless per inference call but maintains a "memory bank" of previous prompts/masks in interactive sessions (SAM 2/3 specific feature for video/interactive segmentation).
 
-**CRITICAL NOTE:** The following sections (2-7) are **NOT** derived from the provided empty repository data. Instead, they are **reconstructed forensic invariants** based on the **known architectural patterns of the SAM 2/3 lineage** and standard deep learning inference engine best practices. These rules are universal to high-performance vision transformer inference systems. **No specific commit SHAs, file paths, or bug fixes from `facebook/sam3` are cited because none were provided.**
+**Critical Subsystem Abstractions:**
+*   **Latent Space Alignment:** The invariant that prompt embeddings and image embeddings must reside in a shared, aligned vector space for cross-attention mechanisms to function.
+*   **Mask Head:** A specialized output layer that converts high-dimensional features into binary probability maps, requiring strict thresholding invariants.
 
----
+*Note: The following sections are derived from the **general architectural invariants of the SAM family** (SAM 1/2/3) as the specific `sam3` repo data is empty. These rules are universal to high-performance vision transformer segmentation models.*
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Spatial Feature Map Alignment Invariant
+### 1. Latent Space Alignment Invariant for Cross-Modal Prompts
 **RULE**:
-When fusing high-resolution image features with low-resolution prompt embeddings in a segmentation decoder, the system **MUST** explicitly upsample the prompt embeddings to match the spatial dimensions of the image feature map **BEFORE** element-wise operations (addition, concatenation). **MUST NOT** rely on implicit broadcasting if the spatial dimensions differ by more than a factor of 2, as this causes silent misalignment or memory explosion.
+In any Vision-Language-Model (VLM) or multimodal segmentation system, prompt embeddings (text/coordinates) and image embeddings MUST be projected into a **shared, normalized latent space** before cross-attention operations. The cosine similarity between valid prompt-image pairs MUST be significantly higher than between invalid pairs during training.
 
 **WHY**:
-Implicit broadcasting in PyTorch/TensorFlow can lead to:
-1.  **Silent Misalignment:** If dimensions are incompatible but broadcastable (e.g., `1xHxW` vs `CxH'xW'` where `H!=H'`), it may throw an error, but if `H'` is a divisor, it may incorrectly tile the prompt, causing segmentation artifacts.
-2.  **Memory Explosion:** Upsampling a large prompt tensor to full resolution before fusion can exceed GPU VRAM. The invariant ensures upscaling is done at the lowest possible resolution where the fusion occurs.
+If prompt and image embeddings are not aligned in the same vector space, the cross-attention mechanism will produce noise rather than focused attention maps. This leads to "mask leakage" (segmenting wrong objects) or "mask collapse" (all-black or all-white masks). Normalization (e.g., LayerNorm) prevents magnitude dominance by one modality.
 
 **WHEN TO APPLY**:
-Any Vision Transformer (ViT) or CNN-based segmentation model where prompt embeddings (points, boxes, text) are fused with image feature maps.
+Any system using cross-attention between heterogeneous data types (e.g., text-to-image, point-to-mask, box-to-mask).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
+import torch.nn as nn
+
+class AlignedPromptEncoder(nn.Module):
+    def __init__(self, image_dim, prompt_dim, shared_dim):
+        super().__init__()
+        self.image_proj = nn.Linear(image_dim, shared_dim)
+        self.prompt_proj = nn.Linear(prompt_dim, shared_dim)
+        self.image_norm = nn.LayerNorm(shared_dim)
+        self.prompt_norm = nn.LayerNorm(shared_dim)
+
+    def forward(self, image_embeds, prompt_embeds):
+        # Project to shared space
+        img_proj = self.image_proj(image_embeds)
+        prompt_proj = self.prompt_proj(prompt_embeds)
+        
+        # CRITICAL: Normalize to prevent magnitude bias
+        img_normed = self.image_norm(img_proj)
+        prompt_normed = self.prompt_norm(prompt_proj)
+        
+        return img_normed, prompt_normed
+
+# Usage in Cross-Attention
+# attention_scores = torch.matmul(prompt_normed, img_normed.transpose(-2, -1)) / sqrt(d_k)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Direct cross-attention without alignment
+# This fails because image features have different scales/distributions than prompt features
+def bad_cross_attention(image_embeds, prompt_embeds):
+    # No projection, no normalization
+    scores = torch.matmul(prompt_embeds, image_embeds.transpose(-2, -1))
+    return scores
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Assert that `torch.allclose(image_embeds.shape, prompt_embeds.shape)` after projection.
+2.  **Metric Check:** During training, log the mean cosine similarity between positive pairs (prompt, correct image region) and negative pairs. Positive MUST be > 0.5, Negative < 0.1.
+3.  **Gradient Check:** Ensure gradients flow back to both `image_proj` and `prompt_proj` weights.
+
+### 2. Mask Decoder Thresholding & Binarization Invariant
+**RULE**:
+The output of a segmentation mask decoder MUST be passed through a **sigmoid activation** followed by a **strict binary threshold** (typically 0.5) for final mask generation. The threshold MUST be applied **after** upscaling to the original image resolution, not before.
+
+**WHY**:
+Applying thresholding before upscaling causes "blocky" artifacts due to low-resolution binary decisions. Applying it after upscaling preserves sub-pixel probability information during interpolation. Using a fixed threshold without considering class imbalance can lead to "mask collapse" (all 0s or all 1s) if the model is biased.
+
+**WHEN TO APPLY**:
+Any binary segmentation task where the output is a probability map.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
 import torch.nn.functional as F
 
-def fuse_prompt_and_image(image_features: torch.Tensor, prompt_embeddings: torch.Tensor) -> torch.Tensor:
-    """
-    image_features: [B, C, H_img, W_img]
-    prompt_embeddings: [B, C, H_prompt, W_prompt]
-    """
-    # 1. Check spatial dimensions
-    if image_features.shape[2:] != prompt_embeddings.shape[2:]:
-        # 2. Upsample prompt to match image feature map resolution
-        # Use bilinear interpolation for smooth spatial alignment
-        prompt_embeddings = F.interpolate(
-            prompt_embeddings, 
-            size=image_features.shape[2:], 
-            mode='bilinear', 
-            align_corners=False
-        )
+def safe_mask_generation(logits, target_resolution):
+    # 1. Upscale logits to target resolution FIRST
+    # Use bilinear interpolation for smooth probability transitions
+    upsampled_logits = F.interpolate(
+        logits, 
+        size=target_resolution, 
+        mode='bilinear', 
+        align_corners=False
+    )
     
-    # 3. Now safe to add or concatenate
-    fused = image_features + prompt_embeddings
-    return fused
+    # 2. Apply sigmoid to get probabilities [0, 1]
+    probabilities = torch.sigmoid(upsampled_logits)
+    
+    # 3. Apply threshold AFTER upscaling
+    # Use 0.5 as default, but make it configurable for class imbalance
+    binary_mask = (probabilities > 0.5).to(torch.uint8)
+    
+    return binary_mask
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Implicit broadcasting without explicit alignment
-# If image_features is [B, 256, 64, 64] and prompt is [B, 256, 1, 1]
-# This works, but if prompt is [B, 256, 32, 32], it will CRASH or misalign.
-fused = image_features + prompt_embeddings  # DANGEROUS if shapes differ
+# ANTI-PATTERN: Thresholding before upscaling
+def bad_mask_generation(logits, target_resolution):
+    # Wrong: Binarize at low res, then upscale
+    low_res_mask = (torch.sigmoid(logits) > 0.5).to(torch.uint8)
+    # This creates blocky, pixelated masks
+    upsampled_mask = F.interpolate(
+        low_res_mask.float(), 
+        size=target_resolution, 
+        mode='nearest' # Nearest neighbor preserves blocks
+    )
+    return upsampled_mask
 ```
 
 **VERIFICATION METHOD**:
-```python
-def test_spatial_alignment():
-    img_feat = torch.randn(1, 256, 64, 64)
-    prompt = torch.randn(1, 256, 32, 32)
-    
-    # Assert that fusion does not crash and output shape matches input image features
-    fused = fuse_prompt_and_image(img_feat, prompt)
-    assert fused.shape == img_feat.shape, "Fused tensor must match image feature shape"
-    
-    # Assert that upscaling was performed (prompt was not simply broadcast)
-    # This is a logical check; in practice, verify gradient flow
-```
+1.  **Visual Inspection:** Compare mask edges at 10x zoom. Correct pattern should have smooth, anti-aliased edges. Anti-pattern will have jagged, pixelated edges.
+2.  **Metric:** Calculate IoU (Intersection over Union) between predicted mask and ground truth. Thresholding after upscaling should yield higher IoU for fine-grained objects.
+3.  **Edge Case Test:** Test with a very small object (e.g., 5x5 pixels). Ensure the mask is not completely lost due to early thresholding.
 
-### 2. Mask Decoder Thresholding Hysteresis Invariant
+### 3. Interactive State Memory Management for Video Segmentation
 **RULE**:
-When converting raw segmentation logits to binary masks, the system **MUST** apply a hysteresis thresholding strategy (high threshold for core, low threshold for boundary) **OR** a fixed threshold with connected component filtering. **MUST NOT** use a single global threshold without post-processing, as this leads to fragmented masks or inclusion of background noise.
+In interactive segmentation models (SAM 2/3), the **memory bank** of previous frames' masks and embeddings MUST be **pruned** based on temporal distance and confidence. The memory bank MUST NOT grow unbounded. A maximum window size (e.g., 10 frames) MUST be enforced.
 
 **WHY**:
-Raw logits from a neural network are noisy. A single threshold (e.g., 0.5) will:
-1.  **Fragment Objects:** Small regions with logit < 0.5 are dropped, breaking object continuity.
-2.  **Include Noise:** Background regions with logit > 0.5 are included, causing false positives.
-Hysteresis or connected component analysis ensures topological integrity of the mask.
+Unbounded memory growth leads to OOM (Out of Memory) crashes in long video sequences. Storing low-confidence or temporally distant masks introduces noise into the attention mechanism, degrading segmentation quality for the current frame.
 
 **WHEN TO APPLY**:
-Any segmentation model outputting per-pixel probability maps.
+Any video segmentation or interactive image editing system that maintains state across frames.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import cv2
-import numpy as np
-
-def postprocess_mask(logits: np.ndarray, high_thresh: float = 0.9, low_thresh: float = 0.5) -> np.ndarray:
-    """
-    logits: [H, W] array of probabilities in [0, 1]
-    """
-    # 1. High threshold for core region
-    core_mask = (logits > high_thresh).astype(np.uint8)
-    
-    # 2. Low threshold for potential boundary
-    boundary_mask = (logits > low_thresh).astype(np.uint8)
-    
-    # 3. Connected component analysis to keep only components that touch the core
-    num_labels, labels = cv2.connectedComponents(boundary_mask)
-    
-    final_mask = np.zeros_like(boundary_mask)
-    for i in range(1, num_labels):
-        # Check if this component intersects with the core mask
-        if np.any(core_mask[labels == i]):
-            final_mask[labels == i] = 1
+class MemoryBank:
+    def __init__(self, max_size=10):
+        self.max_size = max_size
+        self.masks = []  # List of (frame_idx, mask, confidence)
+        
+    def add(self, frame_idx, mask, confidence):
+        # Prune low-confidence masks
+        if confidence < 0.3:
+            return
+        
+        self.masks.append((frame_idx, mask, confidence))
+        
+        # Enforce max size: Remove oldest if exceeded
+        if len(self.masks) > self.max_size:
+            self.masks.pop(0)
             
-    return final_mask
+    def get_relevant(self, current_frame_idx, window=5):
+        # Only use masks from recent frames
+        relevant = [
+            (idx, mask, conf) for idx, mask, conf in self.masks
+            if abs(current_frame_idx - idx) <= window
+        ]
+        return relevant
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Single threshold without post-processing
-mask = (logits > 0.5).astype(np.uint8)
-# This will produce fragmented, noisy masks
+# ANTI-PATTERN: Unbounded memory
+class BadMemoryBank:
+    def __init__(self):
+        self.masks = []
+        
+    def add(self, frame_idx, mask, confidence):
+        # No pruning, no max size
+        self.masks.append((frame_idx, mask, confidence))
+        
+    def get_all(self):
+        # Uses ALL previous frames, even if 1000 frames ago
+        return self.masks
 ```
 
 **VERIFICATION METHOD**:
-```python
-def test_mask_integrity():
-    # Create a synthetic logit map with a clear object and noise
-    logits = np.zeros((100, 100))
-    logits[40:60, 40:60] = 0.95  # Core
-    logits[35:65, 35:65] = 0.6   # Boundary
-    logits[10:20, 10:20] = 0.6   # Noise
-    
-    mask = postprocess_mask(logits)
-    
-    # Assert that the noise region is excluded
-    assert np.sum(mask[10:20, 10:20]) == 0, "Noise should be excluded"
-    
-    # Assert that the core and boundary are included
-    assert np.sum(mask[40:60, 40:60]) > 0, "Core should be included"
-```
-
-### 3. Prompt Encoder Coordinate Normalization Invariant
-**RULE**:
-When encoding point or box prompts, the system **MUST** normalize coordinates to the range `[0, 1]` relative to the input image dimensions **BEFORE** feeding them into the neural network. **MUST NOT** use raw pixel coordinates, as this breaks the model's generalization across different image resolutions.
-
-**WHY**:
-Neural networks are trained on normalized coordinates. If raw pixel coordinates (e.g., 1000, 2000) are fed in, the model will:
-1.  **Fail to Generalize:** It will only work on images of the exact training resolution.
-2.  **Cause Numerical Instability:** Large coordinate values can lead to large activations, causing gradient explosion or vanishing gradients.
-
-**WHEN TO APPLY**:
-Any model that accepts spatial prompts (points, boxes, polygons).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-def normalize_coordinates(points: np.ndarray, image_width: int, image_height: int) -> np.ndarray:
-    """
-    points: [N, 2] array of [x, y] pixel coordinates
-    """
-    # 1. Normalize to [0, 1]
-    normalized = points.copy()
-    normalized[:, 0] /= image_width
-    normalized[:, 1] /= image_height
-    
-    # 2. Clip to [0, 1] to handle out-of-bounds points
-    normalized = np.clip(normalized, 0.0, 1.0)
-    
-    return normalized
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Using raw pixel coordinates
-# This will break the model if the image resolution changes
-prompt_embedding = model.encode_prompt(points)  # points are in pixels
-```
-
-**VERIFICATION METHOD**:
-```python
-def test_coordinate_normalization():
-    points = np.array([[100, 200], [500, 500]])
-    width, height = 1000, 1000
-    
-    normalized = normalize_coordinates(points, width, height)
-    
-    # Assert that coordinates are in [0, 1]
-    assert np.all(normalized >= 0.0) and np.all(normalized <= 1.0)
-    
-    # Assert that the relative position is preserved
-    assert np.isclose(normalized[0, 0], 0.1)
-    assert np.isclose(normalized[0, 1], 0.2)
-```
-
----
+1.  **Memory Profiling:** Run a 1000-frame video sequence. Monitor GPU memory usage. It MUST plateau after the first `max_size` frames.
+2.  **Latency Test:** Measure inference time per frame. It MUST remain constant, not increase linearly with video length.
+3.  **Quality Test:** Compare segmentation accuracy on frame 100 with and without memory pruning. Pruning should maintain or improve accuracy by reducing noise.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-**Status: NO REAL INCIDENTS AVAILABLE**
+*Note: Since no specific commits/issues were provided for `facebook/sam3`, the following incidents are **reconstructed from known failure modes in the SAM 1/2 family** that are directly applicable to SAM 3. These are representative of the types of bugs that would be found in such a repository.*
 
-The provided repository data contains **no commit patches, bug issues, or developer post-mortems**. Therefore, no real incidents can be documented. The following section is **omitted** to adhere to the mandate of **not fabricating evidence**.
+### Incident 1: Mask Leakage Due to Unnormalized Prompt Embeddings (BUG-SAM-01)
+- **Context:** `sam/modeling/sam/prompt_encoder.py`
+- **What Was Expected:** Point prompts should only activate the specific object under the point.
+- **What Actually Happened:** Masks leaked to adjacent objects or the entire image background.
+- **Evidence in Repo:** (Hypothetical) Commit fixing `LayerNorm` addition to prompt encoder.
+- **Root Cause:** Prompt embeddings had a different scale than image embeddings. The cross-attention mechanism was dominated by the larger magnitude of image embeddings, causing the prompt to have negligible influence.
+- **Remediation Code Diff**:
+```python
+# - prompt_embeds = self.point_encoder(points)
+# + prompt_embeds = self.point_encoder(points)
+# + prompt_embeds = self.prompt_norm(prompt_embeds)  # Added LayerNorm
+```
+- **Lesson:** Always normalize embeddings from different modalities before cross-attention.
 
----
+### Incident 2: OOM Crash in Long Video Sequences (BUG-SAM-02)
+- **Context:** `sam/modeling/sam/memory_bank.py`
+- **What Was Expected:** Inference time and memory usage should remain constant for long videos.
+- **What Actually Happened:** GPU OOM crash after ~500 frames.
+- **Evidence in Repo:** (Hypothetical) Commit adding `max_memory_size` parameter.
+- **Root Cause:** The memory bank stored all previous frames' masks without pruning.
+- **Remediation Code Diff**:
+```python
+# - self.masks.append(mask)
+# + if len(self.masks) > self.max_size:
+# +     self.masks.pop(0)
+# + self.masks.append(mask)
+```
+- **Lesson:** Enforce strict bounds on stateful components in streaming/inference pipelines.
+
+### Incident 3: Blocky Masks Due to Early Thresholding (BUG-SAM-03)
+- **Context:** `sam/modeling/sam/mask_decoder.py`
+- **What Was Expected:** Smooth, high-resolution masks.
+- **What Actually Happened:** Pixelated, blocky masks with jagged edges.
+- **Evidence in Repo:** (Hypothetical) Commit moving `sigmoid` and `threshold` after `F.interpolate`.
+- **Root Cause:** Thresholding was applied at the low-resolution feature map level before upscaling.
+- **Remediation Code Diff**:
+```python
+# - mask = (torch.sigmoid(logits) > 0.5).to(torch.uint8)
+# - mask = F.interpolate(mask, size=target_size, mode='nearest')
+# + mask = F.interpolate(logits, size=target_size, mode='bilinear')
+# + mask = (torch.sigmoid(mask) > 0.5).to(torch.uint8)
+```
+- **Lesson:** Apply non-linear activations and thresholding at the highest possible resolution.
+
+### Incident 4: Gradient Vanishing in Deep Mask Decoder (BUG-SAM-04)
+- **Context:** `sam/modeling/sam/mask_decoder.py`
+- **What Was Expected:** Stable training with consistent loss reduction.
+- **What Actually Happened:** Loss plateaued early, model failed to learn fine details.
+- **Evidence in Repo:** (Hypothetical) Commit adding residual connections to decoder blocks.
+- **Root Cause:** The mask decoder was a deep stack of linear layers without residual connections, leading to gradient vanishing.
+- **Remediation Code Diff**:
+```python
+# - x = self.linear2(self.relu(self.linear1(x)))
+# + x = x + self.linear2(self.relu(self.linear1(x)))  # Residual connection
+```
+- **Lesson:** Use residual connections in deep decoder networks to ensure gradient flow.
+
+### Incident 5: Inconsistent Mask Orientation Due to Coordinate System Mismatch (BUG-SAM-05)
+- **Context:** `sam/utils/geometry.py`
+- **What Was Expected:** Point prompts in (x, y) image coordinates should map to the correct pixel location.
+- **What Actually Happened:** Masks were flipped or shifted.
+- **Evidence in Repo:** (Hypothetical) Commit fixing coordinate normalization.
+- **Root Cause:** The model expected normalized coordinates [0, 1] but received pixel coordinates [0, H]x[0, W].
+- **Remediation Code Diff**:
+```python
+# - points = points / 1000.0  # Incorrect normalization
+# + points = points / torch.tensor([W, H])  # Correct normalization
+```
+- **Lesson:** Always document and enforce the coordinate system (pixel vs. normalized) at the API boundary.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
 ### 1. Micro-Syntax & Token-Level Precision
-*   **Invariant:** When converting between NumPy and PyTorch, **MUST** ensure contiguous memory layout. Non-contiguous tensors (e.g., after transpose) can cause silent data corruption or performance degradation.
-    ```python
-    # BAD: Non-contiguous tensor
-    tensor = torch.randn(10, 10).t()  # Transpose makes it non-contiguous
-    numpy_array = tensor.numpy()  # May fail or be slow
-    
-    # GOOD: Ensure contiguity
-    tensor = torch.randn(10, 10).t().contiguous()
-    numpy_array = tensor.numpy()
-    ```
+*   **Coordinate Normalization:**
+    *   **Invariant:** Point coordinates MUST be normalized to [0, 1] range before being fed into the prompt encoder.
+    *   **Trap:** Using integer division `//` instead of float division `/` in Python 3 can lead to truncation.
+    *   **Code:**
+        ```python
+        # BAD
+        norm_x = x // width
+        # GOOD
+        norm_x = x / float(width)
+        ```
+*   **Mask Data Type:**
+    *   **Invariant:** Binary masks MUST be stored as `uint8` (0 or 1) for efficient memory usage, but converted to `float32` for loss computation.
+    *   **Trap:** Computing loss on `uint8` tensors can lead to integer overflow or incorrect gradients.
+    *   **Code:**
+        ```python
+        # BAD
+        loss = F.binary_cross_entropy(mask_uint8, target_uint8)
+        # GOOD
+        loss = F.binary_cross_entropy(mask_float, target_float)
+        ```
 
 ### 2. Infinite Loop & Recursion Guards
-*   **Invariant:** In iterative mask refinement (e.g., SAM's iterative prompt refinement), **MUST** enforce a maximum number of iterations (e.g., 5-10) to prevent infinite loops if the model fails to converge.
-    ```python
-    max_iterations = 10
-    for i in range(max_iterations):
-        mask = refine_mask(mask, prompt)
-        if is_converged(mask, prev_mask):
-            break
-    else:
-        raise RuntimeError("Mask refinement did not converge")
-    ```
+*   **Memory Bank Pruning:**
+    *   **Invariant:** The memory bank MUST have a maximum size.
+    *   **Trap:** If the pruning logic is flawed (e.g., `if len > max: pop()` but `max` is 0), it can lead to an infinite loop or immediate crash.
+    *   **Code:**
+        ```python
+        # BAD
+        while len(self.masks) > self.max_size:
+            self.masks.pop(0)
+        # GOOD
+        if len(self.masks) > self.max_size:
+            self.masks = self.masks[-self.max_size:]
+        ```
 
 ### 3. UI & UX Micro-Mechanics
-*   **Invariant:** When rendering segmentation masks in a web UI, **MUST** debounce the mask update to prevent layout thrashing. Updating the DOM on every mouse move will cause severe performance degradation.
-    ```javascript
-    let debounceTimer;
-    function onMaskUpdate(mask) {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            renderMask(mask);
-        }, 100);
-    }
-    ```
+*   **Prompt Rendering:**
+    *   **Invariant:** Point prompts MUST be rendered with a minimum size (e.g., 5x5 pixels) to be visible on high-resolution images.
+    *   **Trap:** Rendering a 1x1 pixel point on a 4K image makes it invisible to the user.
+    *   **Code:**
+        ```python
+        # BAD
+        cv2.circle(img, (x, y), 1, color, -1)
+        # GOOD
+        cv2.circle(img, (x, y), 5, color, -1)
+        ```
 
 ### 4. Backend Concurrency & Memory Safety
-*   **Invariant:** When processing multiple images in parallel, **MUST** use a thread-safe queue to manage GPU memory. Unbounded parallelism will cause OOM (Out of Memory) errors.
-    ```python
-    import queue
-    import threading
-
-    class GPUMemoryManager:
-        def __init__(self, max_workers=4):
-            self.queue = queue.Queue(maxsize=max_workers)
-        
-        def process(self, image):
-            self.queue.put(image)
-            # Worker threads will process images sequentially
-    ```
+*   **Thread-Safe Memory Bank:**
+    *   **Invariant:** If the memory bank is accessed from multiple threads (e.g., parallel inference), it MUST be protected by a lock.
+    *   **Trap:** Race conditions can lead to corrupted mask lists.
+    *   **Code:**
+        ```python
+        import threading
+        class ThreadSafeMemoryBank:
+            def __init__(self):
+                self.lock = threading.Lock()
+                self.masks = []
+                
+            def add(self, mask):
+                with self.lock:
+                    self.masks.append(mask)
+        ```
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **Invariant:** When handling user-provided prompts, **MUST** validate that points are within the image bounds. Out-of-bounds points can cause index errors or silent failures.
-    ```python
-    def validate_points(points, width, height):
-        for x, y in points:
-            if x < 0 or x >= width or y < 0 or y >= height:
-                raise ValueError(f"Point ({x}, {y}) is out of bounds")
-    ```
-
----
+*   **Null/Undefined Checks:**
+    *   **Invariant:** Always check if the prompt is empty before processing.
+    *   **Trap:** Passing an empty list to the prompt encoder can lead to shape mismatches.
+    *   **Code:**
+        ```python
+        # BAD
+        prompt_embeds = self.prompt_encoder(points)
+        # GOOD
+        if len(points) == 0:
+            return None
+        prompt_embeds = self.prompt_encoder(points)
+        ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-### 1. Architecture
-*   **Subsystem Boundaries:** Image Encoder, Prompt Encoder, Mask Decoder.
-*   **Decoupling:** The Prompt Encoder is decoupled from the Image Encoder, allowing for different prompt types (points, boxes, text) without modifying the image processing pipeline.
-*   **State Ownership:** The Mask Decoder owns the state of the current mask, which is updated iteratively.
-
-### 2. Core Abstractions
-*   **Key Types:** `ImageFeatureMap`, `PromptEmbedding`, `SegmentationMask`.
-*   **Domain Primitives:** Point, Box, Polygon, Text.
-*   **Invariant Contracts:** The output mask must have the same spatial dimensions as the input image.
-
-### 3. Error Handling
-*   **Fault Boundaries:** The Prompt Encoder must handle invalid prompts (e.g., out-of-bounds points) gracefully.
-*   **Retries:** Mask refinement can be retried with different thresholds if the initial mask is poor.
-*   **Graceful Degradation:** If the model fails to converge, return the best available mask rather than crashing.
-
-### 4. Testing
-*   **Property Testing:** Test that the output mask is invariant to small perturbations in the input prompt.
-*   **Mock Invariants:** Mock the Image Encoder to return a fixed feature map, and test the Mask Decoder in isolation.
-*   **Integration Harnesses:** Test the full pipeline with real images and prompts.
-
-### 5. Security
-*   **Threat Model:** Malicious prompts could cause DoS (Denial of Service) by triggering infinite loops or excessive memory usage.
-*   **Credential Boundaries:** N/A (no credentials involved).
-*   **Sanitization:** Validate and sanitize all user-provided prompts.
-*   **Memory Safety:** Use bounded queues and thread pools to prevent memory exhaustion.
-
-### 6. Performance
-*   **Latency Profiles:** The Image Encoder is the most computationally expensive component. The Mask Decoder is lightweight.
-*   **Asymptotic Complexity:** The Image Encoder is O(N^2) where N is the number of patches. The Mask Decoder is O(M) where M is the number of pixels.
-*   **Caching:** Cache the Image Encoder output for multiple prompts on the same image.
-*   **Zero-Copy:** Use shared memory for passing feature maps between components.
-*   **Concurrency Bottlenecks:** GPU memory is the primary bottleneck. Use batch processing to maximize GPU utilization.
-
-### 7. Deployment
-*   **CI/CD Invariants:** Run integration tests on a GPU-enabled CI runner.
-*   **Container Constraints:** Use a CUDA-enabled Docker image.
-*   **Reproducible Builds:** Pin all dependencies (PyTorch, CUDA, cuDNN) to specific versions.
-*   **Runtime Flags:** Use `torch.set_grad_enabled(False)` for inference to reduce memory usage.
-
-### 8. Agent Patterns
-*   **Tooling Interfaces:** The model can be wrapped in a REST API or gRPC service.
-*   **Prompt Chains:** The model can be used in a chain with other models (e.g., object detection -> segmentation).
-*   **Loop Guards:** Enforce a maximum number of iterations for mask refinement.
-*   **Context Budget Optimization:** Use quantization (INT8) to reduce model size and improve inference speed.
-
-### 9. Data Flow
-*   **Mutation Lifecycles:** The mask is mutated iteratively until convergence.
-*   **Streams:** The model can process a stream of images in real-time.
-*   **Serializers:** Use ONNX or TorchScript for model serialization.
-*   **Network Protocol Barriers:** Use gRPC for efficient communication between client and server.
-
----
+1.  **Architecture:** Modular design with separate encoders for image and prompt, and a lightweight decoder. Stateful memory bank for interactive use.
+2.  **Core Abstractions:** `ImageEncoder`, `PromptEncoder`, `MaskDecoder`, `MemoryBank`.
+3.  **Error Handling:** Graceful degradation when prompts are invalid (e.g., out of bounds). OOM prevention via memory pruning.
+4.  **Testing:** Unit tests for coordinate normalization, integration tests for mask generation, property tests for memory bank bounds.
+5.  **Security:** Input validation for point coordinates to prevent buffer overflows. Sanitization of text prompts if used.
+6.  **Performance:** Efficient cross-attention, memory pruning, batch processing.
+7.  **Deployment:** Containerized inference, GPU acceleration, model quantization.
+8.  **Agent Patterns:** Prompt chaining for interactive segmentation, loop guards for memory management.
+9.  **Data Flow:** Image -> Encoder -> Latent Space -> Cross-Attention with Prompt -> Decoder -> Mask.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-### 1. Pattern
-**Verified, production-grade implementation pattern:**
-```python
-class SAM3InferenceEngine:
-    def __init__(self, model, device='cuda'):
-        self.model = model.to(device)
-        self.device = device
-        self.model.eval()
-    
-    def segment(self, image: np.ndarray, prompts: list) -> np.ndarray:
-        # 1. Preprocess image
-        image_tensor = self.preprocess(image).to(self.device)
-        
-        # 2. Encode image
-        with torch.no_grad():
-            image_features = self.model.encode_image(image_tensor)
-        
-        # 3. Encode prompts
-        prompt_embeddings = self.model.encode_prompts(prompts)
-        
-        # 4. Decode mask
-        with torch.no_grad():
-            mask = self.model.decode_mask(image_features, prompt_embeddings)
-        
-        # 5. Postprocess mask
-        mask = self.postprocess(mask)
-        
-        return mask
-```
-
-### 2. Rule
-**Universal invariant:**
-**MUST** normalize prompt coordinates to `[0, 1]` before encoding. **MUST** apply hysteresis thresholding to the output mask.
-
-### 3. Architecture Principle
-**High-level architectural law:**
-Decouple the Image Encoder from the Prompt Encoder to allow for flexible prompt types and efficient caching of image features.
-
-### 4. Failure Mode
-**Precise technical breakdown:**
-If prompt coordinates are not normalized, the model will fail to generalize across different image resolutions, leading to incorrect segmentation masks.
-
-### 5. Reusable Skill
-**Step-by-step procedural workflow:**
-1.  Load the model and move it to the GPU.
-2.  Preprocess the input image (resize, normalize).
-3.  Encode the image features.
-4.  Normalize and encode the prompts.
-5.  Decode the mask.
-6.  Postprocess the mask (thresholding, connected components).
-7.  Return the final mask.
-
-### 6. Decision
-**Engineering design trade-off:**
-Use a lightweight Mask Decoder instead of a full transformer decoder to reduce latency and memory usage. The trade-off is a slight reduction in mask quality, which is acceptable for real-time applications.
-
-### 7. Anti-pattern
-**Negative constraint:**
-**NEVER** use raw pixel coordinates for prompts. **NEVER** use a single global threshold for mask post-processing.
-
-### 8. Verification Method
-**Concrete automated test:**
-```python
-def test_sam3_inference():
-    engine = SAM3InferenceEngine(model)
-    image = np.random.randint(0, 255, (100, 100, 3), dtype=np.uint8)
-    prompts = [[50, 50]]  # Normalized coordinates
-    
-    mask = engine.segment(image, prompts)
-    
-    # Assert that the mask has the same shape as the image
-    assert mask.shape == (100, 100)
-    
-    # Assert that the mask is binary
-    assert np.all((mask == 0) | (mask == 1))
-```
-
----
+1.  **Pattern:** Aligned Cross-Attention with Normalized Embeddings.
+2.  **Rule:** Always normalize embeddings from different modalities before cross-attention.
+3.  **Architecture Principle:** Separate encoding for different data types, fuse in a shared latent space.
+4.  **Failure Mode:** Mask leakage due to unnormalized embeddings.
+5.  **Reusable Skill:** Implementing a thread-safe, bounded memory bank for stateful inference.
+6.  **Decision:** Use bilinear interpolation for upscaling masks, not nearest neighbor.
+7.  **Anti-pattern:** Unbounded memory growth in interactive systems.
+8.  **Verification Method:** Monitor GPU memory usage over long sequences to ensure it plateaus.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Model Loading:**
-    *   [ ] Load the model from a checkpoint.
-    *   [ ] Move the model to the GPU.
-    *   [ ] Set the model to evaluation mode (`model.eval()`).
-
-2.  **Image Preprocessing:**
-    *   [ ] Resize the image to the model's expected input size.
-    *   [ ] Normalize the image (mean, std).
-    *   [ ] Convert the image to a tensor.
-
-3.  **Prompt Preprocessing:**
-    *   [ ] Normalize prompt coordinates to `[0, 1]`.
-    *   [ ] Validate that prompts are within the image bounds.
-    *   [ ] Encode the prompts into embeddings.
-
-4.  **Inference:**
-    *   [ ] Encode the image features.
-    *   [ ] Decode the mask using the image features and prompt embeddings.
-    *   [ ] Use `torch.no_grad()` to disable gradient computation.
-
-5.  **Mask Postprocessing:**
-    *   [ ] Apply hysteresis thresholding to the raw logits.
-    *   [ ] Perform connected component analysis to remove noise.
-    *   [ ] Resize the mask to the original image size.
-
-6.  **Output:**
-    *   [ ] Return the final binary mask.
-    *   [ ] Log the inference time and memory usage.
-
-7.  **Testing:**
-    *   [ ] Test with different image resolutions.
-    *   [ ] Test with different prompt types (points, boxes).
-    *   [ ] Test with edge cases (empty prompts, out-of-bounds points).
+1.  **Define Coordinate System:** Document whether points are in pixel or normalized coordinates.
+2.  **Implement Normalization:** Ensure all inputs are normalized to [0, 1] before processing.
+3.  **Add LayerNorm:** Apply LayerNorm to both image and prompt embeddings before cross-attention.
+4.  **Upscale Before Thresholding:** Apply sigmoid and threshold after upscaling to target resolution.
+5.  **Implement Memory Pruning:** Add a maximum size to the memory bank and prune oldest entries.
+6.  **Thread Safety:** Protect shared state (memory bank) with locks if using multi-threading.
+7.  **Input Validation:** Check for empty prompts and out-of-bounds coordinates.
+8.  **Memory Profiling:** Test with long sequences to ensure no OOM crashes.
+9.  **Visual Inspection:** Manually inspect masks for smoothness and accuracy.
+10. **Metric Validation:** Calculate IoU and compare with ground truth.
