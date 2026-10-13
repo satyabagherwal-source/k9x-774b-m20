@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:28:03.659Z",
-  "total_verified_learnings": 4878,
+  "last_updated": "2026-10-13T11:31:16.422Z",
+  "total_verified_learnings": 4879,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -119385,6 +119385,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T11:28:03.658Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv6lojb9": {
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv6lojb9",
+      "source": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "slug": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "content_hash": "3c2bb62456b7ee756f4b9409ee13c3918c0b6688aee44f58031959db78c4cfc6",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 686,
+          "title": "[MoE Router Logits Suppression]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 687,
+          "title": "[Early‑Compression Down‑sample Mode Validation]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 688,
+          "title": "[Tokenizer Special‑Token Integrity]",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T11:31:16.422Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

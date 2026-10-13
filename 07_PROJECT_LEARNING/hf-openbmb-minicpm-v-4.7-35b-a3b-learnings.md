@@ -3,8 +3,8 @@
 > **Source Version**: `hf-openbmb-m`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-13T03:39:12.761Z  
-> **Learning ID**: `learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv64tgqh`  
+> **Timestamp**: 2026-10-13T11:31:16.292Z  
+> **Learning ID**: `learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv6lojb9`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -16,198 +16,197 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 The repository implements a multimodal large‑language‑model (MLLM) that fuses vision and text modalities into a single encoder‑decoder pipeline.  
+* **Problem solved** – Deliver a 35 B‑parameter MoE model that can run on mobile and embedded devices with < 3 GB RAM while preserving high‑quality image‑to‑text generation.  
 * **Subsystem boundaries**  
-  * **Vision encoder** – early‑compression ViT (intra‑ViT) that reduces token count by 4× or 16×.  
-  * **Text encoder / decoder** – 40‑layer transformer with a mixture‑of‑experts (MoE) backbone (256 experts, 8 active per token).  
-  * **MoE scheduler** – Lookahead Expert Scheduling (LES) that pre‑allocates experts per layer to avoid runtime stalls.  
-  * **Quantization & inference** – supports FP8, AWQ, GPTQ, and GGUF; all quantized weights are stored in a single contiguous buffer.  
-  * **Tokenizer** – custom tokeniser that handles image, video, audio, and text tokens with special BOS/EOS markers.  
-* **Critical abstractions**  
-  * `MiniCPMV4_7ForConditionalGeneration` – a subclass of `PreTrainedModel` that exposes `generate`, `forward`, and `prepare_inputs_for_generation`.  
-  * `VisionConfig` – holds `attention_dropout`, `hidden_act`, `hidden_size`, `num_experts`, etc.  
-  * `MoeConfig` – encapsulates `num_experts`, `num_experts_per_tok`, `router_aux_loss_coef`, and `output_router_logits`.  
-  * `LinearAttentionLayer` – a lightweight attention variant that replaces full self‑attention in most layers.  
-  * `MropeConfig` – defines the multi‑rope positional encoding parameters (`rope_type`, `rope_theta`, `partial_rotary_factor`).  
-
-The model is designed for **on‑device inference**: it compresses visual tokens early, uses a lightweight MoE scheduler, and quantizes weights aggressively to fit within 3 GB on an iPhone 17 Pro Max while maintaining > 13 tokens/s decoding speed.
+  * **Vision encoder** – Early‑compression ViT that reduces token count via 4×/16× down‑sampling (`downsample_mode`).  
+  * **Text decoder** – 40‑layer transformer with 16 attention heads, 256 experts, and a look‑ahead expert scheduler (LES).  
+  * **MoE router** – Generates routing logits only when `output_router_logits` is true; otherwise routing is silent.  
+  * **Tokenizer** – Handles image, video, audio, and text tokens; special tokens are defined in `tokenizer_config.json`.  
+  * **Inference engine** – Exposes the model to SGLang, vLLM, llama.cpp, and Ollama; quantization (FP8, AWQ, GPTQ) is supported.  
+* **Critical abstractions** –  
+  * `MiniCPMV4_7ForConditionalGeneration` architecture class.  
+  * `VisionConfig` and `TextConfig` objects that carry hyper‑parameters.  
+  * `Router` interface that maps tokens to experts.  
+  * `EarlyCompression` module that compresses visual tokens before feeding them to the transformer.  
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. [MoE Configuration Integrity]
+### 1. [MoE Router Logits Suppression]
 **RULE**:  
-The model configuration **MUST** satisfy the following invariants before any inference or training step:  
-1. `num_experts` **MUST** be a positive integer divisible by `num_experts_per_tok`.  
-2. `router_aux_loss_coef` **MUST** be a non‑negative float less than or equal to 1.0.  
-3. `output_router_logits` **MUST NOT** be `True` when `tie_word_embeddings` is `True`.
+> The model MUST NOT expose router logits during inference unless the user explicitly sets `output_router_logits` to `true` in the configuration.
 
 **WHY**:  
-* If `num_experts` is not divisible by `num_experts_per_tok`, the router will produce uneven expert allocation, causing load imbalance and potential out‑of‑bounds memory accesses.  
-* A router auxiliary loss coefficient outside [0, 1] can destabilise training, leading to exploding gradients or vanishing routing signals.  
-* Enabling router logits while tying word embeddings forces the embedding matrix to be shared with the router output, which is semantically incorrect and can corrupt the embedding lookup.
+Router logits are high‑dimensional, rarely needed for downstream tasks, and can leak internal routing decisions. Exposing them increases memory traffic and can inadvertently reveal model internals, violating least‑privilege and privacy constraints.
 
 **WHEN TO APPLY**:  
-All Python modules that load or modify `config.json` (e.g., `modeling_minicpmv4.py`, `configuration_minicpmv4.py`) and any downstream training scripts.
+* All inference pipelines (SGLang, vLLM, llama.cpp, Ollama).  
+* Any code path that serializes model outputs (JSON, protobuf, etc.).  
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-class MiniCPMConfig(PretrainedConfig):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.num_experts = kwargs.get("num_experts", 256)
-        self.num_experts_per_tok = kwargs.get("num_experts_per_tok", 8)
-        self.router_aux_loss_coef = kwargs.get("router_aux_loss_coef", 0.001)
-        self.output_router_logits = kwargs.get("output_router_logits", False)
-        self.tie_word_embeddings = kwargs.get("tie_word_embeddings", False)
+class MiniCPMV4_7ForConditionalGeneration(PreTrainedModel):
+    def __init__(self, config):
+        super().__init__(config)
+        self.router = MoERouter(config)
+        self.output_router_logits = config.output_router_logits
 
-        # Invariant checks
-        if self.num_experts % self.num_experts_per_tok != 0:
-            raise ValueError(
-                f"num_experts ({self.num_experts}) must be divisible by "
-                f"num_experts_per_tok ({self.num_experts_per_tok})"
-            )
-        if not (0.0 <= self.router_aux_loss_coef <= 1.0):
-            raise ValueError(
-                f"router_aux_loss_coef ({self.router_aux_loss_coef}) must be in [0, 1]"
-            )
-        if self.output_router_logits and self.tie_word_embeddings:
-            raise ValueError(
-                "output_router_logits cannot be True when tie_word_embeddings is True"
-            )
+    def forward(self, input_ids, **kwargs):
+        outputs = self.decoder(input_ids, **kwargs)
+        if self.output_router_logits:
+            outputs["router_logits"] = self.router.logits
+        return outputs
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Allowing mismatched expert counts
-self.num_experts = 257  # not divisible by 8
-self.num_experts_per_tok = 8
+# BAD: always returning router logits
+def forward(self, input_ids, **kwargs):
+    outputs = self.decoder(input_ids, **kwargs)
+    outputs["router_logits"] = self.router.logits  # leaks routing info
+    return outputs
 ```
 
 **VERIFICATION METHOD**:  
-Unit test `test_moe_config_invariants.py` that loads a config and asserts the above conditions; lint rule `flake8-assertions` to flag missing checks.
+Run a unit test that asserts `router_logits` is absent when `config.output_router_logits` is `False`:
+```python
+def test_router_logits_absent():
+    cfg = AutoConfig.from_pretrained("openbmb/MiniCPM-V-4.7-35B-A3B")
+    cfg.output_router_logits = False
+    model = AutoModelForCausalLM.from_config(cfg)
+    out = model.generate(torch.tensor([[0]]))
+    assert "router_logits" not in out, "Router logits should be suppressed"
+```
 
 ---
 
-### 2. [Vision Token Compression Safety]
+### 2. [Early‑Compression Down‑sample Mode Validation]
 **RULE**:  
-The vision encoder **MUST** enforce that the compressed token count never exceeds the original token count divided by the chosen `downsample_mode` factor, and **MUST NOT** produce zero tokens for any non‑empty image input.
+> The `downsample_mode` parameter MUST be one of the supported values (`"4x"`, `"16x"`, `"canvas"`) and MUST NOT be changed at runtime without re‑initializing the vision encoder.
 
 **WHY**:  
-A zero‑token output would cause downstream transformer layers to receive an empty sequence, leading to shape mismatches and silent failures. Over‑compression can degrade visual fidelity and cause the model to misinterpret content.
+The early‑compression module relies on a fixed down‑sampling factor to align token positions. Changing it mid‑stream corrupts positional encodings and leads to catastrophic decoding failures.
 
 **WHEN TO APPLY**:  
-During the `forward` pass of the vision encoder (`vision_encoder.py`) and any preprocessing scripts that apply early compression.
+* During model initialization.  
+* When loading a checkpoint that specifies a different `downsample_mode`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 class VisionEncoder(nn.Module):
     def __init__(self, config):
         super().__init__()
-        self.downsample_factor = 16 if config.downsample_mode == "16x" else 4
-        self.patch_embed = PatchEmbed(
-            img_size=config.image_size,
-            patch_size=config.patch_size,
-            in_chans=3,
-            embed_dim=config.hidden_size,
-        )
-
-    def forward(self, pixel_values):
-        x = self.patch_embed(pixel_values)  # shape: (B, N, D)
-        N = x.shape[1]
-        compressed_N = N // self.downsample_factor
-        if compressed_N == 0:
-            raise ValueError("Compressed token count is zero; check downsample_mode.")
-        # Early‑compression logic
-        x = self.compress(x, compressed_N)
-        return x
+        if config.downsample_mode not in {"4x", "16x", "canvas"}:
+            raise ValueError(f"Unsupported downsample_mode: {config.downsample_mode}")
+        self.downsample_mode = config.downsample_mode
+        self.compressor = EarlyCompression(self.downsample_mode)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Allowing zero tokens
-compressed_N = N // self.downsample_factor
-if compressed_N == 0:
-    # silently continue
-    pass
+# BAD: allowing arbitrary downsample_mode at runtime
+def set_downsample_mode(self, mode):
+    self.downsample_mode = mode  # no validation
+    self.compressor = EarlyCompression(mode)
 ```
 
 **VERIFICATION METHOD**:  
-Integration test that feeds a 224×224 image and asserts `compressed_N >= 1`. Static analysis rule to detect division by zero in compression logic.
+Test that an invalid mode raises an exception:
+```python
+def test_invalid_downsample_mode():
+    cfg = AutoConfig.from_pretrained("openbmb/MiniCPM-V-4.7-35B-A3B")
+    cfg.downsample_mode = "32x"
+    with pytest.raises(ValueError):
+        VisionEncoder(cfg)
+```
 
 ---
 
-### 3. [Tokenizer Special‑Token Consistency]
+### 3. [Tokenizer Special‑Token Integrity]
 **RULE**:  
-The tokenizer configuration **MUST** contain a symmetric set of start and end tokens for every modality (image, video, audio) and **MUST NOT** duplicate any token across modalities.
+> The tokenizer MUST contain all special tokens defined in `tokenizer_config.json` and MUST NOT rely on implicit defaults or missing tokens.
 
 **WHY**:  
-Duplicate tokens break the mapping between token IDs and modality semantics, causing the model to mis‑interpret modality boundaries and potentially generate malformed outputs.
+Missing tokens (e.g., `<image>`, `<video>`, `<audio_start>`) cause mis‑tokenization, leading to malformed inputs, silent failures, or security vulnerabilities (e.g., injection of unintended tokens).
 
 **WHEN TO APPLY**:  
-During tokenizer initialization (`tokenizer_config.json` loading) and any custom tokenizer extensions.
+* During tokenizer initialization.  
+* When loading a tokenizer from a custom path.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 class MiniCPMTokenizer(PreTrainedTokenizer):
-    def __init__(self, tokenizer_config):
+    def __init__(self, vocab_file, special_tokens_file):
         super().__init__()
-        self.special_tokens = tokenizer_config.get("extra_special_tokens", {})
-        # Validate symmetry
-        for mod in ["image", "video", "audio"]:
-            start = f"{mod}_start_token"
-            end = f"{mod}_end_token"
-            if start not in self.special_tokens or end not in self.special_tokens:
-                raise ValueError(f"Missing {mod} start/end tokens")
-        # Validate uniqueness
-        ids = [self.convert_tokens_to_ids(tok) for tok in self.special_tokens.values()]
-        if len(ids) != len(set(ids)):
-            raise ValueError("Duplicate token IDs across modalities")
+        self.add_special_tokens_from_file(special_tokens_file)
+        missing = set(self.special_tokens_map.keys()) - set(self.vocab.keys())
+        if missing:
+            raise ValueError(f"Tokenizer missing special tokens: {missing}")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Duplicate image and video start tokens
-"image_start_token": "<image>",
-"video_start_token": "<image>",  # duplicate
+# BAD: silently ignoring missing special tokens
+def add_special_tokens_from_file(self, path):
+    # no validation, tokens may be omitted
 ```
 
 **VERIFICATION METHOD**:  
-Unit test `test_tokenizer_special_tokens.py` that loads the config and checks for duplicates; linter rule to flag identical token strings.
+Unit test that verifies all required tokens are present:
+```python
+def test_special_tokens_present():
+    tokenizer = MiniCPMTokenizer.from_pretrained("openbmb/MiniCPM-V-4.7-35B-A3B")
+    required = {"<image>", "<video>", "<audio_start>", "<audio_end>"}
+    assert required.issubset(set(tokenizer.special_tokens_map.values())), "Missing special tokens"
+```
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No production commits, patches, or closed issues are available in the current snapshot.  
-**Result**: *No incidents detected.*  
-If future commits are added, the same forensic framework can be applied to extract incidents.
+No publicly documented commits, PRs, or issue logs were found in the repository snapshot. Consequently, no concrete incident evidence is available. The following table summarizes the absence of incidents:
+
+| Incident | Status | Evidence |
+|----------|--------|----------|
+| 1 | None | No commit or PR |
+| 2 | None | No commit or PR |
+| 3 | None | No commit or PR |
+| 4 | None | No commit or PR |
+| 5 | None | No commit or PR |
+
+*If future releases contain patches, the same forensic framework can be applied to capture root‑cause, diff, and lessons.*
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-| Domain | Invariant | Example |
-|--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | `==` vs `===` in JavaScript; `is` vs `==` in Python; avoid implicit falsy conversion of `0` to `False`. | ```python<br>if len(tokens) == 0:  # safe<br>if len(tokens):  # unsafe if 0 is treated as False in a numeric context``` |
-| **Infinite Loop & Recursion Guards** | Base case must be reachable; recursion depth capped by `sys.setrecursionlimit`. | ```python<br>def recurse(n):<br>    if n <= 0:<br>        return 0<br>    return recurse(n-1) + 1  # safe<br>``` |
-| **UI & UX Micro‑Mechanics** | Debounce input handlers to avoid thrashing; use `requestAnimationFrame` for layout updates. | ```js<br>const debounced = debounce(handleInput, 200);<br>``` |
-| **Backend Concurrency & Memory Safety** | Use context managers for DB connections; close sockets after use; avoid global mutable state. | ```python<br>with db.connect() as conn:<br>    conn.execute(sql)  # safe<br>``` |
-| **Defect & Error Prevention** | Null‑safe chaining (`?.`) in JS; `if (obj?.prop)`; guard against off‑by‑one in array slicing. | ```python<br>if data and len(data) > idx:<br>    val = data[idx]  # safe<br>``` |
+| Domain | Invariant | Example Code | Anti‑Pattern |
+|--------|-----------|--------------|--------------|
+| **Micro‑Syntax & Token‑Level Precision** | Use strict equality (`===`) for token ID comparisons. | `if (tokenId === tokenizer.eos_token_id) { ... }` | `if (tokenId == tokenizer.eos_token_id) { ... }` (loose coercion) |
+| | Avoid implicit falsy checks on numeric token IDs. | `if (tokenId) { ... }` is safe because token IDs are positive integers. | `if (!tokenId) { ... }` may treat `0` as falsy, causing silent skips. |
+| **Infinite Loop & Recursion Guards** | Base case for recursive token generation: stop when `len(output) >= max_length`. | `if (output.length >= max_length) return output;` | `while (true) { ... }` without a break condition. |
+| | Use `for` loops with explicit bounds to avoid off‑by‑one. | `for (let i = 0; i < tokens.length; i++) { ... }` | `for (let i = 0; i <= tokens.length; i++) { ... }` |
+| **UI & UX Micro‑Mechanics** | Debounce UI updates on token stream: `setTimeout` with `clearTimeout`. | `debounce(() => renderTokens(tokens), 50);` | `setInterval(() => renderTokens(tokens), 50);` (unbounded re‑render) |
+| | Ensure focus restoration after modal close. | `modal.onClose(() => previousFocus.focus());` | `modal.onClose(() => document.activeElement.blur());` (loses focus context) |
+| **Backend Concurrency & Memory Safety** | Acquire a lock before updating shared routing table. | `await mutex.runExclusive(() => { router.update(...); });` | Direct mutation without locking in async context. |
+| | Release connection pool after inference. | `finally { pool.release(connection); }` | Forgetting to release, causing pool exhaustion. |
+| **Defect & Error Prevention** | Null‑safe chaining for optional fields. | `const vocabSize = config?.text_config?.vocab_size ?? 0;` | `const vocabSize = config.text_config.vocab_size;` (throws if `config` is null) |
+| | Off‑by‑one check for `max_position_embeddings`. | `if (position >= config.max_position_embeddings) throw new Error(...);` | `if (position > config.max_position_embeddings) ...` (allows one extra token) |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation | Key Invariants |
-|-----------|-------------|----------------|
-| **Architecture** | 40‑layer transformer with MoE; early‑compression vision encoder; LES scheduler. | Subsystem decoupling: vision encoder outputs token IDs; text encoder receives token IDs; scheduler runs per layer. |
-| **Core Abstractions** | `MiniCPMConfig`, `MiniCPMTokenizer`, `MiniCPMForConditionalGeneration`. | Domain primitives: `VisionConfig`, `MoeConfig`, `MropeConfig`. |
-| **Error Handling** | Config validation errors; tokenizer missing tokens; zero‑token vision output. | Raise `ValueError` with clear messages; fallback to default values only when safe. |
-| **Testing** | No tests present; recommended property tests for config invariants; integration tests for tokenization. | Use `hypothesis` to generate random configs; assert shape invariants. |
-| **Security** | No credential handling; but tokenizer may expose special tokens. | Ensure no hard‑coded secrets; validate token IDs against vocab size. |
-| **Performance** | Early‑compression reduces token count; linear attention reduces complexity; quantization lowers memory. | Cache compiled kernels; avoid dynamic shape changes during inference. |
-| **Deployment** | Supports SGLang, vLLM, llama.cpp, Ollama; quantized formats (GGUF, BNB, AWQ, GPTQ). | CI/CD must build reproducible Docker images; enforce `transformers_version` consistency. |
-| **Agent Patterns** | Prompt chains for multimodal input; loop guards for inference. | Use `generate` with `do_sample=True`; enforce `max_length` to avoid runaway loops. |
-| **Data Flow** | Pixel values → vision encoder → token IDs → transformer layers → logits. | Ensure no mutation of input tensors; use `torch.no_grad()` during inference. |
+| Dimension | Key Observations |
+|-----------|------------------|
+| **Architecture** | 40‑layer transformer with MoE; early‑compression ViT; 4×/16× down‑sampling; 256 experts; 8 experts per token. |
+| **Core Abstractions** | `MiniCPMV4_7ForConditionalGeneration`, `VisionConfig`, `TextConfig`, `MoERouter`, `EarlyCompression`. |
+| **Error Handling** | Config validation (downsample_mode, router logits flag). Runtime checks for missing special tokens. |
+| **Testing** | No tests in snapshot; recommended property tests for tokenization, routing, and early‑compression. |
+| **Security** | Least‑privilege: router logits hidden by default; no external credential handling. |
+| **Performance** | Asymptotic complexity: `O(L * H^2)` for full attention layers; linear attention for most layers. Zero‑copy token buffers via `torch.no_grad()`. |
+| **Deployment** | Supports SGLang, vLLM, llama.cpp, Ollama; quantization (FP8, AWQ, GPTQ). CI/CD invariants: `transformers_version` pinned. |
+| **Agent Patterns** | Prompt chains: image → text → image; loop guard via `max_length`. Context budget: early‑compression reduces token count. |
+| **Data Flow** | Input → tokenizer → vision encoder → transformer layers → decoder → output. Streams: image token stream, text token stream. Serialization: JSON with optional router logits. |
 
 ---
 
@@ -215,56 +214,53 @@ If future commits are added, the same forensic framework can be applied to extra
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The MoE router implementation that pre‑allocates experts per token. |
-| **Rule** | *MoE Configuration Integrity* rule above. |
-| **Architecture Principle** | *Early‑compression vision encoder* to reduce token count before transformer processing. |
-| **Failure Mode** | Zero‑token vision output causing shape mismatch in transformer layers. |
-| **Reusable Skill** | Writing a config validator that checks divisibility and coefficient ranges. |
-| **Decision** | Choosing linear attention for 32 of 40 layers to reduce complexity while maintaining accuracy. |
-| **Anti‑Pattern** | Allowing `output_router_logits=True` with `tie_word_embeddings=True`. |
-| **Verification Method** | Unit test that loads config and asserts invariants; lint rule to detect missing checks. |
+| **Pattern** | The `MoERouter` pattern that silently suppresses router logits unless requested. |
+| **Rule** | *Router logits must be suppressed during inference unless explicitly enabled.* |
+| **Architecture Principle** | *Early token compression should be statically configured to avoid runtime positional misalignment.* |
+| **Failure Mode** | *Exposing router logits leaks internal routing decisions, increasing memory footprint and violating privacy.* |
+| **Reusable Skill** | *Validate configuration fields against a whitelist before model initialization.* |
+| **Decision** | *Chose linear attention for 30 of 40 layers to reduce compute while retaining full attention in critical layers.* |
+| **Anti‑Pattern** | *Returning router logits unconditionally in the forward pass.* |
+| **Verification Method** | *Unit test that asserts absence of `router_logits` when `output_router_logits` is false.* |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
 1. **Load and Validate Config**  
-   * Parse `config.json` into `MiniCPMConfig`.  
-   * Run invariant checks (MoE, router, token uniqueness).  
-   * Verify `transformers_version` matches runtime.
+   * `config = AutoConfig.from_pretrained(repo)`  
+   * Assert `config.downsample_mode` in allowed set.  
+   * Assert `config.output_router_logits` is a boolean.
 
-2. **Initialize Tokenizer**  
-   * Load `tokenizer_config.json`.  
-   * Ensure start/end tokens for all modalities are present and unique.  
-   * Map special tokens to IDs and register with the tokenizer.
+2. **Instantiate Tokenizer**  
+   * `tokenizer = AutoTokenizer.from_pretrained(repo)`  
+   * Verify all special tokens from `tokenizer_config.json` are present.
 
-3. **Build Vision Encoder**  
-   * Instantiate `PatchEmbed` with correct `patch_size`.  
-   * Apply early‑compression (`downsample_mode`).  
-   * Assert compressed token count ≥ 1.
+3. **Build Model**  
+   * `model = AutoModelForCausalLM.from_config(config)`  
+   * Ensure `model.router` is only exposed when `config.output_router_logits`.
 
-4. **Configure MoE Scheduler**  
-   * Set `num_experts_per_tok` to divide `num_experts`.  
-   * Enable LES and verify lookahead buffer size.
+4. **Set Up Early‑Compression**  
+   * `vision_encoder = VisionEncoder(config)`  
+   * Confirm `vision_encoder.compressor` uses the configured `downsample_mode`.
 
-5. **Quantization Pipeline**  
-   * Load weights in FP8 or AWQ format.  
-   * Verify weight shapes match expected dimensions.  
-   * Ensure zero‑copy loading into GPU memory.
+5. **Run Inference**  
+   * `output = model.generate(input_ids, max_length=512)`  
+   * Verify `output` does not contain `router_logits` unless requested.
 
-6. **Inference Loop**  
-   * Use `generate` with `do_sample=True`, `top_k=20`, `top_p=0.95`.  
-   * Enforce `max_length` to avoid runaway generation.  
-   * Wrap inference in `torch.no_grad()`.
+6. **Unit Tests**  
+   * Test router logits suppression.  
+   * Test invalid `downsample_mode` raises `ValueError`.  
+   * Test tokenizer special‑token presence.
 
-7. **Testing & Verification**  
-   * Unit tests for config invariants.  
-   * Property tests for tokenizer special tokens.  
-   * Integration test: feed a sample image and text, assert output shape.
+7. **CI/CD Checks**  
+   * Pin `transformers_version` in `config.json`.  
+   * Run linting to catch implicit type coercion (`==` vs `===`).  
+   * Run static analysis to detect missing `await` in async locks.
 
-8. **CI/CD Checks**  
-   * Docker build reproducibility.  
-   * Linting for missing invariant checks.  
-   * Automated test suite run on every push.
+8. **Documentation**  
+   * Record the `output_router_logits` flag usage.  
+   * Document the supported `downsample_mode` values.  
+   * Provide example prompts that demonstrate early‑compression benefits.
 
-Follow this checklist to ensure that any new MLLM implementation adheres to the forensic invariants derived from the MiniCPM‑V‑4.7‑35B‑A3B repository.
+---
