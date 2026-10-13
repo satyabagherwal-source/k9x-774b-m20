@@ -1073,3 +1073,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv6zpv1e` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-13T18:04:12.886Z |
 | `learn-github-tickernelz-opencode-mem-mv707j1j` | `https://github.com/tickernelz/opencode-mem` | `a2072d75` | Multi-dimensional audit evidence | 2026-10-13T18:17:57.254Z |
 | `learn-huggingface-hf-jialinyyzz-humanizer-mv70jd7b` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-13T18:27:09.456Z |
+| `learn-huggingface-hf-autotrust-jev-27b-vl-mv70nbai` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-13T18:30:13.626Z |

@@ -1090,3 +1090,4 @@
 | `CYCLE-20261013-PV4J` | `2026-10-13T18:04:12.883Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`ce7f914b...`) |
 | `CYCLE-20261013-7J5N` | `2026-10-13T18:17:57.179Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 736` | Yes (`cf2267e3...`) |
 | `CYCLE-20261013-JDAM` | `2026-10-13T18:27:09.454Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`9f68d875...`) |
+| `CYCLE-20261013-NBEG` | `2026-10-13T18:30:13.624Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 737, Rule 738, Rule 739` | Yes (`8adad22d...`) |

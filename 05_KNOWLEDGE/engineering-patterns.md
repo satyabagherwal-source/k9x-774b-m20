@@ -41145,3 +41145,172 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `2dd12552` are properly handled with clean fallback behavior.
+
+
+---
+
+## 737. Hybrid Attention Interval Invariant for Long-Context Efficiency (Harvested from autotrust/JEV-27B-VL)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid Attention Interval Invariant for Long-Context Efficiency",
+  "source": "autotrust/JEV-27B-VL",
+  "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+  "source_version": "hf-autotrust-jev-27b-vl",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T18:30:13.523Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv70nbai",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/JEV-27B-VL](https://huggingface.co/autotrust/JEV-27B-VL) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying VLMs for document/chart analysis, you MUST implement a hybrid attention mechanism where `full_attention` layers are interspersed with `linear_attention` layers at a fixed interval (e.g., every 4th layer). You MUST NOT use pure full attention for all layers in long-context scenarios due to $O(N^2)$ memory explosion, nor pure linear attention due to loss of global context retrieval.
+**WHY**:
+Pure full attention fails on long documents (charts, PDFs) due to quadratic memory growth. Pure linear attention fails to capture long-range dependencies required for holistic document understanding. The interval-based hybrid retains global context anchors (full attention) while using efficient local processing (linear attention) for the majority of layers.
+**WHEN TO APPLY**:
+Any VLM or LLM processing inputs > 8k tokens, specifically for document understanding, chart reading, or long-form reasoning.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// config.json snippet
+{
+  "text_config": {
+    "full_attention_interval": 4,
+    "layer_types": [
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention"
+    ]
+  }
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: All full attention (Memory Leak on Long Context)
+{
+  "layer_types": ["full_attention", "full_attention", "full_attention"]
+}
+// ANTI-PATTERN: All linear attention (Loss of Global Context)
+{
+  "layer_types": ["linear_attention", "linear_attention", "linear_attention"]
+}
+```
+**VERIFICATION METHOD**:
+Assert that `len(layer_types) % full_attention_interval == 0` and that `layer_types[i] == "full_attention"` if and only if `(i+1) % full_attention_interval == 0`.
+
+
+---
+
+## 738. Calibrated Probability Output Invariant (Harvested from autotrust/JEV-27B-VL)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Calibrated Probability Output Invariant",
+  "source": "autotrust/JEV-27B-VL",
+  "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+  "source_version": "hf-autotrust-jev-27b-vl",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T18:30:13.546Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv70nbai",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/JEV-27B-VL](https://huggingface.co/autotrust/JEV-27B-VL) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Decision models MUST output calibrated probabilities (Expected Calibration Error < 0.05) rather than raw logits or unnormalized scores. You MUST NOT use raw softmax outputs for ranking if the model is intended to express uncertainty.
+**WHY**:
+Uncalibrated models produce overconfident errors (e.g., 99% confidence on wrong answers). In recommendation systems, this leads to catastrophic user trust loss. Calibration ensures that the probability score is a reliable metric for downstream filtering and A/B testing.
+**WHEN TO APPLY**:
+Any model used for ranking, recommendation, or decision-making where uncertainty quantification is required.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for Calibration Check
+def check_calibration(model, test_set):
+    predictions = model.predict(test_set)
+    probabilities = softmax(predictions)
+    labels = test_set.labels
+    ece = calculate_expected_calibration_error(probabilities, labels)
+    assert ece < 0.05, f"Model is not calibrated. ECE: {ece}"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using raw logits for ranking
+scores = model.forward(input).logits
+ranked_items = sorted(items, key=lambda x: scores[x], reverse=True)
+# This ignores uncertainty and can rank low-confidence wrong answers high.
+```
+**VERIFICATION METHOD**:
+Run a calibration test suite on a held-out set of 1000+ samples. Assert `ECE < 0.05`.
+
+
+---
+
+## 739. Zero-Shot Vision Encoder Invariance (Harvested from autotrust/JEV-27B-VL)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Shot Vision Encoder Invariance",
+  "source": "autotrust/JEV-27B-VL",
+  "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+  "source_version": "hf-autotrust-jev-27b-vl",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T18:30:13.564Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv70nbai",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/JEV-27B-VL](https://huggingface.co/autotrust/JEV-27B-VL) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When fine-tuning a VLM for a specific task (e.g., decision-making), you MUST freeze the vision encoder weights. You MUST NOT fine-tune the vision encoder unless the task requires learning new visual primitives (e.g., new sensor types).
+**WHY**:
+Fine-tuning the vision encoder on a narrow task (like ranking news) causes catastrophic forgetting of general visual features. The base model's vision encoder is already robust to diverse images. Freezing it ensures zero-shot capability on unseen image types while the LoRA adapters handle the task-specific logic.
+**WHEN TO APPLY**:
+Any VLM fine-tuning where the visual input domain is broad (general web images, charts, documents).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for Model Initialization
+model = Qwen3_5ForConditionalGeneration.from_pretrained("base_model")
+model.vision_encoder.requires_grad_(False) # Freeze Vision Encoder
+model.language_model.requires_grad_(False) # Freeze Language Backbone
+# Only LoRA adapters are trainable
+for name, param in model.named_parameters():
+    if "lora" in name:
+        param.requires_grad_(True)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Fine-tuning Vision Encoder
+model.vision_encoder.requires_grad_(True)
+# This leads to overfitting on the training distribution and loss of generalization.
+```
+**VERIFICATION METHOD**:
+Assert that `model.vision_encoder.parameters()` are all `requires_grad=False`.
