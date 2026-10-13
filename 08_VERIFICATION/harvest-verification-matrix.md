@@ -1109,3 +1109,4 @@
 | `CYCLE-20261013-IN7V` | `2026-10-13T19:22:34.891Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`6736f1ed...`) |
 | `CYCLE-20261013-MJIQ` | `2026-10-13T19:25:36.722Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`1288c3e9...`) |
 | `CYCLE-20261013-QGZ7` | `2026-10-13T19:28:40.051Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`810caec0...`) |
+| `CYCLE-20261013-UFS0` | `2026-10-13T19:31:45.120Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`fb3a4068...`) |
