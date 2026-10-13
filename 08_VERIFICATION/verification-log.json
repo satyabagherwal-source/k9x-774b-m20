@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-CAOU",
-    "timestamp": "2026-10-11T20:38:17.118Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
-    "contentHash": "37806320bcfd877a832e4502ffead7395873eef4af9397ca3c4a970fa042f0af",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-FPLR",
     "timestamp": "2026-10-11T20:40:56.415Z",
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "hexgrad/Kokoro-82M",
     "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv5x2o4x",
     "contentHash": "44aee37c81aa967d23482de75ac5e02214881901de553ec8bd9bc856901db23d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-6IHW",
+    "timestamp": "2026-10-13T00:05:24.644Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv5x6if0",
+    "contentHash": "6fee0780e7e949e7328aead8fc431768a17365c2044aecc4c543a68971b47113",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
