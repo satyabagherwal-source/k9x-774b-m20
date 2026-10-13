@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T06:50:30.249Z",
-  "total_cycles_completed": 859,
-  "total_learnings_persisted": 859,
+  "last_updated": "2026-10-13T06:53:29.406Z",
+  "total_cycles_completed": 860,
+  "total_learnings_persisted": 860,
   "total_rules_promoted": 408,
   "history": [
-    {
-      "timestamp": "2026-10-12T20:23:38.776Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv5p9bi6",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T20:27:23.898Z",
       "repository": "Qwen/Qwen3.8-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T06:50:30.249Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv6bngqx",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T06:53:29.406Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6brb0d",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
