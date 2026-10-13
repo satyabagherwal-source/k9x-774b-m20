@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:48:58.525Z",
+  "last_updated": "2026-10-13T17:52:10.204Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1574,15 +1574,15 @@
       "repository": "Bingsu/adetailer",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-bingsu-adetailer-mv6id4ii",
-      "content_hash": "05097d7d4fd8a759f9892b2cf349ff8a6da6f6ef8612003fad39cf220ed107a4",
-      "verified_at": "2026-10-13T09:58:25.142Z",
+      "learning_id": "learn-huggingface-hf-bingsu-adetailer-mv6zaddu",
+      "content_hash": "e40d0ba2b1d76c17fdd5c2456cdd35221dc301e7a04e001c50f873ed7b4ccd2f",
+      "verified_at": "2026-10-13T17:52:10.204Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T09:58:25.142Z"
+      "last_updated": "2026-10-13T17:52:10.204Z"
     },
     "lilylilith/QI_2.1_AnyAngle": {
       "repository": "lilylilith/QI_2.1_AnyAngle",

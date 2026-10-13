@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-F7R1",
-    "timestamp": "2026-10-12T13:00:19.837Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv59f7pg",
-    "contentHash": "7aec75648fec68b6efcc59a0af88be0955d1050c6e0027da036c950a9553fa01",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-KWST",
     "timestamp": "2026-10-12T13:04:45.581Z",
     "repository": "convaiinnovations/laya",
@@ -7492,6 +7477,21 @@
     "contentHash": "dc8dc18885ef2fce984e2f45474a58a9e6ddb92ba5bcdddecb874e08188353c0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-ADHZ",
+    "timestamp": "2026-10-13T17:52:10.199Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv6zaddu",
+    "contentHash": "e40d0ba2b1d76c17fdd5c2456cdd35221dc301e7a04e001c50f873ed7b4ccd2f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
