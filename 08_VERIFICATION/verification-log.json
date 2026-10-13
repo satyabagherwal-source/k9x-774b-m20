@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-X996",
-    "timestamp": "2026-10-12T17:26:18.138Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv5ix968",
-    "contentHash": "79e443cf84a2dfc84a9f9991e6543b81e53df879a5999708079462e1e39934db",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-1P7K",
     "timestamp": "2026-10-12T17:29:45.440Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv7aeyhm",
     "contentHash": "ec0ab5e0e49dcba4954b5d110282ec1f6176852d2a2fa27881196e8b7c870b8c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-IQDH",
+    "timestamp": "2026-10-13T23:06:35.909Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv7aiqb9",
+    "contentHash": "93f99b9f7b5cb3d67e9105794cdf4e739c614325c1de5427db562a49ff026272",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
