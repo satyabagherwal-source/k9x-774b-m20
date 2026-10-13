@@ -17557,5 +17557,20 @@
     "qualityScore": 1982,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-13T14:40:51.661Z"
+  },
+  {
+    "name": "opencode-mem",
+    "fullName": "tickernelz/opencode-mem",
+    "url": "https://github.com/tickernelz/opencode-mem",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "OpenCode plugin that gives coding agents persistent memory using local vector database",
+    "stars": 1736,
+    "forks": 175,
+    "openIssues": 6,
+    "language": "TypeScript",
+    "qualityScore": 1083,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-13T18:09:02.594Z"
   }
 ]
