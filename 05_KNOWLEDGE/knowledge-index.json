@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T19:51:03.176Z",
-  "total_verified_learnings": 5012,
+  "last_updated": "2026-10-13T19:54:09.254Z",
+  "total_verified_learnings": 5013,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -122963,6 +122963,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T19:51:03.175Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-qwen-qwen-image-2-1-mv73n8vj": {
+      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-mv73n8vj",
+      "source": "Qwen/Qwen-Image-2.1",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "slug": "hf-qwen-qwen-image-2.1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
+      "source_version": "hf-qwen-qwen-image-2.1",
+      "content_hash": "a04e2bbef65ec71a21ebe7fac32a02a66bde80e2127b00132d643c21a3870790",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T19:54:09.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

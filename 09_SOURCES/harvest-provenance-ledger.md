@@ -1099,3 +1099,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv73ak06` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-13T19:44:17.213Z |
 | `learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv73fgj9` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-13T19:48:05.963Z |
 | `learn-huggingface-hf-xingchen-agi-teleocr-mv73j9aj` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-13T19:51:03.237Z |
+| `learn-huggingface-hf-qwen-qwen-image-2-1-mv73n8vj` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-13T19:54:09.313Z |
