@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-5MYU",
-    "timestamp": "2026-10-12T02:37:01.446Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6",
-    "contentHash": "aa76c071cfcd6dfc073bc54c03676801f94e7f63ac41ee7b837fd21b54df8eae",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-9EM7",
     "timestamp": "2026-10-12T02:39:57.247Z",
     "repository": "meta-llama/Meta-Llama-3-8B",
@@ -7490,6 +7475,21 @@
     "repository": "google-t5/t5-small",
     "learningId": "learn-huggingface-hf-google-t5-t5-small-mv69zz5n",
     "contentHash": "51a69f5391f55c9c3272d2c038bb949a72b3b5300aee8fb97fd091e9032d09de",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-3OZK",
+    "timestamp": "2026-10-13T06:07:08.096Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv6a3oxq",
+    "contentHash": "1c181100496091fcdfe071d1c85cdb33a8b40e6fa83d861f53513f705c496f7a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -795,9 +795,9 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "e59685d31a135f5530095104ebe4d73bf8631416f4a2b77559d8092e7bf7eb4e",
-    "lastHarvestedAt": "2026-10-12T23:41:00.279Z",
-    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv5wb4i8"
+    "contentHash": "1c181100496091fcdfe071d1c85cdb33a8b40e6fa83d861f53513f705c496f7a",
+    "lastHarvestedAt": "2026-10-13T06:07:08.098Z",
+    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv6a3oxq"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",

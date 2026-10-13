@@ -903,3 +903,4 @@
 | `CYCLE-20261013-S1OZ` | `2026-10-13T05:58:04.691Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`0198e8ad...`) |
 | `CYCLE-20261013-WBXI` | `2026-10-13T06:01:24.582Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`75d14d37...`) |
 | `CYCLE-20261013-ZZ7H` | `2026-10-13T06:04:14.717Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`51a69f53...`) |
+| `CYCLE-20261013-3OZK` | `2026-10-13T06:07:08.096Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`1c181100...`) |
