@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-KU58",
-    "timestamp": "2026-10-12T05:08:48.668Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4sku2v",
-    "contentHash": "9b0ef2e9c9eb833a00efb64b6933d5916fa3312f473d0c9005122d37012ce2ad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-OTGW",
     "timestamp": "2026-10-12T05:11:54.416Z",
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "7b42f86aadc1486a274e483691f708b751741c9c1b525100ded01af1ad7bb500",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-OHNU",
+    "timestamp": "2026-10-13T09:39:15.690Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv6hohkw",
+    "contentHash": "620071f47a167fbd7dcaa174756123ba405c72faed32ad4f079b315e263c3056",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
