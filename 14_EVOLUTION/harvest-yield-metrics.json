@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T19:31:45.124Z",
-  "total_cycles_completed": 1051,
-  "total_learnings_persisted": 1051,
-  "total_rules_promoted": 500,
+  "last_updated": "2026-10-13T19:34:58.331Z",
+  "total_cycles_completed": 1052,
+  "total_learnings_persisted": 1052,
+  "total_rules_promoted": 503,
   "history": [
-    {
-      "timestamp": "2026-10-13T06:28:43.857Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv6avgpu",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T06:32:02.022Z",
       "repository": "openai/whisper-large-v3",
@@ -1403,6 +1396,13 @@
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv72ufoq",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:34:58.331Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

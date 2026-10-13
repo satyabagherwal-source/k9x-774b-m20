@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T15:02:39.179Z",
+  "last_updated": "2026-10-13T19:34:58.330Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1256,6 +1256,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv6t8ddi"
+    },
+    {
+      "id": "CD-YKUY",
+      "directive_title": "Unique Special Token ID Allocation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-10-13",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0"
+    },
+    {
+      "id": "CD-YKUY",
+      "directive_title": "Consistent Dtype Across the Model Graph",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-10-13",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0"
+    },
+    {
+      "id": "CD-YKUY",
+      "directive_title": "Patch Size Divisibility for Vision Encoder",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-10-13",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0"
     }
   ]
 }
