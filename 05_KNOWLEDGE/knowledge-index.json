@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-12T23:59:26.432Z",
-  "total_verified_learnings": 4680,
+  "last_updated": "2026-10-13T00:02:25.383Z",
+  "total_verified_learnings": 4681,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -114164,6 +114164,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-12T23:59:26.432Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-hexgrad-kokoro-82m-mv5x2o4x": {
+      "learning_id": "learn-huggingface-hf-hexgrad-kokoro-82m-mv5x2o4x",
+      "source": "hexgrad/Kokoro-82M",
+      "repository": "hexgrad/Kokoro-82M",
+      "slug": "hf-hexgrad-kokoro-82m",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/hexgrad/Kokoro-82M",
+      "source_version": "hf-hexgrad-kokoro-82m",
+      "content_hash": "44aee37c81aa967d23482de75ac5e02214881901de553ec8bd9bc856901db23d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T00:02:25.383Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
