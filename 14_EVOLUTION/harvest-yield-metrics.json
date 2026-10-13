@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:33:18.302Z",
-  "total_cycles_completed": 906,
-  "total_learnings_persisted": 906,
+  "last_updated": "2026-10-13T10:36:17.544Z",
+  "total_cycles_completed": 907,
+  "total_learnings_persisted": 907,
   "total_rules_promoted": 431,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:03:27.926Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv5uyukm",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T23:07:25.856Z",
       "repository": "canberkkkkkk/ema-lightning",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T10:33:18.302Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv6jlzlu",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T10:36:17.544Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv6jptw6",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
