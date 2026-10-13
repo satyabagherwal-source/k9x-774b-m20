@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-QWV8",
-    "timestamp": "2026-10-12T11:45:26.756Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv56qwsj",
-    "contentHash": "4b52ed909fe701849f873f28cc777a0822f365e52e1d76930a06bbde2611bd4f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-UR1E",
     "timestamp": "2026-10-12T11:48:25.826Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7490,6 +7475,21 @@
     "repository": "Aleph-Alpha/Kolibri-1",
     "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6wfiiq",
     "contentHash": "da86ab58371e66698c7c4c0ab37f50caf73e47d6f00adaf0afe278ab9a557f8b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-JVHP",
+    "timestamp": "2026-10-13T16:35:34.573Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv6wjve5",
+    "contentHash": "dfabc363bd9a2c5dd757b45eeece799506953878afdbe458eaea34332bdc9fe9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

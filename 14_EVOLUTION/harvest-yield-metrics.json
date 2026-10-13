@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T16:32:11.250Z",
-  "total_cycles_completed": 1000,
-  "total_learnings_persisted": 1000,
+  "last_updated": "2026-10-13T16:35:34.577Z",
+  "total_cycles_completed": 1001,
+  "total_learnings_persisted": 1001,
   "total_rules_promoted": 486,
   "history": [
-    {
-      "timestamp": "2026-10-13T03:51:20.810Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv6592f2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T03:54:17.462Z",
       "repository": "Lightricks/LTX-2.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T16:32:11.250Z",
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6wfiiq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:35:34.577Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv6wjve5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
