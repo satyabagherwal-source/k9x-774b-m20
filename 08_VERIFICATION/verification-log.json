@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-8NH5",
-    "timestamp": "2026-10-12T03:07:21.689Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney",
-    "contentHash": "fa8b726de6dc78872c63e4a00a5d69aa2fa31cfd71c1563a710d9086b3bbcb53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-C8JO",
     "timestamp": "2026-10-12T03:10:08.964Z",
     "repository": "openai/gpt-oss-120b",
@@ -7490,6 +7475,21 @@
     "repository": "black-forest-labs/FLUX.1-schnell",
     "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv6b3qsi",
     "contentHash": "e312d68978342bb093180d4f2723e50ad8d3e873893ef23914c05af6ea6aa0d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-7K5G",
+    "timestamp": "2026-10-13T06:38:08.068Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv6b7k2b",
+    "contentHash": "f432140fb1d0da9eb783091d7600c51bed7fbd405dadd7d8895950a9cffa95d8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
