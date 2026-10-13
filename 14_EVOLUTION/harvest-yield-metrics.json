@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:17:45.714Z",
-  "total_cycles_completed": 949,
-  "total_learnings_persisted": 949,
+  "last_updated": "2026-10-13T13:20:39.953Z",
+  "total_cycles_completed": 950,
+  "total_learnings_persisted": 950,
   "total_rules_promoted": 462,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:15:49.006Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv5zp1y8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:18:52.426Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T13:17:45.714Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv6phhby",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:20:39.953Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv6pl7t8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

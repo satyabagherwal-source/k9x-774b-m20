@@ -991,3 +991,4 @@ Every entry in this ledger must capture:
 | `learn-github-trailhq-trail-code-mv6ovg9f` | `https://github.com/trailhq/Trail-Code` | `fe30ead3` | Multi-dimensional audit evidence | 2026-10-13T13:00:37.921Z |
 | `learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv6pdkuf` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-13T13:14:43.640Z |
 | `learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv6phhby` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-13T13:17:45.713Z |
+| `learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv6pl7t8` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-13T13:20:39.952Z |
