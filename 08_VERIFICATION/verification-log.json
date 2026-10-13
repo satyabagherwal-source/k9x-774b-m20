@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-M10R",
-    "timestamp": "2026-10-12T08:25:41.547Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4zm0yc",
-    "contentHash": "1077255c1f8ad3e85dc7ccb3ef858b77bc5e2035cfbe46f2ce5edbe2cfc5b5b5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-STQT",
     "timestamp": "2026-10-12T08:30:58.709Z",
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/Qwen-Image-2.1",
     "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv6oenyn",
     "contentHash": "fcb3e2de36d3c22de662cbe4137ac534df35fa3651cb6ed1c78a7aa8ea404aed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-INJW",
+    "timestamp": "2026-10-13T12:50:40.700Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv6oingw",
+    "contentHash": "43a575c73ac8c552e7a703759d2b0472d8f0afbd677bfabde8562448905f75a7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
