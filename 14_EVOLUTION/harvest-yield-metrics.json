@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:43:29.290Z",
-  "total_cycles_completed": 957,
-  "total_learnings_persisted": 957,
+  "last_updated": "2026-10-13T13:46:39.060Z",
+  "total_cycles_completed": 958,
+  "total_learnings_persisted": 958,
   "total_rules_promoted": 464,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:39:54.662Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv60k1fq",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:43:09.435Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T13:43:29.290Z",
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-hf-psrben-visionhope-mv6qekdo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:46:39.060Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv6qimse",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

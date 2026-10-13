@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-KKKU",
-    "timestamp": "2026-10-12T09:20:32.814Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv51kkh5",
-    "contentHash": "871ee8afb04614372c9a89b44ee376ea101060c04845949e9a9632f1abc57ede",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-OCRM",
     "timestamp": "2026-10-12T09:23:29.314Z",
     "repository": "Cloudflare/clef",
@@ -7490,6 +7475,21 @@
     "repository": "PSRben/VisionHOPE",
     "learningId": "learn-huggingface-hf-psrben-visionhope-mv6qekdo",
     "contentHash": "5e51a06b48cd410b162cdd6d391315a8cb1f8ad0ff359bfdc4bbbe45876182e6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-IMVK",
+    "timestamp": "2026-10-13T13:46:39.056Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv6qimse",
+    "contentHash": "eabf96c6fbfa675dfefedd867cfb9bc6a8cdf45152367638f1178ff5d95d3f0f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

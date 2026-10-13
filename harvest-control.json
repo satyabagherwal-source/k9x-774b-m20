@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-13T13:43:28.609Z",
+  "lastUpdated": "2026-10-13T13:46:38.136Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T13:43:31.807Z",
-        "lastHarvestedAt": "2026-10-13T13:43:31.807Z",
-        "totalHarvested": 3090,
+        "lastActiveAt": "2026-10-13T13:46:41.582Z",
+        "lastHarvestedAt": "2026-10-13T13:46:41.582Z",
+        "totalHarvested": 3091,
         "lastError": null
       },
       {
@@ -295,10 +295,10 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791902609258,
-      "resetAt": "2026-10-13T14:43:29.258Z",
-      "trippedAt": "2026-10-13T13:43:14.258Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aui-components%20language%3Atypescript%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=1)",
+      "resetEpoch": 1791902798585,
+      "resetAt": "2026-10-13T14:46:38.585Z",
+      "trippedAt": "2026-10-13T13:46:23.585Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Adesign-system%20language%3Atypescript%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=4)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
