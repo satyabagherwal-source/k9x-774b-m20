@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-13T18:12:03.637Z",
+  "lastUpdated": "2026-10-13T18:17:46.128Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -268,9 +268,9 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T18:04:21.762Z",
-        "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
-        "totalHarvested": 1097,
+        "lastActiveAt": "2026-10-13T18:17:59.784Z",
+        "lastHarvestedAt": "2026-10-13T18:17:59.784Z",
+        "totalHarvested": 1098,
         "lastError": null
       }
     ],
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791918737035,
-      "resetAt": "2026-10-13T19:12:17.035Z",
-      "trippedAt": "2026-10-13T18:12:02.035Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Areact-components%20language%3Atypescript%20stars%3A%3E2500%20sort%3Astars&per_page=15&page=2)",
+      "status": "HEALTHY",
+      "remaining": 4974,
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-13T18:17:03.906Z",
+      "reason": null,
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {

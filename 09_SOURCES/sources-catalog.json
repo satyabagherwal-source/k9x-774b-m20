@@ -1438,5 +1438,15 @@
     "contentHash": "24bfd9ae257d9c76196707d2994c223f9eacf8dfcefc8542498e09a11ffc9ffc",
     "lastHarvestedAt": "2026-10-13T14:51:24.484Z",
     "learningId": "learn-github-maxmiksa-autonomous-company-mv6stwsa"
+  },
+  "tickernelz-opencode-mem": {
+    "repository": "tickernelz/opencode-mem",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tickernelz/opencode-mem",
+    "sourceVersion": "a2072d75",
+    "license": "MIT",
+    "contentHash": "cf2267e3fe0e904a62ad3c95aa3ad370f130a8bd45d03bc64cab1b29aae8cc42",
+    "lastHarvestedAt": "2026-10-13T18:17:57.254Z",
+    "learningId": "learn-github-tickernelz-opencode-mem-mv707j1j"
   }
 }

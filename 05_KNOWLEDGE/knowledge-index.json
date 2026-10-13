@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T18:04:12.827Z",
-  "total_verified_learnings": 4984,
+  "last_updated": "2026-10-13T18:17:57.131Z",
+  "total_verified_learnings": 4985,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -122221,6 +122221,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T18:04:12.827Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-tickernelz-opencode-mem-mv707j1j": {
+      "learning_id": "learn-github-tickernelz-opencode-mem-mv707j1j",
+      "source": "tickernelz/opencode-mem",
+      "repository": "tickernelz/opencode-mem",
+      "slug": "tickernelz-opencode-mem",
+      "platform": "github",
+      "source_url": "https://github.com/tickernelz/opencode-mem",
+      "source_version": "a2072d75",
+      "content_hash": "cf2267e3fe0e904a62ad3c95aa3ad370f130a8bd45d03bc64cab1b29aae8cc42",
+      "dossier_path": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 736,
+          "title": "re-raise SIGINT/SIGTERM after plugin cleanup (#409)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T18:17:57.131Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
