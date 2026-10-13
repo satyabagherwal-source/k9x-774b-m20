@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T00:23:29.883Z",
-  "total_verified_learnings": 4688,
+  "last_updated": "2026-10-13T00:26:47.943Z",
+  "total_verified_learnings": 4689,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -114367,6 +114367,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T00:23:29.883Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openai-gpt-oss-120b-mv5xy0no": {
+      "learning_id": "learn-huggingface-hf-openai-gpt-oss-120b-mv5xy0no",
+      "source": "openai/gpt-oss-120b",
+      "repository": "openai/gpt-oss-120b",
+      "slug": "hf-openai-gpt-oss-120b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openai/gpt-oss-120b",
+      "source_version": "hf-openai-gpt-oss-120b",
+      "content_hash": "5acd79679299e8420d5b2ae03fdea2c3a01ba43f5c17bb9011a7dfc8082472a7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T00:26:47.943Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

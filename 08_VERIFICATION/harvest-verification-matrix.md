@@ -792,3 +792,4 @@
 | `CYCLE-20261013-M5BZ` | `2026-10-13T00:17:34.079Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`31e64072...`) |
 | `CYCLE-20261013-PXI8` | `2026-10-13T00:20:30.560Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 604, Rule 605` | Yes (`286b9aa9...`) |
 | `CYCLE-20261013-TRW9` | `2026-10-13T00:23:29.913Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`140c484a...`) |
+| `CYCLE-20261013-Y0QJ` | `2026-10-13T00:26:47.995Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`5acd7967...`) |
