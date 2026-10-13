@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:06:06.747Z",
+  "last_updated": "2026-10-13T12:12:52.811Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2017,6 +2017,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-13T11:18:46.737Z"
+    },
+    "ccfos/nightingale": {
+      "repository": "ccfos/nightingale",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-ccfos-nightingale-mv6n61ix",
+      "content_hash": "dd46b355fb975626e372af5eb1d2b6c6a2313d250aba90372fa28f57612e3831",
+      "verified_at": "2026-10-13T12:12:52.811Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-13T12:12:52.811Z"
     }
   }
 }

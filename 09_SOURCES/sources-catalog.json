@@ -1408,5 +1408,15 @@
     "contentHash": "f98f1d50be9ec448e85e47c0549761a0ac73eb516b047ba302ca3934b1102772",
     "lastHarvestedAt": "2026-10-13T11:18:46.735Z",
     "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv6l8gvf"
+  },
+  "ccfos-nightingale": {
+    "repository": "ccfos/nightingale",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ccfos/nightingale",
+    "sourceVersion": "97fe9297",
+    "license": "Apache-2.0",
+    "contentHash": "dd46b355fb975626e372af5eb1d2b6c6a2313d250aba90372fa28f57612e3831",
+    "lastHarvestedAt": "2026-10-13T12:12:52.808Z",
+    "learningId": "learn-github-ccfos-nightingale-mv6n61ix"
   }
 }

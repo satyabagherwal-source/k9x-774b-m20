@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:06:06.685Z",
-  "total_verified_learnings": 4890,
+  "last_updated": "2026-10-13T12:12:52.760Z",
+  "total_verified_learnings": 4891,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -119689,6 +119689,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T12:06:06.685Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-ccfos-nightingale-mv6n61ix": {
+      "learning_id": "learn-github-ccfos-nightingale-mv6n61ix",
+      "source": "ccfos/nightingale",
+      "repository": "ccfos/nightingale",
+      "slug": "ccfos-nightingale",
+      "platform": "github",
+      "source_url": "https://github.com/ccfos/nightingale",
+      "source_version": "97fe9297",
+      "content_hash": "dd46b355fb975626e372af5eb1d2b6c6a2313d250aba90372fa28f57612e3831",
+      "dossier_path": "07_PROJECT_LEARNING/ccfos-nightingale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ccfos-nightingale-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 689,
+          "title": "mute events of unknown idents when rule is limited to its busi group (#3432)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T12:12:52.760Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
