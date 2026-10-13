@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-PTYU",
-    "timestamp": "2026-10-12T03:48:42.870Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv4pptwo",
-    "contentHash": "110954da03e60add19e174fb324ac157684fce41e9d287f352a41129291f4ba3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-TVAH",
     "timestamp": "2026-10-12T03:51:51.209Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "f8a6168ce56a8f408db7bc03e8bfe16ef48789090e0981f969f3046c265900ae",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-NWQB",
+    "timestamp": "2026-10-13T07:46:50.099Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6dnwn0",
+    "contentHash": "219f411d3664891471676da5512c7f0d17b61be95825166a1f6bed362cce72c1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
