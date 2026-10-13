@@ -1096,3 +1096,4 @@
 | `CYCLE-20261013-ZKCJ` | `2026-10-13T18:39:45.091Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`9d725b9f...`) |
 | `CYCLE-20261013-3MFL` | `2026-10-13T18:42:54.417Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`ce2d8523...`) |
 | `CYCLE-20261013-8X11` | `2026-10-13T18:47:01.429Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`6bf26a38...`) |
+| `CYCLE-20261013-COLW` | `2026-10-13T18:49:57.140Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`64f26d9e...`) |

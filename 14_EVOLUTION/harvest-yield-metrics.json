@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T18:47:01.434Z",
-  "total_cycles_completed": 1037,
-  "total_learnings_persisted": 1037,
+  "last_updated": "2026-10-13T18:49:57.143Z",
+  "total_cycles_completed": 1038,
+  "total_learnings_persisted": 1038,
   "total_rules_promoted": 497,
   "history": [
-    {
-      "timestamp": "2026-10-13T05:46:09.516Z",
-      "repository": "Cloudflare/clef-flash",
-      "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv69cps1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T05:48:57.820Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T18:47:01.434Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv718wxy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:49:57.143Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv71cok1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
