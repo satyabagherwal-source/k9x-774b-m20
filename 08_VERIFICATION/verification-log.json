@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-019P",
-    "timestamp": "2026-10-12T12:48:31.597Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv590170",
-    "contentHash": "44a451759eb62f6dcfb251348843576670bf29a331f2b11cd772c2e03edee57d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-3S0E",
     "timestamp": "2026-10-12T12:51:26.222Z",
     "repository": "mudler/locate-anything.cpp-gguf",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-8B",
     "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv6yq7i4",
     "contentHash": "1e89caa00aa8bef7166a621e3a511a51c7695bd687bff164622bb55e01f55f39",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-UAGL",
+    "timestamp": "2026-10-13T17:39:39.765Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv6yuaen",
+    "contentHash": "d0b5884fefee93aa3bd1bfe0574b95e071ed7b0f712ab24ccb285264f7c3624a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

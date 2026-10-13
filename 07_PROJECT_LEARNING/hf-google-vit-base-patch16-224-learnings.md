@@ -3,8 +3,8 @@
 > **Source Version**: `hf-google-vi`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-13T09:44:16.224Z  
-> **Learning ID**: `learn-huggingface-hf-google-vit-base-patch16-224-mv6huxk0`  
+> **Timestamp**: 2026-10-13T17:39:39.695Z  
+> **Learning ID**: `learn-huggingface-hf-google-vit-base-patch16-224-mv6yuaen`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google/vit-base-patch16-224](https://huggingface.co/google/vit-base-patch16-224))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-13T09:44:15.472Z  
+> **Harvest Timestamp**: 2026-10-13T17:39:38.835Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 12741077 downloads | 1024 likes
+- **Stars / Engagement**: 12741077 downloads | 1037 likes
 
 ---
 
