@@ -3900,3 +3900,7 @@ https://github.com/Ebony-Vinyl/dsh-our-free-model
 # --- Automatically Discovered by AI Scout Engine [2026-10-13T03:29:53.010Z] ---
 # [HUGGINGFACE-AI-MODELS] autotrust/JEV-35B (4190 score) - Verified Hugging Face Model: autotrust/JEV-35B (219 likes, 6262 downloads)
 https://huggingface.co/autotrust/JEV-35B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T03:38:56.124Z] ---
+# [HUGGINGFACE-AI-MODELS] openbmb/MiniCPM-V-4.7-35B-A3B (1746 score) - Verified Hugging Face Model: openbmb/MiniCPM-V-4.7-35B-A3B (158 likes, 166 downl
+https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B

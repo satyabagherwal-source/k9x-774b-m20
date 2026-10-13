@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-VKYR",
-    "timestamp": "2026-10-12T00:09:14.211Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7",
-    "contentHash": "8d185c29d8a6b32eedd9fdcd199978a3b85745d29135839d9713ba3e4f1bc204",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-ZPTC",
     "timestamp": "2026-10-12T00:12:27.120Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
     "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv64poxt",
     "contentHash": "c6606e48a2c807af1a700d2b4376b343d383294ca965abb1662f7826c45b6412",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-TGV4",
+    "timestamp": "2026-10-13T03:39:12.928Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv64tgqh",
+    "contentHash": "8a8d4b1bfe48876c49196eecbd1086482691d2529cf2089e4b2b37daf0520d80",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
