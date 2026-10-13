@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T00:38:46.142Z",
-  "total_cycles_completed": 738,
-  "total_learnings_persisted": 738,
-  "total_rules_promoted": 354,
+  "last_updated": "2026-10-13T00:42:09.224Z",
+  "total_cycles_completed": 739,
+  "total_learnings_persisted": 739,
+  "total_rules_promoted": 357,
   "history": [
-    {
-      "timestamp": "2026-10-12T13:44:22.752Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv5azuy9",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T13:54:15.592Z",
       "repository": "paperclipai/paperclip",
@@ -1403,6 +1396,13 @@
       "repository": "openai/gpt-oss-20b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv5ydes5",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T00:42:09.224Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv5yhrg5",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
