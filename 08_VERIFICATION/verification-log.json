@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-IAUP",
-    "timestamp": "2026-10-12T08:22:47.665Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4zias1",
-    "contentHash": "32283f9733be5f246725e4da8c94dce6a73e9ba9cf01eddf82b663f24f37066a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-M10R",
     "timestamp": "2026-10-12T08:25:41.547Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
     "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv6oaq4r",
     "contentHash": "0df27d0d140fd4ad8468df53cb0147d5a32f93084440b01efd9d2117412be7c1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-EO1K",
+    "timestamp": "2026-10-13T12:47:34.712Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv6oenyn",
+    "contentHash": "fcb3e2de36d3c22de662cbe4137ac534df35fa3651cb6ed1c78a7aa8ea404aed",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
