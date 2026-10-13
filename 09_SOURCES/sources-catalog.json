@@ -1458,5 +1458,15 @@
     "contentHash": "13de9f4208db95d3b5bc34db6051806f43921720c1f6680ba614f302934753a5",
     "lastHarvestedAt": "2026-10-13T18:53:00.121Z",
     "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi"
+  },
+  "leonxlnx-taste-skill": {
+    "repository": "Leonxlnx/taste-skill",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Leonxlnx/taste-skill",
+    "sourceVersion": "6dbbb03c",
+    "license": "MIT",
+    "contentHash": "e7cdfc3ae196f3ee8dbda3c1904f6ffa742083947fc6250ae442675d7f33b369",
+    "lastHarvestedAt": "2026-10-13T21:27:18.456Z",
+    "learningId": "learn-github-leonxlnx-taste-skill-mv76z1gt"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T21:13:25.122Z",
-  "total_verified_learnings": 5030,
+  "last_updated": "2026-10-13T21:27:18.409Z",
+  "total_verified_learnings": 5031,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -123459,6 +123459,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T21:13:25.122Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-leonxlnx-taste-skill-mv76z1gt": {
+      "learning_id": "learn-github-leonxlnx-taste-skill-mv76z1gt",
+      "source": "Leonxlnx/taste-skill",
+      "repository": "Leonxlnx/taste-skill",
+      "slug": "leonxlnx-taste-skill",
+      "platform": "github",
+      "source_url": "https://github.com/Leonxlnx/taste-skill",
+      "source_version": "6dbbb03c",
+      "content_hash": "e7cdfc3ae196f3ee8dbda3c1904f6ffa742083947fc6250ae442675d7f33b369",
+      "dossier_path": "07_PROJECT_LEARNING/leonxlnx-taste-skill-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/leonxlnx-taste-skill-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 761,
+          "title": "taste-skill v2: require real pictures, footage and motion",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T21:27:18.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

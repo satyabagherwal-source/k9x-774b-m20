@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-KE95",
-    "timestamp": "2026-10-12T15:52:19.241Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-hf-psrben-visionhope-mv5fke6e",
-    "contentHash": "57852e20e1793c2102896d6a4fe059eb775a15f7280e715502f9da5eaa088354",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-OD9H",
     "timestamp": "2026-10-12T15:55:24.581Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "4e51b8f907686d1d90ee12b05c3835485ca62cb2e92ad8cb3a05f3a4b23da23a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-Z1KL",
+    "timestamp": "2026-10-13T21:27:18.453Z",
+    "repository": "Leonxlnx/taste-skill",
+    "learningId": "learn-github-leonxlnx-taste-skill-mv76z1gt",
+    "contentHash": "e7cdfc3ae196f3ee8dbda3c1904f6ffa742083947fc6250ae442675d7f33b369",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

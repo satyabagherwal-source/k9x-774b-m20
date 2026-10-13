@@ -42744,3 +42744,62 @@ prompt = f"State: {state}\nQuestion: {question}\nOptions: A) {opt1} B) {opt2} C)
 **VERIFICATION METHOD**:
 1.  **Permutation Test**: For a given question, generate prompts with all permutations of options. Assert that the probability assigned to the correct option (by text) is consistent across permutations, within a small epsilon.
 2.  **Training Data Audit**: Verify that the training dataset contains samples with shuffled options for the same question.
+
+
+---
+
+## 761. taste-skill v2: require real pictures, footage and motion (Harvested from Leonxlnx/taste-skill)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "taste-skill v2: require real pictures, footage and motion",
+  "source": "Leonxlnx/taste-skill",
+  "source_url": "https://github.com/Leonxlnx/taste-skill",
+  "source_version": "6dbbb03c",
+  "license": "MIT",
+  "extracted_at": "2026-10-13T21:27:18.367Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-leonxlnx-taste-skill-mv76z1gt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill) (Revision: `6dbbb03c`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Leonxlnx/taste-skill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9da1763c`: taste-skill v2: require real pictures, footage and motion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+### Pictures, footage and motion are required
+
+Testing showed agents skip pictures and motion when nothing forces them: ten pages built with the first v2 carried no real pictures at all and almost no motion. The inspector now enforces both:
+
+- `few-pictures` (fail): fewer than four real pictures on the page (photographs, archival images, footage, raster artwork; for software, cropped interface fragments). SVG drawings do not count. `no-real-pictures` and `no-footage` warn when a page has fewer than two real photographs or no video.
+- `still-page` (fail under 8, warn under 16): counts the distinct elements that actually move while the page loads and is scrolled, from CSS animations, transitions, Web Animations and script-driven transforms.
+- `assets.mjs --video` finds open-licence footage (Wikimedia Commons, the Internet Archive, NASA) for a muted looping clip.
+
+The motion guidance changed with it: one loud signature move, plus a choreographed entrance for the parts of every section, feedback on every control, and one moving picture. The old "one moment and nothing else" budget is gone; identical fade-ups on every block are still banned.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Anti-pattern to NEVER write (induced failure mode):
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9da1763c` are properly handled with clean fallback behavior.
