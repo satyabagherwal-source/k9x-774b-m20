@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-83S5",
-    "timestamp": "2026-10-12T05:26:54.245Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4t83po",
-    "contentHash": "0d49ba5405aca4470bcc8a445bdd623d3a0b1f873f0ce082b86b3c3232bcbd52",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-BVKO",
     "timestamp": "2026-10-12T05:29:50.232Z",
     "repository": "jialinyyzz/humanizer",
@@ -7490,6 +7475,21 @@
     "repository": "Bingsu/adetailer",
     "learningId": "learn-huggingface-hf-bingsu-adetailer-mv6id4ii",
     "contentHash": "05097d7d4fd8a759f9892b2cf349ff8a6da6f6ef8612003fad39cf220ed107a4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-H8W8",
+    "timestamp": "2026-10-13T10:01:37.352Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ih8t4",
+    "contentHash": "1c46ffe7f6f91e63b5f2e626c188f46efa16a1ed90c131b6b9cff092a534d4fb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
