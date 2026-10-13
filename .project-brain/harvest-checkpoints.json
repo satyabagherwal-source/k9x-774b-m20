@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:06:29.614Z",
+  "last_updated": "2026-10-13T17:09:25.512Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1406,15 +1406,15 @@
       "repository": "FacebookAI/xlm-roberta-base",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv6gtcqp",
-      "content_hash": "3be550f1cafb861987d3dfa8b2196298df65488c94d236e94efcd6ca32d97af1",
-      "verified_at": "2026-10-13T09:15:03.088Z",
+      "learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv6xreim",
+      "content_hash": "0b3b7ccb9fbc2d97d2aaaffba9f1cd9275ef54960f196dac9006f776a29132a3",
+      "verified_at": "2026-10-13T17:09:25.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T09:15:03.088Z"
+      "last_updated": "2026-10-13T17:09:25.512Z"
     },
     "openai-community/gpt2": {
       "repository": "openai-community/gpt2",

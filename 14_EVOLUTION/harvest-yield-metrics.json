@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:06:29.613Z",
-  "total_cycles_completed": 1011,
-  "total_learnings_persisted": 1011,
+  "last_updated": "2026-10-13T17:09:25.511Z",
+  "total_cycles_completed": 1012,
+  "total_learnings_persisted": 1012,
   "total_rules_promoted": 488,
   "history": [
-    {
-      "timestamp": "2026-10-13T04:26:00.874Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv66hner",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T04:29:23.786Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T17:06:29.613Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6xnmrd",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:09:25.511Z",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv6xreim",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

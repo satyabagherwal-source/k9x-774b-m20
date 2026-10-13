@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-09TK",
-    "timestamp": "2026-10-12T12:20:43.064Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv5809rt",
-    "contentHash": "d5ee83c593e51cbf6c0d30e7160da39b079b4fc8e3228fa1f3f6fe5e77a7f482",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-46E1",
     "timestamp": "2026-10-12T12:23:45.241Z",
     "repository": "Qwen/Qwen3-8B",
@@ -7490,6 +7475,21 @@
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6xnmrd",
     "contentHash": "81bdf7ba7375584fe52b735733cf2c2e1a05f64fbc08d77d7119aeee5a226a3c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-REKK",
+    "timestamp": "2026-10-13T17:09:25.508Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv6xreim",
+    "contentHash": "0b3b7ccb9fbc2d97d2aaaffba9f1cd9275ef54960f196dac9006f776a29132a3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
