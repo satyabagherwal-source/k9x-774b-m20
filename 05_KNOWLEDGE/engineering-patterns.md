@@ -39461,3 +39461,207 @@ head_cfg.hidden_size = 4096  # mismatched
 Integration test that loads both configs and verifies equality of `hidden_size` and `num_attention_heads`.
 
 ---
+
+
+---
+
+## 714. JSON Config Integrity Rule (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "JSON Config Integrity Rule",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T14:16:27.104Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv6rkyiu",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** store configuration files (`config.json`, `generation_config.json`, `tokenizer_config.json`) as raw JSON objects, **NOT** as JSON‑encoded strings.
+
+**WHY**:  
+Wrapping JSON in a string forces an extra parsing step and can silently corrupt data (e.g., escape sequences, missing keys). It also breaks tooling that expects a plain JSON file, leading to runtime errors or silent mis‑configurations.
+
+**WHEN TO APPLY**:  
+All Hugging Face model repos that expose configuration files for loading via `AutoConfig`, `AutoModel`, or `AutoTokenizer`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "architectures": ["Qwen3_5ForConditionalGeneration"],
+  "dtype": "bfloat16",
+  "image_token_id": 248056,
+  "model_type": "qwen3_5",
+  "text_config": {
+    "attention_bias": false,
+    "attention_dropout": 0.0,
+    "attn_output_gate": true,
+    "bos_token_id": null,
+    "dtype": "bfloat16",
+    "eos_token_id": 248044,
+    "full_attention_interval": 4,
+    "head_dim": 256,
+    "hidden_act": "silu",
+    "hidden_size": 4096,
+    "initializer_range": 0.02,
+    "intermediate_size": 12288,
+    "layer_types": [
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "linear_attention",
+      "full_attention"
+    ],
+    "linear_conv_kernel_dim": 4,
+    "linear_key_head_dim": 128,
+    "linear_num_key_heads": 16,
+    "linear_num_value_heads": 32,
+    "linear_value_head_dim": 128,
+    "mamba_ssm_dtype": "float32",
+    "max_position_embeddings": 262144,
+    "mlp_only_layers": [],
+    "model_type": "qwen3_5_text",
+    "mtp_num_hidden_layers": 0,
+    "mtp_use_dedicated_embeddings": false,
+    "num_attention_heads": 16,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 4,
+    "pad_token_id": null,
+    "partial_rotary_factor": 0.25,
+    "rms_norm_eps": 1e-06,
+    "rope_parameters": {
+      "mrope_interleaved": true,
+      "mrope_section": [11, 11, 10],
+      "partial_rotary_factor": 0.25,
+      "rope_theta": 10000000,
+      "rope_type": "default"
+    },
+    "tie_word_embeddings": false,
+    "use_cache": true,
+    "vocab_size": 248320
+  },
+  "tie_word_embeddings": false,
+  "transformers_version": "5.10.2",
+  "video_token_id": 248057,
+  "vision_config": {
+    "deepstack_visual_indexes": [],
+    "depth": 27,
+    "dtype": "bfloat16",
+    "hidden_act": "gelu_pytorch_tanh",
+    "hidden_size": 1152,
+    "in_channels": 3,
+    "initializer_range": 0.02,
+    "intermediate_size": 4304,
+    "model_type": "qwen3_5_vision",
+    "num_heads": 16,
+    "num_position_embeddings": 2304,
+    "out_hidden_size": 4096
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+"{\"architectures\": [\"Qwen3_5ForConditionalGeneration\"], \"dtype\": \"bfloat16\"}"
+```
+
+**VERIFICATION METHOD**:  
+Run `python -m json.tool config.json` and expect no `JSONDecodeError`. Add a CI lint step: `jq . config.json > /dev/null`.
+
+
+---
+
+## 715. Max Position Embedding Guard Rule (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Max Position Embedding Guard Rule",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T14:16:27.126Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv6rkyiu",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** verify that the model’s `max_position_embeddings` is **greater than or equal to** the longest expected input sequence length.
+
+**WHY**:  
+If the input exceeds the configured maximum, the model will truncate or raise an error, producing incorrect predictions.
+
+**WHEN TO APPLY**:  
+During model loading and before batching inputs for inference.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+max_pos = model.config.max_position_embeddings
+max_input_len = max(len(seq) for seq in batch_input_ids)
+assert max_input_len <= max_pos, f"Input length {max_input_len} exceeds max_position_embeddings {max_pos}"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: silently truncating without check
+input_ids = input_ids[:, :max_pos]
+```
+
+**VERIFICATION METHOD**:  
+Add a CI check that compares `max_position_embeddings` against a predefined threshold (e.g., 262144) and fails if the input length exceeds it.

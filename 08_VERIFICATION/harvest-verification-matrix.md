@@ -1025,3 +1025,4 @@
 | `CYCLE-20261013-969K` | `2026-10-13T14:07:17.240Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`dfe06d96...`) |
 | `CYCLE-20261013-D4W6` | `2026-10-13T14:10:22.086Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`d7a350f0...`) |
 | `CYCLE-20261013-H5KW` | `2026-10-13T14:13:29.600Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 712, Rule 713` | Yes (`d9b482ce...`) |
+| `CYCLE-20261013-KYLV` | `2026-10-13T14:16:27.187Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 714, Rule EXISTING, Rule 715` | Yes (`5f1ce524...`) |
