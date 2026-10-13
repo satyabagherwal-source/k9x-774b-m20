@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T02:50:08.480Z",
-  "total_verified_learnings": 4736,
+  "last_updated": "2026-10-13T02:53:16.016Z",
+  "total_verified_learnings": 4737,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -115573,6 +115573,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T02:50:08.480Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-baai-bge-small-en-v1-5-mv636djn": {
+      "learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv636djn",
+      "source": "BAAI/bge-small-en-v1.5",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "slug": "hf-baai-bge-small-en-v1.5",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+      "source_version": "hf-baai-bge-small-en-v1.5",
+      "content_hash": "c03b52231c5c9120afe843f26d08712b1ba522b2b0b2df4fa04d2806a7c44378",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 616,
+          "title": "The Semantic Vectorization Invariant: Normalization & Distance Metric Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 617,
+          "title": "The Tokenizer-Model Contract: Truncation & Padding Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T02:53:16.016Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -840,3 +840,4 @@
 | `CYCLE-20261013-UB5U` | `2026-10-13T02:43:52.962Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`da1dcc2a...`) |
 | `CYCLE-20261013-YLMQ` | `2026-10-13T02:47:13.154Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`d09d0954...`) |
 | `CYCLE-20261013-2CY4` | `2026-10-13T02:50:08.524Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`5e86d396...`) |
+| `CYCLE-20261013-6DNF` | `2026-10-13T02:53:16.059Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 616, Rule 617` | Yes (`c03b5223...`) |
