@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-FGJW",
-    "timestamp": "2026-10-11T22:04:43.532Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv4dfghb",
-    "contentHash": "4dc88b7ebeb2ec526e3b3f513b8c419bd8132a0799765906bca2f7743456e1e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-J80M",
     "timestamp": "2026-10-11T22:07:39.094Z",
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv608te6",
     "contentHash": "38a3e79e57de1a13739618da2aa85c60452adfdeffc22ec21c001c57c0dfdbb7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-CJ6D",
+    "timestamp": "2026-10-13T01:34:04.309Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv60cj41",
+    "contentHash": "53dc84cb1ef9d4076e282073299f41d21ab6085d328b63b09a0f0665962fbc65",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
