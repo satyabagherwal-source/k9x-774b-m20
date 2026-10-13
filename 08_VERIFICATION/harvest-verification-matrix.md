@@ -1035,3 +1035,4 @@
 | `CYCLE-20261013-1JKA` | `2026-10-13T14:57:20.458Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`5f729b16...`) |
 | `CYCLE-20261013-8DHJ` | `2026-10-13T15:02:39.175Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 720` | Yes (`a4ddf0f5...`) |
 | `CYCLE-20261013-C7MA` | `2026-10-13T15:05:38.194Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`d978e6e3...`) |
+| `CYCLE-20261013-J76Y` | `2026-10-13T15:11:04.234Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`cd22fb32...`) |

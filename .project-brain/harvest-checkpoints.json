@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T15:05:38.199Z",
+  "last_updated": "2026-10-13T15:11:04.240Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -944,15 +944,15 @@
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv6ab704",
-      "content_hash": "2f20326cb01ecda4286a1c49ec3a6dfa127d3144fd831a181023077f1aac00f9",
-      "verified_at": "2026-10-13T06:12:58.106Z",
+      "learning_id": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv6tj73m",
+      "content_hash": "cd22fb32be523642796a0c4e7c586cbfe152c1560d080f74956c0eca64344576",
+      "verified_at": "2026-10-13T15:11:04.240Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T06:12:58.106Z"
+      "last_updated": "2026-10-13T15:11:04.240Z"
     },
     "amazon/chronos-2": {
       "repository": "amazon/chronos-2",

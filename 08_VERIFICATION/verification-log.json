@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-4LA8",
-    "timestamp": "2026-10-12T10:32:06.080Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv544l7i",
-    "contentHash": "98ce7799159b69b2f4fe5a03bd3d443e3aff928aac03186393bca92ab6da0fdb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-8UCF",
     "timestamp": "2026-10-12T10:35:24.447Z",
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv6tc7j6",
     "contentHash": "d978e6e33ea08d05315275483e7a9ef8afa3a2299150f922eae3dd43b3ab1ac7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-J76Y",
+    "timestamp": "2026-10-13T15:11:04.234Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv6tj73m",
+    "contentHash": "cd22fb32be523642796a0c4e7c586cbfe152c1560d080f74956c0eca64344576",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
