@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-BKAM",
-    "timestamp": "2026-10-12T18:05:25.246Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv5kbk7q",
-    "contentHash": "3a6067562e857810b3775658bbd1292c43c9910ec6732f8e6fcd35e9c28a5b85",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-FI4R",
     "timestamp": "2026-10-12T18:08:29.067Z",
     "repository": "Qwen/Qwen3-4B",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
     "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv7buw5m",
     "contentHash": "8a8dd43d6de663865c7c0e6054f0525ae3e735c41f032fab82cb68c350b2039d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-YS5E",
+    "timestamp": "2026-10-13T23:47:04.322Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv7bys3f",
+    "contentHash": "ca7a947c8f7667a043b21ce532cb89adcb74e07b53112afe1747572cb27c51b0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
