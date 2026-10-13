@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-GCLR",
-    "timestamp": "2026-10-12T13:29:12.399Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv5agcji",
-    "contentHash": "76de533fbd7aae2312dbf1e8758c9201de0905d2100528e6792ca5c247b98eb1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-KA88",
     "timestamp": "2026-10-12T13:32:15.944Z",
     "repository": "Qwen/Qwen3.8-27B",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GEV-26B-Decide",
     "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv70r4om",
     "contentHash": "186595e4b9f81e2f10b6a054c6ce86f6b93c897dcf5df47f85a0e588de6a78ae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-VJ91",
+    "timestamp": "2026-10-13T18:36:37.045Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv70vj5x",
+    "contentHash": "ac17467cf9c4a218dacf66f19795c52defcbd64120d2fd59bff338dc04609766",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

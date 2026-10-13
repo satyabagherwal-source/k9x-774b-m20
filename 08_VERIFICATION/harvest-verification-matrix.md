@@ -1092,3 +1092,4 @@
 | `CYCLE-20261013-JDAM` | `2026-10-13T18:27:09.454Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`9f68d875...`) |
 | `CYCLE-20261013-NBEG` | `2026-10-13T18:30:13.624Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 737, Rule 738, Rule 739` | Yes (`8adad22d...`) |
 | `CYCLE-20261013-R4RO` | `2026-10-13T18:33:11.652Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`186595e4...`) |
+| `CYCLE-20261013-VJ91` | `2026-10-13T18:36:37.045Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`ac17467c...`) |
