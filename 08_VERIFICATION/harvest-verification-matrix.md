@@ -1065,3 +1065,4 @@
 | `CYCLE-20261013-VOYX` | `2026-10-13T16:44:45.993Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`232871ea...`) |
 | `CYCLE-20261013-ZV2A` | `2026-10-13T16:48:00.514Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 729, Rule 730` | Yes (`11ac4d15...`) |
 | `CYCLE-20261013-3MXO` | `2026-10-13T16:50:56.604Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`00a47ea2...`) |
+| `CYCLE-20261013-7KPT` | `2026-10-13T16:54:00.353Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`f8493255...`) |

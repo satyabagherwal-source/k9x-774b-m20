@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T16:50:56.610Z",
-  "total_cycles_completed": 1006,
-  "total_learnings_persisted": 1006,
+  "last_updated": "2026-10-13T16:54:00.356Z",
+  "total_cycles_completed": 1007,
+  "total_learnings_persisted": 1007,
   "total_rules_promoted": 488,
   "history": [
-    {
-      "timestamp": "2026-10-13T04:10:41.218Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv65xxsi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T04:13:59.152Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T16:50:56.610Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv6x3mum",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:54:00.356Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv6x7kmp",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
