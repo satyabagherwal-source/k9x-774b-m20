@@ -1120,3 +1120,4 @@ Every entry in this ledger must capture:
 | `learn-github-leonxlnx-taste-skill-mv76z1gt` | `https://github.com/Leonxlnx/taste-skill` | `6dbbb03c` | Multi-dimensional audit evidence | 2026-10-13T21:27:18.456Z |
 | `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv779id8` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-13T21:35:26.957Z |
 | `learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv77dktm` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-13T21:38:36.763Z |
+| `learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv77hb8w` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-13T21:41:30.918Z |

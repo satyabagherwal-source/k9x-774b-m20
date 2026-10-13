@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T21:38:36.713Z",
-  "total_verified_learnings": 5033,
+  "last_updated": "2026-10-13T21:41:30.857Z",
+  "total_verified_learnings": 5034,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -123569,6 +123569,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T21:38:36.713Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv77hb8w": {
+      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv77hb8w",
+      "source": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "slug": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "content_hash": "4ddbf01f601b854c43f96fe6ede6d388a8e76e59a67c569745fddfdc151f9522",
+      "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T21:41:30.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-W4B7",
-    "timestamp": "2026-10-12T16:01:26.227Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-hf-facebook-sam3-mv5fw487",
-    "contentHash": "c47e8811d81d5438cb55c6d873e3c7f56483901623a2d9b7fb3220684f1a4d4f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-2ZL4",
     "timestamp": "2026-10-12T16:06:46.696Z",
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "1a927ce7189aa663b9f7991e3ae81f9923010bab13b6035ae82cb16359a2f60a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-HBC4",
+    "timestamp": "2026-10-13T21:41:30.916Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv77hb8w",
+    "contentHash": "4ddbf01f601b854c43f96fe6ede6d388a8e76e59a67c569745fddfdc151f9522",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
