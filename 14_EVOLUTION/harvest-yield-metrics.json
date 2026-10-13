@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T16:38:37.883Z",
-  "total_cycles_completed": 1002,
-  "total_learnings_persisted": 1002,
+  "last_updated": "2026-10-13T16:41:41.641Z",
+  "total_cycles_completed": 1003,
+  "total_learnings_persisted": 1003,
   "total_rules_promoted": 486,
   "history": [
-    {
-      "timestamp": "2026-10-13T03:57:32.209Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv65h104",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T04:00:25.312Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T16:38:37.883Z",
       "repository": "Qwen/Qwen3-4B",
       "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv6wnsuy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:41:41.641Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv6wrqmu",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
