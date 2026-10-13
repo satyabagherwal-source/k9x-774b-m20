@@ -1285,9 +1285,9 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceVersion": "hf-baai-bge-base-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "03eb31e2d7771937696dda79a1aeefd95f8caaef1e573c54af796623aa481142",
-    "lastHarvestedAt": "2026-10-13T09:52:20.110Z",
-    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6i5au8"
+    "contentHash": "3b33420e13fad106ce87cbdd8beb91e5f0b6c49a676d425f14600714e5aefae7",
+    "lastHarvestedAt": "2026-10-13T17:45:50.453Z",
+    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6z28e8"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",

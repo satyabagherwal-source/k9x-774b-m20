@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:42:47.226Z",
+  "last_updated": "2026-10-13T17:45:50.456Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1546,15 +1546,15 @@
       "repository": "BAAI/bge-base-en-v1.5",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6i5au8",
-      "content_hash": "03eb31e2d7771937696dda79a1aeefd95f8caaef1e573c54af796623aa481142",
-      "verified_at": "2026-10-13T09:52:20.113Z",
+      "learning_id": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6z28e8",
+      "content_hash": "3b33420e13fad106ce87cbdd8beb91e5f0b6c49a676d425f14600714e5aefae7",
+      "verified_at": "2026-10-13T17:45:50.456Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T09:52:20.113Z"
+      "last_updated": "2026-10-13T17:45:50.456Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",

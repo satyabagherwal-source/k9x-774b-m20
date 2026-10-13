@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:42:47.225Z",
-  "total_cycles_completed": 1022,
-  "total_learnings_persisted": 1022,
+  "last_updated": "2026-10-13T17:45:50.455Z",
+  "total_cycles_completed": 1023,
+  "total_learnings_persisted": 1023,
   "total_rules_promoted": 491,
   "history": [
-    {
-      "timestamp": "2026-10-13T04:59:58.265Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv67pbgg",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T05:03:09.761Z",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T17:42:47.225Z",
       "repository": "google/gemma-4-31B-it",
       "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv6yyb0h",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:45:50.455Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6z28e8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
