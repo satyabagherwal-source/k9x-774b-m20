@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-13T21:13:24.234Z",
+  "lastUpdated": "2026-10-13T21:16:28.018Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -216,12 +216,12 @@
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T21:13:27.704Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-13T21:31:38.479Z",
+        "lastActiveAt": "2026-10-13T21:16:38.420Z",
         "lastHarvestedAt": "2026-10-13T21:13:27.704Z",
         "totalHarvested": 3206,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Epsilon",
@@ -295,10 +295,10 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791929606046,
-      "resetAt": "2026-10-13T22:13:26.046Z",
-      "trippedAt": "2026-10-13T21:13:11.046Z",
-      "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Astorage-engine%20language%3Ac%2B%2B%20OR%20language%3Arust%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=1)",
+      "resetEpoch": 1791929801351,
+      "resetAt": "2026-10-13T22:16:41.351Z",
+      "trippedAt": "2026-10-13T21:16:26.351Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Atailwind%20topic%3Acomponents%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=2)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
