@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:07:58.659Z",
-  "total_cycles_completed": 898,
-  "total_learnings_persisted": 898,
-  "total_rules_promoted": 429,
+  "last_updated": "2026-10-13T10:11:09.672Z",
+  "total_cycles_completed": 899,
+  "total_learnings_persisted": 899,
+  "total_rules_promoted": 431,
   "history": [
-    {
-      "timestamp": "2026-10-12T22:26:27.600Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv5tn9cx",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T22:29:23.947Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1403,6 +1396,13 @@
       "repository": "zai-org/GLM-5.3",
       "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv6ipf1c",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T10:11:09.672Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv6itidh",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
