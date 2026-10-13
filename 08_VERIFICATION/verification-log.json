@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-TG0R",
-    "timestamp": "2026-10-12T04:47:30.651Z",
-    "repository": "Fei2411/DeepSeek-Bot",
-    "learningId": "learn-github-fei2411-deepseek-bot-mv4rtfyk",
-    "contentHash": "3d033e108b8b932f013f6401dd3cc9ea26e969f11599ff8b24a152f47e9ab32f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-94Y2",
     "timestamp": "2026-10-12T04:59:42.794Z",
     "repository": "Qwen/Qwen3-8B",
@@ -7490,6 +7475,21 @@
     "repository": "nomic-ai/nomic-embed-text-v1.5",
     "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv6h58ba",
     "contentHash": "af9c2c810f34a288dbfc4bd2071d87ebf76fd81dc8d4289565b41e72d7b0ba2d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-9BNW",
+    "timestamp": "2026-10-13T09:27:28.076Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6h9blz",
+    "contentHash": "9f20a6b442ec7de56766b500ec8d5b573be3eb802f585f2cbff9cf3f29eb12dd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

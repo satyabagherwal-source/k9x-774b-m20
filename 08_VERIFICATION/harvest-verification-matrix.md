@@ -944,3 +944,4 @@
 | `CYCLE-20261013-XBU1` | `2026-10-13T09:18:08.425Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`682ad6b4...`) |
 | `CYCLE-20261013-18B5` | `2026-10-13T09:21:10.481Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`9b34b544...`) |
 | `CYCLE-20261013-58E9` | `2026-10-13T09:24:17.217Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`af9c2c81...`) |
+| `CYCLE-20261013-9BNW` | `2026-10-13T09:27:28.076Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`9f20a6b4...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T09:24:17.221Z",
-  "total_cycles_completed": 885,
-  "total_learnings_persisted": 885,
+  "last_updated": "2026-10-13T09:27:28.079Z",
+  "total_cycles_completed": 886,
+  "total_learnings_persisted": 886,
   "total_rules_promoted": 427,
   "history": [
-    {
-      "timestamp": "2026-10-12T21:42:39.484Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv5s2xj0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T21:47:16.194Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T09:24:17.221Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv6h58ba",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T09:27:28.079Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6h9blz",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
