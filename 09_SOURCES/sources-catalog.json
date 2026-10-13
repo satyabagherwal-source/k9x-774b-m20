@@ -1125,9 +1125,9 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "0347e7d73c1f520869ab48fe8656738d6b00cdfbbbf5ca823272305a501573ef",
-    "lastHarvestedAt": "2026-10-12T18:26:46.101Z",
-    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv5l30j2"
+    "contentHash": "98e7e90b6db3155b45d51ca51b9fcef3689f5506aa3e95e81e627970aa915ea6",
+    "lastHarvestedAt": "2026-10-13T01:21:48.278Z",
+    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv5zwr6n"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
     "repository": "sentence-transformers/all-mpnet-base-v2",
