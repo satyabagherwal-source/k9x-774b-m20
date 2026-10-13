@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:18:07.452Z",
-  "total_cycles_completed": 901,
-  "total_learnings_persisted": 901,
+  "last_updated": "2026-10-13T10:21:27.225Z",
+  "total_cycles_completed": 902,
+  "total_learnings_persisted": 902,
   "total_rules_promoted": 431,
   "history": [
-    {
-      "timestamp": "2026-10-12T22:35:19.782Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv5tynzw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T22:42:23.013Z",
       "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T10:18:07.452Z",
       "repository": "autotrust/JEV-27B-VL",
       "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv6j2gs9",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T10:21:27.225Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv6j6qx2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
