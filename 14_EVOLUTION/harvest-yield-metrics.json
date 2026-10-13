@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T15:22:30.159Z",
-  "total_cycles_completed": 980,
-  "total_learnings_persisted": 980,
+  "last_updated": "2026-10-13T15:25:35.399Z",
+  "total_cycles_completed": 981,
+  "total_learnings_persisted": 981,
   "total_rules_promoted": 480,
   "history": [
-    {
-      "timestamp": "2026-10-13T02:50:08.527Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv632cvo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T02:53:16.063Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Meta-Llama-3-8B",
       "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv6txwbf",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T15:25:35.399Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv6u1vaq",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
