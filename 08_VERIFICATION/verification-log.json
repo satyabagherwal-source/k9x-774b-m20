@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-5R58",
-    "timestamp": "2026-10-12T08:13:02.252Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4z5r0u",
-    "contentHash": "2d35da11b50f020caddfe4879db8a7fd21e1c4b777fde336de2703c1fabdc74b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-9P24",
     "timestamp": "2026-10-12T08:16:06.172Z",
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv6nywz1",
     "contentHash": "c819b2ae35cfea2a9befcf3e269d489a7992c02407ae57547d8bde21fb75581c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-2Y84",
+    "timestamp": "2026-10-13T12:38:28.036Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv6o2y4v",
+    "contentHash": "d553ff5d9030d975a82e8f29969d2885821704cfe7e4c0f80cb18c825dfa2340",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
