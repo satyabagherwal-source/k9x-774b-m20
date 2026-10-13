@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-KYYF",
-    "timestamp": "2026-10-12T01:24:57.975Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs",
-    "contentHash": "843f34760817c23ed1c501cf981d94d4a1dd762d4a7bd8aededd1831d1c98448",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-ON6Z",
     "timestamp": "2026-10-12T01:27:49.355Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7490,6 +7475,21 @@
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv67hanj",
     "contentHash": "5cfad49aedff6704ca14899424de08a33c10a6916fba57d3f4433419cd9ffb36",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-L2I1",
+    "timestamp": "2026-10-13T04:56:39.913Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv67l2fo",
+    "contentHash": "c4dbe19321a7db5df7fe68c2899b7edeaecfbeab63e969b377f22edec9260258",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

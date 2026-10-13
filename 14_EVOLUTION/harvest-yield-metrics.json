@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T04:53:43.946Z",
-  "total_cycles_completed": 821,
-  "total_learnings_persisted": 821,
+  "last_updated": "2026-10-13T04:56:39.916Z",
+  "total_cycles_completed": 822,
+  "total_learnings_persisted": 822,
   "total_rules_promoted": 391,
   "history": [
-    {
-      "timestamp": "2026-10-12T18:14:22.480Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv5kn2rb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T18:17:27.115Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T04:53:43.946Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv67hanj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T04:56:39.916Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv67l2fo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
