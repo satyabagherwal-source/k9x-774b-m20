@@ -1017,3 +1017,4 @@ Every entry in this ledger must capture:
 | `learn-github-maxmiksa-autonomous-company-mv6stwsa` | `https://github.com/MaxMiksa/Autonomous-Company` | `c7c60dbd` | Multi-dimensional audit evidence | 2026-10-13T14:51:24.484Z |
 | `learn-huggingface-hf-google-t5-t5-small-mv6t1jig` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-13T14:57:20.460Z |
 | `learn-huggingface-hf-comfy-org-minimax-h3-mv6t8ddi` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-13T15:02:39.177Z |
+| `learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv6tc7j6` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-13T15:05:38.197Z |
