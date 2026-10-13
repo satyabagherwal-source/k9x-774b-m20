@@ -841,3 +841,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv64tgqh` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-13T03:39:12.931Z |
 | `learn-huggingface-hf-xingchen-agi-teleocr-mv64xjua` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-13T03:42:23.491Z |
 | `learn-huggingface-hf-qwen-qwen-image-2-1-mv651epb` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-13T03:45:23.480Z |
+| `learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv6556mi` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-13T03:48:19.639Z |

@@ -858,3 +858,4 @@
 | `CYCLE-20261013-TGV4` | `2026-10-13T03:39:12.928Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 623, Rule 624, Rule 625` | Yes (`8a8d4b1b...`) |
 | `CYCLE-20261013-XJWH` | `2026-10-13T03:42:23.489Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`c4b494da...`) |
 | `CYCLE-20261013-1ES5` | `2026-10-13T03:45:23.477Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`16042037...`) |
+| `CYCLE-20261013-56PH` | `2026-10-13T03:48:19.637Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`eee892f5...`) |
