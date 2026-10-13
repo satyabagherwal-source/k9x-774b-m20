@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T04:04:40.820Z",
-  "total_cycles_completed": 805,
-  "total_learnings_persisted": 805,
+  "last_updated": "2026-10-13T04:07:40.322Z",
+  "total_cycles_completed": 806,
+  "total_learnings_persisted": 806,
   "total_rules_promoted": 377,
   "history": [
-    {
-      "timestamp": "2026-10-12T17:26:18.142Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv5ix968",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T17:29:45.447Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -1403,6 +1396,13 @@
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv65q7o3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T04:07:40.322Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv65u279",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

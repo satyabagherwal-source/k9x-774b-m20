@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-UT3D",
-    "timestamp": "2026-10-12T00:36:37.705Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04",
-    "contentHash": "835ddb7f3b1942a7eff964657fd4d9a771f7beac1f27bdcd4b404c5a12715be5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-YD44",
     "timestamp": "2026-10-12T00:39:23.620Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7492,6 +7477,21 @@
     "contentHash": "9e309e6fcc8cf29d3c12fbf16af7933ec96b9d1c01cd9ae4fc21c34bdab54888",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-U2AM",
+    "timestamp": "2026-10-13T04:07:40.318Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv65u279",
+    "contentHash": "a8e978dbf31bb843695c068b4232267db59c6da1546f30aa4f9afb50920efdc7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
