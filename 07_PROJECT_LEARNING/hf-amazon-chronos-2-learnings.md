@@ -3,8 +3,8 @@
 > **Source Version**: `hf-amazon-ch`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T23:50:05.853Z  
-> **Learning ID**: `learn-huggingface-hf-amazon-chronos-2-mv5wmtjx`  
+> **Timestamp**: 2026-10-13T06:16:18.207Z  
+> **Learning ID**: `learn-huggingface-hf-amazon-chronos-2-mv6afhgf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/amazon/chronos-2](https://huggingface.co/amazon/chronos-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T23:50:05.190Z  
+> **Harvest Timestamp**: 2026-10-13T06:16:17.452Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: time-series-forecasting
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 19526904 downloads | 525 likes
+- **Stars / Engagement**: 19526904 downloads | 526 likes
 
 ---
 
