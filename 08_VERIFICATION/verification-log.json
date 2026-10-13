@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-BPOS",
-    "timestamp": "2026-10-12T01:45:45.676Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7",
-    "contentHash": "f4bd8840105c1461518001807b4d87341be3be71511279b771584edeebe0e77c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-FA7E",
     "timestamp": "2026-10-12T01:48:32.234Z",
     "repository": "canberkkkkkk/ema-lightning",
@@ -7490,6 +7475,21 @@
     "repository": "PSRben/VisionHOPE",
     "learningId": "learn-huggingface-hf-psrben-visionhope-mv688xqm",
     "contentHash": "2a36a0b542f00f81ea3d4f8a92460630df9a415ce0fe41b741078b40510aff14",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-CSSB",
+    "timestamp": "2026-10-13T05:18:13.691Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv68cspq",
+    "contentHash": "475b433125cf895ba85ac72a9247b2cd31e5087c0b5c5d856a02594d5f4b4a1c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
