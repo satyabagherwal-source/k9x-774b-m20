@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T04:59:58.265Z",
-  "total_cycles_completed": 823,
-  "total_learnings_persisted": 823,
-  "total_rules_promoted": 391,
+  "last_updated": "2026-10-13T05:03:09.761Z",
+  "total_cycles_completed": 824,
+  "total_learnings_persisted": 824,
+  "total_rules_promoted": 394,
   "history": [
-    {
-      "timestamp": "2026-10-12T18:20:26.357Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv5kuvjn",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T18:23:27.261Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1403,6 +1396,13 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv67pbgg",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T05:03:09.761Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv67tf6k",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
