@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:15:51.180Z",
-  "total_verified_learnings": 4874,
+  "last_updated": "2026-10-13T11:18:46.705Z",
+  "total_verified_learnings": 4875,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -119262,6 +119262,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T11:15:51.179Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv6l8gvf": {
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv6l8gvf",
+      "source": "openbmb/MiniCPM-V-4.7-1B",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "slug": "hf-openbmb-minicpm-v-4.7-1b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "content_hash": "f98f1d50be9ec448e85e47c0549761a0ac73eb516b047ba302ca3934b1102772",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 582,
+          "title": "Consistent Token‑ID Mapping Across Modalities",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 682,
+          "title": "Early Visual Token Compression Must Preserve Spatial Fidelity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 683,
+          "title": "`bfloat16` Inference Must Be Guarded Against Under‑Precision",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T11:18:46.705Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

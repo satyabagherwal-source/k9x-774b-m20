@@ -17500,5 +17500,17 @@
     "downloads": 166,
     "qualityScore": 1746,
     "discoveredAt": "2026-10-13T03:38:56.122Z"
+  },
+  {
+    "name": "openbmb/MiniCPM-V-4.7-1B",
+    "fullName": "openbmb/MiniCPM-V-4.7-1B",
+    "url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: openbmb/MiniCPM-V-4.7-1B (159 likes, 263 downloads)",
+    "likes": 159,
+    "downloads": 263,
+    "qualityScore": 1853,
+    "discoveredAt": "2026-10-13T11:18:30.668Z"
   }
 ]

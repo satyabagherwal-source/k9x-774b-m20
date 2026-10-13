@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:15:51.241Z",
-  "total_cycles_completed": 919,
-  "total_learnings_persisted": 919,
-  "total_rules_promoted": 434,
+  "last_updated": "2026-10-13T11:18:46.736Z",
+  "total_cycles_completed": 920,
+  "total_learnings_persisted": 920,
+  "total_rules_promoted": 437,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:44:06.253Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv5wf416",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T23:47:03.792Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1403,6 +1396,13 @@
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv6l4pg5",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:18:46.736Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv6l8gvf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

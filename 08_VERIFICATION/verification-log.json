@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-SX6M",
-    "timestamp": "2026-10-12T06:39:04.702Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv4vsx43",
-    "contentHash": "50b4a9107bc81fee7661a73c705dd3b8f97b4b30959364b9eee520b547cc225a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-WZV7",
     "timestamp": "2026-10-12T06:42:14.803Z",
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7492,6 +7477,21 @@
     "contentHash": "b23a24349314539b18fdd5af8d610b10c79c18bcafd89913540090d5423ba6cd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-8GY6",
+    "timestamp": "2026-10-13T11:18:46.734Z",
+    "repository": "openbmb/MiniCPM-V-4.7-1B",
+    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv6l8gvf",
+    "contentHash": "f98f1d50be9ec448e85e47c0549761a0ac73eb516b047ba302ca3934b1102772",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
