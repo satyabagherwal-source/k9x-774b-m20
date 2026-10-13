@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-SDQN",
-    "timestamp": "2026-10-12T10:50:36.047Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv54sdoy",
-    "contentHash": "dc34f47de0a3f3aa30f34b8a4b777b7ce7a153e172095802a26041e07336dac7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-WA6K",
     "timestamp": "2026-10-12T10:53:38.060Z",
     "repository": "zai-org/GLM-5.2",
@@ -7490,6 +7475,21 @@
     "repository": "hexgrad/Kokoro-82M",
     "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv6u7jcp",
     "contentHash": "eb916a43696bf574ff0923056bde7dfe4e168aaf661a08b94fd78ddfb7037b15",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-DZZ2",
+    "timestamp": "2026-10-13T15:35:01.214Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv6udzwl",
+    "contentHash": "8ca0cbd7305477a4e14ecc5fda7a8bbace1cb0ee88ccc0baed4c5ab538a7ec2b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
