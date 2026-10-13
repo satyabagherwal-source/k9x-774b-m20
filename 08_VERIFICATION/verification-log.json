@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-85TL",
-    "timestamp": "2026-10-12T01:42:59.961Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv",
-    "contentHash": "6ab7a5baf32943ddee3c4ee04e0d59c30386fd745224ca3c4c01c129fa86569a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-BPOS",
     "timestamp": "2026-10-12T01:45:45.676Z",
     "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv684t2l",
     "contentHash": "2d4222b1b3369899ed3c72ac98d092d65988739f1a1aee1cb6e52e32f8d0152a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-8XSL",
+    "timestamp": "2026-10-13T05:15:13.557Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-hf-psrben-visionhope-mv688xqm",
+    "contentHash": "2a36a0b542f00f81ea3d4f8a92460630df9a415ce0fe41b741078b40510aff14",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
