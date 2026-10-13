@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-CB5K",
-    "timestamp": "2026-10-12T15:46:01.976Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv5fcb2i",
-    "contentHash": "91cdb59961c8e0afa41f7d3bb33035cca151305253be997610c8c9140c8f3901",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-GKM6",
     "timestamp": "2026-10-12T15:49:20.862Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7492,6 +7477,21 @@
     "contentHash": "4642467d16cca758a7f812708630444a957cc023549106ad33a2de30223879a9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-AGTC",
+    "timestamp": "2026-10-13T21:08:11.808Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv76agq7",
+    "contentHash": "8dce0d7628a2c67fa2ebe020f613dbaf15f7c3bfbeef3af5a41a967593e3322f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
