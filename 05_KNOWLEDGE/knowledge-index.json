@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T07:54:32.230Z",
-  "total_verified_learnings": 4825,
+  "last_updated": "2026-10-13T08:15:12.030Z",
+  "total_verified_learnings": 4826,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -118005,6 +118005,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T07:54:32.230Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-speridlabs-iris-3b-mv6eodvz": {
+      "learning_id": "learn-huggingface-hf-speridlabs-iris-3b-mv6eodvz",
+      "source": "speridlabs/iris-3b",
+      "repository": "speridlabs/iris-3b",
+      "slug": "hf-speridlabs-iris-3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "content_hash": "55ec05924e305993d98a82e67f5c5cbc2dc9aafed567e38679662c7e6e2937db",
+      "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 668,
+          "title": "Pixel-Space Transformer Patchification Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 669,
+          "title": "Flow Matching Velocity Prediction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 670,
+          "title": "Turbo Distillation Step Reduction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T08:15:12.030Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

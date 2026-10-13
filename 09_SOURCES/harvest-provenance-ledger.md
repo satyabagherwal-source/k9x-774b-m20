@@ -912,3 +912,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6dnwn0` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-13T07:46:50.102Z |
 | `learn-huggingface-hf-baidu-unlimited-ocr-mv6dtli4` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-13T07:51:15.593Z |
 | `learn-huggingface-hf-aleph-alpha-kolibri-1-mv6dxt9f` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-13T07:54:32.277Z |
+| `learn-huggingface-hf-speridlabs-iris-3b-mv6eodvz` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-13T08:15:12.072Z |

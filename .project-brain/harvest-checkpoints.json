@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T07:54:32.280Z",
+  "last_updated": "2026-10-13T08:15:12.074Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1840,15 +1840,15 @@
       "repository": "speridlabs/iris-3b",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-speridlabs-iris-3b-mv5z555k",
-      "content_hash": "7744b97173e24e29e126c51a3a3e21f0c2cfa91feb0712f5806a1ef68816eab0",
-      "verified_at": "2026-10-13T01:00:20.035Z",
+      "learning_id": "learn-huggingface-hf-speridlabs-iris-3b-mv6eodvz",
+      "content_hash": "55ec05924e305993d98a82e67f5c5cbc2dc9aafed567e38679662c7e6e2937db",
+      "verified_at": "2026-10-13T08:15:12.074Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T01:00:20.035Z"
+      "last_updated": "2026-10-13T08:15:12.074Z"
     },
     "Infisical/infisical": {
       "repository": "Infisical/infisical",
