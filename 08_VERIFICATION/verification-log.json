@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-4L5Z",
-    "timestamp": "2026-10-12T06:48:08.999Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv4w4l3l",
-    "contentHash": "868b05f72227833cf7b4682816f0834c87001383b2e1fe96a8a50ba8eca0cadd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-8GZ3",
     "timestamp": "2026-10-12T06:51:10.191Z",
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -7492,6 +7477,21 @@
     "contentHash": "d53cecde6270a364376a4e610689d5bf067dbc4b9c6030f850c88d72b9c5898a",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-KEPB",
+    "timestamp": "2026-10-13T11:28:03.695Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv6lken7",
+    "contentHash": "08c7960282dcc39597add0b78d96024a55de83cd8b8e55cb96cb3e0988655d85",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
