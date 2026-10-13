@@ -884,3 +884,4 @@
 | `CYCLE-20261013-PBJP` | `2026-10-13T04:59:58.261Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`d5ab7338...`) |
 | `CYCLE-20261013-TFB1` | `2026-10-13T05:03:09.757Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 642, Rule 643, Rule 644` | Yes (`76cbb42c...`) |
 | `CYCLE-20261013-X29V` | `2026-10-13T05:05:59.491Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`f176e20b...`) |
+| `CYCLE-20261013-0YS2` | `2026-10-13T05:09:01.586Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`60fb3741...`) |
