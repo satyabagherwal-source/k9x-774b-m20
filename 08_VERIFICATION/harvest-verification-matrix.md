@@ -1078,3 +1078,4 @@
 | `CYCLE-20261013-E2FT` | `2026-10-13T17:27:02.873Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`15429ed8...`) |
 | `CYCLE-20261013-I4S6` | `2026-10-13T17:30:12.534Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`2b3448ab...`) |
 | `CYCLE-20261013-M9IG` | `2026-10-13T17:33:25.288Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`1839364a...`) |
+| `CYCLE-20261013-Q7LB` | `2026-10-13T17:36:29.423Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`1e89caa0...`) |
