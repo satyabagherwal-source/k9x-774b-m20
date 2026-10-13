@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T16:09:40.964Z",
-  "total_cycles_completed": 993,
-  "total_learnings_persisted": 993,
+  "last_updated": "2026-10-13T16:12:53.936Z",
+  "total_cycles_completed": 994,
+  "total_learnings_persisted": 994,
   "total_rules_promoted": 483,
   "history": [
-    {
-      "timestamp": "2026-10-13T03:30:05.028Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv64hq0e",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T03:33:06.690Z",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T16:09:40.964Z",
       "repository": "bigscience/bloom",
       "learningId": "learn-huggingface-hf-bigscience-bloom-mv6vmkmp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:12:53.936Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv6vqpiu",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

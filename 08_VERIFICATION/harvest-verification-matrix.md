@@ -1052,3 +1052,4 @@
 | `CYCLE-20261013-EMYK` | `2026-10-13T16:03:30.620Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`a9378e58...`) |
 | `CYCLE-20261013-IJRB` | `2026-10-13T16:06:33.095Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`17cb85ef...`) |
 | `CYCLE-20261013-MKPT` | `2026-10-13T16:09:40.961Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`b0ec7d25...`) |
+| `CYCLE-20261013-QPM4` | `2026-10-13T16:12:53.932Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`bbbd95b4...`) |
