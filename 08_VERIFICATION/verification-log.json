@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-KW0L",
-    "timestamp": "2026-10-12T07:56:48.789Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ykvwe",
-    "contentHash": "23937602db3f087b9ee8c1b53b66d3c71f24d02fa83a0a53ad63308cda162c47",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-Q2Y5",
     "timestamp": "2026-10-12T08:00:51.053Z",
     "repository": "akhilaaa3/Jev-Omni",
@@ -7492,6 +7477,21 @@
     "contentHash": "dd46b355fb975626e372af5eb1d2b6c6a2313d250aba90372fa28f57612e3831",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-NB6Q",
+    "timestamp": "2026-10-13T12:26:18.338Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a",
+    "contentHash": "0ecae87a1723dd40a17867e14fb31aecc345e8b1fec0cd72c3df5be14698ed6d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

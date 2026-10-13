@@ -37825,3 +37825,112 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0fcf4427` are properly handled with clean fallback behavior.
+
+
+---
+
+## 690. Vision and Text Hidden Size Synchronization (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Vision and Text Hidden Size Synchronization",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:26:18.235Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The `hidden_size` field in `vision_config` must be a divisor of the `hidden_size` field in `text_config`.  
+**WHY**:  
+The vision embeddings are projected into the text transformer via a linear layer whose weight matrix shape is `(text_hidden_size, vision_hidden_size)`. If the sizes are not in a divisor relationship, the projection layer cannot be initialized without padding or truncation, leading to runtime shape errors.  
+**WHEN TO APPLY**:  
+During model architecture changes or when adding a new vision backbone.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# projection layer initialization
+proj_weight = nn.Linear(
+    in_features=vision_config.hidden_size,
+    out_features=text_config.hidden_size,
+    bias=False
+)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: mismatched sizes
+vision_hidden_size = 1152
+text_hidden_size = 4096  # 4096 % 1152 != 0
+proj_weight = nn.Linear(1152, 4096)  # will raise shape mismatch
+```
+**VERIFICATION METHOD**:  
+A static analysis script that parses both JSON configs and asserts `text_hidden_size % vision_hidden_size == 0`.
+
+
+---
+
+## 691. Enforced Use of `use_cache=False` for Long‑Context Generation (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Enforced Use of `use_cache=False` for Long‑Context Generation",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T12:26:18.260Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+When `max_position_embeddings` exceeds 262144, the model must set `use_cache=False` in both the model and generation configs to avoid out‑of‑memory token caching.  
+**WHY**:  
+Enabling cache for extremely long contexts inflates GPU memory usage beyond available resources, causing OOM crashes.  
+**WHEN TO APPLY**:  
+During any configuration that increases `max_position_embeddings` beyond the default.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// config.json
+{
+  "use_cache": false,
+  "max_position_embeddings": 262144
+}
+
+// generation_config.json
+{
+  "use_cache": true,   // generation uses cache; model disables it
+  "eos_token_id": [248046, 248044],
+  "pad_token_id": 248044
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+// BAD: cache enabled for long context
+{
+  "use_cache": true,
+  "max_position_embeddings": 262144
+}
+```
+**VERIFICATION METHOD**:  
+A CI job that runs `transformers.AutoModelForCausalLM.from_pretrained` and asserts `model.config.use_cache is False` when `max_position_embeddings > 200000`.

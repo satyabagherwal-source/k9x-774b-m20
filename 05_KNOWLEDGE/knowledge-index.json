@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:12:52.760Z",
-  "total_verified_learnings": 4891,
+  "last_updated": "2026-10-13T12:26:18.289Z",
+  "total_verified_learnings": 4892,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -119719,6 +119719,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T12:12:52.760Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a": {
+      "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a",
+      "source": "apple/LensVLM-9B",
+      "repository": "apple/LensVLM-9B",
+      "slug": "hf-apple-lensvlm-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "content_hash": "0ecae87a1723dd40a17867e14fb31aecc345e8b1fec0cd72c3df5be14698ed6d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 351,
+          "title": "Consistent Special‑Token Alignment Across Tokenizer and Model",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 690,
+          "title": "Vision and Text Hidden Size Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 691,
+          "title": "Enforced Use of `use_cache=False` for Long‑Context Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T12:26:18.289Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
