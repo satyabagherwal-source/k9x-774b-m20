@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-KZ7I",
-    "timestamp": "2026-10-12T10:16:51.006Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv53kz3n",
-    "contentHash": "665daf4e734092cfc8db03e67fe88786d3dc19667ed132f34e40ffc6a60ebb5b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-OS1K",
     "timestamp": "2026-10-12T10:19:48.344Z",
     "repository": "meta-llama/Meta-Llama-3-8B",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-m3",
     "learningId": "learn-huggingface-hf-baai-bge-m3-mv6s9ofa",
     "contentHash": "55e8675e705e45381c2e469276f61fc0bd2c0532cc45d036dabdaaf3aff9ffe6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-DFJW",
+    "timestamp": "2026-10-13T14:38:35.517Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv6sdfhz",
+    "contentHash": "ee82692024dd838b794be804ba189f48cd8427595b4a967865c078d5f2a20172",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
