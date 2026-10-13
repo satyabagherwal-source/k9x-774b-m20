@@ -850,3 +850,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv65u279` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-13T04:07:40.321Z |
 | `learn-huggingface-hf-supersoniclabs-julia-1-mv65xxsi` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-13T04:10:41.216Z |
 | `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv6626iq` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-13T04:13:59.151Z |
+| `learn-huggingface-hf-apple-lensvlm-9b-mv6666bw` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-13T04:17:05.589Z |

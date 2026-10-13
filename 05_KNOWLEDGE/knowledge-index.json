@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T04:13:59.095Z",
-  "total_verified_learnings": 4763,
+  "last_updated": "2026-10-13T04:17:05.541Z",
+  "total_verified_learnings": 4764,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -116291,6 +116291,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T04:13:59.094Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-apple-lensvlm-9b-mv6666bw": {
+      "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv6666bw",
+      "source": "apple/LensVLM-9B",
+      "repository": "apple/LensVLM-9B",
+      "slug": "hf-apple-lensvlm-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "content_hash": "e5691dfcbe393a7cbf4fbb273a4948bfe003677f075b3e93639ab81987a9b369",
+      "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 629,
+          "title": "**Multimodal Token ID Consistency**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 630,
+          "title": "**Vision‑Text Dtype Harmonization**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 631,
+          "title": "**Attention Layer Sequencing Integrity**",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T04:17:05.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

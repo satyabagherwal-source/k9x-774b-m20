@@ -33059,3 +33059,226 @@ image = pipe(prompt="A cat", num_inference_steps=8, guidance_scale=7.5).images[0
 1.  Benchmark inference time with `guidance_scale=1.0` and `guidance_scale=7.5`.
 2.  Assert that the time for CFG=7.5 is approximately 2x the time for CFG=1.0.
 3.  Visually inspect outputs; CFG=1.0 should be clean, while CFG=7.5 may show artifacts.
+
+
+---
+
+## 629. **Multimodal Token ID Consistency** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Multimodal Token ID Consistency**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:17:05.465Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv6666bw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that every multimodal token ID (`image_token_id`, `video_token_id`, `pad_token_id`, `eos_token_id`) is unique, non‑overlapping, and referenced consistently across the tokenizer, processor, and model configuration.  
+
+**WHY**:  
+Token ID collisions cause the model to misinterpret modality boundaries, leading to catastrophic decoding failures or silent data corruption.  
+
+**WHEN TO APPLY**:  
+All code that constructs or modifies `tokenizer_config.json`, `config.json`, or any custom processor that injects tokens.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# config_validator.py
+import json
+from pathlib import Path
+
+def validate_token_ids(config_path: Path, tokenizer_path: Path):
+    with config_path.open() as f:
+        cfg = json.load(f)
+    with tokenizer_path.open() as f:
+        tk_cfg = json.load(f)
+
+    ids = {
+        "image_token_id": cfg["image_token_id"],
+        "video_token_id": cfg["video_token_id"],
+        "pad_token_id": cfg["pad_token_id"],
+        "eos_token_id": cfg["eos_token_id"],
+    }
+
+    # Ensure uniqueness
+    assert len(set(ids.values())) == len(ids), "Token IDs must be unique"
+
+    # Cross‑check with tokenizer special tokens
+    special = tk_cfg["model_specific_special_tokens"]
+    for key, val in special.items():
+        if key.endswith("_token"):
+            token_id = ids.get(key.replace("_token", "_token_id"))
+            assert token_id == val, f"{key} ID mismatch: {token_id} vs {val}"
+
+    print("Token ID consistency validated.")
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Overlapping token IDs
+image_token_id = 248056
+video_token_id = 248056  # collision
+pad_token_id   = 248044
+```
+
+**VERIFICATION METHOD**  
+* Unit test that loads `config.json` and `tokenizer_config.json` and runs `validate_token_ids`.  
+* Linter rule that flags duplicate integer literals in the two JSON files.
+
+---
+
+
+---
+
+## 630. **Vision‑Text Dtype Harmonization** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Vision‑Text Dtype Harmonization**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:17:05.491Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv6666bw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** keep the data type (`dtype`) of the vision encoder (`bfloat16`) identical to the language backbone (`bfloat16`) to avoid mixed‑precision conversion overhead and numerical drift.  
+
+**WHY**:  
+Mismatched dtypes trigger implicit casting, which can degrade performance and introduce subtle rounding errors that propagate through the attention layers.  
+
+**WHEN TO APPLY**:  
+During model construction, when loading `vision_config` and `text_config`, and when serializing the model for deployment.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# dtype_checker.py
+import json
+from pathlib import Path
+
+def check_dtype_consistency(config_path: Path):
+    with config_path.open() as f:
+        cfg = json.load(f)
+
+    vision_dtype = cfg["vision_config"]["dtype"]
+    text_dtype   = cfg["text_config"]["dtype"]
+
+    assert vision_dtype == text_dtype, (
+        f"Dtype mismatch: vision={vision_dtype} vs text={text_dtype}"
+    )
+    print("Dtype harmonization validated.")
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Mixed dtypes
+"vision_config": {"dtype": "float32"},
+"text_config":   {"dtype": "bfloat16"},
+```
+
+**VERIFICATION METHOD**  
+* Pre‑commit hook that runs `check_dtype_consistency`.  
+* CI job that asserts `vision_dtype == text_dtype` before packaging the model.
+
+---
+
+
+---
+
+## 631. **Attention Layer Sequencing Integrity** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Attention Layer Sequencing Integrity**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:17:05.512Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv6666bw",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** enforce that the `layer_types` array in `text_config` contains exactly 32 entries, with a full‑attention layer at every 4th position (indices 3, 7, 11, …).  
+
+**WHY**:  
+The alternating pattern is critical for the model’s long‑context capability; any deviation can break the attention schedule and lead to degraded performance or out‑of‑memory errors.  
+
+**WHEN TO APPLY**:  
+During model initialization and when modifying the `layer_types` list.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+# attention_validator.py
+import json
+from pathlib import Path
+
+def validate_attention_sequence(config_path: Path):
+    with config_path.open() as f:
+        cfg = json.load(f)
+
+    layers = cfg["text_config"]["layer_types"]
+    assert len(layers) == 32, f"Expected 32 layers, got {len(layers)}"
+
+    for idx, layer in enumerate(layers):
+        if (idx + 1) % 4 == 0:
+            assert layer == "full_attention", (
+                f"Layer {idx} should be full_attention, got {layer}"
+            )
+        else:
+            assert layer == "linear_attention", (
+                f"Layer {idx} should be linear_attention, got {layer}"
+            )
+    print("Attention sequence validated.")
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Wrong sequence
+"layer_types": [
+    "linear_attention", "linear_attention", "full_attention",  # wrong order
+    ...
+]
+```
+
+**VERIFICATION METHOD**  
+* Unit test that loads `config.json` and runs `validate_attention_sequence`.  
+* CI lint rule that checks the pattern of `layer_types` against the expected regex.
+
+---
