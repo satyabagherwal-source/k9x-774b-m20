@@ -828,3 +828,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-liquidai-d1-3b-mv63dqnz` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-13T02:58:59.583Z |
 | `learn-huggingface-hf-cactus-compute-whistle-mv63hql4` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-10-13T03:02:06.107Z |
 | `learn-huggingface-hf-qwen-qwen3-8-27b-mv63lz5e` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-13T03:05:23.876Z |
+| `learn-huggingface-hf-black-forest-labs-flux-1-dev-mv63prwa` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-13T03:08:21.073Z |

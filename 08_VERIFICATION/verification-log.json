@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-SOT4",
-    "timestamp": "2026-10-11T23:38:59.608Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-hf-francisring-prism-mv4gsoqj",
-    "contentHash": "5f192c0945a5b50e9251d4a679583768e45042f5983a488e7f5558f9071bb9f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-WW52",
     "timestamp": "2026-10-11T23:42:15.734Z",
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3.8-27B",
     "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv63lz5e",
     "contentHash": "e7b88944d45f23e9fccfce9236adf83293557e232c9c61962e61732543f969e6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-PRYN",
+    "timestamp": "2026-10-13T03:08:21.071Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv63prwa",
+    "contentHash": "4ad2b93401c61d6eb139667f5449d85ba1aaa9e22d25d4673dcf83877381993e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
