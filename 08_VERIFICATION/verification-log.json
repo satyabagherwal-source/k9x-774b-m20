@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-RS9U",
-    "timestamp": "2026-10-12T00:06:17.058Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t",
-    "contentHash": "15f9ebd550366a21cb480a2afdcb3ec8d4157cb9b882f439bf031b64588e3b72",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-VKYR",
     "timestamp": "2026-10-12T00:09:14.211Z",
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7492,6 +7477,21 @@
     "contentHash": "a61b613a257c8b83bb0ec108bbab9ac43a65bbae7740850312174cb0888a1dc7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-PP2A",
+    "timestamp": "2026-10-13T03:36:16.930Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv64poxt",
+    "contentHash": "c6606e48a2c807af1a700d2b4376b343d383294ca965abb1662f7826c45b6412",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

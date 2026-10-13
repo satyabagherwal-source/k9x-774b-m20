@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T03:33:06.632Z",
-  "total_verified_learnings": 4750,
+  "last_updated": "2026-10-13T03:36:16.884Z",
+  "total_verified_learnings": 4751,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -115931,6 +115931,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T03:33:06.632Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv64poxt": {
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv64poxt",
+      "source": "meta-llama/Llama-3.1-8B-Instruct",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "slug": "hf-meta-llama-llama-3.1-8b-instruct",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+      "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
+      "content_hash": "c6606e48a2c807af1a700d2b4376b343d383294ca965abb1662f7826c45b6412",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 620,
+          "title": "Numerical Precision & Overflow Guard in High-Dimensional Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 621,
+          "title": "Tokenizer Determinism & Boundary Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 622,
+          "title": "KV-Cache Memory Management & Eviction Policy",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T03:36:16.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
