@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-55NR",
-    "timestamp": "2026-10-12T17:32:26.727Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv5j55ly",
-    "contentHash": "ab07a62d1f002e3a56791ce2768dbd608892ae2a996ab0e006670c2eed2941a3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-8WZ3",
     "timestamp": "2026-10-12T17:35:22.095Z",
     "repository": "zai-org/GLM-5.2",
@@ -7490,6 +7475,21 @@
     "repository": "amazon/chronos-2",
     "learningId": "learn-huggingface-hf-amazon-chronos-2-mv7amj1b",
     "contentHash": "1d6c8b561148d37dce9bda5fc48892e55f5abb4ca27a310e0c78da144babacb3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-QWOF",
+    "timestamp": "2026-10-13T23:12:57.327Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv7aqwl7",
+    "contentHash": "71589fe06335277b0bd2e33ab361dc6f2ed9c2fded062f079baab6766e7d226e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
