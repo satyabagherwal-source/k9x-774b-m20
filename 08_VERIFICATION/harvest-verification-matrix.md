@@ -1019,3 +1019,4 @@
 | `CYCLE-20261013-IMVK` | `2026-10-13T13:46:39.056Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`eabf96c6...`) |
 | `CYCLE-20261013-MCXD` | `2026-10-13T13:49:32.785Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`f3d62dc9...`) |
 | `CYCLE-20261013-QKX6` | `2026-10-13T13:52:49.770Z` | `facebook/sam3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 709, Rule 710, Rule 711` | Yes (`618eded9...`) |
+| `CYCLE-20261013-UFQI` | `2026-10-13T13:55:49.674Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`5b53a9b3...`) |

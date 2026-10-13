@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:52:49.774Z",
-  "total_cycles_completed": 960,
-  "total_learnings_persisted": 960,
+  "last_updated": "2026-10-13T13:55:49.678Z",
+  "total_cycles_completed": 961,
+  "total_learnings_persisted": 961,
   "total_rules_promoted": 467,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:49:20.652Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv60w66h",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:52:17.484Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1403,6 +1396,13 @@
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-hf-facebook-sam3-mv6qqksb",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:55:49.678Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv6qufnc",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
