@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-13T15:49:08.707Z",
+  "lastUpdated": "2026-10-13T15:52:14.821Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T15:49:10.108Z",
-        "lastHarvestedAt": "2026-10-13T15:49:10.108Z",
-        "totalHarvested": 3119,
+        "lastActiveAt": "2026-10-13T15:52:28.224Z",
+        "lastHarvestedAt": "2026-10-13T15:52:28.224Z",
+        "totalHarvested": 3120,
         "lastError": null
       },
       {
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "HEALTHY",
+      "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": "2026-10-13T15:48:52.562Z",
-      "reason": null,
+      "resetEpoch": 1791910335679,
+      "resetAt": "2026-10-13T16:52:15.679Z",
+      "trippedAt": "2026-10-13T15:52:00.679Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Atailwind%20topic%3Acomponents%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=2)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {

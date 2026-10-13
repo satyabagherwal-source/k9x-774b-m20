@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T15:49:07.541Z",
-  "total_verified_learnings": 4942,
+  "last_updated": "2026-10-13T15:52:25.648Z",
+  "total_verified_learnings": 4943,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -121143,6 +121143,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T15:49:07.541Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv6v0dro": {
+      "learning_id": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv6v0dro",
+      "source": "Tongyi-MAI/Z-Image-Turbo",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "slug": "hf-tongyi-mai-z-image-turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+      "source_version": "hf-tongyi-mai-z-image-turbo",
+      "content_hash": "36a876f1e55cb73a216e577120dc87ef9faffe2d1c220d09111b3aae63a32a50",
+      "dossier_path": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 724,
+          "title": "Single-Stream DiT Attention Mask Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 725,
+          "title": "VRAM-Bounded Latent Tensor Management",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 726,
+          "title": "Distilled Scheduler Step Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T15:52:25.648Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-BK8J",
-    "timestamp": "2026-10-12T11:05:30.931Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv55bk44",
-    "contentHash": "947798b6a21250c4cfbd9a1b430e7a83d322b01120499663566ee5126c32c16c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-FM7L",
     "timestamp": "2026-10-12T11:08:40.113Z",
     "repository": "meta-llama/Llama-2-7b",
@@ -7492,6 +7477,21 @@
     "contentHash": "6a65dd37bf54777065d6b879d97025b68d1f59125625f5c2ab3d028a68140aca",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-0DWG",
+    "timestamp": "2026-10-13T15:52:25.696Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv6v0dro",
+    "contentHash": "36a876f1e55cb73a216e577120dc87ef9faffe2d1c220d09111b3aae63a32a50",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
