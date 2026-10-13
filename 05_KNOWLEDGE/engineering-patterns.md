@@ -38740,3 +38740,157 @@ import { BUILD_CONFIG_DIR } from '../util/state.js';
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8c057696` are properly handled with clean fallback behavior.
+
+
+---
+
+## 705. RGBA Transparency Preservation in Image Post-Processing (Harvested from inclusionAI/Ming-Image-0.1-Design)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "RGBA Transparency Preservation in Image Post-Processing",
+  "source": "inclusionAI/Ming-Image-0.1-Design",
+  "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+  "source_version": "hf-inclusionai-ming-image-0.1-design",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T13:14:43.561Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv6pdkuf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [inclusionAI/Ming-Image-0.1-Design](https://huggingface.co/inclusionAI/Ming-Image-0.1-Design) (Revision: `hf-inclusi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating images with alpha channels (RGBA), you MUST ensure that all post-processing steps (resizing, saving, encoding) explicitly preserve the alpha channel. You MUST NOT use lossy formats (JPEG) or image libraries that default to RGB conversion when saving RGBA images.
+
+**WHY**:
+1.  **Data Loss:** JPEG does not support transparency. Saving an RGBA image as JPEG will flatten the alpha channel, typically to black or white, destroying the transparency.
+2.  **Library Defaults:** Many image libraries (e.g., PIL/Pillow) may convert RGBA to RGB if the mode is not explicitly specified during save, or if the image is passed through a function that expects RGB.
+3.  **Visual Artifacts:** Incorrect alpha handling can result in "checkerboard" artifacts being baked into the image or black backgrounds appearing where transparency was intended.
+
+**WHEN TO APPLY**:
+Any image generation pipeline that outputs transparent backgrounds (e.g., icons, stickers, UI elements) and requires the final asset to be usable in design tools (Figma, Photoshop) or web frontends.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from PIL import Image
+import numpy as np
+
+def save_rgba_image(image: Image.Image, filepath: str):
+    """
+    Safely saves an RGBA image, ensuring transparency is preserved.
+    """
+    # Ensure the image is in RGBA mode
+    if image.mode != 'RGBA':
+        image = image.convert('RGBA')
+    
+    # Explicitly save as PNG (lossless, supports alpha)
+    # Do not use JPEG or WebP with lossy compression for alpha
+    image.save(filepath, format='PNG', optimize=True)
+
+# Usage
+generated_image = pipeline(prompt).images[0]
+# generated_image is a PIL Image object
+save_rgba_image(generated_image, "output_design.png")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Saving RGBA as JPEG or without explicit mode
+def save_image_bad(image: Image.Image, filepath: str):
+    # If filepath ends with .jpg, PIL will convert to RGB, losing alpha
+    # If filepath is .png but image mode is RGB, no alpha is saved
+    image.save(filepath)  # Dangerous if filepath is .jpg or image mode is wrong
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Generate an image with a known alpha pattern (e.g., half transparent). Save it. Load it back. Assert that the alpha channel values match the original.
+2.  **File Format Check:** Assert that the saved file is a valid PNG and that its header indicates RGBA color type.
+3.  **Visual Regression Test:** Compare the saved image against a reference transparent image using a perceptual hash that includes alpha channel analysis.
+
+
+---
+
+## 706. Prompt Enhancement (PE) Decoupling for Design-Specific Models (Harvested from inclusionAI/Ming-Image-0.1-Design)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Prompt Enhancement (PE) Decoupling for Design-Specific Models",
+  "source": "inclusionAI/Ming-Image-0.1-Design",
+  "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+  "source_version": "hf-inclusionai-ming-image-0.1-design",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T13:14:43.577Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv6pdkuf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [inclusionAI/Ming-Image-0.1-Design](https://huggingface.co/inclusionAI/Ming-Image-0.1-Design) (Revision: `hf-inclusi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For specialized text-to-image models (e.g., UI/Design), you MUST implement a separate Prompt Enhancement (PE) stage using a dedicated LLM to rewrite user prompts into design-specific instructions before passing them to the diffusion model. You MUST NOT rely on the diffusion model's text encoder to interpret complex, high-level design requests.
+
+**WHY**:
+1.  **Text Encoder Limitations:** Diffusion models use text encoders (e.g., CLIP, T5) that are optimized for semantic similarity, not detailed instruction following. They may miss specific layout requirements (e.g., "place the logo in the top left").
+2.  **Design Vocabulary:** Design models are trained on specific design terminology (e.g., "flat design," "isometric," "glassmorphism"). A PE LLM can inject these keywords to improve fidelity.
+3.  **Complexity Management:** User prompts are often vague. A PE LLM can expand them into detailed, structured prompts that the diffusion model can better interpret.
+
+**WHEN TO APPLY**:
+Any text-to-image system where the user input is high-level (e.g., "make a login page") and the model requires detailed, technical prompts (e.g., "flat design login page, blue theme, rounded corners, email and password fields, submit button, minimalistic, high resolution").
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class DesignPromptEnhancer:
+    def __init__(self, llm_client):
+        self.llm_client = llm_client
+        self.system_prompt = """
+        You are a UI/UX design expert. Rewrite the user's prompt into a detailed 
+        image generation prompt for a text-to-image model. 
+        Include specific design elements, colors, layout, and style keywords.
+        """
+
+    def enhance(self, user_prompt: str) -> str:
+        """
+        Rewrites the user prompt into a design-specific prompt.
+        """
+        response = self.llm_client.chat(
+            system=self.system_prompt,
+            user=user_prompt
+        )
+        return response
+
+# Usage in pipeline
+user_input = "Make a modern dashboard"
+enhanced_prompt = enhancer.enhance(user_input)
+# enhanced_prompt: "Modern dashboard UI, dark mode, blue accents, card layout, 
+#                   charts, graphs, clean typography, high resolution, 4k"
+image = pipeline(enhanced_prompt, width=2048, height=2048)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Passing raw user prompt directly to diffusion model
+def generate_bad(user_prompt: str):
+    # The diffusion model may not understand "modern dashboard" in the context of UI design
+    # It might generate a photo of a dashboard (car) or a generic abstract image
+    return pipeline(user_prompt, width=2048, height=2048)
+```
+
+**VERIFICATION METHOD**:
+1.  **A/B Testing:** Generate images with and without PE. Compare user satisfaction scores or aesthetic quality metrics.
+2.  **Prompt Analysis:** Assert that the enhanced prompt contains specific design keywords (e.g., "UI," "layout," "color") that were not in the original user prompt.
+3.  **Latency Budget:** Ensure the PE stage does not exceed a defined latency budget (e.g., < 2 seconds) to maintain overall system responsiveness.

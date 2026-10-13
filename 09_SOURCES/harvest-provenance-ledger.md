@@ -989,3 +989,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-akhilaaa3-jev-omni-mv6oingw` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-13T12:50:40.702Z |
 | `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv6omgxr` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-13T12:53:38.866Z |
 | `learn-github-trailhq-trail-code-mv6ovg9f` | `https://github.com/trailhq/Trail-Code` | `fe30ead3` | Multi-dimensional audit evidence | 2026-10-13T13:00:37.921Z |
+| `learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv6pdkuf` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-13T13:14:43.640Z |
