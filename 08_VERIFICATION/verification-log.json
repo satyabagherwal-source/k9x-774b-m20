@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-CS2D",
-    "timestamp": "2026-10-12T05:02:32.725Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv4scrzr",
-    "contentHash": "f106366d39d7fa7a96f5fe44d04462c05e5f56ee02a35f41bb9db45f3a030aa1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-GK96",
     "timestamp": "2026-10-12T05:05:29.226Z",
     "repository": "google/gemma-4-31B-it",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-26B-A4B-it",
     "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv6hcxw6",
     "contentHash": "a5a30dc22cce23265d7d8ee9fad18cf6fe1bf32c0e0571d28590167d957e0416",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-GMIC",
+    "timestamp": "2026-10-13T09:33:08.724Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv6hgmgy",
+    "contentHash": "a27dcdbba06a14d334372cd4367b18ca0f2253ae0e0708404a134343ce4a2ea1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
