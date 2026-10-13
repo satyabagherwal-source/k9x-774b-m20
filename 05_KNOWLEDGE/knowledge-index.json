@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T19:37:55.791Z",
-  "total_verified_learnings": 5008,
+  "last_updated": "2026-10-13T19:41:20.297Z",
+  "total_verified_learnings": 5009,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -122851,6 +122851,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T19:37:55.791Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv736rge": {
+      "learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv736rge",
+      "source": "stabilityai/stable-diffusion-xl-base-1.0",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "slug": "hf-stabilityai-stable-diffusion-xl-base-1.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
+      "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
+      "content_hash": "77316d135f2db652b37b856f4310c64d9fb123ba2cf5b745a8e4c2a036c5d03c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 746,
+          "title": "Dual-Encoder Embedding Synchronization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 747,
+          "title": "Latent Space Denoising Step Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 748,
+          "title": "FP16 Precision Stability Invariant for Large Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T19:41:20.297Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

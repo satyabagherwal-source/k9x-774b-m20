@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T19:37:55.840Z",
-  "total_cycles_completed": 1053,
-  "total_learnings_persisted": 1053,
-  "total_rules_promoted": 503,
+  "last_updated": "2026-10-13T19:41:20.360Z",
+  "total_cycles_completed": 1054,
+  "total_learnings_persisted": 1054,
+  "total_rules_promoted": 506,
   "history": [
-    {
-      "timestamp": "2026-10-13T06:35:10.160Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv6b3qsi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T06:38:08.072Z",
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -1403,6 +1396,13 @@
       "repository": "autotrust/JEV-35B",
       "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv732dr6",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:41:20.360Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv736rge",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

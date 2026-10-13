@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-3KI6",
-    "timestamp": "2026-10-12T14:43:14.958Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv5d3kf2",
-    "contentHash": "3f668742ada4d5ac32d8852d03ff321e81c489338a10df01ea15d5bd5da61437",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-7FRB",
     "timestamp": "2026-10-12T14:46:15.431Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "0ce5413d774f2e439952c8e4078514ef6d11f126e65d9911e500de827e87e0c7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-6RMS",
+    "timestamp": "2026-10-13T19:41:20.356Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv736rge",
+    "contentHash": "77316d135f2db652b37b856f4310c64d9fb123ba2cf5b745a8e4c2a036c5d03c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
