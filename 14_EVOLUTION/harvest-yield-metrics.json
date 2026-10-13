@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T04:38:40.618Z",
-  "total_cycles_completed": 816,
-  "total_learnings_persisted": 816,
+  "last_updated": "2026-10-13T04:41:24.571Z",
+  "total_cycles_completed": 817,
+  "total_learnings_persisted": 817,
   "total_rules_promoted": 388,
   "history": [
-    {
-      "timestamp": "2026-10-12T17:59:08.685Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv5k3hng",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T18:02:05.342Z",
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -1403,6 +1396,13 @@
       "repository": "Comfy-Org/Qwen-Image-2.1",
       "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv66xxl8",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T04:41:24.571Z",
+      "repository": "akhilaaa3/Jev-Omni",
+      "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv671g60",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
