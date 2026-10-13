@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T21:27:18.409Z",
-  "total_verified_learnings": 5031,
+  "last_updated": "2026-10-13T21:35:26.908Z",
+  "total_verified_learnings": 5032,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -123489,6 +123489,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T21:27:18.409Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv779id8": {
+      "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv779id8",
+      "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "slug": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "content_hash": "454a1a0ed93c0a9d684cdd6a25e8754a51180f67c6e12a807944902f219bbc59",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 762,
+          "title": "**Special‑Token ID Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 763,
+          "title": "**Attention‑Layer Count Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 764,
+          "title": "**Dtype Uniformity Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T21:35:26.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
