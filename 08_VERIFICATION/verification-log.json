@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-WHNV",
-    "timestamp": "2026-10-12T03:25:53.899Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4owhkh",
-    "contentHash": "138181988d015bb47a22eadb23b1e49ace3998386962d2ed82f85bdebab74873",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-2QO1",
     "timestamp": "2026-10-12T03:30:45.505Z",
     "repository": "meta-llama/Llama-2-7b",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6brb0d",
     "contentHash": "b2a94875456cc52ecd3969f7e71d820e844906f23605492f379badc8e3e128e8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-VC5K",
+    "timestamp": "2026-10-13T06:56:37.448Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv6bvc2l",
+    "contentHash": "fe43101f414389acfdb75a1e8a78b88d10132fcea363f3ffccd8d0c24a2d3c66",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

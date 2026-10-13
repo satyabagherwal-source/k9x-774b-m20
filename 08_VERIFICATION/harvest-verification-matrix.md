@@ -919,3 +919,4 @@
 | `CYCLE-20261013-JQVZ` | `2026-10-13T06:47:36.671Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 655, Rule 656` | Yes (`2e26ca72...`) |
 | `CYCLE-20261013-NGTH` | `2026-10-13T06:50:30.245Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`1e32ecc5...`) |
 | `CYCLE-20261013-RB24` | `2026-10-13T06:53:29.404Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`b2a94875...`) |
+| `CYCLE-20261013-VC5K` | `2026-10-13T06:56:37.448Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`fe43101f...`) |
