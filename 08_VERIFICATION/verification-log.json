@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-J3ZD",
-    "timestamp": "2026-10-12T11:39:22.729Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv56j3xp",
-    "contentHash": "1448b29831c7ce2533a606f8367359f0c3366a3b5084e06f12e48e7010978e6d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-MPWT",
     "timestamp": "2026-10-12T11:42:11.117Z",
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V3",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6w76yr",
     "contentHash": "ed1a2d4e4051e298fd27e7b8018210e24447b038aa7473896220e2a76df5dab1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-BEPS",
+    "timestamp": "2026-10-13T16:28:59.584Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv6wben8",
+    "contentHash": "f1c08f5929968553a7f115d10af5d4c53530a1482029b7ceee0dfcd1dfb3bd9e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
