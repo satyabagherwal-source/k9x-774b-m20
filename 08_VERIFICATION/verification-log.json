@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-CP5P",
-    "timestamp": "2026-10-12T17:38:18.589Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv5jcp2u",
-    "contentHash": "38552a56e8d9dc540fa968f7ababab4cb6353bfbc4151a09f3ff293c12f24f33",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-GDAN",
     "timestamp": "2026-10-12T17:41:09.839Z",
     "repository": "bigscience/bloom",
@@ -7492,6 +7477,21 @@
     "contentHash": "cb99d63fbc4a2f986f7d6de0d3ed02b176434a51cee88cd05883d09dd2ae85d5",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-YW6R",
+    "timestamp": "2026-10-13T23:19:09.939Z",
+    "repository": "microsoft/FrogNano-4B-2609",
+    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv7ayw3i",
+    "contentHash": "d64303118b395212d05053e0b93258ea7fc109a55abfeab5147c86cc991eae49",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
