@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-8AHO",
-    "timestamp": "2026-10-12T07:47:01.020Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4y8adc",
-    "contentHash": "ac9f4cfb1fc814a3ca73097013db1d9e50db2ae203f3ef73c4c5ac2944b6786d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-DVLH",
     "timestamp": "2026-10-12T07:51:21.653Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7490,6 +7475,21 @@
     "repository": "SupersonicLabs/Julia-1",
     "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv6mtg43",
     "contentHash": "1a9936ed15315ffa3b4325402965f8f0b429d0d3d1f29fbf045da612affd3956",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-XCBA",
+    "timestamp": "2026-10-13T12:06:06.742Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv6mxc84",
+    "contentHash": "7ed5edcdc1b7417edac7448391f87ab4770502f49a6e3d54294decee70bfb028",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

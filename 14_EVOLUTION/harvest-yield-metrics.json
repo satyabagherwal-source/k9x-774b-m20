@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:03:05.137Z",
-  "total_cycles_completed": 934,
-  "total_learnings_persisted": 934,
+  "last_updated": "2026-10-13T12:06:06.745Z",
+  "total_cycles_completed": 935,
+  "total_learnings_persisted": 935,
   "total_rules_promoted": 442,
   "history": [
-    {
-      "timestamp": "2026-10-13T00:29:46.049Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv5y1u21",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T00:32:45.098Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T12:03:05.137Z",
       "repository": "SupersonicLabs/Julia-1",
       "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv6mtg43",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T12:06:06.745Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv6mxc84",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
