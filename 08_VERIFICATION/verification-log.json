@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-G93D",
-    "timestamp": "2026-10-11T23:57:18.985Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r",
-    "contentHash": "7b1d6ea5d68368a3626616b26d4812554de53cead27be0e17f59fd4603a0e248",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-K7UN",
     "timestamp": "2026-10-12T00:00:23.999Z",
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-R1",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv649pxx",
     "contentHash": "0e4480c5846cccbd3b300197c012df692ea9fc8f51f12443c132aa9fc4516d7e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-DVOU",
+    "timestamp": "2026-10-13T03:27:05.646Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv64dvmh",
+    "contentHash": "84127fce89f02d63d3dd66d14799db5de48f115a26f96a9134d8847525003bfb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

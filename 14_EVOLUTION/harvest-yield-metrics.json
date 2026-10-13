@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T03:23:51.688Z",
-  "total_cycles_completed": 792,
-  "total_learnings_persisted": 792,
+  "last_updated": "2026-10-13T03:27:05.649Z",
+  "total_cycles_completed": 793,
+  "total_learnings_persisted": 793,
   "total_rules_promoted": 368,
   "history": [
-    {
-      "timestamp": "2026-10-12T16:47:02.418Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv5hirg8",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T16:49:49.607Z",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T03:23:51.688Z",
       "repository": "deepseek-ai/DeepSeek-R1",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv649pxx",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T03:27:05.649Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv64dvmh",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
