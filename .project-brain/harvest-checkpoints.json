@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T01:58:33.382Z",
+  "last_updated": "2026-10-13T02:01:33.481Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1518,15 +1518,15 @@
       "repository": "google/vit-base-patch16-224",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-google-vit-base-patch16-224-mv5mjcl8",
-      "content_hash": "ea9c71e32af790e3310e3811e51bbd5ba6b854a9b69bca04cbadcda61d1b7321",
-      "verified_at": "2026-10-12T19:07:27.850Z",
+      "learning_id": "learn-huggingface-hf-google-vit-base-patch16-224-mv61bvlo",
+      "content_hash": "c033f79694d61a04038658632ad78d580a3b9689eac901f1830e8e345b2b12cb",
+      "verified_at": "2026-10-13T02:01:33.481Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T19:07:27.850Z"
+      "last_updated": "2026-10-13T02:01:33.481Z"
     },
     "google/gemma-4-31B-it": {
       "repository": "google/gemma-4-31B-it",
