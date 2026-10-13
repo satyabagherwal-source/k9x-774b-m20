@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T05:36:51.065Z",
-  "total_cycles_completed": 835,
-  "total_learnings_persisted": 835,
+  "last_updated": "2026-10-13T05:39:51.248Z",
+  "total_cycles_completed": 836,
+  "total_learnings_persisted": 836,
   "total_rules_promoted": 395,
   "history": [
-    {
-      "timestamp": "2026-10-12T18:57:11.070Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv5m64pf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T19:00:06.097Z",
       "repository": "argmaxinc/whisperkit-coreml",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T05:36:51.065Z",
       "repository": "google/embeddinggemma-2",
       "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv690qve",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T05:39:51.248Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv694lwi",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
