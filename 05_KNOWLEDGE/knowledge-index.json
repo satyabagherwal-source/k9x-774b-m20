@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T19:44:17.153Z",
-  "total_verified_learnings": 5010,
+  "last_updated": "2026-10-13T19:48:05.917Z",
+  "total_verified_learnings": 5011,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -122915,6 +122915,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T19:44:17.153Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv73fgj9": {
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv73fgj9",
+      "source": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "slug": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "content_hash": "9b9bade393b42dec81e3fd61329d2bcea9e067cb7a772150f5afca8e3cacd5d5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T19:48:05.916Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
