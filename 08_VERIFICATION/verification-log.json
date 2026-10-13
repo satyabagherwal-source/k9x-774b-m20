@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-RBQG",
-    "timestamp": "2026-10-12T11:17:46.408Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv55rbnq",
-    "contentHash": "091a8ebf38717ac41764810d637c03adaaff344abac6f0d959fcf09251117cdb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-UXQW",
     "timestamp": "2026-10-12T11:20:34.904Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.2",
     "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv6vemvd",
     "contentHash": "a9378e58fab346c37417be1bce84d5f441dc80ee92622fa2d230e28b931e2130",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-IJRB",
+    "timestamp": "2026-10-13T16:06:33.095Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv6vijov",
+    "contentHash": "17cb85ef375aceced9e3aa8b69b2eeb5fec07f8b47b9026e1f70e88c39e6d1c4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
