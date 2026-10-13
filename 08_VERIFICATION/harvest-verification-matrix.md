@@ -952,3 +952,4 @@
 | `CYCLE-20261013-UXMF` | `2026-10-13T09:44:16.311Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`0c92a1b8...`) |
 | `CYCLE-20261013-YUR4` | `2026-10-13T09:47:19.216Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`7c56d78f...`) |
 | `CYCLE-20261013-5AX8` | `2026-10-13T09:52:20.108Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`03eb31e2...`) |
+| `CYCLE-20261013-99HW` | `2026-10-13T09:55:24.884Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`3f064b56...`) |
