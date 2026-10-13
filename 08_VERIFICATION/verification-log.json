@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-8XHV",
-    "timestamp": "2026-10-12T01:15:36.211Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7",
-    "contentHash": "f19821686f1ea401afac4bfae0ceea25a3f7632eac7314249db2092b94af28cd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-CZZX",
     "timestamp": "2026-10-12T01:18:46.077Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "7bf0b561b74bde70bd8301513e4ca6f115e0527a7933548eb3ccf036b137adc6",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-9EEX",
+    "timestamp": "2026-10-13T04:47:35.481Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv679ec0",
+    "contentHash": "506a6ae3494d4ac1df482da8c29bffe5b9b59b5d928fda8d9c52b8869e1f2ab9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
