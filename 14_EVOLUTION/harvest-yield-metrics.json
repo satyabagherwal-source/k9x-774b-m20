@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:54:24.114Z",
-  "total_cycles_completed": 913,
-  "total_learnings_persisted": 913,
+  "last_updated": "2026-10-13T10:57:16.248Z",
+  "total_cycles_completed": 914,
+  "total_learnings_persisted": 914,
   "total_rules_promoted": 434,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:26:18.718Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv5vs893",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T23:28:59.249Z",
       "repository": "google/electra-base-discriminator",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T10:54:24.114Z",
       "repository": "black-forest-labs/FLUX.1-dev",
       "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv6kd4ar",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T10:57:16.248Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-hf-francisring-prism-mv6kgt5g",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
