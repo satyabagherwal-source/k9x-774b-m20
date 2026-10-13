@@ -1103,3 +1103,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv73r2dl` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-13T19:57:07.477Z |
 | `learn-huggingface-hf-nvidia-nemotron-3-diarization-mv73v364` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-13T20:00:15.174Z |
 | `learn-huggingface-hf-lightricks-ltx-2-5-mv73zlgc` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-13T20:03:45.482Z |
+| `learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv743jxv` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-13T20:06:50.128Z |
