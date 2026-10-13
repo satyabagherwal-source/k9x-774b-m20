@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-W34F",
-    "timestamp": "2026-10-12T01:33:36.591Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t",
-    "contentHash": "57f265f2581f16613b2f8f027aac921ab856c92576c410bed2e2dce91678ac3d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-09VO",
     "timestamp": "2026-10-12T01:36:51.972Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "76cbb42c720a5d227f2cdd712295eba26fd42a513ea89d81573770485575a667",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-X29V",
+    "timestamp": "2026-10-13T05:05:59.491Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv67x27a",
+    "contentHash": "f176e20bbaa7b964a64d0806dd975544f98ed9ecfc99eab25d88258863a6d281",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

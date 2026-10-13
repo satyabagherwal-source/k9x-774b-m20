@@ -595,9 +595,9 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "878a50e56a34619ee2eeb575d5460580776a5afccd2403ba7afd8368c48e7733",
-    "lastHarvestedAt": "2026-10-12T22:23:33.157Z",
-    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv5tjirf"
+    "contentHash": "f176e20bbaa7b964a64d0806dd975544f98ed9ecfc99eab25d88258863a6d281",
+    "lastHarvestedAt": "2026-10-13T05:05:59.494Z",
+    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv67x27a"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
