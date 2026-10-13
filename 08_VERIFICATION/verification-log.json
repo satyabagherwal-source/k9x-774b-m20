@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-K7UN",
-    "timestamp": "2026-10-12T00:00:23.999Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf",
-    "contentHash": "e477c27769d1b8995342d71b7467fec3ae4b3e9d8a8635f25981d28ec38f6866",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-NSTH",
     "timestamp": "2026-10-12T00:03:11.141Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7490,6 +7475,21 @@
     "repository": "moonshotai/Kimi-K3",
     "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv64dvmh",
     "contentHash": "84127fce89f02d63d3dd66d14799db5de48f115a26f96a9134d8847525003bfb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-HQ3K",
+    "timestamp": "2026-10-13T03:30:05.024Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv64hq0e",
+    "contentHash": "08ddc625d07b8861c1f8a50b6e74340f469d99eb7c6fdaa36e2055761a22d2ca",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

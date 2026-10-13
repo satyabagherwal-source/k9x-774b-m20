@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T03:27:05.650Z",
+  "last_updated": "2026-10-13T03:30:05.029Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1975,6 +1975,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-12T22:42:23.014Z"
+    },
+    "autotrust/JEV-35B": {
+      "repository": "autotrust/JEV-35B",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-autotrust-jev-35b-mv64hq0e",
+      "content_hash": "08ddc625d07b8861c1f8a50b6e74340f469d99eb7c6fdaa36e2055761a22d2ca",
+      "verified_at": "2026-10-13T03:30:05.029Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-13T03:30:05.029Z"
     }
   }
 }

@@ -17476,5 +17476,17 @@
     "qualityScore": 6342,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-12T22:37:36.175Z"
+  },
+  {
+    "name": "autotrust/JEV-35B",
+    "fullName": "autotrust/JEV-35B",
+    "url": "https://huggingface.co/autotrust/JEV-35B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: autotrust/JEV-35B (219 likes, 6262 downloads)",
+    "likes": 219,
+    "downloads": 6262,
+    "qualityScore": 4190,
+    "discoveredAt": "2026-10-13T03:29:53.009Z"
   }
 ]

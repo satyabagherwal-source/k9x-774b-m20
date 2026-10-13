@@ -1378,5 +1378,15 @@
     "contentHash": "27bbe78cd23740f523edbe38e6c4a2a931d3d7ebc4c3a2107cca2979c1d3e036",
     "lastHarvestedAt": "2026-10-12T22:42:23.011Z",
     "learningId": "learn-github-ebony-vinyl-dsh-our-free-model-mv5u7qjj"
+  },
+  "hf-autotrust-jev-35b": {
+    "repository": "autotrust/JEV-35B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
+    "sourceVersion": "hf-autotrust-jev-35b",
+    "license": "Open-Source",
+    "contentHash": "08ddc625d07b8861c1f8a50b6e74340f469d99eb7c6fdaa36e2055761a22d2ca",
+    "lastHarvestedAt": "2026-10-13T03:30:05.027Z",
+    "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv64hq0e"
   }
 }
