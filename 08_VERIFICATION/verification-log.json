@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-HEZG",
-    "timestamp": "2026-10-12T04:38:09.436Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4rhewt",
-    "contentHash": "8d4be3c7a2abfcad41a4abe531ca263839558578dcd5e314c5cf9089dd3df160",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-L84C",
     "timestamp": "2026-10-12T04:41:07.164Z",
     "repository": "argmaxinc/whisperkit-coreml",
@@ -7490,6 +7475,21 @@
     "repository": "openai-community/gpt2",
     "learningId": "learn-huggingface-hf-openai-community-gpt2-mv6gxbqq",
     "contentHash": "682ad6b4eafa3e631eb242b012a92377b4b7935d1cd32766b6d3fd058e630d2e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-18B5",
+    "timestamp": "2026-10-13T09:21:10.481Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv6h1885",
+    "contentHash": "9b34b544b349ed398b4a5d88515331686615f64280cc90a2ed34d6cdd8756ebc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

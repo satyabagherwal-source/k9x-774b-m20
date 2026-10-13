@@ -942,3 +942,4 @@
 | `CYCLE-20261013-PGAP` | `2026-10-13T09:12:00.961Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`c82d377b...`) |
 | `CYCLE-20261013-TCTN` | `2026-10-13T09:15:03.083Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`3be550f1...`) |
 | `CYCLE-20261013-XBU1` | `2026-10-13T09:18:08.425Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`682ad6b4...`) |
+| `CYCLE-20261013-18B5` | `2026-10-13T09:21:10.481Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`9b34b544...`) |
