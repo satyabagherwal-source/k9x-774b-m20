@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:36:17.544Z",
-  "total_cycles_completed": 907,
-  "total_learnings_persisted": 907,
+  "last_updated": "2026-10-13T10:39:10.506Z",
+  "total_cycles_completed": 908,
+  "total_learnings_persisted": 908,
   "total_rules_promoted": 431,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:07:25.856Z",
-      "repository": "canberkkkkkk/ema-lightning",
-      "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv5v3y5w",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T23:10:49.435Z",
       "repository": "google/embeddinggemma-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T10:36:17.544Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv6jptw6",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T10:39:10.506Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv6jtjdt",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
