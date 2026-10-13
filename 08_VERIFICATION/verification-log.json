@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-GMHB",
-    "timestamp": "2026-10-12T10:13:27.887Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv53gmfl",
-    "contentHash": "cbe09f25372fe28318cfbf07936c354474ca54b6388a68c8916ae74047363e20",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-KZ7I",
     "timestamp": "2026-10-12T10:16:51.006Z",
     "repository": "CompVis/stable-diffusion-v1-4",
@@ -7490,6 +7475,21 @@
     "repository": "google/electra-base-discriminator",
     "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv6s34bk",
     "contentHash": "45f42219b84513a5ec30dd9a9cbe218ef4ae95f3962cf8e828020690029fdca3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-9OIB",
+    "timestamp": "2026-10-13T14:35:40.499Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-m3-mv6s9ofa",
+    "contentHash": "55e8675e705e45381c2e469276f61fc0bd2c0532cc45d036dabdaaf3aff9ffe6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
