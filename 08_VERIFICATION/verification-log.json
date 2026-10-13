@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-TVAH",
-    "timestamp": "2026-10-12T03:51:51.209Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv4ptv8c",
-    "contentHash": "3c336ddaa7ccc933fc07d1be13f2e190a3d1880c0c1d62f1d48bacd71fa0e439",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-XSWK",
     "timestamp": "2026-10-12T03:54:54.740Z",
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V3",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6dnwn0",
     "contentHash": "219f411d3664891471676da5512c7f0d17b61be95825166a1f6bed362cce72c1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-TLL3",
+    "timestamp": "2026-10-13T07:51:15.591Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv6dtli4",
+    "contentHash": "0fe4dd4fd58395d3e77f9c90100c184b9a2ebe4aef37ab53860cd07ec14b13fb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
