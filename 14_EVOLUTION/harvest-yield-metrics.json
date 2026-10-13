@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T00:08:18.187Z",
-  "total_cycles_completed": 728,
-  "total_learnings_persisted": 728,
+  "last_updated": "2026-10-13T00:11:33.750Z",
+  "total_cycles_completed": 729,
+  "total_learnings_persisted": 729,
   "total_rules_promoted": 352,
   "history": [
-    {
-      "timestamp": "2026-10-12T13:13:48.878Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv59wjxj",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T13:16:47.561Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T00:08:18.187Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv5xa8cf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T00:11:33.750Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv5xef7v",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
