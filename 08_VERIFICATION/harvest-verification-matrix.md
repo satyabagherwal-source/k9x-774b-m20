@@ -1100,3 +1100,4 @@
 | `CYCLE-20261013-GLSN` | `2026-10-13T18:53:00.119Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`13de9f42...`) |
 | `CYCLE-20261013-KQ0G` | `2026-10-13T18:56:12.208Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`c1c15dd6...`) |
 | `CYCLE-20261013-OK3X` | `2026-10-13T18:59:11.181Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`ba85fd9c...`) |
+| `CYCLE-20261013-SKFN` | `2026-10-13T19:02:18.227Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`d6c65d38...`) |
