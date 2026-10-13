@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-WG8D",
-    "timestamp": "2026-10-12T02:57:52.429Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64",
-    "contentHash": "ec578ef942b2acd91875b5ebf4345dcb02ff2b6e888d4f9713b8cf03e065d430",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-0OGR",
     "timestamp": "2026-10-12T03:01:09.723Z",
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7490,6 +7475,21 @@
     "repository": "microsoft/FrogNano-4B-2609",
     "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv6arm9s",
     "contentHash": "208abe91b81133cb3401dae03dd1841fa1f01b74ba6d2e1397fe992e0a406cfc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-VGSU",
+    "timestamp": "2026-10-13T06:28:43.854Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv6avgpu",
+    "contentHash": "2b1e28fcacb2b86f56cdadc687068739878d323ff1b1f4e3963a761c530afa69",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
