@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-GRD1",
-    "timestamp": "2026-10-12T15:21:29.989Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv5egrah",
-    "contentHash": "9219558742cda4f727eb719a3054ec6c6648100991afe3be59939399837f58d7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-KZAY",
     "timestamp": "2026-10-12T15:24:46.906Z",
     "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
     "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv74fhom",
     "contentHash": "c57609ce4097254e617b604dcd8486a8e3b61ac5a44c629ae724174155ffd632",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-J7SJ",
+    "timestamp": "2026-10-13T20:19:00.787Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv74j7qn",
+    "contentHash": "fd57261d7a481deee28736e64d7bf393b264688d0270b5d6c138684f45ac71e3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
