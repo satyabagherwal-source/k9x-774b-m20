@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-KQSD",
-    "timestamp": "2026-10-12T07:28:42.397Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv4xkqo7",
-    "contentHash": "41ec35f6a17ac6535f52f40ef068f96a8c0231c73f512574e22e2b63246199c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-QIIY",
     "timestamp": "2026-10-12T07:33:11.626Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
     "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv6mchby",
     "contentHash": "382a8603e45bee6788c22f37755b3993a2663ce10ceee292ed03e327cba05d73",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-GD86",
+    "timestamp": "2026-10-13T11:52:54.774Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv6mgd55",
+    "contentHash": "231991feec35e41b9fa014947332b0fc0869965eba4c705cf848547891705f88",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
