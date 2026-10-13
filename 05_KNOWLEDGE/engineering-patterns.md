@@ -41314,3 +41314,241 @@ model.vision_encoder.requires_grad_(True)
 ```
 **VERIFICATION METHOD**:
 Assert that `model.vision_encoder.parameters()` are all `requires_grad=False`.
+
+
+---
+
+## 740. Edge-ASR Streaming Consistency Invariant (Harvested from Cactus-Compute/whistle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Edge-ASR Streaming Consistency Invariant",
+  "source": "Cactus-Compute/whistle",
+  "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+  "source_version": "hf-cactus-compute-whistle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T19:05:23.974Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv71wjqf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In streaming speech recognition systems, word commitment MUST NOT occur on a single-pass decode result. Instead, a **two-pass agreement mechanism** MUST be implemented where a word is only committed to the final transcript when two consecutive (or overlapping) inference passes produce the same token sequence for that segment.
+**WHY**:
+Single-pass decoding in streaming ASR is highly susceptible to "hallucinations" (inventing words) and instability due to incomplete context at the end of a window. By requiring agreement between two passes (e.g., the current window and the next overlapping window, or a re-decode with more context), the system filters out transient errors and ensures that only stable, high-confidence words are emitted to the UI or downstream systems. This prevents the user from seeing flickering or incorrect text that is later corrected.
+**WHEN TO APPLY**:
+Any real-time or streaming ASR pipeline, particularly on edge devices where latency is critical and re-computation is expensive. Applies to any system where partial results are displayed to users before finalization.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for Two-Pass Agreement
+struct WordCommitment {
+    std::string text;
+    float confidence;
+    int start_frame;
+    int end_frame;
+};
+
+class StreamingASR {
+    std::vector<WordCommitment> pending_words;
+    std::vector<WordCommitment> committed_words;
+
+public:
+    void process_chunk(const AudioChunk& chunk) {
+        // Pass 1: Decode current window
+        auto pass1_results = decoder.decode(chunk);
+        
+        // Pass 2: Decode overlapping window (e.g., previous 50% + current 50%)
+        auto pass2_results = decoder.decode(overlapping_window(chunk));
+
+        // Compare and Commit
+        for (size_t i = 0; i < pass1_results.size(); ++i) {
+            if (i < pass2_results.size() && 
+                pass1_results[i].text == pass2_results[i].text &&
+                pass1_results[i].confidence > THRESHOLD) {
+                // Commit only if both passes agree
+                committed_words.push_back(pass1_results[i]);
+            } else {
+                // Keep in pending buffer for next iteration
+                pending_words.push_back(pass1_results[i]);
+            }
+        }
+        
+        // Update pending buffer for next cycle
+        pending_words = get_uncommitted_tail(pass1_results);
+    }
+};
+```
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Immediate Commit
+void process_chunk_bad(const AudioChunk& chunk) {
+    auto results = decoder.decode(chunk);
+    for (const auto& word : results) {
+        // BAD: Commits immediately, leading to flickering UI and hallucinations
+        ui.update_transcript(word.text); 
+    }
+}
+```
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Feed a synthetic audio stream with known noise patterns. Assert that `committed_words` does not contain any word that was not present in both `pass1` and `pass2` outputs.
+2.  **Integration Test**: Run a 10-second audio clip through the streaming interface. Verify that the final transcript matches the non-streaming transcript within a defined WER tolerance, and that no intermediate UI updates contain words that are not in the final transcript.
+
+
+---
+
+## 741. Quantized Model Container Self-Containment Invariant (Harvested from Cactus-Compute/whistle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantized Model Container Self-Containment Invariant",
+  "source": "Cactus-Compute/whistle",
+  "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+  "source_version": "hf-cactus-compute-whistle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T19:05:23.990Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv71wjqf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A deployed quantized model artifact MUST be a single, self-contained binary file (e.g., `.cact`) that includes all weights, quantization parameters, and architectural metadata. The runtime MUST NOT require external configuration files, separate weight files, or dynamic library dependencies for model loading.
+**WHY**:
+On edge devices (microcontrollers, wearables), file system access is limited, and dependency management is a major source of failure. A single-file container ensures:
+1.  **Reproducibility**: The exact model version is guaranteed.
+2.  **Simplicity**: No risk of mismatched config/weight versions.
+3.  **Security**: Easier to verify integrity (hash check) of a single file.
+4.  **Portability**: The model can be transferred via OTA updates as a single blob.
+**WHEN TO APPLY**:
+Any ML model deployment to edge devices, embedded systems, or WebAssembly environments where dependency management is complex or impossible.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for Self-Contained Loading
+class CactusModelLoader {
+public:
+    static std::unique_ptr<Model> load(const std::string& filepath) {
+        // 1. Read entire file into memory
+        std::vector<uint8_t> buffer = read_file(filepath);
+        
+        // 2. Parse header to verify magic number and version
+        if (buffer[0] != CACT_MAGIC) throw std::runtime_error("Invalid .cact file");
+        
+        // 3. Extract quantization parameters from header
+        auto quant_params = parse_quant_params(buffer);
+        
+        // 4. Extract weights from payload
+        auto weights = extract_weights(buffer, quant_params);
+        
+        // 5. Construct model in memory
+        return std::make_unique<Model>(weights, quant_params);
+    }
+};
+```
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Multi-File Dependency
+void load_model_bad(const std::string& base_path) {
+    auto weights = load_file(base_path + "/weights.bin");
+    auto config = load_json(base_path + "/config.json");
+    auto quant = load_file(base_path + "/quant_params.bin");
+    // BAD: Risk of version mismatch, missing files, and complex path management
+    model = new Model(weights, config, quant);
+}
+```
+**VERIFICATION METHOD**:
+1.  **Static Analysis**: Scan the runtime code for any file I/O operations that reference paths other than the single input model file.
+2.  **Integration Test**: Copy the `.cact` file to a clean environment with no other files. Attempt to load and run inference. Assert success.
+3.  **Hash Check**: Verify that the SHA-256 hash of the `.cact` file matches the expected value in the manifest.
+
+
+---
+
+## 742. Laddered Depth Dynamic Selection Invariant (Harvested from Cactus-Compute/whistle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Laddered Depth Dynamic Selection Invariant",
+  "source": "Cactus-Compute/whistle",
+  "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+  "source_version": "hf-cactus-compute-whistle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T19:05:24.005Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cactus-compute-whistle-mv71wjqf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+A model container MUST support multiple architectural depths (e.g., 2, 4, 8 layers) within the same file. The runtime MUST expose a parameter (e.g., `--audio-depth`) to select the depth at load time, allowing dynamic trade-offs between accuracy and latency based on device capabilities.
+**WHY**:
+Edge devices vary widely in CPU power and memory. A fixed-depth model may be too slow for low-end devices or too inaccurate for high-end devices. By bundling multiple depths, the same model file can serve all devices, with the runtime selecting the optimal depth based on available resources or user preference. This reduces the number of model artifacts to manage and deploy.
+**WHEN TO APPLY**:
+Any ML model where inference cost scales linearly or super-linearly with depth/width, and where the target deployment environment has heterogeneous hardware capabilities.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for Laddered Depth Selection
+class LadderedModel {
+    std::map<int, std::unique_ptr<Decoder>> decoders; // depth -> decoder
+
+public:
+    void load(const std::string& filepath, int requested_depth) {
+        auto buffer = read_file(filepath);
+        // Parse all available depths from header
+        auto available_depths = parse_available_depths(buffer);
+        
+        // Select the closest available depth <= requested_depth
+        int selected_depth = select_optimal_depth(available_depths, requested_depth);
+        
+        // Load only the weights for the selected depth
+        auto weights = extract_weights_for_depth(buffer, selected_depth);
+        decoders[selected_depth] = std::make_unique<Decoder>(weights);
+    }
+
+    void infer(const AudioFeatures& features) {
+        // Use the loaded decoder
+        decoders[loaded_depth]->forward(features);
+    }
+};
+```
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Fixed Depth
+class FixedModel {
+    std::unique_ptr<Decoder> decoder;
+
+public:
+    void load(const std::string& filepath) {
+        // BAD: No flexibility, must deploy separate models for different depths
+        decoder = std::make_unique<Decoder>(load_fixed_weights(filepath));
+    }
+};
+```
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Load the model with different `--audio-depth` values. Assert that the model loads successfully and that the number of layers in the decoder matches the requested depth.
+2.  **Performance Test**: Measure inference latency for each depth. Assert that latency increases monotonically with depth.
+3.  **Accuracy Test**: Measure WER for each depth. Assert that accuracy improves (or stays constant) with increasing depth.

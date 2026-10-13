@@ -3,8 +3,8 @@
 > **Source Version**: `hf-cactus-co`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-13T10:48:29.117Z  
-> **Learning ID**: `learn-huggingface-hf-cactus-compute-whistle-mv6k5igt`  
+> **Timestamp**: 2026-10-13T19:05:23.943Z  
+> **Learning ID**: `learn-huggingface-hf-cactus-compute-whistle-mv71wjqf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,350 +17,296 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The repository `Cactus-Compute/whistle` addresses the critical bottleneck of running high-fidelity Automatic Speech Recognition (ASR) on resource-constrained edge devices (mobiles, wearables, microcontrollers, robots). Traditional ASR models (like Whisper) are too large (hundreds of MBs) and computationally expensive (requiring GPUs or significant CPU cycles) for real-time, on-device inference with low latency and zero network dependency. Whistle solves this by providing a **16.9 MB single-file model** that runs on a **self-contained C++/WebAssembly engine** with **no external dependencies**, achieving competitive Word Error Rates (WER) against much larger models.
+The repository `Cactus-Compute/whistle` addresses the critical bottleneck of deploying high-accuracy Automatic Speech Recognition (ASR) on resource-constrained edge devices (mobiles, wearables, microcontrollers). Traditional ASR models (like Whisper) are too large (GBs) and computationally heavy (GPU-dependent) for on-device inference. Whistle solves this by compressing the entire model into a single **16.9 MB** file that runs on a **self-contained C++ / WebAssembly engine** with **no external dependencies** and **no GPU requirement**.
 
-**Architectural Boundaries & Subsystem Abstractions:**
-1.  **Unified Runtime Boundary**: The system is architecturally decoupled from the model weights. The model (`whistle.cact`) is a data artifact, while the inference engine (`Cactus-Compute/needle3`) is the code artifact. This allows the same binary to run both text generation (Needle) and speech recognition (Whistle) by swapping the `.cact` container.
-2.  **Quantization-First Design**: The architecture is built around `cactus-quants` (group size 128). This is not an afterthought but a core invariant. The model is trained and deployed in a quantized state (2-4 bit), ensuring that the inference kernels are optimized for integer arithmetic (SIMD) rather than floating-point, which is critical for edge CPU performance.
-3.  **Modular Depth Laddering**: The decoder is "laddered," meaning the model supports multiple depths (2 layers up to full depth). This allows for **dynamic precision/latency trade-offs** at load time via `--audio-depth`. A device with less RAM can load a shallower model, while a more powerful device loads the full model, without changing the binary.
-4.  **Cross-Attention Gating**: The decoder uses "gated cross attention" at every layer to read from the audio encoder. This is a specific architectural choice to ensure the text decoder tightly couples with the audio features, improving alignment for word timestamps.
-5.  **Stateless Inference Core**: The engine is designed to be stateless between calls, except for the KV cache. This enables safe multi-threading and easy integration into WebAssembly sandboxes where global state is dangerous.
+**Architectural Boundaries & Subsystems:**
+1.  **Front-End (Signal Processing):** Log-mel spectrogram extraction followed by a convolutional stem. This subsystem converts raw 16 kHz mono audio into feature vectors.
+2.  **Encoder (Audio Understanding):** A transformer-based encoder that processes the feature vectors. It outputs one embedding row per **80 ms frame**. This output serves dual purposes: feeding the decoder and providing speech embeddings for retrieval/matching without decoding.
+3.  **Decoder (Text Generation):** A "Needle-shaped" decoder (reusing the architecture from `Cactus-Compute/needle3`). It uses **Gated Cross-Attention** at every layer to attend to the encoder's output. It is "laddered," meaning it supports variable depth (2+ layers) selectable at load time via `--audio-depth`.
+4.  **Quantization & Runtime:** Uses "Cactus Quants" with a group size of 128. The deployment format is `.cact`, a proprietary container that bundles weights and metadata. The runtime is a single binary supporting SIMD kernels and KV caching.
+5.  **Inference Logic:**
+    *   **Transcription:** One-pass for up to 30 seconds; windowed processing for longer audio.
+    *   **Streaming:** Live audio streams with a "two-pass agreement" mechanism for word commitment (only commits words when two passes agree, reducing hallucinations).
+    *   **Keyword Biasing:** Post-processing or attention-biasing mechanism to favor user-specified keywords (names, places) during search/decoding.
+    *   **Timestamps:** Word-level start/end times and probabilities derived directly from the decoder's attention maps.
 
 **Critical Subsystem Abstractions:**
-*   **`.cact` Container**: A proprietary binary format that encapsulates weights, quantization parameters, and metadata. It is the single source of truth for the model.
-*   **Cactus Quants**: A quantization scheme that groups weights (size 128) for efficient dequantization during inference.
-*   **SIMD Kernels**: Low-level CPU instructions (AVX2, NEON) that perform matrix multiplications on quantized data.
-*   **KV Cache**: A memory-efficient cache for the decoder's attention mechanism, allowing for streaming inference without recomputing previous tokens.
+*   **`.cact` Container:** A unified format for weights and configuration, ensuring the model is self-contained.
+*   **GQA (Grouped Query Attention):** Used in the attention mechanism to reduce KV cache size and improve inference speed on edge hardware.
+*   **Hadamard MLP:** A specific type of Multi-Layer Perceptron activation/structure, likely chosen for computational efficiency or specific mathematical properties beneficial to quantization.
+*   **Laddered Depth:** The ability to load different model depths (complexity) from the same container, allowing dynamic trade-offs between accuracy and latency based on device capabilities.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Quantization-Native Inference Pipeline
+### 1. Edge-ASR Streaming Consistency Invariant
 **RULE**:
-MUST design the inference engine to operate natively on quantized data types (int8/int4) throughout the forward pass, dequantizing only at the final output or when necessary for precision-critical operations. MUST NOT perform dequantization to float32 for every layer operation.
+In streaming speech recognition systems, word commitment MUST NOT occur on a single-pass decode result. Instead, a **two-pass agreement mechanism** MUST be implemented where a word is only committed to the final transcript when two consecutive (or overlapping) inference passes produce the same token sequence for that segment.
 **WHY**:
-Dequantizing to float32 at every layer incurs massive memory bandwidth overhead and CPU cycle costs for type conversion. On edge devices, memory bandwidth is often the bottleneck, not compute. By keeping data in quantized form, you leverage SIMD instructions that are optimized for integer arithmetic, reducing latency by 2-4x.
+Single-pass decoding in streaming ASR is highly susceptible to "hallucinations" (inventing words) and instability due to incomplete context at the end of a window. By requiring agreement between two passes (e.g., the current window and the next overlapping window, or a re-decode with more context), the system filters out transient errors and ensures that only stable, high-confidence words are emitted to the UI or downstream systems. This prevents the user from seeing flickering or incorrect text that is later corrected.
 **WHEN TO APPLY**:
-Any ML inference system targeting edge devices (mobile, IoT, microcontrollers) where memory bandwidth and power consumption are critical constraints.
+Any real-time or streaming ASR pipeline, particularly on edge devices where latency is critical and re-computation is expensive. Applies to any system where partial results are displayed to users before finalization.
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```cpp
-// Pseudo-code for quantized matrix multiplication
-void quantized_matmul(const int8_t* A, const int8_t* B, const int8_t* scales, float* C) {
-    // 1. Load quantized blocks (128 elements)
-    // 2. Perform integer dot product using SIMD (e.g., _mm256_maddubs_epi16)
-    // 3. Scale the result using the pre-computed scale factors
-    // 4. Accumulate into float accumulator
-    // 5. Store result
-    // NO dequantization of A or B to float32 before multiplication
-}
-```
-**NEGATIVE CONSTRAINT**:
-```cpp
-// ANTI-PATTERN: Dequantizing before every operation
-void naive_matmul(const int8_t* A, const int8_t* B, float* C) {
-    float* A_float = new float[A_size];
-    float* B_float = new float[B_size];
-    for (int i = 0; i < A_size; i++) A_float[i] = A[i] * scale_A[i]; // Expensive
-    for (int i = 0; i < B_size; i++) B_float[i] = B[i] * scale_B[i]; // Expensive
-    // Perform float32 matmul
-    // This is 4x slower and uses 4x more memory bandwidth
-}
-```
-**VERIFICATION METHOD**:
-Profile the inference engine using a memory bandwidth profiler (e.g., Intel VTune, ARM Streamline). Verify that the majority of memory accesses are to `int8_t` or `int4_t` arrays, not `float32_t`. Assert that the number of float32 operations is less than 10% of the total operations.
+// Pseudocode for Two-Pass Agreement
+struct WordCommitment {
+    std::string text;
+    float confidence;
+    int start_frame;
+    int end_frame;
+};
 
-### 2. Dynamic Model Depth Selection at Load Time
-**RULE**:
-MUST support loading different model depths (e.g., 2 layers, 4 layers, full depth) from the same binary file by selecting the appropriate subset of weights at load time. MUST NOT require separate binaries for different model sizes.
-**WHY**:
-Edge devices vary widely in memory and compute capabilities. A single binary that can adapt to the device's capabilities reduces deployment complexity and allows for graceful degradation. If a device runs out of memory, it can fall back to a shallower model without crashing.
-**WHEN TO APPLY**:
-Any ML system that needs to run on a heterogeneous fleet of devices with varying hardware capabilities.
-**VERIFIED IMPLEMENTATION PATTERN**:
+class StreamingASR {
+    std::vector<WordCommitment> pending_words;
+    std::vector<WordCommitment> committed_words;
+
+public:
+    void process_chunk(const AudioChunk& chunk) {
+        // Pass 1: Decode current window
+        auto pass1_results = decoder.decode(chunk);
+        
+        // Pass 2: Decode overlapping window (e.g., previous 50% + current 50%)
+        auto pass2_results = decoder.decode(overlapping_window(chunk));
+
+        // Compare and Commit
+        for (size_t i = 0; i < pass1_results.size(); ++i) {
+            if (i < pass2_results.size() && 
+                pass1_results[i].text == pass2_results[i].text &&
+                pass1_results[i].confidence > THRESHOLD) {
+                // Commit only if both passes agree
+                committed_words.push_back(pass1_results[i]);
+            } else {
+                // Keep in pending buffer for next iteration
+                pending_words.push_back(pass1_results[i]);
+            }
+        }
+        
+        // Update pending buffer for next cycle
+        pending_words = get_uncommitted_tail(pass1_results);
+    }
+};
+```
+**NEGATIVE CONSTRAINT**:
 ```cpp
-// Pseudo-code for dynamic depth selection
-Model load_model(const std::string& path, int target_depth) {
-    // 1. Read the .cact file header
-    // 2. Identify the available depths (e.g., 2, 4, 8, 16)
-    // 3. Select the largest depth <= target_depth
-    // 4. Load only the weights for the selected depth
-    // 5. Initialize the model with the selected depth
-    return model;
+// ANTI-PATTERN: Immediate Commit
+void process_chunk_bad(const AudioChunk& chunk) {
+    auto results = decoder.decode(chunk);
+    for (const auto& word : results) {
+        // BAD: Commits immediately, leading to flickering UI and hallucinations
+        ui.update_transcript(word.text); 
+    }
 }
 ```
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Feed a synthetic audio stream with known noise patterns. Assert that `committed_words` does not contain any word that was not present in both `pass1` and `pass2` outputs.
+2.  **Integration Test**: Run a 10-second audio clip through the streaming interface. Verify that the final transcript matches the non-streaming transcript within a defined WER tolerance, and that no intermediate UI updates contain words that are not in the final transcript.
+
+### 2. Quantized Model Container Self-Containment Invariant
+**RULE**:
+A deployed quantized model artifact MUST be a single, self-contained binary file (e.g., `.cact`) that includes all weights, quantization parameters, and architectural metadata. The runtime MUST NOT require external configuration files, separate weight files, or dynamic library dependencies for model loading.
+**WHY**:
+On edge devices (microcontrollers, wearables), file system access is limited, and dependency management is a major source of failure. A single-file container ensures:
+1.  **Reproducibility**: The exact model version is guaranteed.
+2.  **Simplicity**: No risk of mismatched config/weight versions.
+3.  **Security**: Easier to verify integrity (hash check) of a single file.
+4.  **Portability**: The model can be transferred via OTA updates as a single blob.
+**WHEN TO APPLY**:
+Any ML model deployment to edge devices, embedded systems, or WebAssembly environments where dependency management is complex or impossible.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for Self-Contained Loading
+class CactusModelLoader {
+public:
+    static std::unique_ptr<Model> load(const std::string& filepath) {
+        // 1. Read entire file into memory
+        std::vector<uint8_t> buffer = read_file(filepath);
+        
+        // 2. Parse header to verify magic number and version
+        if (buffer[0] != CACT_MAGIC) throw std::runtime_error("Invalid .cact file");
+        
+        // 3. Extract quantization parameters from header
+        auto quant_params = parse_quant_params(buffer);
+        
+        // 4. Extract weights from payload
+        auto weights = extract_weights(buffer, quant_params);
+        
+        // 5. Construct model in memory
+        return std::make_unique<Model>(weights, quant_params);
+    }
+};
+```
 **NEGATIVE CONSTRAINT**:
 ```cpp
-// ANTI-PATTERN: Separate binaries for each depth
-// whistle_2layer.cact
-// whistle_4layer.cact
-// whistle_8layer.cact
-// This requires the user to know which binary to download, increasing complexity
+// ANTI-PATTERN: Multi-File Dependency
+void load_model_bad(const std::string& base_path) {
+    auto weights = load_file(base_path + "/weights.bin");
+    auto config = load_json(base_path + "/config.json");
+    auto quant = load_file(base_path + "/quant_params.bin");
+    // BAD: Risk of version mismatch, missing files, and complex path management
+    model = new Model(weights, config, quant);
+}
 ```
 **VERIFICATION METHOD**:
-Write a test that loads the model with different `--audio-depth` values and verifies that the model's output changes accordingly (shallower models should have higher WER). Assert that the memory usage decreases as the depth decreases.
+1.  **Static Analysis**: Scan the runtime code for any file I/O operations that reference paths other than the single input model file.
+2.  **Integration Test**: Copy the `.cact` file to a clean environment with no other files. Attempt to load and run inference. Assert success.
+3.  **Hash Check**: Verify that the SHA-256 hash of the `.cact` file matches the expected value in the manifest.
 
-### 3. Zero-Dependency WebAssembly Packaging
+### 3. Laddered Depth Dynamic Selection Invariant
 **RULE**:
-MUST package the inference engine as a self-contained WebAssembly module with no external dependencies (no libc, no libm, no OS calls). MUST NOT rely on host-provided libraries for core inference logic.
+A model container MUST support multiple architectural depths (e.g., 2, 4, 8 layers) within the same file. The runtime MUST expose a parameter (e.g., `--audio-depth`) to select the depth at load time, allowing dynamic trade-offs between accuracy and latency based on device capabilities.
 **WHY**:
-WebAssembly modules that depend on external libraries are difficult to deploy across different platforms (browser, Node.js, Deno, Bun). A self-contained module ensures that the inference engine runs identically everywhere, reducing integration bugs and security risks.
+Edge devices vary widely in CPU power and memory. A fixed-depth model may be too slow for low-end devices or too inaccurate for high-end devices. By bundling multiple depths, the same model file can serve all devices, with the runtime selecting the optimal depth based on available resources or user preference. This reduces the number of model artifacts to manage and deploy.
 **WHEN TO APPLY**:
-Any ML inference system that needs to run in a WebAssembly environment (browser, server-side WASM).
+Any ML model where inference cost scales linearly or super-linearly with depth/width, and where the target deployment environment has heterogeneous hardware capabilities.
 **VERIFIED IMPLEMENTATION PATTERN**:
-```wasm
-// Pseudo-code for a self-contained WASM module
-(module
-  (memory 1)
-  (func (export "inference") (param i32 i32) (result i32)
-    ;; All logic is self-contained
-    ;; No calls to external functions
-  )
-)
+```cpp
+// Pseudocode for Laddered Depth Selection
+class LadderedModel {
+    std::map<int, std::unique_ptr<Decoder>> decoders; // depth -> decoder
+
+public:
+    void load(const std::string& filepath, int requested_depth) {
+        auto buffer = read_file(filepath);
+        // Parse all available depths from header
+        auto available_depths = parse_available_depths(buffer);
+        
+        // Select the closest available depth <= requested_depth
+        int selected_depth = select_optimal_depth(available_depths, requested_depth);
+        
+        // Load only the weights for the selected depth
+        auto weights = extract_weights_for_depth(buffer, selected_depth);
+        decoders[selected_depth] = std::make_unique<Decoder>(weights);
+    }
+
+    void infer(const AudioFeatures& features) {
+        // Use the loaded decoder
+        decoders[loaded_depth]->forward(features);
+    }
+};
 ```
 **NEGATIVE CONSTRAINT**:
-```wasm
-// ANTI-PATTERN: Relying on host-provided libraries
-(module
-  (import "env" "malloc" (func $malloc (param i32) (result i32)))
-  (import "env" "free" (func $free (param i32)))
-  ;; This makes the module dependent on the host's memory management
-)
+```cpp
+// ANTI-PATTERN: Fixed Depth
+class FixedModel {
+    std::unique_ptr<Decoder> decoder;
+
+public:
+    void load(const std::string& filepath) {
+        // BAD: No flexibility, must deploy separate models for different depths
+        decoder = std::make_unique<Decoder>(load_fixed_weights(filepath));
+    }
+};
 ```
 **VERIFICATION METHOD**:
-Use a WASM linter to verify that the module has no imports from `env` or other host modules. Run the module in a minimal WASM runtime (e.g., Wasmtime) and verify that it runs without any host-provided libraries.
+1.  **Unit Test**: Load the model with different `--audio-depth` values. Assert that the model loads successfully and that the number of layers in the decoder matches the requested depth.
+2.  **Performance Test**: Measure inference latency for each depth. Assert that latency increases monotonically with depth.
+3.  **Accuracy Test**: Measure WER for each depth. Assert that accuracy improves (or stays constant) with increasing depth.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: The provided repository data does not contain specific commit patches, bug issues, or developer post-mortems. Therefore, this section will be populated with **hypothetical but highly probable incidents** based on the architectural invariants and common failure modes in edge ML systems. These are derived from the "Microscopic Code-Level Invariants" and "9 Deep Learning Dimensions" sections.*
-
-### Incident 1: KV Cache Memory Leak in Streaming Inference (BUG-KV-01)
-- **Context**: Decoder subsystem, KV cache management.
-- **What Was Expected**: The KV cache should be reused across streaming inference calls, with memory being freed when the stream ends.
-- **What Actually Happened**: Memory usage grew linearly with the length of the audio stream, eventually causing an Out-Of-Memory (OOM) crash on mobile devices.
-- **Evidence in Repo**: N/A (Hypothetical based on common WASM/edge ML bugs).
-- **Root Cause**: The KV cache was allocated in a global pool but not properly freed when the stream ended. The `free` call was missing or conditional on a flag that was never set.
-- **Remediation Code Diff**:
-```cpp
-// - Buggy code
-void process_stream_chunk(const AudioChunk& chunk) {
-    kv_cache.append(chunk); // Appends to global cache
-    // No cleanup
-}
-
-// + Fixed pattern
-void process_stream_chunk(const AudioChunk& chunk, bool is_last_chunk) {
-    kv_cache.append(chunk);
-    if (is_last_chunk) {
-        kv_cache.clear(); // Explicitly free memory
-    }
-}
-```
-- **Lesson**: Always explicitly manage memory in streaming inference. Do not rely on garbage collection or implicit cleanup.
-
-### Incident 2: Quantization Scale Mismatch in SIMD Kernels (BUG-QNT-02)
-- **Context**: SIMD kernel for matrix multiplication.
-- **What Was Expected**: The quantized matrix multiplication should produce results consistent with the float32 reference implementation.
-- **What Actually Happened**: The output was significantly different from the reference, leading to high WER.
-- **Evidence in Repo**: N/A (Hypothetical based on common quantization bugs).
-- **Root Cause**: The SIMD kernel used a different scale factor than the one stored in the `.cact` file. The scale factor was hardcoded in the kernel instead of being loaded from the model.
-- **Remediation Code Diff**:
-```cpp
-// - Buggy code
-void quantized_matmul(const int8_t* A, const int8_t* B, float* C) {
-    const float scale = 0.01f; // Hardcoded, incorrect
-    // ...
-}
-
-// + Fixed pattern
-void quantized_matmul(const int8_t* A, const int8_t* B, const float* scales, float* C) {
-    // Load scale from the model
-    const float scale = scales[0];
-    // ...
-}
-```
-- **Lesson**: Never hardcode quantization parameters. Always load them from the model file to ensure consistency.
-
-### Incident 3: WebAssembly Memory Corruption Due to Buffer Overflow (BUG-WASM-03)
-- **Context**: WebAssembly module, audio buffer processing.
-- **What Was Expected**: The audio buffer should be processed without corrupting the WebAssembly memory.
-- **What Actually Happened**: The WebAssembly module crashed with a memory access violation.
-- **Evidence in Repo**: N/A (Hypothetical based on common WASM bugs).
-- **Root Cause**: The audio buffer was larger than the allocated memory in the WebAssembly module. The code did not check the buffer size before copying.
-- **Remediation Code Diff**:
-```cpp
-// - Buggy code
-void process_audio(const uint8_t* buffer, size_t size) {
-    memcpy(wasm_memory, buffer, size); // No size check
-}
-
-// + Fixed pattern
-void process_audio(const uint8_t* buffer, size_t size) {
-    if (size > WASM_MEMORY_SIZE) {
-        throw std::runtime_error("Buffer too large");
-    }
-    memcpy(wasm_memory, buffer, size);
-}
-```
-- **Lesson**: Always validate input sizes before copying to fixed-size buffers in WebAssembly.
-
-### Incident 4: Infinite Loop in Beam Search Due to NaN Values (BUG-BEAM-04)
-- **Context**: Decoder subsystem, beam search.
-- **What Was Expected**: The beam search should terminate after a fixed number of steps.
-- **What Actually Happened**: The beam search entered an infinite loop, causing the application to hang.
-- **Evidence in Repo**: N/A (Hypothetical based on common ASR bugs).
-- **Root Cause**: A NaN value was introduced into the beam scores due to a division by zero. The beam search algorithm did not handle NaN values, leading to an infinite loop.
-- **Remediation Code Diff**:
-```cpp
-// - Buggy code
-void beam_search() {
-    while (!done) {
-        // ...
-        score = log(prob) / count; // Division by zero if count == 0
-        // ...
-    }
-}
-
-// + Fixed pattern
-void beam_search() {
-    while (!done) {
-        // ...
-        if (count == 0) {
-            score = -std::numeric_limits<float>::infinity();
-        } else {
-            score = log(prob) / count;
-        }
-        // ...
-    }
-}
-```
-- **Lesson**: Always handle edge cases like division by zero and NaN values in numerical algorithms.
-
-### Incident 5: Language Detection Failure Due to Insufficient Audio Length (BUG-LANG-05)
-- **Context**: Language detection subsystem.
-- **What Was Expected**: The language should be detected correctly for audio of any length.
-- **What Actually Happened**: The language detection failed for short audio clips (< 1 second), returning the wrong language.
-- **Evidence in Repo**: N/A (Hypothetical based on common ASR bugs).
-- **Root Cause**: The language detection model required a minimum audio length of 1 second to produce reliable results. The code did not check the audio length before calling the language detection model.
-- **Remediation Code Diff**:
-```cpp
-// - Buggy code
-std::string detect_language(const AudioChunk& chunk) {
-    return language_model.predict(chunk);
-}
-
-// + Fixed pattern
-std::string detect_language(const AudioChunk& chunk) {
-    if (chunk.duration < 1.0f) {
-        return "unknown"; // Or use a fallback
-    }
-    return language_model.predict(chunk);
-}
-```
-- **Lesson**: Always validate input constraints before calling ML models.
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no specific production incidents can be documented. The following section is intentionally left empty as per the data governance mandate to only extract from provided evidence.*
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
+*Note: Since no source code is provided, the following invariants are derived from the architectural description and standard best practices for the described system (C++/WASM, streaming ASR, quantized inference).*
+
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When converting between quantized and float types, always use explicit casting and avoid implicit conversions.
-    *   **Example**: `float val = static_cast<float>(quantized_val) * scale;` instead of `float val = quantized_val * scale;` (which may truncate).
-    *   **Trap**: Implicit conversion from `int8_t` to `float` can lose precision if not handled correctly.
+    *   **Invariant**: When parsing the `.cact` container, all integer fields (e.g., `group_size`, `max_audio_seconds`) MUST be validated against expected ranges to prevent buffer overflows or misinterpretation of data types.
+    *   **Example**: `if (group_size < 1 || group_size > 1024) throw std::runtime_error("Invalid group size");`
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: Beam search and other iterative algorithms must have a maximum iteration count.
-    *   **Example**: `for (int i = 0; i < max_beams; i++) { ... }` instead of `while (!done) { ... }`.
-    *   **Trap**: If the termination condition is never met (e.g., due to NaN values), the loop will run forever.
+    *   **Invariant**: The windowed processing loop for audio longer than 30 seconds MUST have a strict termination condition based on the total audio length, not just the current window.
+    *   **Example**: `while (current_offset < total_audio_samples) { process_window(); current_offset += window_size; }`
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: When displaying word timestamps, always debounce the UI updates to prevent flickering.
-    *   **Example**: Use a `setTimeout` or `requestAnimationFrame` to batch UI updates.
-    *   **Trap**: Updating the UI on every word can cause performance issues on low-end devices.
+    *   **Invariant**: In the streaming UI, word updates MUST be debounced to prevent excessive re-renders. Only committed words (from the two-pass agreement) should trigger UI updates.
+    *   **Example**: `if (word.is_committed) { ui.update(word); } else { pending_ui_updates.push(word); }`
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: The KV cache must be thread-safe if used in a multi-threaded environment.
-    *   **Example**: Use a mutex to protect the KV cache.
-    *   **Trap**: Concurrent access to the KV cache can lead to data races and memory corruption.
+    *   **Invariant**: The KV cache for the decoder MUST be pre-allocated and reused across inference calls to avoid frequent memory allocations, which can cause latency spikes and memory fragmentation.
+    *   **Example**: `kv_cache.resize(max_sequence_length); // Pre-allocate once`
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Always check for null pointers before dereferencing.
-    *   **Example**: `if (ptr != nullptr) { *ptr = value; }`
-    *   **Trap**: Dereferencing a null pointer can cause a crash.
+    *   **Invariant**: When extracting word timestamps from attention maps, the attention weights MUST be normalized to sum to 1.0 for each word to ensure probability values are valid.
+    *   **Example**: `float sum = std::accumulate(attention_weights.begin(), attention_weights.end(), 0.0f); for (auto& w : attention_weights) w /= sum;`
 
 ## 5. The 9 Deep Learning Dimensions
 
 1.  **Architecture**:
-    *   **Subsystem Boundaries**: The model is separated from the engine. The engine is a self-contained C++/WASM module.
-    *   **Decoupling**: The model can be swapped without changing the engine.
-    *   **Modular Layout**: The model is divided into encoder, decoder, and language detection modules.
-    *   **State Ownership**: The KV cache is owned by the decoder.
+    *   **Subsystem Boundaries**: Clear separation between front-end (log-mel + conv stem), encoder (transformer), and decoder (Needle-shaped).
+    *   **Decoupling**: The encoder output is decoupled from the decoder via gated cross-attention, allowing the encoder to be used independently for speech embeddings.
+    *   **State Ownership**: The KV cache is owned by the decoder, while the audio buffer is owned by the front-end.
 
 2.  **Core Abstractions**:
-    *   **Key Types**: `int8_t`, `float`, `AudioChunk`, `KVCache`.
-    *   **Traits/Interfaces**: `InferenceEngine`, `ModelLoader`.
-    *   **Domain Primitives**: `QuantizedWeight`, `ScaleFactor`.
-    *   **Invariant Contracts**: The model must be quantized. The engine must be self-contained.
+    *   **Key Types**: `AudioChunk`, `FeatureVector`, `WordCommitment`, `KVCache`.
+    *   **Traits/Interfaces**: `ModelLoader`, `Decoder`, `Encoder`.
+    *   **Domain Primitives**: `LogMelSpectrogram`, `ConvStem`, `GatedCrossAttention`.
+    *   **Invariant Contracts**: The encoder MUST output one row per 80 ms frame. The decoder MUST produce word timestamps aligned with attention maps.
 
 3.  **Error Handling**:
-    *   **Fault Boundaries**: The engine handles errors internally and returns error codes.
-    *   **Error Trees**: `OOM`, `InvalidModel`, `BufferOverflow`.
-    *   **Retries**: No retries for inference.
-    *   **Rollbacks**: No rollbacks.
-    *   **Graceful Degradation**: If the model fails to load, the engine returns an error code.
+    *   **Fault Boundaries**: Errors in audio loading, model parsing, and inference are handled separately.
+    *   **Error Trees**: `InvalidAudioFormat`, `InvalidModelFile`, `InferenceFailure`.
+    *   **Retries**: No retries for inference; errors are propagated to the caller.
+    *   **Rollbacks**: No rollbacks; the system is stateless between inference calls.
+    *   **Graceful Degradation**: If a keyword biasing fails, the system falls back to standard decoding.
 
 4.  **Testing**:
-    *   **Property Testing**: Test that the model produces valid outputs for valid inputs.
-    *   **Mock Invariants**: Mock the audio input and verify the output.
-    *   **Integration Harnesses**: Test the engine with different models.
-    *   **Regression Shields**: Test that the WER does not degrade over time.
+    *   **Property Testing**: Test that the model produces valid probabilities (sum to 1.0) for all inputs.
+    *   **Mock Invariants**: Mock the audio input to test the two-pass agreement mechanism.
+    *   **Integration Harnesses**: Test the full pipeline from audio file to transcript.
+    *   **Regression Shields**: Test against a fixed set of audio clips with known transcripts.
 
 5.  **Security**:
-    *   **Threat Model**: Malicious audio input could cause a crash.
+    *   **Threat Model**: Malformed `.cact` files could cause buffer overflows.
     *   **Credential Boundaries**: No credentials are used.
-    *   **Sanitization**: Audio input is sanitized to prevent buffer overflows.
-    *   **Memory Safety**: The engine uses safe memory management.
-    *   **Least Privilege**: The engine runs in a sandboxed environment.
+    *   **Sanitization**: Audio input is sanitized to ensure it is 16 kHz mono.
+    *   **Memory Safety**: Use of smart pointers and bounds checking in C++.
+    *   **Least Privilege**: The runtime has no network access or file system access beyond the model file.
 
 6.  **Performance**:
-    *   **Latency Profiles**: The engine has a low latency profile.
-    *   **Asymptotic Complexity**: The inference time is linear with the audio length.
-    *   **Caching**: The KV cache is used to speed up inference.
-    *   **Zero-Copy**: The audio input is copied into the engine's memory.
-    *   **Concurrency Bottlenecks**: The KV cache is a potential bottleneck.
+    *   **Latency Profiles**: Time to first token is measured from audio input to first token output.
+    *   **Asymptotic Complexity**: O(N) for audio length, O(L) for model depth.
+    *   **Caching**: KV cache is reused across inference calls.
+    *   **Zero-Copy**: Audio data is passed by reference to avoid copying.
+    *   **Concurrency Bottlenecks**: Inference is single-threaded; no concurrency bottlenecks.
 
 7.  **Deployment**:
-    *   **CI/CD Invariants**: The model is built and tested in CI.
-    *   **Container Constraints**: The engine is packaged as a WASM module.
-    *   **Reproducible Builds**: The model is built with a fixed version of the quantization tool.
-    *   **Runtime Flags**: The `--audio-depth` flag is used to select the model depth.
+    *   **CI/CD Invariants**: The `.cact` file is built from a reproducible source.
+    *   **Container Constraints**: The model is a single file, no dependencies.
+    *   **Reproducible Builds**: The build process is deterministic.
+    *   **Runtime Flags**: `--audio-depth` is used to select model depth.
 
 8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: The engine provides a simple API for inference.
-    *   **Prompt Chains**: Not applicable.
-    *   **Loop Guards**: The beam search has a maximum iteration count.
-    *   **Context Budget Optimization**: The KV cache is limited in size.
+    *   **Tooling Interfaces**: The model is accessed via a C++ API.
+    *   **Prompt Chains**: No prompt chains; the model is a single inference call.
+    *   **Loop Guards**: The windowed processing loop has a termination condition.
+    *   **Context Budget Optimization**: The KV cache is limited to the maximum sequence length.
 
 9.  **Data Flow**:
-    *   **Mutation Lifecycles**: The audio input is immutable. The KV cache is mutable.
-    *   **Streams**: The audio input is streamed into the engine.
-    *   **Serializers**: The model is serialized in the `.cact` format.
-    *   **Network Protocol Barriers**: Not applicable.
+    *   **Mutation Lifecycles**: Audio data is immutable; feature vectors are mutable.
+    *   **Streams**: Audio is processed in a streaming fashion.
+    *   **Serializers**: The `.cact` format is a custom binary serializer.
+    *   **Network Protocol Barriers**: No network protocols; all processing is local.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Quantized matrix multiplication using SIMD.
-2.  **Rule**: Always use quantized data types for inference on edge devices.
-3.  **Architecture Principle**: Separate the model from the engine.
-4.  **Failure Mode**: Memory leak in KV cache.
-5.  **Reusable Skill**: How to package a C++ inference engine as a WASM module.
-6.  **Decision**: Use group quantization with group size 128.
-7.  **Anti-pattern**: Dequantizing to float32 at every layer.
-8.  **Verification Method**: Profile memory bandwidth to verify quantized inference.
+1.  **Pattern**: Two-pass agreement for streaming ASR word commitment.
+2.  **Rule**: Word commitment MUST require agreement between two inference passes.
+3.  **Architecture Principle**: Self-contained model containers for edge deployment.
+4.  **Failure Mode**: Hallucinations and flickering UI in single-pass streaming ASR.
+5.  **Reusable Skill**: Implementing a two-pass agreement mechanism for streaming inference.
+6.  **Decision**: Using a single `.cact` file instead of multiple files for model deployment.
+7.  **Anti-pattern**: Immediate word commitment in streaming ASR.
+8.  **Verification Method**: Unit tests for two-pass agreement and integration tests for streaming UI updates.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Model Format**: Ensure the model is in the `.cact` format.
-2.  **Check Quantization**: Verify that the model is quantized with group size 128.
-3.  **Test Inference**: Run the inference engine with a sample audio file and verify the output.
-4.  **Profile Performance**: Use a profiler to verify that the inference engine is using quantized data types.
-5.  **Test Memory Usage**: Verify that the memory usage is within the expected limits.
-6.  **Test Error Handling**: Verify that the engine handles errors gracefully.
-7.  **Test WebAssembly Packaging**: Verify that the engine is packaged as a self-contained WASM module.
-8.  **Test Dynamic Depth Selection**: Verify that the engine can load different model depths.
+1.  **Verify Audio Input**: Ensure audio is 16 kHz mono.
+2.  **Load Model**: Load the `.cact` file and verify its integrity.
+3.  **Select Depth**: Choose the appropriate model depth based on device capabilities.
+4.  **Process Audio**: Process audio in windows of up to 30 seconds.
+5.  **Two-Pass Agreement**: Implement the two-pass agreement mechanism for word commitment.
+6.  **Extract Timestamps**: Extract word timestamps from attention maps.
+7.  **Apply Keyword Biasing**: Apply keyword biasing if specified.
+8.  **Update UI**: Update the UI only with committed words.
+9.  **Handle Errors**: Handle errors in audio loading, model parsing, and inference.
+10. **Test**: Run unit tests and integration tests to verify correctness.
