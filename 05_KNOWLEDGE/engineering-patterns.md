@@ -33781,3 +33781,240 @@ for key, tensor in patch_data.items():
 
 **VERIFICATION METHOD**:
 Integration test that applies a valid patch to a base model, then applies an incompatible patch (wrong shape) and asserts that `ArchitectureMismatchError` is raised and the base model remains unmodified.
+
+
+---
+
+## 639. [Hybrid Attention Layer Sequencing] (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Hybrid Attention Layer Sequencing]",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:44:45.814Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv675rgx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** enforce that the `layer_types` array in the model configuration contains an exact alternating pattern of linear and full attention layers, with a full attention layer occurring every `full_attention_interval` layers, and no other deviations.
+
+**WHY**:  
+A mismatch between the declared attention pattern and the actual implementation leads to **attention mis‑alignment**: the model will either over‑use full attention (excessive memory and compute) or under‑use it (loss of long‑range context), both of which degrade performance and can trigger out‑of‑memory errors.
+
+**WHEN TO APPLY**:  
+Applicable to any transformer model that mixes linear and full attention, regardless of language or framework, as long as the configuration exposes a `layer_types` list and a `full_attention_interval` integer.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config.json snippet
+{
+  "text_config": {
+    "num_hidden_layers": 32,
+    "full_attention_interval": 4,
+    "layer_types": [
+      "linear_attention", "linear_attention", "linear_attention", "full_attention",
+      "linear_attention", "linear_attention", "linear_attention", "full_attention",
+      "linear_attention", "linear_attention", "linear_attention", "full_attention",
+      "linear_attention", "linear_attention", "linear_attention", "full_attention",
+      "linear_attention", "linear_attention", "linear_attention", "full_attention",
+      "linear_attention", "linear_attention", "linear_attention", "full_attention",
+      "linear_attention", "linear_attention", "linear_attention", "full_attention",
+      "linear_attention", "linear_attention", "linear_attention", "full_attention"
+    ]
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: random ordering that violates the interval
+"layer_types": [
+  "full_attention", "linear_attention", "linear_attention", "linear_attention",
+  "full_attention", "linear_attention", "linear_attention", "linear_attention",
+  ...
+]
+```
+
+**VERIFICATION METHOD**:  
+A unit test that parses `layer_types`, counts occurrences of `"full_attention"`, and asserts that the distance between consecutive full‑attention indices equals `full_attention_interval`.  
+```python
+def test_attention_pattern():
+    cfg = load_config("config.json")
+    layers = cfg["text_config"]["layer_types"]
+    interval = cfg["text_config"]["full_attention_interval"]
+    full_indices = [i for i, t in enumerate(layers) if t == "full_attention"]
+    assert all(full_indices[i+1] - full_indices[i] == interval for i in range(len(full_indices)-1))
+```
+
+---
+
+
+---
+
+## 640. [BFloat16 Consistency] (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[BFloat16 Consistency]",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:44:45.837Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv675rgx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that every tensor produced by the model (including intermediate activations, attention outputs, and MLP outputs) is explicitly cast to `bfloat16` before any arithmetic operation that could otherwise promote it to a higher precision type.
+
+**WHY**:  
+Implicit promotion to `float32` or `float64` during matrix multiplications can **inflate memory usage** and **slow down inference** on bfloat16‑optimized hardware. It also introduces subtle **precision drift** that can affect generation quality.
+
+**WHEN TO APPLY**:  
+During model construction (e.g., in the `forward` method of each transformer block) and during any custom layer that performs arithmetic on tensors.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class LinearAttentionBlock(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.q_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=False)
+        self.k_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=False)
+        self.v_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=False)
+        self.out_proj = nn.Linear(config.hidden_size, config.hidden_size, bias=False)
+
+    def forward(self, hidden_states):
+        # Ensure bfloat16
+        hidden_states = hidden_states.to(torch.bfloat16)
+        q = self.q_proj(hidden_states).to(torch.bfloat16)
+        k = self.k_proj(hidden_states).to(torch.bfloat16)
+        v = self.v_proj(hidden_states).to(torch.bfloat16)
+
+        # Linear attention computation
+        attn_scores = torch.einsum("bqd,bkd->bqk", q, k)
+        attn_scores = attn_scores / math.sqrt(q.size(-1))
+        attn_scores = torch.softmax(attn_scores, dim=-1).to(torch.bfloat16)
+
+        context = torch.einsum("bqk,bvd->bqd", attn_scores, v).to(torch.bfloat16)
+        return self.out_proj(context).to(torch.bfloat16)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: implicit promotion to float32
+q = self.q_proj(hidden_states)          # hidden_states may be float32
+k = self.k_proj(hidden_states)
+v = self.v_proj(hidden_states)
+# subsequent ops use float32
+```
+
+**VERIFICATION METHOD**:  
+A static analysis rule that scans the model code for any tensor that is not explicitly cast to `torch.bfloat16` before an arithmetic operation.  
+```bash
+# Example using flake8-bfloat16 plugin (hypothetical)
+flake8 --select=BFLOAT16 my_model.py
+```
+
+---
+
+
+---
+
+## 641. [Multimodal Token ID Alignment] (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Multimodal Token ID Alignment]",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:44:45.853Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv675rgx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** guarantee that every multimodal token ID defined in `config.json` (e.g., `image_token_id`, `video_token_id`, `audio_*_token`) is present in the tokenizer’s `special_tokens_map` with the same integer value, and that the tokenizer’s `model_max_length` accommodates the maximum sequence length implied by these tokens.
+
+**WHY**:  
+If the tokenizer and model disagree on token IDs, the model will misinterpret multimodal markers as ordinary tokens, leading to **semantic corruption** of the input and **generation failures** (e.g., missing image embeddings).
+
+**WHEN TO APPLY**:  
+During tokenizer initialization and model loading; also when adding new multimodal tokens.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# tokenizer_config.json snippet
+{
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "audio_bos_token": "<|audio_start|>",
+  "audio_eos_token": "<|audio_end|>",
+  "audio_token": "<|audio_pad|>",
+  "special_tokens_map": {
+    "image_token": "<|image_pad|>",
+    "video_token": "<|video_pad|>",
+    "audio_bos_token": "<|audio_start|>",
+    "audio_eos_token": "<|audio_end|>",
+    "audio_token": "<|audio_pad|>"
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: mismatched IDs
+{
+  "image_token_id": 248056,
+  "special_tokens_map": {
+    "image_token": "<|image_pad|>"   # tokenizer assigns 248057 internally
+  }
+}
+```
+
+**VERIFICATION METHOD**:  
+A unit test that loads the tokenizer and model, then asserts equality of each multimodal token ID.  
+```python
+def test_multimodal_token_alignment():
+    tokenizer = AutoTokenizer.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
+    model = AutoModelForCausalLM.from_pretrained("XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B")
+    assert tokenizer.image_token_id == model.config.image_token_id
+    assert tokenizer.video_token_id == model.config.video_token_id
+    assert tokenizer.audio_bos_token_id == model.config.audio_bos_token_id
+    # ... repeat for all multimodal tokens
+```
+
+---

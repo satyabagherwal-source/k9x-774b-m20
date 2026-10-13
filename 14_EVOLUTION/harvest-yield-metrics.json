@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T04:41:24.571Z",
-  "total_cycles_completed": 817,
-  "total_learnings_persisted": 817,
-  "total_rules_promoted": 388,
+  "last_updated": "2026-10-13T04:44:45.919Z",
+  "total_cycles_completed": 818,
+  "total_learnings_persisted": 818,
+  "total_rules_promoted": 391,
   "history": [
-    {
-      "timestamp": "2026-10-12T18:02:05.342Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv5k79yq",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T18:05:25.250Z",
       "repository": "speridlabs/iris-3b",
@@ -1403,6 +1396,13 @@
       "repository": "akhilaaa3/Jev-Omni",
       "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv671g60",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T04:44:45.919Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv675rgx",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
