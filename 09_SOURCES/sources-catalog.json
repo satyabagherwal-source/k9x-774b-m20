@@ -625,9 +625,9 @@
     "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceVersion": "hf-psrben-visionhope",
     "license": "Open-Source",
-    "contentHash": "5e51a06b48cd410b162cdd6d391315a8cb1f8ad0ff359bfdc4bbbe45876182e6",
-    "lastHarvestedAt": "2026-10-13T13:43:29.289Z",
-    "learningId": "learn-huggingface-hf-psrben-visionhope-mv6qekdo"
+    "contentHash": "fdead8a96013ffacf37b382ebacd7663a482d82706bfcb877b2e7c50256620ed",
+    "lastHarvestedAt": "2026-10-13T22:08:05.393Z",
+    "learningId": "learn-huggingface-hf-psrben-visionhope-mv78fhjf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
