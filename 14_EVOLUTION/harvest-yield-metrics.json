@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T19:48:05.964Z",
-  "total_cycles_completed": 1056,
-  "total_learnings_persisted": 1056,
+  "last_updated": "2026-10-13T19:51:03.238Z",
+  "total_cycles_completed": 1057,
+  "total_learnings_persisted": 1057,
   "total_rules_promoted": 506,
   "history": [
-    {
-      "timestamp": "2026-10-13T06:44:09.601Z",
-      "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv6bfb1e",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T06:47:36.676Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T19:48:05.964Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
       "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv73fgj9",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:51:03.238Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv73j9aj",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
