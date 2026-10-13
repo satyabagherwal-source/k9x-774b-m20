@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T18:36:36.988Z",
-  "total_verified_learnings": 4989,
+  "last_updated": "2026-10-13T18:39:45.028Z",
+  "total_verified_learnings": 4990,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -122363,6 +122363,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T18:36:36.988Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-edge0-audio8-asr-infinite-mv70zk96": {
+      "learning_id": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv70zk96",
+      "source": "Edge0/Audio8-ASR-Infinite",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "slug": "hf-edge0-audio8-asr-infinite",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+      "source_version": "hf-edge0-audio8-asr-infinite",
+      "content_hash": "9d725b9fcb766d74266a81ff8a2a592d7d2adacedfd9f97dd35ccd65ff8324cf",
+      "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T18:39:45.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
