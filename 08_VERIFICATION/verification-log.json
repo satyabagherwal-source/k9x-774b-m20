@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-D5P3",
-    "timestamp": "2026-10-11T23:26:54.999Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv4gd5ma",
-    "contentHash": "5e95037448913123b95e1c3d976554535033ef7e9e7c0961b7c0fe50c667040b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-GUH6",
     "timestamp": "2026-10-11T23:29:47.082Z",
     "repository": "Cactus-Compute/whistle",
@@ -7492,6 +7477,21 @@
     "contentHash": "c03b52231c5c9120afe843f26d08712b1ba522b2b0b2df4fa04d2806a7c44378",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-A4LK",
+    "timestamp": "2026-10-13T02:56:10.952Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv63a4js",
+    "contentHash": "a1db5948ff96b8d4c8dd41d7310a1d4d036761e14c90b85e0652aafc7f32de06",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
