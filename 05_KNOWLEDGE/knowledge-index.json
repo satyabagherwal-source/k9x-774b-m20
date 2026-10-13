@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T22:57:26.724Z",
-  "total_verified_learnings": 5058,
+  "last_updated": "2026-10-13T23:00:35.662Z",
+  "total_verified_learnings": 5059,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -124228,6 +124228,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T22:57:26.724Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-comfy-org-minimax-h3-mv7ab0cx": {
+      "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv7ab0cx",
+      "source": "Comfy-Org/MiniMax-H3",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "slug": "hf-comfy-org-minimax-h3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+      "source_version": "hf-comfy-org-minimax-h3",
+      "content_hash": "da300c1b40d264d1c1ba9f8535be8c14b2fa1b9c7aaacf9a82b15fb38e6593b5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T23:00:35.662Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T22:57:26.786Z",
-  "total_cycles_completed": 1103,
-  "total_learnings_persisted": 1103,
+  "last_updated": "2026-10-13T23:00:35.727Z",
+  "total_cycles_completed": 1104,
+  "total_learnings_persisted": 1104,
   "total_rules_promoted": 536,
   "history": [
-    {
-      "timestamp": "2026-10-13T10:27:18.963Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv6jeacz",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T10:30:16.915Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T22:57:26.786Z",
       "repository": "google-t5/t5-small",
       "learningId": "learn-huggingface-hf-google-t5-t5-small-mv7a6ykq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T23:00:35.727Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv7ab0cx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
