@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-VQ6B",
-    "timestamp": "2026-10-11T21:49:22.883Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q",
-    "contentHash": "86dd080ff8d3757393c91890d70de6a4ee0f846b375f5e3766e96d3b0bab0628",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-ZT3S",
     "timestamp": "2026-10-11T21:52:33.304Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7490,6 +7475,21 @@
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv5zp1y8",
     "contentHash": "d4e80497ddb872ae56ba18a4002fd7ed269646c0a0aa2892a1dbed12ae4203f3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-SZK7",
+    "timestamp": "2026-10-13T01:18:52.423Z",
+    "repository": "NaiveAI/Naive-N0.5-Flash",
+    "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv5zszh9",
+    "contentHash": "78ef94c1da95ae632a372e8e4d789969694f5893e24f1bc936bb9356e0dbf36e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

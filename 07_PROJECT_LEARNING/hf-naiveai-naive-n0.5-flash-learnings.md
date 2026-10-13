@@ -3,8 +3,8 @@
 > **Source Version**: `hf-naiveai-n`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T18:23:27.147Z  
-> **Learning ID**: `learn-huggingface-hf-naiveai-naive-n0-5-flash-mv5kyr3f`  
+> **Timestamp**: 2026-10-13T01:18:52.317Z  
+> **Learning ID**: `learn-huggingface-hf-naiveai-naive-n0-5-flash-mv5zszh9`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/NaiveAI/Naive-N0.5-Flash](https://huggingface.co/NaiveAI/Naive-N0.5-Flash))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T18:23:26.527Z  
+> **Harvest Timestamp**: 2026-10-13T01:18:51.113Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
