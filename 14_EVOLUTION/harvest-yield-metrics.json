@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T19:14:33.119Z",
-  "total_cycles_completed": 1046,
-  "total_learnings_persisted": 1046,
+  "last_updated": "2026-10-13T19:19:34.451Z",
+  "total_cycles_completed": 1047,
+  "total_learnings_persisted": 1047,
   "total_rules_promoted": 500,
   "history": [
-    {
-      "timestamp": "2026-10-13T06:12:58.105Z",
-      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv6ab704",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T06:16:18.321Z",
       "repository": "amazon/chronos-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T19:14:33.119Z",
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-hf-francisring-prism-mv728be1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:19:34.451Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv72erwz",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

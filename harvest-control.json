@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-13T19:14:32.264Z",
+  "lastUpdated": "2026-10-13T19:19:33.679Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T19:14:35.640Z",
-        "lastHarvestedAt": "2026-10-13T19:14:35.640Z",
-        "totalHarvested": 3177,
+        "lastActiveAt": "2026-10-13T19:19:36.969Z",
+        "lastHarvestedAt": "2026-10-13T19:19:36.969Z",
+        "totalHarvested": 3178,
         "lastError": null
       },
       {
@@ -295,10 +295,10 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791922472911,
-      "resetAt": "2026-10-13T20:14:32.911Z",
-      "trippedAt": "2026-10-13T19:14:17.911Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Adesign-system%20language%3Atypescript%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=4)",
+      "resetEpoch": 1791922776087,
+      "resetAt": "2026-10-13T20:19:36.087Z",
+      "trippedAt": "2026-10-13T19:19:21.088Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Adatabase%20language%3Arust%20stars%3A%3E2500%20sort%3Astars&per_page=15&page=4)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
