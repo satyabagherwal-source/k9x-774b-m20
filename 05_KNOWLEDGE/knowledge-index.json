@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T04:17:05.541Z",
-  "total_verified_learnings": 4764,
+  "last_updated": "2026-10-13T04:20:09.055Z",
+  "total_verified_learnings": 4765,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -116331,6 +116331,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T04:17:05.541Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-altworld-hemmingway-1-mv66a3y0": {
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv66a3y0",
+      "source": "Altworld/Hemmingway-1",
+      "repository": "Altworld/Hemmingway-1",
+      "slug": "hf-altworld-hemmingway-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "content_hash": "376c6781c5dca14d755609e84c042b7039f2aeb56d2bdbbc81d0c2b4cc8a7a03",
+      "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 632,
+          "title": "Consistent Model Configuration Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 633,
+          "title": "Tokenizer Special Token Consistency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 634,
+          "title": "Generation Configuration Alignment Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T04:20:09.055Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

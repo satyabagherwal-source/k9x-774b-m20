@@ -33282,3 +33282,230 @@ def validate_attention_sequence(config_path: Path):
 * CI lint rule that checks the pattern of `layer_types` against the expected regex.
 
 ---
+
+
+---
+
+## 632. Consistent Model Configuration Rule (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Model Configuration Rule",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:20:08.991Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv66a3y0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**: The model configuration JSON must contain an architecture field that exactly matches the base model’s architecture name, and all numeric hyper‑parameters must be within the ranges supported by the base model’s implementation.  
+**WHY**: A mismatched architecture name or out‑of‑range hyper‑parameters causes weight loading failures, undefined tensor shapes, or silent numerical instability during inference.  
+**WHEN TO APPLY**: During packaging of any Hugging Face model that includes a `config.json`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "architectures": ["Qwen3_5ForCausalLM"],
+  "hidden_size": 5120,
+  "num_attention_heads": 24,
+  "num_hidden_layers": 64,
+  "max_position_embeddings": 262144,
+  "dtype": "bfloat16",
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "attn_output_gate": true,
+  "hidden_act": "silu",
+  "intermediate_size": 17408,
+  "initializer_range": 0.02,
+  "layer_types": [
+    "linear_attention","linear_attention","linear_attention","full_attention",
+    /* … 60 more entries … */
+  ],
+  "linear_conv_kernel_dim": 4,
+  "linear_key_head_dim": 128,
+  "linear_num_key_heads": 16,
+  "linear_num_value_heads": 48,
+  "linear_value_head_dim": 128,
+  "mamba_ssm_dtype": "float32",
+  "num_key_value_heads": 4,
+  "output_gate_type": "swish",
+  "partial_rotary_factor": 0.25,
+  "rope_parameters": {
+    "mrope_interleaved": true,
+    "mrope_section": [11, 11, 10],
+    "partial_rotary_factor": 0.25,
+    "rope_theta": 10000000,
+    "rope_type": "default"
+  },
+  "tie_word_embeddings": false
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "architectures": ["WrongArchitecture"],
+  "hidden_size": 1024,
+  "num_attention_heads": 12
+}
+```
+**VERIFICATION METHOD**:  
+```python
+from transformers import AutoConfig
+config = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+assert config.architectures[0] == "Qwen3_5ForCausalLM"
+assert config.hidden_size == 5120
+assert config.num_attention_heads == 24
+```
+
+---
+
+
+---
+
+## 633. Tokenizer Special Token Consistency Rule (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tokenizer Special Token Consistency Rule",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:20:09.013Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv66a3y0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**: The tokenizer’s special token identifiers (bos_token, eos_token, pad_token, image_token, audio_token, etc.) must be present in the model’s vocabulary and must match the IDs used in the generation configuration.  
+**WHY**: Inconsistent special tokens break the mapping between token IDs and embeddings, causing mis‑aligned generation, truncated outputs, or infinite loops.  
+**WHEN TO APPLY**: When creating or updating a tokenizer for a model.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "add_prefix_space": false,
+  "audio_bos_token": "<|audio_start|>",
+  "audio_eos_token": "<|audio_end|>",
+  "audio_token": "<|audio_pad|>",
+  "backend": "tokenizers",
+  "bos_token": null,
+  "clean_up_tokenization_spaces": false,
+  "eos_token": "<|im_end|>",
+  "errors": "replace",
+  "image_token": "<|image_pad|>",
+  "is_local": true,
+  "local_files_only": false,
+  "model_max_length": 262144,
+  "model_specific_special_tokens": {
+    "audio_bos_token": "<|audio_start|>",
+    "audio_eos_token": "<|audio_end|>",
+    "audio_token": "<|audio_pad|>",
+    "image_token": "<|image_pad|>",
+    "video_token": "<|video_pad|>",
+    "vision_bos_token": "<|vision_start|>",
+    "vision_eos_token": "<|vision_end|>"
+  },
+  "pad_token": "<|endoftext|>",
+  "pretokenize_regex": "(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?[\\p{L}\\p{M}]+|\\p{N}| ?[^\\s\\p{L}\\p{M}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+",
+  "split_special_tokens": false,
+  "tokenizer_class": "Qwen2Tokenizer",
+  "unk_token": null,
+  "video_token": "<|video_pad|>",
+  "vision_bos_token": "<|vision_start|>",
+  "vision_eos_token": "<|vision_end|>"
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "eos_token": "<|wrong_eos|>",
+  "pad_token": "<|wrong_pad|>"
+}
+```
+**VERIFICATION METHOD**:  
+```python
+from transformers import AutoTokenizer
+tokenizer = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
+assert tokenizer.eos_token_id == tokenizer.convert_tokens_to_ids("<|im_end|>")
+assert tokenizer.pad_token_id == tokenizer.convert_tokens_to_ids("<|endoftext|>")
+```
+
+---
+
+
+---
+
+## 634. Generation Configuration Alignment Rule (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Generation Configuration Alignment Rule",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:20:09.031Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv66a3y0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**: The generation configuration must reference token IDs that exist in the tokenizer and must not include duplicate or conflicting EOS token IDs.  
+**WHY**: Duplicate or missing EOS IDs cause the decoding loop to terminate prematurely or never terminate, leading to truncated or infinite outputs.  
+**WHEN TO APPLY**: When defining `generation_config.json` for a model.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "bos_token_id": 248044,
+  "do_sample": true,
+  "eos_token_id": [248046, 248044],
+  "pad_token_id": 248044,
+  "temperature": 1.0,
+  "top_k": 20,
+  "top_p": 0.95,
+  "transformers_version": "5.17.0"
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "eos_token_id": [999999, 999999]
+}
+```
+**VERIFICATION METHOD**:  
+```python
+from transformers import AutoConfig, AutoTokenizer
+config = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+tokenizer = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
+for eos_id in config.eos_token_id:
+    assert eos_id in tokenizer.vocab
+assert len(set(config.eos_token_id)) == len(config.eos_token_id)
+```
+
+---

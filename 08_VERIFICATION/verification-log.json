@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-A6SI",
-    "timestamp": "2026-10-12T00:48:35.298Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo",
-    "contentHash": "bcae827d6e7fe80cefec2c2036346656c57b185e7faafdffc27af677670e0373",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-EAFY",
     "timestamp": "2026-10-12T00:51:46.654Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7490,6 +7475,21 @@
     "repository": "apple/LensVLM-9B",
     "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv6666bw",
     "contentHash": "e5691dfcbe393a7cbf4fbb273a4948bfe003677f075b3e93639ab81987a9b369",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-A41W",
+    "timestamp": "2026-10-13T04:20:09.092Z",
+    "repository": "Altworld/Hemmingway-1",
+    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv66a3y0",
+    "contentHash": "376c6781c5dca14d755609e84c042b7039f2aeb56d2bdbbc81d0c2b4cc8a7a03",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
