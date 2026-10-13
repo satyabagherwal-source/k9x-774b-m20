@@ -1255,9 +1255,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "1e40fd35937c6e0d76c9fedc7ffbd84e4947230f94849255b1d8f444a721c95d",
-    "lastHarvestedAt": "2026-10-12T19:03:26.668Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv5me6hv"
+    "contentHash": "9cd8cabc950c509c0bdfe56d7eabb41708c9b1d000a61cd43308e7c96a3a5bbb",
+    "lastHarvestedAt": "2026-10-13T01:58:33.380Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv6180mw"
   },
   "hf-google-vit-base-patch16-224": {
     "repository": "google/vit-base-patch16-224",
