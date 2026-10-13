@@ -970,3 +970,4 @@
 | `CYCLE-20261013-XKCD` | `2026-10-13T10:42:18.301Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`f7a11ee2...`) |
 | `CYCLE-20261013-1B8P` | `2026-10-13T10:45:13.129Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`268686fc...`) |
 | `CYCLE-20261013-5ILF` | `2026-10-13T10:48:29.283Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 679, Rule 680, Rule 681` | Yes (`427a97ee...`) |
+| `CYCLE-20261013-9BQ8` | `2026-10-13T10:51:27.008Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`9329e5dd...`) |

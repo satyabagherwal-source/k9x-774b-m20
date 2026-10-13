@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:48:29.286Z",
-  "total_cycles_completed": 911,
-  "total_learnings_persisted": 911,
+  "last_updated": "2026-10-13T10:51:27.012Z",
+  "total_cycles_completed": 912,
+  "total_learnings_persisted": 912,
   "total_rules_promoted": 434,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:19:51.885Z",
-      "repository": "Cloudflare/clef-flash",
-      "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv5vjxs2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T23:22:53.996Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -1403,6 +1396,13 @@
       "repository": "Cactus-Compute/whistle",
       "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv6k5igt",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T10:51:27.012Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv6k9bn9",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
