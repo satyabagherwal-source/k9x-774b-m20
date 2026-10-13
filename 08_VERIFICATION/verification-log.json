@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-3ZMS",
-    "timestamp": "2026-10-12T05:23:42.244Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv4t3zjz",
-    "contentHash": "d9c6817847ebf0fabb9c504693dc915574b9ce027fef925ba2efdfe111a69336",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-83S5",
     "timestamp": "2026-10-12T05:26:54.245Z",
     "repository": "mudler/locate-anything.cpp-gguf",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv6i99ep",
     "contentHash": "3f064b56f5729ecc54fa2d525ef260e2437dd02af5d911a9e673ebad541f79f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-D4KY",
+    "timestamp": "2026-10-13T09:58:25.138Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv6id4ii",
+    "contentHash": "05097d7d4fd8a759f9892b2cf349ff8a6da6f6ef8612003fad39cf220ed107a4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
