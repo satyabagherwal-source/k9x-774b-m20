@@ -903,3 +903,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv6bngqx` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-13T06:50:30.248Z |
 | `learn-huggingface-hf-openai-gpt-oss-120b-mv6brb0d` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-13T06:53:29.405Z |
 | `learn-huggingface-hf-zai-org-glm-5-2-mv6bvc2l` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-13T06:56:37.450Z |
+| `learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv6bz9r4` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-13T06:59:41.049Z |
