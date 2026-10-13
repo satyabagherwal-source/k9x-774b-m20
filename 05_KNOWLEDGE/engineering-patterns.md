@@ -43693,3 +43693,128 @@ class BadMemoryBank:
 1.  **Memory Profiling:** Run a 1000-frame video sequence. Monitor GPU memory usage. It MUST plateau after the first `max_size` frames.
 2.  **Latency Test:** Measure inference time per frame. It MUST remain constant, not increase linearly with video length.
 3.  **Quality Test:** Compare segmentation accuracy on frame 100 with and without memory pruning. Pruning should maintain or improve accuracy by reducing noise.
+
+
+---
+
+## 773. **Configuration Integrity Rule** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Configuration Integrity Rule**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T22:35:57.905Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv79fc4g",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that every configuration JSON (`config.json`, `generation_config.json`, `tokenizer_config.json`) contains a non‑null, integer `pad_token_id` that matches the tokenizer’s pad token.  
+**WHY**:  
+A missing or null `pad_token_id` causes the tokenizer to fall back to a default that may not align with the model’s expected padding token, leading to mis‑aligned embeddings, shape mismatches, and silent inference failures.  
+**WHEN TO APPLY**:  
+During model loading (`load_release_model`) and before any tokenization or batching step, in any language that consumes the config (Python, Rust, C++).  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import json
+from pathlib import Path
+
+def load_config(path: Path) -> dict:
+    with path.open() as f:
+        cfg = json.load(f)
+
+    pad_id = cfg.get("pad_token_id")
+    if pad_id is None or not isinstance(pad_id, int):
+        raise ValueError(
+            f"pad_token_id must be a non‑null integer; got {pad_id!r} in {path}"
+        )
+    return cfg
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: silently defaulting to None
+cfg = json.load(f)
+pad_id = cfg.get("pad_token_id")  # could be None
+```
+**VERIFICATION METHOD**:  
+Unit test that loads every config file and asserts `pad_token_id` is an integer and equals `tokenizer.pad_token_id`.  
+```python
+def test_pad_token_id_consistency():
+    cfg = load_config(Path("config.json"))
+    assert cfg["pad_token_id"] == tokenizer.pad_token_id
+```
+
+
+---
+
+## 774. **Joint Head Weight Alignment Rule** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Joint Head Weight Alignment Rule**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T22:35:57.933Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv79fc4g",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** verify that the joint head’s weight matrix dimensions match the backbone’s final hidden size and the number of output logits equals the total number of allowed options across all questions.  
+**WHY**:  
+Dimension mismatches between the backbone and joint head cause runtime shape errors or, worse, silent broadcasting that corrupts logits, leading to invalid probability distributions.  
+**WHEN TO APPLY**:  
+During `load_release_model` after the backbone is loaded and before the joint head is attached.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def validate_joint_head(backbone: torch.nn.Module, joint_head: torch.nn.Module):
+    hidden_size = backbone.config.hidden_size
+    joint_out = joint_head.out_proj.weight.shape[0]
+    expected_out = sum(
+        len(q["criteria"]) if q["type"] == "choice" else 1
+        for q in joint_head.config.questions
+    )
+    if joint_out != expected_out:
+        raise ValueError(
+            f"Joint head output {joint_out} does not match expected {expected_out}"
+        )
+    if joint_head.out_proj.weight.shape[1] != hidden_size:
+        raise ValueError(
+            f"Joint head weight shape {joint_head.out_proj.weight.shape} "
+            f"does not match backbone hidden size {hidden_size}"
+        )
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: assuming dimensions match without check
+joint_head = load_joint_head()
+```
+**VERIFICATION METHOD**:  
+Integration test that loads a model, runs a dummy forward pass, and asserts the logits shape equals `(batch_size, total_options)`.  
+
+---

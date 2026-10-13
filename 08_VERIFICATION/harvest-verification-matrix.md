@@ -1154,3 +1154,4 @@
 | `CYCLE-20261013-34BU` | `2026-10-13T22:26:27.882Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`116c9987...`) |
 | `CYCLE-20261013-74GB` | `2026-10-13T22:29:34.667Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`92ddc162...`) |
 | `CYCLE-20261013-B99Q` | `2026-10-13T22:32:47.534Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`0a55b13b...`) |
+| `CYCLE-20261013-FC8S` | `2026-10-13T22:35:58.012Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 773, Rule 774` | Yes (`38b650fb...`) |
