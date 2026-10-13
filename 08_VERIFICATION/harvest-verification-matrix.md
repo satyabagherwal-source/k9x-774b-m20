@@ -912,3 +912,4 @@
 | `CYCLE-20261013-RMCS` | `2026-10-13T06:25:44.428Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`208abe91...`) |
 | `CYCLE-20261013-VGSU` | `2026-10-13T06:28:43.854Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`2b1e28fc...`) |
 | `CYCLE-20261013-ZPPE` | `2026-10-13T06:32:02.018Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`e9ece303...`) |
+| `CYCLE-20261013-3QVG` | `2026-10-13T06:35:10.156Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`e312d689...`) |
