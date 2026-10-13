@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T16:41:41.642Z",
+  "last_updated": "2026-10-13T16:44:45.998Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1294,15 +1294,15 @@
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv6fdapi",
-      "content_hash": "62fb76a453485e243e5cc9975899125565d9ec9fce42ab13894c35ac1fbafbf8",
-      "verified_at": "2026-10-13T08:34:34.304Z",
+      "learning_id": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv6wvovt",
+      "content_hash": "232871ea6717853a858d3a728b09a2c00079679881724d7169b899e54e5e61f8",
+      "verified_at": "2026-10-13T16:44:45.998Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T08:34:34.304Z"
+      "last_updated": "2026-10-13T16:44:45.998Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
