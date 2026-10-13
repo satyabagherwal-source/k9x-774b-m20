@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-HRTT",
-    "timestamp": "2026-10-12T09:46:21.857Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv52hrqy",
-    "contentHash": "7f3b70c5ef62457330fcb4af7b902c1299f64b5b3766665b341cf06718b1792e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-LS12",
     "timestamp": "2026-10-12T09:49:28.743Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7492,6 +7477,21 @@
     "contentHash": "d7a350f01249e7a1869e05ede95126e88695db47eb7a7bcaba1b95920ea8da62",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-H5KW",
+    "timestamp": "2026-10-13T14:13:29.600Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-mv6rh5gf",
+    "contentHash": "d9b482ce6b40931b56098440646883b85e65298ad7f8f13ade89ad8be3395c60",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
