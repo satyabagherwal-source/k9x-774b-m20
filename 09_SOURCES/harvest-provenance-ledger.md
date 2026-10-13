@@ -939,3 +939,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-bingsu-adetailer-mv6id4ii` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-13T09:58:25.140Z |
 | `learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ih8t4` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-13T10:01:37.355Z |
 | `learn-huggingface-hf-baai-bge-large-en-v1-5-mv6ilfpa` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-13T10:04:52.915Z |
+| `learn-huggingface-hf-zai-org-glm-5-3-mv6ipf1c` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-13T10:07:58.658Z |
