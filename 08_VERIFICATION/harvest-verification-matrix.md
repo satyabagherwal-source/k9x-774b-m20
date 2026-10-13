@@ -959,3 +959,4 @@
 | `CYCLE-20261013-PF40` | `2026-10-13T10:07:58.656Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`8b91ee44...`) |
 | `CYCLE-20261013-TIHV` | `2026-10-13T10:11:09.667Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 677, Rule 678` | Yes (`c7b8dfe7...`) |
 | `CYCLE-20261013-X8U0` | `2026-10-13T10:14:03.769Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`2347c224...`) |
+| `CYCLE-20261013-2GUW` | `2026-10-13T10:18:07.448Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`f44c95ab...`) |

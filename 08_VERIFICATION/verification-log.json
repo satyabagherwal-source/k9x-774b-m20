@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-RFEP",
-    "timestamp": "2026-10-12T05:41:55.777Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4trfd3",
-    "contentHash": "45b0883fae1342af027546931d71f9476819165a7462defcf28657df77977017",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-V8B6",
     "timestamp": "2026-10-12T05:44:53.202Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "jialinyyzz/humanizer",
     "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv6ix8rk",
     "contentHash": "2347c2245ab8288866a4df1ba30231cd2194c3d29d24a3cc4c11d73d7f988a04",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-2GUW",
+    "timestamp": "2026-10-13T10:18:07.448Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv6j2gs9",
+    "contentHash": "f44c95ab584da0d745343eb497e1be0264ecded6e03c138a8a86a0e13e59b3e2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
