@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T01:46:36.850Z",
-  "total_cycles_completed": 760,
-  "total_learnings_persisted": 760,
+  "last_updated": "2026-10-13T01:49:20.652Z",
+  "total_cycles_completed": 761,
+  "total_learnings_persisted": 761,
   "total_rules_promoted": 362,
   "history": [
-    {
-      "timestamp": "2026-10-12T15:06:23.119Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv5dxbja",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T15:09:29.865Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -1403,6 +1396,13 @@
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv60snqq",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T01:49:20.652Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv60w66h",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

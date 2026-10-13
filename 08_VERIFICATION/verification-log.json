@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-Z4XC",
-    "timestamp": "2026-10-11T22:20:01.584Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0",
-    "contentHash": "edad5c5fd192b35d1dc039ee8e24f2fe2ccf5a8a1f847d6cfb7b2ab2ad0803d1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-2T4R",
     "timestamp": "2026-10-11T22:22:52.923Z",
     "repository": "argmaxinc/whisperkit-coreml",
@@ -7492,6 +7477,21 @@
     "contentHash": "5aad8a6c6c345b18874ddb9bd345dc7e5d3cee1246e9ac8a5f36e81943eacef8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-W68A",
+    "timestamp": "2026-10-13T01:49:20.650Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv60w66h",
+    "contentHash": "8e832f3ee32a89c84c8db30700fa229f571d280bf17f5fa04caad23e1a400714",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
