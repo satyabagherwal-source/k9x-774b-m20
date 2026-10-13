@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:37:37.410Z",
-  "total_cycles_completed": 926,
-  "total_learnings_persisted": 926,
+  "last_updated": "2026-10-13T11:40:49.475Z",
+  "total_cycles_completed": 927,
+  "total_learnings_persisted": 927,
   "total_rules_promoted": 442,
   "history": [
-    {
-      "timestamp": "2026-10-13T00:05:24.648Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv5x6if0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T00:08:18.187Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T11:37:37.410Z",
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv6lwpal",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:40:49.475Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv6m0thg",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
