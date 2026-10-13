@@ -785,3 +785,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv5yp1hq` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-13T00:47:48.752Z |
 | `learn-huggingface-hf-deepseek-ai-deepseek-v3-mv5ysvny` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-13T00:50:47.869Z |
 | `learn-huggingface-hf-baidu-unlimited-ocr-mv5yx9tn` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-13T00:54:12.837Z |
+| `learn-huggingface-hf-aleph-alpha-kolibri-1-mv5z1c7j` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-13T00:57:22.517Z |
