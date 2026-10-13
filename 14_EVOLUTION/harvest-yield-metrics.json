@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T21:41:30.920Z",
-  "total_cycles_completed": 1079,
-  "total_learnings_persisted": 1079,
+  "last_updated": "2026-10-13T21:44:48.568Z",
+  "total_cycles_completed": 1080,
+  "total_learnings_persisted": 1080,
   "total_rules_promoted": 525,
   "history": [
-    {
-      "timestamp": "2026-10-13T09:07:43.892Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6gjxum",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T09:12:00.964Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T21:41:30.920Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv77hb8w",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T21:44:48.568Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv77ljra",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

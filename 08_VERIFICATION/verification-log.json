@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-2ZL4",
-    "timestamp": "2026-10-12T16:06:46.696Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv5g2zi8",
-    "contentHash": "65ac6a318296a12573f69905be492ccb59eeaf51b608ccc4f4b4b92e785d1d91",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-7WSA",
     "timestamp": "2026-10-12T16:10:36.346Z",
     "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv77hb8w",
     "contentHash": "4ddbf01f601b854c43f96fe6ede6d388a8e76e59a67c569745fddfdc151f9522",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-LJUD",
+    "timestamp": "2026-10-13T21:44:48.565Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv77ljra",
+    "contentHash": "6bed17c89f560b81d9bd2a14417f2b3fe078dff6a1ea4f78dbc5ede07f532a12",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
