@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T20:59:11.733Z",
-  "total_cycles_completed": 1072,
-  "total_learnings_persisted": 1072,
-  "total_rules_promoted": 515,
+  "last_updated": "2026-10-13T21:03:20.045Z",
+  "total_cycles_completed": 1073,
+  "total_learnings_persisted": 1073,
+  "total_rules_promoted": 518,
   "history": [
-    {
-      "timestamp": "2026-10-13T08:31:36.126Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv6f9h6z",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T08:34:34.303Z",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T20:59:11.733Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv75yvwy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T21:03:20.045Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv7647js",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

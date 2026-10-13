@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T20:59:11.667Z",
-  "total_verified_learnings": 5027,
+  "last_updated": "2026-10-13T21:03:19.993Z",
+  "total_verified_learnings": 5028,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -123371,6 +123371,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T20:59:11.667Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv7647js": {
+      "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv7647js",
+      "source": "Phocinae/Phocinae-Largha-150M-v1",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "slug": "hf-phocinae-phocinae-largha-150m-v1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
+      "source_version": "hf-phocinae-phocinae-largha-150m-v1",
+      "content_hash": "4642467d16cca758a7f812708630444a957cc023549106ad33a2de30223879a9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 758,
+          "title": "Hybrid Attention Layer Type Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 759,
+          "title": "Zero-Output-Token Decision Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 760,
+          "title": "Option-Order Invariance in Prompt Construction",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T21:03:19.993Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

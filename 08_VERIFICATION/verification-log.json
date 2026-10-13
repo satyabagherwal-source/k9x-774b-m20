@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-8GT9",
-    "timestamp": "2026-10-12T15:43:02.685Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv5f8grg",
-    "contentHash": "21f59c7285aa60b5da67d95427c3f9f6ebc0583411abe21d5b6f652d9db5c0f7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-CB5K",
     "timestamp": "2026-10-12T15:46:01.976Z",
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "TaichuAI/ZDTaichu5.0-9B",
     "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv75yvwy",
     "contentHash": "bd0d9d6d7deb17a1949a53220e4d648f613fdeea0309e8f3ed985cb307285cde",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-47OP",
+    "timestamp": "2026-10-13T21:03:20.041Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv7647js",
+    "contentHash": "4642467d16cca758a7f812708630444a957cc023549106ad33a2de30223879a9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

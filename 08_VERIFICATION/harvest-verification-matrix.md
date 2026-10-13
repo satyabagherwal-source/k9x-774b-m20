@@ -1131,3 +1131,4 @@
 | `CYCLE-20261013-4A8U` | `2026-10-13T20:35:23.742Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`cd497e26...`) |
 | `CYCLE-20261013-TFHD` | `2026-10-13T20:54:56.929Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`bf221acf...`) |
 | `CYCLE-20261013-YW35` | `2026-10-13T20:59:11.729Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 755, Rule 756, Rule 757` | Yes (`bd0d9d6d...`) |
+| `CYCLE-20261013-47OP` | `2026-10-13T21:03:20.041Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 758, Rule 759, Rule 760` | Yes (`4642467d...`) |
