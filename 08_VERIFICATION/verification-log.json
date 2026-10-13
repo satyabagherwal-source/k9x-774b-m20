@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-U8Z4",
-    "timestamp": "2026-10-11T22:44:13.168Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg",
-    "contentHash": "830edd66d55155ea020655949565553797e65b6d65b37f162d0c4f93a20142c8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-XUUW",
     "timestamp": "2026-10-11T22:47:01.496Z",
     "repository": "BAAI/bge-large-en-v1.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "19d08ca59b01dd6518be7c41ee2bcf4cf25e8f2e45366e6621979f4d86f8eafc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-RMYO",
+    "timestamp": "2026-10-13T02:13:48.672Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv61rmuk",
+    "contentHash": "84f4e766b75d16a6c8c9df9669727d2f200261f1ade6c609a3fad2ce175d69bd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

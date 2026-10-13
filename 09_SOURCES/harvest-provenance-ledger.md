@@ -810,3 +810,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-google-gemma-4-31b-it-mv61fi9e` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-13T02:04:22.767Z |
 | `learn-huggingface-hf-baai-bge-base-en-v1-5-mv61jbpw` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-13T02:07:20.957Z |
 | `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv61n8kh` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-13T02:10:23.507Z |
+| `learn-huggingface-hf-bingsu-adetailer-mv61rmuk` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-13T02:13:48.679Z |
