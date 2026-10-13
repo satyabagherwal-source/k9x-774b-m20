@@ -3908,3 +3908,7 @@ https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B
 # --- Automatically Discovered by AI Scout Engine [2026-10-13T11:18:30.670Z] ---
 # [HUGGINGFACE-AI-MODELS] openbmb/MiniCPM-V-4.7-1B (1853 score) - Verified Hugging Face Model: openbmb/MiniCPM-V-4.7-1B (159 likes, 263 downloads)
 https://huggingface.co/openbmb/MiniCPM-V-4.7-1B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T12:08:59.931Z] ---
+# [AI-AGENTS] ccfos/nightingale (7654 score) - Open-source, self-hosted alerting for metrics, logs, and databases. Includes a b
+https://github.com/ccfos/nightingale

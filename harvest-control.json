@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-13T12:06:10.154Z",
+  "lastUpdated": "2026-10-13T12:09:13.072Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -216,12 +216,12 @@
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T12:06:09.265Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-13T12:24:08.786Z",
+        "lastActiveAt": "2026-10-13T12:09:08.722Z",
         "lastHarvestedAt": "2026-10-13T12:06:09.265Z",
         "totalHarvested": 3070,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Epsilon",
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T12:00:03.504Z",
+        "lastActiveAt": "2026-10-13T12:09:13.770Z",
         "lastHarvestedAt": "2026-10-12T13:54:18.108Z",
         "totalHarvested": 1092,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T12:06:10.903Z",
+        "lastActiveAt": "2026-10-13T12:09:16.259Z",
         "lastHarvestedAt": "2026-10-12T22:42:25.539Z",
         "totalHarvested": 1099,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T12:06:13.344Z",
+        "lastActiveAt": "2026-10-13T12:09:18.767Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T12:06:15.847Z",
+        "lastActiveAt": "2026-10-13T12:09:21.261Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -297,7 +297,7 @@
       "remaining": 0,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-13T12:05:51.397Z",
+      "trippedAt": "2026-10-13T12:08:56.852Z",
       "reason": null,
       "consecutiveBlocks": 1
     },

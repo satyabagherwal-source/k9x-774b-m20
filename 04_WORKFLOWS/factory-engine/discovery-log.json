@@ -17512,5 +17512,20 @@
     "downloads": 263,
     "qualityScore": 1853,
     "discoveredAt": "2026-10-13T11:18:30.668Z"
+  },
+  {
+    "name": "nightingale",
+    "fullName": "ccfos/nightingale",
+    "url": "https://github.com/ccfos/nightingale",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source, self-hosted alerting for metrics, logs, and databases. Includes a built-in AI agent and MCP server.",
+    "stars": 13337,
+    "forks": 1784,
+    "openIssues": 245,
+    "language": "Go",
+    "qualityScore": 7654,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-13T12:08:02.204Z"
   }
 ]
