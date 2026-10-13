@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-XD2C",
-    "timestamp": "2026-10-12T04:22:33.828Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv4qxczq",
-    "contentHash": "25382c066c6858a2a6de6e5aa619aeb3af53a6210857d25f45571297d322d1ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-23RK",
     "timestamp": "2026-10-12T04:26:15.056Z",
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7492,6 +7477,21 @@
     "contentHash": "c7c82a7cee5a585f224e6e54bf2467df80246389cc757d8305d39ccdbc98ffd5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-EU8R",
+    "timestamp": "2026-10-13T09:03:45.819Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6geu4x",
+    "contentHash": "215415289cc5a5ef2e52d020a9f5f26234a8fcdea0671c1510471480edb07560",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

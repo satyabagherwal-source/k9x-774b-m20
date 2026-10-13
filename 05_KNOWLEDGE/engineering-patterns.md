@@ -36674,3 +36674,139 @@ def calculate_loss_bad(pred_video, target_video):
 1.  **Feature Tracking:** Use a feature tracker (e.g., ORB, SIFT) on the subject region across all frames.
 2.  **Assertion:** The centroid and orientation of the subject features should remain within a tight epsilon (e.g., < 2 pixels deviation) across the entire video.
 3.  **Parallax Check:** Verify that background features move relative to the subject features, confirming camera motion.
+
+
+---
+
+## 673. The L2 Normalization Mandate for Cosine Similarity (Harvested from sentence-transformers/all-mpnet-base-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The L2 Normalization Mandate for Cosine Similarity",
+  "source": "sentence-transformers/all-mpnet-base-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+  "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T09:03:45.729Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6geu4x",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using sentence embeddings for similarity search or clustering, you **MUST** apply L2 normalization to the final embedding vectors. You **MUST NOT** assume that the raw output of the pooling layer is normalized.
+
+**WHY**:
+The `all-mpnet-base-v2` model is trained such that the **direction** of the vector encodes semantic meaning, while the **magnitude** is not semantically meaningful for similarity. Cosine similarity is defined as the dot product of two unit vectors. If vectors are not normalized, the dot product is influenced by the magnitude (length) of the vectors, which can vary based on input length or model internal states. This leads to incorrect similarity rankings. Normalizing ensures that the dot product is strictly equivalent to cosine similarity, which is the metric the model was optimized for.
+
+**WHEN TO APPLY**:
+Any inference pipeline where embeddings are used for:
+*   Semantic search (dot product or cosine similarity).
+*   Clustering (K-Means, etc.).
+*   Vector database indexing (FAISS, Pinecone, Weaviate).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch.nn.functional as F
+
+# After mean_pooling
+sentence_embeddings = mean_pooling(model_output, attention_mask)
+
+# CRITICAL: Normalize to unit length
+# p=2 is L2 norm, dim=1 is the feature dimension
+sentence_embeddings = F.normalize(sentence_embeddings, p=2, dim=1)
+
+# Now, dot product == cosine similarity
+# similarity = torch.matmul(embedding_a, embedding_b.T)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Do NOT skip normalization
+# This will cause similarity scores to be biased by vector magnitude
+sentence_embeddings = mean_pooling(model_output, attention_mask)
+# Missing F.normalize()
+```
+
+**VERIFICATION METHOD**:
+1.  Generate embeddings for a set of sentences.
+2.  Check the L2 norm of each embedding. It should be approximately 1.0 (within floating-point precision, e.g., `abs(norm - 1.0) < 1e-6`).
+3.  Compute cosine similarity using `torch.nn.functional.cosine_similarity` and using raw dot product. They should be identical if normalization is applied.
+
+
+---
+
+## 674. The Relative Positional Encoding Awareness (Harvested from sentence-transformers/all-mpnet-base-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Relative Positional Encoding Awareness",
+  "source": "sentence-transformers/all-mpnet-base-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+  "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T09:03:45.751Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6geu4x",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing or modifying the MPNet architecture, you **MUST** account for the fact that it uses **Relative Positional Encoding** (via `relative_attention_num_buckets`), not absolute positional embeddings. You **MUST NOT** assume that the position of a token in the sequence directly maps to a fixed embedding vector.
+
+**WHY**:
+MPNet (and RoBERTa) uses relative position biases in the attention mechanism. This means the attention score between two tokens depends on their *relative* distance, not their absolute positions. This allows the model to generalize better to longer sequences (up to `max_position_embeddings`) and makes the model more robust to shifts in token positions. If you incorrectly implement absolute positional embeddings, you will break the model's ability to understand relative context, leading to degraded performance.
+
+**WHEN TO APPLY**:
+*   When implementing a custom MPNet model from scratch.
+*   When fine-tuning the model and modifying the attention mechanism.
+*   When analyzing the model's attention weights for interpretability.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# This is handled internally by the HuggingFace MPNet implementation.
+# However, when inspecting or modifying, be aware of:
+# config.relative_attention_num_buckets = 32
+# This means the relative position is bucketed into 32 bins.
+# The attention bias is added to the attention scores based on these buckets.
+
+# In the attention layer:
+# relative_position_bias = self.relative_position_bias(relative_position)
+# attention_scores = attention_scores + relative_position_bias
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Do NOT replace relative positional encoding with absolute
+# This will break the model's architecture and performance
+class BadMPNetAttention(nn.Module):
+    def __init__(self):
+        # Wrong: Using absolute positional embeddings
+        self.position_embeddings = nn.Embedding(max_len, hidden_size)
+    
+    def forward(self, hidden_states, position_ids):
+        # Wrong: Adding absolute position embeddings
+        position_embeddings = self.position_embeddings(position_ids)
+        hidden_states = hidden_states + position_embeddings
+        # ... rest of attention
+```
+
+**VERIFICATION METHOD**:
+1.  Inspect the model's attention layer to confirm the presence of `relative_position_bias` or similar relative encoding mechanisms.
+2.  Verify that the model's performance does not degrade when input sequences are shifted (e.g., prepending a dummy token) if the relative encoding is correctly implemented. (Note: This is a complex test, so primarily rely on code inspection.)

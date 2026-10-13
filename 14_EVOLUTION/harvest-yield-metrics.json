@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T09:00:29.395Z",
-  "total_cycles_completed": 878,
-  "total_learnings_persisted": 878,
-  "total_rules_promoted": 424,
+  "last_updated": "2026-10-13T09:03:45.822Z",
+  "total_cycles_completed": 879,
+  "total_learnings_persisted": 879,
+  "total_rules_promoted": 427,
   "history": [
-    {
-      "timestamp": "2026-10-12T21:21:32.151Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv5rbrmh",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T21:24:29.012Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1403,6 +1396,13 @@
       "repository": "openai/clip-vit-base-patch32",
       "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv6gaml4",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T09:03:45.822Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6geu4x",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
