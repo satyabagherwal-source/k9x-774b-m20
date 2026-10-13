@@ -1111,3 +1111,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv74q4h9` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-13T20:24:23.203Z |
 | `learn-huggingface-hf-apple-lensvlm-9b-mv74vgkb` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-13T20:28:32.216Z |
 | `learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-13T20:31:26.835Z |
+| `learn-huggingface-hf-fastino-gliner2-5-decide-mv754a6b` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-13T20:35:23.744Z |

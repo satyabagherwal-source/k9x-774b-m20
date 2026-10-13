@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T20:31:26.836Z",
-  "total_cycles_completed": 1069,
-  "total_learnings_persisted": 1069,
+  "last_updated": "2026-10-13T20:35:23.745Z",
+  "total_cycles_completed": 1070,
+  "total_learnings_persisted": 1070,
   "total_rules_promoted": 512,
   "history": [
-    {
-      "timestamp": "2026-10-13T07:54:32.279Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6dxt9f",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T08:15:12.073Z",
       "repository": "speridlabs/iris-3b",
@@ -1403,6 +1396,13 @@
       "repository": "Altworld/Hemmingway-1",
       "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T20:35:23.745Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv754a6b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
