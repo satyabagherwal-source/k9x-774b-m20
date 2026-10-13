@@ -881,3 +881,4 @@
 | `CYCLE-20261013-D2WE` | `2026-10-13T04:50:27.182Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`0b0cd201...`) |
 | `CYCLE-20261013-HAPZ` | `2026-10-13T04:53:43.943Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`5cfad49a...`) |
 | `CYCLE-20261013-L2I1` | `2026-10-13T04:56:39.913Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`c4dbe193...`) |
+| `CYCLE-20261013-PBJP` | `2026-10-13T04:59:58.261Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`d5ab7338...`) |
