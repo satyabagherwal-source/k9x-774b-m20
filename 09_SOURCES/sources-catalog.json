@@ -1418,5 +1418,15 @@
     "contentHash": "dd46b355fb975626e372af5eb1d2b6c6a2313d250aba90372fa28f57612e3831",
     "lastHarvestedAt": "2026-10-13T12:12:52.808Z",
     "learningId": "learn-github-ccfos-nightingale-mv6n61ix"
+  },
+  "trailhq-trail-code": {
+    "repository": "trailhq/Trail-Code",
+    "platform": "github",
+    "sourceUrl": "https://github.com/trailhq/Trail-Code",
+    "sourceVersion": "fe30ead3",
+    "license": "MIT",
+    "contentHash": "a3e3d17d1797f46c54475022aca228dc21bde024de195594897ae62ef8ab5156",
+    "lastHarvestedAt": "2026-10-13T13:00:37.921Z",
+    "learningId": "learn-github-trailhq-trail-code-mv6ovg9f"
   }
 }

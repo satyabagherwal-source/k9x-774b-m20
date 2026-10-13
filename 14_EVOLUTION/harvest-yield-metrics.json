@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:53:38.867Z",
-  "total_cycles_completed": 946,
-  "total_learnings_persisted": 946,
-  "total_rules_promoted": 458,
+  "last_updated": "2026-10-13T13:00:37.922Z",
+  "total_cycles_completed": 947,
+  "total_learnings_persisted": 947,
+  "total_rules_promoted": 459,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:06:24.384Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv5zcy9o",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:09:24.732Z",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -1403,6 +1396,13 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv6omgxr",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:00:37.922Z",
+      "repository": "trailhq/Trail-Code",
+      "learningId": "learn-github-trailhq-trail-code-mv6ovg9f",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

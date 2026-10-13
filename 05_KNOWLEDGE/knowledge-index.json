@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:53:38.835Z",
-  "total_verified_learnings": 4901,
+  "last_updated": "2026-10-13T13:00:37.870Z",
+  "total_verified_learnings": 4902,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -120039,6 +120039,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T12:53:38.835Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-trailhq-trail-code-mv6ovg9f": {
+      "learning_id": "learn-github-trailhq-trail-code-mv6ovg9f",
+      "source": "trailhq/Trail-Code",
+      "repository": "trailhq/Trail-Code",
+      "slug": "trailhq-trail-code",
+      "platform": "github",
+      "source_url": "https://github.com/trailhq/Trail-Code",
+      "source_version": "fe30ead3",
+      "content_hash": "a3e3d17d1797f46c54475022aca228dc21bde024de195594897ae62ef8ab5156",
+      "dossier_path": "07_PROJECT_LEARNING/trailhq-trail-code-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/trailhq-trail-code-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 704,
+          "title": "brain): hold the push until the brain is built, and land the browser on it (#422",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T13:00:37.870Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

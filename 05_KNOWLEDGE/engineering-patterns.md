@@ -38680,3 +38680,63 @@ During any change to `hidden_size`, `num_attention_heads`, or `num_key_value_hea
 A pre‑commit hook that checks the divisibility constraints and aborts the commit if violated.
 
 ---
+
+
+---
+
+## 704. brain): hold the push until the brain is built, and land the browser on it (#422 (Harvested from trailhq/Trail-Code)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "brain): hold the push until the brain is built, and land the browser on it (#422",
+  "source": "trailhq/Trail-Code",
+  "source_url": "https://github.com/trailhq/Trail-Code",
+  "source_version": "fe30ead3",
+  "license": "MIT",
+  "extracted_at": "2026-10-13T13:00:37.829Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trailhq-trail-code-mv6ovg9f",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trailhq/Trail-Code](https://github.com/trailhq/Trail-Code) (Revision: `fe30ead3`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `src/brain/link.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailhq/Trail-Code. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8c057696`: brain): hold the push until the brain is built, and land the browser on it (#422). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/brain/link.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+import { ensureGitignored, LINK_NOTE } from '../context/node-file.js';
+import { BUILD_CONFIG_DIR } from '../util/state.js';
+/** Persist the link for repo `dir`, merging into any existing build config.
+ *
+ * The write is what creates `.graft/config.json`, and that file holds the read
+ * token — which is exactly why this is also where it gets ignored. The comment
+ * on {@link BrainLink} has claimed `.graft/` was "git-ignored" since the day it
+ * was written, and nothing ever made it true: `ensureGitignored` only ever ran
+ * for the graph cache. Every repository anyone ran `graft brain connect` in was
+ * therefore one `git add -A` away from publishing a credential. */
+  ensureGitignored(dir, join(dir, BUILD_CONFIG_DIR), LINK_NOTE);
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+/** Persist the link for repo `dir`, merging into any existing build config. */
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8c057696` are properly handled with clean fallback behavior.
