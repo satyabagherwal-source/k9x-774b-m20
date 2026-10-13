@@ -941,3 +941,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-baai-bge-large-en-v1-5-mv6ilfpa` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-13T10:04:52.915Z |
 | `learn-huggingface-hf-zai-org-glm-5-3-mv6ipf1c` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-13T10:07:58.658Z |
 | `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv6itidh` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-13T10:11:09.670Z |
+| `learn-huggingface-hf-jialinyyzz-humanizer-mv6ix8rk` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-13T10:14:03.771Z |
