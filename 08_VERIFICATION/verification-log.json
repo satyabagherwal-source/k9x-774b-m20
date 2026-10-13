@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-ND5L",
-    "timestamp": "2026-10-11T22:10:52.377Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y",
-    "contentHash": "a1ead13c8491a0dbd6a4136a6b09fc032b7b54bf1996216f2d9a0ef5e111d0e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-R5RT",
     "timestamp": "2026-10-11T22:13:49.433Z",
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "openai-community/gpt2",
     "learningId": "learn-huggingface-hf-openai-community-gpt2-mv60gc1t",
     "contentHash": "6f4bb5a8ca834be694b34d8575bf0f3bd1063247ca60234cca38f5b9df6b644f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-K1IB",
+    "timestamp": "2026-10-13T01:39:54.659Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv60k1fq",
+    "contentHash": "7cefa91b68fa2fe33432cadf8ec4155d630721e9c56777390e85332c5685c6a5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
