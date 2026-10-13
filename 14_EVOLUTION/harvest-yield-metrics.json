@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T16:48:00.523Z",
-  "total_cycles_completed": 1005,
-  "total_learnings_persisted": 1005,
+  "last_updated": "2026-10-13T16:50:56.610Z",
+  "total_cycles_completed": 1006,
+  "total_learnings_persisted": 1006,
   "total_rules_promoted": 488,
   "history": [
-    {
-      "timestamp": "2026-10-13T04:07:40.322Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv65u279",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T04:10:41.218Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1403,6 +1396,13 @@
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv6wzuxa",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:50:56.610Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv6x3mum",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
