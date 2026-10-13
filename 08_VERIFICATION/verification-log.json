@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-4PU4",
-    "timestamp": "2026-10-12T15:40:07.756Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv5f4psg",
-    "contentHash": "f933f8c206cd047e003e5f7cdbd099c38c7e6b2601807690e4c0d05f639e1cd6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-8GT9",
     "timestamp": "2026-10-12T15:43:02.685Z",
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7492,6 +7477,21 @@
     "contentHash": "bf221acf28e1e54c787882ad163561ec9af33eb72ad632254a0bc07331e62c51",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-YW35",
+    "timestamp": "2026-10-13T20:59:11.729Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv75yvwy",
+    "contentHash": "bd0d9d6d7deb17a1949a53220e4d648f613fdeea0309e8f3ed985cb307285cde",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
