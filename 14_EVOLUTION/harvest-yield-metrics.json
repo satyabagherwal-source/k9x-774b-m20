@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:37:21.882Z",
-  "total_cycles_completed": 955,
-  "total_learnings_persisted": 955,
+  "last_updated": "2026-10-13T13:40:29.575Z",
+  "total_cycles_completed": 956,
+  "total_learnings_persisted": 956,
   "total_rules_promoted": 464,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:34:04.312Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv60cj41",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:37:01.807Z",
       "repository": "openai-community/gpt2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T13:37:21.882Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv6q6ov5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:40:29.575Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv6qapp4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
