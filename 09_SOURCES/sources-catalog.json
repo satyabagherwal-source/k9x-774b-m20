@@ -695,9 +695,9 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "dfe06d96fdbe07ec726fbdf855205ab87d2ab1a9557cd4134167abbfce82dca4",
-    "lastHarvestedAt": "2026-10-13T14:07:17.242Z",
-    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv6r967u"
+    "contentHash": "92ddc16252d228d50c70a72e65d7cddd54740782bde53f3cb3bc4829e16d7bb1",
+    "lastHarvestedAt": "2026-10-13T22:29:34.670Z",
+    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv7974d5"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "repository": "unsloth/embeddinggemma-2-GGUF",
