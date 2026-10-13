@@ -794,3 +794,4 @@
 | `CYCLE-20261013-TRW9` | `2026-10-13T00:23:29.913Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`140c484a...`) |
 | `CYCLE-20261013-Y0QJ` | `2026-10-13T00:26:47.995Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`5acd7967...`) |
 | `CYCLE-20261013-1U4E` | `2026-10-13T00:29:46.046Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`66b40107...`) |
+| `CYCLE-20261013-5O9Z` | `2026-10-13T00:32:45.095Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`10e22ac6...`) |
