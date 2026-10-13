@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T05:18:13.694Z",
-  "total_cycles_completed": 829,
-  "total_learnings_persisted": 829,
+  "last_updated": "2026-10-13T05:21:16.640Z",
+  "total_cycles_completed": 830,
+  "total_learnings_persisted": 830,
   "total_rules_promoted": 394,
   "history": [
-    {
-      "timestamp": "2026-10-12T18:38:34.826Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv5li7en",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T18:41:54.119Z",
       "repository": "openai-community/gpt2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T05:18:13.694Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv68cspq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T05:21:16.640Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv68gpv1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
