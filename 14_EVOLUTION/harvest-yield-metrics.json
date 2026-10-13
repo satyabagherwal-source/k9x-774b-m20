@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T23:34:12.795Z",
-  "total_cycles_completed": 1115,
-  "total_learnings_persisted": 1115,
+  "last_updated": "2026-10-13T23:37:15.381Z",
+  "total_cycles_completed": 1116,
+  "total_learnings_persisted": 1116,
   "total_rules_promoted": 539,
   "history": [
-    {
-      "timestamp": "2026-10-13T11:06:35.103Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv6kssbw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T11:09:34.223Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T23:34:12.795Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
       "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv7bi8qr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T23:37:15.381Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv7bm5mk",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

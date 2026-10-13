@@ -1157,3 +1157,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv7bactj` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-13T23:28:04.811Z |
 | `learn-huggingface-hf-minimaxai-minimax-h3-mv7bebzc` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-13T23:31:10.364Z |
 | `learn-huggingface-hf-qwen-qwen3-8-flash-next-mv7bi8qr` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-13T23:34:12.793Z |
+| `learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv7bm5mk` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-13T23:37:15.380Z |

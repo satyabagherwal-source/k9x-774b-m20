@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-ZMTU",
-    "timestamp": "2026-10-12T17:56:08.658Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv5jzmqw",
-    "contentHash": "e59f0d0ba845041a0775b42d0ea3a31d6269dae380d9c773ac3ab4bda79c62ac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-3HQH",
     "timestamp": "2026-10-12T17:59:08.681Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3.8-Flash-Next",
     "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv7bi8qr",
     "contentHash": "b89441cc27691035778727d75f6abf16ddc2dd3c2727d0f547eb6ec054d36573",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-M5PT",
+    "timestamp": "2026-10-13T23:37:15.377Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv7bm5mk",
+    "contentHash": "22ffa333532556f32931fbc1eba5e6408bf76b2dec3eb75b924bc174a9849e92",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
