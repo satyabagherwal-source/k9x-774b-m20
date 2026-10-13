@@ -866,3 +866,4 @@
 | `CYCLE-20261013-Q7SH` | `2026-10-13T04:04:40.817Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 626, Rule 627, Rule 628` | Yes (`9e309e6f...`) |
 | `CYCLE-20261013-U2AM` | `2026-10-13T04:07:40.318Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`a8e978db...`) |
 | `CYCLE-20261013-XXVI` | `2026-10-13T04:10:41.214Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`e492c764...`) |
+| `CYCLE-20261013-26LO` | `2026-10-13T04:13:59.148Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`2ce7591d...`) |
