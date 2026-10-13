@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:21:27.226Z",
+  "last_updated": "2026-10-13T10:24:27.935Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -34,15 +34,15 @@
       "repository": "convaiinnovations/laya",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv62mnor",
-      "content_hash": "b15684e0930992f7ed023e5e5c6fb8d1b8c526a6581a8bfb3fbe220c3d985ed9",
-      "verified_at": "2026-10-13T02:37:56.040Z",
+      "learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv6jamcu",
+      "content_hash": "3b48ef36eea786851c68f045ce9284d23749475146f944e9f8969c34c0250e44",
+      "verified_at": "2026-10-13T10:24:27.935Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T02:37:56.040Z"
+      "last_updated": "2026-10-13T10:24:27.935Z"
     },
     "Edge0/Audio8-ASR-Infinite": {
       "repository": "Edge0/Audio8-ASR-Infinite",
