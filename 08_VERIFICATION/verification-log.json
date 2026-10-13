@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-XL0Q",
-    "timestamp": "2026-10-12T09:58:39.530Z",
-    "repository": "duty1g/x64dbg-mcp-server",
-    "learningId": "learn-github-duty1g-x64dbg-mcp-server-mv52xkxd",
-    "contentHash": "5a62b5e227d874691f28643800e99a028f300dcea3d6b6c81ce81f5242901138",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-CXVW",
     "timestamp": "2026-10-12T10:10:36.044Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7492,6 +7477,21 @@
     "contentHash": "d4a13e029e0603db9dd3ae4c6562ed65d8548aec70139b2d884e060b73c37996",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-Z0MR",
+    "timestamp": "2026-10-13T14:27:22.995Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv6rz0hx",
+    "contentHash": "ac2d60348694e3203c80a5641a60ac231df232d0abcac66a50da6e250afa3c1f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
