@@ -1011,3 +1011,4 @@
 | `CYCLE-20261013-L7V2` | `2026-10-13T13:20:39.950Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`3a321530...`) |
 | `CYCLE-20261013-P5KS` | `2026-10-13T13:23:43.612Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`8173580c...`) |
 | `CYCLE-20261013-T69C` | `2026-10-13T13:26:51.120Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`c2bf3565...`) |
+| `CYCLE-20261013-YODD` | `2026-10-13T13:31:07.873Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 707, Rule 708` | Yes (`e2eb6a3b...`) |

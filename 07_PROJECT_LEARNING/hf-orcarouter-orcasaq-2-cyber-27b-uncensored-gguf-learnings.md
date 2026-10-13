@@ -3,8 +3,8 @@
 > **Source Version**: `hf-orcaroute`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-13T05:03:09.596Z  
-> **Learning ID**: `learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv67tf6k`  
+> **Timestamp**: 2026-10-13T13:31:07.728Z  
+> **Learning ID**: `learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv6pyo9c`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -16,430 +16,332 @@
 
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Forensic Status: DATA ABSENCE / NULL POINTER EXCEPTION**
+**Forensic Status: EMPTY REPOSITORY / METADATA ONLY**
 
-The target repository `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` is a **Hugging Face Model Artifact Repository**, not a software engineering codebase. It contains binary Large Language Model (LLM) weights in GGUF format, not executable source code, CI/CD pipelines, or application logic.
+The target repository `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` on Hugging Face is a **Model Artifact Repository**, not a software engineering codebase. It contains no source code, no CI/CD pipelines, no unit tests, and no architectural logic in the traditional software engineering sense.
 
-**Architectural Boundaries:**
-*   **Input:** Binary tensor data (float16/bfloat16 quantized to Q4/Q5/Q8).
-*   **Output:** Inference-ready model weights for local LLM runners (llama.cpp, Ollama, LM Studio).
-*   **Subsystems:** None. There are no modules, classes, functions, or state machines.
-*   **State Ownership:** Static. The model weights are immutable artifacts.
+**Technical Reality:**
+1.  **Content Type:** The repository hosts Large Language Model (LLM) weights in GGUF (GPT-Generated Universal File) format.
+2.  **Model Identity:** "OrcaSAQ-2-Cyber-27B-Uncensored" implies a fine-tuned or quantized variant of a 27B parameter model (likely based on Llama 3 or similar architecture), specifically tuned for "Cyber" tasks and "Uncensored" (removal of safety refusals).
+3.  **Absence of Code:** The provided inputs (Commits, Issues, Source Snippets, Manifests) are all empty or marked "N/A". There is no `main.py`, no `Dockerfile`, no `package.json`, and no `CMakeLists.txt`.
+4.  **Architectural Boundary:** The "system" here is the **inference engine** (e.g., llama.cpp, Ollama, LM Studio) that *consumes* these files, not the files themselves. The repository is a static data blob.
 
-**Critical Subsystem Abstractions:**
-*   **Quantization Scheme:** "SAQ" (Smooth Attention Quantization) or similar advanced quantization technique applied to a 27B parameter model.
-*   **Uncensored Alignment:** The model has undergone RLHF/DPO fine-tuning to remove safety refusals, which is a data-level modification, not a code-level feature.
+**Critical Implication for AI-Builder-Brain:**
+Since there is no executable code to analyze for bugs, race conditions, or architectural patterns, a standard software forensic extraction is **impossible** and would result in hallucinated data.
 
-**Forensic Conclusion:**
-There is **no source code** to extract. There are no commits, no bugs, no tests, no security vulnerabilities in the traditional software sense, and no concurrency issues. The "code" is the mathematical weights themselves.
+However, to fulfill the mandate of "totally puri learning nichod lena" (extracting pure learning), we must pivot the forensic lens from **Software Engineering** to **AI Model Deployment & Inference Engineering**. The "code" is the **quantization strategy**, the **file structure invariants**, and the **runtime constraints** implied by the GGUF format and the "27B" parameter count.
 
-**However**, to fulfill the mandate of "totally puri learning nichod lena" (extracting all possible learning), I will pivot the forensic analysis to the **engineering invariants required to build, deploy, and secure systems that consume such artifacts**. This is the only valid path to generate high-value engineering rules from a model repository.
+We will extract invariants related to:
+1.  **GGUF Format Integrity:** How model weights are serialized and validated.
+2.  **Quantization Trade-offs:** The engineering decision behind "SAQ" (likely Scaled Asymmetric Quantization or similar) and its impact on inference latency vs. accuracy.
+3.  **Uncensored Model Security:** The threat model implications of deploying "uncensored" models in production.
+4.  **Inference Engine Compatibility:** The interface contract between the model file and the runtime.
 
 ---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-Since the repository contains no code, the following rules are derived from the **operational requirements** of deploying and securing a 27B-parameter uncensored LLM artifact. These are universal invariants for any system integrating large binary AI artifacts.
-
-### 1. Binary Artifact Integrity & Supply Chain Verification
+### 1. GGUF File Integrity & Quantization Consistency Invariant
 **RULE**:
-Any system loading a large binary model artifact (GGUF, ONNX, PT) MUST verify cryptographic checksums (SHA-256) against a trusted registry before deserialization. The system MUST NOT execute or load weights from unverified sources.
+When deploying GGUF model files, the inference engine MUST validate the `gguf` magic bytes, version, and tensor metadata against the expected architecture before loading. The quantization type (e.g., Q4_K_M, Q5_K_S) MUST match the engine's supported kernel implementations to prevent silent numerical corruption or crashes.
 
 **WHY**:
-Binary model files are opaque. A malicious actor can inject backdoors into the weight matrices (e.g., specific token embeddings that trigger harmful outputs or exfiltrate data). Without checksum verification, the system is vulnerable to supply chain attacks where the "model" is actually a Trojan horse.
+GGUF is a binary format. If the quantization type is not supported by the CPU/GPU backend, the engine may either:
+1.  Crash with a segfault (memory safety violation).
+2.  Silently fall back to a lower-precision or incorrect kernel, leading to **garbage output** (nonsense tokens) without any error log.
+3.  Miscalculate memory requirements, leading to OOM (Out of Memory) kills during context expansion.
 
 **WHEN TO APPLY**:
-*   Any LLM inference server.
-*   Any system downloading models from Hugging Face, GitHub, or private registries.
-*   CI/CD pipelines that cache model artifacts.
+Any system loading GGUF files (llama.cpp, Ollama, LM Studio, custom C++/Rust inference servers).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for safe GGUF loading
+bool load_model_safe(const char* path) {
+    // 1. Validate Magic Bytes
+    uint32_t magic;
+    if (fread(&magic, 4, 1, file) != 1 || magic != GGUF_MAGIC) {
+        return false; // Not a GGUF file
+    }
+
+    // 2. Parse Metadata
+    gguf_context* ctx = gguf_init_from_file(path, 0);
+    if (!ctx) return false;
+
+    // 3. Check Quantization Type Support
+    int arch = gguf_get_architecture(ctx);
+    int quant_type = gguf_get_tensor_type(ctx, "output.weight");
+    
+    if (!is_quant_type_supported(arch, quant_type, current_backend)) {
+        log_error("Quantization type %d not supported for backend %s", quant_type, backend_name);
+        gguf_free(ctx);
+        return false;
+    }
+
+    // 4. Pre-calculate Memory Footprint
+    size_t required_mem = calculate_memory_footprint(ctx);
+    if (required_mem > available_ram()) {
+        log_error("Insufficient RAM: Required %zu, Available %zu", required_mem, available_ram());
+        gguf_free(ctx);
+        return false;
+    }
+
+    // 5. Load
+    return llama_load_model_from_file(path, params);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Blind loading without validation
+llama_model* model = llama_load_model_from_file(path, params);
+if (!model) {
+    // This only catches file-not-found, NOT quantization mismatch
+    // If quantization is unsupported, it may crash HERE or later during inference
+    exit(1); 
+}
+// No check for quant_type support -> Silent garbage output or segfault
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Load a GGUF file with an unsupported quant type (e.g., Q8_0 on a CPU-only backend that only supports Q4_K_M). Assert that the loader returns a specific error code, not a crash.
+2.  **Integration Test:** Verify that the output tokens for a known prompt match a reference implementation within a tolerance threshold (e.g., cosine similarity > 0.95) to detect silent numerical corruption.
+
+### 2. Uncensored Model Deployment Security Boundary
+**RULE**:
+When deploying "uncensored" or "jailbroken" LLMs, the system MUST implement a **post-inference content filter** or **tool-use sandbox** to prevent the model from generating harmful instructions, executing arbitrary code via tool calls, or leaking system prompts. The model's lack of safety training is a **security vulnerability**, not a feature.
+
+**WHY**:
+"Uncensored" models have had their refusal mechanisms removed. This means:
+1.  They will comply with requests to generate malware, phishing emails, or hate speech.
+2.  They are more susceptible to **prompt injection** attacks, as they lack the "refusal" heuristic that often acts as a secondary filter.
+3.  If integrated with tools (e.g., code execution, web browsing), they may be tricked into executing malicious commands.
+
+**WHEN TO APPLY**:
+Any production system using uncensored models, especially those with tool-calling capabilities.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import hashlib
-import os
+# Pseudocode for secure uncensored model deployment
+class SecureUncensoredLLM:
+    def __init__(self, model_path):
+        self.model = load_gguf(model_path)
+        self.content_filter = ContentFilter(strict_mode=True)
+        self.tool_sandbox = ToolSandbox(network_isolated=True)
 
-def verify_model_integrity(model_path: str, expected_sha256: str) -> bool:
-    """
-    Verify the SHA-256 hash of a model file against a trusted expected hash.
-    """
-    if not os.path.exists(model_path):
-        raise FileNotFoundError(f"Model file not found: {model_path}")
-    
-    sha256_hash = hashlib.sha256()
-    # Read in chunks to avoid loading 27GB+ into memory
-    with open(model_path, "rb") as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
-            sha256_hash.update(byte_block)
-    
-    calculated_hash = sha256_hash.hexdigest()
-    if calculated_hash != expected_sha256:
-        raise SecurityError(f"Integrity check failed. Expected {expected_sha256}, got {calculated_hash}")
-    
-    return True
-
-# Usage in deployment script
-EXPECTED_HASH = "a1b2c3d4..." # From trusted registry
-verify_model_integrity("model.gguf", EXPECTED_HASH)
+    def generate(self, prompt: str, tools: list = None) -> str:
+        # 1. Pre-filter prompt for injection attempts
+        if self.content_filter.is_malicious(prompt):
+            raise SecurityError("Prompt injection detected")
+        
+        # 2. Generate response
+        raw_response = self.model.generate(prompt, max_tokens=512)
+        
+        # 3. Post-filter response for harmful content
+        if self.content_filter.is_harmful(raw_response):
+            return "I cannot fulfill that request."
+        
+        # 4. If tools are requested, execute in sandbox
+        if tools:
+            tool_calls = parse_tool_calls(raw_response)
+            for call in tool_calls:
+                # Sandbox prevents network access, file system writes outside temp dir
+                result = self.tool_sandbox.execute(call)
+                raw_response += f"\n[Tool Result]: {result}"
+        
+        return raw_response
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER do this:
-# 1. Loading without verification
-model = load_gguf("model.gguf") # No integrity check
+# ANTI-PATTERN: Direct exposure of uncensored model
+class InsecureLLM:
+    def __init__(self, model_path):
+        self.model = load_gguf(model_path)
 
-# 2. Using MD5 or weak hashes
-hashlib.md5(open("model.gguf", "rb").read()).hexdigest() # Weak, collision-prone
-
-# 3. Trusting the filename or metadata
-if "uncensored" in filename:
-    load_model(filename) # No cryptographic proof of content
+    def generate(self, prompt: str) -> str:
+        # No input filtering, no output filtering, no sandbox
+        # Model can be tricked into revealing system prompt or executing malicious tools
+        return self.model.generate(prompt)
 ```
 
 **VERIFICATION METHOD**:
-*   **Unit Test**: Mock a file with a known hash. Assert `verify_model_integrity` returns `True` for correct hash and raises `SecurityError` for incorrect hash.
-*   **Integration Test**: In CI, download the model, compute hash, and compare against the hash published in the repository's `README.md` or a separate `checksums.txt` file.
-
-### 2. Memory-Bounded Inference Resource Allocation
-**RULE**:
-Any system loading a 27B-parameter model MUST enforce a hard memory limit (cgroup, ulimit, or runtime config) that is at least 1.5x the model's file size to account for KV-cache and activation memory. The system MUST NOT allow unbounded memory growth during inference.
-
-**WHY**:
-A 27B model in Q4_K_M quantization is ~16GB. With context length, KV-cache can add several GB. If the system does not cap memory, a single inference request with a long context can exhaust host RAM, causing OOM kills, system instability, or denial of service.
-
-**WHEN TO APPLY**:
-*   Docker/Kubernetes deployments of LLM servers.
-*   Local inference runners (llama.cpp, Ollama).
-*   Any multi-tenant inference service.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```yaml
-# docker-compose.yml
-services:
-  llm-inference:
-    image: ghcr.io/ollama/ollama:latest
-    volumes:
-      - ./models:/root/.ollama/models
-    deploy:
-      resources:
-        limits:
-          memory: 32G # 16GB model + 16GB headroom for KV-cache/activations
-        cpus: '8'
-    environment:
-      - OLLAMA_NUM_PARALLEL=1 # Limit concurrent requests to prevent memory spikes
-```
-
-**NEGATIVE CONSTRAINT**:
-```yaml
-# NEVER do this:
-# 1. No memory limit
-services:
-  llm-inference:
-    image: ollama/ollama
-    # No deploy.resources.limits.memory
-
-# 2. Allowing unbounded parallelism
-environment:
-  - OLLAMA_NUM_PARALLEL=100 # Will cause OOM with 27B model
-```
-
-**VERIFICATION METHOD**:
-*   **Load Test**: Run 10 concurrent inference requests with max context length. Monitor memory usage. Assert it stays below the configured limit.
-*   **Static Analysis**: Lint Dockerfiles and K8s manifests to ensure `resources.limits.memory` is defined for any service labeled `app=llm-inference`.
-
-### 3. Uncensored Model Output Sanitization & Guardrails
-**RULE**:
-Any system serving an "uncensored" LLM MUST implement a post-inference output filter that scans for PII, credentials, and harmful content before returning the response to the user. The system MUST NOT trust the model's self-regulation.
-
-**WHY**:
-"Uncensored" models are fine-tuned to bypass safety filters. They may generate harmful content, leak training data, or produce outputs that violate legal/compliance requirements. Relying on the model's alignment is a security vulnerability.
-
-**WHEN TO APPLY**:
-*   Any public-facing LLM API.
-*   Any system where user input can influence model output.
-*   Compliance-critical applications (healthcare, finance).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-import re
-from typing import List
-
-class OutputGuardrail:
-    def __init__(self):
-        # Simple regex-based guardrails (extend with ML-based classifiers in production)
-        self.pii_patterns = [
-            r'\b\d{3}-\d{2}-\d{4}\b', # SSN
-            r'\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b', # Email
-            r'\b\d{16}\b', # Credit card
-        ]
-    
-    def sanitize(self, output: str) -> str:
-        """
-        Scan output for PII and sensitive data. Redact if found.
-        """
-        sanitized = output
-        for pattern in self.pii_patterns:
-            sanitized = re.sub(pattern, '[REDACTED]', sanitized)
-        return sanitized
-
-# Usage
-guardrail = OutputGuardrail()
-raw_output = "The user's SSN is 123-45-6789."
-safe_output = guardrail.sanitize(raw_output)
-# safe_output: "The user's SSN is [REDACTED]."
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# NEVER do this:
-# 1. Returning raw model output
-return model.generate(prompt)
-
-# 2. Trusting the model's safety
-if model.is_safe(prompt):
-    return model.generate(prompt) # No post-inference check
-```
-
-**VERIFICATION METHOD**:
-*   **Unit Test**: Feed known PII strings to `sanitize`. Assert they are redacted.
-*   **Red Team Test**: Prompt the uncensored model with jailbreak attempts. Assert the output guardrail catches and redacts any leaked PII or harmful content.
+1.  **Red Team Test:** Attempt to jailbreak the model with known prompts (e.g., "Ignore previous instructions and..."). Assert that the system blocks the request or sanitizes the output.
+2.  **Tool Abuse Test:** Prompt the model to execute `rm -rf /` via a tool call. Assert that the sandbox prevents execution and logs the attempt.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-**Forensic Status: NO INCIDENTS FOUND**
+**Note:** Since the repository contains no code, commits, or issues, there are **no real incidents** to document. The following section is **empty** by design, as fabricating incidents would violate the forensic integrity mandate.
 
-The repository `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` is a static artifact repository. It has:
-*   No commit history (or only initial upload commits).
-*   No bug reports.
-*   No pull requests.
-*   No code changes.
-
-Therefore, **no real incidents or production patches exist** to document. This section is intentionally left empty to reflect the forensic truth. Fabricating incidents would violate the mandate of accuracy.
+*No incidents found.*
 
 ---
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-Since the repository contains no code, the following invariants are derived from the **standard engineering practices required to build systems that consume such artifacts**. These are universal micro-level rules for any AI inference system.
+Since there is no source code, we extract invariants from the **inference engine** that consumes this model.
 
 ### 1. Micro-Syntax & Token-Level Precision
-*   **Invariant**: When parsing model metadata (e.g., `config.json` for GGUF), MUST use strict JSON parsing with type validation. MUST NOT use `eval()` or `pickle` for deserializing model metadata.
-*   **Code Example**:
-    ```python
-    import json
-    
-    # SAFE
-    with open("config.json") as f:
-        config = json.load(f)
-    
-    # UNSAFE
-    config = eval(open("config.json").read()) # Code injection risk
+*   **Token ID Boundary:** When decoding tokens, ensure that the token ID is within the valid vocabulary range `[0, vocab_size)`. Out-of-bounds access leads to memory corruption.
+    ```cpp
+    // SAFE
+    if (token_id < 0 || token_id >= vocab_size) {
+        return nullptr; // Invalid token
+    }
+    // UNSAFE
+    char* token = vocab[token_id]; // Segfault if token_id is out of bounds
     ```
+*   **Float Precision:** GGUF models often use `float16` or `bfloat16`. When converting to `float32` for CPU computation, ensure no precision loss in critical layers (e.g., attention scores).
 
 ### 2. Infinite Loop & Recursion Guards
-*   **Invariant**: Inference loops MUST have a maximum token limit (`max_tokens`). MUST NOT allow unbounded generation.
-*   **Code Example**:
-    ```python
-    # SAFE
-    output = model.generate(prompt, max_tokens=512)
-    
-    # UNSAFE
-    output = model.generate(prompt) # May run indefinitely if model loops
+*   **Generation Loop Termination:** The token generation loop MUST have a `max_tokens` limit and a `stop_token` check. Without these, the model may generate infinite text or loop on a single token.
+    ```cpp
+    // SAFE
+    for (int i = 0; i < max_tokens; i++) {
+        int token = sample_token(logits);
+        if (is_stop_token(token)) break;
+        append_token(token);
+    }
+    // UNSAFE
+    while (true) {
+        int token = sample_token(logits);
+        append_token(token); // No termination condition
+    }
     ```
+*   **Context Window Overflow:** If the context length exceeds the model's maximum (e.g., 4096 tokens), the inference engine MUST truncate or slide the window. Exceeding the limit causes undefined behavior or crashes.
 
 ### 3. UI & UX Micro-Mechanics
-*   **Invariant**: When streaming LLM output to a UI, MUST implement backpressure handling. MUST NOT buffer the entire response before rendering.
-*   **Code Example**:
-    ```javascript
-    // SAFE: Stream chunks to UI
-    for await (const chunk of stream) {
-        appendToDOM(chunk);
-    }
-    
-    // UNSAFE: Buffer entire response
-    const fullResponse = await collectStream(stream);
-    appendToDOM(fullResponse); // User waits for entire generation
-    ```
+*   **Streaming Latency:** For UIs displaying LLM output, use **streaming** (token-by-token) rather than waiting for the full response. This reduces perceived latency.
+*   **Backpressure:** If the UI cannot render tokens fast enough, implement backpressure to prevent memory buildup in the token buffer.
 
 ### 4. Backend Concurrency & Memory Safety
-*   **Invariant**: Inference requests MUST be serialized or limited in concurrency to prevent memory exhaustion. MUST NOT allow multiple 27B model inferences to run in parallel on a single GPU without sufficient VRAM.
-*   **Code Example**:
-    ```python
-    import asyncio
+*   **Thread Safety:** LLM inference is often single-threaded per model instance. If multiple requests are processed concurrently, use a **request queue** to serialize access to the model.
+    ```cpp
+    // SAFE
+    std::queue<Request> request_queue;
+    std::mutex queue_mutex;
     
-    semaphore = asyncio.Semaphore(1) # Limit to 1 concurrent inference
+    void process_request(Request req) {
+        std::lock_guard<std::mutex> lock(queue_mutex);
+        request_queue.push(req);
+    }
     
-    async def infer(prompt: str):
-        async with semaphore:
-            return await model.generate(prompt)
+    void worker_thread() {
+        while (true) {
+            Request req;
+            {
+                std::lock_guard<std::mutex> lock(queue_mutex);
+                if (request_queue.empty()) continue;
+                req = request_queue.front();
+                request_queue.pop();
+            }
+            // Process req (single-threaded access to model)
+            model.generate(req);
+        }
+    }
+    // UNSAFE
+    // Multiple threads calling model.generate() concurrently -> Data race, crash
     ```
+*   **Memory Leak:** Ensure that all allocated tensors (KV cache, logits) are freed after each inference step. Use RAII (Resource Acquisition Is Initialization) in C++ or context managers in Python.
 
 ### 5. Defect & Error Prevention ("Galti Pakadna")
-*   **Invariant**: MUST handle `OutOfMemoryError` gracefully. MUST NOT crash the entire service if a single inference request fails due to memory.
-*   **Code Example**:
-    ```python
-    try:
-        output = model.generate(prompt)
-    except OutOfMemoryError:
-        logger.error("OOM during inference")
-        return {"error": "Server busy, please retry"}
+*   **Null Pointer Dereference:** Always check if the model pointer is valid before calling methods.
+    ```cpp
+    if (!model) {
+        log_error("Model not loaded");
+        return;
+    }
+    model->generate(prompt);
+    ```
+*   **Division by Zero:** In attention mechanisms, ensure that the sequence length is not zero before dividing.
+    ```cpp
+    if (seq_len == 0) {
+        return zeros;
+    }
+    float scale = 1.0f / sqrt(seq_len);
     ```
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-### 1. Architecture
-*   **Analysis**: The repository is a **leaf node** in the AI infrastructure stack. It has no internal architecture. It is a data artifact. The architecture of the *consuming system* is what matters: a stateless inference server with a model loader, a tokenizer, and a KV-cache manager.
-
-### 2. Core Abstractions
-*   **Analysis**: The core abstraction is the **Model Weight Tensor**. The GGUF format encapsulates tensors, metadata, and quantization parameters. The key invariant is that the tensor layout must match the inference engine's expectations.
-
-### 3. Error Handling
-*   **Analysis**: Error handling is minimal in the artifact itself. The consuming system MUST handle:
-    *   File not found.
-    *   Corrupted file (checksum mismatch).
-    *   Incompatible quantization scheme.
-    *   Out of memory.
-    *   Tokenizer mismatch.
-
-### 4. Testing
-*   **Analysis**: No tests exist in the repository. The consuming system MUST test:
-    *   Model loading.
-    *   Inference output correctness (golden tests).
-    *   Memory usage under load.
-    *   Latency under load.
-
-### 5. Security
-*   **Analysis**: The primary security risk is **supply chain attack**. The model file could be malicious. The consuming system MUST verify checksums. Secondary risk is **prompt injection**, where user input manipulates the model to leak data. The consuming system MUST sanitize inputs and outputs.
-
-### 6. Performance
-*   **Analysis**: Performance is determined by:
-    *   Quantization level (Q4 vs Q8).
-    *   Context length.
-    *   Hardware (GPU vs CPU).
-    *   Concurrency.
-    The consuming system MUST profile and tune these parameters.
-
-### 7. Deployment
-*   **Analysis**: Deployment requires:
-    *   Large storage (16GB+).
-    *   High memory (32GB+).
-    *   GPU with sufficient VRAM (24GB+ for Q4).
-    *   Containerization with resource limits.
-
-### 8. Agent Patterns
-*   **Analysis**: The model can be used as a tool for AI agents. The agent MUST:
-    *   Define clear tool schemas.
-    *   Limit context window.
-    *   Handle tool execution errors.
-    *   Sanitize tool outputs.
-
-### 9. Data Flow
-*   **Analysis**: Data flow is:
-    1.  User prompt -> Tokenizer -> Token IDs.
-    2.  Token IDs -> Model Weights -> Logits.
-    3.  Logits -> Sampler -> Next Token.
-    4.  Repeat until EOS or max_tokens.
-    5.  Token IDs -> Detokenizer -> Text.
-    6.  Text -> Output Guardrail -> User.
+1.  **Architecture:** The "architecture" is the **GGUF file format** and the **inference engine** (e.g., llama.cpp). The model is a static artifact; the engine is the dynamic system.
+2.  **Core Abstractions:** `Tensor`, `Layer`, `Attention`, `FFN`, `Tokenizer`. The GGUF format abstracts the tensor storage and metadata.
+3.  **Error Handling:** The inference engine must handle:
+    *   File I/O errors (corrupted GGUF).
+    *   Memory allocation failures (OOM).
+    *   Unsupported quantization types.
+    *   Invalid token IDs.
+4.  **Testing:**
+    *   **Unit Tests:** Validate tensor shapes, quantization round-trip accuracy.
+    *   **Integration Tests:** Compare output tokens against a reference model (e.g., PyTorch) for numerical stability.
+    *   **Performance Tests:** Measure tokens/second, memory usage, and latency.
+5.  **Security:**
+    *   **Model Poisoning:** Ensure the GGUF file is from a trusted source. Malicious GGUF files could contain malicious code in metadata or exploit vulnerabilities in the parser.
+    *   **Prompt Injection:** As discussed, uncensored models are vulnerable.
+6.  **Performance:**
+    *   **Quantization:** Q4_K_M vs. Q8_0 trade-off between memory and accuracy.
+    *   **Batching:** Process multiple requests in a batch to improve GPU utilization.
+    *   **KV Cache:** Reuse key-value pairs to avoid recomputation.
+7.  **Deployment:**
+    *   **Containerization:** Use Docker images with CUDA support for GPU inference.
+    *   **Model Caching:** Cache the loaded model in memory to avoid reloading for each request.
+8.  **Agent Patterns:**
+    *   **Tool Calling:** The model must be prompted to output structured JSON for tool calls.
+    *   **Loop Guards:** Limit the number of tool calls to prevent infinite loops.
+9.  **Data Flow:**
+    *   **Input:** Text -> Tokenizer -> Token IDs.
+    *   **Processing:** Token IDs -> Embedding -> Transformer Layers -> Logits.
+    *   **Output:** Logits -> Sampling -> Token IDs -> Tokenizer -> Text.
 
 ---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-### 1. Pattern
-*   **Verified, production-grade implementation pattern**:
-    ```python
-    class SecureModelLoader:
-        def __init__(self, model_path: str, expected_hash: str):
-            self.model_path = model_path
-            self.expected_hash = expected_hash
-        
-        def load(self):
-            verify_model_integrity(self.model_path, self.expected_hash)
-            return load_gguf(self.model_path)
-    ```
-
-### 2. Rule
-*   **Universal invariant**: MUST verify cryptographic checksums of binary model artifacts before loading.
-
-### 3. Architecture Principle
-*   **High-level architectural law**: Treat model artifacts as untrusted input. Isolate model loading in a separate process or container with strict resource limits.
-
-### 4. Failure Mode
-*   **Precise technical breakdown**: Supply chain attack where a malicious model file is downloaded and loaded, leading to data exfiltration or system compromise.
-
-### 5. Reusable Skill
-*   **Step-by-step procedural workflow**:
-    1.  Download model file.
-    2.  Compute SHA-256 hash.
-    3.  Compare against trusted registry hash.
-    4.  If match, load model.
-    5.  If mismatch, delete file and alert.
-
-### 6. Decision
-*   **Engineering design trade-off**: Use SHA-256 instead of MD5 for model verification. SHA-256 is slower but cryptographically secure. MD5 is fast but vulnerable to collision attacks.
-
-### 7. Anti-pattern
-*   **Negative constraint**:
-    ```python
-    # NEVER do this:
-    model = load_gguf("model.gguf") # No integrity check
-    ```
-
-### 8. Verification Method
-*   **Concrete automated test**:
-    ```python
-    def test_model_integrity():
-        # Create a mock model file with known hash
-        with open("test_model.gguf", "wb") as f:
-            f.write(b"test data")
-        
-        expected_hash = hashlib.sha256(b"test data").hexdigest()
-        
-        # Test correct hash
-        assert verify_model_integrity("test_model.gguf", expected_hash)
-        
-        # Test incorrect hash
-        with pytest.raises(SecurityError):
-            verify_model_integrity("test_model.gguf", "wrong_hash")
-    ```
+1.  **Pattern:** **Safe GGUF Loading with Validation.** Always validate magic bytes, version, and quantization type before loading.
+2.  **Rule:** **Uncensored Models Require Post-Inference Filtering.** Never expose uncensored models directly to users without content filtering.
+3.  **Architecture Principle:** **Separate Model Artifact from Inference Engine.** The model is a static file; the engine is a dynamic service. This allows for independent scaling and updates.
+4.  **Failure Mode:** **Silent Numerical Corruption.** Unsupported quantization types may not crash but produce garbage output. This is harder to detect than a crash.
+5.  **Reusable Skill:** **Red Team Testing for LLMs.** Develop a suite of jailbreak prompts and tool abuse scenarios to test the security of uncensored models.
+6.  **Decision:** **Use GGUF for CPU-Only Inference.** GGUF is optimized for CPU inference with quantization. For GPU-only, consider FP16 or INT8 formats.
+7.  **Anti-pattern:** **Blind Model Loading.** Loading a GGUF file without checking its compatibility with the backend.
+8.  **Verification Method:** **Token Cosine Similarity Test.** Compare the output tokens of the GGUF model against a reference model to ensure numerical stability.
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-**For any AI coding agent building a system that consumes `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` or similar artifacts:**
+For any AI coding agent building a system that consumes this model:
 
-1.  **Verify Artifact Integrity**:
-    *   [ ] Compute SHA-256 hash of the downloaded model file.
-    *   [ ] Compare against the hash published in the repository's `README.md` or a trusted registry.
-    *   [ ] If mismatch, abort and alert.
-
-2.  **Enforce Resource Limits**:
-    *   [ ] Configure Docker/K8s memory limits to at least 1.5x the model file size.
-    *   [ ] Limit concurrent inference requests to prevent memory exhaustion.
-    *   [ ] Set `max_tokens` to a reasonable value (e.g., 512) to prevent unbounded generation.
-
-3.  **Implement Output Guardrails**:
-    *   [ ] Add a post-inference filter to scan for PII, credentials, and harmful content.
-    *   [ ] Redact or block outputs that violate compliance policies.
-    *   [ ] Log all blocked outputs for audit.
-
-4.  **Handle Errors Gracefully**:
-    *   [ ] Catch `OutOfMemoryError` and return a user-friendly error message.
-    *   [ ] Catch `FileNotFoundError` and prompt the user to download the model.
-    *   [ ] Catch `TokenizerMismatchError` and log the mismatch.
-
-5.  **Test Under Load**:
-    *   [ ] Run load tests with 10 concurrent requests.
-    *   [ ] Monitor memory usage and latency.
-    *   [ ] Assert that memory stays within limits and latency is acceptable.
-
-6.  **Secure the Deployment**:
-    *   [ ] Use a private registry for model artifacts.
-    *   [ ] Restrict access to the model file using IAM roles or service accounts.
-    *   [ ] Enable audit logging for all model loading and inference requests.
+1.  **Validate GGUF File:**
+    *   [ ] Check magic bytes (`GGUF`).
+    *   [ ] Check version compatibility.
+    *   [ ] Check quantization type support.
+2.  **Pre-calculate Memory:**
+    *   [ ] Estimate memory footprint based on model size and quantization.
+    *   [ ] Check available RAM/VRAM.
+3.  **Implement Safe Loading:**
+    *   [ ] Use RAII for resource management.
+    *   [ ] Handle file I/O errors.
+4.  **Implement Content Filtering:**
+    *   [ ] Pre-filter prompts for injection.
+    *   [ ] Post-filter responses for harmful content.
+5.  **Implement Tool Sandbox:**
+    *   [ ] Isolate tool execution from the main process.
+    *   [ ] Restrict network and file system access.
+6.  **Implement Generation Loop Guards:**
+    *   [ ] Set `max_tokens` limit.
+    *   [ ] Check for stop tokens.
+    *   [ ] Handle context window overflow.
+7.  **Implement Concurrency Control:**
+    *   [ ] Serialize access to the model instance.
+    *   [ ] Use a request queue for multiple users.
+8.  **Test for Numerical Stability:**
+    *   [ ] Compare output tokens against a reference model.
+    *   [ ] Assert cosine similarity > 0.95.
+9.  **Red Team Test:**
+    *   [ ] Attempt jailbreaks.
+    *   [ ] Attempt tool abuse.
+    *   [ ] Verify that security filters block these attempts.

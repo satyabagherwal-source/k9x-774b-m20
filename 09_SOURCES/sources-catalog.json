@@ -585,9 +585,9 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "76cbb42c720a5d227f2cdd712295eba26fd42a513ea89d81573770485575a667",
-    "lastHarvestedAt": "2026-10-13T05:03:09.760Z",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv67tf6k"
+    "contentHash": "e2eb6a3b44f6849a5a212af4c3eea1aa747f53af3bdf105c520a21a51e55d93d",
+    "lastHarvestedAt": "2026-10-13T13:31:07.876Z",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv6pyo9c"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "repository": "Alissonerdx/BFS-Best-Face-Swap",

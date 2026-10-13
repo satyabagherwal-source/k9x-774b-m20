@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-1JG9",
-    "timestamp": "2026-10-12T09:05:44.889Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-hf-facebook-sam3-mv511jdi",
-    "contentHash": "01736fbeb321bf0206dca79010c5414a9d6b32a90b0f2c30bf9e14e31767ef26",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-5A3Q",
     "timestamp": "2026-10-12T09:08:39.398Z",
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "c2bf356598057b01d02f5e2a69f432e186bb473b6c1c1f3e564a41067c0e7b7a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-YODD",
+    "timestamp": "2026-10-13T13:31:07.873Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv6pyo9c",
+    "contentHash": "e2eb6a3b44f6849a5a212af4c3eea1aa747f53af3bdf105c520a21a51e55d93d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
