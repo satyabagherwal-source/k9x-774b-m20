@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-WKWW",
-    "timestamp": "2026-10-12T12:17:50.816Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv57wkuj",
-    "contentHash": "371dd81c3ba224f763177caadf60a1e8a5405bab1555f6dec0ea304064401b4f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-09TK",
     "timestamp": "2026-10-12T12:20:43.064Z",
     "repository": "argmaxinc/whisperkit-coreml",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-reranker-v2-m3",
     "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6xji5s",
     "contentHash": "8d32cc4e19b72821ac5cdb1afa7420d194de18000f0ec97728abf7f7e796841b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-NMUH",
+    "timestamp": "2026-10-13T17:06:29.609Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6xnmrd",
+    "contentHash": "81bdf7ba7375584fe52b735733cf2c2e1a05f64fbc08d77d7119aeee5a226a3c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
