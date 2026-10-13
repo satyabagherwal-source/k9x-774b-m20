@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-GFZU",
-    "timestamp": "2026-10-11T21:37:29.850Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7",
-    "contentHash": "34bd7ef3c6e2ae0cc7c2771ed3c12a06b2a3030faa9f14e6c063c9fbbb122adb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-KGEG",
     "timestamp": "2026-10-11T21:40:37.000Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-4B",
     "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv5z8yrd",
     "contentHash": "a42c50c3d22fa8c6f55788c542f9074f2437699206a3f5213f514c459f9dd2ea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-CYD9",
+    "timestamp": "2026-10-13T01:06:24.381Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv5zcy9o",
+    "contentHash": "7f5fecd95e1ffc243aba689d69cd927628e62716532c9a4a01e15af328271747",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
