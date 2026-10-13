@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-94Y2",
-    "timestamp": "2026-10-12T04:59:42.794Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv4s94vb",
-    "contentHash": "7beffa7c4c869176f4c9a8b51db1915983dd2de9c6dc41bbf86ad10cbedab66b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-CS2D",
     "timestamp": "2026-10-12T05:02:32.725Z",
     "repository": "google/vit-base-patch16-224",
@@ -7490,6 +7475,21 @@
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
     "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6h9blz",
     "contentHash": "9f20a6b442ec7de56766b500ec8d5b573be3eb802f585f2cbff9cf3f29eb12dd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-CXXX",
+    "timestamp": "2026-10-13T09:30:16.917Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv6hcxw6",
+    "contentHash": "a5a30dc22cce23265d7d8ee9fad18cf6fe1bf32c0e0571d28590167d957e0416",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
