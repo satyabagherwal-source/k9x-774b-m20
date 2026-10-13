@@ -875,9 +875,9 @@
     "sourceUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceVersion": "hf-openai-whisper-large-v3",
     "license": "Open-Source",
-    "contentHash": "8ca0cbd7305477a4e14ecc5fda7a8bbace1cb0ee88ccc0baed4c5ab538a7ec2b",
-    "lastHarvestedAt": "2026-10-13T15:35:01.216Z",
-    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv6udzwl"
+    "contentHash": "58cf7a1acadd2b21277a5f7b904c0b7e07781bd148754d2e7df94457dedd29b0",
+    "lastHarvestedAt": "2026-10-13T23:25:06.180Z",
+    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv7b6iz6"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "repository": "black-forest-labs/FLUX.1-schnell",
