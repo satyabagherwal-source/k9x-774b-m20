@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-7A1N",
-    "timestamp": "2026-10-12T18:02:05.339Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv5k79yq",
-    "contentHash": "b018b0b8046c08832b7e36a40c5e2e1aaae55e5d6cc50b9fde862a225dbb8387",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-BKAM",
     "timestamp": "2026-10-12T18:05:25.246Z",
     "repository": "speridlabs/iris-3b",
@@ -7492,6 +7477,21 @@
     "contentHash": "9a6be525845cee99a8298a24b3673003d97c43412c8ce8304d5ea838d37b4ee8",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-UW91",
+    "timestamp": "2026-10-13T23:44:03.013Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv7buw5m",
+    "contentHash": "8a8dd43d6de663865c7c0e6054f0525ae3e735c41f032fab82cb68c350b2039d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
