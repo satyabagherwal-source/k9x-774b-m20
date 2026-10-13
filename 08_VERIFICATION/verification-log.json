@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-APHF",
-    "timestamp": "2026-10-12T03:36:57.219Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4papes",
-    "contentHash": "73ea503c948800768e6b526fac545f6cf43b40db5fcd03ea9dcaa68c04b9300e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-EFVI",
     "timestamp": "2026-10-12T03:39:51.390Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7490,6 +7475,21 @@
     "repository": "bigscience/bloom",
     "learningId": "learn-huggingface-hf-bigscience-bloom-mv6cl3jg",
     "contentHash": "c6ca449ee499b6f05a0aa53f5aa6d329337ed0c8ff422a3f095b623020972f0f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-UHHA",
+    "timestamp": "2026-10-13T07:23:57.310Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv6cuhbr",
+    "contentHash": "b97eb9065cb78bfbc59caf7c660e2348b8854a8a741cf173bc30aefced9901a7",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T07:16:39.444Z",
-  "total_verified_learnings": 4818,
+  "last_updated": "2026-10-13T07:23:57.262Z",
+  "total_verified_learnings": 4819,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -117794,6 +117794,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T07:16:39.444Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openai-gpt-oss-20b-mv6cuhbr": {
+      "learning_id": "learn-huggingface-hf-openai-gpt-oss-20b-mv6cuhbr",
+      "source": "openai/gpt-oss-20b",
+      "repository": "openai/gpt-oss-20b",
+      "slug": "hf-openai-gpt-oss-20b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openai/gpt-oss-20b",
+      "source_version": "hf-openai-gpt-oss-20b",
+      "content_hash": "b97eb9065cb78bfbc59caf7c660e2348b8854a8a741cf173bc30aefced9901a7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 660,
+          "title": "Microscaling Sub-Byte Quantization Selective Exclusion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 661,
+          "title": "SwiGLU Activation Range Clamping for Low-Precision Dynamic Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 662,
+          "title": "Interleaved Sliding-Window and YaRN Global Attention State Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T07:23:57.262Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -985,9 +985,9 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceVersion": "hf-openai-gpt-oss-20b",
     "license": "Open-Source",
-    "contentHash": "8fd6f37138394b87a220896b3f6a4974526a90d9c180e3ba2e5f09b32baa2a50",
-    "lastHarvestedAt": "2026-10-13T00:38:46.141Z",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv5ydes5"
+    "contentHash": "b97eb9065cb78bfbc59caf7c660e2348b8854a8a741cf173bc30aefced9901a7",
+    "lastHarvestedAt": "2026-10-13T07:23:57.312Z",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv6cuhbr"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
     "repository": "meta-llama/Llama-2-7b-chat-hf",
