@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T05:55:10.296Z",
-  "total_cycles_completed": 841,
-  "total_learnings_persisted": 841,
+  "last_updated": "2026-10-13T05:58:04.694Z",
+  "total_cycles_completed": 842,
+  "total_learnings_persisted": 842,
   "total_rules_promoted": 403,
   "history": [
-    {
-      "timestamp": "2026-10-12T19:16:20.892Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv5murvp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T19:19:46.736Z",
       "repository": "Bingsu/adetailer",
@@ -1403,6 +1396,13 @@
       "repository": "google/electra-base-discriminator",
       "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv69ob02",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T05:58:04.694Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-m3-mv69s1lw",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
