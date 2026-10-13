@@ -1245,9 +1245,9 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "29541c570abf1e7b27e2bc27b8438b85742b58395861d342849c31ae88262b55",
-    "lastHarvestedAt": "2026-10-13T01:55:17.641Z",
-    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv613tlo"
+    "contentHash": "7b42f86aadc1486a274e483691f708b751741c9c1b525100ded01af1ad7bb500",
+    "lastHarvestedAt": "2026-10-13T09:36:21.238Z",
+    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv6hkqx7"
   },
   "hf-qwen-qwen3-8b": {
     "repository": "Qwen/Qwen3-8B",

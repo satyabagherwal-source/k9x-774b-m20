@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T09:33:08.701Z",
-  "total_verified_learnings": 4843,
+  "last_updated": "2026-10-13T09:36:21.183Z",
+  "total_verified_learnings": 4844,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -118480,6 +118480,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T09:33:08.700Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv6hkqx7": {
+      "learning_id": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv6hkqx7",
+      "source": "argmaxinc/whisperkit-coreml",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "slug": "hf-argmaxinc-whisperkit-coreml",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+      "source_version": "hf-argmaxinc-whisperkit-coreml",
+      "content_hash": "7b42f86aadc1486a274e483691f708b751741c9c1b525100ded01af1ad7bb500",
+      "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 675,
+          "title": "Hardware-Capability Gating for ML Model Loading",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 676,
+          "title": "Quantization-Aware Model Naming Convention",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T09:36:21.183Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -36810,3 +36810,147 @@ class BadMPNetAttention(nn.Module):
 **VERIFICATION METHOD**:
 1.  Inspect the model's attention layer to confirm the presence of `relative_position_bias` or similar relative encoding mechanisms.
 2.  Verify that the model's performance does not degrade when input sequences are shifted (e.g., prepending a dummy token) if the relative encoding is correctly implemented. (Note: This is a complex test, so primarily rely on code inspection.)
+
+
+---
+
+## 675. Hardware-Capability Gating for ML Model Loading (Harvested from argmaxinc/whisperkit-coreml)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hardware-Capability Gating for ML Model Loading",
+  "source": "argmaxinc/whisperkit-coreml",
+  "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+  "source_version": "hf-argmaxinc-whisperkit-coreml",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T09:36:21.118Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv6hkqx7",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml) (Revision: `hf-argmaxi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying machine learning models to heterogeneous edge devices, you **MUST** implement a static configuration manifest that maps specific hardware identifiers to supported model variants. You **MUST NOT** allow the runtime to attempt loading a model without first verifying that the device's memory and compute capabilities match the model's requirements.
+
+**WHY**:
+On mobile and embedded devices, memory is strictly bounded. Loading a model that exceeds the available RAM (e.g., a 1GB model on a 4GB RAM device with OS overhead) will cause an immediate `SIGKILL` or `OOM` crash, which is unrecoverable at the application level. A static gate prevents this class of fatal errors before the model loading process begins.
+
+**WHEN TO APPLY**:
+Any system deploying ML models to devices with varying hardware specs (mobile phones, IoT devices, laptops with different RAM configurations).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// config.json
+{
+  "device_support": [
+    {
+      "chips": "A12, A13",
+      "identifiers": ["iPhone11", "iPhone12"],
+      "models": {
+        "default": "tiny",
+        "supported": ["tiny", "base"]
+      }
+    },
+    {
+      "chips": "A16, M1",
+      "identifiers": ["iPhone15", "MacBookPro18,1"],
+      "models": {
+        "default": "large-v3",
+        "supported": ["tiny", "base", "small", "large-v3"]
+      }
+    }
+  ]
+}
+```
+```swift
+// Pseudocode for the loader
+func loadModel(for deviceID: String) throws -> MLModel {
+    let config = try loadConfig()
+    guard let deviceEntry = config.deviceSupport.first(where: { $0.identifiers.contains(deviceID) }) else {
+        throw ModelError.unsupportedDevice
+    }
+    let modelID = deviceEntry.models.default
+    // Verify modelID is in supported list before loading
+    guard deviceEntry.models.supported.contains(modelID) else {
+        throw ModelError.modelNotSupportedForDevice
+    }
+    return try MLModel(contentsOf: modelURL(for: modelID))
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// BAD: Attempting to load the largest model by default regardless of device
+func loadModel() throws -> MLModel {
+    // This will crash on low-end devices
+    return try MLModel(contentsOf: URL(string: "large-v3.mlmodel")!)
+}
+```
+
+**VERIFICATION METHOD**:
+1.  **Static Analysis:** A CI script that parses `config.json` and asserts that every `identifier` in the `identifiers` array corresponds to a valid Apple hardware model.
+2.  **Integration Test:** A test suite that mocks the device identifier for each entry in `config.json` and asserts that the `loadModel` function returns a valid model object without throwing an `OOM` error.
+
+
+---
+
+## 676. Quantization-Aware Model Naming Convention (Harvested from argmaxinc/whisperkit-coreml)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization-Aware Model Naming Convention",
+  "source": "argmaxinc/whisperkit-coreml",
+  "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+  "source_version": "hf-argmaxinc-whisperkit-coreml",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T09:36:21.150Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv6hkqx7",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml) (Revision: `hf-argmaxi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing quantized ML models, you **MUST** encode the quantization strategy and approximate memory footprint in the model identifier. You **MUST NOT** use generic names (e.g., `model_v1`) that do not convey the resource cost.
+
+**WHY**:
+Quantization (e.g., FP16 to INT8) significantly reduces memory usage but can impact accuracy. By encoding the size (e.g., `_949MB`) and strategy (`_turbo`) in the name, developers and users can make informed decisions about which model to load based on their specific latency and accuracy requirements. It also helps in debugging memory issues by providing immediate visibility into the expected resource cost.
+
+**WHEN TO APPLY**:
+Any project distributing multiple variants of the same model with different precision or compression levels.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+"supported": [
+    "openai_whisper-large-v3_947MB",
+    "openai_whisper-large-v3_turbo_954MB",
+    "distil-whisper_distil-large-v3_594MB"
+]
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+"supported": [
+    "model_a",
+    "model_b",
+    "model_c"
+]
+```
+
+**VERIFICATION METHOD**:
+A linting rule that checks if model names in the configuration match a regex pattern that includes a size indicator (e.g., `\d+MB`) or a quantization tag (e.g., `int8`, `turbo`).
