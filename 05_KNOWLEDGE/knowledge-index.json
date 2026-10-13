@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T06:59:41.002Z",
-  "total_verified_learnings": 4817,
+  "last_updated": "2026-10-13T07:16:39.444Z",
+  "total_verified_learnings": 4818,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -117754,6 +117754,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T06:59:41.002Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-bigscience-bloom-mv6cl3jg": {
+      "learning_id": "learn-huggingface-hf-bigscience-bloom-mv6cl3jg",
+      "source": "bigscience/bloom",
+      "repository": "bigscience/bloom",
+      "slug": "hf-bigscience-bloom",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/bigscience/bloom",
+      "source_version": "hf-bigscience-bloom",
+      "content_hash": "c6ca449ee499b6f05a0aa53f5aa6d329337ed0c8ff422a3f095b623020972f0f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 657,
+          "title": "Left-Padding Invariant for Autoregressive Batched Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 658,
+          "title": "FP32 Precision Guard for Attention Softmax in Large-Scale Transformers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 659,
+          "title": "Vocab-Dimension Divisibility Guarantee for Tensor-Parallel Distributed Partitions",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T07:16:39.444Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

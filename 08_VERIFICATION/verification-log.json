@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-6LDF",
-    "timestamp": "2026-10-12T03:33:45.267Z",
-    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4p6lav",
-    "contentHash": "f3ab47459c1360aa2c508b0b351fc23cdf1987b32e2bb2b73e4007574110e7cd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-APHF",
     "timestamp": "2026-10-12T03:36:57.219Z",
     "repository": "deepseek-ai/DeepSeek-V3",
@@ -7492,6 +7477,21 @@
     "contentHash": "ad5fd5bdea753b079cfb240a1197ee85b0cbca2afcc03a6dee2062d2657df31b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-L3NC",
+    "timestamp": "2026-10-13T07:16:39.480Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-hf-bigscience-bloom-mv6cl3jg",
+    "contentHash": "c6ca449ee499b6f05a0aa53f5aa6d329337ed0c8ff422a3f095b623020972f0f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
