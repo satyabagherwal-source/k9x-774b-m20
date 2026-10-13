@@ -979,3 +979,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv6mxc84` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-13T12:06:06.744Z |
 | `learn-github-ccfos-nightingale-mv6n61ix` | `https://github.com/ccfos/nightingale` | `97fe9297` | Multi-dimensional audit evidence | 2026-10-13T12:12:52.808Z |
 | `learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-13T12:26:18.341Z |
+| `learn-huggingface-hf-altworld-hemmingway-1-mv6nrao5` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-13T12:29:24.463Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:26:18.289Z",
-  "total_verified_learnings": 4892,
+  "last_updated": "2026-10-13T12:29:24.414Z",
+  "total_verified_learnings": 4893,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -119759,6 +119759,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T12:26:18.289Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-altworld-hemmingway-1-mv6nrao5": {
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv6nrao5",
+      "source": "Altworld/Hemmingway-1",
+      "repository": "Altworld/Hemmingway-1",
+      "slug": "hf-altworld-hemmingway-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "content_hash": "eada004a51e480df22aaed92842f72078d2c61713110584ce15b18ea21a501a7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 692,
+          "title": "**Rule‑001 – Token‑ID Consistency Across Configurations**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 693,
+          "title": "**Rule‑002 – dtype Alignment Between Config and Runtime Loader**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 694,
+          "title": "**Rule‑003 – Layer‑Type Schedule Integrity**",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T12:29:24.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
