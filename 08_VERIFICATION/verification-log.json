@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-SBNZ",
-    "timestamp": "2026-10-12T12:14:32.207Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv57sbl4",
-    "contentHash": "6926809f2cadc00adf5b358b019846a4d879c37b7f18b490abb78637d259f877",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-WKWW",
     "timestamp": "2026-10-12T12:17:50.816Z",
     "repository": "intfloat/multilingual-e5-small",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/all-mpnet-base-v2",
     "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6xfbaj",
     "contentHash": "bb0c65474425dcb921765143225da76fcc936954068b7e5ceb39112744665cc1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-JI7S",
+    "timestamp": "2026-10-13T17:03:16.984Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6xji5s",
+    "contentHash": "8d32cc4e19b72821ac5cdb1afa7420d194de18000f0ec97728abf7f7e796841b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
