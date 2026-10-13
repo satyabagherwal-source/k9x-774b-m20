@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-0N0P",
-    "timestamp": "2026-10-12T06:45:04.777Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4w0mz1",
-    "contentHash": "f55d3e2c4c8b40d1aac7379a5d2c86144ad202abb41de72a2d179ca47974e772",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-4L5Z",
     "timestamp": "2026-10-12T06:48:08.999Z",
     "repository": "Lightricks/LTX-2.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "8bc4ce9efb9056ea3241387f7ac7f9e753af984970fa77d1842f86641c27bf7e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-GU9K",
+    "timestamp": "2026-10-13T11:25:17.240Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv6lgu5i",
+    "contentHash": "d53cecde6270a364376a4e610689d5bf067dbc4b9c6030f850c88d72b9c5898a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

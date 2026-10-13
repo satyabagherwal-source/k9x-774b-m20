@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T11:22:06.861Z",
-  "total_cycles_completed": 921,
-  "total_learnings_persisted": 921,
-  "total_rules_promoted": 437,
+  "last_updated": "2026-10-13T11:25:17.244Z",
+  "total_cycles_completed": 922,
+  "total_learnings_persisted": 922,
+  "total_rules_promoted": 439,
   "history": [
-    {
-      "timestamp": "2026-10-12T23:50:05.968Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-hf-amazon-chronos-2-mv5wmtjx",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T23:53:14.236Z",
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -1403,6 +1396,13 @@
       "repository": "autotrust/JEV-35B",
       "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv6lcra4",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:25:17.244Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv6lgu5i",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
