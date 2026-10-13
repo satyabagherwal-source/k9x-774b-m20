@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-J80M",
-    "timestamp": "2026-10-11T22:07:39.094Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1",
-    "contentHash": "31b09193f16b7add63a5ccd7c97dffdb34bafc30fa4c73ecec66fc068ea24368",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-ND5L",
     "timestamp": "2026-10-11T22:10:52.377Z",
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "FacebookAI/xlm-roberta-base",
     "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv60cj41",
     "contentHash": "53dc84cb1ef9d4076e282073299f41d21ab6085d328b63b09a0f0665962fbc65",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-GC4R",
+    "timestamp": "2026-10-13T01:37:01.803Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv60gc1t",
+    "contentHash": "6f4bb5a8ca834be694b34d8575bf0f3bd1063247ca60234cca38f5b9df6b644f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
