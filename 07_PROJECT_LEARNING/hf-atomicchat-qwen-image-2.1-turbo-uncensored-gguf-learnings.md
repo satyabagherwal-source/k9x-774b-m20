@@ -3,8 +3,8 @@
 > **Source Version**: `hf-atomiccha`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T23:44:06.186Z  
-> **Learning ID**: `learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv5wf416`  
+> **Timestamp**: 2026-10-13T06:10:06.121Z  
+> **Learning ID**: `learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv6a7icp`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF](https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T23:44:05.623Z  
+> **Harvest Timestamp**: 2026-10-13T06:10:05.503Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 161715 downloads | 373 likes
+- **Stars / Engagement**: 161715 downloads | 378 likes
 
 ---
 

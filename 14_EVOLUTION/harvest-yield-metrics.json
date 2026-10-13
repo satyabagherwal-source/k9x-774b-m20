@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T06:07:08.098Z",
-  "total_cycles_completed": 845,
-  "total_learnings_persisted": 845,
+  "last_updated": "2026-10-13T06:10:06.212Z",
+  "total_cycles_completed": 846,
+  "total_learnings_persisted": 846,
   "total_rules_promoted": 403,
   "history": [
-    {
-      "timestamp": "2026-10-12T19:28:31.809Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv5nafvw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T19:31:30.617Z",
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T06:07:08.098Z",
       "repository": "Comfy-Org/MiniMax-H3",
       "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv6a3oxq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T06:10:06.212Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv6a7icp",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

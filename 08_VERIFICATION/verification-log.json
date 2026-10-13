@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-9EM7",
-    "timestamp": "2026-10-12T02:39:57.247Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx",
-    "contentHash": "267dfe484debebf50e6be90fdfa37a33ed9525c95ccc70ff5d2234db05b73202",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-CZFU",
     "timestamp": "2026-10-12T02:42:44.202Z",
     "repository": "microsoft/FrogNano-4B-2609",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/MiniMax-H3",
     "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv6a3oxq",
     "contentHash": "1c181100496091fcdfe071d1c85cdb33a8b40e6fa83d861f53513f705c496f7a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-7IF5",
+    "timestamp": "2026-10-13T06:10:06.209Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv6a7icp",
+    "contentHash": "edddec6943be3f56498d0b80099b85d36f975a6e15bdc84e362f277144a0f90c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
