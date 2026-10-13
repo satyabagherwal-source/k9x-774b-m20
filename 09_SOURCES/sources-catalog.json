@@ -1275,9 +1275,9 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "7c56d78fd9a4d7fc5ab20860df6732326af510c193a393479f88cf1c86d866bd",
-    "lastHarvestedAt": "2026-10-13T09:47:19.218Z",
-    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv6hyunz"
+    "contentHash": "c22599bca0df9039a88702a73cced19801e594419dbc3f64e893525822d02dff",
+    "lastHarvestedAt": "2026-10-13T17:42:47.221Z",
+    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv6yyb0h"
   },
   "hf-baai-bge-base-en-v1.5": {
     "repository": "BAAI/bge-base-en-v1.5",
