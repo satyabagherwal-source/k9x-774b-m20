@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-YQ1E",
-    "timestamp": "2026-10-12T16:31:27.314Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv5gypyg",
-    "contentHash": "99b34d370fd38c3c8329414da8d95833702620f4ae56f453d15c23c21199d0f5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-2FDF",
     "timestamp": "2026-10-12T16:34:20.115Z",
     "repository": "google/electra-base-discriminator",
@@ -7490,6 +7475,21 @@
     "repository": "PSRben/VisionHOPE",
     "learningId": "learn-huggingface-hf-psrben-visionhope-mv78fhjf",
     "contentHash": "fdead8a96013ffacf37b382ebacd7663a482d82706bfcb877b2e7c50256620ed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-JHCF",
+    "timestamp": "2026-10-13T22:11:11.631Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv78jh97",
+    "contentHash": "68d6280612cb066e078311b44af8b2de44990dde54e8635e06f494913d56834d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
