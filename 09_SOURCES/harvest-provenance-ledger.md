@@ -1081,3 +1081,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv718wxy` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-13T18:47:01.432Z |
 | `learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv71cok1` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-13T18:49:57.142Z |
 | `learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-13T18:53:00.121Z |
+| `learn-huggingface-hf-baai-bge-small-en-v1-5-mv71kpx8` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-13T18:56:12.212Z |

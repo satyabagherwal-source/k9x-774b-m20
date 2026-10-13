@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-CKH1",
-    "timestamp": "2026-10-12T13:54:15.589Z",
-    "repository": "paperclipai/paperclip",
-    "learningId": "learn-github-paperclipai-paperclip-mv5bckez",
-    "contentHash": "4b05325c29df6e1f9888cc1a978c8d9fc9976e2c0fca993b15a4a1f4180996f2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-OCY5",
     "timestamp": "2026-10-12T14:03:25.709Z",
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B-NVFP4",
     "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi",
     "contentHash": "13de9f4208db95d3b5bc34db6051806f43921720c1f6680ba614f302934753a5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-KQ0G",
+    "timestamp": "2026-10-13T18:56:12.208Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv71kpx8",
+    "contentHash": "c1c15dd66968b26cf3c0396bb6d7affdf3849fe933261fd8f501bab945c748aa",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
