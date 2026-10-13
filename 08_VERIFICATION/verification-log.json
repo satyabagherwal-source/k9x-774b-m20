@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-3HQH",
-    "timestamp": "2026-10-12T17:59:08.681Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv5k3hng",
-    "contentHash": "ffc513c5b9b6b038278a83d9f64c947fe537d6dffc38a47667d5f73478c96900",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-7A1N",
     "timestamp": "2026-10-12T18:02:05.339Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "22ffa333532556f32931fbc1eba5e6408bf76b2dec3eb75b924bc174a9849e92",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-R1VZ",
+    "timestamp": "2026-10-13T23:41:03.695Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv7br1ri",
+    "contentHash": "9a6be525845cee99a8298a24b3673003d97c43412c8ce8304d5ea838d37b4ee8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
