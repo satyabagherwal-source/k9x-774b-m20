@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-NHJT",
-    "timestamp": "2026-10-12T11:14:47.321Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv55nhgy",
-    "contentHash": "d22ec0c885e5c89d5f3f6c58f665eee18e3eb6c03180b8125b7561e31527ccab",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-RBQG",
     "timestamp": "2026-10-12T11:17:46.408Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6v87qw",
     "contentHash": "980c00153ccce8c48813f402f405ec6dc3124be427b5a4a88a5c0c06d1d0341d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-EMYK",
+    "timestamp": "2026-10-13T16:03:30.620Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv6vemvd",
+    "contentHash": "a9378e58fab346c37417be1bce84d5f441dc80ee92622fa2d230e28b931e2130",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T15:58:31.085Z",
-  "total_cycles_completed": 990,
-  "total_learnings_persisted": 990,
+  "last_updated": "2026-10-13T16:03:30.624Z",
+  "total_cycles_completed": 991,
+  "total_learnings_persisted": 991,
   "total_rules_promoted": 483,
   "history": [
-    {
-      "timestamp": "2026-10-13T03:20:45.822Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv645qjn",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T03:23:51.688Z",
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T15:58:31.085Z",
       "repository": "openai/gpt-oss-120b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6v87qw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:03:30.624Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv6vemvd",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1049,3 +1049,4 @@
 | `CYCLE-20261013-0DWG` | `2026-10-13T15:52:25.696Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 724, Rule 725, Rule 726` | Yes (`36a876f1...`) |
 | `CYCLE-20261013-48A9` | `2026-10-13T15:55:25.041Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`04fd137e...`) |
 | `CYCLE-20261013-87U1` | `2026-10-13T15:58:31.081Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`980c0015...`) |
+| `CYCLE-20261013-EMYK` | `2026-10-13T16:03:30.620Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`a9378e58...`) |
