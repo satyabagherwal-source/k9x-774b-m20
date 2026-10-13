@@ -911,3 +911,4 @@
 | `CYCLE-20261013-NZ1L` | `2026-10-13T06:22:54.249Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 653, Rule 654, Rule 417` | Yes (`73e2b306...`) |
 | `CYCLE-20261013-RMCS` | `2026-10-13T06:25:44.428Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`208abe91...`) |
 | `CYCLE-20261013-VGSU` | `2026-10-13T06:28:43.854Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`2b1e28fc...`) |
+| `CYCLE-20261013-ZPPE` | `2026-10-13T06:32:02.018Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`e9ece303...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-0OGR",
-    "timestamp": "2026-10-12T03:01:09.723Z",
-    "repository": "deepseek-ai/DeepSeek-V4-Pro",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx",
-    "contentHash": "bb60761ed8faa0f372d0e00eb184ebdffef3ec9ee6b6fb061fdf8d891d1a21cc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-4VAD",
     "timestamp": "2026-10-12T03:04:25.189Z",
     "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -7490,6 +7475,21 @@
     "repository": "hexgrad/Kokoro-82M",
     "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv6avgpu",
     "contentHash": "2b1e28fcacb2b86f56cdadc687068739878d323ff1b1f4e3963a761c530afa69",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-ZPPE",
+    "timestamp": "2026-10-13T06:32:02.018Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv6azpmg",
+    "contentHash": "e9ece3031149b7521d8de413519071bcba69f51b98dbd8bcb316b557ce88d305",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

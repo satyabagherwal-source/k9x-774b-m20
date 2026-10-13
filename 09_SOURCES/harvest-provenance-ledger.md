@@ -894,3 +894,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv6anyxa` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-13T06:22:54.251Z |
 | `learn-huggingface-hf-microsoft-frognano-4b-2609-mv6arm9s` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-13T06:25:44.430Z |
 | `learn-huggingface-hf-hexgrad-kokoro-82m-mv6avgpu` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-13T06:28:43.856Z |
+| `learn-huggingface-hf-openai-whisper-large-v3-mv6azpmg` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-13T06:32:02.020Z |
