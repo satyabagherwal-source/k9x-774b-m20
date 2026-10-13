@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T23:12:57.331Z",
-  "total_cycles_completed": 1108,
-  "total_learnings_persisted": 1108,
-  "total_rules_promoted": 536,
+  "last_updated": "2026-10-13T23:16:16.583Z",
+  "total_cycles_completed": 1109,
+  "total_learnings_persisted": 1109,
+  "total_rules_promoted": 539,
   "history": [
-    {
-      "timestamp": "2026-10-13T10:42:18.305Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv6jxk9a",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T10:45:13.131Z",
       "repository": "LiquidAI/d1-3B",
@@ -1403,6 +1396,13 @@
       "repository": "CompVis/stable-diffusion-v1-4",
       "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv7aqwl7",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T23:16:16.583Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv7av68q",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
