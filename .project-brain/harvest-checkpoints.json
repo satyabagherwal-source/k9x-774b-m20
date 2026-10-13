@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T09:07:43.893Z",
+  "last_updated": "2026-10-13T09:12:00.964Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1392,15 +1392,15 @@
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv608te6",
-      "content_hash": "38a3e79e57de1a13739618da2aa85c60452adfdeffc22ec21c001c57c0dfdbb7",
-      "verified_at": "2026-10-13T01:31:11.036Z",
+      "learning_id": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6gpg8j",
+      "content_hash": "c82d377b74327d580fa911a361cc5e85f1952434ff50f52e188764ae315c07bc",
+      "verified_at": "2026-10-13T09:12:00.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T01:31:11.036Z"
+      "last_updated": "2026-10-13T09:12:00.964Z"
     },
     "FacebookAI/xlm-roberta-base": {
       "repository": "FacebookAI/xlm-roberta-base",

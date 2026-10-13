@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-5PGB",
-    "timestamp": "2026-10-12T04:29:03.131Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4r5pdv",
-    "contentHash": "3d4a475203799fb7a63fd0f07caf62116c587907e2c6681347df6b3a9eb3e4cf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-9HU8",
     "timestamp": "2026-10-12T04:31:59.888Z",
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-reranker-v2-m3",
     "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6gjxum",
     "contentHash": "5e8cfaf6b46da53080a7a68b678c4bab947614e7ef7190b9e081e300d6e60e87",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-PGAP",
+    "timestamp": "2026-10-13T09:12:00.961Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6gpg8j",
+    "contentHash": "c82d377b74327d580fa911a361cc5e85f1952434ff50f52e188764ae315c07bc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
