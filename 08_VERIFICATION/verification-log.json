@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-MRE6",
-    "timestamp": "2026-10-12T00:30:22.254Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh",
-    "contentHash": "b3e576915c81e2c11bd22b7f45bb7a0ec67e1af3c1251446a08bffaf105b3cba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-QNIF",
     "timestamp": "2026-10-12T00:33:23.847Z",
     "repository": "apple/LensVLM-9B",
@@ -7490,6 +7475,21 @@
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
     "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv65h104",
     "contentHash": "c20a39ea539801907c9a71cb336c8b4f333e087256de21f95b092246ba4c67b2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-KQN1",
+    "timestamp": "2026-10-13T04:00:25.309Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv65kqkj",
+    "contentHash": "990ddc4d80aa736399fc86ffa78fefc7f513a762a13b7f6e069e76ca5fb234eb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

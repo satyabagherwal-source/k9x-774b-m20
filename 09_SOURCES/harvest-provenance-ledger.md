@@ -845,3 +845,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-nvidia-nemotron-3-diarization-mv6592f2` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-10-13T03:51:20.809Z |
 | `learn-huggingface-hf-lightricks-ltx-2-5-mv65cuqh` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-10-13T03:54:17.461Z |
 | `learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv65h104` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-13T03:57:32.208Z |
+| `learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv65kqkj` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-13T04:00:25.311Z |
