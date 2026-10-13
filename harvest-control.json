@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-13T17:18:55.157Z",
+  "lastUpdated": "2026-10-13T17:22:57.801Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T17:18:32.276Z",
-        "lastHarvestedAt": "2026-10-13T17:18:32.276Z",
-        "totalHarvested": 3147,
+        "lastActiveAt": "2026-10-13T17:23:08.280Z",
+        "lastHarvestedAt": "2026-10-13T17:23:08.280Z",
+        "totalHarvested": 3148,
         "lastError": null
       },
       {
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T17:18:34.029Z",
+        "lastActiveAt": "2026-10-13T17:22:58.577Z",
         "lastHarvestedAt": "2026-10-13T13:00:40.443Z",
         "totalHarvested": 1100,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T17:18:36.511Z",
+        "lastActiveAt": "2026-10-13T17:23:01.048Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T17:15:45.493Z",
+        "lastActiveAt": "2026-10-13T17:23:03.539Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -294,10 +294,10 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 20,
+      "remaining": 0,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-13T17:18:15.055Z",
+      "trippedAt": "2026-10-13T17:22:40.597Z",
       "reason": null,
       "consecutiveBlocks": 1
     },

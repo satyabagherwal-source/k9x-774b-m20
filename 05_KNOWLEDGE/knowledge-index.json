@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:18:29.723Z",
-  "total_verified_learnings": 4970,
+  "last_updated": "2026-10-13T17:23:05.710Z",
+  "total_verified_learnings": 4971,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -121858,6 +121858,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T17:18:29.723Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6y8zcb": {
+      "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6y8zcb",
+      "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "slug": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+      "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "content_hash": "99ddc4a5884bc7045eeff480b807d77a06161a7a9f6851030f20c88812581bce",
+      "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 731,
+          "title": "Decoupled Modality Projection for Lightweight LLMs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 732,
+          "title": "Jinja2-Driven State Management for Agentic LLMs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 733,
+          "title": "Benchmark-Driven Quantization for Agentic Capabilities",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T17:23:05.710Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

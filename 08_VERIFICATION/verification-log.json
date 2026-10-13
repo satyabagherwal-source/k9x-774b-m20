@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-GHT1",
-    "timestamp": "2026-10-12T12:33:19.909Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv58ghq2",
-    "contentHash": "8aacbb27beaaa56f48e345b35a18d7855d50c9707a8384b8924fc255677c68ca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-K6YD",
     "timestamp": "2026-10-12T12:36:12.469Z",
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "eaa4bb26cc7b3a3b0b5ddfd4057d651094a981cc7e1cdf952158d19907fefc1e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-8ZH8",
+    "timestamp": "2026-10-13T17:23:05.756Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6y8zcb",
+    "contentHash": "99ddc4a5884bc7045eeff480b807d77a06161a7a9f6851030f20c88812581bce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

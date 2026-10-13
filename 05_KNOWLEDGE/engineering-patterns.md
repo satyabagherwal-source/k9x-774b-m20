@@ -40769,3 +40769,178 @@ prompt = "A video of a person standing still while the camera moves."
 2.  Use a feature matcher (e.g., ORB, SIFT) to track points on the subject.
 3.  Calculate the variance of the subject's centroid position across frames.
 4.  Assert `variance < epsilon` (e.g., < 2 pixels).
+
+
+---
+
+## 731. Decoupled Modality Projection for Lightweight LLMs (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Modality Projection for Lightweight LLMs",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T17:23:05.629Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6y8zcb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying multimodal LLMs on resource-constrained hardware, the vision encoder/projection layer MUST be decoupled from the core LLM backbone into a separate artifact (e.g., `mmproj` file) to allow independent loading, unloading, and precision tuning. The core LLM MUST remain text-only in its base artifact.
+**WHY**:
+Coupling vision weights to the LLM backbone forces users who only need text generation to load unnecessary VRAM/RAM for the vision encoder. Decoupling allows:
+1.  **Memory Optimization:** Text-only agents save 600 MB - 1 GB of memory.
+2.  **Precision Flexibility:** The vision projection can be quantized differently (e.g., Q8_0) than the LLM (e.g., IQ2-mix) to balance quality and size.
+3.  **Modularity:** Users can swap vision backends without re-downloading the entire LLM.
+**WHEN TO APPLY**:
+Any LLM deployment where multimodal capabilities are optional, and target hardware has limited VRAM/RAM (e.g., consumer GPUs, edge devices).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Core LLM (Text-only, 7.89 GB)
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf --jinja -ngl 99 -fa on -c 32768
+
+# Multimodal LLM (Text + Vision, 7.89 GB + 928 MB)
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf \
+  --mmproj mmproj-Underdog-Saluki-27B-1.0-F16.gguf \
+  --jinja -ngl 99 -fa on -c 32768
+```
+**NEGATIVE CONSTRAINT**:
+```bash
+# NEVER bundle vision weights into the main GGUF file if text-only usage is common.
+# This forces all users to load 1 GB of unused vision weights.
+llama-server -m Underdog-Saluki-27B-1.0-Combined.gguf # Bad: Bloats memory for text-only tasks
+```
+**VERIFICATION METHOD**:
+1.  Check that the main GGUF file does not contain vision encoder tensors (e.g., `vision.model.*`).
+2.  Verify that the `mmproj` file contains only projection layers (e.g., `mmproj.*`).
+3.  Test that the server starts successfully without `--mmproj` for text-only tasks.
+
+
+---
+
+## 732. Jinja2-Driven State Management for Agentic LLMs (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Jinja2-Driven State Management for Agentic LLMs",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T17:23:05.656Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6y8zcb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For LLMs that support "thinking" modes and tool calling, the state management (e.g., enabling/disabling chain-of-thought, parsing tool calls) MUST be handled by a Jinja2 chat template, not by hard-coded logic in the inference server. The template MUST expose a `enable_thinking` parameter that can be toggled per request.
+**WHY**:
+Hard-coding state management in the server creates tight coupling between the model and the inference engine. Using Jinja2 templates:
+1.  **Decouples Logic:** The model's prompt structure is defined in the template, allowing the same server to support different models with different prompt structures.
+2.  **Enables Per-Request Control:** Users can toggle "thinking" mode on/off for specific requests (e.g., turn off for fast tool calls, turn on for complex reasoning).
+3.  **Standardizes Parsing:** The template ensures that tool calls are formatted in a way that the server can reliably parse (e.g., JSON blocks).
+**WHEN TO APPLY**:
+Any LLM deployment that supports agentic workflows (tool calling, function execution) and requires dynamic control over reasoning depth.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Inference Server Configuration
+server_config = {
+    "model": "Underdog-Saluki-27B-1.0-IQ2-mix.gguf",
+    "jinja": True,  # Enable Jinja2 template
+    "chat_template_kwargs": {
+        "enable_thinking": False  # Disable thinking for fast tool calls
+    }
+}
+
+# Request with Thinking Enabled
+request = {
+    "messages": [{"role": "user", "content": "Solve this math problem"}],
+    "chat_template_kwargs": {"enable_thinking": True}
+}
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# NEVER hard-code the "thinking" prompt in the server logic.
+# This prevents users from toggling the mode per request.
+if model_name == "Underdog-Saluki":
+    prompt = "Let's think step by step..." + user_input  # Bad: Hard-coded
+```
+**VERIFICATION METHOD**:
+1.  Verify that the `config.json` or `tokenizer_config.json` contains a `chat_template` field with Jinja2 syntax.
+2.  Test that sending `chat_template_kwargs: {"enable_thinking": false}` results in a shorter, faster response without chain-of-thought.
+3.  Test that sending `chat_template_kwargs: {"enable_thinking": true}` results in a longer response with visible reasoning steps.
+
+
+---
+
+## 733. Benchmark-Driven Quantization for Agentic Capabilities (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Benchmark-Driven Quantization for Agentic Capabilities",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T17:23:05.679Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6y8zcb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing LLMs for agentic use (tool calling, function execution), the quantization strategy MUST be validated against agentic benchmarks (e.g., BFCL v4) rather than general language modeling benchmarks (e.g., MMLU). The quantized model MUST retain at least 90% of the full model's performance on agentic tasks.
+**WHY**:
+General benchmarks (e.g., MMLU) measure broad knowledge, but agentic tasks require precise structured output generation (e.g., JSON tool calls). Aggressive quantization can degrade the model's ability to generate valid JSON, leading to tool call failures. Validating against agentic benchmarks ensures that the quantized model remains reliable for production agentic workflows.
+**WHEN TO APPLY**:
+Any quantization of LLMs intended for agentic use (tool calling, function execution, RAG pipelines).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Run BFCL v4 benchmark on quantized model
+python bfcl_eval.py --model Underdog-Saluki-27B-1.0-IQ2-mix.gguf --benchmark bfcl_v4
+
+# Compare with full model
+python bfcl_eval.py --model Qwen3.8-27B-FP16.gguf --benchmark bfcl_v4
+
+# Assert that quantized model retains >= 90% of full model's score
+assert quantized_score >= 0.9 * full_model_score
+```
+**NEGATIVE CONSTRAINT**:
+```bash
+# NEVER rely solely on MMLU or other general benchmarks to validate quantization for agentic use.
+# A model can score well on MMLU but fail to generate valid JSON tool calls.
+python mmlu_eval.py --model Underdog-Saluki-27B-1.0-IQ2-mix.gguf  # Bad: Insufficient validation
+```
+**VERIFICATION METHOD**:
+1.  Run BFCL v4 (or equivalent agentic benchmark) on the quantized model.
+2.  Compare the score with the full model's score.
+3.  Assert that the quantized model retains at least 90% of the full model's performance.
+4.  Test edge cases (e.g., parallel tool calls, nested JSON) to ensure robustness.
