@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-KWST",
-    "timestamp": "2026-10-12T13:04:45.581Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv59kwp4",
-    "contentHash": "48b3d37b3f7d1ad181ce08594935d943eaec5481998a76bc471c03d06db6b02c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-OSRS",
     "timestamp": "2026-10-12T13:07:46.984Z",
     "repository": "Edge0/Audio8-ASR-Infinite",
@@ -7492,6 +7477,21 @@
     "contentHash": "e40d0ba2b1d76c17fdd5c2456cdd35221dc301e7a04e001c50f873ed7b4ccd2f",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-E2I5",
+    "timestamp": "2026-10-13T17:55:02.573Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ze2g6",
+    "contentHash": "54f13d9e0747c398333f730db6207de66dfcadf320ca7993d4acfbdb59763cba",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:52:10.203Z",
-  "total_cycles_completed": 1025,
-  "total_learnings_persisted": 1025,
+  "last_updated": "2026-10-13T17:55:02.575Z",
+  "total_cycles_completed": 1026,
+  "total_learnings_persisted": 1026,
   "total_rules_promoted": 493,
   "history": [
-    {
-      "timestamp": "2026-10-13T05:09:01.590Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv680yp0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T05:12:00.911Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1403,6 +1396,13 @@
       "repository": "Bingsu/adetailer",
       "learningId": "learn-huggingface-hf-bingsu-adetailer-mv6zaddu",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:55:02.575Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ze2g6",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
