@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T10:01:37.356Z",
-  "total_cycles_completed": 896,
-  "total_learnings_persisted": 896,
+  "last_updated": "2026-10-13T10:04:52.916Z",
+  "total_cycles_completed": 897,
+  "total_learnings_persisted": 897,
   "total_rules_promoted": 429,
   "history": [
-    {
-      "timestamp": "2026-10-12T22:20:25.145Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv5tfho8",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T22:23:33.158Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T10:01:37.356Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
       "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ih8t4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T10:04:52.916Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv6ilfpa",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
