@@ -3,8 +3,8 @@
 > **Source Version**: `hf-contrasti`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-13T11:40:49.348Z  
-> **Learning ID**: `learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv6m0thg`  
+> **Timestamp**: 2026-10-13T19:57:07.401Z  
+> **Learning ID**: `learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv73r2dl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Contrastive-LM/CLM-v0.1-8B](https://huggingface.co/Contrastive-LM/CLM-v0.1-8B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-13T11:40:48.262Z  
+> **Harvest Timestamp**: 2026-10-13T19:57:06.826Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

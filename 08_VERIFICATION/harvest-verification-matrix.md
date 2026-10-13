@@ -1117,3 +1117,4 @@
 | `CYCLE-20261013-FGLM` | `2026-10-13T19:48:05.962Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | Yes (`9b9bade3...`) |
 | `CYCLE-20261013-J9DU` | `2026-10-13T19:51:03.234Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`2868be3f...`) |
 | `CYCLE-20261013-N8YM` | `2026-10-13T19:54:09.310Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`a04e2bbe...`) |
+| `CYCLE-20261013-R2FN` | `2026-10-13T19:57:07.475Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`7b7d9224...`) |
