@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T22:51:13.485Z",
-  "total_cycles_completed": 1101,
-  "total_learnings_persisted": 1101,
+  "last_updated": "2026-10-13T22:54:20.278Z",
+  "total_cycles_completed": 1102,
+  "total_learnings_persisted": 1102,
   "total_rules_promoted": 536,
   "history": [
-    {
-      "timestamp": "2026-10-13T10:21:27.225Z",
-      "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv6j6qx2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T10:24:27.934Z",
       "repository": "convaiinnovations/laya",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T22:51:13.485Z",
       "repository": "BAAI/bge-m3",
       "learningId": "learn-huggingface-hf-baai-bge-m3-mv79yykn",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T22:54:20.278Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv7a2yo1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
