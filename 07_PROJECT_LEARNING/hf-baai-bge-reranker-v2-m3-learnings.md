@@ -3,8 +3,8 @@
 > **Source Version**: `hf-baai-bge-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T18:32:43.035Z  
-> **Learning ID**: `learn-huggingface-hf-baai-bge-reranker-v2-m3-mv5lao0r`  
+> **Timestamp**: 2026-10-13T01:28:11.773Z  
+> **Learning ID**: `learn-huggingface-hf-baai-bge-reranker-v2-m3-mv604z5p`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/BAAI/bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T18:32:42.322Z  
+> **Harvest Timestamp**: 2026-10-13T01:28:11.010Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 16000331 downloads | 1242 likes
+- **Stars / Engagement**: 16000331 downloads | 1243 likes
 
 ---
 

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T01:24:53.571Z",
-  "total_cycles_completed": 753,
-  "total_learnings_persisted": 753,
+  "last_updated": "2026-10-13T01:28:11.888Z",
+  "total_cycles_completed": 754,
+  "total_learnings_persisted": 754,
   "total_rules_promoted": 359,
   "history": [
-    {
-      "timestamp": "2026-10-12T14:43:14.962Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv5d3kf2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T14:46:15.434Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T01:24:53.571Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv600q4w",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T01:28:11.888Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv604z5p",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

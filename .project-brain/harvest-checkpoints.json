@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T01:24:53.572Z",
+  "last_updated": "2026-10-13T01:28:11.890Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1378,15 +1378,15 @@
       "repository": "BAAI/bge-reranker-v2-m3",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv5lao0r",
-      "content_hash": "f5693c7bf2854793e3db96db231b4062f46b0b0211db127c229356042b17e54d",
-      "verified_at": "2026-10-12T18:32:43.142Z",
+      "learning_id": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv604z5p",
+      "content_hash": "d9293b899ebabe2d271cb39da3c707defd0a04d8b2062c6e216710ef581aa5cc",
+      "verified_at": "2026-10-13T01:28:11.890Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T18:32:43.142Z"
+      "last_updated": "2026-10-13T01:28:11.890Z"
     },
     "jonatasgrosman/wav2vec2-large-xlsr-53-japanese": {
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
