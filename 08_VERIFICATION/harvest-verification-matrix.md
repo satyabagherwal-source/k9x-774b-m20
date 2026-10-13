@@ -799,3 +799,4 @@
 | `CYCLE-20261013-DEUY` | `2026-10-13T00:38:46.138Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`8fd6f371...`) |
 | `CYCLE-20261013-HRK5` | `2026-10-13T00:42:09.221Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 606, Rule 607, Rule 608` | Yes (`46663c8f...`) |
 | `CYCLE-20261013-LEYH` | `2026-10-13T00:44:59.513Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`5aa55734...`) |
+| `CYCLE-20261013-P1JI` | `2026-10-13T00:47:48.750Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`4d2870ca...`) |
