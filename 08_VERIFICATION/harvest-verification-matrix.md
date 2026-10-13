@@ -949,3 +949,4 @@
 | `CYCLE-20261013-GMIC` | `2026-10-13T09:33:08.724Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`a27dcdbb...`) |
 | `CYCLE-20261013-KR1S` | `2026-10-13T09:36:21.232Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 675, Rule 676` | Yes (`7b42f86a...`) |
 | `CYCLE-20261013-OHNU` | `2026-10-13T09:39:15.690Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`620071f4...`) |
+| `CYCLE-20261013-UXMF` | `2026-10-13T09:44:16.311Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`0c92a1b8...`) |
