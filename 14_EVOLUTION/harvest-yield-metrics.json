@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T12:41:36.385Z",
-  "total_cycles_completed": 942,
-  "total_learnings_persisted": 942,
+  "last_updated": "2026-10-13T12:44:30.909Z",
+  "total_cycles_completed": 943,
+  "total_learnings_persisted": 943,
   "total_rules_promoted": 455,
   "history": [
-    {
-      "timestamp": "2026-10-13T00:54:12.841Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv5yx9tn",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T00:57:22.518Z",
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -1403,6 +1396,13 @@
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T12:44:30.909Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv6oaq4r",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
