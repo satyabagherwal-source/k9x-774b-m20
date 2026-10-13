@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T13:40:29.575Z",
-  "total_cycles_completed": 956,
-  "total_learnings_persisted": 956,
+  "last_updated": "2026-10-13T13:43:29.290Z",
+  "total_cycles_completed": 957,
+  "total_learnings_persisted": 957,
   "total_rules_promoted": 464,
   "history": [
-    {
-      "timestamp": "2026-10-13T01:37:01.807Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv60gc1t",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T01:39:54.662Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T13:40:29.575Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv6qapp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:43:29.290Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-hf-psrben-visionhope-mv6qekdo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
