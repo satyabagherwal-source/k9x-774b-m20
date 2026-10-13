@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T18:17:57.256Z",
-  "total_cycles_completed": 1030,
-  "total_learnings_persisted": 1030,
+  "last_updated": "2026-10-13T18:27:09.458Z",
+  "total_cycles_completed": 1031,
+  "total_learnings_persisted": 1031,
   "total_rules_promoted": 494,
   "history": [
-    {
-      "timestamp": "2026-10-13T05:24:32.224Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-hf-facebook-sam3-mv68kwre",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T05:27:26.972Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "tickernelz/opencode-mem",
       "learningId": "learn-github-tickernelz-opencode-mem-mv707j1j",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:27:09.458Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv70jd7b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

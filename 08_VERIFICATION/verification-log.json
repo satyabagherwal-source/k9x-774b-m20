@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-4AGK",
-    "timestamp": "2026-10-12T13:19:49.748Z",
-    "repository": "BAAI/bge-small-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv5a4adr",
-    "contentHash": "d418053f2497952e5204a2cfb7633c370e56473c05fec687d37d8e2828d8618d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-8M64",
     "timestamp": "2026-10-12T13:23:11.548Z",
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -7492,6 +7477,21 @@
     "contentHash": "cf2267e3fe0e904a62ad3c95aa3ad370f130a8bd45d03bc64cab1b29aae8cc42",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-JDAM",
+    "timestamp": "2026-10-13T18:27:09.454Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv70jd7b",
+    "contentHash": "9f68d8752597821fe22e333bff8ec15deea575d38b229634cc1cba38be86209f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

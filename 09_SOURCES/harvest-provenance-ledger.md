@@ -1072,3 +1072,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-zai-org-glm-5-3-mv6zlvwk` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-13T18:01:07.363Z |
 | `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv6zpv1e` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-13T18:04:12.886Z |
 | `learn-github-tickernelz-opencode-mem-mv707j1j` | `https://github.com/tickernelz/opencode-mem` | `a2072d75` | Multi-dimensional audit evidence | 2026-10-13T18:17:57.254Z |
+| `learn-huggingface-hf-jialinyyzz-humanizer-mv70jd7b` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-13T18:27:09.456Z |
