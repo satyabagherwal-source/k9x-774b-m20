@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T06:38:08.073Z",
+  "last_updated": "2026-10-13T06:41:14.276Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1056,15 +1056,15 @@
       "repository": "Qwen/Qwen3.8-Flash-Next",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv5xibjc",
-      "content_hash": "66f89af15ea92f279ba478f4a7f4034050781fefb1aa5ee4eb54b5342dc90314",
-      "verified_at": "2026-10-13T00:14:35.607Z",
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv6bbjqu",
+      "content_hash": "f44586202f667779ab10603deb4beb71ec31ea4e2a5404746851c427778f644f",
+      "verified_at": "2026-10-13T06:41:14.276Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T00:14:35.607Z"
+      "last_updated": "2026-10-13T06:41:14.276Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
