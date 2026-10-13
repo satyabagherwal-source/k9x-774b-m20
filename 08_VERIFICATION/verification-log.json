@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-QNIF",
-    "timestamp": "2026-10-12T00:33:23.847Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex",
-    "contentHash": "c3c6aab9a37bf7af7ab76dfe799ba2d128443887259b7fe08ae9cb27a609a5d0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-UT3D",
     "timestamp": "2026-10-12T00:36:37.705Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "990ddc4d80aa736399fc86ffa78fefc7f513a762a13b7f6e069e76ca5fb234eb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-Q7SH",
+    "timestamp": "2026-10-13T04:04:40.817Z",
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv65q7o3",
+    "contentHash": "9e309e6fcc8cf29d3c12fbf16af7933ec96b9d1c01cd9ae4fc21c34bdab54888",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -863,3 +863,4 @@
 | `CYCLE-20261013-CUSZ` | `2026-10-13T03:54:17.459Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`09c8bae6...`) |
 | `CYCLE-20261013-H12M` | `2026-10-13T03:57:32.206Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`c20a39ea...`) |
 | `CYCLE-20261013-KQN1` | `2026-10-13T04:00:25.309Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`990ddc4d...`) |
+| `CYCLE-20261013-Q7SH` | `2026-10-13T04:04:40.817Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 626, Rule 627, Rule 628` | Yes (`9e309e6f...`) |

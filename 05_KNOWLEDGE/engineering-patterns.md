@@ -32881,3 +32881,181 @@ class MiniCPMTokenizer(PreTrainedTokenizer):
 Unit test `test_tokenizer_special_tokens.py` that loads the config and checks for duplicates; linter rule to flag identical token strings.
 
 ---
+
+
+---
+
+## 626. Turbo Model Scheduler Coupling Invariant (Harvested from Qwen/Qwen-Image-2.1-Turbo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Turbo Model Scheduler Coupling Invariant",
+  "source": "Qwen/Qwen-Image-2.1-Turbo",
+  "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+  "source_version": "hf-qwen-qwen-image-2.1-turbo",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:04:40.698Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv65q7o3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen-Image-2.1-Turbo](https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying a distilled or "Turbo" diffusion model checkpoint, the inference pipeline **MUST** load the specific sampling schedule (sigmas) provided in the model's configuration. It **MUST NOT** rely on the default scheduler parameters of the base model class.
+**WHY**:
+Turbo models are trained on a specific, non-linear noise schedule that allows convergence in fewer steps (e.g., 8 vs 50). Using a standard linear or cosine schedule with a Turbo model results in severe under-denoising (noisy artifacts) or over-denoising (blurry images) because the model's learned noise prediction function is mismatched with the actual noise level at each step.
+**WHEN TO APPLY**:
+Any system integrating distilled diffusion models (SDXL-Turbo, LCM, Qwen-Image-Turbo) where the step count is significantly reduced from the base model.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from diffusers import QwenImage21Pipeline
+import torch
+
+# The pipeline automatically loads the 'scheduler' config from the repo
+# which contains the specific 'sigmas' for the 8-step Turbo schedule.
+pipe = QwenImage21Pipeline.from_pretrained(
+    "Qwen/Qwen-Image-2.1-Turbo",
+    dtype=torch.bfloat16,
+).to("cuda")
+
+# DO NOT manually override the scheduler with a default one.
+# If you must customize, ensure you copy the 'sigmas' from the model's config.
+image = pipe(prompt="A cat", num_inference_steps=8).images[0]
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Manually instantiating a default scheduler and attaching it
+# to a Turbo model, ignoring the model-specific sigma schedule.
+from diffusers import EulerDiscreteScheduler
+
+# This will likely produce garbage output for a Turbo model
+scheduler = EulerDiscreteScheduler() 
+pipe.scheduler = scheduler 
+image = pipe(prompt="A cat", num_inference_steps=8).images[0]
+```
+**VERIFICATION METHOD**:
+1.  Load the model.
+2.  Inspect `pipe.scheduler.sigmas`.
+3.  Assert that the length of `sigmas` matches `num_inference_steps + 1` (or the specific format required by the scheduler).
+4.  Assert that the values in `sigmas` are non-linear (e.g., not evenly spaced) if the model is a Turbo variant.
+
+
+---
+
+## 627. BFloat16 Precision Lock for Turbo Checkpoints (Harvested from Qwen/Qwen-Image-2.1-Turbo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "BFloat16 Precision Lock for Turbo Checkpoints",
+  "source": "Qwen/Qwen-Image-2.1-Turbo",
+  "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+  "source_version": "hf-qwen-qwen-image-2.1-turbo",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:04:40.720Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv65q7o3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen-Image-2.1-Turbo](https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Inference pipelines for 7B+ parameter Turbo diffusion models **MUST** be loaded with `dtype=torch.bfloat16`. Loading with `float32` is **FORBIDDEN** unless explicitly required for debugging, and `float16` is **DISCOURAGED** due to potential overflow issues in attention mechanisms.
+**WHY**:
+Turbo models are often distilled from larger models and may have weight distributions that are stable in BFloat16 but prone to numerical instability (NaNs/Infs) in Float16 due to its smaller exponent range. Float32 doubles the VRAM footprint, potentially causing OOM (Out of Memory) errors on consumer GPUs, negating the "Turbo" efficiency gains.
+**WHEN TO APPLY**:
+Any deployment of large-scale (7B+) transformer-based diffusion models on NVIDIA GPUs with Ampere architecture or newer (which support BFloat16 natively).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+from diffusers import QwenImage21Pipeline
+
+# Explicitly enforce BFloat16
+pipe = QwenImage21Pipeline.from_pretrained(
+    "Qwen/Qwen-Image-2.1-Turbo",
+    dtype=torch.bfloat16,  # Critical for stability and memory efficiency
+).to("cuda")
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using default float32 or float16
+pipe = QwenImage21Pipeline.from_pretrained(
+    "Qwen/Qwen-Image-2.1-Turbo",
+    dtype=torch.float32, # Wastes 2x VRAM
+).to("cuda")
+# OR
+pipe = QwenImage21Pipeline.from_pretrained(
+    "Qwen/Qwen-Image-2.1-Turbo",
+    dtype=torch.float16, # Risk of NaNs in attention
+).to("cuda")
+```
+**VERIFICATION METHOD**:
+1.  After loading, check `next(pipe.parameters()).dtype`.
+2.  Assert `dtype == torch.bfloat16`.
+3.  Monitor GPU memory usage; it should be ~50% of the Float32 equivalent.
+
+
+---
+
+## 628. CFG=1 Default for Turbo Models (Harvested from Qwen/Qwen-Image-2.1-Turbo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "CFG=1 Default for Turbo Models",
+  "source": "Qwen/Qwen-Image-2.1-Turbo",
+  "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+  "source_version": "hf-qwen-qwen-image-2.1-turbo",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T04:04:40.737Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv65q7o3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Qwen/Qwen-Image-2.1-Turbo](https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo) (Revision: `hf-qwen-qw`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using a Turbo diffusion model, the `guidance_scale` (CFG) parameter **MUST** be set to 1.0 (or the model's default) unless the user explicitly requests higher fidelity at the cost of speed. Setting CFG > 1.0 **MUST** trigger a warning or automatic step increase, as Turbo models are not trained for high-guidance dual-pass inference.
+**WHY**:
+Classifier-Free Guidance (CFG) requires two forward passes per step: one with the prompt (conditional) and one without (unconditional). Turbo models are optimized for single-pass inference (CFG=1). Forcing CFG > 1.0 doubles the compute time, negating the "Turbo" speed advantage, and may produce artifacts because the model was not fine-tuned to handle the guidance vector subtraction effectively at low step counts.
+**WHEN TO APPLY**:
+Any inference call on a model explicitly labeled "Turbo", "LCM", or "Distilled".
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Default behavior for Turbo models
+image = pipe(prompt="A cat", num_inference_steps=8, guidance_scale=1.0).images[0]
+
+# If user requests higher quality, warn them about the speed penalty
+if guidance_scale > 1.0:
+    print("Warning: CFG > 1.0 on Turbo models doubles inference time.")
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming standard CFG values apply to Turbo models
+image = pipe(prompt="A cat", num_inference_steps=8, guidance_scale=7.5).images[0]
+# This will be 2x slower and may look worse than CFG=1.0
+```
+**VERIFICATION METHOD**:
+1.  Benchmark inference time with `guidance_scale=1.0` and `guidance_scale=7.5`.
+2.  Assert that the time for CFG=7.5 is approximately 2x the time for CFG=1.0.
+3.  Visually inspect outputs; CFG=1.0 should be clean, while CFG=7.5 may show artifacts.
