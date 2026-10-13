@@ -901,3 +901,4 @@
 | `CYCLE-20261013-K5MG` | `2026-10-13T05:51:56.536Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`f17291cd...`) |
 | `CYCLE-20261013-OB4K` | `2026-10-13T05:55:10.292Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `VERIFIED` | `Rule 651, Rule 652` | Yes (`4b7af198...`) |
 | `CYCLE-20261013-S1OZ` | `2026-10-13T05:58:04.691Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`0198e8ad...`) |
+| `CYCLE-20261013-WBXI` | `2026-10-13T06:01:24.582Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`75d14d37...`) |

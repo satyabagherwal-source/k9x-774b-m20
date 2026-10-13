@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T05:58:04.694Z",
-  "total_cycles_completed": 842,
-  "total_learnings_persisted": 842,
+  "last_updated": "2026-10-13T06:01:24.586Z",
+  "total_cycles_completed": 843,
+  "total_learnings_persisted": 843,
   "total_rules_promoted": 403,
   "history": [
-    {
-      "timestamp": "2026-10-12T19:19:46.736Z",
-      "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv5mz6oo",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T19:22:33.964Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T05:58:04.694Z",
       "repository": "BAAI/bge-m3",
       "learningId": "learn-huggingface-hf-baai-bge-m3-mv69s1lw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T06:01:24.586Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv69wbuf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
