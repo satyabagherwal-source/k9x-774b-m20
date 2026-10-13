@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-FM2A",
-    "timestamp": "2026-10-12T11:36:39.538Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv56flya",
-    "contentHash": "4f8de801ac68588b1356c7a9ea14662266385ae92e981548cbc3af2fd1dc03c3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-J3ZD",
     "timestamp": "2026-10-12T11:39:22.729Z",
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
     "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv6w2zb2",
     "contentHash": "7e1c899c5b268e68a168e37e2812f616b09cb07c090ca2c0b2ff54ce7f5a9123",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-770M",
+    "timestamp": "2026-10-13T16:25:42.982Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6w76yr",
+    "contentHash": "ed1a2d4e4051e298fd27e7b8018210e24447b038aa7473896220e2a76df5dab1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
