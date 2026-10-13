@@ -789,3 +789,4 @@
 | `CYCLE-20261013-A8EE` | `2026-10-13T00:08:18.182Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`8e79ce5c...`) |
 | `CYCLE-20261013-EFAR` | `2026-10-13T00:11:33.747Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`cc012ddf...`) |
 | `CYCLE-20261013-IBMA` | `2026-10-13T00:14:35.602Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`66f89af1...`) |
+| `CYCLE-20261013-M5BZ` | `2026-10-13T00:17:34.079Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`31e64072...`) |
