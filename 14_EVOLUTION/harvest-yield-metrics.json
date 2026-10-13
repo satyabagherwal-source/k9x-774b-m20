@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:58:06.073Z",
-  "total_cycles_completed": 1027,
-  "total_learnings_persisted": 1027,
+  "last_updated": "2026-10-13T18:01:07.364Z",
+  "total_cycles_completed": 1028,
+  "total_learnings_persisted": 1028,
   "total_rules_promoted": 493,
   "history": [
-    {
-      "timestamp": "2026-10-13T05:15:13.559Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-hf-psrben-visionhope-mv688xqm",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T05:18:13.694Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T17:58:06.073Z",
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv6zi008",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:01:07.364Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv6zlvwk",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
