@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T15:46:08.404Z",
-  "total_cycles_completed": 986,
-  "total_learnings_persisted": 986,
+  "last_updated": "2026-10-13T15:49:07.591Z",
+  "total_cycles_completed": 987,
+  "total_learnings_persisted": 987,
   "total_rules_promoted": 480,
   "history": [
-    {
-      "timestamp": "2026-10-13T03:08:21.074Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv63prwa",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T03:11:41.083Z",
       "repository": "FrancisRing/Prism",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T15:46:08.404Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
       "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv6usape",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T15:49:07.591Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv6uw4yx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
