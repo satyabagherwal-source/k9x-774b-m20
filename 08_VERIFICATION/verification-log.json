@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-13EZ",
-    "timestamp": "2026-10-12T15:37:18.731Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv5f13c5",
-    "contentHash": "ee5c54afd2b1fab13d9ae25a65010bbd93b253ccd8f20baef583a5a993bbe4e9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-4PU4",
     "timestamp": "2026-10-12T15:40:07.756Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "fastino/GLiNER2.5-Decide",
     "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv754a6b",
     "contentHash": "cd497e26cc2654d97ae1bd145ac3f31a5728cd6b32ec37e07a15c7ac0b2c438c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-TFHD",
+    "timestamp": "2026-10-13T20:54:56.929Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv75tfe1",
+    "contentHash": "bf221acf28e1e54c787882ad163561ec9af33eb72ad632254a0bc07331e62c51",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

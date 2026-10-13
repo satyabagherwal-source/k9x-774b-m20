@@ -3,8 +3,8 @@
 > **Source Version**: `hf-orcaroute`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-13T12:38:27.918Z  
-> **Learning ID**: `learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv6o2y4v`  
+> **Timestamp**: 2026-10-13T20:54:56.809Z  
+> **Learning ID**: `learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv75tfe1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/orcarouter/OrcaSAQ-2-27B](https://huggingface.co/orcarouter/OrcaSAQ-2-27B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-13T12:38:27.268Z  
+> **Harvest Timestamp**: 2026-10-13T20:54:55.863Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

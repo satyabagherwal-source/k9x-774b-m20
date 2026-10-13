@@ -1129,3 +1129,4 @@
 | `CYCLE-20261013-VGPH` | `2026-10-13T20:28:32.213Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 749, Rule 750, Rule 751` | Yes (`19600433...`) |
 | `CYCLE-20261013-Z7G1` | `2026-10-13T20:31:26.833Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 752, Rule 753, Rule 754` | Yes (`b870e63c...`) |
 | `CYCLE-20261013-4A8U` | `2026-10-13T20:35:23.742Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`cd497e26...`) |
+| `CYCLE-20261013-TFHD` | `2026-10-13T20:54:56.929Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`bf221acf...`) |
