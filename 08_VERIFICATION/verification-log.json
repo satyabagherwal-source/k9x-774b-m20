@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-M4G7",
-    "timestamp": "2026-10-12T02:21:50.983Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm",
-    "contentHash": "c3f7854035fc6df077f8acd1a5de9f24c4eb37360933eb6ed15e54315da2b839",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-PV8L",
     "timestamp": "2026-10-12T02:24:45.669Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv69gbo5",
     "contentHash": "854a18f2437747b9d8d602e99dc69d7c943670432806e7dbd806e7adb32f7a45",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-K5MG",
+    "timestamp": "2026-10-13T05:51:56.536Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv69k5k2",
+    "contentHash": "f17291cde5352214a7bf953521292dbef9715468054c45639bac8d143dea6da5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

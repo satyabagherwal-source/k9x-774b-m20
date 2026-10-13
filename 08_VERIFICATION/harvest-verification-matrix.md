@@ -898,3 +898,4 @@
 | `CYCLE-20261013-8LIG` | `2026-10-13T05:42:57.256Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 646, Rule EXISTING, Rule 647` | Yes (`0b88e3a9...`) |
 | `CYCLE-20261013-CPUX` | `2026-10-13T05:46:09.513Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 648, Rule 649, Rule 650` | Yes (`9ec0be5c...`) |
 | `CYCLE-20261013-GBQ1` | `2026-10-13T05:48:57.817Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`854a18f2...`) |
+| `CYCLE-20261013-K5MG` | `2026-10-13T05:51:56.536Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`f17291cd...`) |

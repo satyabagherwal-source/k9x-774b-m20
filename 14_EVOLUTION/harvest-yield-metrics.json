@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T05:48:57.820Z",
-  "total_cycles_completed": 839,
-  "total_learnings_persisted": 839,
+  "last_updated": "2026-10-13T05:51:56.540Z",
+  "total_cycles_completed": 840,
+  "total_learnings_persisted": 840,
   "total_rules_promoted": 401,
   "history": [
-    {
-      "timestamp": "2026-10-12T19:10:28.124Z",
-      "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv5mn7q3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-12T19:13:17.777Z",
       "repository": "BAAI/bge-base-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T05:48:57.820Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv69gbo5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T05:51:56.540Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv69k5k2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
