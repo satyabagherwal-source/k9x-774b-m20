@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-13T14:16:20.782Z",
+  "lastUpdated": "2026-10-13T14:21:56.673Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +188,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T14:04:13.740Z",
+        "lastActiveAt": "2026-10-13T14:21:46.039Z",
         "lastHarvestedAt": "2026-10-09T02:57:19.056Z",
         "totalHarvested": 1090,
         "lastError": null
@@ -198,7 +198,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T14:04:16.796Z",
+        "lastActiveAt": "2026-10-13T14:21:49.172Z",
         "lastHarvestedAt": "2026-10-09T03:02:14.971Z",
         "totalHarvested": 1103,
         "lastError": null
@@ -208,7 +208,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T14:04:19.275Z",
+        "lastActiveAt": "2026-10-13T14:21:51.677Z",
         "lastHarvestedAt": "2026-10-09T03:02:14.971Z",
         "totalHarvested": 1098,
         "lastError": null
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T14:16:29.705Z",
-        "lastHarvestedAt": "2026-10-13T14:16:29.705Z",
-        "totalHarvested": 3100,
+        "lastActiveAt": "2026-10-13T14:22:00.021Z",
+        "lastHarvestedAt": "2026-10-13T14:22:00.021Z",
+        "totalHarvested": 3101,
         "lastError": null
       },
       {
@@ -228,7 +228,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T14:04:24.285Z",
+        "lastActiveAt": "2026-10-13T14:21:56.671Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.568Z",
         "totalHarvested": 1101,
         "lastError": null
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T14:13:27.080Z",
+        "lastActiveAt": "2026-10-13T14:21:59.187Z",
         "lastHarvestedAt": "2026-10-13T12:12:55.332Z",
         "totalHarvested": 1093,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T14:13:29.582Z",
+        "lastActiveAt": "2026-10-13T14:22:01.667Z",
         "lastHarvestedAt": "2026-10-13T13:00:40.443Z",
         "totalHarvested": 1100,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T14:13:32.106Z",
+        "lastActiveAt": "2026-10-13T14:22:04.175Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T14:13:34.577Z",
+        "lastActiveAt": "2026-10-13T14:22:06.672Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
         "totalHarvested": 1097,
         "lastError": null
@@ -293,13 +293,13 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
-      "remaining": 0,
-      "resetEpoch": 1791904581886,
-      "resetAt": "2026-10-13T15:16:21.886Z",
-      "trippedAt": "2026-10-13T14:16:06.886Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Adesign-system%20language%3Atypescript%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=3)",
-      "consecutiveBlocks": 1
+      "status": "HEALTHY",
+      "remaining": 16,
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": null,
+      "reason": null,
+      "consecutiveBlocks": 0
     },
     "GITHUB_ACTIONS": {
       "service": "GITHUB_ACTIONS",
