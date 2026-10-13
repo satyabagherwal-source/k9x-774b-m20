@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:09:25.511Z",
-  "total_cycles_completed": 1012,
-  "total_learnings_persisted": 1012,
+  "last_updated": "2026-10-13T17:12:30.824Z",
+  "total_cycles_completed": 1013,
+  "total_learnings_persisted": 1013,
   "total_rules_promoted": 488,
   "history": [
-    {
-      "timestamp": "2026-10-13T04:29:23.786Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv66lzyz",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T04:32:27.092Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T17:09:25.511Z",
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv6xreim",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:12:30.824Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv6xvdgv",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
