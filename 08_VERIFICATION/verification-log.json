@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-KS1D",
-    "timestamp": "2026-10-12T04:12:46.705Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4qkrzs",
-    "contentHash": "8ad0789c786f726bcd3b0573edec82864275b1045be44a5c3ec96f353d8b420c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-OOH5",
     "timestamp": "2026-10-12T04:15:48.713Z",
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7492,6 +7477,21 @@
     "contentHash": "94cdb33d6f083576ce968f3ec0620575232bee5604b0b53a89e417e6da03c766",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-MBAE",
+    "timestamp": "2026-10-13T08:41:34.886Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv6fmb82",
+    "contentHash": "8abc4b842d6a7e5af4014b4e9d3c628d5c0310377f9e89093c4104950576b5f5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
