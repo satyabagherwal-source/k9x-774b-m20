@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-UR1E",
-    "timestamp": "2026-10-12T11:48:25.826Z",
-    "repository": "sentence-transformers/all-mpnet-base-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv56uqyo",
-    "contentHash": "a5ea58b08f538ed7c65df93e0897cf7c64529c6f3dfdd2555e200ebf72da8928",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-16UY",
     "timestamp": "2026-10-12T11:53:26.266Z",
     "repository": "BAAI/bge-reranker-v2-m3",
@@ -7490,6 +7475,21 @@
     "repository": "speridlabs/iris-3b",
     "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv6wjve5",
     "contentHash": "dfabc363bd9a2c5dd757b45eeece799506953878afdbe458eaea34332bdc9fe9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-NSXK",
+    "timestamp": "2026-10-13T16:38:37.880Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv6wnsuy",
+    "contentHash": "f54b2ac37f01aa75019226682fb6e37849b25f927409a79501cda9cbcbb3259c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

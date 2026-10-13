@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T16:35:34.577Z",
-  "total_cycles_completed": 1001,
-  "total_learnings_persisted": 1001,
+  "last_updated": "2026-10-13T16:38:37.883Z",
+  "total_cycles_completed": 1002,
+  "total_learnings_persisted": 1002,
   "total_rules_promoted": 486,
   "history": [
-    {
-      "timestamp": "2026-10-13T03:54:17.462Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv65cuqh",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T03:57:32.209Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T16:35:34.577Z",
       "repository": "speridlabs/iris-3b",
       "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv6wjve5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:38:37.883Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv6wnsuy",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
