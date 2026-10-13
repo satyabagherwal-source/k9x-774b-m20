@@ -1035,9 +1035,9 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "ffc513c5b9b6b038278a83d9f64c947fe537d6dffc38a47667d5f73478c96900",
-    "lastHarvestedAt": "2026-10-12T17:59:08.684Z",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv5k3hng"
+    "contentHash": "2f2bb510df5e56ffd8a7f3002a9b06091533e326135ecbc7ccb576a3c05d9499",
+    "lastHarvestedAt": "2026-10-13T00:54:12.837Z",
+    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv5yx9tn"
   },
   "hf-aleph-alpha-kolibri-1": {
     "repository": "Aleph-Alpha/Kolibri-1",

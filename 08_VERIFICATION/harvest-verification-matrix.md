@@ -801,3 +801,4 @@
 | `CYCLE-20261013-LEYH` | `2026-10-13T00:44:59.513Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`5aa55734...`) |
 | `CYCLE-20261013-P1JI` | `2026-10-13T00:47:48.750Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`4d2870ca...`) |
 | `CYCLE-20261013-SVQY` | `2026-10-13T00:50:47.866Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`23d3e7d6...`) |
+| `CYCLE-20261013-X9WI` | `2026-10-13T00:54:12.834Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`2f2bb510...`) |
