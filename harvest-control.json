@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-13T21:08:18.055Z",
+  "lastUpdated": "2026-10-13T21:13:24.234Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-13T21:08:14.331Z",
-        "lastHarvestedAt": "2026-10-13T21:08:14.331Z",
-        "totalHarvested": 3205,
+        "lastActiveAt": "2026-10-13T21:13:27.704Z",
+        "lastHarvestedAt": "2026-10-13T21:13:27.704Z",
+        "totalHarvested": 3206,
         "lastError": null
       },
       {
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "HEALTHY",
+      "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": "2026-10-13T21:07:58.429Z",
-      "reason": null,
+      "resetEpoch": 1791929606046,
+      "resetAt": "2026-10-13T22:13:26.046Z",
+      "trippedAt": "2026-10-13T21:13:11.046Z",
+      "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Astorage-engine%20language%3Ac%2B%2B%20OR%20language%3Arust%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=1)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
