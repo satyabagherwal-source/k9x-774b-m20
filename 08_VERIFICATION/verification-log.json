@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261011-WW52",
-    "timestamp": "2026-10-11T23:42:15.734Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z",
-    "contentHash": "3586164fc594020cb2f5c174d262d0e0a5ae8f87f05a767389b00961a54f85e0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261011-0GPO",
     "timestamp": "2026-10-11T23:45:02.364Z",
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -7490,6 +7475,21 @@
     "repository": "black-forest-labs/FLUX.1-dev",
     "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv63prwa",
     "contentHash": "4ad2b93401c61d6eb139667f5449d85ba1aaa9e22d25d4673dcf83877381993e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-U2AE",
+    "timestamp": "2026-10-13T03:11:41.078Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-hf-francisring-prism-mv63u274",
+    "contentHash": "aa03061af6d8260217dee502341cc46066fa7401d4f2d56ae424f21eda770d54",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

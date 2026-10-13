@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T03:08:21.075Z",
+  "last_updated": "2026-10-13T03:11:41.084Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1742,15 +1742,15 @@
       "repository": "FrancisRing/Prism",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-francisring-prism-mv5plg98",
-      "content_hash": "53438ac284c98ad6cdcbaf1194c2b1a42ee11f1228cc6e964487faf997f8b316",
-      "verified_at": "2026-10-12T20:33:04.738Z",
+      "learning_id": "learn-huggingface-hf-francisring-prism-mv63u274",
+      "content_hash": "aa03061af6d8260217dee502341cc46066fa7401d4f2d56ae424f21eda770d54",
+      "verified_at": "2026-10-13T03:11:41.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-12T20:33:04.738Z"
+      "last_updated": "2026-10-13T03:11:41.084Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
