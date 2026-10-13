@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T17:45:50.455Z",
-  "total_cycles_completed": 1023,
-  "total_learnings_persisted": 1023,
+  "last_updated": "2026-10-13T17:48:58.525Z",
+  "total_cycles_completed": 1024,
+  "total_learnings_persisted": 1024,
   "total_rules_promoted": 491,
   "history": [
-    {
-      "timestamp": "2026-10-13T05:03:09.761Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv67tf6k",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T05:05:59.495Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T17:45:50.455Z",
       "repository": "BAAI/bge-base-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6z28e8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:48:58.525Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv6z69ii",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
