@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-Z6YR",
-    "timestamp": "2026-10-12T02:04:01.155Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs",
-    "contentHash": "3181bdfb619135b98662fd2d806d9af96dd9801abe77304c89848fc1d81d0fe9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-2R8F",
     "timestamp": "2026-10-12T02:06:47.391Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7490,6 +7475,21 @@
     "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv68sxdb",
     "contentHash": "93a32ee3e4445e39225c195bbaa1fc71607b1bc4769f78db812fa84478bc590c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-WSTW",
+    "timestamp": "2026-10-13T05:33:46.868Z",
+    "repository": "canberkkkkkk/ema-lightning",
+    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv68wsqz",
+    "contentHash": "aa6cb9fe47dabe1a584d6c53102ea9dd17abc7148a9941caca8177f3b808b2c4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -875,3 +875,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-facebook-sam3-mv68kwre` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-13T05:24:32.222Z |
 | `learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv68onlr` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-13T05:27:26.971Z |
 | `learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv68sxdb` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-10-13T05:30:46.241Z |
+| `learn-huggingface-hf-canberkkkkkk-ema-lightning-mv68wsqz` | `https://huggingface.co/canberkkkkkk/ema-lightning` | `hf-canberk` | Multi-dimensional audit evidence | 2026-10-13T05:33:46.871Z |
