@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T20:28:32.167Z",
-  "total_verified_learnings": 5023,
+  "last_updated": "2026-10-13T20:31:26.791Z",
+  "total_verified_learnings": 5024,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -123243,6 +123243,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-13T20:28:32.167Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs": {
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs",
+      "source": "Altworld/Hemmingway-1",
+      "repository": "Altworld/Hemmingway-1",
+      "slug": "hf-altworld-hemmingway-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+      "source_version": "hf-altworld-hemmingway-1",
+      "content_hash": "b870e63c4bc218f4c6a9efaeaaf6d919c01d3940262d7b4d2c4236dd2081a754",
+      "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 752,
+          "title": "Consistent Data‑Type Declaration Across Model, Weights, and Inference Engine",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 753,
+          "title": "Dual‑EOS Token Strategy Must Be Explicitly Declared",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 754,
+          "title": "Linear‑Attention Layer Count Must Match `num_hidden_layers`",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-13T20:31:26.791Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

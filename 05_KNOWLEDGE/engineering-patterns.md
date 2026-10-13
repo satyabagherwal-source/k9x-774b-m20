@@ -42158,3 +42158,171 @@ def lint_full_attention_interval():
 ```
 
 ---
+
+
+---
+
+## 752. Consistent Data‑Type Declaration Across Model, Weights, and Inference Engine (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Data‑Type Declaration Across Model, Weights, and Inference Engine",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T20:31:26.723Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The `dtype` field in the model configuration file must exactly match the binary data type of the stored weight tensors and the data type used by the inference runtime.  
+**WHY**:  
+Mismatched data types cause silent truncation or overflow, leading to degraded perplexity, unexpected NaNs, or crashes during matrix multiplication.  
+**WHEN TO APPLY**:  
+* All model‑only distributions that expose a `config.json`.  
+* Any inference pipeline that loads the model weights into GPU memory.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "dtype": "bfloat16",
+  "model_type": "qwen3_5_text",
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "attn_output_gate": true,
+  "hidden_act": "silu",
+  "hidden_size": 5120,
+  "intermediate_size": 17408,
+  "num_attention_heads": 24,
+  "num_hidden_layers": 64,
+  "num_key_value_heads": 4,
+  "output_gate_type": "swish",
+  "max_position_embeddings": 262144,
+  "rope_parameters": {
+    "mrope_interleaved": true,
+    "partial_rotary_factor": 0.25,
+    "rope_theta": 10000000,
+    "rope_type": "default"
+  }
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "dtype": "float32",          // ❌ Wrong dtype – will corrupt inference
+  "hidden_size": 5120,
+  "num_attention_heads": 24
+}
+```
+**VERIFICATION METHOD**:  
+Run a schema validator that checks the `dtype` field against the weight file header and the runtime’s `torch_dtype` argument. A unit test can load the model with `torch_dtype="auto"` and assert that `model.config.dtype == "bfloat16"`.
+
+
+---
+
+## 753. Dual‑EOS Token Strategy Must Be Explicitly Declared (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual‑EOS Token Strategy Must Be Explicitly Declared",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T20:31:26.745Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> When `eos_token_id` is a list, the generation logic must treat any of the listed IDs as a termination signal and must not rely on a single default EOS.  
+**WHY**:  
+If the inference engine only checks the first EOS ID, generation may continue past the intended end, producing garbled or overly long outputs.  
+**WHEN TO APPLY**:  
+* All text‑generation pipelines that consume `generation_config.json`.  
+* Any custom sampling loop that implements early stopping.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+eos_ids = set(generation_config["eos_token_id"])
+while True:
+    logits = model(input_ids)
+    next_token = sample(logits, eos_ids)
+    if next_token in eos_ids:
+        break
+    input_ids = torch.cat([input_ids, next_token], dim=-1)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Only checks the first EOS ID
+if next_token == generation_config["eos_token_id"][0]:
+    break
+```
+**VERIFICATION METHOD**:  
+Unit test that feeds a prompt and asserts that generation stops when any EOS ID is produced. Use `pytest` with a mock `sample` function that returns each EOS ID in turn.
+
+
+---
+
+## 754. Linear‑Attention Layer Count Must Match `num_hidden_layers` (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Linear‑Attention Layer Count Must Match `num_hidden_layers`",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-13T20:31:26.765Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The number of entries in `layer_types` must equal `num_hidden_layers`; otherwise the weight mapping will misalign.  
+**WHY**:  
+A mismatch causes the loader to skip or duplicate layers, leading to shape mismatches or silent weight corruption.  
+**WHEN TO APPLY**:  
+* During model initialization from `config.json`.  
+* When modifying the architecture for fine‑tuning.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+assert len(config["layer_types"]) == config["num_hidden_layers"], \
+    "layer_types length must match num_hidden_layers"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Missing a layer type entry
+"layer_types": [
+  "linear_attention", "full_attention", ...  // fewer than 64 entries
+]
+```
+**VERIFICATION METHOD**:  
+Schema validation that counts `layer_types` and compares to `num_hidden_layers`. A CI job can run this check on every push.

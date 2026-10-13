@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T20:28:32.218Z",
-  "total_cycles_completed": 1068,
-  "total_learnings_persisted": 1068,
-  "total_rules_promoted": 509,
+  "last_updated": "2026-10-13T20:31:26.836Z",
+  "total_cycles_completed": 1069,
+  "total_learnings_persisted": 1069,
+  "total_rules_promoted": 512,
   "history": [
-    {
-      "timestamp": "2026-10-13T07:51:15.595Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv6dtli4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T07:54:32.279Z",
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-13T20:28:32.218Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv74vgkb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T20:31:26.836Z",
+      "repository": "Altworld/Hemmingway-1",
+      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
