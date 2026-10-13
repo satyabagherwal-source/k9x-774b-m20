@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-1U9C",
-    "timestamp": "2026-10-12T02:34:04.272Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n",
-    "contentHash": "3be9a782d97e42944190e6e57e0df66f0b354d18d9eac643c5e41fd3f924a43c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-5MYU",
     "timestamp": "2026-10-12T02:37:01.446Z",
     "repository": "CompVis/stable-diffusion-v1-4",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-0.6B",
     "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv69wbuf",
     "contentHash": "75d14d37f8f533e7d89cfcc0d9c62a1139198bba5ef0c1a77f66073972ee65cc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261013-ZZ7H",
+    "timestamp": "2026-10-13T06:04:14.717Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv69zz5n",
+    "contentHash": "51a69f5391f55c9c3272d2c038bb949a72b3b5300aee8fb97fd091e9032d09de",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
