@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:14:06.881Z",
-  "total_cycles_completed": 1309,
-  "total_learnings_persisted": 1309,
+  "last_updated": "2026-10-14T11:17:13.292Z",
+  "total_cycles_completed": 1310,
+  "total_learnings_persisted": 1310,
   "total_rules_promoted": 637,
   "history": [
-    {
-      "timestamp": "2026-10-13T23:19:09.943Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv7ayw3i",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T23:22:03.405Z",
       "repository": "hexgrad/Kokoro-82M",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T11:14:06.881Z",
       "repository": "deepseek-ai/DeepSeek-R1",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv80ibl2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T11:17:13.292Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv80mbf0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
