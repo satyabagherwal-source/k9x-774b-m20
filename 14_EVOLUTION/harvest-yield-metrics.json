@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T08:53:58.344Z",
-  "total_cycles_completed": 1266,
-  "total_learnings_persisted": 1266,
-  "total_rules_promoted": 620,
+  "last_updated": "2026-10-14T08:57:56.552Z",
+  "total_cycles_completed": 1267,
+  "total_learnings_persisted": 1267,
+  "total_rules_promoted": 622,
   "history": [
-    {
-      "timestamp": "2026-10-13T20:24:23.205Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv74q4h9",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T20:28:32.218Z",
       "repository": "apple/LensVLM-9B",
@@ -1403,6 +1396,13 @@
       "repository": "NaiveAI/Naive-N0.5-Flash",
       "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv7vi3io",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T08:57:56.552Z",
+      "repository": "openai/clip-vit-base-patch32",
+      "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv7vn79p",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

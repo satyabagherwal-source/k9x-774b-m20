@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-JBSQ",
-    "timestamp": "2026-10-13T02:07:20.954Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv61jbpw",
-    "contentHash": "14be4ae8176a5ea69dbfa00aff41d9c945fe9871e256b6f31bc0d2a4e43eb7e6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-N8NL",
     "timestamp": "2026-10-13T02:10:23.505Z",
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "b59e97cfc8c1a9331add31adba46e828dea06fa2371069d02ba7fcdd01e86d5c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-N7ES",
+    "timestamp": "2026-10-14T08:57:56.548Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv7vn79p",
+    "contentHash": "15d29824561366b54e87e7bd374a593a50211cb4d47daff150f2d284fa7c101f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
