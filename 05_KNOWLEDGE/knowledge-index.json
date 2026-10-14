@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T08:10:27.874Z",
-  "total_verified_learnings": 5217,
+  "last_updated": "2026-10-14T08:28:11.016Z",
+  "total_verified_learnings": 5218,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128459,6 +128459,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T08:10:27.874Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7ukxlf": {
+      "learning_id": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7ukxlf",
+      "source": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "slug": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+      "content_hash": "a29e0c7b540d8c6e200c6b5b63e957471b2023cd5ddd1a426b25b1e85a5db805",
+      "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 849,
+          "title": "Heterogeneous Precision Allocation for MoE Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 850,
+          "title": "Schema-Aware Tool Argument Parsing for LLM Agents",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T08:28:11.016Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

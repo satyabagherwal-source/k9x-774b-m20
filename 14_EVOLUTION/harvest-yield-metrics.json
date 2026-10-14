@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T08:10:27.930Z",
-  "total_cycles_completed": 1262,
-  "total_learnings_persisted": 1262,
-  "total_rules_promoted": 613,
+  "last_updated": "2026-10-14T08:28:11.071Z",
+  "total_cycles_completed": 1263,
+  "total_learnings_persisted": 1263,
+  "total_rules_promoted": 615,
   "history": [
-    {
-      "timestamp": "2026-10-13T20:09:58.265Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv747l36",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T20:13:01.676Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T08:10:27.930Z",
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv7ty58m",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T08:28:11.071Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7ukxlf",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

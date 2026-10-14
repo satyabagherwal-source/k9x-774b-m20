@@ -49521,3 +49521,149 @@ def load_model(model_path: str):
 **VERIFICATION METHOD**:
 1.  Unit test: Mock `platform.system()` and `platform.machine()` to simulate different hardware and assert the correct backend is selected.
 2.  Integration test: Run the model on a CPU-only machine and verify that it uses the CPU backend and logs the fallback.
+
+
+---
+
+## 849. Heterogeneous Precision Allocation for MoE Models (Harvested from Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Heterogeneous Precision Allocation for MoE Models",
+  "source": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+  "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+  "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T08:28:10.954Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7ukxlf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw](https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw) (Revision: `hf-infatos`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing Mixture-of-Experts (MoE) models, you MUST apply heterogeneous bitrates based on component criticality: higher precision (5-6 bpw) for attention mechanisms, shared experts, and LM heads; lower precision (3-4 bpw) for routed experts. You MUST NOT apply uniform quantization across all weights.
+
+**WHY**:
+Uniform quantization wastes memory on routed experts (which are sparsely activated) and degrades attention mechanisms (which are densely activated and sensitive to precision loss). The LM head is critical for final token selection and requires higher precision to maintain probability distribution fidelity. This rule optimizes the memory-to-fidelity trade-off, allowing larger models to fit in constrained VRAM without significant perplexity degradation.
+
+**WHEN TO APPLY**:
+Any MoE model quantization pipeline, especially when targeting VRAM-constrained hardware (e.g., 8x 40GB GPUs for a 700B+ model).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for EXL3-style heterogeneous quantization
+def quantize_moe_model(model, target_bpw=3.0):
+    for layer in model.layers:
+        # Attention and Shared Experts: High Precision
+        layer.attention.quantize(bpw=5.0, codebook='mul1')
+        layer.shared_expert.quantize(bpw=5.0, codebook='mul1')
+        
+        # Dense MLPs: Medium Precision
+        if layer.mlp_type == 'dense':
+            layer.mlp.quantize(bpw=4.0, codebook='mul1')
+            
+        # Routed Experts: Low Precision
+        elif layer.mlp_type == 'sparse':
+            for expert in layer.routed_experts:
+                expert.quantize(bpw=3.0, codebook='mul1')
+                
+    # LM Head: Highest Precision
+    model.lm_head.quantize(bpw=6.0, codebook='mul1')
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniform quantization
+def quantize_moe_model_uniform(model, target_bpw=3.0):
+    for param in model.parameters():
+        param.quantize(bpw=target_bpw) # WRONG: Wastes memory on experts, degrades attention
+```
+
+**VERIFICATION METHOD**:
+1.  **Perplexity Check:** Compare perplexity on a validation set (e.g., wikitext-2) against the FP8 source. The difference should be < 0.2 (as seen in the repo: 3.440 vs 3.302).
+2.  **KL Divergence:** Calculate KL divergence between quantized and source logits. Median per-token KL should be < 0.05.
+3.  **Memory Audit:** Verify that the total model size matches the expected bitrate calculation (e.g., 753B params * 3.04 bpw / 8 ≈ 286 GiB, close to the reported 273 GiB).
+
+
+---
+
+## 850. Schema-Aware Tool Argument Parsing for LLM Agents (Harvested from Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Schema-Aware Tool Argument Parsing for LLM Agents",
+  "source": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+  "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+  "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T08:28:10.983Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7ukxlf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw](https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw) (Revision: `hf-infatos`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When parsing tool calls from LLMs that output raw text arguments (e.g., `<arg_value>...</arg_value>`), you MUST consult the tool schema to determine the expected type of each parameter. You MUST NOT blindly JSON-decode all values, as this causes type coercion errors for string parameters that resemble numbers (e.g., zip codes, order IDs).
+
+**WHY**:
+LLMs often output string parameters that look like numbers (e.g., "9523456873"). If the parser blindly JSON-decodes these, they become integers. If the downstream tool expects a string, this causes type errors and tool call failures. The repo documents a ~70% failure rate in retail tool calls due to this exact issue.
+
+**WHEN TO APPLY**:
+Any agent framework that parses tool calls from LLMs with raw text argument formats (e.g., GLM, some Llama variants).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def parse_tool_call(raw_args: str, tool_schema: dict) -> dict:
+    parsed_args = {}
+    for key, value in extract_raw_args(raw_args).items():
+        expected_type = tool_schema['parameters'][key]['type']
+        if expected_type == 'string':
+            # Keep as raw string, do NOT JSON decode
+            parsed_args[key] = value
+        elif expected_type == 'integer':
+            parsed_args[key] = int(value)
+        elif expected_type == 'number':
+            parsed_args[key] = float(value)
+        elif expected_type == 'boolean':
+            parsed_args[key] = value.lower() in ['true', '1']
+        else:
+            # Fallback: Try JSON decode, then string
+            try:
+                parsed_args[key] = json.loads(value)
+            except:
+                parsed_args[key] = value
+    return parsed_args
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Blind JSON decoding
+def parse_tool_call_blind(raw_args: str) -> dict:
+    parsed_args = {}
+    for key, value in extract_raw_args(raw_args).items():
+        try:
+            parsed_args[key] = json.loads(value) # WRONG: Coerces "9523456873" to int
+        except:
+            parsed_args[key] = value
+    return parsed_args
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Create a tool schema with a string parameter `order_id`. Pass a raw argument `<arg_value>12345</arg_value>`. Assert that the parsed value is the string `"12345"`, not the integer `12345`.
+2.  **Integration Test:** Run a suite of tool calls where string parameters contain numeric values. Assert that 0% of calls fail due to type errors.

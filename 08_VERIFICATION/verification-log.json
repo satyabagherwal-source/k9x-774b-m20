@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-3TON",
-    "timestamp": "2026-10-13T01:55:17.639Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv613tlo",
-    "contentHash": "29541c570abf1e7b27e2bc27b8438b85742b58395861d342849c31ae88262b55",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-80PT",
     "timestamp": "2026-10-13T01:58:33.377Z",
     "repository": "Qwen/Qwen3-8B",
@@ -7490,6 +7475,21 @@
     "repository": "FermionResearch/Phonon-2",
     "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv7ty58m",
     "contentHash": "e2d09e56547a08e4ed863eff1362cc16e80b0e31519e4de38e9fb551996eb1e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-KXQ2",
+    "timestamp": "2026-10-14T08:28:11.066Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7ukxlf",
+    "contentHash": "a29e0c7b540d8c6e200c6b5b63e957471b2023cd5ddd1a426b25b1e85a5db805",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

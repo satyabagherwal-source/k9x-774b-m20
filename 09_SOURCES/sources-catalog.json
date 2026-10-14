@@ -1085,9 +1085,9 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "ab34896a528e56ba87ae65a53f3d3317e57f52cf192886c718e613495f0d3d7a",
-    "lastHarvestedAt": "2026-10-14T00:32:19.214Z",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7dkyvm"
+    "contentHash": "a29e0c7b540d8c6e200c6b5b63e957471b2023cd5ddd1a426b25b1e85a5db805",
+    "lastHarvestedAt": "2026-10-14T08:28:11.069Z",
+    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7ukxlf"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
