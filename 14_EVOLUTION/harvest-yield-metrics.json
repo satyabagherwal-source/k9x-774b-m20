@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T05:35:20.402Z",
-  "total_cycles_completed": 1230,
-  "total_learnings_persisted": 1230,
+  "last_updated": "2026-10-14T05:38:12.609Z",
+  "total_cycles_completed": 1231,
+  "total_learnings_persisted": 1231,
   "total_rules_promoted": 592,
   "history": [
-    {
-      "timestamp": "2026-10-13T18:27:09.458Z",
-      "repository": "jialinyyzz/humanizer",
-      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv70jd7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T18:30:13.628Z",
       "repository": "autotrust/JEV-27B-VL",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T05:35:20.402Z",
       "repository": "BAAI/bge-m3",
       "learningId": "learn-huggingface-hf-baai-bge-m3-mv7oenkr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T05:38:12.609Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv7oichd",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

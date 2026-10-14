@@ -1289,3 +1289,4 @@
 | `CYCLE-20261014-5OL4` | `2026-10-14T05:28:21.688Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule 827, Rule 828` | Yes (`a7a91e39...`) |
 | `CYCLE-20261014-APV2` | `2026-10-14T05:32:16.622Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`2c737d6c...`) |
 | `CYCLE-20261014-ENNY` | `2026-10-14T05:35:20.398Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`3f5032be...`) |
+| `CYCLE-20261014-ICJI` | `2026-10-14T05:38:12.606Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`9649ed75...`) |
