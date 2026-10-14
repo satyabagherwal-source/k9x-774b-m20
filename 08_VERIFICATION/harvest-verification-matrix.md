@@ -1297,3 +1297,4 @@
 | `CYCLE-20261014-2026` | `2026-10-14T05:53:29.550Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`671946c3...`) |
 | `CYCLE-20261014-61PX` | `2026-10-14T05:56:38.325Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 829, Rule 830` | Yes (`145831c7...`) |
 | `CYCLE-20261014-9JSN` | `2026-10-14T05:59:21.719Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`4d85d703...`) |
+| `CYCLE-20261014-DI59` | `2026-10-14T06:02:26.205Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`7b5a004b...`) |
