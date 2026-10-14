@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:40:49.456Z",
+  "last_updated": "2026-10-14T06:43:56.902Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1154,15 +1154,15 @@
       "repository": "bigscience/bloom",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-bigscience-bloom-mv7cdbe9",
-      "content_hash": "1e5fc8ebc9a5c85988944aa3bb4032090828eecbf6901ee55a0b3dd729f3f1bf",
-      "verified_at": "2026-10-13T23:58:22.565Z",
+      "learning_id": "learn-huggingface-hf-bigscience-bloom-mv7quvvw",
+      "content_hash": "503d10f106a05424afa5309e42d69c6f16b138965f7fb35eeff4bf4eaa2aa7ae",
+      "verified_at": "2026-10-14T06:43:56.902Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T23:58:22.565Z"
+      "last_updated": "2026-10-14T06:43:56.902Z"
     },
     "openai/gpt-oss-20b": {
       "repository": "openai/gpt-oss-20b",

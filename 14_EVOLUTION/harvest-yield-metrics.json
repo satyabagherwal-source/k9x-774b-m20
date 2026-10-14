@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:40:49.456Z",
-  "total_cycles_completed": 1251,
-  "total_learnings_persisted": 1251,
+  "last_updated": "2026-10-14T06:43:56.901Z",
+  "total_cycles_completed": 1252,
+  "total_learnings_persisted": 1252,
   "total_rules_promoted": 600,
   "history": [
-    {
-      "timestamp": "2026-10-13T19:34:58.331Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T19:37:55.840Z",
       "repository": "autotrust/JEV-35B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T06:40:49.456Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
       "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv7qqvaf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T06:43:56.901Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-hf-bigscience-bloom-mv7quvvw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
