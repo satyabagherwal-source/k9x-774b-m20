@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-PRYN",
-    "timestamp": "2026-10-13T03:08:21.071Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv63prwa",
-    "contentHash": "4ad2b93401c61d6eb139667f5449d85ba1aaa9e22d25d4673dcf83877381993e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-U2AE",
     "timestamp": "2026-10-13T03:11:41.078Z",
     "repository": "FrancisRing/Prism",
@@ -7490,6 +7475,21 @@
     "repository": "lilylilith/QI_2.1_AnyAngle",
     "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv7xydmg",
     "contentHash": "3db89b6f0ed756115612485174a412d1f9bffff832d7c3037eb6b0588847a69d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-27A3",
+    "timestamp": "2026-10-14T10:05:35.451Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv7y2777",
+    "contentHash": "57abef0ddb6d78980931a9dd6be19578e6b4f607f30e1028f9ec410e06e0cbca",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
