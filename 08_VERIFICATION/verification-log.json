@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-9M3S",
-    "timestamp": "2026-10-13T00:35:48.904Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-hf-bigscience-bloom-mv5y9m0s",
-    "contentHash": "a796c5a0bfa1a9cc1c73dd9c75c1612582b8b277464e67cd01afc06d465a367f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-DEUY",
     "timestamp": "2026-10-13T00:38:46.138Z",
     "repository": "openai/gpt-oss-20b",
@@ -7492,6 +7477,21 @@
     "contentHash": "671946c3047fd31fcf43636a0e554938febb8ebad9daae74f39d76050aa17314",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-61PX",
+    "timestamp": "2026-10-14T05:56:38.325Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv7p61lf",
+    "contentHash": "145831c7cb802576ff3dc38a6f30205b90b2b1fe7edac65955f2b5eca4f77d2e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

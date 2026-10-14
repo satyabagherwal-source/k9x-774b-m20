@@ -47862,3 +47862,144 @@ def bad_preprocess(text: str) -> list:
 **VERIFICATION METHOD**:
 1.  **Integration Test**: Pass a string with mixed case and accents (e.g., "Élève"). Assert that the resulting token IDs correspond to the lowercase, accent-stripped versions in the vocab.
 2.  **Config Check**: Assert `tokenizer.init_kwargs['do_lower_case'] == True` for uncased models.
+
+
+---
+
+## 829. Model Artifact Versioning & Lineage Integrity (Harvested from CompVis/stable-diffusion-v1-4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Model Artifact Versioning & Lineage Integrity",
+  "source": "CompVis/stable-diffusion-v1-4",
+  "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+  "source_version": "hf-compvis-stable-diffusion-v1-4",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:56:38.210Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv7p61lf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) (Revision: `hf-compvis`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing neural network weights, the repository MUST explicitly document the **lineage** (parent checkpoint) and the **fine-tuning delta** (steps, resolution, data distribution, conditioning drop rate). The artifact MUST be versioned such that the configuration files (`config.json`) are strictly coupled to the weight files (`unet/diffusion_pytorch_model.bin`, etc.) to prevent schema drift.
+
+**WHY**:
+Without explicit lineage documentation, downstream consumers cannot reproduce the model's behavior or debug performance regressions. If the `config.json` (which defines layer dimensions, attention heads, etc.) is out of sync with the binary weights, the model will fail to load or produce garbage outputs due to shape mismatches. This is a critical "Time-of-Check to Time-of-Use" (TOCTOU) race condition in the context of model loading: the code checks the config, then loads the weights; if they don't match, the system crashes or silently corrupts.
+
+**WHEN TO APPLY**:
+Any MLOps pipeline distributing PyTorch, TensorFlow, or JAX model weights. Specifically applicable to Diffusion Models, LLMs, and any parameterized neural network.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# In the model card (README.md) or metadata JSON
+model_metadata = {
+    "model_id": "CompVis/stable-diffusion-v1-4",
+    "lineage": {
+        "parent_model": "CompVis/stable-diffusion-v1-2",
+        "fine_tuning_steps": 225000,
+        "resolution": "512x512",
+        "data_source": "laion-aesthetics v2 5+",
+        "conditioning_drop_rate": 0.10 # 10% dropping for CFG
+    },
+    "schema_version": "diffusers-v0.14.0", # Explicit version coupling
+    "weights_hash": "sha256:..." # Integrity check
+}
+
+# In the loading code (Consumer Side)
+def load_model_with_integrity_check(model_id):
+    config = load_json(f"{model_id}/unet/config.json")
+    weights = load_tensor(f"{model_id}/unet/diffusion_pytorch_model.bin")
+    
+    # Verify that the config's expected shapes match the actual weight shapes
+    for name, param in weights.items():
+        expected_shape = config["layers"][name]["shape"]
+        if param.shape != expected_shape:
+            raise ModelIntegrityError(f"Shape mismatch for {name}: {param.shape} vs {expected_shape}")
+            
+    return initialize_model(config, weights)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Distributing weights without versioned config coupling
+# This leads to silent failures if the consumer library updates its schema
+def load_model_naive(model_id):
+    # No check if config.json matches the weight file version
+    # No lineage documentation, making it impossible to know if this is v1.2 or v1.4
+    weights = load_tensor(f"{model_id}/unet/diffusion_pytorch_model.bin")
+    return initialize_model(weights) # Will crash or corrupt if schema changed
+```
+
+**VERIFICATION METHOD**:
+1.  **Automated Test**: A CI job that loads the model using the *latest* version of the consumer library and asserts that all tensor shapes match the `config.json`.
+2.  **Hash Verification**: Compute the SHA-256 of the weight files and compare against a manifest in the repository.
+3.  **Lineage Audit**: A linter that checks the `README.md` for the presence of `parent_model` and `fine_tuning_steps` fields.
+
+
+---
+
+## 830. License-Gated Access & Ethical Usage Enforcement (Harvested from CompVis/stable-diffusion-v1-4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "License-Gated Access & Ethical Usage Enforcement",
+  "source": "CompVis/stable-diffusion-v1-4",
+  "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+  "source_version": "hf-compvis-stable-diffusion-v1-4",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:56:38.234Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv7p61lf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4) (Revision: `hf-compvis`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For models with restrictive licenses (e.g., OpenRAIL-M), the repository MUST implement a **gated access mechanism** that requires explicit user agreement to the license terms before downloading the weights. The license text MUST be embedded in the repository metadata and displayed prominently in the UI. The model MUST NOT be distributed in a way that allows bypassing the license agreement (e.g., via direct HTTP links without authentication).
+
+**WHY**:
+Legal liability and ethical compliance. If the model is used to generate harmful content, the distributor may face legal repercussions if they did not enforce the license terms. The "gated" mechanism ensures that the user has explicitly accepted the terms, creating a legal record of consent. This is a critical security and compliance invariant.
+
+**WHEN TO APPLY**:
+Any AI model with a non-permissive license (e.g., OpenRAIL, CC-BY-NC, proprietary). Especially critical for generative models (text-to-image, text-to-text) that can be misused.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```yaml
+# In the repository metadata (Hugging Face specific)
+license: creativeml-openrail-m
+gated: true # Requires user to accept terms
+extra_gated_prompt: |
+  This model is open access and available to all, with a CreativeML OpenRAIL-M license...
+  1. You can't use the model to deliberately produce nor share illegal or harmful outputs...
+  2. The authors claim no rights on the outputs...
+  3. You may re-distribute the weights...
+```
+
+**NEGATIVE CONSTRAINT**:
+```yaml
+# ANTI-PATTERN: Distributing a restricted model without gating
+license: creativeml-openrail-m
+gated: false # Allows anyone to download without accepting terms
+# This violates the license and exposes the distributor to legal risk
+```
+
+**VERIFICATION METHOD**:
+1.  **Legal Audit**: A manual review of the license text and the gating mechanism.
+2.  **Access Control Test**: Attempt to download the model without accepting the terms; the request MUST be rejected.
+3.  **Metadata Check**: A script that verifies the `license` field matches the `extra_gated_prompt` content.
