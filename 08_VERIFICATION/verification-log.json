@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-N7RU",
-    "timestamp": "2026-10-12T19:10:28.122Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv5mn7q3",
-    "contentHash": "62198483e1f37fa6dafaa9080cace06cd953f37f3e960b1b988240757366377f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-QUOE",
     "timestamp": "2026-10-12T19:13:17.774Z",
     "repository": "BAAI/bge-base-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-reranker-v2-m3",
     "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv7e8bfy",
     "contentHash": "c181a32287b51b7e2e086a024fc8261576d43d62cbf819648034ed93f1adb933",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-C9CZ",
+    "timestamp": "2026-10-14T00:53:32.387Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-hf-liquidai-lfm2-5-24b-a2b-mv7ec99r",
+    "contentHash": "dcf67087a6899a8d9a9fe69d7162f5b3d381083c9b92bec3d965da037f79e226",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

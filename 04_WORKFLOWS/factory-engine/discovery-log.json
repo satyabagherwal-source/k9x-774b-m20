@@ -17599,5 +17599,17 @@
     "qualityScore": 49875,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-13T21:15:28.233Z"
+  },
+  {
+    "name": "LiquidAI/LFM2.5-24B-A2B",
+    "fullName": "LiquidAI/LFM2.5-24B-A2B",
+    "url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: LiquidAI/LFM2.5-24B-A2B (156 likes, 2565 downloads)",
+    "likes": 156,
+    "downloads": 2565,
+    "qualityScore": 3560,
+    "discoveredAt": "2026-10-14T00:53:20.209Z"
   }
 ]

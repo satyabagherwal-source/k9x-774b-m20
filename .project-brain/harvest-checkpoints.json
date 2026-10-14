@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:50:28.531Z",
+  "last_updated": "2026-10-14T00:53:32.392Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2101,6 +2101,20 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-13T21:27:18.458Z"
+    },
+    "LiquidAI/LFM2.5-24B-A2B": {
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-hf-liquidai-lfm2-5-24b-a2b-mv7ec99r",
+      "content_hash": "dcf67087a6899a8d9a9fe69d7162f5b3d381083c9b92bec3d965da037f79e226",
+      "verified_at": "2026-10-14T00:53:32.391Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-14T00:53:32.392Z"
     }
   }
 }

@@ -1468,5 +1468,15 @@
     "contentHash": "e7cdfc3ae196f3ee8dbda3c1904f6ffa742083947fc6250ae442675d7f33b369",
     "lastHarvestedAt": "2026-10-13T21:27:18.456Z",
     "learningId": "learn-github-leonxlnx-taste-skill-mv76z1gt"
+  },
+  "hf-liquidai-lfm2.5-24b-a2b": {
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+    "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
+    "license": "Open-Source",
+    "contentHash": "dcf67087a6899a8d9a9fe69d7162f5b3d381083c9b92bec3d965da037f79e226",
+    "lastHarvestedAt": "2026-10-14T00:53:32.389Z",
+    "learningId": "learn-huggingface-hf-liquidai-lfm2-5-24b-a2b-mv7ec99r"
   }
 }
