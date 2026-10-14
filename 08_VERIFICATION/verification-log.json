@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-X54M",
-    "timestamp": "2026-10-12T20:42:10.102Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv5px51m",
-    "contentHash": "f9ce912cf1d23eb7045b7e5b44c16cd2e08ed4161ee86f9f4ca687a7966db581",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-0W57",
     "timestamp": "2026-10-12T20:45:05.083Z",
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -7492,6 +7477,21 @@
     "contentHash": "bf23a3ce102cd70496d1df9664334c3f86b8b4e9d9895d1f86f4fbaca8e912d8",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-9BYM",
+    "timestamp": "2026-10-14T02:15:14.638Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv7h9bvi",
+    "contentHash": "92126c2455b342fcd23844262e039d7f13de72c397b6923e8f0042f7047d63eb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

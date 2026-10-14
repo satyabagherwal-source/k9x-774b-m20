@@ -1207,3 +1207,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-convaiinnovations-laya-mv7gxi8o` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-14T02:06:03.015Z |
 | `learn-huggingface-hf-edge0-audio8-asr-infinite-mv7h1f8t` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-10-14T02:09:05.758Z |
 | `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv7h5edr` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-14T02:12:11.261Z |
+| `learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv7h9bvi` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-14T02:15:14.641Z |
