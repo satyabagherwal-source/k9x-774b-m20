@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:50:16.556Z",
-  "total_cycles_completed": 1254,
-  "total_learnings_persisted": 1254,
+  "last_updated": "2026-10-14T06:53:13.543Z",
+  "total_cycles_completed": 1255,
+  "total_learnings_persisted": 1255,
   "total_rules_promoted": 603,
   "history": [
-    {
-      "timestamp": "2026-10-13T19:44:17.215Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv73ak06",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T19:48:05.964Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Llama-2-7b-chat-hf",
       "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv7r30qx",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T06:53:13.543Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv7r6te4",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
