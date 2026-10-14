@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T09:47:05.225Z",
+  "last_updated": "2026-10-14T09:50:06.906Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1532,15 +1532,15 @@
       "repository": "google/gemma-4-31B-it",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-google-gemma-4-31b-it-mv7fp7re",
-      "content_hash": "b71f626df0a84d930c1e60b2dd1f63442c953db3ceafe4928fe0847a5b5616fe",
-      "verified_at": "2026-10-14T01:31:36.575Z",
+      "learning_id": "learn-huggingface-hf-google-gemma-4-31b-it-mv7xiaqe",
+      "content_hash": "f947de475b705adcf8a2d1887e0a122bf902458f3eb63c3ced8a9b5f8ea9fdec",
+      "verified_at": "2026-10-14T09:50:06.906Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T01:31:36.575Z"
+      "last_updated": "2026-10-14T09:50:06.906Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
