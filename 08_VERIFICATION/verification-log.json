@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-CPUX",
-    "timestamp": "2026-10-13T05:46:09.513Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv69cps1",
-    "contentHash": "9ec0be5cf65c3c2dc3dffcb376ef5a4be11e35b2c119495658571240b5fcb093",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-GBQ1",
     "timestamp": "2026-10-13T05:48:57.817Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "4129d4146582e2a2b4b615372a5299e067467c80ffa8310484b200a9b39c6148",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-WQEJ",
+    "timestamp": "2026-10-14T12:49:17.995Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv83wqb7",
+    "contentHash": "a538a12c4210547a7a171487f55666b69d07b53d43c22696d2a72c1d14ed5327",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

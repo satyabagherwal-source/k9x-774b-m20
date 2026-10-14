@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:46:16.021Z",
-  "total_cycles_completed": 1337,
-  "total_learnings_persisted": 1337,
+  "last_updated": "2026-10-14T12:49:17.999Z",
+  "total_cycles_completed": 1338,
+  "total_learnings_persisted": 1338,
   "total_rules_promoted": 663,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:47:16.164Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7e470c",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:50:28.530Z",
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -1403,6 +1396,13 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv83stub",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:49:17.999Z",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv83wqb7",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
