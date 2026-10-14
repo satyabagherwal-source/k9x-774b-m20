@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-EGFI",
-    "timestamp": "2026-10-12T19:59:38.670Z",
-    "repository": "cosscom/ui",
-    "learningId": "learn-github-cosscom-ui-mv5oegcc",
-    "contentHash": "b0b6b233b446e06ab95e6410d88046819990fb657168f77596bdbddfcd6ac60b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-T6KU",
     "timestamp": "2026-10-12T20:11:05.742Z",
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv7fxazj",
     "contentHash": "0aa934779dacb740101ac244b0a4666ee29b301311be5cf4bfcf7d6b73276479",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-1B3S",
+    "timestamp": "2026-10-14T01:41:00.664Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv7g1b0m",
+    "contentHash": "ed941032966044558449e5091d9610587abe13a2bfb421d158bcf3e18789531f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
