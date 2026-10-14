@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:34:19.419Z",
-  "total_cycles_completed": 1172,
-  "total_learnings_persisted": 1172,
+  "last_updated": "2026-10-14T02:37:16.684Z",
+  "total_cycles_completed": 1173,
+  "total_learnings_persisted": 1173,
   "total_rules_promoted": 554,
   "history": [
-    {
-      "timestamp": "2026-10-13T14:51:24.486Z",
-      "repository": "MaxMiksa/Autonomous-Company",
-      "learningId": "learn-github-maxmiksa-autonomous-company-mv6stwsa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T14:57:20.461Z",
       "repository": "google-t5/t5-small",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T02:34:19.419Z",
       "repository": "Cactus-Compute/whistle",
       "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv7hxv83",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T02:37:16.684Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv7i1nzb",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
