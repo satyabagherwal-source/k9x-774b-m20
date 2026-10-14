@@ -605,9 +605,9 @@
     "sourceUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "1be9430d435500c1c996f155bbf998c1473a19343cb07526918dff209fc97378",
-    "lastHarvestedAt": "2026-10-14T04:44:22.892Z",
-    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv7ml4e0"
+    "contentHash": "95037d13c72b08002c12a4061d78bb4d0f926e84a7f2271edffadf10e6c26817",
+    "lastHarvestedAt": "2026-10-14T13:11:57.568Z",
+    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv84pv9i"
   },
   "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
