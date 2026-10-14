@@ -1394,3 +1394,4 @@
 | `CYCLE-20261014-BUIC` | `2026-10-14T12:33:03.540Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 892, Rule 893, Rule 894` | Yes (`13a60a91...`) |
 | `CYCLE-20261014-GFYR` | `2026-10-14T12:36:37.971Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`843db21d...`) |
 | `CYCLE-20261014-KI58` | `2026-10-14T12:39:47.420Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`3bf95196...`) |
+| `CYCLE-20261014-OKV1` | `2026-10-14T12:42:57.565Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`bd598b86...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:39:47.424Z",
-  "total_cycles_completed": 1335,
-  "total_learnings_persisted": 1335,
+  "last_updated": "2026-10-14T12:42:57.569Z",
+  "total_cycles_completed": 1336,
+  "total_learnings_persisted": 1336,
   "total_rules_promoted": 660,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:41:12.141Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv7dwe3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:44:21.979Z",
       "repository": "openai/clip-vit-base-patch32",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T12:39:47.424Z",
       "repository": "Comfy-Org/Qwen-Image-2.1",
       "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv83ki1q",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:42:57.569Z",
+      "repository": "akhilaaa3/Jev-Omni",
+      "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv83okro",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

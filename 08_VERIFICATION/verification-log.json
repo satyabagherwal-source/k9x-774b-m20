@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-4LZH",
-    "timestamp": "2026-10-13T05:39:51.245Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv694lwi",
-    "contentHash": "a11677de73236267a380955e646b6b2cef877bb382a6b7d82c500b59bd84b774",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-8LIG",
     "timestamp": "2026-10-13T05:42:57.256Z",
     "repository": "Cloudflare/clef",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/Qwen-Image-2.1",
     "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv83ki1q",
     "contentHash": "3bf95196eacd6a43b83f17b0f6e27f463ebfe5a75c1b701a48cf1f5fc992e966",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-OKV1",
+    "timestamp": "2026-10-14T12:42:57.565Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv83okro",
+    "contentHash": "bd598b867d7bb6bfe34a9639cf472b67b812585db7c5a544f3542d5237818ef7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
