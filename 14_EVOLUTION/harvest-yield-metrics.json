@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:03:53.816Z",
-  "total_cycles_completed": 1387,
-  "total_learnings_persisted": 1387,
+  "last_updated": "2026-10-14T16:07:03.330Z",
+  "total_cycles_completed": 1388,
+  "total_learnings_persisted": 1388,
   "total_rules_promoted": 691,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:24:53.332Z",
-      "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv7jqw5y",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:27:56.931Z",
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Llama-2-7b-chat-hf",
       "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv8auzfh",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T16:07:03.330Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv8az1o3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

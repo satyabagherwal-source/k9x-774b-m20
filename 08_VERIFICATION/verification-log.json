@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-GMIC",
-    "timestamp": "2026-10-13T09:33:08.724Z",
-    "repository": "intfloat/multilingual-e5-small",
-    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv6hgmgy",
-    "contentHash": "a27dcdbba06a14d334372cd4367b18ca0f2253ae0e0708404a134343ce4a2ea1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-KR1S",
     "timestamp": "2026-10-13T09:36:21.232Z",
     "repository": "argmaxinc/whisperkit-coreml",
@@ -7492,6 +7477,21 @@
     "contentHash": "c40ff68f13f28564d929626c987cc2bf81b43a9b0194cc20647c4f524d1e7792",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-Z1R2",
+    "timestamp": "2026-10-14T16:07:03.326Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv8az1o3",
+    "contentHash": "f0a08ba0c2a27ac9cc9a79d1c030997ffafa9eb758f8b735007a580a608b1c26",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
