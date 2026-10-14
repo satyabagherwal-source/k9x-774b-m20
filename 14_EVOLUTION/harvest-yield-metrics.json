@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T17:10:20.458Z",
-  "total_cycles_completed": 1400,
-  "total_learnings_persisted": 1400,
+  "last_updated": "2026-10-14T17:13:32.830Z",
+  "total_cycles_completed": 1401,
+  "total_learnings_persisted": 1401,
   "total_rules_promoted": 696,
   "history": [
-    {
-      "timestamp": "2026-10-14T04:04:29.520Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv7l5tna",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T04:07:52.641Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T17:10:20.458Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv8d8fjf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T17:13:32.830Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv8dcjz1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
