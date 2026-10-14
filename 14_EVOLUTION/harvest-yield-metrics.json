@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:21:20.516Z",
-  "total_cycles_completed": 1245,
-  "total_learnings_persisted": 1245,
+  "last_updated": "2026-10-14T06:24:19.189Z",
+  "total_cycles_completed": 1246,
+  "total_learnings_persisted": 1246,
   "total_rules_promoted": 597,
   "history": [
-    {
-      "timestamp": "2026-10-13T19:14:33.119Z",
-      "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-hf-francisring-prism-mv728be1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T19:19:34.451Z",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T06:21:20.516Z",
       "repository": "fishaudio/drama-3",
       "learningId": "learn-huggingface-hf-fishaudio-drama-3-mv7q1taj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T06:24:19.189Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv7q5n63",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
