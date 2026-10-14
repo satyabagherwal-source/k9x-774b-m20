@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-6Y88",
-    "timestamp": "2026-10-13T02:25:43.112Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv626y5b",
-    "contentHash": "9e1edc252d155f08bf0666c91db81706f4f9585ca7021a6fa34a97ed5a77fc31",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-B5RT",
     "timestamp": "2026-10-13T02:28:59.513Z",
     "repository": "jialinyyzz/humanizer",
@@ -7492,6 +7477,21 @@
     "contentHash": "eec8ed5cc4170a0c5aa6f85e0c83e548e92acdeced6ac7ba2893daf39de560b3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-HWNX",
+    "timestamp": "2026-10-14T09:21:48.957Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv7whwi4",
+    "contentHash": "e06f9155f3ca3a66eaaf1223bee9e79027fa130559d60aabe75d123bdbe2b4a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

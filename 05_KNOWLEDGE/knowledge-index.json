@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T09:17:15.017Z",
-  "total_verified_learnings": 5227,
+  "last_updated": "2026-10-14T09:21:48.909Z",
+  "total_verified_learnings": 5228,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128759,6 +128759,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T09:17:15.017Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openai-community-gpt2-mv7whwi4": {
+      "learning_id": "learn-huggingface-hf-openai-community-gpt2-mv7whwi4",
+      "source": "openai-community/gpt2",
+      "repository": "openai-community/gpt2",
+      "slug": "hf-openai-community-gpt2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openai-community/gpt2",
+      "source_version": "hf-openai-community-gpt2",
+      "content_hash": "e06f9155f3ca3a66eaaf1223bee9e79027fa130559d60aabe75d123bdbe2b4a7",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 860,
+          "title": "Causal Autoregressive Token Id Collision Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 861,
+          "title": "Numerical Parity Enforcement for Non-Standard GELU Approximations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 862,
+          "title": "Absolute Context Horizon Strict Upper-Bound Assertion",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T09:21:48.909Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
