@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-9EEX",
-    "timestamp": "2026-10-13T04:47:35.481Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv679ec0",
-    "contentHash": "506a6ae3494d4ac1df482da8c29bffe5b9b59b5d928fda8d9c52b8869e1f2ab9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-D2WE",
     "timestamp": "2026-10-13T04:50:27.182Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7490,6 +7475,21 @@
     "repository": "Contrastive-LM/CLM-v0.1-8B",
     "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv81iqno",
     "contentHash": "463178838f21e47f18a4e1c1e708c13731742361418c51ea47309193595f1e2b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-MHO7",
+    "timestamp": "2026-10-14T11:45:20.887Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv81mhm0",
+    "contentHash": "8027be2e52afd76087566a123d87f81a5e002597416c3cdfa6dfac92725db059",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
