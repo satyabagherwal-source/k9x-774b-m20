@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-AO3L",
-    "timestamp": "2026-10-12T18:32:43.137Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv5lao0r",
-    "contentHash": "f5693c7bf2854793e3db96db231b4062f46b0b0211db127c229356042b17e54d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-EGBF",
     "timestamp": "2026-10-12T18:35:39.675Z",
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V3",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv7cxfit",
     "contentHash": "0d3bf733794c73cc19a41944daa84fe14bb02f3ca88cb654b145b60b02dd1dae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-14AK",
+    "timestamp": "2026-10-14T00:16:52.988Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv7d148q",
+    "contentHash": "ba8ed34a2061d87403f1df9e9aa02b34cf3191a643cde476967de4f08f0891f4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
