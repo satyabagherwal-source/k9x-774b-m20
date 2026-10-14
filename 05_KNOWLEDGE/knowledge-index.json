@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T03:36:53.244Z",
-  "total_verified_learnings": 5147,
+  "last_updated": "2026-10-14T03:40:04.035Z",
+  "total_verified_learnings": 5148,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -126521,6 +126521,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T03:36:53.244Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv7kaevq": {
+      "learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv7kaevq",
+      "source": "Qwen/Qwen-Image-2.1-Turbo",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "slug": "hf-qwen-qwen-image-2.1-turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
+      "source_version": "hf-qwen-qwen-image-2.1-turbo",
+      "content_hash": "20a0c8131631101ab0fb99d39c757f629f38e14116cb92847837dc83a526f754",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 802,
+          "title": "Distilled Model Scheduler Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 803,
+          "title": "Prefix KV Caching for Multi-Step Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T03:40:04.035Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

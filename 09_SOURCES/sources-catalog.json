@@ -405,9 +405,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "1750ec32e18162d4405ab1b8f18e54d854a7865404557108eaa52f27d9e8ab78",
-    "lastHarvestedAt": "2026-10-13T20:13:01.674Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv74bilw"
+    "contentHash": "20a0c8131631101ab0fb99d39c757f629f38e14116cb92847837dc83a526f754",
+    "lastHarvestedAt": "2026-10-14T03:40:04.087Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv7kaevq"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",

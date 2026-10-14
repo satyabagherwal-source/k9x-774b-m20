@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T03:36:53.283Z",
-  "total_cycles_completed": 1192,
-  "total_learnings_persisted": 1192,
-  "total_rules_promoted": 565,
+  "last_updated": "2026-10-14T03:40:04.089Z",
+  "total_cycles_completed": 1193,
+  "total_learnings_persisted": 1193,
+  "total_rules_promoted": 567,
   "history": [
-    {
-      "timestamp": "2026-10-13T16:09:40.964Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-hf-bigscience-bloom-mv6vmkmp",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T16:12:53.936Z",
       "repository": "openai/gpt-oss-20b",
@@ -1403,6 +1396,13 @@
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv7k6bq0",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T03:40:04.089Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv7kaevq",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
