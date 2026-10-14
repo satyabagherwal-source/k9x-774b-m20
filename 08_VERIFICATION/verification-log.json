@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-Z92Z",
-    "timestamp": "2026-10-13T02:19:43.931Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv61z901",
-    "contentHash": "e5ff993b8c0286434077309ce87722f8bb6f1e7a4a52310c95cfcf94b332f6f3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-31FR",
     "timestamp": "2026-10-13T02:22:40.647Z",
     "repository": "zai-org/GLM-5.3",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/LFM2.5-24B-A2B",
     "learningId": "learn-huggingface-hf-liquidai-lfm2-5-24b-a2b-mv7w496w",
     "contentHash": "2ca9e6338f38e49a5f99c05781ebddfdd762678cfc71f50faac4ea305ae8f8a9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-8C4O",
+    "timestamp": "2026-10-14T09:14:22.440Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv7w8c1d",
+    "contentHash": "ab061ba2392d906c5ea0844af737cf4311e2fc4243d72c6f0994a1782b7a5c85",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

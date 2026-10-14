@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T09:11:12.130Z",
-  "total_cycles_completed": 1270,
-  "total_learnings_persisted": 1270,
+  "last_updated": "2026-10-14T09:14:22.444Z",
+  "total_cycles_completed": 1271,
+  "total_learnings_persisted": 1271,
   "total_rules_promoted": 624,
   "history": [
-    {
-      "timestamp": "2026-10-13T20:54:56.933Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv75tfe1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T20:59:11.733Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T09:11:12.130Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
       "learningId": "learn-huggingface-hf-liquidai-lfm2-5-24b-a2b-mv7w496w",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T09:14:22.444Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv7w8c1d",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
