@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:33:03.544Z",
-  "total_cycles_completed": 1333,
-  "total_learnings_persisted": 1333,
+  "last_updated": "2026-10-14T12:36:37.976Z",
+  "total_cycles_completed": 1334,
+  "total_learnings_persisted": 1334,
   "total_rules_promoted": 660,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:35:22.544Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv7dowc6",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:38:10.996Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv83buc0",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:36:37.976Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv83gfv7",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

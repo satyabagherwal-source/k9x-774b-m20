@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-WSTW",
-    "timestamp": "2026-10-13T05:33:46.868Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv68wsqz",
-    "contentHash": "aa6cb9fe47dabe1a584d6c53102ea9dd17abc7148a9941caca8177f3b808b2c4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-0QYD",
     "timestamp": "2026-10-13T05:36:51.061Z",
     "repository": "google/embeddinggemma-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "13a60a91ae55cf4b852f0505efa43ecb116bde471415695f1613d9c4da021171",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-GFYR",
+    "timestamp": "2026-10-14T12:36:37.971Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv83gfv7",
+    "contentHash": "843db21d99705f0f11bf2ddcb7290fcb7f71d9849c493d011fb633e60103cc60",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
