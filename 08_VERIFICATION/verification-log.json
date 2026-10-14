@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-VIES",
-    "timestamp": "2026-10-12T21:36:53.236Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv5rvid0",
-    "contentHash": "c51f0c2342c8f4e22fd3bc2106b7139050d0f16f4949816324544536534b30f4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-ZANM",
     "timestamp": "2026-10-12T21:39:49.810Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "e9e2e38adeae1c8f492eec09cb4b680da9c7e3e579dca3729caaafdfa11052a9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-AVHQ",
+    "timestamp": "2026-10-14T03:12:25.838Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv7javdk",
+    "contentHash": "f497c9c38ce2f6944af22261f33fb96d8d7937be706b0fbf89832d93f7cac70b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
