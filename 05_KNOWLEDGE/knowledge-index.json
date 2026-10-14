@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T07:28:07.837Z",
-  "total_verified_learnings": 5215,
+  "last_updated": "2026-10-14T07:48:37.913Z",
+  "total_verified_learnings": 5216,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128384,6 +128384,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T07:28:07.837Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-qwen-qwen3-4b-mv7t62g6": {
+      "learning_id": "learn-huggingface-hf-qwen-qwen3-4b-mv7t62g6",
+      "source": "Qwen/Qwen3-4B",
+      "repository": "Qwen/Qwen3-4B",
+      "slug": "hf-qwen-qwen3-4b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
+      "source_version": "hf-qwen-qwen3-4b",
+      "content_hash": "76d07aad9744775fd32d32e446d95875b4a6b8fbc8bf6663a7ee5fb007262ea5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 844,
+          "title": "Dual-Terminal Multi-Token Stopping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 845,
+          "title": "Tied-Embedding Weight Pointer Slicing & Mutation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 846,
+          "title": "Dynamic Thinking-Mode Repetition Penalty Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T07:48:37.913Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

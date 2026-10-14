@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-W68A",
-    "timestamp": "2026-10-13T01:49:20.650Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv60w66h",
-    "contentHash": "8e832f3ee32a89c84c8db30700fa229f571d280bf17f5fa04caad23e1a400714",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ZYO9",
     "timestamp": "2026-10-13T01:52:17.481Z",
     "repository": "intfloat/multilingual-e5-small",
@@ -7492,6 +7477,21 @@
     "contentHash": "48a7e1d268d8ca4828a827ed5c9cce42e00c6a97d070f33b7a22df5b7bfcdbee",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-62N3",
+    "timestamp": "2026-10-14T07:48:37.983Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv7t62g6",
+    "contentHash": "76d07aad9744775fd32d32e446d95875b4a6b8fbc8bf6663a7ee5fb007262ea5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
