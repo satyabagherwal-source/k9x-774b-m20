@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-EGBF",
-    "timestamp": "2026-10-12T18:35:39.675Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv5leg8x",
-    "contentHash": "590b970f203676e716913a3fdaaa13414742b629871be26fd3ae05d66b004031",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-I7GN",
     "timestamp": "2026-10-12T18:38:34.823Z",
     "repository": "FacebookAI/xlm-roberta-base",
@@ -7490,6 +7475,21 @@
     "repository": "baidu/Unlimited-OCR",
     "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv7d148q",
     "contentHash": "ba8ed34a2061d87403f1df9e9aa02b34cf3191a643cde476967de4f08f0891f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-4XT1",
+    "timestamp": "2026-10-14T00:19:51.205Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv7d4xqj",
+    "contentHash": "c46865d6f9b876c8a65c54fa6dc53c7b66393b3a3cf9c7604435f6cefc49c2ca",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
