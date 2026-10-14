@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-FHRQ",
-    "timestamp": "2026-10-12T22:20:25.142Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv5tfho8",
-    "contentHash": "be9d83c0af599b909e940e7d03501012e62e23947e87c7773db0a38457ab2f3b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-JIUB",
     "timestamp": "2026-10-12T22:23:33.155Z",
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7492,6 +7477,21 @@
     "contentHash": "f5baf3d4ceb9db908f190d092b5bff916244a0af34ddfebed7be8041c6850e48",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-QE4D",
+    "timestamp": "2026-10-14T03:52:29.437Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv7kqdu6",
+    "contentHash": "d7a9c0bd700827569bb8a58ac34a0cf103048d5410846a6a011087502a190a7b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

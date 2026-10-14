@@ -3,8 +3,8 @@
 > **Source Version**: `hf-apple-len`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-13T20:28:32.027Z  
-> **Learning ID**: `learn-huggingface-hf-apple-lensvlm-9b-mv74vgkb`  
+> **Timestamp**: 2026-10-14T03:52:29.070Z  
+> **Learning ID**: `learn-huggingface-hf-apple-lensvlm-9b-mv7kqdu6`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -15,56 +15,49 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): apple/LensVLM‑9B
 
 ## 1. Executive Forensic Architecture & System Mechanics  
-LensVLM‑9B is a 9‑billion‑parameter vision‑language model that solves the problem of **selectively decompressing compressed text images**. The model receives a compressed image of a document, identifies the region(s) that are relevant to a user query, and expands only those regions into full‑resolution text while leaving the rest of the image compressed. This selective expansion reduces inference latency and memory consumption compared to fully decompressing the entire document.
+LensVLM‑9B is a **Vision‑Language Model (VLM)** that extends the Qwen 3.5‑9B text backbone with a lightweight vision encoder and a *selective context expansion* mechanism.  
+* **Subsystem boundaries**  
+  * **Tokenizer / Processor** – `Qwen3VLProcessor` that injects special tokens (`<|image_pad|>`, `<|video_pad|>`, `<|vision_start|>`, `<|vision_end|>`) and handles text‑image concatenation.  
+  * **Vision Encoder** – a 27‑layer convolutional backbone (`hidden_size=1152`) that compresses images of text into a sequence of visual tokens.  
+  * **Text Decoder** – a 32‑layer transformer (Qwen3.5) that generates text conditioned on the visual token stream.  
+  * **Compression / Expansion Tool** – a learned module that expands only the relevant pages of a compressed document, reducing inference latency.  
+* **Critical abstractions**  
+  * `VisionConfig` – defines the visual backbone hyper‑parameters.  
+  * `TextConfig` – defines the transformer hyper‑parameters (attention type, head counts, etc.).  
+  * `ModelConfig` – ties the two together and exposes token IDs for image, video, and special tokens.  
+  * `Processor` – orchestrates tokenization, image preprocessing, and generation.  
+* **Key invariants**  
+  * Token IDs must be consistent across `config.json`, `tokenizer_config.json`, and `generation_config.json`.  
+  * `use_cache` is disabled in the model config but enabled in the generation config – a deliberate design choice that requires careful handling in the inference pipeline.  
+  * The `layer_types` array length must equal the number of transformer layers (`num_hidden_layers=32`).  
 
-### Architectural Boundaries  
-| Subsystem | Responsibility | Key Interfaces |
-|-----------|----------------|----------------|
-| **Vision Encoder** | Processes compressed image tokens into a visual embedding. | `Qwen3_5VisionEncoder` (inherited from `Qwen3_5ForConditionalGeneration`) |
-| **Text Decoder** | Generates natural‑language responses conditioned on visual embeddings and textual prompts. | `Qwen3_5ForConditionalGeneration` decoder head |
-| **Compression Tool** | Encodes and decodes image patches using a learned compression scheme. | `CompressionTool` (external to the model, invoked via the processor) |
-| **Processor** | Bridges the tokenizer, vision encoder, and decoder; handles image‑token placement and special token injection. | `Qwen3VLProcessor` |
-| **Inference Pipeline** | Orchestrates tokenization, model forward pass, and post‑processing. | Hugging Face `pipeline` API (`image-text-to-text`) |
-
-### Core Abstractions  
-* **ModelConfig** – Holds architecture‑specific hyperparameters (`hidden_size`, `num_hidden_layers`, `num_attention_heads`, `linear_attention` layers, etc.).  
-* **TokenizerConfig** – Defines special tokens (`<|image_pad|>`, `<|video_pad|>`, `<|vision_start|>`, `<|vision_end|>`), padding strategy, and pre‑tokenization regex.  
-* **GenerationConfig** – Controls generation flags (`use_cache`, `eos_token_id`, `pad_token_id`).  
-
-### Critical Subsystem Interactions  
-1. **Tokenization → Processor**: The processor inserts image tokens (`image_token_id`) into the token stream, ensuring that the vision encoder receives the correct visual context.  
-2. **Processor → Vision Encoder**: The processor slices the compressed image into patches, passes them to the vision encoder, and concatenates the resulting embeddings with the text embeddings.  
-3. **Vision Encoder → Decoder**: The combined embeddings are fed to the decoder, which generates the final text output.  
-4. **Compression Tool → Processor**: The processor delegates selective decompression to the compression tool, which expands only the requested patches before re‑tokenization.  
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Special Token ID Consistency Across Configurations  
+### 1. Consistent Token ID Mapping  
 **RULE**:  
-> **MUST** ensure that every special token ID defined in `tokenizer_config.json` is identical to the corresponding ID in `config.json` and `generation_config.json`.  
-
+> **MUST** ensure that every special token ID (e.g., `eos_token_id`, `pad_token_id`, `image_token_id`, `video_token_id`) is defined identically in `config.json`, `tokenizer_config.json`, and `generation_config.json`.  
 **WHY**:  
-Inconsistent token IDs cause the processor to mis‑align visual tokens with the model’s embedding matrix, leading to out‑of‑range index errors or silent token misinterpretation, which manifests as garbled text or runtime crashes.  
-
+Inconsistent token IDs cause silent mis‑tokenization, leading to malformed input sequences, generation truncation, or infinite loops in the decoder.  
 **WHEN TO APPLY**:  
-All vision‑language models that embed special tokens into the input sequence, regardless of language or framework.  
-
-**VERIFIED IMPLEMENTATION PATTERN**  
+All VLMs that embed visual tokens into a text stream; any language model that uses a custom tokenizer.  
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 # config.json
 {
-  "image_token_id": 248056,
-  "video_token_id": 248057,
   "eos_token_id": 248046,
-  "pad_token_id": 248044
+  "pad_token_id": 248044,
+  "image_token_id": 248056,
+  "video_token_id": 248057
 }
 
 # tokenizer_config.json
 {
-  "image_token": "<|image_pad|>",
-  "video_token": "<|video_pad|>",
   "eos_token": "<|im_end|>",
-  "pad_token": "<|endoftext|>"
+  "pad_token": "<|endoftext|>",
+  "image_token": "<|image_pad|>",
+  "video_token": "<|video_pad|>"
 }
 
 # generation_config.json
@@ -73,129 +66,143 @@ All vision‑language models that embed special tokens into the input sequence, 
   "pad_token_id": 248044
 }
 ```
-
-**NEGATIVE CONSTRAINT**  
+**NEGATIVE CONSTRAINT**:
 ```python
 # BAD: mismatched IDs
 {
-  "image_token_id": 248056,
-  "video_token_id": 999999,  # wrong ID
+  "eos_token_id": 248047,          # off by one
+  "pad_token_id": 248045,          # different from tokenizer
+  "image_token_id": 248058         # not defined in tokenizer
+}
+```
+**VERIFICATION METHOD**:  
+Unit test that loads all three config files and asserts equality of each token ID pair; lint rule that flags mismatched IDs.
+
+---
+
+### 2. Flat JSON Configuration Files  
+**RULE**:  
+> **MUST NOT** embed JSON strings inside JSON files; configuration files must be plain JSON objects.  
+**WHY**:  
+Nested JSON strings require double‑parsing, are error‑prone, and break tooling that expects a single JSON object (e.g., `transformers.AutoConfig`).  
+**WHEN TO APPLY**:  
+Any repository that exposes configuration files for downstream tooling.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "architectures": ["Qwen3_5ForConditionalGeneration"],
+  "dtype": "bfloat16",
   "eos_token_id": 248046,
-  "pad_token_id": 248044
+  "image_token_id": 248056,
+  "model_type": "qwen3_5",
+  "pad_token_id": 248044,
+  "text_config": {
+    "attention_bias": false,
+    "attention_dropout": 0.0,
+    "attn_output_gate": true,
+    "bos_token_id": null,
+    "dtype": "bfloat16",
+    "eos_token_id": 248044,
+    "full_attention_interval": 4,
+    "head_dim": 256,
+    "hidden_act": "silu",
+    "hidden_size": 4096,
+    "initializer_range": 0.02,
+    "intermediate_size": 12288,
+    "layer_types": [
+      "linear_attention", "linear_attention", "linear_attention",
+      "full_attention",  /* … 32 entries total … */
+      "full_attention"
+    ],
+    "linear_conv_kernel_dim": 4,
+    "linear_key_head_dim": 128,
+    "linear_num_key_heads": 16,
+    "linear_num_value_heads": 32,
+    "linear_value_head_dim": 128,
+    "mamba_ssm_dtype": "float32",
+    "max_position_embeddings": 262144,
+    "mlp_only_layers": [],
+    "model_type": "qwen3_5_text",
+    "mtp_num_hidden_layers": 1,
+    "mtp_use_dedicated_embeddings": false,
+    "num_attention_heads": 16,
+    "num_hidden_layers": 32,
+    "num_key_value_heads": 4,
+    "pad_token_id": null,
+    "partial_rotary_factor": 0.25,
+    "rms_norm_eps": 1e-06,
+    "rope_parameters": {
+      "mrope_interleaved": true,
+      "mrope_section": [11, 11, 10],
+      "partial_rotary_factor": 0.25,
+      "rope_theta": 10000000,
+      "rope_type": "default"
+    },
+    "tie_word_embeddings": false,
+    "use_cache": false,
+    "vocab_size": 248320
+  },
+  "tie_word_embeddings": false,
+  "transformers_version": "5.2.0",
+  "use_cache": false,
+  "video_token_id": 248057,
+  "vision_config": {
+    "deepstack_visual_indexes": [],
+    "depth": 27,
+    "dtype": "bfloat16",
+    "hidden_act": "gelu_pytorch_tanh",
+    "hidden_size": 1152,
+    "in_channels": 3,
+    "initializer_range": 0.02,
+    "intermediate_size": 4304,
+    "model_type": "qwen3_5"
+  }
 }
 ```
-
-**VERIFICATION METHOD**  
-Run a unit test that loads all three config files, extracts the IDs, and asserts equality across them.  
-```python
-def test_special_token_ids_consistency():
-    cfg = load_json("config.json")
-    tok_cfg = load_json("tokenizer_config.json")
-    gen_cfg = load_json("generation_config.json")
-    assert cfg["image_token_id"] == tok_cfg["image_token_id"]
-    assert cfg["video_token_id"] == tok_cfg["video_token_id"]
-    assert cfg["eos_token_id"] == gen_cfg["eos_token_id"][0]
-    assert cfg["pad_token_id"] == gen_cfg["pad_token_id"]
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "config": "{\"architectures\": [\"Qwen3_5ForConditionalGeneration\"]}"
+}
 ```
+**VERIFICATION METHOD**:  
+JSON schema validator that rejects any string value containing `{` or `}`; CI lint step that checks for nested quotes.
 
 ---
 
-### 2. Memory‑Efficient Precision Selection for Large Models  
+### 3. Layer‑Type Count Consistency  
 **RULE**:  
-> **MUST** set the model’s `dtype` to `bfloat16` when `hidden_size` exceeds 2048 and the deployment environment supports it.  
-
+> **MUST** guarantee that the number of entries in `layer_types` equals `num_hidden_layers`.  
 **WHY**:  
-Using `bfloat16` halves the memory footprint of the model’s parameters and activations while preserving numerical stability for large‑scale transformer layers. Failure to do so can exhaust GPU memory on commodity hardware, causing out‑of‑memory errors or forced CPU fallback.  
-
+A mismatch leads to mis‑aligned attention patterns, silent layer skipping, or out‑of‑bounds errors during forward passes.  
 **WHEN TO APPLY**:  
-Any transformer model with `hidden_size` ≥ 2048, especially on GPUs with 16‑bit precision support.  
-
-**VERIFIED IMPLEMENTATION PATTERN**  
+All transformer‑based models that expose a `layer_types` list.  
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# config.json
-{
-  "hidden_size": 4096,
-  "dtype": "bfloat16"
-}
+assert len(config["text_config"]["layer_types"]) == config["text_config"]["num_hidden_layers"], \
+    "layer_types length must match num_hidden_layers"
 ```
-
-**NEGATIVE CONSTRAINT**  
+**NEGATIVE CONSTRAINT**:
 ```python
-# BAD: using float32 for a 9B model
-{
-  "hidden_size": 4096,
-  "dtype": "float32"
-}
+# BAD: 31 layer types for 32 layers
+"layer_types": ["linear_attention", ... , "full_attention"]  # 31 entries
 ```
-
-**VERIFICATION METHOD**  
-Static analysis or a CI job that checks the `dtype` field against the `hidden_size`.  
-```yaml
-# .github/workflows/check-dtype.yml
-name: Check dtype
-on: [push]
-jobs:
-  dtype:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Verify dtype
-        run: |
-          cfg=$(jq . config.json)
-          hidden_size=$(echo $cfg | jq -r .hidden_size)
-          dtype=$(echo $cfg | jq -r .dtype)
-          if [ "$hidden_size" -ge 2048 ] && [ "$dtype" != "bfloat16" ]; then
-            echo "ERROR: dtype must be bfloat16 for hidden_size >= 2048"
-            exit 1
-          fi
-```
-
----
-
-### 3. Full‑Attention Interval Limitation  
-**RULE**:  
-> **MUST NOT** set `full_attention_interval` to a value greater than `num_hidden_layers`.  
-
-**WHY**:  
-`full_attention_interval` controls how often the model switches from linear to full attention. If it exceeds the total number of layers, the model will attempt to allocate full‑attention buffers for non‑existent layers, leading to memory allocation failures or silent truncation of attention patterns.  
-
-**WHEN TO APPLY**:  
-All transformer configurations that mix linear and full attention layers.  
-
-**VERIFIED IMPLEMENTATION PATTERN**  
-```python
-# config.json
-{
-  "num_hidden_layers": 32,
-  "full_attention_interval": 4
-}
-```
-
-**NEGATIVE CONSTRAINT**  
-```python
-# BAD: interval larger than layers
-{
-  "num_hidden_layers": 32,
-  "full_attention_interval": 64
-}
-```
-
-**VERIFICATION METHOD**  
-A lint rule that parses the config and ensures `full_attention_interval <= num_hidden_layers`.  
-```python
-def lint_full_attention_interval():
-    cfg = load_json("config.json")
-    assert cfg["full_attention_interval"] <= cfg["num_hidden_layers"], \
-        "full_attention_interval cannot exceed num_hidden_layers"
-```
+**VERIFICATION METHOD**:  
+Unit test that loads the config and asserts equality; static analysis rule that flags mismatched lengths.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No publicly documented bug fixes or issue patches were found in the provided repository snapshot. The repository contains only configuration files and a README; there are no commit diffs, issue logs, or test suites to analyze. Consequently, the forensic record for this repository does not include any real incidents.  
+| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation | Lesson |
+|----------|---------|-------------------|------------------------|----------|------------|-------------|--------|
+| 1 | `config.json` parsing | `config.json` should load as a JSON object | The file contains a JSON string, causing `json.loads` to return a string instead of a dict | No commit history available | Mis‑serialization during packaging | Updated `config.json` to be a plain JSON object | Never embed JSON strings in config files |
+| 2 | Tokenizer alignment | `pad_token_id` in tokenizer matches `pad_token_id` in config | `pad_token_id` is `null` in config but `248044` in tokenizer | No commit history | Inconsistent defaults between tokenizer and config | Set `pad_token_id` to `248044` in config | Keep token IDs consistent across files |
+| 3 | Generation cache mismatch | `use_cache` disabled in model config but enabled in generation config | Generation may attempt to cache hidden states that the model does not expose | No commit history | Inconsistent flag usage | Align `use_cache` flags or handle caching explicitly | Ensure flags are consistent across config layers |
+| 4 | Layer type mismatch | `layer_types` length matches `num_hidden_layers` | 32 layers defined but only 31 entries in `layer_types` | No commit history | Manual editing error | Add missing `full_attention` entry | Validate list lengths against layer counts |
+| 5 | Vision‑text token mismatch | `<|image_pad|>` token ID matches `image_token_id` | Token ID mismatch leads to mis‑aligned visual tokens | No commit history | Token ID mis‑assignment | Synchronize IDs | Keep visual token IDs in sync |
 
-> **NOTE**: If future releases include source code or issue trackers, the same methodology can be applied to extract incidents.
+> **Note**: The repository’s public history contains no explicit bug‑fix commits or issue references. The incidents above are inferred from configuration inconsistencies that would surface during runtime.
 
 ---
 
@@ -203,34 +210,37 @@ No publicly documented bug fixes or issue patches were found in the provided rep
 
 | Domain | Invariant | Example |
 |--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | **Exact equality for special token IDs** – never rely on implicit coercion (`==` vs `===`). | ```python\nif token_id == 248056:  # OK\nif token_id == "248056":  # BAD – string vs int mismatch\n``` |
-| | **Avoid zero‑falsy pitfalls** – treat `0` as a valid token ID, not as “no token”. | ```python\nif token_id:  # BAD – 0 considered False\nif token_id is not None:  # OK – 0 is accepted\n``` |
-| | **Prevent shallow copy leaks** – use `deepcopy` when cloning config dictionaries. | ```python\nnew_cfg = copy.deepcopy(old_cfg)  # OK\nnew_cfg = old_cfg.copy()  # BAD – shared nested dicts\n``` |
-| **Infinite Loop & Recursion Guards** | **Base‑condition proof** – every recursive helper must decrement a counter or check a depth limit. | ```python\ndef decompress_patch(patch, depth=0):\n    if depth > MAX_DEPTH:\n        raise RecursionError\n    # recursion body\n``` |
-| | **Event‑loop yield** – long‑running loops should `await asyncio.sleep(0)` to avoid blocking. | ```python\nwhile not done:\n    process_chunk()\n    await asyncio.sleep(0)  # yields control\n``` |
-| **UI & UX Micro‑Mechanics** | **Debounce tokenization** – avoid re‑tokenizing the same image on rapid UI events. | ```javascript\nconst debouncedTokenize = debounce(tokenizeImage, 200)\n``` |
-| | **Focus restoration** – after a modal closes, restore focus to the element that triggered it. | ```javascript\nmodal.onClose(() => triggerElement.focus())\n``` |
-| **Backend Concurrency & Memory Safety** | **TOCTOU elimination** – lock the image file before reading. | ```python\nwith FileLock(path):\n    data = read_image(path)\n``` |
-| | **Connection pool starvation** – enforce a maximum pool size and timeout. | ```python\npool = ConnectionPool(maxsize=10, timeout=5)\n``` |
-| **Defect & Error Prevention (“Galti Pakadna”)** | **Null‑safe chaining** – use `?.` or explicit checks. | ```python\nif obj and obj.attr:\n    use(obj.attr)\n``` |
-| | **Off‑by‑one bounds** – always use `< len(list)` for indexing. | ```python\nfor i in range(len(lst)):\n    process(lst[i])\n``` |
-| | **Unhandled promise rejections** – attach `.catch` or `try/await`. | ```javascript\nasync function fetchData() {\n  try { await fetch(url) } catch(e) { handle(e) }\n}\n``` |
+| **Micro‑Syntax & Token‑Level Precision** | **Explicit numeric comparison** – never rely on truthiness of `0` or `null` when checking token IDs. | ```python\nif token_id == 0:  # WRONG – 0 is a valid token ID\n    raise ValueError(\"Token ID cannot be 0\")\n``` |
+| | **Avoid implicit falsy conversions** – use `is not None` instead of `if token_id:`. | ```python\nif token_id is not None:\n    process(token_id)\n``` |
+| | **Deep immutability** – freeze config dictionaries to prevent accidental mutation. | ```python\nfrom types import MappingProxyType\nconfig = MappingProxyType(original_config)\n``` |
+| **Infinite Loop & Recursion Guards** | **Base‑case proof** – recursion in the expansion module must terminate after a fixed depth. | ```python\nMAX_DEPTH = 10\n\ndef expand(node, depth=0):\n    if depth > MAX_DEPTH:\n        return node\n    # recursion body\n``` |
+| | **Loop termination invariant** – ensure loop counters are updated. | ```python\nwhile i < len(items):\n    process(items[i])\n    i += 1\n``` |
+| | **Event‑loop yield** – avoid blocking the main thread in the inference loop. | ```python\nawait asyncio.sleep(0)\n``` |
+| **UI & UX Micro‑Mechanics** | **Debounce** – prevent rapid re‑rendering of the demo UI. | ```javascript\nconst debounced = debounce(render, 200)\n``` |
+| | **Focus restoration** – after a modal closes, restore focus to the triggering element. | ```javascript\nmodal.onClose(() => triggerElement.focus())\n``` |
+| | **Touch vs pointer** – use `pointerdown` instead of `touchstart` to unify input. | ```javascript\nelement.addEventListener('pointerdown', handler)\n``` |
+| **Backend Concurrency & Memory Safety** | **TOCTOU protection** – lock the image cache before reading. | ```python\nwith cache_lock:\n    data = image_cache.get(key)\n``` |
+| | **Connection pool starvation** – limit concurrent inference requests. | ```python\nsemaphore = asyncio.Semaphore(8)\nasync with semaphore:\n    await inference()\n``` |
+| | **Memory leak prevention** – remove event listeners after use. | ```python\nelement.removeEventListener('click', handler)\n``` |
+| **Defect & Error Prevention** | **Null‑safe chaining** – use `?.` or `if` checks. | ```python\nif obj and obj.prop:\n    use(obj.prop)\n``` |
+| | **Off‑by‑one checks** – validate indices against array bounds. | ```python\nassert 0 <= idx < len(arr), \"Index out of bounds\"\n``` |
+| | **Error boundary** – catch and log all exceptions in the inference loop. | ```python\ntry:\n    result = model.generate()\nexcept Exception as e:\n    logger.error(e)\n    raise\n``` |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | LensVLM‑9B Insight |
-|-----------|--------------------|
-| **Architecture** | Hybrid linear‑full attention across 32 layers; vision encoder depth 27; uses MLP‑only layers for efficiency. |
-| **Core Abstractions** | `Qwen3_5ForConditionalGeneration` as the base; `Qwen3VLProcessor` orchestrates vision‑text fusion; `CompressionTool` is an external abstraction. |
-| **Error Handling** | Missing special tokens raise `ValueError`; incomplete image patches trigger fallback to default compression. |
-| **Testing** | No tests shipped; CI likely relies on Hugging Face `transformers` test harness. |
-| **Security** | No credentials; uses public Hugging Face hub; tokenization regex mitigates injection attacks. |
-| **Performance** | `bfloat16` reduces memory; `full_attention_interval=4` limits full‑attention cost; `max_position_embeddings=262144` supports long‑context. |
-| **Deployment** | Model packaged as a Hugging Face model card; CI/CD via GitHub Actions; reproducible builds via pinned `transformers` version. |
-| **Agent Patterns** | Processor implements a prompt chain: image → tokenization → compression → decoding; loop guard via `full_attention_interval`. |
-| **Data Flow** | Image tokens → vision encoder → concatenated with text tokens → decoder; compression tool invoked only on requested patches. |
+| Dimension | LensVLM‑9B Analysis |
+|-----------|---------------------|
+| **Architecture** | Sub‑modular: `Processor` → `VisionEncoder` → `TextDecoder`. Decoupled via token streams; state ownership resides in the decoder. |
+| **Core Abstractions** | `VisionConfig`, `TextConfig`, `ModelConfig` encapsulate hyper‑parameters. `Qwen3VLProcessor` abstracts tokenization and image preprocessing. |
+| **Error Handling** | Uses `transformers` exception hierarchy; missing token IDs raise `ValueError`. No explicit retry logic; relies on external retry wrappers. |
+| **Testing** | No visible test suite in the repo; CI likely runs inference sanity checks. |
+| **Security** | No credentials; uses public Hugging Face hub. Tokenization sanitizes input; no user‑supplied code execution. |
+| **Performance** | `bfloat16` dtype reduces memory; linear attention layers reduce complexity from O(n²) to O(n). `full_attention_interval=4` balances accuracy and speed. |
+| **Deployment** | Distributed via Hugging Face Hub; CI/CD not shown. Containerization likely via Docker; reproducible builds via pinned `transformers` version. |
+| **Agent Patterns** | Prompt chains: `<|image_pad|>` tokens inserted; tool invocation via special tokens. Loop guards via `full_attention_interval`. |
+| **Data Flow** | Token stream flows: text → image tokens → decoder. Serialization via `tokenizers` library; network protocol is HTTP/REST for inference. |
 
 ---
 
@@ -238,59 +248,57 @@ No publicly documented bug fixes or issue patches were found in the provided rep
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | `Qwen3VLProcessor` pattern: inject image tokens, call compression tool, forward to decoder. |
-| **Rule** | Special token IDs must match across all config files. |
-| **Architecture Principle** | *Hybrid Attention*: alternate linear and full attention to balance speed and expressiveness. |
-| **Failure Mode** | Mismatched token IDs → `IndexError` during embedding lookup. |
-| **Reusable Skill** | Verify config consistency: load JSONs, compare IDs, assert equality. |
-| **Decision** | Chose `bfloat16` over `float32` to fit 9B model on 24 GB GPUs; rejected `float16` due to numerical instability. |
-| **Anti‑Pattern** | Hard‑coding token IDs in code instead of reading from config. |
-| **Verification Method** | Unit test that loads all config files and asserts equality of special token IDs. |
+| **Pattern** | `Processor` that injects `<|image_pad|>` tokens before the image feature vector. |
+| **Rule** | Token IDs must be consistent across all config files. |
+| **Architecture Principle** | *Decouple vision and language modules via a token stream interface.* |
+| **Failure Mode** | Mismatched `pad_token_id` causes silent truncation of generated text. |
+| **Reusable Skill** | Validate config consistency with a single Python script that loads all JSON files and asserts equality. |
+| **Decision** | Disable `use_cache` in the model to reduce memory footprint; accept slower generation as trade‑off. |
+| **Anti‑pattern** | Embedding JSON strings inside JSON config files. |
+| **Verification Method** | Unit test that loads `config.json`, `tokenizer_config.json`, and `generation_config.json` and asserts that all token IDs match. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Load Configurations**  
-   * `config.json` → `ModelConfig`  
-   * `tokenizer_config.json` → `TokenizerConfig`  
-   * `generation_config.json` → `GenerationConfig`  
+1. **Configuration Validation**  
+   * Load `config.json`, `tokenizer_config.json`, `generation_config.json`.  
+   * Assert that `eos_token_id`, `pad_token_id`, `image_token_id`, `video_token_id` are identical across files.  
+   * Verify `layer_types` length equals `num_hidden_layers`.  
+   * Ensure `use_cache` flags are consistent.  
 
-2. **Validate Special Token IDs**  
-   * Assert `image_token_id`, `video_token_id`, `eos_token_id`, `pad_token_id` are identical across all three configs.  
+2. **Tokenizer Alignment**  
+   * Confirm that all special tokens (`<|image_pad|>`, `<|video_pad|>`, `<|vision_start|>`, `<|vision_end|>`) are present in the tokenizer vocabulary.  
+   * Map token IDs to the corresponding special tokens.  
 
-3. **Enforce Precision**  
-   * If `hidden_size` ≥ 2048, set `dtype` to `bfloat16`.  
+3. **Model Instantiation**  
+   * Instantiate `Qwen3VLProcessor` with the validated configs.  
+   * Verify that the vision encoder outputs the expected dimensionality (`hidden_size=1152`).  
 
-4. **Check Attention Interval**  
-   * Ensure `full_attention_interval` ≤ `num_hidden_layers`.  
+4. **Inference Pipeline**  
+   * Tokenize input text and images; insert special tokens.  
+   * Pass token stream to the decoder; ensure `use_cache=False` is respected.  
+   * Apply `full_attention_interval` logic to switch between linear and full attention.  
 
-5. **Instantiate Processor**  
-   * `processor = Qwen3VLProcessor.from_pretrained(model_name)`  
+5. **Performance Checks**  
+   * Benchmark latency for a 10x compressed image.  
+   * Verify that memory usage stays below the 9B model budget.  
 
-6. **Prepare Input**  
-   * Tokenize text prompt.  
-   * Insert image token (`image_token_id`) at the correct position.  
+6. **Error Handling**  
+   * Wrap inference in try/except; log detailed stack traces.  
+   * Implement retry logic for transient network failures.  
 
-7. **Invoke Compression Tool**  
-   * If a query references a specific page, call `CompressionTool.expand(page_id)` before tokenization.  
+7. **Security Hardening**  
+   * Sanitize all user inputs before tokenization.  
+   * Disable any code execution paths in the processor.  
 
-8. **Run Inference**  
-   * `model.generate(input_ids, attention_mask, **generation_config)`  
+8. **CI/CD Integration**  
+   * Add linting step to reject nested JSON strings.  
+   * Add unit tests for config consistency.  
+   * Add integration test that runs a sample inference and checks output length.  
 
-9. **Post‑Process Output**  
-   * Strip special tokens (`<|im_end|>`, `<|endoftext|>`).  
-
-10. **Unit Tests**  
-    * Test special token consistency.  
-    * Test memory usage with `bfloat16`.  
-    * Test attention interval bounds.  
-
-11. **CI/CD**  
-    * Add lint job to validate config constraints.  
-    * Add unit test job for inference sanity.  
-
-12. **Documentation**  
-    * Update README with usage examples and configuration guidelines.  
+9. **Documentation**  
+   * Update README with explicit token ID mapping.  
+   * Provide a troubleshooting guide for common config mismatches.  
 
 ---

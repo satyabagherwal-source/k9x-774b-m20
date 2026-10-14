@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T03:49:15.999Z",
-  "total_cycles_completed": 1196,
-  "total_learnings_persisted": 1196,
-  "total_rules_promoted": 567,
+  "last_updated": "2026-10-14T03:52:29.442Z",
+  "total_cycles_completed": 1197,
+  "total_learnings_persisted": 1197,
+  "total_rules_promoted": 570,
   "history": [
-    {
-      "timestamp": "2026-10-13T16:22:26.481Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv6w2zb2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T16:25:42.984Z",
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -1403,6 +1396,13 @@
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv7km8sc",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T03:52:29.442Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv7kqdu6",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
