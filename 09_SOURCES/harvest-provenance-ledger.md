@@ -1237,3 +1237,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv7kaevq` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-14T03:40:04.087Z |
 | `learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv7kdxa2` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-14T03:42:47.814Z |
 | `learn-huggingface-hf-supersoniclabs-julia-1-mv7kia43` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-10-14T03:46:11.124Z |
+| `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv7km8sc` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-14T03:49:15.998Z |
