@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T15:17:27.165Z",
-  "total_cycles_completed": 1373,
-  "total_learnings_persisted": 1373,
+  "last_updated": "2026-10-14T15:20:29.130Z",
+  "total_cycles_completed": 1374,
+  "total_learnings_persisted": 1374,
   "total_rules_promoted": 685,
   "history": [
-    {
-      "timestamp": "2026-10-14T02:40:32.398Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv7i5uxf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T02:43:34.067Z",
       "repository": "FrancisRing/Prism",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T15:17:27.165Z",
       "repository": "vllm-sr/d3",
       "learningId": "learn-huggingface-hf-vllm-sr-d3-mv897988",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T15:20:29.130Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv89b5od",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

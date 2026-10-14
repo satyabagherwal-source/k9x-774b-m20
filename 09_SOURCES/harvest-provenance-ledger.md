@@ -1415,3 +1415,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-microsoft-frognano-4b-2609-mv88xntc` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-10-14T15:09:59.450Z |
 | `learn-huggingface-hf-hexgrad-kokoro-82m-mv891s7q` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-10-14T15:13:11.817Z |
 | `learn-huggingface-hf-vllm-sr-d3-mv897988` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-10-14T15:17:27.163Z |
+| `learn-huggingface-hf-openai-whisper-large-v3-mv89b5od` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-14T15:20:29.129Z |

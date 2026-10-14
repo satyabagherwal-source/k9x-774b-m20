@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-DARG",
-    "timestamp": "2026-10-13T08:34:34.300Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv6fdapi",
-    "contentHash": "62fb76a453485e243e5cc9975899125565d9ec9fce42ab13894c35ac1fbafbf8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ID03",
     "timestamp": "2026-10-13T08:38:30.483Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "vllm-sr/d3",
     "learningId": "learn-huggingface-hf-vllm-sr-d3-mv897988",
     "contentHash": "1bbd9df7d57dce44ea684c45444dd0718f2e6dae4c2931688edecba8628aeb19",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-B5QF",
+    "timestamp": "2026-10-14T15:20:29.127Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv89b5od",
+    "contentHash": "470a901cffa8a326f86cd9d0c5b7daa7703352d043c587f014efd1603cb8af6d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
