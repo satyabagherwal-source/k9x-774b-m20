@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-PGAP",
-    "timestamp": "2026-10-13T09:12:00.961Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6gpg8j",
-    "contentHash": "c82d377b74327d580fa911a361cc5e85f1952434ff50f52e188764ae315c07bc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-TCTN",
     "timestamp": "2026-10-13T09:15:03.083Z",
     "repository": "FacebookAI/xlm-roberta-base",
@@ -7492,6 +7477,21 @@
     "contentHash": "af18e3795c7823ea5d76723f0acf3709c1867088e929ed85e6d1ffc0f215fe3b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-6DUL",
+    "timestamp": "2026-10-14T15:44:45.981Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv8a6dnw",
+    "contentHash": "9a6e1d8752f7bb74746362e1dab49e0cae0ff94aeffdd9bc74f07146e12da917",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

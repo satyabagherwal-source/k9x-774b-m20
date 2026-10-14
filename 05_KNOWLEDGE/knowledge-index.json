@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T15:41:17.440Z",
-  "total_verified_learnings": 5335,
+  "last_updated": "2026-10-14T15:44:45.917Z",
+  "total_verified_learnings": 5336,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -131690,6 +131690,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T15:41:17.440Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv8a6dnw": {
+      "learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv8a6dnw",
+      "source": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "slug": "hf-meta-llama-meta-llama-3-8b-instruct",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+      "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
+      "content_hash": "9a6e1d8752f7bb74746362e1dab49e0cae0ff94aeffdd9bc74f07146e12da917",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 921,
+          "title": "Binary Artifact Integrity & Memory Safety Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 922,
+          "title": "Tokenizer Determinism & Unicode Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 923,
+          "title": "Inference Context Window & Memory Leak Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T15:44:45.917Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

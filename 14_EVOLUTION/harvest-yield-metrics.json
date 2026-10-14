@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T15:41:17.497Z",
-  "total_cycles_completed": 1380,
-  "total_learnings_persisted": 1380,
-  "total_rules_promoted": 687,
+  "last_updated": "2026-10-14T15:44:45.985Z",
+  "total_cycles_completed": 1381,
+  "total_learnings_persisted": 1381,
+  "total_rules_promoted": 690,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:03:06.800Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv7iyw19",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:06:21.624Z",
       "repository": "autotrust/JEV-35B",
@@ -1403,6 +1396,13 @@
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv8a1wwb",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T15:44:45.985Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv8a6dnw",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
