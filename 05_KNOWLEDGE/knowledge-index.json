@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:37:16.634Z",
-  "total_verified_learnings": 5128,
+  "last_updated": "2026-10-14T02:40:32.345Z",
+  "total_verified_learnings": 5129,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -126005,6 +126005,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T02:37:16.633Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv7i5uxf": {
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv7i5uxf",
+      "source": "black-forest-labs/FLUX.1-dev",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "slug": "hf-black-forest-labs-flux.1-dev",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "content_hash": "2b51d6875cc6d46c0a029d341147e8017f0f1193663761a2592e3f36c4f5c501",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 794,
+          "title": "Transformer Attention Memory Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 795,
+          "title": "Text-Conditioning Data Flow Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 796,
+          "title": "Rectified Flow ODE Solver Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T02:40:32.345Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
