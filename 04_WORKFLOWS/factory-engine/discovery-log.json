@@ -17635,5 +17635,20 @@
     "downloads": 78156,
     "qualityScore": 8280,
     "discoveredAt": "2026-10-14T12:07:09.428Z"
+  },
+  {
+    "name": "opentag",
+    "fullName": "amplifthq/opentag",
+    "url": "https://github.com/amplifthq/opentag",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "OpenMeld: the open-source collaboration system for people and AI agents. Share context, coordinate tasks, and work in parallel with your team, cloud agents, Codex, Claude Code, OpenCode, and Cursor.",
+    "stars": 1358,
+    "forks": 75,
+    "openIssues": 9,
+    "language": "TypeScript",
+    "qualityScore": 970,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-14T14:22:50.595Z"
   }
 ]

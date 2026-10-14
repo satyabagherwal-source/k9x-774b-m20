@@ -3944,3 +3944,7 @@ https://huggingface.co/fishaudio/drama-3
 # --- Automatically Discovered by AI Scout Engine [2026-10-14T12:07:37.718Z] ---
 # [HUGGINGFACE-AI-MODELS] dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 (8280 score) - Verified Hugging Face Model: dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 (628 l
 https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T14:23:45.417Z] ---
+# [AI-AGENTS] amplifthq/opentag (970 score) - OpenMeld: the open-source collaboration system for people and AI agents. Share c
+https://github.com/amplifthq/opentag
