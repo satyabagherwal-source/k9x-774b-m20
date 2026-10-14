@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T05:15:30.910Z",
-  "total_verified_learnings": 5179,
+  "last_updated": "2026-10-14T05:18:43.174Z",
+  "total_verified_learnings": 5180,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -127391,6 +127391,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T05:15:30.910Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-mv7nta3f": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-mv7nta3f",
+      "source": "Cloudflare/clef",
+      "repository": "Cloudflare/clef",
+      "slug": "hf-cloudflare-clef",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef",
+      "source_version": "hf-cloudflare-clef",
+      "content_hash": "1e29c7016e11d95796d2c6d213e80173de75d1a6bc0369823c32008e705f01d3",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 821,
+          "title": "**Strict Token‑ID Alignment Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 822,
+          "title": "**Deterministic Schema‑to‑Logit Mapping Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 823,
+          "title": "**Zero‑Copy Vision Feature Integration Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T05:18:43.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

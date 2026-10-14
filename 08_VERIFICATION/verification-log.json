@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-YU51",
-    "timestamp": "2026-10-12T23:59:26.485Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv5wyu24",
-    "contentHash": "10a53ced2f3cbeb7606d5be891b19b14f3d178f69221385804ce81cc738c9cae",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-2O7X",
     "timestamp": "2026-10-13T00:02:25.437Z",
     "repository": "hexgrad/Kokoro-82M",
@@ -7492,6 +7477,21 @@
     "contentHash": "3a8963c2b36698b6d81e08458c1294faf899c7aa20f7e05ea0f910b0dc1f989b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-TA92",
+    "timestamp": "2026-10-14T05:18:43.238Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-mv7nta3f",
+    "contentHash": "1e29c7016e11d95796d2c6d213e80173de75d1a6bc0369823c32008e705f01d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

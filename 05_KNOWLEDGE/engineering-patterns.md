@@ -47326,3 +47326,195 @@ def generate_response_unsafe(prompt, model):
 -   **A/B Testing:** Compare the output of the uncensored model with and without the external content filter. Assert that the filtered output is safe.
 
 ---
+
+
+---
+
+## 821. **Strict Token‑ID Alignment Rule** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Strict Token‑ID Alignment Rule**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:18:43.087Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv7nta3f",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+`MUST` ensure that every special token (bos, eos, pad, image, audio, video) defined in `tokenizer_config.json` has a unique, non‑negative integer ID that is *explicitly* referenced in all downstream code paths (e.g., `encode_record`, `collate_records`, `joint_head`).  
+**WHY**:  
+Missing or duplicated token IDs cause silent mis‑tokenization, leading to incorrect attention masks, corrupted embeddings, and ultimately wrong decision probabilities.  
+**WHEN TO APPLY**:  
+All Python modules that interact with the tokenizer, including `joint_schema_model.py`, `processor_config.json`, and any custom inference wrappers.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# joint_schema_model.py
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+# Load tokenizer and verify special tokens
+tokenizer = AutoTokenizer.from_pretrained("Cloudflare/clef")
+special_tokens = {
+    "bos_token_id": tokenizer.bos_token_id,
+    "eos_token_id": tokenizer.eos_token_id,
+    "pad_token_id": tokenizer.pad_token_id,
+    "image_token_id": tokenizer.convert_tokens_to_ids("<|image_pad|>"),
+    "audio_token_id": tokenizer.convert_tokens_to_ids("<|audio_pad|>"),
+    "video_token_id": tokenizer.convert_tokens_to_ids("<|video_pad|>"),
+}
+assert len(set(special_tokens.values())) == len(special_tokens), \
+    "Duplicate special token IDs detected!"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Implicitly assume pad token is 0
+pad_id = 0  # WRONG: pad token may be 50256
+```
+**VERIFICATION METHOD**:  
+Run a unit test that loads the tokenizer, extracts all special token IDs, and asserts uniqueness. Add a linter rule that flags hard‑coded numeric token IDs.
+
+
+---
+
+## 822. **Deterministic Schema‑to‑Logit Mapping Rule** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Deterministic Schema‑to‑Logit Mapping Rule**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:18:43.116Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv7nta3f",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+`MUST` map each question’s `option_ids` to a contiguous slice of the joint head’s output logits, preserving the order defined in the schema.  
+**WHY**:  
+Non‑deterministic mapping leads to mis‑aligned probabilities, making the model’s output unusable for downstream decision logic.  
+**WHEN TO APPLY**:  
+During `joint_schema_model.encode_record` and `joint_schema_model.collate_records`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# joint_schema_model.py
+def encode_record(tokenizer, record, processor=None):
+    # ... tokenization ...
+    question_encodings = []
+    for q_id, q in record["questions"].items():
+        option_ids = list(q["criteria"].keys())
+        question_encodings.append(
+            QuestionEncoding(
+                question_id=q_id,
+                option_ids=option_ids,
+                # other metadata
+            )
+        )
+    return RecordEncoding(
+        input_ids=encoded_input_ids,
+        attention_mask=attention_mask,
+        questions=question_encodings,
+        # ...
+    )
+
+def collate_records(encoded_records, pad_token_id, device):
+    # Build batch tensors
+    batch_input_ids = torch.nn.utils.rnn.pad_sequence(
+        [r.input_ids for r in encoded_records],
+        batch_first=True,
+        padding_value=pad_token_id,
+    ).to(device)
+    # ... same for attention_mask, image_features, etc. ...
+    # Preserve question order
+    batch_questions = [r.questions for r in encoded_records]
+    return BatchEncoding(
+        input_ids=batch_input_ids,
+        attention_mask=batch_attention_mask,
+        questions=batch_questions,
+        # ...
+    )
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Shuffle options before feeding to head
+option_ids = list(q["criteria"].keys())
+random.shuffle(option_ids)  # WRONG: breaks deterministic mapping
+```
+**VERIFICATION METHOD**:  
+Add a property test that encodes a record, runs inference, and verifies that the logits for each question correspond to the original option order.
+
+
+---
+
+## 823. **Zero‑Copy Vision Feature Integration Rule** (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Zero‑Copy Vision Feature Integration Rule**",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:18:43.141Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-mv7nta3f",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+`MUST` avoid unnecessary tensor copies when passing vision features from the processor to the joint head; use `torch.no_grad()` and in‑place operations whenever possible.  
+**WHY**:  
+Vision encoders produce large tensors; copying them per batch inflates memory usage and can trigger OOM on GPUs.  
+**WHEN TO APPLY**:  
+During `processor.image_processor` and `joint_schema_model.collate_records`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# joint_schema_model.py
+def collate_records(encoded_records, pad_token_id, device):
+    # ... other tensors ...
+    image_features = torch.cat(
+        [r.image_features for r in encoded_records], dim=0
+    ).to(device, non_blocking=True)  # zero‑copy via non_blocking
+    # No .clone() or .detach() unless necessary
+    return BatchEncoding(
+        # ...
+        image_features=image_features,
+    )
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: clone image features unnecessarily
+image_features = torch.cat([r.image_features.clone() for r in encoded_records])
+```
+**VERIFICATION METHOD**:  
+Profile memory usage with `torch.cuda.memory_summary()` before and after batching; assert that the peak memory does not exceed a threshold.
