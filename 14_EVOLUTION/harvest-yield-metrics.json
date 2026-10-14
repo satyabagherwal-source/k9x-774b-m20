@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T01:09:51.662Z",
-  "total_cycles_completed": 1145,
-  "total_learnings_persisted": 1145,
+  "last_updated": "2026-10-14T01:12:57.529Z",
+  "total_cycles_completed": 1146,
+  "total_learnings_persisted": 1146,
   "total_rules_promoted": 549,
   "history": [
-    {
-      "timestamp": "2026-10-13T12:53:38.867Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv6omgxr",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T13:00:37.922Z",
       "repository": "trailhq/Trail-Code",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T01:09:51.662Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv7ex8vt",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T01:12:57.529Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7f18ar",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

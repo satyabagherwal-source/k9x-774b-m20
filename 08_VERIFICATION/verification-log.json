@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-AFY6",
-    "timestamp": "2026-10-12T19:28:31.806Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv5nafvw",
-    "contentHash": "dd6dc92825e6492bff4c70447d8f8985cc440aba1f7f153ea445a6789e7d5c1b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-E9X2",
     "timestamp": "2026-10-12T19:31:30.614Z",
     "repository": "mudler/locate-anything.cpp-gguf",
@@ -7490,6 +7475,21 @@
     "repository": "nomic-ai/nomic-embed-text-v1.5",
     "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv7ex8vt",
     "contentHash": "32088a5c24c3c457e53ebb009d7fbf01927b4dab905955d30ed4fe800f657a50",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-18DX",
+    "timestamp": "2026-10-14T01:12:57.525Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7f18ar",
+    "contentHash": "49693ffe69ec2a4ccf8d009f9885e1c0075188baa8e5a2ed27c39592104f1ff2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
