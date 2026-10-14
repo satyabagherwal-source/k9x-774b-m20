@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T09:08:11.639Z",
-  "total_cycles_completed": 1269,
-  "total_learnings_persisted": 1269,
+  "last_updated": "2026-10-14T09:11:12.130Z",
+  "total_cycles_completed": 1270,
+  "total_learnings_persisted": 1270,
   "total_rules_promoted": 624,
   "history": [
-    {
-      "timestamp": "2026-10-13T20:35:23.745Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv754a6b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T20:54:56.933Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T09:08:11.639Z",
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv7w0dyh",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T09:11:12.130Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-hf-liquidai-lfm2-5-24b-a2b-mv7w496w",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

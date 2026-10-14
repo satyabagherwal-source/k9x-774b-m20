@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-VD8P",
-    "timestamp": "2026-10-13T02:16:42.697Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv61vd67",
-    "contentHash": "094a0957e2b64f028fc607969448807d10c1436bd4b43855f6e39f662e43612d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-Z92Z",
     "timestamp": "2026-10-13T02:19:43.931Z",
     "repository": "BAAI/bge-large-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-reranker-v2-m3",
     "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv7w0dyh",
     "contentHash": "a55304da34c35fbccc8fe1c601490ab7d6ed76399dc5220c5c43e754786d2707",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-49A6",
+    "timestamp": "2026-10-14T09:11:12.126Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-hf-liquidai-lfm2-5-24b-a2b-mv7w496w",
+    "contentHash": "2ca9e6338f38e49a5f99c05781ebddfdd762678cfc71f50faac4ea305ae8f8a9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
