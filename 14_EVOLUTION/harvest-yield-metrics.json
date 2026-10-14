@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T14:51:27.419Z",
-  "total_cycles_completed": 1367,
-  "total_learnings_persisted": 1367,
+  "last_updated": "2026-10-14T14:54:41.370Z",
+  "total_cycles_completed": 1368,
+  "total_learnings_persisted": 1368,
   "total_rules_promoted": 682,
   "history": [
-    {
-      "timestamp": "2026-10-14T02:21:05.161Z",
-      "repository": "autotrust/JEV-35B-NVFP4",
-      "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7hgud8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T02:24:08.287Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T14:51:27.419Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv889tq5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T14:54:41.370Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-hf-amazon-chronos-2-mv88dzds",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
