@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-CYD9",
-    "timestamp": "2026-10-13T01:06:24.381Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv5zcy9o",
-    "contentHash": "7f5fecd95e1ffc243aba689d69cd927628e62716532c9a4a01e15af328271747",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-GTIX",
     "timestamp": "2026-10-13T01:09:24.729Z",
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv7q5n63",
     "contentHash": "f23acbf72ae16aaad0a7309c96001315961a7285877eeb56a381593da9259fe9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-9I4S",
+    "timestamp": "2026-10-14T06:27:19.180Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv7q9i23",
+    "contentHash": "1726807c43708b253cb084860cdb1fb2dd29130084ee728d0048ac4c090fe6e1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
