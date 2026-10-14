@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-JIUB",
-    "timestamp": "2026-10-12T22:23:33.155Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv5tjirf",
-    "contentHash": "878a50e56a34619ee2eeb575d5460580776a5afccd2403ba7afd8368c48e7733",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-N9FX",
     "timestamp": "2026-10-12T22:26:27.597Z",
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "apple/LensVLM-9B",
     "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv7kqdu6",
     "contentHash": "d7a9c0bd700827569bb8a58ac34a0cf103048d5410846a6a011087502a190a7b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-U92P",
+    "timestamp": "2026-10-14T03:55:29.521Z",
+    "repository": "Altworld/Hemmingway-1",
+    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv7ku8xd",
+    "contentHash": "997819001521b6bd3e53340ee6821d2db069666a4a2f0ea353010d2325edca8f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

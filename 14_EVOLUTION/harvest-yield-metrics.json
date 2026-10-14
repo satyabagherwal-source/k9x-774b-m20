@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T03:52:29.442Z",
-  "total_cycles_completed": 1197,
-  "total_learnings_persisted": 1197,
-  "total_rules_promoted": 570,
+  "last_updated": "2026-10-14T03:55:29.525Z",
+  "total_cycles_completed": 1198,
+  "total_learnings_persisted": 1198,
+  "total_rules_promoted": 573,
   "history": [
-    {
-      "timestamp": "2026-10-13T16:25:42.984Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6w76yr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T16:28:59.587Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T03:52:29.442Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv7kqdu6",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T03:55:29.525Z",
+      "repository": "Altworld/Hemmingway-1",
+      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv7ku8xd",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
