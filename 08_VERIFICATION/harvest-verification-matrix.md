@@ -1222,3 +1222,4 @@
 | `CYCLE-20261014-P91P` | `2026-10-14T01:59:37.741Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`359f46ba...`) |
 | `CYCLE-20261014-TLVQ` | `2026-10-14T02:03:00.998Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`20f390f7...`) |
 | `CYCLE-20261014-XIBO` | `2026-10-14T02:06:03.012Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`a0d32f97...`) |
+| `CYCLE-20261014-1FBW` | `2026-10-14T02:09:05.756Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`b84b3fd5...`) |

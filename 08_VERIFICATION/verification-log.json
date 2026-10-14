@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-P68D",
-    "timestamp": "2026-10-12T20:35:58.285Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv5pp662",
-    "contentHash": "a7f9f913be04d34b5d5645d9586c2f84fcd7cb3a748ea139e706c6bae6904723",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-T9IP",
     "timestamp": "2026-10-12T20:39:09.169Z",
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -7490,6 +7475,21 @@
     "repository": "convaiinnovations/laya",
     "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv7gxi8o",
     "contentHash": "a0d32f9772e3179594a3a01f98c7a288885cff4678fa6cd569266e1221f73d59",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-1FBW",
+    "timestamp": "2026-10-14T02:09:05.756Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv7h1f8t",
+    "contentHash": "b84b3fd52c638dd586411417c93d7f613005e1a9915b132f7dd5db826464795e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
