@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-R1AF",
-    "timestamp": "2026-10-12T18:17:27.111Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv5kr16r",
-    "contentHash": "51f4133c6cf8e6339f257b40da81b195863d514f60a398470525ad3ad40ca8e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-UVLF",
     "timestamp": "2026-10-12T18:20:26.355Z",
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "bigscience/bloom",
     "learningId": "learn-huggingface-hf-bigscience-bloom-mv7cdbe9",
     "contentHash": "1e5fc8ebc9a5c85988944aa3bb4032090828eecbf6901ee55a0b3dd729f3f1bf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-HAP0",
+    "timestamp": "2026-10-14T00:01:28.164Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv7chalv",
+    "contentHash": "a8327ef5ce677c5ad34afea3ae557c9842043aee8b0669704b3f95eca8431396",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
