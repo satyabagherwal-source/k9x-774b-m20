@@ -1201,3 +1201,4 @@
 | `CYCLE-20261014-C9CZ` | `2026-10-14T00:53:32.387Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`dcf67087...`) |
 | `CYCLE-20261014-FYUV` | `2026-10-14T00:56:25.399Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`a2badd5c...`) |
 | `CYCLE-20261014-KB3S` | `2026-10-14T00:59:47.896Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`92f6a77b...`) |
+| `CYCLE-20261014-OGVB` | `2026-10-14T01:03:01.991Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 787, Rule 788, Rule 789` | Yes (`09956a4e...`) |

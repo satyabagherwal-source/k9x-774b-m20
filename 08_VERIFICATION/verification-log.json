@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-Z6SR",
-    "timestamp": "2026-10-12T19:19:46.731Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv5mz6oo",
-    "contentHash": "9013f85ac59a13de1c241fefe1bd1c7e51afc6546ef83ba91794490c99d30704",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-2RU1",
     "timestamp": "2026-10-12T19:22:33.961Z",
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -7492,6 +7477,21 @@
     "contentHash": "92f6a77b9bf5f9b79e2b550f8900966288d501971d263394f38f87170907ad3c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-OGVB",
+    "timestamp": "2026-10-14T01:03:01.991Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv7eogqa",
+    "contentHash": "09956a4e0974f44e163d4a9f6a1430ef890521e86c447c0ed6856cd8515e699c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

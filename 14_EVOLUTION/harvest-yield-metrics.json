@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:59:47.900Z",
-  "total_cycles_completed": 1142,
-  "total_learnings_persisted": 1142,
-  "total_rules_promoted": 546,
+  "last_updated": "2026-10-14T01:03:01.995Z",
+  "total_cycles_completed": 1143,
+  "total_learnings_persisted": 1143,
+  "total_rules_promoted": 549,
   "history": [
-    {
-      "timestamp": "2026-10-13T12:44:30.909Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv6oaq4r",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T12:47:34.715Z",
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -1403,6 +1396,13 @@
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv7ekb0j",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T01:03:01.995Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv7eogqa",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
