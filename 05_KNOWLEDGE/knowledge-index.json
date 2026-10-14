@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T14:27:43.314Z",
-  "total_verified_learnings": 5318,
+  "last_updated": "2026-10-14T14:41:31.487Z",
+  "total_verified_learnings": 5319,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -131239,6 +131239,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T14:27:43.314Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-google-t5-t5-small-mv87x1v4": {
+      "learning_id": "learn-huggingface-hf-google-t5-t5-small-mv87x1v4",
+      "source": "google-t5/t5-small",
+      "repository": "google-t5/t5-small",
+      "slug": "hf-google-t5-t5-small",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "content_hash": "4347c95f46a4628f2c809ece33aa67f607d030e32d24b2d2d98fd24ae4d04bd5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 913,
+          "title": "Task-Specific Hyperparameter Encapsulation via Configuration",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 914,
+          "title": "Relative Positional Encoding for Length Generalization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 915,
+          "title": "Shared Embeddings for Input and Output",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T14:41:31.487Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

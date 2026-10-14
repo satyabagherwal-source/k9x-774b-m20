@@ -1422,3 +1422,4 @@
 | `CYCLE-20261014-2BW8` | `2026-10-14T14:17:37.976Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`04497d4d...`) |
 | `CYCLE-20261014-6AZB` | `2026-10-14T14:20:43.415Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`31ce0057...`) |
 | `CYCLE-20261014-FB0L` | `2026-10-14T14:27:43.365Z` | `amplifthq/opentag` | Commit diff / Patch analysis | `VERIFIED` | `Rule 912` | Yes (`e2e9b481...`) |
+| `CYCLE-20261014-X21D` | `2026-10-14T14:41:31.537Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 913, Rule 914, Rule 915` | Yes (`4347c95f...`) |

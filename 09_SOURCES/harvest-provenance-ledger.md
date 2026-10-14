@@ -1405,3 +1405,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-baai-bge-m3-mv872bsw` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-14T14:17:37.978Z |
 | `learn-huggingface-hf-qwen-qwen3-0-6b-mv876aw7` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-14T14:20:43.418Z |
 | `learn-github-amplifthq-opentag-mv87fawi` | `https://github.com/amplifthq/opentag` | `b1deea8f` | Multi-dimensional audit evidence | 2026-10-14T14:27:43.367Z |
+| `learn-huggingface-hf-google-t5-t5-small-mv87x1v4` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-14T14:41:31.540Z |

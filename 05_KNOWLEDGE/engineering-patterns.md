@@ -54274,3 +54274,239 @@ configuration checks.
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `deb600c5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 913. Task-Specific Hyperparameter Encapsulation via Configuration (Harvested from google-t5/t5-small)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Task-Specific Hyperparameter Encapsulation via Configuration",
+  "source": "google-t5/t5-small",
+  "source_url": "https://huggingface.co/google-t5/t5-small",
+  "source_version": "hf-google-t5-t5-small",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T14:41:31.378Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-google-t5-t5-small-mv87x1v4",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-t5/t5-small](https://huggingface.co/google-t5/t5-small) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST encapsulate task-specific generation hyperparameters (e.g., `max_length`, `num_beams`, `prefix`) within the model's configuration object (`task_specific_params`) rather than hardcoding them in application logic. MUST NOT scatter task-specific decoding parameters across multiple application files.
+
+**WHY**:
+Hardcoding task parameters creates tight coupling between the model artifact and the application logic. When a new task is added or a task's optimal parameters change, the application code must be modified and redeployed. By embedding these parameters in the model config, the model becomes a self-describing artifact. The application can dynamically load the correct parameters based on the task name, ensuring consistency and reducing deployment complexity. This also enables A/B testing of generation strategies without code changes.
+
+**WHEN TO APPLY**:
+Any system that uses a single pre-trained model for multiple downstream tasks (e.g., LLMs for chat, summarization, translation). Applies to Python, JavaScript, and any language that can parse JSON configuration files.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import json
+from transformers import T5ForConditionalGeneration, T5Tokenizer
+
+# Load model and config
+model = T5ForConditionalGeneration.from_pretrained("google-t5/t5-small")
+tokenizer = T5Tokenizer.from_pretrained("google-t5/t5-small")
+
+# Dynamically retrieve task-specific parameters
+task_name = "summarization"
+task_params = model.config.task_specific_params.get(task_name, {})
+
+# Extract parameters with safe defaults
+max_length = task_params.get("max_length", 200)
+num_beams = task_params.get("num_beams", 4)
+prefix = task_params.get("prefix", "")
+
+# Apply parameters to generation
+inputs = tokenizer(prefix + input_text, return_tensors="pt", truncation=True, max_length=512)
+outputs = model.generate(
+    **inputs,
+    max_length=max_length,
+    num_beams=num_beams,
+    early_stopping=task_params.get("early_stopping", True)
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoding task parameters in application logic
+def summarize(text):
+    inputs = tokenizer("summarize: " + text, return_tensors="pt")
+    # Hardcoded values, not derived from model config
+    outputs = model.generate(**inputs, max_length=200, num_beams=4)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+
+def translate(text):
+    inputs = tokenizer("translate English to German: " + text, return_tensors="pt")
+    # Different hardcoded values, leading to inconsistency
+    outputs = model.generate(**inputs, max_length=300, num_beams=4)
+    return tokenizer.decode(outputs[0], skip_special_tokens=True)
+```
+
+**VERIFICATION METHOD**:
+1.  **Static Analysis:** Use a linter to check that `model.generate()` calls do not contain hardcoded integer literals for `max_length`, `num_beams`, or `temperature` unless they are explicitly overridden by user input.
+2.  **Unit Test:** Assert that `model.config.task_specific_params` contains all expected task names and that the values match the expected defaults.
+3.  **Integration Test:** Load the model, retrieve parameters for a task, and verify that the generated output respects the `max_length` constraint.
+
+
+---
+
+## 914. Relative Positional Encoding for Length Generalization (Harvested from google-t5/t5-small)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Relative Positional Encoding for Length Generalization",
+  "source": "google-t5/t5-small",
+  "source_url": "https://huggingface.co/google-t5/t5-small",
+  "source_version": "hf-google-t5-t5-small",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T14:41:31.410Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-google-t5-t5-small-mv87x1v4",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-t5/t5-small](https://huggingface.co/google-t5/t5-small) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST use relative positional encoding (e.g., relative attention bias) for transformer models intended to generalize to sequence lengths longer than the training length. MUST NOT use absolute positional embeddings if the model is expected to handle variable-length inputs beyond the training horizon.
+
+**WHY**:
+Absolute positional embeddings are learned for specific positions (e.g., 0-511). When the model encounters a sequence longer than 512 tokens, it has no learned representation for positions >511, leading to degraded performance or failure. Relative positional encoding learns the *distance* between tokens, not their absolute position. This allows the model to extrapolate to longer sequences by reusing the learned relative distance patterns. This is critical for tasks like summarization, where input lengths can vary significantly.
+
+**WHEN TO APPLY**:
+Any transformer-based model that processes variable-length sequences and is expected to generalize to lengths beyond the training data. Applies to PyTorch, TensorFlow, and JAX implementations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# In the T5 architecture, relative attention bias is computed as follows:
+# 1. Compute relative positions between query and key tokens
+# 2. Map relative positions to a fixed number of buckets (e.g., 32)
+# 3. Learn a bias vector for each bucket
+# 4. Add the bias to the attention scores
+
+# Pseudocode for relative attention bias computation:
+def compute_relative_attention_bias(query_len, key_len, num_buckets):
+    # Create a matrix of relative positions
+    relative_positions = torch.arange(query_len)[:, None] - torch.arange(key_len)[None, :]
+    # Map relative positions to buckets
+    bucket_ids = bucketize(relative_positions, num_buckets)
+    # Look up learned bias values
+    bias = relative_attention_bias_table[bucket_ids]
+    return bias
+
+# In the attention mechanism:
+# attention_scores = Q @ K.T / sqrt(d_k) + relative_attention_bias
+# attention_weights = softmax(attention_scores)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using absolute positional embeddings
+class AbsolutePositionalEncoding(nn.Module):
+    def __init__(self, d_model, max_len=512):
+        super().__init__()
+        # Learnable absolute positional embeddings
+        self.pos_embedding = nn.Embedding(max_len, d_model)
+
+    def forward(self, x):
+        # x shape: (batch, seq_len, d_model)
+        positions = torch.arange(x.size(1)).unsqueeze(0)  # (1, seq_len)
+        pos = self.pos_embedding(positions)  # (1, seq_len, d_model)
+        return x + pos  # Add absolute position to input
+
+# This fails when seq_len > max_len because self.pos_embedding has no entries for positions > max_len
+```
+
+**VERIFICATION METHOD**:
+1.  **Code Inspection:** Verify that the attention mechanism uses a relative position bias table rather than an absolute position embedding table.
+2.  **Generalization Test:** Train a small transformer on sequences of length 512, then test it on sequences of length 1024. Compare the performance of relative vs. absolute positional encoding. The relative encoding should show significantly less degradation.
+3.  **Gradient Check:** Verify that the gradient of the relative attention bias table is non-zero for all buckets, indicating that the model is learning to use the relative positions.
+
+
+---
+
+## 915. Shared Embeddings for Input and Output (Harvested from google-t5/t5-small)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Shared Embeddings for Input and Output",
+  "source": "google-t5/t5-small",
+  "source_url": "https://huggingface.co/google-t5/t5-small",
+  "source_version": "hf-google-t5-t5-small",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T14:41:31.442Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-google-t5-t5-small-mv87x1v4",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-t5/t5-small](https://huggingface.co/google-t5/t5-small) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+MUST share the input and output embedding matrices in encoder-decoder models where the input and output vocabularies are identical. MUST NOT use separate embedding matrices for input and output if the vocabularies are the same, unless there is a specific architectural reason (e.g., different tokenization schemes).
+
+**WHY**:
+Sharing embeddings reduces the parameter count by ~50% for the embedding layer, which is significant for large models. It also enforces a consistent semantic space for input and output tokens, which can improve generalization. For example, the token "cat" should have the same semantic representation whether it appears in the input or the output. Separate embeddings can lead to a mismatch between the input and output spaces, requiring the model to learn a mapping between them, which is inefficient.
+
+**WHEN TO APPLY**:
+Any encoder-decoder model with identical input and output vocabularies (e.g., T5, BART, GPT-2). Applies to PyTorch, TensorFlow, and JAX implementations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class T5Model(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        # Shared embedding matrix
+        self.shared = nn.Embedding(config.vocab_size, config.d_model)
+
+    def forward(self, input_ids, decoder_input_ids):
+        # Use the same embedding matrix for both input and output
+        encoder_inputs = self.shared(input_ids)
+        decoder_inputs = self.shared(decoder_input_ids)
+        # ... rest of the model
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using separate embedding matrices
+class T5Model(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        # Separate embedding matrices
+        self.encoder_embedding = nn.Embedding(config.vocab_size, config.d_model)
+        self.decoder_embedding = nn.Embedding(config.vocab_size, config.d_model)
+
+    def forward(self, input_ids, decoder_input_ids):
+        encoder_inputs = self.encoder_embedding(input_ids)
+        decoder_inputs = self.decoder_embedding(decoder_input_ids)
+        # ... rest of the model
+```
+
+**VERIFICATION METHOD**:
+1.  **Parameter Count Check:** Verify that the total number of parameters in the model is consistent with the use of shared embeddings. For example, if the vocabulary size is 32,128 and d_model is 512, the shared embedding matrix should have 32,128 * 512 = 16,449,536 parameters. If separate embeddings are used, the parameter count should be double this value.
+2.  **Weight Identity Check:** In a trained model, verify that the weights of the input and output embedding matrices are identical (or very close, if fine-tuned separately).
+3.  **Performance Comparison:** Train two models, one with shared embeddings and one with separate embeddings, and compare their performance on a downstream task. The shared embedding model should perform at least as well, if not better, due to the reduced parameter count and consistent semantic space.

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-UHHA",
-    "timestamp": "2026-10-13T07:23:57.310Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv6cuhbr",
-    "contentHash": "b97eb9065cb78bfbc59caf7c660e2348b8854a8a741cf173bc30aefced9901a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-1IIL",
     "timestamp": "2026-10-13T07:29:25.245Z",
     "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -7492,6 +7477,21 @@
     "contentHash": "e2e9b481a56a6665ecbccb42410af9c2a95e98cc4282ed5f23efdb5d3d9921ba",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-X21D",
+    "timestamp": "2026-10-14T14:41:31.537Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv87x1v4",
+    "contentHash": "4347c95f46a4628f2c809ece33aa67f607d030e32d24b2d2d98fd24ae4d04bd5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
