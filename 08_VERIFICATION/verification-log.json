@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-DVOU",
-    "timestamp": "2026-10-13T03:27:05.646Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv64dvmh",
-    "contentHash": "84127fce89f02d63d3dd66d14799db5de48f115a26f96a9134d8847525003bfb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-HQ3K",
     "timestamp": "2026-10-13T03:30:05.024Z",
     "repository": "autotrust/JEV-35B",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GEV-26B-Decide",
     "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv7ymg0n",
     "contentHash": "3dc2d9b73071ae3a7f14fb06864661b9d9b1ec600e5a873172d57fcaafb1ca2c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-QHGA",
+    "timestamp": "2026-10-14T10:24:28.378Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv7yqhdh",
+    "contentHash": "d345443b787bd7ce33c03555bd6a8a5706b00ba38eb42205550b6f47636a7ea6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
