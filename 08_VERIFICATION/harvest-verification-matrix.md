@@ -1344,3 +1344,4 @@
 | `CYCLE-20261014-MESO` | `2026-10-14T09:53:18.696Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`57c97e9d...`) |
 | `CYCLE-20261014-QE63` | `2026-10-14T09:56:24.507Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`630c2258...`) |
 | `CYCLE-20261014-UDUH` | `2026-10-14T09:59:30.713Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`dcaadee1...`) |
+| `CYCLE-20261014-YDQ1` | `2026-10-14T10:02:37.177Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`3db89b6f...`) |
