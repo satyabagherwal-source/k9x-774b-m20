@@ -1339,3 +1339,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv7yyis5` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-14T10:30:43.455Z |
 | `learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv7z2xsz` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-14T10:34:09.564Z |
 | `learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv7z6yz6` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-14T10:37:17.708Z |
+| `learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7zb0lb` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-14T10:40:26.423Z |

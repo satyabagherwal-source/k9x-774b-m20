@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-XJWH",
-    "timestamp": "2026-10-13T03:42:23.489Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv64xjua",
-    "contentHash": "c4b494da010bed5fe1fbb9fd9309cab6a76cae0f1f4e970fe25c5de8c1fbe77d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-1ES5",
     "timestamp": "2026-10-13T03:45:23.477Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
     "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv7z6yz6",
     "contentHash": "2c64172091a9b2fb684b45c60286fd685dacda3f71b1546c66a6992a6c3cf27f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-B0OK",
+    "timestamp": "2026-10-14T10:40:26.420Z",
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7zb0lb",
+    "contentHash": "ff8ba6b3059cda30c99aa1c075172b4b1e2a8ba197367ae42a3b8c07d0be0eef",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
