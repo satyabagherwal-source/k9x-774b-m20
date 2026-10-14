@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:38:10.959Z",
-  "total_verified_learnings": 5090,
+  "last_updated": "2026-10-14T00:41:12.079Z",
+  "total_verified_learnings": 5091,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -125050,6 +125050,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T00:38:10.959Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv7dwe3b": {
+      "learning_id": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv7dwe3b",
+      "source": "NaiveAI/Naive-N0.5-Flash",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "slug": "hf-naiveai-naive-n0.5-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+      "source_version": "hf-naiveai-naive-n0.5-flash",
+      "content_hash": "c848be7c4b86138e8a76234c1862e1f6105fd3897e25ba205ed99195e77c2790",
+      "dossier_path": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T00:41:12.079Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
