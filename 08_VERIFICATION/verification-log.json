@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-3Y8T",
-    "timestamp": "2026-10-12T23:07:25.853Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv5v3y5w",
-    "contentHash": "9cce72cf127f9bd7862fcb4fc5e8d1a57f34b92882ca05996cc0d48a8719235c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-8BBS",
     "timestamp": "2026-10-12T23:10:49.432Z",
     "repository": "google/embeddinggemma-2",
@@ -7490,6 +7475,21 @@
     "repository": "inclusionAI/Ming-Image-0.1-Design",
     "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv7ltg2k",
     "contentHash": "cc2087c962d2dd81b4cf7be5bf7962813f25c98740b2258dee6038f7f3c7ec3c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-XHF5",
+    "timestamp": "2026-10-14T04:25:59.921Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv7lxhbp",
+    "contentHash": "e656e84c8b6d8250e4432b9852991a147d2dc6be3badffa4f12ebb1d33377bdd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
