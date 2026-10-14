@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:31:57.412Z",
-  "total_cycles_completed": 1210,
-  "total_learnings_persisted": 1210,
+  "last_updated": "2026-10-14T04:35:08.406Z",
+  "total_cycles_completed": 1211,
+  "total_learnings_persisted": 1211,
   "total_rules_promoted": 581,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:06:29.613Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6xnmrd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:09:25.511Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T04:31:57.412Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv7m556s",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T04:35:08.406Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv7m98iq",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
