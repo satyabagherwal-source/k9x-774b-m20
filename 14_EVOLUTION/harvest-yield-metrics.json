@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T15:34:47.392Z",
-  "total_cycles_completed": 1378,
-  "total_learnings_persisted": 1378,
+  "last_updated": "2026-10-14T15:38:00.843Z",
+  "total_cycles_completed": 1379,
+  "total_learnings_persisted": 1379,
   "total_rules_promoted": 687,
   "history": [
-    {
-      "timestamp": "2026-10-14T02:57:08.730Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv7ir7r2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:00:07.203Z",
       "repository": "moonshotai/Kimi-K3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T15:34:47.392Z",
       "repository": "fishaudio/drama-3",
       "learningId": "learn-huggingface-hf-fishaudio-drama-3-mv89tjwz",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T15:38:00.843Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv89xp52",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-EU8R",
-    "timestamp": "2026-10-13T09:03:45.819Z",
-    "repository": "sentence-transformers/all-mpnet-base-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6geu4x",
-    "contentHash": "215415289cc5a5ef2e52d020a9f5f26234a8fcdea0671c1510471480edb07560",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-JXXS",
     "timestamp": "2026-10-13T09:07:43.888Z",
     "repository": "BAAI/bge-reranker-v2-m3",
@@ -7490,6 +7475,21 @@
     "repository": "fishaudio/drama-3",
     "learningId": "learn-huggingface-hf-fishaudio-drama-3-mv89tjwz",
     "contentHash": "7760dc0c00c97d463ebcc985332bf8948780a5a3807ab8d2dd6bcde233b550b0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-XP8N",
+    "timestamp": "2026-10-14T15:38:00.839Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv89xp52",
+    "contentHash": "81e68c75df5f52040f0107f1b3cda5934e413e4615f80f2ba53b900bbe7061f1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
