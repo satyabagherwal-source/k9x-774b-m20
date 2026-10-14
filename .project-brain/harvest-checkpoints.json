@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:43:56.902Z",
+  "last_updated": "2026-10-14T06:46:56.438Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1168,15 +1168,15 @@
       "repository": "openai/gpt-oss-20b",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-openai-gpt-oss-20b-mv7chalv",
-      "content_hash": "a8327ef5ce677c5ad34afea3ae557c9842043aee8b0669704b3f95eca8431396",
-      "verified_at": "2026-10-14T00:01:28.168Z",
+      "learning_id": "learn-huggingface-hf-openai-gpt-oss-20b-mv7qyqfk",
+      "content_hash": "a1c1ae6ec0204cbfd5dfb84b6d2001f838b9e1952d4be22250ff0c33c476ce2f",
+      "verified_at": "2026-10-14T06:46:56.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T00:01:28.168Z"
+      "last_updated": "2026-10-14T06:46:56.438Z"
     },
     "meta-llama/Llama-2-7b-chat-hf": {
       "repository": "meta-llama/Llama-2-7b-chat-hf",

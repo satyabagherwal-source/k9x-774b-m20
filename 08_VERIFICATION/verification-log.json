@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-0Q80",
-    "timestamp": "2026-10-13T01:24:53.568Z",
-    "repository": "sentence-transformers/all-mpnet-base-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv600q4w",
-    "contentHash": "b6027129e0726fddc0fcce39be13ac4bd3c05f04e6a1a15413a4a22503ac1d95",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-4Z8S",
     "timestamp": "2026-10-13T01:28:11.884Z",
     "repository": "BAAI/bge-reranker-v2-m3",
@@ -7490,6 +7475,21 @@
     "repository": "bigscience/bloom",
     "learningId": "learn-huggingface-hf-bigscience-bloom-mv7quvvw",
     "contentHash": "503d10f106a05424afa5309e42d69c6f16b138965f7fb35eeff4bf4eaa2aa7ae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-YQIA",
+    "timestamp": "2026-10-14T06:46:56.434Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv7qyqfk",
+    "contentHash": "a1c1ae6ec0204cbfd5dfb84b6d2001f838b9e1952d4be22250ff0c33c476ce2f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
