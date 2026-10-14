@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:09:05.700Z",
-  "total_verified_learnings": 5119,
+  "last_updated": "2026-10-14T02:12:11.225Z",
+  "total_verified_learnings": 5120,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -125778,6 +125778,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T02:09:05.700Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv7h5edr": {
+      "learning_id": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv7h5edr",
+      "source": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "slug": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "content_hash": "bf23a3ce102cd70496d1df9664334c3f86b8b4e9d9895d1f86f4fbaca8e912d8",
+      "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 792,
+          "title": "Quantization Format-Engine Compatibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 793,
+          "title": "VRAM Budgeting & Quantization Selection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T02:12:11.225Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

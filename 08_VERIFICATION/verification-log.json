@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-T9IP",
-    "timestamp": "2026-10-12T20:39:09.169Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv5pt9gt",
-    "contentHash": "ee748338901b5944dcd18888203ce3c4ac8868e0ebd3de99818e896f33b33e61",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-X54M",
     "timestamp": "2026-10-12T20:42:10.102Z",
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "b84b3fd52c638dd586411417c93d7f613005e1a9915b132f7dd5db826464795e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-5EGR",
+    "timestamp": "2026-10-14T02:12:11.259Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv7h5edr",
+    "contentHash": "bf23a3ce102cd70496d1df9664334c3f86b8b4e9d9895d1f86f4fbaca8e912d8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

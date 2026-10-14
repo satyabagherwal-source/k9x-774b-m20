@@ -1223,3 +1223,4 @@
 | `CYCLE-20261014-TLVQ` | `2026-10-14T02:03:00.998Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`20f390f7...`) |
 | `CYCLE-20261014-XIBO` | `2026-10-14T02:06:03.012Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`a0d32f97...`) |
 | `CYCLE-20261014-1FBW` | `2026-10-14T02:09:05.756Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`b84b3fd5...`) |
+| `CYCLE-20261014-5EGR` | `2026-10-14T02:12:11.259Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `VERIFIED` | `Rule 792, Rule 793` | Yes (`bf23a3ce...`) |
