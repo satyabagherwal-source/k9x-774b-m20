@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:54:41.367Z",
-  "total_cycles_completed": 1355,
-  "total_learnings_persisted": 1355,
-  "total_rules_promoted": 670,
+  "last_updated": "2026-10-14T13:57:52.673Z",
+  "total_cycles_completed": 1356,
+  "total_learnings_persisted": 1356,
+  "total_rules_promoted": 673,
   "history": [
-    {
-      "timestamp": "2026-10-14T01:44:08.127Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv7g5bnv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T01:47:27.634Z",
       "repository": "BAAI/bge-large-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T13:54:41.367Z",
       "repository": "unsloth/embeddinggemma-2-GGUF",
       "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv868tj7",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T13:57:52.673Z",
+      "repository": "Cloudflare/clef",
+      "learningId": "learn-huggingface-hf-cloudflare-clef-mv86cx3m",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-BJTQ",
-    "timestamp": "2026-10-13T06:41:14.270Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv6bbjqu",
-    "contentHash": "f44586202f667779ab10603deb4beb71ec31ea4e2a5404746851c427778f644f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-FB3X",
     "timestamp": "2026-10-13T06:44:09.597Z",
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/embeddinggemma-2-GGUF",
     "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv868tj7",
     "contentHash": "b9ae788b5c2621df8741951cf7f85f03d25b9aa7772b89f861c335fe47d23a1b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-CXB2",
+    "timestamp": "2026-10-14T13:57:52.670Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-mv86cx3m",
+    "contentHash": "65edfe54ef7e6b07a8df10209d803891ec1b39b5493adc7a02a092188f113feb",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
