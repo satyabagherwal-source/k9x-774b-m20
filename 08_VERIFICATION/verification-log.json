@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-N9FX",
-    "timestamp": "2026-10-12T22:26:27.597Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv5tn9cx",
-    "contentHash": "8db96a33debd5e25f9bc38a5e656e79921c31cdfaa78b5feea802bbf6174bf43",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-R1IF",
     "timestamp": "2026-10-12T22:29:23.943Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7492,6 +7477,21 @@
     "contentHash": "997819001521b6bd3e53340ee6821d2db069666a4a2f0ea353010d2325edca8f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-Y6HT",
+    "timestamp": "2026-10-14T03:58:32.801Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv7ky6ej",
+    "contentHash": "6300d0e9c1eebde8324d24102717763f95cc40c58b2ea6fe5177bdf82fbfad26",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
