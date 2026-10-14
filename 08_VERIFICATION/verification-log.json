@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-UNS3",
-    "timestamp": "2026-10-12T23:56:11.619Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv5wunq4",
-    "contentHash": "deb68c4d8933afc0fbd95c5f22f89ef8ddc1c2cc4b688e91a3d58b0e896d5a54",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-YU51",
     "timestamp": "2026-10-12T23:59:26.485Z",
     "repository": "microsoft/FrogNano-4B-2609",
@@ -7490,6 +7475,21 @@
     "repository": "google/embeddinggemma-2",
     "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv7nl6j6",
     "contentHash": "d2a0ced8fd236f7aff35e928e2c473a3ff3c977476831ff6ef328900f0095edb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-P5W4",
+    "timestamp": "2026-10-14T05:15:30.964Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv7np5t3",
+    "contentHash": "3a8963c2b36698b6d81e08458c1294faf899c7aa20f7e05ea0f910b0dc1f989b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
