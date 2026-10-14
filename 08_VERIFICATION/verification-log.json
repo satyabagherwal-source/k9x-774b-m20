@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-VC5K",
-    "timestamp": "2026-10-13T06:56:37.448Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv6bvc2l",
-    "contentHash": "fe43101f414389acfdb75a1e8a78b88d10132fcea363f3ffccd8d0c24a2d3c66",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-Z9TI",
     "timestamp": "2026-10-13T06:59:41.046Z",
     "repository": "stabilityai/stable-diffusion-3-medium",
@@ -7490,6 +7475,21 @@
     "repository": "google/electra-base-discriminator",
     "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv86wty5",
     "contentHash": "546a6756fa59c58873a4647e810a8dec863ec523524354ab2a471c9be236be6e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-2BW8",
+    "timestamp": "2026-10-14T14:17:37.976Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-m3-mv872bsw",
+    "contentHash": "04497d4d58f4d0f28a9eb582b91336ac2dd5af16653a6defae3b8a1886776136",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1419,3 +1419,4 @@
 | `CYCLE-20261014-OTPZ` | `2026-10-14T14:07:07.895Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 910, Rule 911` | Yes (`aec522d6...`) |
 | `CYCLE-20261014-SOT3` | `2026-10-14T14:10:08.151Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`54f56609...`) |
 | `CYCLE-20261014-WU1D` | `2026-10-14T14:13:21.553Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`546a6756...`) |
+| `CYCLE-20261014-2BW8` | `2026-10-14T14:17:37.976Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`04497d4d...`) |

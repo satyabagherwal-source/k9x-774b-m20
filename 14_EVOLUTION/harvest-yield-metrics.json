@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T14:13:21.557Z",
-  "total_cycles_completed": 1360,
-  "total_learnings_persisted": 1360,
+  "last_updated": "2026-10-14T14:17:37.980Z",
+  "total_cycles_completed": 1361,
+  "total_learnings_persisted": 1361,
   "total_rules_promoted": 678,
   "history": [
-    {
-      "timestamp": "2026-10-14T01:59:37.745Z",
-      "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv7gp8y7",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T02:03:01.002Z",
       "repository": "autotrust/GEV-26B-Decide",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T14:13:21.557Z",
       "repository": "google/electra-base-discriminator",
       "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv86wty5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T14:17:37.980Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-m3-mv872bsw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

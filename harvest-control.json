@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-14T14:13:18.611Z",
+  "lastUpdated": "2026-10-14T14:17:37.087Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-14T14:13:24.077Z",
-        "lastHarvestedAt": "2026-10-14T14:13:24.077Z",
-        "totalHarvested": 3490,
+        "lastActiveAt": "2026-10-14T14:17:40.497Z",
+        "lastHarvestedAt": "2026-10-14T14:17:40.497Z",
+        "totalHarvested": 3491,
         "lastError": null
       },
       {
@@ -295,10 +295,10 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1791990799124,
-      "resetAt": "2026-10-14T15:13:19.124Z",
-      "trippedAt": "2026-10-14T14:13:04.125Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aweb-framework%20language%3Atypescript%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=2)",
+      "resetEpoch": 1791991059045,
+      "resetAt": "2026-10-14T15:17:39.045Z",
+      "trippedAt": "2026-10-14T14:17:24.045Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Acloud-native%20language%3Ago%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=1)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
