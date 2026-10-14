@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:51:51.914Z",
-  "total_cycles_completed": 1394,
-  "total_learnings_persisted": 1394,
+  "last_updated": "2026-10-14T16:54:58.186Z",
+  "total_cycles_completed": 1395,
+  "total_learnings_persisted": 1395,
   "total_rules_promoted": 696,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:46:11.126Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv7kia43",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:49:15.999Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T16:51:51.914Z",
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv8cko6k",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T16:54:58.186Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv8conwt",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

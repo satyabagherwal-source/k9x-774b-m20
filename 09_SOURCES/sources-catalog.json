@@ -1055,9 +1055,9 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "48a7e1d268d8ca4828a827ed5c9cce42e00c6a97d070f33b7a22df5b7bfcdbee",
-    "lastHarvestedAt": "2026-10-14T07:28:07.905Z",
-    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv7sfpcu"
+    "contentHash": "a21f9859c02b729687ce5d5a85be757b853292d1805842b0d83315b8416e8097",
+    "lastHarvestedAt": "2026-10-14T16:54:58.185Z",
+    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv8conwt"
   },
   "hf-qwen-qwen3-4b": {
     "repository": "Qwen/Qwen3-4B",

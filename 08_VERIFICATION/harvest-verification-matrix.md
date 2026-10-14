@@ -1453,3 +1453,4 @@
 | `CYCLE-20261014-0RH5` | `2026-10-14T16:36:22.937Z` | `pathwaycom/serviette` | Commit diff / Patch analysis | `VERIFIED` | `Rule 926` | Yes (`a24ccc15...`) |
 | `CYCLE-20261014-GRKV` | `2026-10-14T16:48:49.567Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `VERIFIED` | `Rule 927, Rule 928, Rule 929` | Yes (`92a837f4...`) |
 | `CYCLE-20261014-KO9Y` | `2026-10-14T16:51:51.910Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`71784e7c...`) |
+| `CYCLE-20261014-OO06` | `2026-10-14T16:54:58.182Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`a21f9859...`) |
