@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:41:19.228Z",
-  "total_cycles_completed": 1213,
-  "total_learnings_persisted": 1213,
+  "last_updated": "2026-10-14T04:44:22.893Z",
+  "total_cycles_completed": 1214,
+  "total_learnings_persisted": 1214,
   "total_rules_promoted": 584,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:15:36.466Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv6xzcpo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:18:29.760Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T04:41:19.228Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv7mh6nz",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T04:44:22.893Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv7ml4e0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
