@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:28:54.914Z",
-  "total_cycles_completed": 1209,
-  "total_learnings_persisted": 1209,
+  "last_updated": "2026-10-14T04:31:57.412Z",
+  "total_cycles_completed": 1210,
+  "total_learnings_persisted": 1210,
   "total_rules_promoted": 581,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:03:16.987Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6xji5s",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:06:29.613Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T04:28:54.914Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv7m18du",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T04:31:57.412Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv7m556s",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

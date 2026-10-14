@@ -1251,3 +1251,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv7ltg2k` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-14T04:22:51.668Z |
 | `learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv7lxhbp` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-14T04:25:59.923Z |
 | `learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv7m18du` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-10-14T04:28:54.913Z |
+| `learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv7m556s` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-14T04:31:57.410Z |

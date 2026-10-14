@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-C4ND",
-    "timestamp": "2026-10-12T23:13:47.401Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv5vc4kc",
-    "contentHash": "8ba3d522d8a44af479f1458f56c4c1052ce45a528991e6a292e9dc69598bcdd6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-G68Y",
     "timestamp": "2026-10-12T23:16:56.098Z",
     "repository": "Cloudflare/clef",
@@ -7490,6 +7475,21 @@
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv7m18du",
     "contentHash": "feb5e17171af5821920d6fc9879efe7fcfcb8c4291748ad36c77b97f684878f7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-559C",
+    "timestamp": "2026-10-14T04:31:57.408Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv7m556s",
+    "contentHash": "70806992a7e0fb5a6bc4c12344c158cb622d391294337ae5f514d2d964d711b8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
