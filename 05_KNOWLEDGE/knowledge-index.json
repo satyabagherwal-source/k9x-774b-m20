@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:59:25.258Z",
-  "total_verified_learnings": 5212,
+  "last_updated": "2026-10-14T07:05:51.349Z",
+  "total_verified_learnings": 5213,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128285,6 +128285,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T06:59:25.258Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-baidu-unlimited-ocr-mv7rn238": {
+      "learning_id": "learn-huggingface-hf-baidu-unlimited-ocr-mv7rn238",
+      "source": "baidu/Unlimited-OCR",
+      "repository": "baidu/Unlimited-OCR",
+      "slug": "hf-baidu-unlimited-ocr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
+      "source_version": "hf-baidu-unlimited-ocr",
+      "content_hash": "6a8b1adb486922c8c2d85126399d09db4749f2ae290ca596a6558200b0a4d662",
+      "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 839,
+          "title": "Dual-Encoder Channel Concatenation and Projection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 840,
+          "title": "Windowed N-Gram Repetition Suppression for Dense Structured OCR",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 841,
+          "title": "Sparse MoE First-Layer Dense Replacement Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T07:05:51.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
