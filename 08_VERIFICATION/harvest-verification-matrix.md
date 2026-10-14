@@ -1433,3 +1433,4 @@
 | `CYCLE-20261014-1SAV` | `2026-10-14T15:13:11.815Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`17d6fe3d...`) |
 | `CYCLE-20261014-79BS` | `2026-10-14T15:17:27.160Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`1bbd9df7...`) |
 | `CYCLE-20261014-B5QF` | `2026-10-14T15:20:29.127Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`470a901c...`) |
+| `CYCLE-20261014-F7G3` | `2026-10-14T15:23:37.971Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 919, Rule 920` | Yes (`3710bdc2...`) |

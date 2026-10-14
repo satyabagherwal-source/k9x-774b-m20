@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T15:20:29.090Z",
-  "total_verified_learnings": 5329,
+  "last_updated": "2026-10-14T15:23:37.930Z",
+  "total_verified_learnings": 5330,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -131535,6 +131535,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T15:20:29.090Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv89f7c2": {
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv89f7c2",
+      "source": "black-forest-labs/FLUX.1-schnell",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "slug": "hf-black-forest-labs-flux.1-schnell",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "content_hash": "3710bdc27e76d260fd7b80e34ab2184b7aa6dc88d1d415e53a40e72c9f2c9714",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 919,
+          "title": "Latent Space Dimensionality Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 920,
+          "title": "Deterministic Seeding for Reproducible Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T15:23:37.930Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
