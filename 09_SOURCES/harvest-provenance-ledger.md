@@ -1298,3 +1298,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv7r30qx` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-14T06:50:16.555Z |
 | `learn-huggingface-hf-meta-llama-llama-2-7b-mv7r6te4` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-14T06:53:13.541Z |
 | `learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv7rb42b` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-14T06:56:33.998Z |
+| `learn-huggingface-hf-deepseek-ai-deepseek-v3-mv7res9v` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-14T06:59:25.296Z |
