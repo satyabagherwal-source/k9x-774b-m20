@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-CJ6D",
-    "timestamp": "2026-10-13T01:34:04.309Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv60cj41",
-    "contentHash": "53dc84cb1ef9d4076e282073299f41d21ab6085d328b63b09a0f0665962fbc65",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-GC4R",
     "timestamp": "2026-10-13T01:37:01.803Z",
     "repository": "openai-community/gpt2",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Llama-2-7b",
     "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv7r6te4",
     "contentHash": "8c1f61e8e4d3cccb781cd444462b47b45e1d555b03ec76f7cacc504c4beab7e6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-B45N",
+    "timestamp": "2026-10-14T06:56:33.995Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv7rb42b",
+    "contentHash": "2697a89fa2fa578f7bf5a7ee22e36a90bee89a74352a2c8704c129a29204d1bd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

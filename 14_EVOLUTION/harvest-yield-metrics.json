@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:53:13.543Z",
-  "total_cycles_completed": 1255,
-  "total_learnings_persisted": 1255,
+  "last_updated": "2026-10-14T06:56:33.999Z",
+  "total_cycles_completed": 1256,
+  "total_learnings_persisted": 1256,
   "total_rules_promoted": 603,
   "history": [
-    {
-      "timestamp": "2026-10-13T19:48:05.964Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv73fgj9",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T19:51:03.238Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T06:53:13.543Z",
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv7r6te4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T06:56:33.999Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv7rb42b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
