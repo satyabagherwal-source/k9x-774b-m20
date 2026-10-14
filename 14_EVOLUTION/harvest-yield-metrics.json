@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:39:15.320Z",
-  "total_cycles_completed": 1317,
-  "total_learnings_persisted": 1317,
+  "last_updated": "2026-10-14T11:42:26.012Z",
+  "total_cycles_completed": 1318,
+  "total_learnings_persisted": 1318,
   "total_rules_promoted": 646,
   "history": [
-    {
-      "timestamp": "2026-10-13T23:44:03.018Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv7buw5m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T23:47:04.324Z",
       "repository": "openai/gpt-oss-120b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T11:39:15.320Z",
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv81enis",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T11:42:26.012Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv81iqno",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
