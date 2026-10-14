@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-PXHQ",
-    "timestamp": "2026-10-13T04:32:27.086Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv66pxdg",
-    "contentHash": "67ae5db69a83ee4adbdbc1e11dbde7410cc37067167594852560414a94e42521",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-TVMN",
     "timestamp": "2026-10-13T04:35:31.295Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7492,6 +7477,21 @@
     "contentHash": "d5282fa9165ad5acdac6583ea21cfde9f698432ca4ab018f7a181931d1ac00ad",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-2GR5",
+    "timestamp": "2026-10-14T11:29:46.577Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv812gm9",
+    "contentHash": "56b2274c789b495af0253946fd179e7486357534e1dccc500ccbcddb73b6e1bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

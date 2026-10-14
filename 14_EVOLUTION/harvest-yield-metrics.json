@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:26:29.625Z",
-  "total_cycles_completed": 1313,
-  "total_learnings_persisted": 1313,
-  "total_rules_promoted": 640,
+  "last_updated": "2026-10-14T11:29:46.582Z",
+  "total_cycles_completed": 1314,
+  "total_learnings_persisted": 1314,
+  "total_rules_promoted": 643,
   "history": [
-    {
-      "timestamp": "2026-10-13T23:31:10.366Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv7bebzc",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T23:34:12.795Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1403,6 +1396,13 @@
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
       "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv80y8ow",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T11:29:46.582Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv812gm9",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
