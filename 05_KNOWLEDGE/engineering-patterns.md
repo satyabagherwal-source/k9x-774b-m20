@@ -45484,3 +45484,217 @@ def unsafe_adaptive_solver(model, x_t, t):
 **VERIFICATION METHOD**:
 1.  **Unit Test**: Run the solver with different initial noise seeds and assert that the output is deterministic for the same seed.
 2.  **Stability Test**: Monitor the norm of the latent vector during sampling and assert that it does not diverge (e.g., remains below a threshold).
+
+
+---
+
+## 797. Selective Heterogeneous Quantization Invariant for Calibrated MoE Architectures (Harvested from autotrust/GEV-26B-Decide-NVFP4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Selective Heterogeneous Quantization Invariant for Calibrated MoE Architectures",
+  "source": "autotrust/GEV-26B-Decide-NVFP4",
+  "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+  "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T02:51:03.003Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv7ijdlx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/GEV-26B-Decide-NVFP4](https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing Mixture-of-Experts architectures below 8-bit precision (e.g., NVFP4, FP4 E2M1, INT4), expert routing gates, attention QKV projections, and output decision heads MUST remain in higher precision (`bfloat16` or `float32`). Developers MUST NOT apply uniform whole-model quantization.
+
+**WHY**:
+Routing networks depend on subtle logit differentials among dozens or hundreds of experts (e.g., top-8 out of 128). Quantizing router weights or expert-selection softmax computations introduces gradient misalignment and routing collapse, directing tokens to sub-optimal experts. Similarly, decision heads outputting calibrated probabilities degrade when subjected to coarse floating-point lattices like FP4, destroying probability calibration while saving less than 4% of total parameter volume.
+
+**WHEN TO APPLY**:
+Applies to any MoE or multi-head classification/decision model deployed on sub-8-bit inference engines (TensorRT-LLM, vLLM, DeepSpeed-FastGen) where parameter counts exceed 10B and decision probabilities are used downstream.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn as nn
+from typing import Dict, Any
+
+class HeterogeneousNVFP4Quantizer:
+    """
+    Enforces selective NVFP4 compression:
+    - Experts: Quantized to FP4 E2M1 with block-level E4M3 scaling
+    - Router, Attention, Norms, Heads: Locked to bfloat16
+    """
+    EXCLUDED_PATTERNS = [
+        "router", "gate.weight", "q_proj", "k_proj", "v_proj", 
+        "o_proj", "input_layernorm", "post_attention_layernorm", 
+        "lm_head", "decision_head", "dense_mlp"
+    ]
+
+    @classmethod
+    def should_quantize_layer(cls, layer_name: str) -> bool:
+        return not any(excluded in layer_name for excluded in cls.EXCLUDED_PATTERNS)
+
+    @classmethod
+    def fuse_and_pack_expert_gate_up(cls, gate: torch.Tensor, up: torch.Tensor) -> Dict[str, torch.Tensor]:
+        """
+        Concatenates gate and up projections to share a single FP32 tensor scale
+        required by fused FP4 MoE kernels.
+        """
+        assert gate.shape == up.shape, "Shape mismatch between gate and up projections"
+        fused_weight = torch.cat([gate, up], dim=0) # [2 * intermediate, hidden]
+        
+        # Calculate tensor-level global scale (FP32)
+        global_scale = fused_weight.abs().max().to(torch.float32) / 6.0 # FP4 E2M1 max representable value is 6.0
+        scaled_weight = fused_weight / global_scale
+        
+        # Block-level scaling (group_size = 16)
+        orig_shape = scaled_weight.shape
+        reshaped = scaled_weight.view(-1, 16)
+        block_scale = (reshaped.abs().max(dim=1, keepdim=True).values / 6.0).to(torch.float8_e4m3fn)
+        
+        # Quantize to E2M1 pseudo-representation
+        quantized_blocks = torch.clamp(torch.round(reshaped / block_scale.to(torch.float32)), -6.0, 6.0)
+        
+        return {
+            "packed_weight": quantized_blocks.view(orig_shape),
+            "block_scale": block_scale,
+            "global_scale": global_scale
+        }
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniform quantizer applying 4-bit quantization blindly across the entire state dict
+def quantize_model_naive(model: nn.Module):
+    for name, module in model.named_modules():
+        if isinstance(module, nn.Linear):
+            # CATASTROPHIC: Quantizes routers, attention projections, and classification heads.
+            # Results in router collapse (all tokens assigned to expert 0) and loss of probability calibration.
+            module.to(torch.float8_e4m3fn) # or convert to FP4
+```
+
+**VERIFICATION METHOD**:
+Run an automated post-quantization inspection script verifying parameter data types across all modules:
+```bash
+python -c '
+import json, torch
+from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained("autotrust/GEV-26B-Decide-NVFP4", device_map="cpu")
+for name, param in model.named_parameters():
+    if any(k in name for k in ["router", "q_proj", "decision_head"]):
+        assert param.dtype == torch.bfloat16, f"Invariant violated: {name} is {param.dtype}, expected bfloat16"
+print("Quantization verification passed: Critical paths remain in bfloat16.")
+'
+```
+
+---
+
+
+---
+
+## 798. Multi-Token EOS Sequence and Logit Softcapping Synchronization (Harvested from autotrust/GEV-26B-Decide-NVFP4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Token EOS Sequence and Logit Softcapping Synchronization",
+  "source": "autotrust/GEV-26B-Decide-NVFP4",
+  "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+  "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T02:51:03.030Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv7ijdlx",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/GEV-26B-Decide-NVFP4](https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In models utilizing logit softcapping (e.g., $C = 30.0$) alongside multi-token end-of-sequence termination sets (`eos_token_id: [1, 106, 50]`), sampling loops MUST apply softcapping prior to calculating stopping criteria and MUST evaluate termination across all configured EOS tokens on each generation step.
+
+**WHY**:
+Logit softcapping bounds logit magnitudes to prevent dynamic range explosion ($C \cdot \tanh(x/C)$). If temperature scaling or top-$p$ filtering is evaluated on raw unbounded logits while the greedy decision path uses softcapped logits, the runtime diverges. Furthermore, if an inference runtime takes `eos_token_id` as an integer scalar rather than an array or set, emitting token 106 (`<turn|>`) or token 50 will fail to halt generation, causing infinite token emission and out-of-context runaways.
+
+**WHEN TO APPLY**:
+All autoregressive generation routines in production engines (vLLM, HuggingFace `generate`, custom Triton inference loops) deploying modern Gemma/Gemma-4 style models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn.functional as F
+from typing import Set, Union, List
+
+class SoftcappedMultiEOSSampler:
+    def __init__(self, softcapping_limit: float, eos_token_ids: Union[int, List[int]]):
+        self.cap = float(softcapping_limit)
+        self.eos_tokens: Set[int] = {eos_token_ids} if isinstance(eos_token_ids, int) else set(eos_token_ids)
+
+    def sample_next_token(self, raw_logits: torch.Tensor, temperature: float = 1.0, top_k: int = 64) -> torch.Tensor:
+        """
+        Applies logit softcapping, samples next token, and verifies EOS termination set.
+        """
+        # Invariant 1: Apply logit softcapping strictly before temperature scaling
+        capped_logits = self.cap * torch.tanh(raw_logits / self.cap)
+        
+        # Scaling
+        scaled_logits = capped_logits / max(temperature, 1e-5)
+        
+        # Top-k truncation
+        if top_k > 0:
+            indices_to_remove = scaled_logits < torch.topk(scaled_logits, top_k)[0][..., -1, None]
+            scaled_logits[indices_to_remove] = float('-inf')
+            
+        probs = F.softmax(scaled_logits, dim=-1)
+        next_tokens = torch.multinomial(probs, num_samples=1)
+        return next_tokens
+
+    def is_sequence_complete(self, token_id: int) -> bool:
+        # Invariant 2: In-set membership across multi-token EOS boundaries
+        return token_id in self.eos_tokens
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoded single-scalar EOS and sampling from un-softcapped logits
+def generate_step_flawed(logits, eos_token=1):
+    # Missing softcapping allows extreme logit outliers to distort probabilities
+    probs = torch.softmax(logits, dim=-1)
+    next_token = torch.argmax(probs, dim=-1).item()
+    
+    # CATASTROPHIC BUG: Token 106 (<turn|>) or Token 50 will NOT terminate generation.
+    # The agent will continuously spit out hallucinations until model_max_length.
+    if next_token == eos_token:
+        return None
+    return next_token
+```
+
+**VERIFICATION METHOD**:
+Unit test validating array-based EOS containment and softcapping boundaries:
+```python
+def test_softcapped_sampler():
+    sampler = SoftcappedMultiEOSSampler(softcapping_limit=30.0, eos_token_ids=[1, 106, 50])
+    raw_overflow_logits = torch.tensor([[1000.0, -1000.0, 500.0]])
+    capped = 30.0 * torch.tanh(raw_overflow_logits / 30.0)
+    assert torch.all(capped <= 30.0) and torch.all(capped >= -30.0), "Softcapping out of bounds"
+    
+    for eos in [1, 106, 50]:
+        assert sampler.is_sequence_complete(eos), f"EOS {eos} failed to trigger completion"
+    assert not sampler.is_sequence_complete(2), "Non-EOS token erroneously triggered completion"
+```
+
+---

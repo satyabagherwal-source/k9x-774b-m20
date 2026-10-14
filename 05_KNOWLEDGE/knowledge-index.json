@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:46:39.188Z",
-  "total_verified_learnings": 5131,
+  "last_updated": "2026-10-14T02:51:03.067Z",
+  "total_verified_learnings": 5132,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -126093,6 +126093,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T02:46:39.188Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv7ijdlx": {
+      "learning_id": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv7ijdlx",
+      "source": "autotrust/GEV-26B-Decide-NVFP4",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "slug": "hf-autotrust-gev-26b-decide-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
+      "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
+      "content_hash": "4ee2d93effa542cfd5343a7a09fe4041fe6f95a9bb4f1490e710a6a29bd416d9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 797,
+          "title": "Selective Heterogeneous Quantization Invariant for Calibrated MoE Architectures",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 798,
+          "title": "Multi-Token EOS Sequence and Logit Softcapping Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T02:51:03.066Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

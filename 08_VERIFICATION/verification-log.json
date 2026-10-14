@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-3YAH",
-    "timestamp": "2026-10-12T21:15:27.449Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv5r3y7i",
-    "contentHash": "79a04ccd0119fb45e142f97be2505bd0533d27f59429a93f6b048d9b1a9de327",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-7LW4",
     "timestamp": "2026-10-12T21:18:18.004Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7492,6 +7477,21 @@
     "contentHash": "716c80f189c45c32ea21009e89ccde84b618dc49d056e7eee60ef409421a3c3d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-JDQQ",
+    "timestamp": "2026-10-14T02:51:03.122Z",
+    "repository": "autotrust/GEV-26B-Decide-NVFP4",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv7ijdlx",
+    "contentHash": "4ee2d93effa542cfd5343a7a09fe4041fe6f95a9bb4f1490e710a6a29bd416d9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
