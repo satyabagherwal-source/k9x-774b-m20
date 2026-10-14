@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-QKT4",
-    "timestamp": "2026-10-13T02:40:58.840Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv62qkq8",
-    "contentHash": "857d292f02ed9d0a4ad41e9a3d67e222b6bdc49d27c7aff51d0d39c9bd416a6a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-UB5U",
     "timestamp": "2026-10-13T02:43:52.962Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-26B-A4B-it",
     "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv7wy347",
     "contentHash": "b7b1e2ae50abff0e64b253f3aa81df45d7fc45d74750afd8d89b97f9f8745661",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-23QS",
+    "timestamp": "2026-10-14T09:37:31.252Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv7x23nw",
+    "contentHash": "dfecd8fef49aff1ef4ec61aa4d226b88cd10285ff271f0ec0ab0b50fa19bc8eb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
