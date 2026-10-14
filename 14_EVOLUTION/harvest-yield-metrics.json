@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T10:27:39.781Z",
-  "total_cycles_completed": 1294,
-  "total_learnings_persisted": 1294,
+  "last_updated": "2026-10-14T10:30:43.456Z",
+  "total_cycles_completed": 1295,
+  "total_learnings_persisted": 1295,
   "total_rules_promoted": 631,
   "history": [
-    {
-      "timestamp": "2026-10-13T22:32:47.538Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv79b965",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T22:35:58.017Z",
       "repository": "Cloudflare/clef",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T10:27:39.781Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
       "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv7yul1h",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T10:30:43.456Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv7yyis5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

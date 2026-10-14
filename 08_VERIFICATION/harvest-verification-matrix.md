@@ -1353,3 +1353,4 @@
 | `CYCLE-20261014-MG41` | `2026-10-14T10:21:20.017Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`3dc2d9b7...`) |
 | `CYCLE-20261014-QHGA` | `2026-10-14T10:24:28.378Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`d345443b...`) |
 | `CYCLE-20261014-UL4X` | `2026-10-14T10:27:39.777Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`c4a2c7a9...`) |
+| `CYCLE-20261014-YIV1` | `2026-10-14T10:30:43.453Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`08393127...`) |
