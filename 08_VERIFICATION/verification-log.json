@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-T6KU",
-    "timestamp": "2026-10-12T20:11:05.742Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv5ot6hu",
-    "contentHash": "810f23f27c6fa0e8922d2670229da3ce642e90f82ac97e3e82150e8f9b93c113",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-X6J3",
     "timestamp": "2026-10-12T20:14:12.303Z",
     "repository": "BAAI/bge-small-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "Bingsu/adetailer",
     "learningId": "learn-huggingface-hf-bingsu-adetailer-mv7g1b0m",
     "contentHash": "ed941032966044558449e5091d9610587abe13a2bfb421d158bcf3e18789531f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-5BR0",
+    "timestamp": "2026-10-14T01:44:08.124Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv7g5bnv",
+    "contentHash": "1a8542d1a4d144c9b6ffabfa4c36dc53afb4d95a3edebec8176e31eed4244017",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
