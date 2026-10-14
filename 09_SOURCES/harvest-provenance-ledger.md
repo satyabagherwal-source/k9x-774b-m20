@@ -1305,3 +1305,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-qwen-qwen3-4b-mv7t62g6` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-14T07:48:37.985Z |
 | `learn-huggingface-hf-fermionresearch-phonon-2-mv7ty58m` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-14T08:10:27.928Z |
 | `learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7ukxlf` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-10-14T08:28:11.069Z |
+| `learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv7v5mbk` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-10-14T08:44:16.289Z |

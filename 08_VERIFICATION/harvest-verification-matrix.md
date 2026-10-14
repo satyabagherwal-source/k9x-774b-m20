@@ -1322,3 +1322,4 @@
 | `CYCLE-20261014-62N3` | `2026-10-14T07:48:37.983Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 844, Rule 845, Rule 846` | Yes (`76d07aad...`) |
 | `CYCLE-20261014-Y5EE` | `2026-10-14T08:10:27.926Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 847, Rule 848` | Yes (`e2d09e56...`) |
 | `CYCLE-20261014-KXQ2` | `2026-10-14T08:28:11.066Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 849, Rule 850` | Yes (`a29e0c7b...`) |
+| `CYCLE-20261014-5MHQ` | `2026-10-14T08:44:16.286Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 851, Rule 852, Rule 853` | Yes (`a6b4d635...`) |

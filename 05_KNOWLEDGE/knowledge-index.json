@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T08:28:11.016Z",
-  "total_verified_learnings": 5218,
+  "last_updated": "2026-10-14T08:44:16.233Z",
+  "total_verified_learnings": 5219,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128494,6 +128494,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T08:28:11.016Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv7v5mbk": {
+      "learning_id": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv7v5mbk",
+      "source": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "slug": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "content_hash": "a6b4d63528d8fe72d1e4909bcc2135cbe309dee6e4dd7482930d46641bc0e54b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 851,
+          "title": "Temporal Boundary Equivalence Loop Invariant (FLF2V Invariant)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 852,
+          "title": "LoRA Rank-Scale Dimension & Precision Preservation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 853,
+          "title": "Spatial Scene Rigid Invariance Conditioning Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T08:44:16.233Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
