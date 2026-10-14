@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:53:40.231Z",
-  "total_cycles_completed": 1217,
-  "total_learnings_persisted": 1217,
+  "last_updated": "2026-10-14T04:56:44.391Z",
+  "total_cycles_completed": 1218,
+  "total_learnings_persisted": 1218,
   "total_rules_promoted": 584,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:30:12.538Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv6yi4pg",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:33:25.292Z",
       "repository": "argmaxinc/whisperkit-coreml",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T04:53:40.231Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv7mx2gp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T04:56:44.391Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv7n10j3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
