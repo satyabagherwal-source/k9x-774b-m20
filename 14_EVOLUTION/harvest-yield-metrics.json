@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T05:09:17.933Z",
-  "total_cycles_completed": 1222,
-  "total_learnings_persisted": 1222,
+  "last_updated": "2026-10-14T05:12:25.292Z",
+  "total_cycles_completed": 1223,
+  "total_learnings_persisted": 1223,
   "total_rules_promoted": 584,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:45:50.455Z",
-      "repository": "BAAI/bge-base-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6z28e8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:48:58.525Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T05:09:17.933Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv7nh5yr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T05:12:25.292Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv7nl6j6",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
