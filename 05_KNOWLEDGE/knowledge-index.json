@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T05:25:04.579Z",
-  "total_verified_learnings": 5182,
+  "last_updated": "2026-10-14T05:28:21.637Z",
+  "total_verified_learnings": 5183,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -127495,6 +127495,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T05:25:04.579Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-google-bert-bert-base-uncased-mv7o5ogj": {
+      "learning_id": "learn-huggingface-hf-google-bert-bert-base-uncased-mv7o5ogj",
+      "source": "google-bert/bert-base-uncased",
+      "repository": "google-bert/bert-base-uncased",
+      "slug": "hf-google-bert-bert-base-uncased",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+      "source_version": "hf-google-bert-bert-base-uncased",
+      "content_hash": "a7a91e399bd325e948a21f5c5f5db34d3137d46fde64295aff0cd668323e2aea",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 827,
+          "title": "The Absolute Positional Embedding Boundary Constraint",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 828,
+          "title": "The Uncased Normalization Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T05:28:21.637Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

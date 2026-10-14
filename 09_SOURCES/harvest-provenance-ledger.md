@@ -1269,3 +1269,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-cloudflare-clef-mv7nta3f` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-14T05:18:43.241Z |
 | `learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-10-14T05:22:06.354Z |
 | `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv7o1gg9` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-14T05:25:04.640Z |
+| `learn-huggingface-hf-google-bert-bert-base-uncased-mv7o5ogj` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-14T05:28:21.690Z |

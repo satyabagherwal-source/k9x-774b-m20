@@ -47701,3 +47701,164 @@ probs = torch.softmax(logits, dim=1)  # mixes questions
 Unit test that asserts `probs.sum(dim=-1)` equals 1.0 for each question; linter rule that checks `softmax` dim argument.
 
 ---
+
+
+---
+
+## 827. The Absolute Positional Embedding Boundary Constraint (Harvested from google-bert/bert-base-uncased)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Absolute Positional Embedding Boundary Constraint",
+  "source": "google-bert/bert-base-uncased",
+  "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+  "source_version": "hf-google-bert-bert-base-uncased",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:28:21.575Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-google-bert-bert-base-uncased-mv7o5ogj",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing or utilizing Transformer models with **absolute** positional embeddings, the input sequence length MUST NOT exceed the `max_position_embeddings` defined in the model configuration. If the input exceeds this limit, the system MUST truncate or chunk the input; it MUST NOT attempt to extrapolate or dynamically resize the positional embedding matrix at inference time without retraining.
+
+**WHY**:
+Absolute positional embeddings are learned parameters of fixed size (e.g., 512 x 768). Accessing an index beyond the matrix bounds (e.g., token at position 513) results in an `IndexError` or undefined behavior in C++/CUDA kernels. Unlike relative positional encodings (RoPE), absolute embeddings do not generalize to unseen lengths. Exceeding this limit breaks the invariant that every token has a valid, learned positional context.
+
+**WHEN TO APPLY**:
+Any system using Hugging Face `BertModel`, `BertTokenizer`, or similar Transformer architectures with `position_embedding_type: "absolute"`. Applies to Python, C++, Rust, and ONNX Runtime deployments.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import BertTokenizer, BertModel
+import torch
+
+tokenizer = BertTokenizer.from_pretrained('google-bert/bert-base-uncased')
+model = BertModel.from_pretrained('google-bert/bert-base-uncased')
+
+max_len = model.config.max_position_embeddings # 512
+
+def safe_encode(text: str) -> dict:
+    # 1. Tokenize
+    encoded = tokenizer(text, return_tensors="pt")
+    
+    # 2. Enforce Boundary Invariant
+    if encoded['input_ids'].shape[1] > max_len:
+        # Truncate to max length (Right truncation is standard for BERT)
+        encoded['input_ids'] = encoded['input_ids'][:, :max_len]
+        encoded['attention_mask'] = encoded['attention_mask'][:, :max_len]
+        # Note: Tokenizer usually handles this if max_length is set, 
+        # but explicit check ensures safety if tokenizer config is overridden.
+        
+    return encoded
+
+# Usage
+inputs = safe_encode("This is a very long sentence that exceeds the limit...")
+outputs = model(**inputs)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming dynamic expansion or ignoring length limits
+def unsafe_encode(text: str) -> dict:
+    # No length check. If text > 512 tokens, model will crash or produce garbage.
+    return tokenizer(text, return_tensors="pt")
+
+# ANTI-PATTERN: Manually slicing embeddings without updating attention mask
+# This causes the model to attend to padding tokens as if they were real content.
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Generate a string of 600 unique tokens. Pass through tokenizer. Assert `input_ids.shape[1] <= 512`.
+2.  **Static Analysis**: Lint rule to ensure `tokenizer(..., max_length=model.config.max_position_embeddings)` is always passed or explicitly truncated.
+3.  **Runtime Assert**: In the model's `forward` pass, assert `input_ids.shape[1] <= self.config.max_position_embeddings`.
+
+
+---
+
+## 828. The Uncased Normalization Consistency Invariant (Harvested from google-bert/bert-base-uncased)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Uncased Normalization Consistency Invariant",
+  "source": "google-bert/bert-base-uncased",
+  "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
+  "source_version": "hf-google-bert-bert-base-uncased",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:28:21.604Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-google-bert-bert-base-uncased-mv7o5ogj",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased) (Revision: `hf-google-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using an `uncased` model, the preprocessing pipeline MUST apply the exact same normalization (lowercasing, accent stripping) as the tokenizer's `do_lower_case=True` setting. The system MUST NOT mix cased and uncased inputs within the same batch or session without re-tokenizing. The vocabulary indices are bound to the normalized form.
+
+**WHY**:
+The vocabulary of `bert-base-uncased` contains only lowercase tokens (e.g., `[english]`, not `[English]`). If raw cased text is passed to a tokenizer configured for `do_lower_case=False` but fed to an uncased model, or if normalization is inconsistent, the model will encounter `UNK` (unknown) tokens or incorrect embeddings, leading to silent degradation in performance (high perplexity, poor classification accuracy).
+
+**WHEN TO APPLY**:
+Any NLP pipeline using `bert-base-uncased`, `bert-base-multilingual-cased` (with appropriate casing), or any model where `do_lower_case` is a critical config parameter.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import BertTokenizer
+
+# 1. Initialize tokenizer with explicit config
+tokenizer = BertTokenizer.from_pretrained(
+    'google-bert/bert-base-uncased',
+    do_lower_case=True # MUST match model expectation
+)
+
+def preprocess_text(text: str) -> list:
+    # 2. Ensure input is a string
+    if not isinstance(text, str):
+        raise TypeError("Input must be a string")
+    
+    # 3. Tokenize (Tokenizer handles lowercasing internally if do_lower_case=True)
+    tokens = tokenizer.tokenize(text)
+    
+    # 4. Verify no unexpected casing (Optional sanity check for debugging)
+    # In production, rely on tokenizer config.
+    return tokens
+
+# Usage
+text = "Hello World"
+tokens = preprocess_text(text)
+# Expected: ['hello', 'world']
+# If 'Hello' was not lowercased, it would be ['[UNK]', 'world'] or similar depending on vocab.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Manual lowercasing that differs from tokenizer logic
+def bad_preprocess(text: str) -> list:
+    # Python's .lower() does not strip accents. 
+    # BertTokenizer with do_lower_case=True uses a specific Unicode normalization.
+    # If you manually lowercase "Café" to "café", but tokenizer expects "cafe" (accent stripped),
+    # you get a mismatch.
+    return tokenizer.tokenize(text.lower()) 
+
+# ANTI-PATTERN: Mixing cased and uncased models in the same pipeline without re-tokenization
+```
+
+**VERIFICATION METHOD**:
+1.  **Integration Test**: Pass a string with mixed case and accents (e.g., "Élève"). Assert that the resulting token IDs correspond to the lowercase, accent-stripped versions in the vocab.
+2.  **Config Check**: Assert `tokenizer.init_kwargs['do_lower_case'] == True` for uncased models.

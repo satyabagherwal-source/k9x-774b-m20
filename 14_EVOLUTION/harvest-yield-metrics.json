@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T05:25:04.642Z",
-  "total_cycles_completed": 1227,
-  "total_learnings_persisted": 1227,
-  "total_rules_promoted": 590,
+  "last_updated": "2026-10-14T05:28:21.692Z",
+  "total_cycles_completed": 1228,
+  "total_learnings_persisted": 1228,
+  "total_rules_promoted": 592,
   "history": [
-    {
-      "timestamp": "2026-10-13T18:01:07.364Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv6zlvwk",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T18:04:12.887Z",
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -1403,6 +1396,13 @@
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv7o1gg9",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T05:28:21.692Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv7o5ogj",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
