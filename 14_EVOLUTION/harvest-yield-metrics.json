@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:53:58.985Z",
-  "total_cycles_completed": 1178,
-  "total_learnings_persisted": 1178,
+  "last_updated": "2026-10-14T02:57:08.730Z",
+  "total_cycles_completed": 1179,
+  "total_learnings_persisted": 1179,
   "total_rules_promoted": 559,
   "history": [
-    {
-      "timestamp": "2026-10-13T15:19:11.097Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv6ttmsd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T15:22:30.159Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T02:53:58.985Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv7in5cl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T02:57:08.730Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv7ir7r2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

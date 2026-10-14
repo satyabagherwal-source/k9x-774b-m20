@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-BRP0",
-    "timestamp": "2026-10-12T21:21:32.148Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv5rbrmh",
-    "contentHash": "602df1e69355c9baf08cec03b6719b119469ba804b351ceffa16df80f1b96d8c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-FK5T",
     "timestamp": "2026-10-12T21:24:29.009Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7490,6 +7475,21 @@
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv7in5cl",
     "contentHash": "1637aa46ce0492442e67b7aee31edefaab06db28a093f4de35bb625ae42b5e73",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-R7UE",
+    "timestamp": "2026-10-14T02:57:08.726Z",
+    "repository": "deepseek-ai/DeepSeek-R1",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv7ir7r2",
+    "contentHash": "3e47484920269e840df353cbd086f7483062eed575ba68f58ad51eed596a2da0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
