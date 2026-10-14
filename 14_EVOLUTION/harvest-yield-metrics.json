@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:10:42.036Z",
-  "total_cycles_completed": 1126,
-  "total_learnings_persisted": 1126,
+  "last_updated": "2026-10-14T00:14:01.015Z",
+  "total_cycles_completed": 1127,
+  "total_learnings_persisted": 1127,
   "total_rules_promoted": 544,
   "history": [
-    {
-      "timestamp": "2026-10-13T11:40:49.475Z",
-      "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv6m0thg",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T11:43:47.277Z",
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T00:10:42.036Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
       "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv7ct5yx",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T00:14:01.015Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv7cxfit",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
