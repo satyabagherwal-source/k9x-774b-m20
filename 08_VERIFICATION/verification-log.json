@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-ODZA",
-    "timestamp": "2026-10-13T08:15:12.070Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv6eodvz",
-    "contentHash": "55ec05924e305993d98a82e67f5c5cbc2dc9aafed567e38679662c7e6e2937db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-32AB",
     "timestamp": "2026-10-13T08:26:36.755Z",
     "repository": "Qwen/Qwen3-4B",
@@ -7492,6 +7477,21 @@
     "contentHash": "47ffb5f5c5c875072b75b52e37660b8563cc3d7c40a864b1ad47eb72600d8527",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-XNVD",
+    "timestamp": "2026-10-14T15:09:59.449Z",
+    "repository": "microsoft/FrogNano-4B-2609",
+    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv88xntc",
+    "contentHash": "1d9d1dc110c6c8f8e9067b8421116aa130ba8497bb520b0abda40bade475ca91",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -3,8 +3,8 @@
 > **Source Version**: `hf-microsoft`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-14T06:02:26.092Z  
-> **Learning ID**: `learn-huggingface-hf-microsoft-frognano-4b-2609-mv7pdi24`  
+> **Timestamp**: 2026-10-14T15:09:59.376Z  
+> **Learning ID**: `learn-huggingface-hf-microsoft-frognano-4b-2609-mv88xntc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/microsoft/FrogNano-4B-2609](https://huggingface.co/microsoft/FrogNano-4B-2609))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-14T06:02:25.304Z  
+> **Harvest Timestamp**: 2026-10-14T15:09:58.717Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1534 downloads | 157 likes
+- **Stars / Engagement**: 1601 downloads | 157 likes
 
 ---
 
