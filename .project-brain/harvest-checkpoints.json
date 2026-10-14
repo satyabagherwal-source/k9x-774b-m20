@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:01:37.750Z",
+  "last_updated": "2026-10-14T11:04:49.436Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -230,15 +230,15 @@
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv7idq1m",
-      "content_hash": "716c80f189c45c32ea21009e89ccde84b618dc49d056e7eee60ef409421a3c3d",
-      "verified_at": "2026-10-14T02:46:39.245Z",
+      "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv806dfb",
+      "content_hash": "26cc5e0704940739363a8782ad0810aeee87c22b62f53dd39c1c17a36d02c94f",
+      "verified_at": "2026-10-14T11:04:49.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T02:46:39.245Z"
+      "last_updated": "2026-10-14T11:04:49.436Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",

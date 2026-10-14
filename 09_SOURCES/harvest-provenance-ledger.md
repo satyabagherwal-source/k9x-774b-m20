@@ -1347,3 +1347,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-qwen-qwen3-8-27b-mv7zufg6` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-14T10:55:32.147Z |
 | `learn-huggingface-hf-black-forest-labs-flux-1-dev-mv7zy6w3` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-14T10:58:27.634Z |
 | `learn-huggingface-hf-francisring-prism-mv8029js` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-14T11:01:37.747Z |
+| `learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv806dfb` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-14T11:04:49.434Z |
