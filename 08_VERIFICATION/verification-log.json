@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-P216",
-    "timestamp": "2026-10-13T01:15:49.002Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv5zp1y8",
-    "contentHash": "d4e80497ddb872ae56ba18a4002fd7ed269646c0a0aa2892a1dbed12ae4203f3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-SZK7",
     "timestamp": "2026-10-13T01:18:52.423Z",
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv7qiyti",
     "contentHash": "8fd7f24344c6d933e4acbb9456102a0ad0c7e678ecf78d3cf5ad716339b4c840",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-N5LR",
+    "timestamp": "2026-10-14T06:37:56.127Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv7qn5jq",
+    "contentHash": "147abcedf185d4186bd4fd5af1cacee4e0593eed52e8b2e365348b1686e9be76",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

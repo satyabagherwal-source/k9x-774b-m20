@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:34:40.770Z",
-  "total_verified_learnings": 5204,
+  "last_updated": "2026-10-14T06:37:56.090Z",
+  "total_verified_learnings": 5205,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128077,6 +128077,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T06:34:40.770Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-zai-org-glm-5-2-mv7qn5jq": {
+      "learning_id": "learn-huggingface-hf-zai-org-glm-5-2-mv7qn5jq",
+      "source": "zai-org/GLM-5.2",
+      "repository": "zai-org/GLM-5.2",
+      "slug": "hf-zai-org-glm-5.2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/zai-org/GLM-5.2",
+      "source_version": "hf-zai-org-glm-5.2",
+      "content_hash": "147abcedf185d4186bd4fd5af1cacee4e0593eed52e8b2e365348b1686e9be76",
+      "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T06:37:56.090Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
