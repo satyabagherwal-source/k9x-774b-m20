@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-H12M",
-    "timestamp": "2026-10-13T03:57:32.206Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv65h104",
-    "contentHash": "c20a39ea539801907c9a71cb336c8b4f333e087256de21f95b092246ba4c67b2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-KQN1",
     "timestamp": "2026-10-13T04:00:25.309Z",
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -7490,6 +7475,21 @@
     "repository": "Cactus-Compute/whistle",
     "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv7zqdul",
     "contentHash": "1d68b4cf1193be9913885d18059d6fee278b61616efc8d5c501c5a153c98dbde",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-UFJL",
+    "timestamp": "2026-10-14T10:55:32.145Z",
+    "repository": "Qwen/Qwen3.8-27B",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv7zufg6",
+    "contentHash": "337ed10a488ffd6e51e0ea5624ca21b2fb2d50567396f8ae2310690ef513cdb3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
