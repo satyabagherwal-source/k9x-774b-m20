@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-2O7X",
-    "timestamp": "2026-10-13T00:02:25.437Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv5x2o4x",
-    "contentHash": "44aee37c81aa967d23482de75ac5e02214881901de553ec8bd9bc856901db23d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-6IHW",
     "timestamp": "2026-10-13T00:05:24.644Z",
     "repository": "openai/whisper-large-v3",
@@ -7490,6 +7475,21 @@
     "repository": "Cloudflare/clef",
     "learningId": "learn-huggingface-hf-cloudflare-clef-mv7nta3f",
     "contentHash": "1e29c7016e11d95796d2c6d213e80173de75d1a6bc0369823c32008e705f01d3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-XMZ4",
+    "timestamp": "2026-10-14T05:22:06.352Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2",
+    "contentHash": "07e7c68d78f6764a1ffcc6076a07029678189605c2a295a2f7875365a22d371b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

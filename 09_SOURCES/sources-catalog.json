@@ -725,9 +725,9 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceVersion": "hf-cloudflare-clef-flash",
     "license": "Open-Source",
-    "contentHash": "373793cf1a7f9a2dc04d3c65a3ed489cff1eec2e588cf900ec5b8477c24e2b14",
-    "lastHarvestedAt": "2026-10-13T22:39:13.953Z",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv79jjdb"
+    "contentHash": "07e7c68d78f6764a1ffcc6076a07029678189605c2a295a2f7875365a22d371b",
+    "lastHarvestedAt": "2026-10-14T05:22:06.354Z",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",

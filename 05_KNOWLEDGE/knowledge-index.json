@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T05:18:43.174Z",
-  "total_verified_learnings": 5180,
+  "last_updated": "2026-10-14T05:22:06.303Z",
+  "total_verified_learnings": 5181,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -127431,6 +127431,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T05:18:43.174Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2",
+      "source": "Cloudflare/clef-flash",
+      "repository": "Cloudflare/clef-flash",
+      "slug": "hf-cloudflare-clef-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "content_hash": "07e7c68d78f6764a1ffcc6076a07029678189605c2a295a2f7875365a22d371b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 824,
+          "title": "[Special Token Consistency Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 825,
+          "title": "[Mixed‑Precision Safety Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 826,
+          "title": "[Per‑Question Normalisation Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T05:22:06.303Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

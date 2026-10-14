@@ -47518,3 +47518,186 @@ image_features = torch.cat([r.image_features.clone() for r in encoded_records])
 ```
 **VERIFICATION METHOD**:  
 Profile memory usage with `torch.cuda.memory_summary()` before and after batching; assert that the peak memory does not exceed a threshold.
+
+
+---
+
+## 824. [Special Token Consistency Rule] (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Special Token Consistency Rule]",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:22:06.221Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+All special token IDs (`bos_token_id`, `eos_token_id`, `pad_token_id`) must be defined in both the tokenizer configuration and the model configuration; they must never be `null` or `None`.
+
+**WHY**:  
+A missing special token causes the tokenizer to fall back to default values that may not match the model’s expectations, leading to mis‑aligned embeddings, truncated sequences, or silent padding errors that manifest as NaNs or incorrect logits.
+
+**WHEN TO APPLY**:  
+During model initialisation (`load_release_model`) and any custom tokenizer construction in downstream code.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# load_release_model
+def load_release_model(path: str, device: str = "cpu"):
+    tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True)
+    model = AutoModelForCausalLM.from_pretrained(
+        path,
+        device_map=device,
+        torch_dtype=torch.bfloat16,
+        trust_remote_code=True,
+    )
+    # Verify consistency
+    for token_name in ("bos_token_id", "eos_token_id", "pad_token_id"):
+        token_id = getattr(tokenizer, token_name, None)
+        model_id = getattr(model.config, token_name, None)
+        if token_id is None or model_id is None:
+            raise ValueError(f"Missing {token_name} in tokenizer or model config")
+        if token_id != model_id:
+            raise ValueError(f"{token_name} mismatch: tokenizer={token_id} vs model={model_id}")
+    return model, tokenizer
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Allowing null special tokens
+tokenizer = AutoTokenizer.from_pretrained(path)
+model = AutoModelForCausalLM.from_pretrained(path)
+# No validation – may silently use defaults
+```
+
+**VERIFICATION METHOD**:  
+Unit test that loads the model and asserts equality of the three token IDs; a linter rule that flags `None` assignments to `bos_token_id`, `eos_token_id`, or `pad_token_id`.
+
+---
+
+
+---
+
+## 825. [Mixed‑Precision Safety Rule] (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Mixed‑Precision Safety Rule]",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:22:06.248Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+When the model is loaded with `torch.bfloat16`, every operation that requires higher precision (e.g., softmax, loss computation, or any custom head that uses `float32` weights) must explicitly cast tensors back to `float32` before the operation and cast results back to `bfloat16` if they are fed into subsequent `bfloat16` layers.
+
+**WHY**:  
+`bfloat16` has a limited exponent range; performing softmax or other numerically sensitive operations in `bfloat16` can overflow or underflow, producing NaNs that propagate through the network.
+
+**WHEN TO APPLY**:  
+During forward passes of the joint head and any custom post‑processing that involves exponentials or divisions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class JointHead(nn.Module):
+    def forward(self, hidden_states, schema_repr):
+        # hidden_states: [batch, seq_len, hidden_dim] in bfloat16
+        # schema_repr: [batch, num_questions, hidden_dim] in bfloat16
+        logits = self.linear(schema_repr)  # linear in float32
+        logits = logits.to(torch.bfloat16)  # cast back
+        # Softmax per question
+        probs = torch.softmax(logits.to(torch.float32), dim=-1).to(torch.bfloat16)
+        return probs
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Softmax directly on bfloat16 logits
+probs = torch.softmax(logits, dim=-1)  # logits in bfloat16 → NaNs
+```
+
+**VERIFICATION METHOD**:  
+Static analysis that flags `torch.softmax` calls on tensors with dtype `bfloat16`; runtime test that checks for NaNs after a forward pass.
+
+---
+
+
+---
+
+## 826. [Per‑Question Normalisation Rule] (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Per‑Question Normalisation Rule]",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T05:22:06.273Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+Logits produced by the joint head must be normalised **per question** (i.e., softmax over the option dimension for each question) rather than over the entire output tensor.
+
+**WHY**:  
+Normalising across all options of all questions mixes probabilities from unrelated questions, yielding invalid confidence scores and corrupting downstream decision logic.
+
+**WHEN TO APPLY**:  
+In the joint head’s forward method and any custom head that aggregates logits.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def forward(self, logits):
+    # logits shape: [batch, num_questions, num_options]
+    probs = torch.softmax(logits, dim=-1)  # softmax over options only
+    return probs
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Softmax over the wrong dimension
+probs = torch.softmax(logits, dim=1)  # mixes questions
+```
+
+**VERIFICATION METHOD**:  
+Unit test that asserts `probs.sum(dim=-1)` equals 1.0 for each question; linter rule that checks `softmax` dim argument.
+
+---

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T05:18:43.242Z",
-  "total_cycles_completed": 1225,
-  "total_learnings_persisted": 1225,
-  "total_rules_promoted": 587,
+  "last_updated": "2026-10-14T05:22:06.356Z",
+  "total_cycles_completed": 1226,
+  "total_learnings_persisted": 1226,
+  "total_rules_promoted": 590,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:55:02.575Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ze2g6",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:58:06.073Z",
       "repository": "BAAI/bge-large-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T05:18:43.242Z",
       "repository": "Cloudflare/clef",
       "learningId": "learn-huggingface-hf-cloudflare-clef-mv7nta3f",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T05:22:06.356Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
