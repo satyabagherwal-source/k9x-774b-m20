@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:07:50.045Z",
-  "total_cycles_completed": 1326,
-  "total_learnings_persisted": 1326,
+  "last_updated": "2026-10-14T12:11:08.255Z",
+  "total_cycles_completed": 1327,
+  "total_learnings_persisted": 1327,
   "total_rules_promoted": 648,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:14:01.015Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv7cxfit",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:16:52.990Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T12:07:50.045Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "learningId": "learn-huggingface-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-mv82felm",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:11:08.255Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv82jnj9",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
