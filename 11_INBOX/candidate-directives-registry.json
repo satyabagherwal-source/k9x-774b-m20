@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T19:34:58.330Z",
+  "last_updated": "2026-10-14T04:59:47.274Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1289,6 +1289,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0"
+    },
+    {
+      "id": "CD-4XQI",
+      "directive_title": "Forensic Data Integrity & Null-State Handling",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "facebook/sam3",
+      "source_commit": "hf-facebook-",
+      "date_staged": "2026-10-14",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-huggingface-hf-facebook-sam3-mv7n4xns"
     }
   ]
 }
