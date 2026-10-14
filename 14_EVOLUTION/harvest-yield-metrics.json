@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:41:12.141Z",
-  "total_cycles_completed": 1136,
-  "total_learnings_persisted": 1136,
+  "last_updated": "2026-10-14T00:44:21.979Z",
+  "total_cycles_completed": 1137,
+  "total_learnings_persisted": 1137,
   "total_rules_promoted": 546,
   "history": [
-    {
-      "timestamp": "2026-10-13T12:26:18.342Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T12:29:24.465Z",
       "repository": "Altworld/Hemmingway-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T00:41:12.141Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
       "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv7dwe3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T00:44:21.979Z",
+      "repository": "openai/clip-vit-base-patch32",
+      "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv7e0gm0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
