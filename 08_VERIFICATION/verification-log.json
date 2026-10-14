@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-99HW",
-    "timestamp": "2026-10-13T09:55:24.884Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv6i99ep",
-    "contentHash": "3f064b56f5729ecc54fa2d525ef260e2437dd02af5d911a9e673ebad541f79f4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-D4KY",
     "timestamp": "2026-10-13T09:58:25.138Z",
     "repository": "Bingsu/adetailer",
@@ -7492,6 +7477,21 @@
     "contentHash": "92a837f4b66b72a11e765ba7fcf81e3b208b31b8d954b9e85985f195533e2f00",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-KO9Y",
+    "timestamp": "2026-10-14T16:51:51.910Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv8cko6k",
+    "contentHash": "71784e7c055fff814070ecc2a7bbaa4f5eeadaac848c2cef3a2166fea01e29fa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

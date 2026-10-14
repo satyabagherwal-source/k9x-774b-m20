@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:48:49.570Z",
-  "total_cycles_completed": 1393,
-  "total_learnings_persisted": 1393,
+  "last_updated": "2026-10-14T16:51:51.914Z",
+  "total_cycles_completed": 1394,
+  "total_learnings_persisted": 1394,
   "total_rules_promoted": 696,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:42:47.815Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv7kdxa2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:46:11.126Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1403,6 +1396,13 @@
       "repository": "baidu/Unlimited-OCR",
       "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv8cgrgg",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T16:51:51.914Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv8cko6k",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

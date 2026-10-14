@@ -1435,3 +1435,4 @@ Every entry in this ledger must capture:
 | `learn-github-nguyenphutrong-quotio-mv8bh96o` | `https://github.com/nguyenphutrong/quotio` | `dfa5beeb` | Multi-dimensional audit evidence | 2026-10-14T16:21:12.921Z |
 | `learn-github-pathwaycom-serviette-mv8c0rd1` | `https://github.com/pathwaycom/serviette` | `beb17f1e` | Multi-dimensional audit evidence | 2026-10-14T16:36:22.940Z |
 | `learn-huggingface-hf-baidu-unlimited-ocr-mv8cgrgg` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-14T16:48:49.569Z |
+| `learn-huggingface-hf-aleph-alpha-kolibri-1-mv8cko6k` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-14T16:51:51.913Z |
