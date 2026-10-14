@@ -1342,3 +1342,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7zb0lb` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-14T10:40:26.423Z |
 | `learn-huggingface-hf-baai-bge-small-en-v1-5-mv7zeu3c` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-14T10:43:24.597Z |
 | `learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv7zikv4` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-14T10:46:19.243Z |
+| `learn-huggingface-hf-liquidai-d1-3b-mv7zmiwd` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-14T10:49:23.386Z |

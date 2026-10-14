@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T10:46:19.205Z",
-  "total_verified_learnings": 5255,
+  "last_updated": "2026-10-14T10:49:23.337Z",
+  "total_verified_learnings": 5256,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -129469,6 +129469,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T10:46:19.205Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-liquidai-d1-3b-mv7zmiwd": {
+      "learning_id": "learn-huggingface-hf-liquidai-d1-3b-mv7zmiwd",
+      "source": "LiquidAI/d1-3B",
+      "repository": "LiquidAI/d1-3B",
+      "slug": "hf-liquidai-d1-3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/d1-3B",
+      "source_version": "hf-liquidai-d1-3b",
+      "content_hash": "f0df5eecf7438e98ab8a475514ad13c06af065eda985d306520a3a55b7c0f0de",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 867,
+          "title": "Hybrid Conv-Attention Layer Interleaving for Latency-Critical Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 868,
+          "title": "Zero-Output-Token Decision Inference Pattern",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 869,
+          "title": "Multimodal Tile-Based Image Processing with Dynamic Resolution",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T10:49:23.337Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
