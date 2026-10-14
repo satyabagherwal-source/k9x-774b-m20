@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-I7GN",
-    "timestamp": "2026-10-12T18:38:34.823Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv5li7en",
-    "contentHash": "3d40ad69fa7a54f002a819f4d6b88d22b1bcf9686b5a12fdcb9311fd21bdb02c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-MH8J",
     "timestamp": "2026-10-12T18:41:54.115Z",
     "repository": "openai-community/gpt2",
@@ -7490,6 +7475,21 @@
     "repository": "Aleph-Alpha/Kolibri-1",
     "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv7d4xqj",
     "contentHash": "c46865d6f9b876c8a65c54fa6dc53c7b66393b3a3cf9c7604435f6cefc49c2ca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-8UI7",
+    "timestamp": "2026-10-14T00:22:53.551Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv7d8uew",
+    "contentHash": "f871c7d7c54a7b2b1a4baa3a8e15dc25c51d24dcd970d39264c5cf8cd3fed23a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

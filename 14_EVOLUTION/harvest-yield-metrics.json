@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:19:51.209Z",
-  "total_cycles_completed": 1129,
-  "total_learnings_persisted": 1129,
+  "last_updated": "2026-10-14T00:22:53.555Z",
+  "total_cycles_completed": 1130,
+  "total_learnings_persisted": 1130,
   "total_rules_promoted": 544,
   "history": [
-    {
-      "timestamp": "2026-10-13T11:49:53.565Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv6mchby",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T11:52:54.778Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T00:19:51.209Z",
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv7d4xqj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T00:22:53.555Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv7d8uew",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
