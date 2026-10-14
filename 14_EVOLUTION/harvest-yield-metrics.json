@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T10:43:24.599Z",
-  "total_cycles_completed": 1299,
-  "total_learnings_persisted": 1299,
+  "last_updated": "2026-10-14T10:46:19.244Z",
+  "total_cycles_completed": 1300,
+  "total_learnings_persisted": 1300,
   "total_rules_promoted": 631,
   "history": [
-    {
-      "timestamp": "2026-10-13T22:48:26.950Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv79vdzs",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T22:51:13.485Z",
       "repository": "BAAI/bge-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T10:43:24.599Z",
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv7zeu3c",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T10:46:19.244Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv7zikv4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
