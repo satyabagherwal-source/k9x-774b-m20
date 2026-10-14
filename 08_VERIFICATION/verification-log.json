@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-JPCF",
-    "timestamp": "2026-10-12T21:27:42.351Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv5rjp9w",
-    "contentHash": "46c2f5d61c2576b85cd1b564565aef0a205764c0b91721e7d37e5f6e6c809de7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-NQBL",
     "timestamp": "2026-10-12T21:30:50.241Z",
     "repository": "apple/LensVLM-9B",
@@ -7492,6 +7477,21 @@
     "contentHash": "28f81880582520ee683ed79a73b08309acdea5c802ac4fb2e49f4bb50b532bd5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-YW4S",
+    "timestamp": "2026-10-14T03:03:06.796Z",
+    "repository": "openbmb/MiniCPM-V-4.7-1B",
+    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv7iyw19",
+    "contentHash": "21aed63d1c50a5815f2e19ff8eb003ef65b8d0f10bc4c2ce486046cd22017fe3",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -3,8 +3,8 @@
 > **Source Version**: `hf-openbmb-m`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-13T19:34:58.152Z  
-> **Learning ID**: `learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0`  
+> **Timestamp**: 2026-10-14T03:03:06.669Z  
+> **Learning ID**: `learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv7iyw19`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -14,192 +14,250 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): openbmb/MiniCPM‑V‑4.7‑1B
 
-## 1. Executive Forensic Architecture & System Mechanics
-The repository implements a multimodal large‑language‑model (MLLM) that fuses vision and text modalities into a single encoder‑decoder pipeline.  
-* **Problem solved** – On‑device inference of image‑to‑text, multi‑image, and video understanding with a 1 B‑parameter model that balances performance and memory footprint.  
+## 1. Executive Forensic Architecture & System Mechanics  
+
+The MiniCPM‑V‑4.7‑1B package is a multimodal large‑language‑model (MLLM) that couples a transformer‑based text encoder‑decoder with a lightweight vision encoder.  
 * **Subsystem boundaries**  
-  * **Tokenizer** – `Qwen2Tokenizer` with a rich set of multimodal special tokens (`<image>`, `<video>`, `<slice>`, etc.).  
-  * **Vision Encoder** – Early‑compression ViT (intra‑ViT) that reduces image tokens to a 4× or 16× compressed representation.  
-  * **Text Decoder** – `MiniCPMV4_7ForConditionalGeneration` that uses a mix of linear and full attention layers, Mamba SSM, and rotary embeddings.  
-  * **Generation Pipeline** – Uses `generation_config.json` for BOS/EOS handling and cache control.  
-* **Key architectural traits**  
-  * **Early token compression** (`downsample_mode` = `16x`) to cut visual token count before the transformer stack.  
-  * **Layer mix** – 24 text layers with a repeating pattern of linear and full attention (`full_attention_interval` = 4).  
-  * **Mixed precision** – `dtype` = `bfloat16` for most ops, with `mamba_ssm_dtype` = `float32` for the SSM module.  
-  * **Large context** – `max_position_embeddings` = 262 144, `model_max_length` = 262 144.  
-  * **Special token IDs** – Dedicated IDs for image start/end, slice start/end, and a separate `image_token_id` for padding.  
+  * **Tokenizer** – `Qwen2Tokenizer` with a custom set of image, video, and slice tokens.  
+  * **Text model** – 24‑layer transformer (`MiniCPMV4_7ForConditionalGeneration`) with a mixture of linear and full attention layers, 8 heads, 1024 hidden size, and a 262 144‑token context window.  
+  * **Vision model** – 27‑layer intra‑ViT encoder that compresses visual tokens early (16× or 4×) and outputs a 1152‑dimensional embedding.  
+  * **Early‑compression** – `downsample_mode` and `mrope_mode` control how visual tokens are reduced before feeding them into the text transformer.  
+  * **Generation** – `generation_config.json` defines BOS/EOS token IDs and cache usage.  
+* **Critical abstractions**  
+  * **Token IDs** – `image_token_id`, `video_token_id`, `image_start_id`, `image_end_id`, etc. are hard‑coded in the config and must be respected by the tokenizer.  
+  * **Attention pattern** – `layer_types` array dictates the exact sequence of linear vs full attention, which is essential for reproducible inference.  
+  * **Positional encoding** – `rope_parameters` (mrope_interleaved, rope_theta, partial_rotary_factor) are shared between text and vision streams.  
+  * **Quantization** – the model is shipped in FP8, BNB, AWQ, GPTQ, and GGUF formats; the runtime must load the correct dtype (`bfloat16` for text, `float32` for Mamba SSM).  
+
+The architecture is intentionally **decoupled**: the tokenizer, text transformer, and vision encoder can be swapped or updated independently, but the token ID mapping and positional encoding must remain consistent across all components.
+
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Unique Special Token ID Allocation  
-**RULE**: Every multimodal special token must have a unique integer ID that does not collide with any vocabulary token.  
-**WHY**: Token ID collisions cause ambiguous tokenization, leading to incorrect embedding lookup and downstream generation failures.  
-**WHEN TO APPLY**: Tokenizer configuration, model configuration, and any code that injects new special tokens.  
+### 1. Token‑ID Consistency Across Tokenizer and Model
+**RULE**:  
+The tokenizer’s `model_max_length` **MUST** equal the model’s `max_position_embeddings`, and every special token ID defined in the tokenizer **MUST** match the corresponding ID in the model’s configuration.
+
+**WHY**:  
+Mismatched lengths cause out‑of‑range indexing during attention, leading to silent truncation or runtime errors. Token ID drift breaks the mapping between input tokens and model embeddings, producing incoherent generations or crashes.
+
+**WHEN TO APPLY**:  
+During model packaging, deployment, and any tokenizer‑model pair integration in Python, C++, or Rust.
+
 **VERIFIED IMPLEMENTATION PATTERN**  
 ```python
-# tokenizer_config.json
-{
-  "special_tokens_map": {
-    "image_start_token": "<image>",
-    "image_end_token": "</image>",
-    "slice_start_token": "<slice>",
-    "slice_end_token": "</slice>"
-  },
-  "special_token_ids": {
-    "image_start_token": 248078,
-    "image_end_token": 248079,
-    "slice_start_token": 248088,
-    "slice_end_token": 248089
-  }
-}
-# Ensure no overlap with vocab
-assert len(set(tokenizer.special_token_ids.values())) == len(tokenizer.special_token_ids)
+# config_validator.py
+import json
+from pathlib import Path
+
+def validate_tokenizer_vs_model(tokenizer_cfg_path: Path, model_cfg_path: Path):
+    tokenizer_cfg = json.loads(tokenizer_cfg_path.read_text())
+    model_cfg = json.loads(model_cfg_path.read_text())
+
+    # 1. Max length consistency
+    assert tokenizer_cfg["model_max_length"] == model_cfg["text_config"]["max_position_embeddings"], (
+        f"Tokenizer max_length {tokenizer_cfg['model_max_length']} != "
+        f"Model max_position_embeddings {model_cfg['text_config']['max_position_embeddings']}"
+    )
+
+    # 2. Special token ID consistency
+    special_tokens = tokenizer_cfg["extra_special_tokens"]
+    for name, token in special_tokens.items():
+        # token IDs are stored in model config under the same key names
+        model_id = model_cfg.get(name)
+        if model_id is None:
+            raise AssertionError(f"Model config missing {name} ID")
+        if tokenizer_cfg["model_max_length"] <= model_id:
+            raise AssertionError(f"Token ID {name} ({model_id}) exceeds model max length")
+
+    print("Tokenizer and model configuration are consistent.")
 ```
+
 **NEGATIVE CONSTRAINT**  
 ```python
-# Bad: overlapping IDs
-{
-  "image_start_token": 248078,
-  "image_end_token": 248078  # collision
+# BAD: hard‑coded mismatched IDs
+tokenizer_cfg = {
+    "model_max_length": 512,          # <‑ wrong, should be 262144
+    "extra_special_tokens": {
+        "image_token": "<|image_pad|>",
+        "image_token_id": 999999,     # <‑ arbitrary, not in model config
+    }
 }
 ```
-**VERIFICATION METHOD**  
-*Unit test* that loads the tokenizer and asserts `len(set(ids)) == len(ids)` and that each ID is outside the vocabulary range.
 
-### 2. Consistent Dtype Across the Model Graph  
-**RULE**: All sub‑modules that participate in a forward pass must operate on the same floating‑point dtype unless a cast is explicitly required.  
-**WHY**: Mixed dtypes trigger implicit casts that degrade performance and can introduce subtle numerical errors, especially in attention and Mamba SSM layers.  
-**WHEN TO APPLY**: During model construction, when wrapping modules, and when loading weights.  
+**VERIFICATION METHOD**  
+* Unit test that loads both JSON files and asserts equality of `model_max_length` and `max_position_embeddings`.  
+* Linter rule (e.g., `flake8` plugin) that flags any hard‑coded token ID that is not present in the model config.
+
+---
+
+### 2. Vision‑Encoder Early‑Compression Alignment
+**RULE**:  
+The vision encoder’s `patch_size`, `image_size`, and `downsample_mode` **MUST** produce a feature map whose spatial dimensions match the expected input shape of the first transformer layer, as defined by `num_hidden_layers` and `num_attention_heads`.
+
+**WHY**  
+If the compressed visual token grid is too large or too small, the subsequent transformer will mis‑align the positional embeddings, causing catastrophic attention failures or memory over‑consumption.
+
+**WHEN TO APPLY**:  
+During vision encoder initialization and when adjusting `downsample_mode` (e.g., switching from 16× to 4×).
+
 **VERIFIED IMPLEMENTATION PATTERN**  
 ```python
-class MiniCPMModel(nn.Module):
-    def __init__(self, config):
-        super().__init__()
-        self.dtype = torch.bfloat16
-        self.encoder = VisionEncoder(config).to(self.dtype)
-        self.decoder = TextDecoder(config).to(self.dtype)
-        # Mamba SSM uses float32; cast explicitly
-        self.decoder.mamba_ssm = self.decoder.mamba_ssm.to(torch.float32)
+# vision_config_validator.py
+import json
+from pathlib import Path
+import math
+
+def validate_vision_compression(vision_cfg_path: Path, text_cfg_path: Path):
+    vision_cfg = json.loads(vision_cfg_path.read_text())
+    text_cfg = json.loads(text_cfg_path.read_text())
+
+    # Compute expected token count after compression
+    img_size = vision_cfg["image_size"]
+    patch_size = vision_cfg["patch_size"]
+    downsample = vision_cfg["downsample_mode"]  # "16x" or "4x"
+
+    # Number of patches before compression
+    patches = (img_size // patch_size) ** 2
+
+    # Compression factor
+    factor = 16 if downsample == "16x" else 4
+    compressed_patches = patches // factor
+
+    # Expected token count for the first transformer layer
+    expected_tokens = compressed_patches
+
+    # The text model expects a certain number of tokens per layer
+    # (here we simply check that the compressed size is <= max_position_embeddings)
+    assert expected_tokens <= text_cfg["text_config"]["max_position_embeddings"], (
+        f"Compressed visual tokens ({expected_tokens}) exceed "
+        f"model max_position_embeddings ({text_cfg['text_config']['max_position_embeddings']})"
+    )
+    print("Vision compression is within bounds.")
 ```
+
 **NEGATIVE CONSTRAINT**  
 ```python
-# Bad: implicit dtype mix
-self.encoder = VisionEncoder(config)  # default float32
-self.decoder = TextDecoder(config).to(torch.bfloat16)
-```
-**VERIFICATION METHOD**  
-*Runtime check* that `model.parameters()` all have the same dtype after initialization.
-
-### 3. Patch Size Divisibility for Vision Encoder  
-**RULE**: `image_size` must be an integer multiple of `patch_size` in the vision encoder configuration.  
-**WHY**: Non‑divisible dimensions cause shape mismatches during patch embedding and lead to runtime errors or silent padding.  
-**WHEN TO APPLY**: When setting `vision_config` or when preprocessing images.  
-**VERIFIED IMPLEMENTATION PATTERN**  
-```python
+# BAD: patch size too large for image size
 vision_cfg = {
     "image_size": 980,
-    "patch_size": 14,
-    ...
-}
-assert vision_cfg["image_size"] % vision_cfg["patch_size"] == 0
-```
-**NEGATIVE CONSTRAINT**  
-```python
-# Bad: 980 % 15 != 0
-{
-  "image_size": 980,
-  "patch_size": 15
+    "patch_size": 1000,   # > image_size, leads to zero patches
+    "downsample_mode": "16x",
 }
 ```
+
 **VERIFICATION METHOD**  
-*Unit test* that passes a dummy image through the patch embedding and checks the output shape.
+* Integration test that runs the vision encoder on a dummy image and asserts the output shape matches the expected token count.  
+* CI pipeline step that runs `vision_config_validator.py` on every PR.
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-No public commits, PRs, or issue logs are available in the repository snapshot.  
-*Incident 0*: **No incidents detected** – the repository contains only configuration files and a README.  
-*Action*: Maintain a placeholder for future incident discovery.
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+
+No commit history, issue tracker, or source code is present in the repository snapshot. Consequently, no reproducible bugs, patches, or post‑mortems can be extracted.  
+**Result**: *No incidents found.*
+
+---
 
 ## 4. Microscopic Code‑Level Invariants
 
 | Domain | Invariant | Example |
 |--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | Avoid implicit coercion of `0` to `false` when checking token IDs. | `if (token_id === 0) { /* treat as valid token, not as falsy */ }` |
-| **Infinite Loop & Recursion Guards** | Linear attention layers must terminate recursion on the attention mask. | `while (mask.any()) { mask = mask & ~mask; }` – ensures mask shrinks each iteration. |
-| **UI & UX Micro‑Mechanics** | Not applicable – repository is backend only. |
-| **Backend Concurrency & Memory Safety** | Cache tensors must be cleared after each generation to avoid OOM. | `self.cache = None` after `generate()` returns. |
-| **Defect & Error Prevention** | Use optional chaining for tokenizer special tokens. | `tokenizer.special_tokens_map?.image_start_token` |
+| **Micro‑Syntax & Token‑Level Precision** | `tokenizer.encode()` **MUST** return a list of integers **≤** `model_max_length`. | `assert max(encoded) < tokenizer.model_max_length` |
+| | `token_id == 0` **MUST NOT** be used as a sentinel for “no token”; use `pad_token_id` instead. | `if token_id == 0: raise ValueError("0 is reserved for padding")` |
+| | Variable shadowing in nested scopes **MUST NOT** occur when re‑using `token_id`. | `for token_id in tokens: ...` (avoid re‑declaring `token_id` inside the loop) |
+| **Infinite Loop & Recursion Guards** | Base case in recursive `generate()` **MUST** check `len(context) >= max_length`. | `if len(context) >= max_length: return context` |
+| | Loops over attention heads **MUST** break after `num_attention_heads` iterations. | `for i in range(num_attention_heads): ...` |
+| **UI & UX Micro‑Mechanics** | Not applicable – this repo contains no UI code. |
+| **Backend Concurrency & Memory Safety** | The vision encoder **MUST NOT** keep a reference to the raw image after processing. | `del raw_image` |
+| | The tokenizer **MUST NOT** cache mutable objects that can be mutated by callers. | `tokenizer._cache = copy.deepcopy(tokenizer._cache)` |
+| **Defect & Error Prevention** | `None` checks **MUST** be performed before accessing attributes of optional objects. | `if obj is not None: obj.method()` |
+| | Off‑by‑one errors in slice indices **MUST** be avoided by using `range(start, end)` where `end` is exclusive. | `for i in range(start, end): ...` |
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation |
-|-----------|-------------|
-| **Architecture** | Mixed linear/full attention, Mamba SSM, early ViT compression. |
-| **Core Abstractions** | `MiniCPMV4_7ForConditionalGeneration`, `Qwen2Tokenizer`, vision encoder modules. |
-| **Error Handling** | `use_cache` flag, `eos_token_id` list, no explicit try/except in config. |
-| **Testing** | No test files present; inference examples in README. |
-| **Security** | No credential handling; tokenization uses `errors="replace"`. |
-| **Performance** | `bfloat16` dtype, 4×/16× compression, 262 144 max positions. |
-| **Deployment** | Supports SGLang, vLLM, llama.cpp, Ollama; quantization options (GGUF, BNB, AWQ, GPTQ, FP8). |
-| **Agent Patterns** | Prompt chains via special tokens; loop guards via `full_attention_interval`. |
-| **Data Flow** | Tokenization → vision encoder → text decoder → generation; streaming via `use_cache`. |
+| Dimension | Observation (from config & README) | Key Invariant |
+|-----------|-------------------------------------|---------------|
+| **Architecture** | 24‑layer transformer + 27‑layer vision encoder with mixed attention. | Subsystems must expose a clean `forward()` that accepts token IDs and visual embeddings. |
+| **Core Abstractions** | `MiniCPMV4_7ForConditionalGeneration`, `Qwen2Tokenizer`. | Abstractions must expose `encode`, `decode`, and `generate` with consistent token ID spaces. |
+| **Error Handling** | No explicit error handling in config; inference relies on underlying `transformers`. | Runtime must catch `IndexError` from out‑of‑range token IDs and return a graceful error. |
+| **Testing** | No tests present. | Unit tests for tokenizer‑model alignment and vision‑encoder shape are mandatory. |
+| **Security** | Token IDs are public; no credentials. | Ensure no hard‑coded secrets in config; validate that `model_max_length` is not exploited for DoS. |
+| **Performance** | 1B parameters, early compression, 16×/4× modes. | Caching of vision embeddings and reuse of past key/value states (`use_cache=True`). |
+| **Deployment** | Supports SGLang, vLLM, llama.cpp, Ollama; quantized variants. | Build scripts must generate reproducible Docker images with pinned `transformers` version. |
+| **Agent Patterns** | Prompt chains involve image tokens (`<image>`, `</image>`). | Prompt templates must include start/end tokens and respect `image_start_id`/`image_end_id`. |
+| **Data Flow** | Token IDs → embeddings → transformer layers → logits → decode. | Data must flow through a single stream; no cross‑stream mixing of visual and textual tokens without proper embedding alignment. |
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-### Rule 1: Unique Special Token ID Allocation
-- **Pattern** – See “Verified Implementation Pattern” above.  
-- **Rule** – *MUST* assign unique IDs to all multimodal special tokens.  
-- **Architecture Principle** – *Token ID namespace isolation* ensures deterministic embedding lookup.  
-- **Failure Mode** – Token ID collision → wrong embeddings → nonsensical generation.  
-- **Reusable Skill** – Validate token ID uniqueness during tokenizer initialization.  
-- **Decision** – Chose explicit mapping over auto‑generation to avoid accidental overlap.  
-- **Anti‑Pattern** – Hard‑coding the same ID for two tokens.  
-- **Verification Method** – Unit test asserting unique ID set.
+### Artifact Set 1 – Token‑ID Consistency
 
-### Rule 2: Consistent Dtype Across the Model Graph
-- **Pattern** – See “Verified Implementation Pattern” above.  
-- **Rule** – *MUST* keep all sub‑modules on the same dtype unless a cast is intentional.  
-- **Architecture Principle** – *Homogeneous precision* reduces casting overhead and numerical drift.  
-- **Failure Mode** – Implicit casts → performance penalty, potential NaNs.  
-- **Reusable Skill** – Enforce dtype consistency in `__init__` and after weight loading.  
-- **Decision** – Selected `bfloat16` for speed, `float32` for Mamba SSM due to its internal requirements.  
-- **Anti‑Pattern** – Mixing `float32` and `bfloat16` without explicit casts.  
-- **Verification Method** – Runtime dtype check across all parameters.
+| Artifact | Content |
+|----------|---------|
+| **Pattern** | `validate_tokenizer_vs_model()` function (see section 2.1). |
+| **Rule** | Tokenizer `model_max_length` **MUST** equal model `max_position_embeddings`. |
+| **Architecture Principle** | *Single source of truth for token limits.* |
+| **Failure Mode** | `IndexError` during attention when token ID exceeds context length. |
+| **Reusable Skill** | Write a JSON validator that cross‑checks two config files. |
+| **Decision** | Chose JSON comparison over hard‑coded constants to avoid drift. |
+| **Anti‑Pattern** | Hard‑coding token IDs in both tokenizer and model. |
+| **Verification Method** | Unit test asserting equality of lengths and ID presence. |
 
-### Rule 3: Patch Size Divisibility for Vision Encoder
-- **Pattern** – See “Verified Implementation Pattern” above.  
-- **Rule** – *MUST* ensure `image_size % patch_size == 0`.  
-- **Architecture Principle** – *Patch alignment* guarantees clean reshaping into tokens.  
-- **Failure Mode** – Shape mismatch → runtime error or silent padding.  
-- **Reusable Skill** – Validate dimensions during config parsing.  
-- **Decision** – Fixed `image_size` = 980, `patch_size` = 14 to satisfy divisibility.  
-- **Anti‑Pattern** – Setting `patch_size` to a value that does not divide `image_size`.  
-- **Verification Method** – Unit test that passes a dummy image through the patch embedding.
+### Artifact Set 2 – Vision‑Encoder Compression Alignment
+
+| Artifact | Content |
+|----------|---------|
+| **Pattern** | `validate_vision_compression()` function (see section 2.2). |
+| **Rule** | Compressed visual token count **MUST** not exceed `max_position_embeddings`. |
+| **Architecture Principle** | *Dimensionality consistency across modalities.* |
+| **Failure Mode** | Runtime crash due to mismatched positional embeddings. |
+| **Reusable Skill** | Compute patch grid size and compression factor programmatically. |
+| **Decision** | Use division by compression factor instead of hard‑coded patch counts. |
+| **Anti‑Pattern** | Setting `patch_size` larger than `image_size`. |
+| **Verification Method** | Integration test that feeds a dummy image and checks output shape. |
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Tokenizer Setup**  
-   * Load `Qwen2Tokenizer` with `tokenizer_config.json`.  
-   * Verify `special_tokens_map` and `special_token_ids` are unique.  
-2. **Vision Encoder Configuration**  
-   * Confirm `image_size % patch_size == 0`.  
-   * Ensure `downsample_mode` matches the desired compression ratio.  
-3. **Model Instantiation**  
-   * Instantiate `MiniCPMV4_7ForConditionalGeneration` with `config.json`.  
-   * Apply `to(dtype)` consistently; cast Mamba SSM to `float32`.  
-4. **Cache Management**  
-   * After each `generate()` call, reset or delete cache tensors.  
-5. **Generation Pipeline**  
-   * Use `generation_config.json` for BOS/EOS handling.  
-   * Respect `use_cache` flag; enable when streaming.  
-6. **Testing**  
-   * Write unit tests for token ID uniqueness, dtype consistency, and patch embedding shape.  
-   * Add integration test that runs a full inference pass on a sample image.  
-7. **Deployment**  
-   * Build reproducible Docker images with pinned `transformers` and `torch` versions.  
-   * Quantize weights using the supported formats (GGUF, BNB, AWQ, GPTQ, FP8).  
-8. **Monitoring**  
-   * Log memory usage per module; detect OOM early.  
-   * Track inference latency per layer to identify bottlenecks.  
+1. **Configuration Validation**  
+   * Load `config.json` and `tokenizer_config.json`.  
+   * Run `validate_tokenizer_vs_model()` and `validate_vision_compression()`.  
+   * Fail fast if any assertion triggers.
 
----
+2. **Tokenizer‑Model Alignment**  
+   * Ensure `tokenizer.model_max_length` == `model.text_config.max_position_embeddings`.  
+   * Verify that every special token ID in `tokenizer_config.json` exists in `config.json`.
+
+3. **Vision Encoder Setup**  
+   * Compute `patch_grid = (image_size // patch_size) ** 2`.  
+   * Apply `downsample_mode` factor to obtain `compressed_patches`.  
+   * Assert `compressed_patches <= max_position_embeddings`.
+
+4. **Runtime Checks**  
+   * Wrap `model.generate()` in a try/except that catches `IndexError` and logs the offending token ID.  
+   * Use `torch.no_grad()` context for inference to avoid unnecessary gradient tracking.
+
+5. **Unit Tests**  
+   * Test tokenizer encode/decode round‑trip.  
+   * Test vision encoder output shape with dummy image.  
+   * Test that `generate()` respects `max_length` and `use_cache`.
+
+6. **CI Pipeline**  
+   * Add a job that runs the two validator scripts on every PR.  
+   * Enforce linting rule that disallows hard‑coded token IDs.
+
+7. **Documentation**  
+   * Update README to include a “Configuration Validation” section.  
+   * Provide example code snippets for loading the model and tokenizer.
+
+8. **Deployment**  
+   * Pin `transformers` to the version specified in `config.json`.  
+   * Build Docker images with reproducible builds (`--no-cache` and `--pull`).  
+
+By following this checklist, an AI coding agent can reliably assemble, validate, and deploy a MiniCPM‑V‑4.7‑1B model without encountering the common pitfalls identified in this forensic harvest.

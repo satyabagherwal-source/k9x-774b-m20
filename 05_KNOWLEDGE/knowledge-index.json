@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T03:00:07.157Z",
-  "total_verified_learnings": 5135,
+  "last_updated": "2026-10-14T03:03:06.756Z",
+  "total_verified_learnings": 5136,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -126200,6 +126200,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T03:00:07.157Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv7iyw19": {
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv7iyw19",
+      "source": "openbmb/MiniCPM-V-4.7-1B",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "slug": "hf-openbmb-minicpm-v-4.7-1b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "content_hash": "21aed63d1c50a5815f2e19ff8eb003ef65b8d0f10bc4c2ce486046cd22017fe3",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 698,
+          "title": "Token‑ID Consistency Across Tokenizer and Model",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 799,
+          "title": "Vision‑Encoder Early‑Compression Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T03:03:06.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
