@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:29:46.527Z",
-  "total_verified_learnings": 5269,
+  "last_updated": "2026-10-14T11:32:53.246Z",
+  "total_verified_learnings": 5270,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -129869,6 +129869,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T11:29:46.527Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv816goc": {
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv816goc",
+      "source": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "slug": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "content_hash": "a793dcdb5d8733758137ae1069195f3db6af0876acf48fe6d79fea1cfc054f83",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 878,
+          "title": "Consistent Data‑Type Propagation Across the Model Pipeline",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 879,
+          "title": "Early‑Compression Token Count Limitation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 880,
+          "title": "MoE Router Auxiliary Loss Coefficient Stability",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T11:32:53.246Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

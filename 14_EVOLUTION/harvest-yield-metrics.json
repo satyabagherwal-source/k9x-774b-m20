@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:29:46.582Z",
-  "total_cycles_completed": 1314,
-  "total_learnings_persisted": 1314,
-  "total_rules_promoted": 643,
+  "last_updated": "2026-10-14T11:32:53.300Z",
+  "total_cycles_completed": 1315,
+  "total_learnings_persisted": 1315,
+  "total_rules_promoted": 646,
   "history": [
-    {
-      "timestamp": "2026-10-13T23:34:12.795Z",
-      "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv7bi8qr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T23:37:15.381Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T11:29:46.582Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv812gm9",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T11:32:53.300Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv816goc",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

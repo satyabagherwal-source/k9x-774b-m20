@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-TVMN",
-    "timestamp": "2026-10-13T04:35:31.295Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv66tviz",
-    "contentHash": "327a5e7239d7748daabba713d784bd986751c287e37821e86bb56bf2ed8d9f0b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-XXPJ",
     "timestamp": "2026-10-13T04:38:40.615Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
     "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv812gm9",
     "contentHash": "56b2274c789b495af0253946fd179e7486357534e1dccc500ccbcddb73b6e1bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-6GTS",
+    "timestamp": "2026-10-14T11:32:53.296Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv816goc",
+    "contentHash": "a793dcdb5d8733758137ae1069195f3db6af0876acf48fe6d79fea1cfc054f83",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

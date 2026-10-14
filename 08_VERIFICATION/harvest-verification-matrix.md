@@ -1373,3 +1373,4 @@
 | `CYCLE-20261014-U6ZM` | `2026-10-14T11:23:20.674Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`18a67592...`) |
 | `CYCLE-20261014-Y8S5` | `2026-10-14T11:26:29.621Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`d5282fa9...`) |
 | `CYCLE-20261014-2GR5` | `2026-10-14T11:29:46.577Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 876, Rule 877, Rule 570` | Yes (`56b2274c...`) |
+| `CYCLE-20261014-6GTS` | `2026-10-14T11:32:53.296Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 878, Rule 879, Rule 880` | Yes (`a793dcdb...`) |
