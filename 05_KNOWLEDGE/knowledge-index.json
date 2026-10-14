@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T05:47:17.762Z",
-  "total_verified_learnings": 5189,
+  "last_updated": "2026-10-14T05:50:37.251Z",
+  "total_verified_learnings": 5190,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -127674,6 +127674,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T05:47:17.762Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv7oyb2g": {
+      "learning_id": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv7oyb2g",
+      "source": "timm/mobilenetv3_small_100.lamb_in1k",
+      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+      "slug": "hf-timm-mobilenetv3_small_100.lamb_in1k",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+      "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
+      "content_hash": "062d355d9aa6382a96d31f0d974dd8cf63a3f1a778b7ad87fc1f2f2165c8f3a2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T05:50:37.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
