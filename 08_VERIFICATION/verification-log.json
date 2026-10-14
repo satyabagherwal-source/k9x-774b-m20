@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-66GI",
-    "timestamp": "2026-10-13T04:17:05.586Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv6666bw",
-    "contentHash": "e5691dfcbe393a7cbf4fbb273a4948bfe003677f075b3e93639ab81987a9b369",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-A41W",
     "timestamp": "2026-10-13T04:20:09.092Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7490,6 +7475,21 @@
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv80ecoj",
     "contentHash": "82cc53dca7d53485ed865a80e880c166563967fd85adbf7725ca740bac8e4567",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-IBOC",
+    "timestamp": "2026-10-14T11:14:06.876Z",
+    "repository": "deepseek-ai/DeepSeek-R1",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv80ibl2",
+    "contentHash": "9b8dd5d286ed733d516bdb1f98dae7dce631575c3b559ef007dfbaef25ebecb3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
