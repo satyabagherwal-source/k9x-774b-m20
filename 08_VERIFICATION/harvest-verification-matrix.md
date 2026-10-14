@@ -1197,3 +1197,4 @@
 | `CYCLE-20261014-WE6I` | `2026-10-14T00:41:12.138Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`c848be7c...`) |
 | `CYCLE-20261014-0GNT` | `2026-10-14T00:44:21.977Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`feb6016d...`) |
 | `CYCLE-20261014-4729` | `2026-10-14T00:47:16.161Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`0548adfc...`) |
+| `CYCLE-20261014-8BHS` | `2026-10-14T00:50:28.528Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`c181a322...`) |

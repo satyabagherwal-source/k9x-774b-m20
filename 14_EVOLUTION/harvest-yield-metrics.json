@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:47:16.164Z",
-  "total_cycles_completed": 1138,
-  "total_learnings_persisted": 1138,
+  "last_updated": "2026-10-14T00:50:28.530Z",
+  "total_cycles_completed": 1139,
+  "total_learnings_persisted": 1139,
   "total_rules_promoted": 546,
   "history": [
-    {
-      "timestamp": "2026-10-13T12:32:33.200Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T12:35:19.858Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T00:47:16.164Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7e470c",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T00:50:28.530Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv7e8bfy",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
