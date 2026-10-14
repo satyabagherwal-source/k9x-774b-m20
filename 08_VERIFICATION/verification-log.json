@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-18B5",
-    "timestamp": "2026-10-13T09:21:10.481Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv6h1885",
-    "contentHash": "9b34b544b349ed398b4a5d88515331686615f64280cc90a2ed34d6cdd8756ebc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-58E9",
     "timestamp": "2026-10-13T09:24:17.217Z",
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.2",
     "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv8aemw3",
     "contentHash": "f54e72b96a02f23e518500bb2f6a9465fe39a7b9f9edb6ca59fef70d03204b8b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-IUMN",
+    "timestamp": "2026-10-14T15:54:27.599Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv8aiuiv",
+    "contentHash": "6d53ad645ff152993b825e4ef36dbf2e8f0c73e0ae880668876092a48430d872",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
