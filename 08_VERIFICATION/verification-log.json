@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-1WKM",
-    "timestamp": "2026-10-13T03:17:46.918Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv641who",
-    "contentHash": "79ad59001ab513d931a4df844c1aea67ae1f61735116eb70c8370898f2d5acb4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-5QM3",
     "timestamp": "2026-10-13T03:20:45.819Z",
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "6c8539a6199d236e7a2762f9451eee9e3e531b301fc23efa91e19dbd5fcba078",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-E4ZA",
+    "timestamp": "2026-10-14T10:14:52.342Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv7ye4x6",
+    "contentHash": "7c75686d9fed942cefe7738d277fc1e81b17ec279b34c4377e4fd6fe021696d7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

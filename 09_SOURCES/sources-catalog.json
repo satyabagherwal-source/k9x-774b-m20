@@ -115,9 +115,9 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "97566bc7da43f6469566eec568291b6e3d6cee3dad2923f2af1bfa20dfa505c0",
-    "lastHarvestedAt": "2026-10-14T01:56:34.039Z",
-    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv7glb7l"
+    "contentHash": "7c75686d9fed942cefe7738d277fc1e81b17ec279b34c4377e4fd6fe021696d7",
+    "lastHarvestedAt": "2026-10-14T10:14:52.344Z",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv7ye4x6"
   },
   "hf-autotrust-jev-27b-vl": {
     "repository": "autotrust/JEV-27B-VL",
