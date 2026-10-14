@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-RB24",
-    "timestamp": "2026-10-13T06:53:29.404Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6brb0d",
-    "contentHash": "b2a94875456cc52ecd3969f7e71d820e844906f23605492f379badc8e3e128e8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-VC5K",
     "timestamp": "2026-10-13T06:56:37.448Z",
     "repository": "zai-org/GLM-5.2",
@@ -7490,6 +7475,21 @@
     "repository": "google-bert/bert-base-uncased",
     "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv86sopo",
     "contentHash": "54f566094660a9a7f2518bcc6bf6fb4f6fa407c0e3988884082fd09f450bcadb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-WU1D",
+    "timestamp": "2026-10-14T14:13:21.553Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv86wty5",
+    "contentHash": "546a6756fa59c58873a4647e810a8dec863ec523524354ab2a471c9be236be6e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
