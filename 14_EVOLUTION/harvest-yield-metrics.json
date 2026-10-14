@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T15:54:27.603Z",
-  "total_cycles_completed": 1384,
-  "total_learnings_persisted": 1384,
+  "last_updated": "2026-10-14T15:57:36.086Z",
+  "total_cycles_completed": 1385,
+  "total_learnings_persisted": 1385,
   "total_rules_promoted": 690,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:15:29.882Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv7jetdw",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:18:30.494Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T15:54:27.603Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
       "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv8aiuiv",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T15:57:36.086Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-hf-bigscience-bloom-mv8amvyr",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
