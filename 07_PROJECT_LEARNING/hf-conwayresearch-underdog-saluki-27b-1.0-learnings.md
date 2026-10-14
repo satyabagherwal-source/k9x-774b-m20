@@ -3,8 +3,8 @@
 > **Source Version**: `hf-conwayres`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-14T01:12:57.411Z  
-> **Learning ID**: `learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7f18ar`  
+> **Timestamp**: 2026-10-14T09:31:14.968Z  
+> **Learning ID**: `learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7wu1eg`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-14T01:12:56.525Z  
+> **Harvest Timestamp**: 2026-10-14T09:31:14.369Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 269829 downloads | 423 likes
+- **Stars / Engagement**: 269829 downloads | 436 likes
 
 ---
 

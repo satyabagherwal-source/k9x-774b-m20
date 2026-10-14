@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T09:28:10.227Z",
-  "total_cycles_completed": 1275,
-  "total_learnings_persisted": 1275,
+  "last_updated": "2026-10-14T09:31:15.072Z",
+  "total_cycles_completed": 1276,
+  "total_learnings_persisted": 1276,
   "total_rules_promoted": 627,
   "history": [
-    {
-      "timestamp": "2026-10-13T21:27:18.457Z",
-      "repository": "Leonxlnx/taste-skill",
-      "learningId": "learn-github-leonxlnx-taste-skill-mv76z1gt",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T21:35:26.958Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T09:28:10.227Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv7wq2s0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T09:31:15.072Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7wu1eg",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
