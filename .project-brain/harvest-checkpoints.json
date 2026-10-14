@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:37:57.943Z",
+  "last_updated": "2026-10-14T13:43:03.978Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -762,15 +762,15 @@
       "repository": "canberkkkkkk/ema-lightning",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv7nh5yr",
-      "content_hash": "ed3c89d8dac98a2ec5812c3ba8347e163df9fdbfc8fb379deb06959ac194c20f",
-      "verified_at": "2026-10-14T05:09:17.934Z",
+      "learning_id": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv85tvic",
+      "content_hash": "3c6ad03656bc9e0f5b329166d6faece4d98700bf45eacead9a323a47f65cca7f",
+      "verified_at": "2026-10-14T13:43:03.978Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T05:09:17.934Z"
+      "last_updated": "2026-10-14T13:43:03.978Z"
     },
     "google/embeddinggemma-2": {
       "repository": "google/embeddinggemma-2",

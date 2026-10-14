@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-ZPPE",
-    "timestamp": "2026-10-13T06:32:02.018Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv6azpmg",
-    "contentHash": "e9ece3031149b7521d8de413519071bcba69f51b98dbd8bcb316b557ce88d305",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-3QVG",
     "timestamp": "2026-10-13T06:35:10.156Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7490,6 +7475,21 @@
     "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv85nbdd",
     "contentHash": "2fa9f23ee6755557680a7638be7c22c96ea80e1a2e689c3aec80377ba0ca975b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-TVL2",
+    "timestamp": "2026-10-14T13:43:03.974Z",
+    "repository": "canberkkkkkk/ema-lightning",
+    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv85tvic",
+    "contentHash": "3c6ad03656bc9e0f5b329166d6faece4d98700bf45eacead9a323a47f65cca7f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
