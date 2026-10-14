@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-N1GH",
-    "timestamp": "2026-10-12T22:54:16.865Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv5un1ch",
-    "contentHash": "e37ecf324371f58aadfd806bf0fad78ece315aad7cbfa349b8d403913a99de4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-QQ1P",
     "timestamp": "2026-10-12T22:57:08.701Z",
     "repository": "facebook/sam3",
@@ -7492,6 +7477,21 @@
     "contentHash": "0166241fa4e0ebc4e77caf8d1b5e972a19f1311506a21a9029ff1cbb50a7fda5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-ICYY",
+    "timestamp": "2026-10-14T04:14:14.314Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv7licuf",
+    "contentHash": "dea7b3ffba67f1002febcb117af8370dab0ad0a2ad9469c0587ebda64a8bc5f1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

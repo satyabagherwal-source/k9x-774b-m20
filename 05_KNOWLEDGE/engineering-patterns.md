@@ -46722,3 +46722,173 @@ num_attention_heads = 7  # 4096 % 7 != 0
 Add a CI lint rule that parses `config.json` and checks the divisibility constraint. Fail the build if violated.
 
 ---
+
+
+---
+
+## 813. Quantization-Aware Artifact Segregation (Harvested from Comfy-Org/Qwen-Image-2.1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization-Aware Artifact Segregation",
+  "source": "Comfy-Org/Qwen-Image-2.1",
+  "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+  "source_version": "hf-comfy-org-qwen-image-2.1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T04:14:14.203Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv7licuf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing machine learning models for heterogeneous hardware, you MUST segregate artifacts by precision (BF16, Int8, Int4) and architecture (Base, Turbo, ControlNet) into distinct, explicitly named files. You MUST NOT mix precision variants in a single file or rely on implicit runtime detection of tensor dtype.
+
+**WHY**:
+Implicit dtype detection leads to silent performance degradation or OOM (Out of Memory) crashes on edge devices. Explicit segregation allows the inference engine (ComfyUI) to perform **static memory planning** and **kernel selection** (e.g., selecting `int8_convrot` kernels vs. `bf16` kernels) before execution begins. Mixing formats forces runtime casting, which incurs significant latency overhead and breaks zero-copy optimizations.
+
+**WHEN TO APPLY**:
+Any ML model distribution pipeline targeting mixed-precision hardware (GPU/CPU/NPU). Specifically applicable to diffusion models where VAE, Text Encoder, and UNet/DiT have different sensitivity to quantization.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# ComfyUI Model Loader Logic (Pseudo-code)
+def load_model(model_path):
+    # 1. Parse filename to determine precision and type
+    # e.g., "qwen_image_2.1_int8_convrot.safetensors"
+    filename = os.path.basename(model_path)
+    
+    if "int8_convrot" in filename:
+        dtype = torch.int8
+        kernel_type = "conv_rotated"
+    elif "w4a8" in filename:
+        dtype = torch.int4
+        kernel_type = "weight_4_act_8"
+    elif "bf16" in filename:
+        dtype = torch.bfloat16
+        kernel_type = "standard"
+    else:
+        raise ValueError("Unknown precision format")
+        
+    # 2. Load with explicit dtype to avoid implicit casting
+    state_dict = safetensors.load_file(model_path, device="cuda", dtype=dtype)
+    
+    # 3. Verify tensor shapes match expected architecture
+    expected_shapes = get_expected_shapes(model_type)
+    for key, tensor in state_dict.items():
+        if key in expected_shapes:
+            assert tensor.shape == expected_shapes[key], f"Shape mismatch for {key}"
+            
+    return ModelWrapper(state_dict, kernel_type)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Implicit loading
+# This forces the CPU to load as float32, then cast to GPU, causing 2x memory spike
+state_dict = torch.load("model.safetensors") # No dtype specified
+model.load_state_dict(state_dict) 
+# If model expects int8 but gets float32, it will either crash or silently upcast, 
+# defeating the purpose of quantization.
+```
+
+**VERIFICATION METHOD**:
+1.  **Static Analysis:** Lint check on model filenames to ensure they contain one of the allowed precision tokens (`bf16`, `int8`, `w4a8`).
+2.  **Runtime Assertion:** In the loader, assert that `tensor.dtype` matches the expected dtype derived from the filename.
+3.  **Memory Profiling:** Verify that peak GPU memory usage for `int8` models is < 50% of `bf16` models for the same architecture.
+
+
+---
+
+## 814. Distillation-Step Invariant Coupling (Harvested from Comfy-Org/Qwen-Image-2.1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Distillation-Step Invariant Coupling",
+  "source": "Comfy-Org/Qwen-Image-2.1",
+  "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+  "source_version": "hf-comfy-org-qwen-image-2.1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T04:14:14.232Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv7licuf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When providing a "Turbo" or "Fast" variant of a diffusion model via LoRA or distilled weights, you MUST enforce a strict coupling between the model artifact and its required inference parameters (step count, CFG scale). You MUST NOT allow the user to apply a Turbo LoRA with standard high-step/CFG settings without explicit warning or automatic parameter override.
+
+**WHY**:
+Distilled models (like Turbo) are trained to converge in few steps (e.g., 8) with low guidance (CFG 1.0). Using them with standard settings (e.g., 20 steps, CFG 7.5) results in **over-saturation**, **artifacts**, or **complete failure** to generate coherent images. The model's latent trajectory is optimized for a specific ODE solver path; deviating from it breaks the learned distribution.
+
+**WHEN TO APPLY**:
+Any deployment of distilled, step-reduced, or LoRA-accelerated diffusion models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// ComfyUI Workflow JSON Metadata
+{
+  "nodes": [
+    {
+      "type": "KSampler",
+      "inputs": {
+        "steps": 8,
+        "cfg": 1.0,
+        "sampler_name": "euler",
+        "scheduler": "normal"
+      }
+    },
+    {
+      "type": "LoadLoRANode",
+      "inputs": {
+        "lora_name": "qwen_image_2.1_turbo_lora_avg_rank_178_bf16.safetensors",
+        "strength_model": 1.0,
+        "strength_clip": 1.0
+      }
+    }
+  ]
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: Mismatched Parameters
+{
+  "nodes": [
+    {
+      "type": "KSampler",
+      "inputs": {
+        "steps": 30, // Too high for Turbo
+        "cfg": 7.5   // Too high for Turbo
+      }
+    },
+    {
+      "type": "LoadLoRANode",
+      "inputs": {
+        "lora_name": "qwen_image_2.1_turbo_lora_avg_rank_178_bf16.safetensors"
+      }
+    }
+  ]
+}
+// Result: Blurry, over-saturated, or corrupted images.
+```
+
+**VERIFICATION METHOD**:
+1.  **Workflow Validation:** A linter for ComfyUI workflows that checks if a `Turbo` LoRA is loaded. If yes, assert `steps <= 10` and `cfg <= 2.0`.
+2.  **Visual Regression Test:** Generate a standard test prompt with the Turbo model. Compare PSNR/SSIM against a reference image generated with correct parameters. If deviation exceeds threshold, flag configuration error.

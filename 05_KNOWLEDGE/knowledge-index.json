@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:10:55.752Z",
-  "total_verified_learnings": 5158,
+  "last_updated": "2026-10-14T04:14:14.265Z",
+  "total_verified_learnings": 5159,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -126844,6 +126844,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T04:10:55.752Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv7licuf": {
+      "learning_id": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv7licuf",
+      "source": "Comfy-Org/Qwen-Image-2.1",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "slug": "hf-comfy-org-qwen-image-2.1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+      "source_version": "hf-comfy-org-qwen-image-2.1",
+      "content_hash": "dea7b3ffba67f1002febcb117af8370dab0ad0a2ad9469c0587ebda64a8bc5f1",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 813,
+          "title": "Quantization-Aware Artifact Segregation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 814,
+          "title": "Distillation-Step Invariant Coupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T04:14:14.265Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
