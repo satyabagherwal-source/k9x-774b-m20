@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-UVLF",
-    "timestamp": "2026-10-12T18:20:26.355Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv5kuvjn",
-    "contentHash": "1f6a1f1b17cda21f345b6a0d28c35c4746f834959f42bf722d348b3452c8fb83",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-YR6E",
     "timestamp": "2026-10-12T18:23:27.254Z",
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-20b",
     "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv7chalv",
     "contentHash": "a8327ef5ce677c5ad34afea3ae557c9842043aee8b0669704b3f95eca8431396",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-L7ET",
+    "timestamp": "2026-10-14T00:04:30.533Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv7cl7bi",
+    "contentHash": "cf335252deabad99431a04894dcd4d203508ca7bb4ef68fcd3337e5a58c84406",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
