@@ -565,9 +565,9 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "70806992a7e0fb5a6bc4c12344c158cb622d391294337ae5f514d2d964d711b8",
-    "lastHarvestedAt": "2026-10-14T04:31:57.410Z",
-    "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv7m556s"
+    "contentHash": "8a5fed77b3e47fa81d12506d45865c2d0a6a72e7422d9349ec10419b37244bfd",
+    "lastHarvestedAt": "2026-10-14T12:58:44.373Z",
+    "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv848va9"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",

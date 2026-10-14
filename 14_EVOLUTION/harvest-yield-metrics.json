@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:55:28.982Z",
-  "total_cycles_completed": 1340,
-  "total_learnings_persisted": 1340,
+  "last_updated": "2026-10-14T12:58:44.374Z",
+  "total_cycles_completed": 1341,
+  "total_learnings_persisted": 1341,
   "total_rules_promoted": 665,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:56:25.402Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv7efyt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:59:47.900Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1403,6 +1396,13 @@
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv844oix",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:58:44.374Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv848va9",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1399,3 +1399,4 @@
 | `CYCLE-20261014-WQEJ` | `2026-10-14T12:49:17.995Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`a538a12c...`) |
 | `CYCLE-20261014-0G4X` | `2026-10-14T12:52:11.313Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`f64d1f98...`) |
 | `CYCLE-20261014-4ONM` | `2026-10-14T12:55:28.978Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 897, Rule 898` | Yes (`29a29c42...`) |
+| `CYCLE-20261014-8VF7` | `2026-10-14T12:58:44.371Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`8a5fed77...`) |
