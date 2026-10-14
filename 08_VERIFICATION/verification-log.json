@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-PXI8",
-    "timestamp": "2026-10-13T00:20:30.560Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv5xpxfk",
-    "contentHash": "286b9aa989343980efbebce80f9d093c5c9a0df6e6c01694b8103a7bd76baaf1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-TRW9",
     "timestamp": "2026-10-13T00:23:29.913Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-0.6B",
     "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv7oichd",
     "contentHash": "9649ed75e26d817bce450938b97cd7848e129e3ae2991424476da7275a4f64a3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-MA86",
+    "timestamp": "2026-10-14T05:41:16.230Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv7oma4v",
+    "contentHash": "f899128780f8482c3e63b8679bb02cc5884afc8c0ba49826416f7fa3ee88f734",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1273,3 +1273,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-google-electra-base-discriminator-mv7oapsi` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-14T05:32:16.624Z |
 | `learn-huggingface-hf-baai-bge-m3-mv7oenkr` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-14T05:35:20.400Z |
 | `learn-huggingface-hf-qwen-qwen3-0-6b-mv7oichd` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-14T05:38:12.608Z |
+| `learn-huggingface-hf-google-t5-t5-small-mv7oma4v` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-14T05:41:16.232Z |
