@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T07:11:36.771Z",
-  "total_verified_learnings": 5214,
+  "last_updated": "2026-10-14T07:28:07.837Z",
+  "total_verified_learnings": 5215,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128349,6 +128349,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T07:11:36.771Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-speridlabs-iris-3b-mv7sfpcu": {
+      "learning_id": "learn-huggingface-hf-speridlabs-iris-3b-mv7sfpcu",
+      "source": "speridlabs/iris-3b",
+      "repository": "speridlabs/iris-3b",
+      "slug": "hf-speridlabs-iris-3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/speridlabs/iris-3b",
+      "source_version": "hf-speridlabs-iris-3b",
+      "content_hash": "48a7e1d268d8ca4828a827ed5c9cce42e00c6a97d070f33b7a22df5b7bfcdbee",
+      "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 842,
+          "title": "Zero-Epsilon Dynamic Range Clamping in Pixel-Space Flow Matching",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 843,
+          "title": "Dimension Preservation Invariant for Patchified Spatial-Temporal Modulation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T07:28:07.837Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

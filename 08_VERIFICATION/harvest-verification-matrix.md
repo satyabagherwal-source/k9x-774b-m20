@@ -1318,3 +1318,4 @@
 | `CYCLE-20261014-ESBZ` | `2026-10-14T06:59:25.295Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`c07b9865...`) |
 | `CYCLE-20261014-N291` | `2026-10-14T07:05:51.397Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `VERIFIED` | `Rule 839, Rule 840, Rule 841` | Yes (`6a8b1adb...`) |
 | `CYCLE-20261014-UGS5` | `2026-10-14T07:11:36.821Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`d23766fb...`) |
+| `CYCLE-20261014-FPI6` | `2026-10-14T07:28:07.902Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `VERIFIED` | `Rule 842, Rule 843` | Yes (`48a7e1d2...`) |

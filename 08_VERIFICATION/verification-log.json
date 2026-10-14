@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-SNU7",
-    "timestamp": "2026-10-13T01:46:36.847Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv60snqq",
-    "contentHash": "5aad8a6c6c345b18874ddb9bd345dc7e5d3cee1246e9ac8a5f36e81943eacef8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-W68A",
     "timestamp": "2026-10-13T01:49:20.650Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7492,6 +7477,21 @@
     "contentHash": "d23766fba10eb71b242720d8d5ed40c3acb42897c46dc7d3522c36c0ed6bfc3d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-FPI6",
+    "timestamp": "2026-10-14T07:28:07.902Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv7sfpcu",
+    "contentHash": "48a7e1d268d8ca4828a827ed5c9cce42e00c6a97d070f33b7a22df5b7bfcdbee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
