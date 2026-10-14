@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-BVOL",
-    "timestamp": "2026-10-13T02:01:33.477Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv61bvlo",
-    "contentHash": "c033f79694d61a04038658632ad78d580a3b9689eac901f1830e8e345b2b12cb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-FIB2",
     "timestamp": "2026-10-13T02:04:22.766Z",
     "repository": "google/gemma-4-31B-it",
@@ -7492,6 +7477,21 @@
     "contentHash": "a6b4d63528d8fe72d1e4909bcc2135cbe309dee6e4dd7482930d46641bc0e54b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-DX1A",
+    "timestamp": "2026-10-14T08:50:43.198Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv7vdwvx",
+    "contentHash": "98c28acbf286e23a9a8dccbda8e41c1957dbe8c3880797721c184a357a920cdc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

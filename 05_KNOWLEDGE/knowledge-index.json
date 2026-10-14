@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T08:44:16.233Z",
-  "total_verified_learnings": 5219,
+  "last_updated": "2026-10-14T08:50:43.130Z",
+  "total_verified_learnings": 5220,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128534,6 +128534,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T08:44:16.233Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv7vdwvx": {
+      "learning_id": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv7vdwvx",
+      "source": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "slug": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "content_hash": "98c28acbf286e23a9a8dccbda8e41c1957dbe8c3880797721c184a357a920cdc",
+      "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 854,
+          "title": "Safe Log-Space Sinkhorn Normalization with Clamped Residuals",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 855,
+          "title": "Dequantization Separation Invariant for Multi-Head Latent Attention (MLA)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T08:50:43.130Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
