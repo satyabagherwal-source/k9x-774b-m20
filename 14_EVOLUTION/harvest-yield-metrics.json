@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:57:52.673Z",
-  "total_cycles_completed": 1356,
-  "total_learnings_persisted": 1356,
-  "total_rules_promoted": 673,
+  "last_updated": "2026-10-14T14:02:11.687Z",
+  "total_cycles_completed": 1357,
+  "total_learnings_persisted": 1357,
+  "total_rules_promoted": 676,
   "history": [
-    {
-      "timestamp": "2026-10-14T01:47:27.634Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv7g9lln",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T01:50:31.991Z",
       "repository": "zai-org/GLM-5.3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T13:57:52.673Z",
       "repository": "Cloudflare/clef",
       "learningId": "learn-huggingface-hf-cloudflare-clef-mv86cx3m",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T14:02:11.687Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv86igy0",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

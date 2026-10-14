@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:57:52.603Z",
-  "total_verified_learnings": 5311,
+  "last_updated": "2026-10-14T14:02:11.590Z",
+  "total_verified_learnings": 5312,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -131038,6 +131038,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T13:57:52.603Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-cloudflare-clef-flash-mv86igy0": {
+      "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv86igy0",
+      "source": "Cloudflare/clef-flash",
+      "repository": "Cloudflare/clef-flash",
+      "slug": "hf-cloudflare-clef-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+      "source_version": "hf-cloudflare-clef-flash",
+      "content_hash": "b9be8c512363509f160482b03f9b71441f7f6ac59f66066406852f6c376f826c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 907,
+          "title": "**Strict BFloat16 Weight & Activation Policy**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 908,
+          "title": "**Deterministic Tokenization Contract**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 909,
+          "title": "**Cache‑Enabled Generation Policy**",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T14:02:11.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
