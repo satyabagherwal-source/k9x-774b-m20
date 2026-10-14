@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:48:13.784Z",
-  "total_cycles_completed": 1320,
-  "total_learnings_persisted": 1320,
+  "last_updated": "2026-10-14T11:51:17.711Z",
+  "total_cycles_completed": 1321,
+  "total_learnings_persisted": 1321,
   "total_rules_promoted": 646,
   "history": [
-    {
-      "timestamp": "2026-10-13T23:52:59.669Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv7c6ea2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T23:58:22.564Z",
       "repository": "bigscience/bloom",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T11:48:13.784Z",
       "repository": "Lightricks/LTX-2.5",
       "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv81q70u",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T11:51:17.711Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv81u4we",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
