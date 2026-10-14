@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-PBJP",
-    "timestamp": "2026-10-13T04:59:58.261Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv67pbgg",
-    "contentHash": "d5ab7338a2a7359ced4f282c3b404e9c69dbe19591620e970745ae64c10c3b1f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-TFB1",
     "timestamp": "2026-10-13T05:03:09.757Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "1962ce5a44189959df6c98d3a35898c285c30604b20c33a1c0917d9e031b9522",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-2830",
+    "timestamp": "2026-10-14T11:57:34.956Z",
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv8227zh",
+    "contentHash": "7196350a58645065cfe886da56cb178350710c934f0a3dc82500864f18229b58",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
