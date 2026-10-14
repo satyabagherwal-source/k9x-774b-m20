@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:03:01.002Z",
-  "total_cycles_completed": 1162,
-  "total_learnings_persisted": 1162,
+  "last_updated": "2026-10-14T02:06:03.016Z",
+  "total_cycles_completed": 1163,
+  "total_learnings_persisted": 1163,
   "total_rules_promoted": 552,
   "history": [
-    {
-      "timestamp": "2026-10-13T14:04:24.887Z",
-      "repository": "canberkkkkkk/ema-lightning",
-      "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv6r5h7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T14:07:17.242Z",
       "repository": "google/embeddinggemma-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T02:03:01.002Z",
       "repository": "autotrust/GEV-26B-Decide",
       "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv7gtlsf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T02:06:03.016Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv7gxi8o",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
