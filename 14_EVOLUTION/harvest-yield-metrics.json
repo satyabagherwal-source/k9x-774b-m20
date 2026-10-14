@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:57:34.960Z",
-  "total_cycles_completed": 1323,
-  "total_learnings_persisted": 1323,
+  "last_updated": "2026-10-14T12:00:42.135Z",
+  "total_cycles_completed": 1324,
+  "total_learnings_persisted": 1324,
   "total_rules_promoted": 648,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:04:30.537Z",
-      "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv7cl7bi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:07:46.694Z",
       "repository": "meta-llama/Llama-2-7b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T11:57:34.960Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv8227zh",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:00:42.135Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv8268ez",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
