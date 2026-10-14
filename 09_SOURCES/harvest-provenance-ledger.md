@@ -1198,3 +1198,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv7fxazj` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-14T01:37:53.954Z |
 | `learn-huggingface-hf-bingsu-adetailer-mv7g1b0m` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-14T01:41:00.667Z |
 | `learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv7g5bnv` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-14T01:44:08.126Z |
+| `learn-huggingface-hf-baai-bge-large-en-v1-5-mv7g9lln` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-14T01:47:27.633Z |
