@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-GBQ1",
-    "timestamp": "2026-10-13T05:48:57.817Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv69gbo5",
-    "contentHash": "854a18f2437747b9d8d602e99dc69d7c943670432806e7dbd806e7adb32f7a45",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-K5MG",
     "timestamp": "2026-10-13T05:51:56.536Z",
     "repository": "google-bert/bert-base-uncased",
@@ -7490,6 +7475,21 @@
     "repository": "inclusionAI/Ming-Image-0.1-Design",
     "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv83wqb7",
     "contentHash": "a538a12c4210547a7a171487f55666b69d07b53d43c22696d2a72c1d14ed5327",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-0G4X",
+    "timestamp": "2026-10-14T12:52:11.313Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv840g2v",
+    "contentHash": "f64d1f98541ab9d708c365eaab808002e14b4d2c12cbcd03d212f6b83c4b2978",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
