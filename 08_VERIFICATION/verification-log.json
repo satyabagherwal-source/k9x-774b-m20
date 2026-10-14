@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-B5RT",
-    "timestamp": "2026-10-13T02:28:59.513Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv62b5oz",
-    "contentHash": "0dd89f1a96f603fa0e51d05fd3ba26fa67feb3b668d800b5331e30bba5e66190",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-EZI2",
     "timestamp": "2026-10-13T02:31:58.010Z",
     "repository": "autotrust/JEV-27B-VL",
@@ -7492,6 +7477,21 @@
     "contentHash": "e06f9155f3ca3a66eaaf1223bee9e79027fa130559d60aabe75d123bdbe2b4a7",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-LQA6",
+    "timestamp": "2026-10-14T09:24:47.310Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv7wlq70",
+    "contentHash": "3e81c4f9ddd95b0e29a7718e583091f49086cea2bc957ddf8985930dbdb4fb4c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
