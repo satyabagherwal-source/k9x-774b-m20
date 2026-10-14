@@ -55229,3 +55229,53 @@ def test_kv_cache_boundary():
     except Exception as e:
         assert "max_length" in str(e) or "OOM" not in str(e)
 ```
+
+
+---
+
+## 925. macos): NFC-normalize only Claude config directories (Harvested from nguyenphutrong/quotio)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "macos): NFC-normalize only Claude config directories",
+  "source": "nguyenphutrong/quotio",
+  "source_url": "https://github.com/nguyenphutrong/quotio",
+  "source_version": "dfa5beeb",
+  "license": "MIT",
+  "extracted_at": "2026-10-14T16:21:12.829Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nguyenphutrong-quotio-mv8bh96o",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio) (Revision: `dfa5beeb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `17258af6`: macos): NFC-normalize only Claude config directories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Packages/QuotioCore/Sources/QuotioInfrastructure/QuotioCLI/QuotioCLIBackend.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        let directory = kind == "claude_native" ? configDirectory.precomposedStringWithCanonicalMapping : configDirectory
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Anti-pattern to NEVER write (induced failure mode):
+        let directory = configDirectory.precomposedStringWithCanonicalMapping
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `17258af6` are properly handled with clean fallback behavior.

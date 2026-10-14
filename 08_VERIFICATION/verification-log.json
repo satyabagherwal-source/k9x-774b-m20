@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-UXMF",
-    "timestamp": "2026-10-13T09:44:16.311Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv6huxk0",
-    "contentHash": "0c92a1b8b18a14a8edcc4e991c97985233a132845b3739ada8c3e263dce0bcff",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-YUR4",
     "timestamp": "2026-10-13T09:47:19.216Z",
     "repository": "google/gemma-4-31B-it",
@@ -7492,6 +7477,21 @@
     "contentHash": "5c8944f382d983a886904d9dc8047ecb92b3f22d583dc6fe3b59d5d5ea4eae7d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-H9AV",
+    "timestamp": "2026-10-14T16:21:12.919Z",
+    "repository": "nguyenphutrong/quotio",
+    "learningId": "learn-github-nguyenphutrong-quotio-mv8bh96o",
+    "contentHash": "5a419bdfb765dfc7bf710d3e4da26697f9a26c64fb18b9a155e41cb71b514b22",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1518,5 +1518,15 @@
     "contentHash": "1bbd9df7d57dce44ea684c45444dd0718f2e6dae4c2931688edecba8628aeb19",
     "lastHarvestedAt": "2026-10-14T15:17:27.163Z",
     "learningId": "learn-huggingface-hf-vllm-sr-d3-mv897988"
+  },
+  "nguyenphutrong-quotio": {
+    "repository": "nguyenphutrong/quotio",
+    "platform": "github",
+    "sourceUrl": "https://github.com/nguyenphutrong/quotio",
+    "sourceVersion": "dfa5beeb",
+    "license": "MIT",
+    "contentHash": "5a419bdfb765dfc7bf710d3e4da26697f9a26c64fb18b9a155e41cb71b514b22",
+    "lastHarvestedAt": "2026-10-14T16:21:12.921Z",
+    "learningId": "learn-github-nguyenphutrong-quotio-mv8bh96o"
   }
 }

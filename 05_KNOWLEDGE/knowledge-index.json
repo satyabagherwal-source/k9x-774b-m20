@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:13:22.304Z",
-  "total_verified_learnings": 5345,
+  "last_updated": "2026-10-14T16:21:12.868Z",
+  "total_verified_learnings": 5346,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -131952,6 +131952,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T16:13:22.304Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-nguyenphutrong-quotio-mv8bh96o": {
+      "learning_id": "learn-github-nguyenphutrong-quotio-mv8bh96o",
+      "source": "nguyenphutrong/quotio",
+      "repository": "nguyenphutrong/quotio",
+      "slug": "nguyenphutrong-quotio",
+      "platform": "github",
+      "source_url": "https://github.com/nguyenphutrong/quotio",
+      "source_version": "dfa5beeb",
+      "content_hash": "5a419bdfb765dfc7bf710d3e4da26697f9a26c64fb18b9a155e41cb71b514b22",
+      "dossier_path": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 925,
+          "title": "macos): NFC-normalize only Claude config directories",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T16:21:12.868Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
