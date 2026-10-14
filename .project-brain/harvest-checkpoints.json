@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:11:08.257Z",
+  "last_updated": "2026-10-14T12:16:51.373Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -454,15 +454,15 @@
       "repository": "apple/LensVLM-9B",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv7kqdu6",
-      "content_hash": "d7a9c0bd700827569bb8a58ac34a0cf103048d5410846a6a011087502a190a7b",
-      "verified_at": "2026-10-14T03:52:29.443Z",
+      "learning_id": "learn-huggingface-hf-apple-lensvlm-9b-mv82r080",
+      "content_hash": "e51a9638266e674a640eee9754c8d85d58b5c912d8c592cb5f1c09e8cbb2da02",
+      "verified_at": "2026-10-14T12:16:51.373Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T03:52:29.443Z"
+      "last_updated": "2026-10-14T12:16:51.373Z"
     },
     "Altworld/Hemmingway-1": {
       "repository": "Altworld/Hemmingway-1",
