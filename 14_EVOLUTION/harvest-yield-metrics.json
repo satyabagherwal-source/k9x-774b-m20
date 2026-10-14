@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T01:12:57.529Z",
-  "total_cycles_completed": 1146,
-  "total_learnings_persisted": 1146,
+  "last_updated": "2026-10-14T01:16:08.513Z",
+  "total_cycles_completed": 1147,
+  "total_learnings_persisted": 1147,
   "total_rules_promoted": 549,
   "history": [
-    {
-      "timestamp": "2026-10-13T13:00:37.922Z",
-      "repository": "trailhq/Trail-Code",
-      "learningId": "learn-github-trailhq-trail-code-mv6ovg9f",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T13:14:43.642Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T01:12:57.529Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7f18ar",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T01:16:08.513Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv7f5boy",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

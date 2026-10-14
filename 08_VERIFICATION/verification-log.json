@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-E9X2",
-    "timestamp": "2026-10-12T19:31:30.614Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv5ne9uq",
-    "contentHash": "9b720a5ece6c4c9089c5a81385f49a266cac89b618114486178f72590f25f316",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-IHLR",
     "timestamp": "2026-10-12T19:34:47.199Z",
     "repository": "jialinyyzz/humanizer",
@@ -7490,6 +7475,21 @@
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
     "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7f18ar",
     "contentHash": "49693ffe69ec2a4ccf8d009f9885e1c0075188baa8e5a2ed27c39592104f1ff2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-5BR2",
+    "timestamp": "2026-10-14T01:16:08.510Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv7f5boy",
+    "contentHash": "beedd2b01bb13f91c44f531ea7de599c1d97a379e29a1072332027107cfa0017",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
