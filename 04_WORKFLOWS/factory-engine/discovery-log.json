@@ -17677,5 +17677,20 @@
     "qualityScore": 2892,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-14T16:16:42.669Z"
+  },
+  {
+    "name": "serviette",
+    "fullName": "pathwaycom/serviette",
+    "url": "https://github.com/pathwaycom/serviette",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "Ready-to-run cloud templates for RAG, AI pipelines, and enterprise search with live data. 🐳Docker-friendly.⚡Always in sync with Sharepoint, Google Drive, S3, Kafka, PostgreSQL, real-time data APIs, and more.",
+    "stars": 58789,
+    "forks": 1508,
+    "openIssues": 8,
+    "language": "Jupyter Notebook",
+    "qualityScore": 30013,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-14T16:32:14.822Z"
   }
 ]
