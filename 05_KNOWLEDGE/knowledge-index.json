@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T01:25:12.228Z",
-  "total_verified_learnings": 5105,
+  "last_updated": "2026-10-14T01:28:16.645Z",
+  "total_verified_learnings": 5106,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -125426,6 +125426,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T01:25:12.228Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-google-vit-base-patch16-224-mv7fkxji": {
+      "learning_id": "learn-huggingface-hf-google-vit-base-patch16-224-mv7fkxji",
+      "source": "google/vit-base-patch16-224",
+      "repository": "google/vit-base-patch16-224",
+      "slug": "hf-google-vit-base-patch16-224",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/google/vit-base-patch16-224",
+      "source_version": "hf-google-vit-base-patch16-224",
+      "content_hash": "0e12e62731269c0b9487d4dc4fd524318d634bbbdfd83a000712dd74d4f4bb4b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T01:28:16.645Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
