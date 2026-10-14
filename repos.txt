@@ -3948,3 +3948,7 @@ https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8
 # --- Automatically Discovered by AI Scout Engine [2026-10-14T14:23:45.417Z] ---
 # [AI-AGENTS] amplifthq/opentag (970 score) - OpenMeld: the open-source collaboration system for people and AI agents. Share c
 https://github.com/amplifthq/opentag
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T15:17:15.039Z] ---
+# [HUGGINGFACE-AI-MODELS] vllm-sr/d3 (3335 score) - Verified Hugging Face Model: vllm-sr/d3 (153 likes, 1805 downloads)
+https://huggingface.co/vllm-sr/d3

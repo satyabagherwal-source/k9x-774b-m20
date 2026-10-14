@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-9HA2",
-    "timestamp": "2026-10-13T08:31:36.122Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv6f9h6z",
-    "contentHash": "ff43a4f49dca06f06506d58e52eaeff65c46cbd224c9e1896e6ff7de6d40c405",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-DARG",
     "timestamp": "2026-10-13T08:34:34.300Z",
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7490,6 +7475,21 @@
     "repository": "hexgrad/Kokoro-82M",
     "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv891s7q",
     "contentHash": "17d6fe3d8104fdb05113b27ec6e90c04e348ee66221ea37e5635cc3191080661",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-79BS",
+    "timestamp": "2026-10-14T15:17:27.160Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-hf-vllm-sr-d3-mv897988",
+    "contentHash": "1bbd9df7d57dce44ea684c45444dd0718f2e6dae4c2931688edecba8628aeb19",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

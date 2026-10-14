@@ -1508,5 +1508,15 @@
     "contentHash": "e2e9b481a56a6665ecbccb42410af9c2a95e98cc4282ed5f23efdb5d3d9921ba",
     "lastHarvestedAt": "2026-10-14T14:27:43.367Z",
     "learningId": "learn-github-amplifthq-opentag-mv87fawi"
+  },
+  "hf-vllm-sr-d3": {
+    "repository": "vllm-sr/d3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/vllm-sr/d3",
+    "sourceVersion": "hf-vllm-sr-d3",
+    "license": "Open-Source",
+    "contentHash": "1bbd9df7d57dce44ea684c45444dd0718f2e6dae4c2931688edecba8628aeb19",
+    "lastHarvestedAt": "2026-10-14T15:17:27.163Z",
+    "learningId": "learn-huggingface-hf-vllm-sr-d3-mv897988"
   }
 }

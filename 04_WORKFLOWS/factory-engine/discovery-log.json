@@ -17650,5 +17650,17 @@
     "qualityScore": 970,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-14T14:22:50.595Z"
+  },
+  {
+    "name": "vllm-sr/d3",
+    "fullName": "vllm-sr/d3",
+    "url": "https://huggingface.co/vllm-sr/d3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: vllm-sr/d3 (153 likes, 1805 downloads)",
+    "likes": 153,
+    "downloads": 1805,
+    "qualityScore": 3335,
+    "discoveredAt": "2026-10-14T15:16:43.530Z"
   }
 ]
