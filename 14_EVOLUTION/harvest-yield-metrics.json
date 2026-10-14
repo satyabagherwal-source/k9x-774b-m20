@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T15:38:00.843Z",
-  "total_cycles_completed": 1379,
-  "total_learnings_persisted": 1379,
+  "last_updated": "2026-10-14T15:41:17.497Z",
+  "total_cycles_completed": 1380,
+  "total_learnings_persisted": 1380,
   "total_rules_promoted": 687,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:00:07.203Z",
-      "repository": "moonshotai/Kimi-K3",
-      "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv7iv1hm",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:03:06.800Z",
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T15:38:00.843Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv89xp52",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T15:41:17.497Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv8a1wwb",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
