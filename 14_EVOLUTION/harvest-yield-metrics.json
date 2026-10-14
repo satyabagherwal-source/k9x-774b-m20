@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:00:44.794Z",
-  "total_cycles_completed": 1386,
-  "total_learnings_persisted": 1386,
-  "total_rules_promoted": 690,
+  "last_updated": "2026-10-14T16:03:53.816Z",
+  "total_cycles_completed": 1387,
+  "total_learnings_persisted": 1387,
+  "total_rules_promoted": 691,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:21:44.076Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv7jmu5z",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:24:53.332Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -1403,6 +1396,13 @@
       "repository": "openai/gpt-oss-20b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv8aqxkr",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T16:03:53.816Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv8auzfh",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T10:12:01.582Z",
+  "last_updated": "2026-10-14T16:03:53.815Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1311,6 +1311,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7yah35"
+    },
+    {
+      "id": "CD-UZIV",
+      "directive_title": "Tokenizer Special Token Integrity & Chat Template Consistency",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "meta-llama/Llama-2-7b-chat-hf",
+      "source_commit": "hf-meta-llam",
+      "date_staged": "2026-10-14",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv8auzfh"
     }
   ]
 }
