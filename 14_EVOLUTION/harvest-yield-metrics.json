@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:51:16.480Z",
-  "total_cycles_completed": 1354,
-  "total_learnings_persisted": 1354,
-  "total_rules_promoted": 667,
+  "last_updated": "2026-10-14T13:54:41.367Z",
+  "total_cycles_completed": 1355,
+  "total_learnings_persisted": 1355,
+  "total_rules_promoted": 670,
   "history": [
-    {
-      "timestamp": "2026-10-14T01:41:00.668Z",
-      "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv7g1b0m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T01:44:08.127Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -1403,6 +1396,13 @@
       "repository": "google/embeddinggemma-2",
       "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv864fi8",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T13:54:41.367Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv868tj7",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

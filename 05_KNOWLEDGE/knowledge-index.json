@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:51:16.414Z",
-  "total_verified_learnings": 5309,
+  "last_updated": "2026-10-14T13:54:41.302Z",
+  "total_verified_learnings": 5310,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -130958,6 +130958,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T13:51:16.414Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv868tj7": {
+      "learning_id": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv868tj7",
+      "source": "unsloth/embeddinggemma-2-GGUF",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "slug": "hf-unsloth-embeddinggemma-2-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
+      "source_version": "hf-unsloth-embeddinggemma-2-gguf",
+      "content_hash": "b9ae788b5c2621df8741951cf7f85f03d25b9aa7772b89f861c335fe47d23a1b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 901,
+          "title": "Matryoshka Vector Truncation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 902,
+          "title": "Selective Modality Loading & Graceful Degradation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 903,
+          "title": "Dynamic Quantization Precision Allocation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T13:54:41.302Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
