@@ -275,9 +275,9 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "4ee2d93effa542cfd5343a7a09fe4041fe6f95a9bb4f1490e710a6a29bd416d9",
-    "lastHarvestedAt": "2026-10-14T02:51:03.124Z",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv7ijdlx"
+    "contentHash": "063c67fa2f7ba2e4aa4f28288c4de0fdee0270ae3e469f0b8635154b8775c74e",
+    "lastHarvestedAt": "2026-10-14T11:07:53.806Z",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv80abq0"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
