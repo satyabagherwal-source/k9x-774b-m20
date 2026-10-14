@@ -1240,3 +1240,4 @@
 | `CYCLE-20261014-R7UE` | `2026-10-14T02:57:08.726Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`3e474849...`) |
 | `CYCLE-20261014-V1K0` | `2026-10-14T03:00:07.200Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`28f81880...`) |
 | `CYCLE-20261014-YW4S` | `2026-10-14T03:03:06.796Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 698, Rule 799` | Yes (`21aed63d...`) |
+| `CYCLE-20261014-32GK` | `2026-10-14T03:06:21.620Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`7fd2c0b8...`) |

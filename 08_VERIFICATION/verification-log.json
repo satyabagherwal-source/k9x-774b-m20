@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-NQBL",
-    "timestamp": "2026-10-12T21:30:50.241Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv5rnq8d",
-    "contentHash": "9e932fa81f6e6e8ce8cd79326eda981cc9a223ef42422530fb5259e9e3011aef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-RYVS",
     "timestamp": "2026-10-12T21:34:07.960Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "21aed63d1c50a5815f2e19ff8eb003ef65b8d0f10bc4c2ce486046cd22017fe3",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-32GK",
+    "timestamp": "2026-10-14T03:06:21.620Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv7j32d3",
+    "contentHash": "7fd2c0b859dab36c51b0dacd42d9fe626060093352b4186fd28e7421b6627f5b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
