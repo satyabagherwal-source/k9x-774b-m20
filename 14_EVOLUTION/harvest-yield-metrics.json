@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:50:50.133Z",
-  "total_cycles_completed": 1216,
-  "total_learnings_persisted": 1216,
+  "last_updated": "2026-10-14T04:53:40.231Z",
+  "total_cycles_completed": 1217,
+  "total_learnings_persisted": 1217,
   "total_rules_promoted": 584,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:27:02.877Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv6ye2da",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:30:12.538Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T04:50:50.133Z",
       "repository": "PSRben/VisionHOPE",
       "learningId": "learn-huggingface-hf-psrben-visionhope-mv7mtf6l",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T04:53:40.231Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv7mx2gp",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
