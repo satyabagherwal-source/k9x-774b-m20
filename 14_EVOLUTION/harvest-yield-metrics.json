@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T14:07:07.900Z",
-  "total_cycles_completed": 1358,
-  "total_learnings_persisted": 1358,
+  "last_updated": "2026-10-14T14:10:08.155Z",
+  "total_cycles_completed": 1359,
+  "total_learnings_persisted": 1359,
   "total_rules_promoted": 678,
   "history": [
-    {
-      "timestamp": "2026-10-14T01:53:31.583Z",
-      "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7ghefw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T01:56:34.041Z",
       "repository": "jialinyyzz/humanizer",
@@ -1403,6 +1396,13 @@
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv86otkt",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T14:10:08.155Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv86sopo",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

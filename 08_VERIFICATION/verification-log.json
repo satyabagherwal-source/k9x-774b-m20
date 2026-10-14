@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-NGTH",
-    "timestamp": "2026-10-13T06:50:30.245Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv6bngqx",
-    "contentHash": "1e32ecc5059bf2d513bde6647fe86aa62ab7a16bf6699d40f6416286cbcc0ab3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-RB24",
     "timestamp": "2026-10-13T06:53:29.404Z",
     "repository": "openai/gpt-oss-120b",
@@ -7492,6 +7477,21 @@
     "contentHash": "aec522d65a7452a9573664ec7c063acb0c5d46c773d272db7849d10c85f3fd71",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-SOT3",
+    "timestamp": "2026-10-14T14:10:08.151Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv86sopo",
+    "contentHash": "54f566094660a9a7f2518bcc6bf6fb4f6fa407c0e3988884082fd09f450bcadb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
