@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-MNR8",
-    "timestamp": "2026-10-13T02:37:56.036Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv62mnor",
-    "contentHash": "b15684e0930992f7ed023e5e5c6fb8d1b8c526a6581a8bfb3fbe220c3d985ed9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-QKT4",
     "timestamp": "2026-10-13T02:40:58.840Z",
     "repository": "Edge0/Audio8-ASR-Infinite",
@@ -7490,6 +7475,21 @@
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
     "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7wu1eg",
     "contentHash": "a960c3058ee9e534358a8f6e65c58391f5d0eb24d889b698189cdfebc4d786d0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-Y37J",
+    "timestamp": "2026-10-14T09:34:23.935Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv7wy347",
+    "contentHash": "b7b1e2ae50abff0e64b253f3aa81df45d7fc45d74750afd8d89b97f9f8745661",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
