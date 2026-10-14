@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T10:24:28.382Z",
-  "total_cycles_completed": 1293,
-  "total_learnings_persisted": 1293,
+  "last_updated": "2026-10-14T10:27:39.781Z",
+  "total_cycles_completed": 1294,
+  "total_learnings_persisted": 1294,
   "total_rules_promoted": 631,
   "history": [
-    {
-      "timestamp": "2026-10-13T22:29:34.671Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv7974d5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T22:32:47.538Z",
       "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T10:24:28.382Z",
       "repository": "convaiinnovations/laya",
       "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv7yqhdh",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T10:27:39.781Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv7yul1h",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

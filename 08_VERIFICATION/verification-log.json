@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-HQ3K",
-    "timestamp": "2026-10-13T03:30:05.024Z",
-    "repository": "autotrust/JEV-35B",
-    "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv64hq0e",
-    "contentHash": "08ddc625d07b8861c1f8a50b6e74340f469d99eb7c6fdaa36e2055761a22d2ca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-LM9R",
     "timestamp": "2026-10-13T03:33:06.687Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "convaiinnovations/laya",
     "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv7yqhdh",
     "contentHash": "d345443b787bd7ce33c03555bd6a8a5706b00ba38eb42205550b6f47636a7ea6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-UL4X",
+    "timestamp": "2026-10-14T10:27:39.777Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv7yul1h",
+    "contentHash": "c4a2c7a9cbf7707859455a928fd712cdc27c0b3048c347b0ad402d0d859cc410",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
