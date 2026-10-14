@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-RYVS",
-    "timestamp": "2026-10-12T21:34:07.960Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv5rryra",
-    "contentHash": "c5cbe846f2b5fe6a4e568f0754d26cb7fc420916a9ed75bd778f3314eeea59b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-VIES",
     "timestamp": "2026-10-12T21:36:53.236Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B",
     "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv7j32d3",
     "contentHash": "7fd2c0b859dab36c51b0dacd42d9fe626060093352b4186fd28e7421b6627f5b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-6QS3",
+    "timestamp": "2026-10-14T03:09:13.107Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv7j6qqa",
+    "contentHash": "e9e2e38adeae1c8f492eec09cb4b680da9c7e3e579dca3729caaafdfa11052a9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
