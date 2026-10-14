@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-ZANM",
-    "timestamp": "2026-10-12T21:39:49.810Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv5rzalc",
-    "contentHash": "f181ea38fa87e7e05163093d4b59ba30967c8e910618ad15b7c69090393af9e6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-2XKP",
     "timestamp": "2026-10-12T21:42:39.481Z",
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -7492,6 +7477,21 @@
     "contentHash": "f497c9c38ce2f6944af22261f33fb96d8d7937be706b0fbf89832d93f7cac70b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-ETHY",
+    "timestamp": "2026-10-14T03:15:29.878Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv7jetdw",
+    "contentHash": "5a77d9aa93ddf2a4f8a42fcd728951713806c354e3e44e937797aa4d9ce48be9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

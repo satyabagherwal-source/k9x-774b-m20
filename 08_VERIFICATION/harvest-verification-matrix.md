@@ -1243,3 +1243,4 @@
 | `CYCLE-20261014-32GK` | `2026-10-14T03:06:21.620Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`7fd2c0b8...`) |
 | `CYCLE-20261014-6QS3` | `2026-10-14T03:09:13.107Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`e9e2e38a...`) |
 | `CYCLE-20261014-AVHQ` | `2026-10-14T03:12:25.838Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 800, Rule 570, Rule 550` | Yes (`f497c9c3...`) |
+| `CYCLE-20261014-ETHY` | `2026-10-14T03:15:29.878Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 801` | Yes (`5a77d9aa...`) |
