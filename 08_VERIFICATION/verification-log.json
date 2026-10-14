@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-7LW4",
-    "timestamp": "2026-10-12T21:18:18.004Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv5r7lub",
-    "contentHash": "25d6742bcfd2849d61a0e15be4947aedc3bdac8f4a4b8ef0b290a978db68d7e9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-BRP0",
     "timestamp": "2026-10-12T21:21:32.148Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7492,6 +7477,21 @@
     "contentHash": "4ee2d93effa542cfd5343a7a09fe4041fe6f95a9bb4f1490e710a6a29bd416d9",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-N5FP",
+    "timestamp": "2026-10-14T02:53:58.981Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv7in5cl",
+    "contentHash": "1637aa46ce0492442e67b7aee31edefaab06db28a093f4de35bb625ae42b5e73",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

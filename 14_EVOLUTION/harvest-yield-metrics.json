@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:51:03.126Z",
-  "total_cycles_completed": 1177,
-  "total_learnings_persisted": 1177,
+  "last_updated": "2026-10-14T02:53:58.985Z",
+  "total_cycles_completed": 1178,
+  "total_learnings_persisted": 1178,
   "total_rules_promoted": 559,
   "history": [
-    {
-      "timestamp": "2026-10-13T15:14:13.123Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-hf-amazon-chronos-2-mv6tn8uj",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T15:19:11.097Z",
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -1403,6 +1396,13 @@
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv7ijdlx",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T02:53:58.985Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv7in5cl",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
