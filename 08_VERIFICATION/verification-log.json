@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-OLIT",
-    "timestamp": "2026-10-12T21:59:30.293Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv5solec",
-    "contentHash": "cb69e5ea15deb0e1ee36fc4a7c144d4e0a9a482716d4c82dfe2f4d4fab1d39c5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-SGWR",
     "timestamp": "2026-10-12T22:02:30.939Z",
     "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -7490,6 +7475,21 @@
     "repository": "Lightricks/LTX-2.5",
     "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv7jyp05",
     "contentHash": "d6efaad6a60254f9d98c0c732f694db26e6d36e7ee77be6dd00c72b5324eb40c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-2L3E",
+    "timestamp": "2026-10-14T03:33:58.730Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv7k2l0p",
+    "contentHash": "dbc60f74ae2f4dbd4841e258ae052b279160d5cd3b7d5a7f8530bd5c25be4cf1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
