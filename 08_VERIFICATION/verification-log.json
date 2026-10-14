@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-DEUY",
-    "timestamp": "2026-10-13T00:38:46.138Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv5ydes5",
-    "contentHash": "8fd6f37138394b87a220896b3f6a4974526a90d9c180e3ba2e5f09b32baa2a50",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-HRK5",
     "timestamp": "2026-10-13T00:42:09.221Z",
     "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -7492,6 +7477,21 @@
     "contentHash": "145831c7cb802576ff3dc38a6f30205b90b2b1fe7edac65955f2b5eca4f77d2e",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-9JSN",
+    "timestamp": "2026-10-14T05:59:21.719Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv7p9jqs",
+    "contentHash": "4d85d7037661ac3565b1613a5f10eb28e763544909d1f54b6161950332356f0c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
