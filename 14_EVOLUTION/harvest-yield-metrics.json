@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T09:56:24.511Z",
-  "total_cycles_completed": 1284,
-  "total_learnings_persisted": 1284,
+  "last_updated": "2026-10-14T09:59:30.716Z",
+  "total_cycles_completed": 1285,
+  "total_learnings_persisted": 1285,
   "total_rules_promoted": 629,
   "history": [
-    {
-      "timestamp": "2026-10-13T22:01:39.375Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv7877pl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T22:04:37.115Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T09:56:24.511Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv7xqe35",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T09:59:30.716Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv7xudro",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

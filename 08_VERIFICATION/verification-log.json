@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-HQMY",
-    "timestamp": "2026-10-13T03:02:06.106Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv63hql4",
-    "contentHash": "8f73779aad618b03bf66f2650da547a53894e719c14507fe10d24e4f4f806e84",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-LZ8I",
     "timestamp": "2026-10-13T03:05:23.874Z",
     "repository": "Qwen/Qwen3.8-27B",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv7xqe35",
     "contentHash": "630c225847d8f174b156b7c2d2eb2cb93b9cef30bfa55715983ef74dc8ea3704",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-UDUH",
+    "timestamp": "2026-10-14T09:59:30.713Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv7xudro",
+    "contentHash": "dcaadee19e4bc07842e5a009919fa81a83589a559c429cbf137e26ee862c24e0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
