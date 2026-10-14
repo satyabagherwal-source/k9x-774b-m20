@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:11:57.570Z",
-  "total_cycles_completed": 1345,
-  "total_learnings_persisted": 1345,
+  "last_updated": "2026-10-14T13:15:17.320Z",
+  "total_cycles_completed": 1346,
+  "total_learnings_persisted": 1346,
   "total_rules_promoted": 665,
   "history": [
-    {
-      "timestamp": "2026-10-14T01:12:57.529Z",
-      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7f18ar",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T01:16:08.513Z",
       "repository": "google/gemma-4-26B-A4B-it",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T13:11:57.570Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv84pv9i",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T13:15:17.320Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv84u5he",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
