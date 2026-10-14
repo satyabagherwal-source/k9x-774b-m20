@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-14T16:58:11.492Z",
+  "lastUpdated": "2026-10-14T17:01:06.552Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-14T16:58:10.551Z",
-        "lastHarvestedAt": "2026-10-14T16:58:10.551Z",
-        "totalHarvested": 3523,
+        "lastActiveAt": "2026-10-14T17:01:09.975Z",
+        "lastHarvestedAt": "2026-10-14T17:01:09.975Z",
+        "totalHarvested": 3524,
         "lastError": null
       },
       {
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "HEALTHY",
+      "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": "2026-10-14T16:57:52.602Z",
-      "reason": null,
+      "resetEpoch": 1792000867680,
+      "resetAt": "2026-10-14T18:01:07.680Z",
+      "trippedAt": "2026-10-14T17:00:52.680Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Anextjs%20%22design-system%22%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=2)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {

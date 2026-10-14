@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:58:08.028Z",
-  "total_cycles_completed": 1396,
-  "total_learnings_persisted": 1396,
+  "last_updated": "2026-10-14T17:01:07.458Z",
+  "total_cycles_completed": 1397,
+  "total_learnings_persisted": 1397,
   "total_rules_promoted": 696,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:52:29.442Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv7kqdu6",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:55:29.525Z",
       "repository": "Altworld/Hemmingway-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T16:58:08.028Z",
       "repository": "Qwen/Qwen3-4B",
       "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv8csqdq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T17:01:07.458Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv8cwkv4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
