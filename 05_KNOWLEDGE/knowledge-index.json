@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T07:48:37.913Z",
-  "total_verified_learnings": 5216,
+  "last_updated": "2026-10-14T08:10:27.874Z",
+  "total_verified_learnings": 5217,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128424,6 +128424,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T07:48:37.913Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-fermionresearch-phonon-2-mv7ty58m": {
+      "learning_id": "learn-huggingface-hf-fermionresearch-phonon-2-mv7ty58m",
+      "source": "FermionResearch/Phonon-2",
+      "repository": "FermionResearch/Phonon-2",
+      "slug": "hf-fermionresearch-phonon-2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "content_hash": "e2d09e56547a08e4ed863eff1362cc16e80b0e31519e4de38e9fb551996eb1e4",
+      "dossier_path": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 847,
+          "title": "Quantized Model Artifact Integrity & Deterministic Unpacking",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 848,
+          "title": "Hardware-Agnostic Inference Dispatch with Fallback",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T08:10:27.874Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
