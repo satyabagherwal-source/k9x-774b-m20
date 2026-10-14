@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-IHLR",
-    "timestamp": "2026-10-12T19:34:47.199Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv5nihj0",
-    "contentHash": "047ba6c87c8a29247479e5240605945c32f8508a3d277000904acdaa5aad63f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-MCU7",
     "timestamp": "2026-10-12T19:37:47.647Z",
     "repository": "autotrust/JEV-27B-VL",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-26B-A4B-it",
     "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv7f5boy",
     "contentHash": "beedd2b01bb13f91c44f531ea7de599c1d97a379e29a1072332027107cfa0017",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-95DR",
+    "timestamp": "2026-10-14T01:19:06.879Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv7f95c7",
+    "contentHash": "46522d3b7429e9a9c44d5c00d50d61a48511cc164b64929da7d96f7c818a9c31",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

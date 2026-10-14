@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T01:16:08.473Z",
-  "total_verified_learnings": 5102,
+  "last_updated": "2026-10-14T01:19:06.852Z",
+  "total_verified_learnings": 5103,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -125354,6 +125354,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T01:16:08.473Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-intfloat-multilingual-e5-small-mv7f95c7": {
+      "learning_id": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv7f95c7",
+      "source": "intfloat/multilingual-e5-small",
+      "repository": "intfloat/multilingual-e5-small",
+      "slug": "hf-intfloat-multilingual-e5-small",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
+      "source_version": "hf-intfloat-multilingual-e5-small",
+      "content_hash": "46522d3b7429e9a9c44d5c00d50d61a48511cc164b64929da7d96f7c818a9c31",
+      "dossier_path": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T01:19:06.852Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
