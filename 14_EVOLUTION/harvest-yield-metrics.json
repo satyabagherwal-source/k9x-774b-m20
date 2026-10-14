@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T15:57:36.086Z",
-  "total_cycles_completed": 1385,
-  "total_learnings_persisted": 1385,
+  "last_updated": "2026-10-14T16:00:44.794Z",
+  "total_cycles_completed": 1386,
+  "total_learnings_persisted": 1386,
   "total_rules_promoted": 690,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:18:30.494Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv7jiorl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:21:44.076Z",
       "repository": "Qwen/Qwen-Image-2.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T15:57:36.086Z",
       "repository": "bigscience/bloom",
       "learningId": "learn-huggingface-hf-bigscience-bloom-mv8amvyr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T16:00:44.794Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv8aqxkr",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

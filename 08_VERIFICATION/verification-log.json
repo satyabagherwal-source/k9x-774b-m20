@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-9BNW",
-    "timestamp": "2026-10-13T09:27:28.076Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6h9blz",
-    "contentHash": "9f20a6b442ec7de56766b500ec8d5b573be3eb802f585f2cbff9cf3f29eb12dd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-CXXX",
     "timestamp": "2026-10-13T09:30:16.917Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7490,6 +7475,21 @@
     "repository": "bigscience/bloom",
     "learningId": "learn-huggingface-hf-bigscience-bloom-mv8amvyr",
     "contentHash": "f2a7f37016f7ddfbdd5e8b17f51e9db86d0b84588e9303768e1f7d12b7aa15bc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-QXO6",
+    "timestamp": "2026-10-14T16:00:44.790Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv8aqxkr",
+    "contentHash": "9e7e3ebcd8b8ce6d70b54dd03b2f543e991bf628a137a566dcaa80b4d25ad0ae",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
