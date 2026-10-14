@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T09:24:47.313Z",
-  "total_cycles_completed": 1274,
-  "total_learnings_persisted": 1274,
+  "last_updated": "2026-10-14T09:28:10.227Z",
+  "total_cycles_completed": 1275,
+  "total_learnings_persisted": 1275,
   "total_rules_promoted": 627,
   "history": [
-    {
-      "timestamp": "2026-10-13T21:13:25.186Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv76h6iu",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T21:27:18.457Z",
       "repository": "Leonxlnx/taste-skill",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T09:24:47.313Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv7wlq70",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T09:28:10.227Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv7wq2s0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
