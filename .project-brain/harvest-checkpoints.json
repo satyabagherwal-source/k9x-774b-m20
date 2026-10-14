@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:05:10.029Z",
+  "last_updated": "2026-10-14T13:08:22.357Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -664,15 +664,15 @@
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv7mh6nz",
-      "content_hash": "2b332b6033ea3634527fd17064859f3c9f69a4fc32192ee15bb7039a765fd825",
-      "verified_at": "2026-10-14T04:41:19.231Z",
+      "learning_id": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv84l9ar",
+      "content_hash": "c0dd254830913e8dba254c97b9df0ad697509a311fe1d960f538672f66cfb51f",
+      "verified_at": "2026-10-14T13:08:22.357Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T04:41:19.231Z"
+      "last_updated": "2026-10-14T13:08:22.357Z"
     },
     "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",

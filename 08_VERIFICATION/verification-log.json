@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-ZZ7H",
-    "timestamp": "2026-10-13T06:04:14.717Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv69zz5n",
-    "contentHash": "51a69f5391f55c9c3272d2c038bb949a72b3b5300aee8fb97fd091e9032d09de",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-3OZK",
     "timestamp": "2026-10-13T06:07:08.096Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv84h4we",
     "contentHash": "14e115b8ad4e947afbe42e387bb73e82678161f1759ffe22c7663c6cf22665a2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-L9E8",
+    "timestamp": "2026-10-14T13:08:22.352Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv84l9ar",
+    "contentHash": "c0dd254830913e8dba254c97b9df0ad697509a311fe1d960f538672f66cfb51f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

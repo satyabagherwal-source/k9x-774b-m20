@@ -1385,3 +1385,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv848va9` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-10-14T12:58:44.373Z |
 | `learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv84d3nn` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-14T13:02:01.793Z |
 | `learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv84h4we` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-14T13:05:10.026Z |
+| `learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv84l9ar` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-10-14T13:08:22.355Z |
