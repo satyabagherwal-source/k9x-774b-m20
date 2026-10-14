@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-R1IF",
-    "timestamp": "2026-10-12T22:29:23.943Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv5tr1fi",
-    "contentHash": "861129b0d530a011c9ac648156375abb67262f8038eb7c6dba25b605d911efd1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-URHF",
     "timestamp": "2026-10-12T22:32:17.571Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7475,21 @@
     "repository": "fastino/GLiNER2.5-Decide",
     "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv7ky6ej",
     "contentHash": "6300d0e9c1eebde8324d24102717763f95cc40c58b2ea6fe5177bdf82fbfad26",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-1ZGZ",
+    "timestamp": "2026-10-14T04:01:30.323Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv7l1zey",
+    "contentHash": "754ef3288f9480929cf9e1dd9fef953e2d429a692768690ae381eca54d5d00b5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T03:58:32.805Z",
-  "total_cycles_completed": 1199,
-  "total_learnings_persisted": 1199,
+  "last_updated": "2026-10-14T04:01:30.326Z",
+  "total_cycles_completed": 1200,
+  "total_learnings_persisted": 1200,
   "total_rules_promoted": 573,
   "history": [
-    {
-      "timestamp": "2026-10-13T16:32:11.250Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6wfiiq",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T16:35:34.577Z",
       "repository": "speridlabs/iris-3b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T03:58:32.805Z",
       "repository": "fastino/GLiNER2.5-Decide",
       "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv7ky6ej",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T04:01:30.326Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv7l1zey",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1258,3 +1258,4 @@
 | `CYCLE-20261014-QE4D` | `2026-10-14T03:52:29.437Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 804, Rule 805, Rule 806` | Yes (`d7a9c0bd...`) |
 | `CYCLE-20261014-U92P` | `2026-10-14T03:55:29.521Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 807, Rule 808, Rule 809` | Yes (`99781900...`) |
 | `CYCLE-20261014-Y6HT` | `2026-10-14T03:58:32.801Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`6300d0e9...`) |
+| `CYCLE-20261014-1ZGZ` | `2026-10-14T04:01:30.323Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`754ef328...`) |
