@@ -3,8 +3,8 @@
 > **Source Version**: `hf-hexgrad-k`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-13T23:22:03.326Z  
-> **Learning ID**: `learn-huggingface-hf-hexgrad-kokoro-82m-mv7b2lz2`  
+> **Timestamp**: 2026-10-14T06:05:45.998Z  
+> **Learning ID**: `learn-huggingface-hf-hexgrad-kokoro-82m-mv7phsb2`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/hexgrad/Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-13T23:22:02.618Z  
+> **Harvest Timestamp**: 2026-10-14T06:05:45.285Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-speech
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 10639234 downloads | 7248 likes
+- **Stars / Engagement**: 10639234 downloads | 7249 likes
 
 ---
 

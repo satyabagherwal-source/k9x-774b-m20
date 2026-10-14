@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:02:26.209Z",
-  "total_cycles_completed": 1239,
-  "total_learnings_persisted": 1239,
+  "last_updated": "2026-10-14T06:05:46.124Z",
+  "total_cycles_completed": 1240,
+  "total_learnings_persisted": 1240,
   "total_rules_promoted": 594,
   "history": [
-    {
-      "timestamp": "2026-10-13T18:56:12.213Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv71kpx8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T18:59:11.185Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T06:02:26.209Z",
       "repository": "microsoft/FrogNano-4B-2609",
       "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv7pdi24",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T06:05:46.124Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv7phsb2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
