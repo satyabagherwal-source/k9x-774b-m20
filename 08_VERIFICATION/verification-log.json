@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-N8NL",
-    "timestamp": "2026-10-13T02:10:23.505Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv61n8kh",
-    "contentHash": "19d08ca59b01dd6518be7c41ee2bcf4cf25e8f2e45366e6621979f4d86f8eafc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-RMYO",
     "timestamp": "2026-10-13T02:13:48.672Z",
     "repository": "Bingsu/adetailer",
@@ -7490,6 +7475,21 @@
     "repository": "openai/clip-vit-base-patch32",
     "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv7vn79p",
     "contentHash": "15d29824561366b54e87e7bd374a593a50211cb4d47daff150f2d284fa7c101f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-WG6Z",
+    "timestamp": "2026-10-14T09:05:07.835Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7vwg4a",
+    "contentHash": "1be65988318ac94796ed961298e3615e8cda28374e86749dfe30c5a3cb421034",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

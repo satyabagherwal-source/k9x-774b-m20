@@ -50348,3 +50348,150 @@ def test_dynamic_eos_pooling():
 ```
 
 ---
+
+
+---
+
+## 858. The Attention-Masked Mean Pooling Invariant (Harvested from sentence-transformers/all-mpnet-base-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Attention-Masked Mean Pooling Invariant",
+  "source": "sentence-transformers/all-mpnet-base-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+  "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T09:05:07.769Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7vwg4a",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When converting variable-length token sequences into fixed-size sentence embeddings via mean pooling, you **MUST** multiply the token embeddings by the expanded attention mask before summing, and you **MUST** divide by the clamped sum of the mask (minimum epsilon) to prevent division by zero or bias from padding tokens.
+
+**WHY**:
+Standard `torch.mean` or `np.mean` over the sequence dimension includes padding tokens (usually zeros or arbitrary values). If padding is zero, it artificially lowers the magnitude of the embedding. If padding is non-zero (e.g., from a previous batch), it introduces noise. Dividing by the raw count of tokens (including padding) results in a biased average that does not represent the semantic content of the actual words. Clamping the denominator prevents `NaN` or `Inf` values when a sentence is empty or fully padded.
+
+**WHEN TO APPLY**:
+Any NLP pipeline where variable-length sequences are reduced to fixed-length vectors using average pooling. Applies to PyTorch, TensorFlow, JAX, and NumPy implementations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn.functional as F
+
+def safe_mean_pooling(model_output, attention_mask):
+    """
+    model_output: Tensor of shape [batch_size, seq_len, hidden_size]
+    attention_mask: Tensor of shape [batch_size, seq_len] (1 for real tokens, 0 for pad)
+    """
+    # 1. Expand mask to match hidden dimension
+    # Shape: [batch_size, seq_len, 1]
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand(model_output.size()).float()
+    
+    # 2. Zero out padding tokens
+    masked_embeddings = model_output * input_mask_expanded
+    
+    # 3. Sum over sequence dimension
+    sum_embeddings = torch.sum(masked_embeddings, dim=1)
+    
+    # 4. Calculate count of real tokens per sentence
+    # Shape: [batch_size, 1]
+    token_counts = torch.sum(input_mask_expanded, dim=1)
+    
+    # 5. Clamp to prevent division by zero (epsilon = 1e-9)
+    safe_counts = torch.clamp(token_counts, min=1e-9)
+    
+    # 6. Compute mean
+    return sum_embeddings / safe_counts
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naive mean pooling
+# This includes padding tokens in the average, biasing the vector towards zero
+# or towards the padding value, destroying semantic similarity metrics.
+def bad_mean_pooling(model_output, attention_mask):
+    return torch.mean(model_output, dim=1) 
+```
+
+**VERIFICATION METHOD**:
+1.  Create a batch with two sentences: one short ("Hi") and one long ("This is a very long sentence with many words").
+2.  Pad the short sentence to match the long one.
+3.  Compute embeddings using `safe_mean_pooling` and `bad_mean_pooling`.
+4.  Assert that the `bad_mean_pooling` embedding for the short sentence has a significantly lower L2 norm or different direction compared to the `safe_mean_pooling` version.
+5.  Assert that `safe_mean_pooling` produces identical vectors for a sentence regardless of how much trailing padding is added.
+
+
+---
+
+## 859. The L2-Normalization for Cosine Similarity Equivalence (Harvested from sentence-transformers/all-mpnet-base-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The L2-Normalization for Cosine Similarity Equivalence",
+  "source": "sentence-transformers/all-mpnet-base-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+  "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T09:05:07.787Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7vwg4a",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-mpnet-base-v2](https://huggingface.co/sentence-transformers/all-mpnet-base-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating embeddings for semantic search or clustering, you **MUST** apply L2 normalization (`F.normalize`) to the final sentence vectors. You **MUST NOT** rely on raw dot products for similarity if the vectors are not normalized.
+
+**WHY**:
+Cosine similarity is defined as $\frac{A \cdot B}{\|A\| \|B\|}$. If $\|A\| = 1$ and $\|B\| = 1$, then Cosine Similarity = Dot Product. Dot product is computationally cheaper (no division) and more numerically stable in high-dimensional spaces. Without normalization, the magnitude of the vector (which can vary based on sentence length or confidence) dominates the similarity score, leading to false positives where long, confident sentences match everything.
+
+**WHEN TO APPLY**:
+Any vector database ingestion (FAISS, Milvus, Pinecone), semantic search API, or clustering algorithm (K-Means, HDBSCAN) that relies on angular distance.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch.nn.functional as F
+
+def normalize_embeddings(embeddings):
+    """
+    embeddings: Tensor of shape [batch_size, hidden_size]
+    """
+    # p=2 is L2 norm, dim=1 is the feature dimension
+    # eps=1e-12 prevents division by zero for zero vectors
+    return F.normalize(embeddings, p=2, dim=1, eps=1e-12)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using raw dot product for similarity
+# This conflates magnitude with direction.
+def bad_similarity(embedding_a, embedding_b):
+    return torch.dot(embedding_a, embedding_b)
+```
+
+**VERIFICATION METHOD**:
+1.  Generate two embeddings: `vec_a` and `vec_b`.
+2.  Scale `vec_a` by 100x: `vec_a_scaled = vec_a * 100`.
+3.  Compute Cosine Similarity between `vec_a` and `vec_b`.
+4.  Compute Dot Product between `vec_a` and `vec_b`.
+5.  Compute Dot Product between `vec_a_scaled` and `vec_b`.
+6.  Assert that Cosine Similarity is invariant to scaling.
+7.  Assert that Dot Product changes drastically with scaling, proving why normalization is required for consistent similarity metrics.

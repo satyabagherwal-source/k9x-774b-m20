@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T08:57:56.487Z",
-  "total_verified_learnings": 5222,
+  "last_updated": "2026-10-14T09:05:07.806Z",
+  "total_verified_learnings": 5223,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128628,6 +128628,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T08:57:56.487Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7vwg4a": {
+      "learning_id": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7vwg4a",
+      "source": "sentence-transformers/all-mpnet-base-v2",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "slug": "hf-sentence-transformers-all-mpnet-base-v2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
+      "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
+      "content_hash": "1be65988318ac94796ed961298e3615e8cda28374e86749dfe30c5a3cb421034",
+      "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 858,
+          "title": "The Attention-Masked Mean Pooling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 859,
+          "title": "The L2-Normalization for Cosine Similarity Equivalence",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T09:05:07.806Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
