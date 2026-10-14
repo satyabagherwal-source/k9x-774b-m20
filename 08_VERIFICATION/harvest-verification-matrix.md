@@ -1401,3 +1401,4 @@
 | `CYCLE-20261014-4ONM` | `2026-10-14T12:55:28.978Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 897, Rule 898` | Yes (`29a29c42...`) |
 | `CYCLE-20261014-8VF7` | `2026-10-14T12:58:44.371Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`8a5fed77...`) |
 | `CYCLE-20261014-D3R3` | `2026-10-14T13:02:01.791Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`0dfa86d8...`) |
+| `CYCLE-20261014-H4ZS` | `2026-10-14T13:05:10.024Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`14e115b8...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:02:01.795Z",
-  "total_cycles_completed": 1342,
-  "total_learnings_persisted": 1342,
+  "last_updated": "2026-10-14T13:05:10.028Z",
+  "total_cycles_completed": 1343,
+  "total_learnings_persisted": 1343,
   "total_rules_promoted": 665,
   "history": [
-    {
-      "timestamp": "2026-10-14T01:03:01.995Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv7eogqa",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T01:05:47.453Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T13:02:01.795Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv84d3nn",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T13:05:10.028Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv84h4we",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
