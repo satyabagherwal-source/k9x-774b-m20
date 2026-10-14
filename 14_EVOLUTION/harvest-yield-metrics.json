@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T17:07:14.032Z",
-  "total_cycles_completed": 1399,
-  "total_learnings_persisted": 1399,
+  "last_updated": "2026-10-14T17:10:20.458Z",
+  "total_cycles_completed": 1400,
+  "total_learnings_persisted": 1400,
   "total_rules_promoted": 696,
   "history": [
-    {
-      "timestamp": "2026-10-14T04:01:30.326Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv7l1zey",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T04:04:29.520Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T17:07:14.032Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv8d4fpr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T17:10:20.458Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv8d8fjf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
