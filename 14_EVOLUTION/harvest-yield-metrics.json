@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:52:11.316Z",
-  "total_cycles_completed": 1339,
-  "total_learnings_persisted": 1339,
-  "total_rules_promoted": 663,
+  "last_updated": "2026-10-14T12:55:28.982Z",
+  "total_cycles_completed": 1340,
+  "total_learnings_persisted": 1340,
+  "total_rules_promoted": 665,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:53:32.390Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "learningId": "learn-huggingface-hf-liquidai-lfm2-5-24b-a2b-mv7ec99r",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:56:25.402Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1403,6 +1396,13 @@
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv840g2v",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:55:28.982Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv844oix",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
