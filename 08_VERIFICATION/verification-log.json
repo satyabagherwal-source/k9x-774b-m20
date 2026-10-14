@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-PP2A",
-    "timestamp": "2026-10-13T03:36:16.930Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv64poxt",
-    "contentHash": "c6606e48a2c807af1a700d2b4376b343d383294ca965abb1662f7826c45b6412",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-TGV4",
     "timestamp": "2026-10-13T03:39:12.928Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7490,6 +7475,21 @@
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv7yyis5",
     "contentHash": "0839312794e8f15f79a75b24e201852f0ca35e3930dfe4a99e315e1b95ad3bfb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-2XWA",
+    "timestamp": "2026-10-14T10:34:09.562Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv7z2xsz",
+    "contentHash": "b1865445632366a646394df623233c2f9eb817e0cf1794fae86cc8b1ef7c247f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
