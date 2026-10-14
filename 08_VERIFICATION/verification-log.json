@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-YO2Q",
-    "timestamp": "2026-10-12T22:35:19.778Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv5tynzw",
-    "contentHash": "7e069a61fd1516540cfd2c6c411567b26037930c4f34196ee34f3a453a324145",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-7QN5",
     "timestamp": "2026-10-12T22:42:23.009Z",
     "repository": "Ebony-Vinyl/dsh-our-free-model",
@@ -7492,6 +7477,21 @@
     "contentHash": "e315a069d496ca8c18c3a235831ee162ad962db03ed1b41bd5c8b3fd3dd485db",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-A6GT",
+    "timestamp": "2026-10-14T04:07:52.637Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv7la6ch",
+    "contentHash": "247decb88abfe01a3e8f46195f4814a1b271db70aedccf138493864b5ed3fe23",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
