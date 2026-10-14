@@ -1245,3 +1245,4 @@
 | `CYCLE-20261014-AVHQ` | `2026-10-14T03:12:25.838Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 800, Rule 570, Rule 550` | Yes (`f497c9c3...`) |
 | `CYCLE-20261014-ETHY` | `2026-10-14T03:15:29.878Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 801` | Yes (`5a77d9aa...`) |
 | `CYCLE-20261014-IOUY` | `2026-10-14T03:18:30.490Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`e4b6ea8e...`) |
+| `CYCLE-20261014-MU89` | `2026-10-14T03:21:44.073Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`c7d96bd8...`) |
