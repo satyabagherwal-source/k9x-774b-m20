@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:00:42.135Z",
-  "total_cycles_completed": 1324,
-  "total_learnings_persisted": 1324,
+  "last_updated": "2026-10-14T12:03:35.868Z",
+  "total_cycles_completed": 1325,
+  "total_learnings_persisted": 1325,
   "total_rules_promoted": 648,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:07:46.694Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv7cpenf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:10:42.036Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T12:00:42.135Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv8268ez",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:03:35.868Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv829yi1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1383,3 +1383,4 @@
 | `CYCLE-20261014-Y60F` | `2026-10-14T11:54:25.647Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 881, Rule 882` | Yes (`1962ce5a...`) |
 | `CYCLE-20261014-2830` | `2026-10-14T11:57:34.956Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`7196350a...`) |
 | `CYCLE-20261014-68IB` | `2026-10-14T12:00:42.131Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`9b687928...`) |
+| `CYCLE-20261014-9YK9` | `2026-10-14T12:03:35.865Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`daecc2e8...`) |

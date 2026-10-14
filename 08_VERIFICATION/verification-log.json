@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-X29V",
-    "timestamp": "2026-10-13T05:05:59.491Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv67x27a",
-    "contentHash": "f176e20bbaa7b964a64d0806dd975544f98ed9ecfc99eab25d88258863a6d281",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-0YS2",
     "timestamp": "2026-10-13T05:09:01.586Z",
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
     "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv8268ez",
     "contentHash": "9b687928ebdcfc5c6e5b28694e100030bc915f11c1a84fbc49044d8c80de7cb8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-9YK9",
+    "timestamp": "2026-10-14T12:03:35.865Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv829yi1",
+    "contentHash": "daecc2e82accb8e9f607b06ab592d37bcaa9c3cafc2dd44aba6eac5d7767a546",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
