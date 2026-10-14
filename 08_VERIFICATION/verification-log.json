@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-ZD1V",
-    "timestamp": "2026-10-12T23:31:51.379Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-hf-baai-bge-m3-mv5vzczk",
-    "contentHash": "9bb5697df618e2422753ef140e03be60c3ef66a48483281bc4007d96a264e8f5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-384L",
     "timestamp": "2026-10-12T23:34:51.621Z",
     "repository": "Qwen/Qwen3-0.6B",
@@ -7490,6 +7475,21 @@
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv7mp2ps",
     "contentHash": "f6f96f87b5355b8e5f39c98fceff9fb2f12105223fca34aeeceed394c58bb61f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-TF9T",
+    "timestamp": "2026-10-14T04:50:50.129Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-hf-psrben-visionhope-mv7mtf6l",
+    "contentHash": "c32a5fb0b4bfa2dd88ceefb769edd7aeebfd8c9a169454fd6cb36a42cd46f6b1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
