@@ -3952,3 +3952,7 @@ https://github.com/amplifthq/opentag
 # --- Automatically Discovered by AI Scout Engine [2026-10-14T15:17:15.039Z] ---
 # [HUGGINGFACE-AI-MODELS] vllm-sr/d3 (3335 score) - Verified Hugging Face Model: vllm-sr/d3 (153 likes, 1805 downloads)
 https://huggingface.co/vllm-sr/d3
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T16:17:20.392Z] ---
+# [HIGH-PERF-SYSTEMS] nguyenphutrong/quotio (2892 score) - Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that 
+https://github.com/nguyenphutrong/quotio
