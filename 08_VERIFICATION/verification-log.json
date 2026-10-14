@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-5QM3",
-    "timestamp": "2026-10-13T03:20:45.819Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv645qjn",
-    "contentHash": "5685e370e450133c0674e380af9f75588d8ad1eb6827526e646f773dccb8053a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-9Q10",
     "timestamp": "2026-10-13T03:23:51.684Z",
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -7490,6 +7475,21 @@
     "repository": "jialinyyzz/humanizer",
     "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv7ye4x6",
     "contentHash": "7c75686d9fed942cefe7738d277fc1e81b17ec279b34c4377e4fd6fe021696d7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-IAG4",
+    "timestamp": "2026-10-14T10:18:06.052Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv7yiacp",
+    "contentHash": "ca25af33349f4c3c0842af8c1f5475ce212c5543756366059a82519574a1f2c9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

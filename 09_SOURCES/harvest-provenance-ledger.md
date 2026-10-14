@@ -1332,3 +1332,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-zai-org-glm-5-3-mv7y6a56` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-14T10:08:45.901Z |
 | `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7yah35` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-14T10:12:01.580Z |
 | `learn-huggingface-hf-jialinyyzz-humanizer-mv7ye4x6` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-10-14T10:14:52.344Z |
+| `learn-huggingface-hf-autotrust-jev-27b-vl-mv7yiacp` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-14T10:18:06.055Z |
