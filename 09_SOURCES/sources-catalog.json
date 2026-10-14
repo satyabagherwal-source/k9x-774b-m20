@@ -1528,5 +1528,15 @@
     "contentHash": "5a419bdfb765dfc7bf710d3e4da26697f9a26c64fb18b9a155e41cb71b514b22",
     "lastHarvestedAt": "2026-10-14T16:21:12.921Z",
     "learningId": "learn-github-nguyenphutrong-quotio-mv8bh96o"
+  },
+  "pathwaycom-serviette": {
+    "repository": "pathwaycom/serviette",
+    "platform": "github",
+    "sourceUrl": "https://github.com/pathwaycom/serviette",
+    "sourceVersion": "beb17f1e",
+    "license": "MIT",
+    "contentHash": "a24ccc15521ccdc8ffea3d84b4979663af1359492997d219676448250cd025cb",
+    "lastHarvestedAt": "2026-10-14T16:36:22.940Z",
+    "learningId": "learn-github-pathwaycom-serviette-mv8c0rd1"
   }
 }

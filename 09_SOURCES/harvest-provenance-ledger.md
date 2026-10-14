@@ -1433,3 +1433,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv8b358s` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-14T16:10:14.638Z |
 | `learn-huggingface-hf-deepseek-ai-deepseek-v3-mv8b764j` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-14T16:13:22.368Z |
 | `learn-github-nguyenphutrong-quotio-mv8bh96o` | `https://github.com/nguyenphutrong/quotio` | `dfa5beeb` | Multi-dimensional audit evidence | 2026-10-14T16:21:12.921Z |
+| `learn-github-pathwaycom-serviette-mv8c0rd1` | `https://github.com/pathwaycom/serviette` | `beb17f1e` | Multi-dimensional audit evidence | 2026-10-14T16:36:22.940Z |

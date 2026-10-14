@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:21:12.868Z",
-  "total_verified_learnings": 5346,
+  "last_updated": "2026-10-14T16:36:22.886Z",
+  "total_verified_learnings": 5347,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -131982,6 +131982,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T16:21:12.868Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-pathwaycom-serviette-mv8c0rd1": {
+      "learning_id": "learn-github-pathwaycom-serviette-mv8c0rd1",
+      "source": "pathwaycom/serviette",
+      "repository": "pathwaycom/serviette",
+      "slug": "pathwaycom-serviette",
+      "platform": "github",
+      "source_url": "https://github.com/pathwaycom/serviette",
+      "source_version": "beb17f1e",
+      "content_hash": "a24ccc15521ccdc8ffea3d84b4979663af1359492997d219676448250cd025cb",
+      "dossier_path": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/pathwaycom-serviette-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 926,
+          "title": "relative links to assets in llm-app (#9439)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T16:36:22.886Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
