@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-0QYD",
-    "timestamp": "2026-10-13T05:36:51.061Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv690qve",
-    "contentHash": "5dda9bd3f8479ec568219d6aa383e3e56ea9613b7463a133386d7b449a588c09",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-4LZH",
     "timestamp": "2026-10-13T05:39:51.245Z",
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
     "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv83gfv7",
     "contentHash": "843db21d99705f0f11bf2ddcb7290fcb7f71d9849c493d011fb633e60103cc60",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-KI58",
+    "timestamp": "2026-10-14T12:39:47.420Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv83ki1q",
+    "contentHash": "3bf95196eacd6a43b83f17b0f6e27f463ebfe5a75c1b701a48cf1f5fc992e966",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

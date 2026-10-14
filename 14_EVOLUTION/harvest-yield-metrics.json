@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:36:37.976Z",
-  "total_cycles_completed": 1334,
-  "total_learnings_persisted": 1334,
+  "last_updated": "2026-10-14T12:39:47.424Z",
+  "total_cycles_completed": 1335,
+  "total_learnings_persisted": 1335,
   "total_rules_promoted": 660,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:38:10.996Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv7dsicu",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:41:12.141Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T12:36:37.976Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
       "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv83gfv7",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:39:47.424Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv83ki1q",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
