@@ -1354,3 +1354,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-moonshotai-kimi-k3-mv80mbf0` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-14T11:17:13.291Z |
 | `learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv80q99d` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-14T11:20:17.112Z |
 | `learn-huggingface-hf-autotrust-jev-35b-mv80u6w7` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-14T11:23:20.677Z |
+| `learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv80y8ow` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-14T11:26:29.624Z |
