@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:35:08.406Z",
-  "total_cycles_completed": 1211,
-  "total_learnings_persisted": 1211,
-  "total_rules_promoted": 581,
+  "last_updated": "2026-10-14T04:38:22.199Z",
+  "total_cycles_completed": 1212,
+  "total_learnings_persisted": 1212,
+  "total_rules_promoted": 584,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:09:25.511Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv6xreim",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:12:30.824Z",
       "repository": "openai-community/gpt2",
@@ -1403,6 +1396,13 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv7m98iq",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T04:38:22.199Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv7mde0p",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

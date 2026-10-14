@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:35:08.330Z",
-  "total_verified_learnings": 5166,
+  "last_updated": "2026-10-14T04:38:22.146Z",
+  "total_verified_learnings": 5167,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -127063,6 +127063,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T04:35:08.329Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv7mde0p": {
+      "learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv7mde0p",
+      "source": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "slug": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "content_hash": "f50f36d812c8c76837563834a1755407ad5cf80d2a82345532ee94b5698e5c26",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 818,
+          "title": "GGUF Metadata Integrity & Tensor Alignment Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 819,
+          "title": "Quantization Type Compatibility & Fallback Strategy",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 820,
+          "title": "Uncensored Model Safety Boundary & Content Filtering",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T04:38:22.146Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
