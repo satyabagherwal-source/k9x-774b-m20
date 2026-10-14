@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-6RQX",
-    "timestamp": "2026-10-13T07:33:30.489Z",
-    "repository": "meta-llama/Llama-2-7b",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv6d6rnk",
-    "contentHash": "b0ac240b6195bc686186122950ea448bc925dfdf83bd26f8efde239ed6b7b1eb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-IOCB",
     "timestamp": "2026-10-13T07:42:45.947Z",
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/MiniMax-H3",
     "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv880ntt",
     "contentHash": "ba05fdc1d56eb1dcc2b8be960ae148961c7f8062cc9382a52ff06a654fb10d5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-5S6N",
+    "timestamp": "2026-10-14T14:48:18.671Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv885s4e",
+    "contentHash": "7b90a207f16c3ff421a8ef58fd336861118d8865923b043a509a74a3d05e7c60",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

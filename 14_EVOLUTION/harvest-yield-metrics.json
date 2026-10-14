@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T14:44:19.818Z",
-  "total_cycles_completed": 1365,
-  "total_learnings_persisted": 1365,
+  "last_updated": "2026-10-14T14:48:18.674Z",
+  "total_cycles_completed": 1366,
+  "total_learnings_persisted": 1366,
   "total_rules_promoted": 682,
   "history": [
-    {
-      "timestamp": "2026-10-14T02:15:14.642Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv7h9bvi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T02:18:11.588Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T14:44:19.818Z",
       "repository": "Comfy-Org/MiniMax-H3",
       "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv880ntt",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T14:48:18.674Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv885s4e",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
