@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:43:34.067Z",
-  "total_cycles_completed": 1175,
-  "total_learnings_persisted": 1175,
+  "last_updated": "2026-10-14T02:46:39.244Z",
+  "total_cycles_completed": 1176,
+  "total_learnings_persisted": 1176,
   "total_rules_promoted": 557,
   "history": [
-    {
-      "timestamp": "2026-10-13T15:05:38.198Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv6tc7j6",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T15:11:04.239Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T02:43:34.067Z",
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-hf-francisring-prism-mv7i9r56",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T02:46:39.244Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv7idq1m",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
