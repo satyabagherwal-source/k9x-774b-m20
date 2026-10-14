@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:27:19.183Z",
-  "total_cycles_completed": 1247,
-  "total_learnings_persisted": 1247,
-  "total_rules_promoted": 597,
+  "last_updated": "2026-10-14T06:30:39.985Z",
+  "total_cycles_completed": 1248,
+  "total_learnings_persisted": 1248,
+  "total_rules_promoted": 600,
   "history": [
-    {
-      "timestamp": "2026-10-13T19:22:34.894Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv72in5c",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T19:25:36.726Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv7q9i23",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T06:30:39.985Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv7qdsxv",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

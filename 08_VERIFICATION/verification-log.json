@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-GTIX",
-    "timestamp": "2026-10-13T01:09:24.729Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv5zgtg1",
-    "contentHash": "7b963f34348023f8e9ba5227db0431646b454ac7b05bf3bc80131b9975104abb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-LA8G",
     "timestamp": "2026-10-13T01:12:53.008Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7492,6 +7477,21 @@
     "contentHash": "1726807c43708b253cb084860cdb1fb2dd29130084ee728d0048ac4c090fe6e1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-DT2K",
+    "timestamp": "2026-10-14T06:30:39.980Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv7qdsxv",
+    "contentHash": "dff2275a12e9192fc12fe72a05a619150b3dc38af06011c4f48a6df9c077ab37",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
