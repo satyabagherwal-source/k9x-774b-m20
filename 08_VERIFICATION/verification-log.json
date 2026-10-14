@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-UKXB",
-    "timestamp": "2026-10-12T18:48:12.143Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv5luku6",
-    "contentHash": "7e8dc96adcc08134976d0f62d01d8c94a3d95ecf013e383496d9eac10c1fb90a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-YOQ5",
     "timestamp": "2026-10-12T18:51:23.693Z",
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "FermionResearch/Phonon-2",
     "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv7dh3ea",
     "contentHash": "23b6123895892268d11e8986636dcebfc16e80d433ad20e0b22bb071901bc899",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-KYYZ",
+    "timestamp": "2026-10-14T00:32:19.211Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7dkyvm",
+    "contentHash": "ab34896a528e56ba87ae65a53f3d3317e57f52cf192886c718e613495f0d3d7a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
