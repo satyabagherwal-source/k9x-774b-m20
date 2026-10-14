@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:03:35.868Z",
-  "total_cycles_completed": 1325,
-  "total_learnings_persisted": 1325,
+  "last_updated": "2026-10-14T12:07:50.045Z",
+  "total_cycles_completed": 1326,
+  "total_learnings_persisted": 1326,
   "total_rules_promoted": 648,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:10:42.036Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv7ct5yx",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:14:01.015Z",
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T12:03:35.868Z",
       "repository": "SupersonicLabs/Julia-1",
       "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv829yi1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:07:50.045Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-mv82felm",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

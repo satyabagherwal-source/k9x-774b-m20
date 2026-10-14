@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:03:35.826Z",
-  "total_verified_learnings": 5280,
+  "last_updated": "2026-10-14T12:07:49.984Z",
+  "total_verified_learnings": 5281,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -130160,6 +130160,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T12:03:35.826Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-mv82felm": {
+      "learning_id": "learn-huggingface-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-mv82felm",
+      "source": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "slug": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "source_version": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
+      "content_hash": "14e5db31117e43b93566d692ab902ff0686a26878a78b6d2ac3d9a62bdb4c4eb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T12:07:49.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

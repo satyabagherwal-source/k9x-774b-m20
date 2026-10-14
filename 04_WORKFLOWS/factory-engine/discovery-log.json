@@ -17623,5 +17623,17 @@
     "downloads": 23,
     "qualityScore": 1603,
     "discoveredAt": "2026-10-14T06:21:07.939Z"
+  },
+  {
+    "name": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "fullName": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "url": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 (628 likes, 78156 downloads)",
+    "likes": 628,
+    "downloads": 78156,
+    "qualityScore": 8280,
+    "discoveredAt": "2026-10-14T12:07:09.428Z"
   }
 ]

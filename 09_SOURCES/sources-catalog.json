@@ -1488,5 +1488,15 @@
     "contentHash": "a29abd7125a184786d653139a9391895c5287c68c78e8df87df477ad3b837f5e",
     "lastHarvestedAt": "2026-10-14T06:21:20.515Z",
     "learningId": "learn-huggingface-hf-fishaudio-drama-3-mv7q1taj"
+  },
+  "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
+    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
+    "license": "Open-Source",
+    "contentHash": "14e5db31117e43b93566d692ab902ff0686a26878a78b6d2ac3d9a62bdb4c4eb",
+    "lastHarvestedAt": "2026-10-14T12:07:50.044Z",
+    "learningId": "learn-huggingface-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-mv82felm"
   }
 }
