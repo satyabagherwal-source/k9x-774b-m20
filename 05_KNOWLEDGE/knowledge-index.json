@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T14:20:43.361Z",
-  "total_verified_learnings": 5317,
+  "last_updated": "2026-10-14T14:27:43.314Z",
+  "total_verified_learnings": 5318,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -131209,6 +131209,36 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T14:20:43.361Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-amplifthq-opentag-mv87fawi": {
+      "learning_id": "learn-github-amplifthq-opentag-mv87fawi",
+      "source": "amplifthq/opentag",
+      "repository": "amplifthq/opentag",
+      "slug": "amplifthq-opentag",
+      "platform": "github",
+      "source_url": "https://github.com/amplifthq/opentag",
+      "source_version": "b1deea8f",
+      "content_hash": "e2e9b481a56a6665ecbccb42410af9c2a95e98cc4282ed5f23efdb5d3d9921ba",
+      "dossier_path": "07_PROJECT_LEARNING/amplifthq-opentag-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/amplifthq-opentag-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 912,
+          "title": "validate historical billing config against its release owner",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T14:27:43.314Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

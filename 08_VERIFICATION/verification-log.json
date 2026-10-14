@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-L3NC",
-    "timestamp": "2026-10-13T07:16:39.480Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-hf-bigscience-bloom-mv6cl3jg",
-    "contentHash": "c6ca449ee499b6f05a0aa53f5aa6d329337ed0c8ff422a3f095b623020972f0f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-UHHA",
     "timestamp": "2026-10-13T07:23:57.310Z",
     "repository": "openai/gpt-oss-20b",
@@ -7492,6 +7477,21 @@
     "contentHash": "31ce0057c685a6de5da45941cc2a93a01a9e5c62aac745d2b115bd0b9b935e89",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-FB0L",
+    "timestamp": "2026-10-14T14:27:43.365Z",
+    "repository": "amplifthq/opentag",
+    "learningId": "learn-github-amplifthq-opentag-mv87fawi",
+    "contentHash": "e2e9b481a56a6665ecbccb42410af9c2a95e98cc4282ed5f23efdb5d3d9921ba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

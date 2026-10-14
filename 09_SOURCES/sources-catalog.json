@@ -1498,5 +1498,15 @@
     "contentHash": "14e5db31117e43b93566d692ab902ff0686a26878a78b6d2ac3d9a62bdb4c4eb",
     "lastHarvestedAt": "2026-10-14T12:07:50.044Z",
     "learningId": "learn-huggingface-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-mv82felm"
+  },
+  "amplifthq-opentag": {
+    "repository": "amplifthq/opentag",
+    "platform": "github",
+    "sourceUrl": "https://github.com/amplifthq/opentag",
+    "sourceVersion": "b1deea8f",
+    "license": "MIT",
+    "contentHash": "e2e9b481a56a6665ecbccb42410af9c2a95e98cc4282ed5f23efdb5d3d9921ba",
+    "lastHarvestedAt": "2026-10-14T14:27:43.367Z",
+    "learningId": "learn-github-amplifthq-opentag-mv87fawi"
   }
 }
