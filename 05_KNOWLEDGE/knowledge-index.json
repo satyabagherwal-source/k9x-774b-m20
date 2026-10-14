@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:25:59.355Z",
-  "total_verified_learnings": 5086,
+  "last_updated": "2026-10-14T00:29:18.373Z",
+  "total_verified_learnings": 5087,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -124943,6 +124943,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T00:25:59.355Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-fermionresearch-phonon-2-mv7dh3ea": {
+      "learning_id": "learn-huggingface-hf-fermionresearch-phonon-2-mv7dh3ea",
+      "source": "FermionResearch/Phonon-2",
+      "repository": "FermionResearch/Phonon-2",
+      "slug": "hf-fermionresearch-phonon-2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
+      "source_version": "hf-fermionresearch-phonon-2",
+      "content_hash": "23b6123895892268d11e8986636dcebfc16e80d433ad20e0b22bb071901bc899",
+      "dossier_path": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T00:29:18.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

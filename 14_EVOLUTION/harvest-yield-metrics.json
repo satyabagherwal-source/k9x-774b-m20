@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:25:59.417Z",
-  "total_cycles_completed": 1131,
-  "total_learnings_persisted": 1131,
+  "last_updated": "2026-10-14T00:29:18.425Z",
+  "total_cycles_completed": 1132,
+  "total_learnings_persisted": 1132,
   "total_rules_promoted": 544,
   "history": [
-    {
-      "timestamp": "2026-10-13T11:57:01.582Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv6mlnle",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T12:00:02.386Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T00:25:59.417Z",
       "repository": "Qwen/Qwen3-4B",
       "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv7dcttv",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T00:29:18.425Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv7dh3ea",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

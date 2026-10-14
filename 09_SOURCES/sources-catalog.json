@@ -1075,9 +1075,9 @@
     "sourceUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceVersion": "hf-fermionresearch-phonon-2",
     "license": "Open-Source",
-    "contentHash": "b62efeb096fe9de4223a66214a2e91132aaea51d68dc889057f121be5abd6ca6",
-    "lastHarvestedAt": "2026-10-13T16:41:41.639Z",
-    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv6wrqmu"
+    "contentHash": "23b6123895892268d11e8986636dcebfc16e80d433ad20e0b22bb071901bc899",
+    "lastHarvestedAt": "2026-10-14T00:29:18.424Z",
+    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv7dh3ea"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
