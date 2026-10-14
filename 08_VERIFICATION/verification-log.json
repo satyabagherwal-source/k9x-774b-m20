@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-CUSZ",
-    "timestamp": "2026-10-13T03:54:17.459Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv65cuqh",
-    "contentHash": "09c8bae61f2c2ee36faf1fd51dc382fc6e10e794694010bec0260bc88393f7f1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-H12M",
     "timestamp": "2026-10-13T03:57:32.206Z",
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -7492,6 +7477,21 @@
     "contentHash": "f0df5eecf7438e98ab8a475514ad13c06af065eda985d306520a3a55b7c0f0de",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-QDY0",
+    "timestamp": "2026-10-14T10:52:23.448Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv7zqdul",
+    "contentHash": "1d68b4cf1193be9913885d18059d6fee278b61616efc8d5c501c5a153c98dbde",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
