@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:07:03.330Z",
-  "total_cycles_completed": 1388,
-  "total_learnings_persisted": 1388,
+  "last_updated": "2026-10-14T16:10:14.640Z",
+  "total_cycles_completed": 1389,
+  "total_learnings_persisted": 1389,
   "total_rules_promoted": 691,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:27:56.931Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv7jutu9",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:30:57.274Z",
       "repository": "Lightricks/LTX-2.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T16:07:03.330Z",
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv8az1o3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T16:10:14.640Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv8b358s",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

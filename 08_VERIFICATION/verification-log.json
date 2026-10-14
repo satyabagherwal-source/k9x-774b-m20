@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-KR1S",
-    "timestamp": "2026-10-13T09:36:21.232Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv6hkqx7",
-    "contentHash": "7b42f86aadc1486a274e483691f708b751741c9c1b525100ded01af1ad7bb500",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-OHNU",
     "timestamp": "2026-10-13T09:39:15.690Z",
     "repository": "Qwen/Qwen3-8B",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Llama-2-7b",
     "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv8az1o3",
     "contentHash": "f0a08ba0c2a27ac9cc9a79d1c030997ffafa9eb758f8b735007a580a608b1c26",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-35D7",
+    "timestamp": "2026-10-14T16:10:14.635Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv8b358s",
+    "contentHash": "58a4379cf47db02903a62ddde9648bc933924279e5c3f5313396c0b7b86e0d6a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

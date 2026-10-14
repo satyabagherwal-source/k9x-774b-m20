@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:07:03.331Z",
+  "last_updated": "2026-10-14T16:10:14.641Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1210,15 +1210,15 @@
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv7rb42b",
-      "content_hash": "2697a89fa2fa578f7bf5a7ee22e36a90bee89a74352a2c8704c129a29204d1bd",
-      "verified_at": "2026-10-14T06:56:34.000Z",
+      "learning_id": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv8b358s",
+      "content_hash": "58a4379cf47db02903a62ddde9648bc933924279e5c3f5313396c0b7b86e0d6a",
+      "verified_at": "2026-10-14T16:10:14.641Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T06:56:34.000Z"
+      "last_updated": "2026-10-14T16:10:14.641Z"
     },
     "deepseek-ai/DeepSeek-V3": {
       "repository": "deepseek-ai/DeepSeek-V3",
