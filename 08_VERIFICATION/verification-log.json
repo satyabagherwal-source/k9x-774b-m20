@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-1IIL",
-    "timestamp": "2026-10-13T07:29:25.245Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv6d1iec",
-    "contentHash": "368f35263ae3b5e22fb02c09cdd035ba84f9cc331520ac26aba0a57e22a78f9d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-6RQX",
     "timestamp": "2026-10-13T07:33:30.489Z",
     "repository": "meta-llama/Llama-2-7b",
@@ -7492,6 +7477,21 @@
     "contentHash": "4347c95f46a4628f2c809ece33aa67f607d030e32d24b2d2d98fd24ae4d04bd5",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-0NVR",
+    "timestamp": "2026-10-14T14:44:19.815Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv880ntt",
+    "contentHash": "ba05fdc1d56eb1dcc2b8be960ae148961c7f8062cc9382a52ff06a654fb10d5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
