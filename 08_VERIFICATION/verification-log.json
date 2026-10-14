@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-L2I1",
-    "timestamp": "2026-10-13T04:56:39.913Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv67l2fo",
-    "contentHash": "c4dbe19321a7db5df7fe68c2899b7edeaecfbeab63e969b377f22edec9260258",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-PBJP",
     "timestamp": "2026-10-13T04:59:58.261Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -7492,6 +7477,21 @@
     "contentHash": "33b775e9426294f318bfa6325a0719a92c7bae9d7ef7edb241e3fe1a8f5f10f7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-Y60F",
+    "timestamp": "2026-10-14T11:54:25.647Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv81y5w0",
+    "contentHash": "1962ce5a44189959df6c98d3a35898c285c30604b20c33a1c0917d9e031b9522",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

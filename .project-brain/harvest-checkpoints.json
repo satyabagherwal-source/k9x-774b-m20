@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:51:17.712Z",
+  "last_updated": "2026-10-14T11:54:25.652Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -412,15 +412,15 @@
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv7k6bq0",
-      "content_hash": "8362dce9dbb78bb51022e252291303457138b1f1f3254b16e18433b6676a2d11",
-      "verified_at": "2026-10-14T03:36:53.283Z",
+      "learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv81y5w0",
+      "content_hash": "1962ce5a44189959df6c98d3a35898c285c30604b20c33a1c0917d9e031b9522",
+      "verified_at": "2026-10-14T11:54:25.652Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T03:36:53.283Z"
+      "last_updated": "2026-10-14T11:54:25.652Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",

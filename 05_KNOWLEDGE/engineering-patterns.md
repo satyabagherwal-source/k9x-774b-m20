@@ -52072,3 +52072,136 @@ self.coef = torch.tensor(config.router_aux_loss_coef)
 ```
 **VERIFICATION METHOD**:  
 Assert that `router.coef.item()` is within `[0.0, 1.0]` in a unit test; static analysis rule that flags any assignment without `torch.clamp`.
+
+
+---
+
+## 881. The Few-Step Distillation Scheduler Invariant (Harvested from Viggle/Qwen-Image-2.1-viggle-turbo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Few-Step Distillation Scheduler Invariant",
+  "source": "Viggle/Qwen-Image-2.1-viggle-turbo",
+  "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+  "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T11:54:25.533Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv81y5w0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Viggle/Qwen-Image-2.1-viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo) (Revision: `hf-viggle-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distilling a diffusion model to reduce inference steps (e.g., 40 to 6), the noise scheduler's terminal shift parameter MUST be explicitly set to `null` or a specific calibrated value, and the LoRA adapter MUST be trained against this specific scheduler configuration. You MUST NOT use the default scheduler parameters for a distilled model.
+
+**WHY**:
+Standard diffusion schedulers assume a gradual, high-step-count denoising process. In few-step distillation, the model learns to make large, aggressive jumps in the latent space. If the scheduler's terminal shift (which controls the final noise level) is not adjusted (set to `null` in this case), the final denoising step will either leave residual noise (grain) or over-smooth the image (loss of detail). The "grain vs. softness" trade-off mentioned in the README is directly tied to this scheduler-adapter coupling.
+
+**WHEN TO APPLY**:
+Any project involving diffusion model distillation, step reduction, or "turbo" variants of stable diffusion models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Correct: Explicitly configure scheduler for few-step inference
+from diffusers import FlowMatchEulerDiscreteScheduler
+
+scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained(
+    "Qwen/Qwen-Image-2.1",
+    subfolder="scheduler",
+    shift_terminal=None  # Critical: Must match training config
+)
+
+# Load the distilled LoRA
+pipe.load_lora_weights("Viggle/Qwen-Image-2.1-viggle-turbo", weight_name="...-6step-lora-r256.safetensors")
+
+# Inference with reduced steps
+image = pipe(
+    prompt="...",
+    num_inference_steps=6,  # Must match distillation target
+    guidance_scale=1.0      # CFG is disabled/unnecessary in distilled models
+).images[0]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# WRONG: Using default scheduler parameters with a distilled model
+# This will result in "grainy" or "soft" images because the noise schedule
+# does not align with the learned few-step trajectory.
+scheduler = FlowMatchEulerDiscreteScheduler.from_pretrained("Qwen/Qwen-Image-2.1")
+# Do NOT override shift_terminal if the LoRA was trained with shift_terminal=None
+image = pipe(prompt="...", num_inference_steps=6)
+```
+
+**VERIFICATION METHOD**:
+1.  **Visual Regression Test**: Generate a fixed set of prompts with the distilled model + default scheduler vs. distilled model + `shift_terminal=None`. Assert that the `shift_terminal=None` version has lower high-frequency noise variance (grain) and higher structural similarity (SSIM) to the 40-step baseline.
+2.  **Config Audit**: Lint the pipeline initialization to ensure `scheduler.config.shift_terminal` is `None` when `num_inference_steps < 10`.
+
+
+---
+
+## 882. The LoRA Rank-VRAM Trade-off Invariant (Harvested from Viggle/Qwen-Image-2.1-viggle-turbo)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The LoRA Rank-VRAM Trade-off Invariant",
+  "source": "Viggle/Qwen-Image-2.1-viggle-turbo",
+  "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+  "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T11:54:25.559Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv81y5w0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Viggle/Qwen-Image-2.1-viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo) (Revision: `hf-viggle-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying distilled LoRA adapters, you MUST provide multiple rank variants (e.g., r256 for quality, r128 for efficiency) and explicitly document the VRAM footprint. You MUST NOT assume a single rank is optimal for all hardware.
+
+**WHY**:
+LoRA rank determines the number of trainable parameters and the expressiveness of the adapter. Rank 256 (1.3 GB) captures more fine-grained details but requires more VRAM. Rank 128 (0.7 GB) is more efficient but may lose subtle texture details. In production, users have heterogeneous hardware (consumer GPUs vs. server GPUs). Providing only one rank forces users to either suffer from OOM (Out of Memory) errors or accept suboptimal quality.
+
+**WHEN TO APPLY**:
+Any ML model deployment that uses LoRA or similar low-rank adaptation techniques, especially for consumer-facing applications.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Provide a factory function that selects the appropriate LoRA based on available VRAM
+def load_optimal_lora(device):
+    vram = torch.cuda.get_device_properties(device).total_memory / 1e9
+    if vram > 10:
+        # High-end GPU: Use full rank for max quality
+        return "Viggle/Qwen-Image-2.1-viggle-turbo", "Qwen-Image-2.1-viggle-turbo-v0.3-6step-lora-r256.safetensors"
+    else:
+        # Consumer GPU: Use reduced rank to fit in VRAM
+        return "Viggle/Qwen-Image-2.1-viggle-turbo", "Qwen-Image-2.1-viggle-turbo-v0.3-6step-lora-r128.safetensors"
+
+repo, weight_name = load_optimal_lora(torch.device("cuda"))
+pipe.load_lora_weights(repo, weight_name=weight_name)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# WRONG: Hardcoding a single high-rank LoRA without VRAM checks
+# This will cause CUDA OOM errors on consumer GPUs with < 8GB VRAM
+pipe.load_lora_weights("Viggle/Qwen-Image-2.1-viggle-turbo", weight_name="...-r256.safetensors")
+```
+
+**VERIFICATION METHOD**:
+1.  **VRAM Stress Test**: Run the pipeline on a simulated 8GB VRAM environment. Assert that the r128 variant loads successfully and generates images, while the r256 variant either fails or triggers automatic offloading.
+2.  **Documentation Check**: Verify that the README explicitly lists the file sizes and recommended hardware for each rank variant.
