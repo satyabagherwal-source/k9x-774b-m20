@@ -3,8 +3,8 @@
 > **Source Version**: `hf-aleph-alp`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-14T00:19:51.115Z  
-> **Learning ID**: `learn-huggingface-hf-aleph-alpha-kolibri-1-mv7d4xqj`  
+> **Timestamp**: 2026-10-14T07:11:36.697Z  
+> **Learning ID**: `learn-huggingface-hf-aleph-alpha-kolibri-1-mv7rugop`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Aleph-Alpha/Kolibri-1](https://huggingface.co/Aleph-Alpha/Kolibri-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-14T00:19:50.501Z  
+> **Harvest Timestamp**: 2026-10-14T07:11:08.273Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

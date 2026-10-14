@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T07:05:51.349Z",
-  "total_verified_learnings": 5213,
+  "last_updated": "2026-10-14T07:11:36.771Z",
+  "total_verified_learnings": 5214,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128325,6 +128325,30 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T07:05:51.349Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-aleph-alpha-kolibri-1-mv7rugop": {
+      "learning_id": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv7rugop",
+      "source": "Aleph-Alpha/Kolibri-1",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "slug": "hf-aleph-alpha-kolibri-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+      "source_version": "hf-aleph-alpha-kolibri-1",
+      "content_hash": "d23766fba10eb71b242720d8d5ed40c3acb42897c46dc7d3522c36c0ed6bfc3d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T07:11:36.771Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
