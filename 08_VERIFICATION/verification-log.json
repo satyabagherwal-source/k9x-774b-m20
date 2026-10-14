@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-4S8D",
-    "timestamp": "2026-10-12T20:48:06.637Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv5q4s5l",
-    "contentHash": "b8b90d1857aa7145e63969c64f0d96cb56c32df47912b4a1419cca3632836dcf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-8NUA",
     "timestamp": "2026-10-12T20:51:07.570Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
     "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv7hd4f4",
     "contentHash": "8a1e293f418f3414d7260cf84c7eb854cfc08a766c7edac7427559d6531ec477",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-GUFA",
+    "timestamp": "2026-10-14T02:21:05.158Z",
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7hgud8",
+    "contentHash": "31b7309ef745527ad7050f82c1f4752e61de30128b28030e65cab4ee430a6cbd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:18:11.589Z",
+  "last_updated": "2026-10-14T02:21:05.162Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2078,15 +2078,15 @@
       "repository": "autotrust/JEV-35B-NVFP4",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi",
-      "content_hash": "13de9f4208db95d3b5bc34db6051806f43921720c1f6680ba614f302934753a5",
-      "verified_at": "2026-10-13T18:53:00.123Z",
+      "learning_id": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7hgud8",
+      "content_hash": "31b7309ef745527ad7050f82c1f4752e61de30128b28030e65cab4ee430a6cbd",
+      "verified_at": "2026-10-14T02:21:05.162Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T18:53:00.123Z"
+      "last_updated": "2026-10-14T02:21:05.162Z"
     },
     "Leonxlnx/taste-skill": {
       "repository": "Leonxlnx/taste-skill",
