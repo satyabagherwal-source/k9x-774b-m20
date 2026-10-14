@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-U2AE",
-    "timestamp": "2026-10-13T03:11:41.078Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-hf-francisring-prism-mv63u274",
-    "contentHash": "aa03061af6d8260217dee502341cc46066fa7401d4f2d56ae424f21eda770d54",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-Y52L",
     "timestamp": "2026-10-13T03:14:51.309Z",
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-large-en-v1.5",
     "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv7y2777",
     "contentHash": "57abef0ddb6d78980931a9dd6be19578e6b4f607f30e1028f9ec410e06e0cbca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-6A8B",
+    "timestamp": "2026-10-14T10:08:45.899Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv7y6a56",
+    "contentHash": "e233eb72b3e487837137f10e6ae4849ce35ec8491bb5e702a539eb552d90a0bf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
