@@ -1341,3 +1341,4 @@
 | `CYCLE-20261014-AE7C` | `2026-10-14T09:43:58.056Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`4eed53e3...`) |
 | `CYCLE-20261014-EEMD` | `2026-10-14T09:47:05.221Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`83aaa676...`) |
 | `CYCLE-20261014-IAT2` | `2026-10-14T09:50:06.902Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`f947de47...`) |
+| `CYCLE-20261014-MESO` | `2026-10-14T09:53:18.696Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`57c97e9d...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-A4LK",
-    "timestamp": "2026-10-13T02:56:10.952Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv63a4js",
-    "contentHash": "a1db5948ff96b8d4c8dd41d7310a1d4d036761e14c90b85e0652aafc7f32de06",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-DQPQ",
     "timestamp": "2026-10-13T02:58:59.582Z",
     "repository": "LiquidAI/d1-3B",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-31B-it",
     "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv7xiaqe",
     "contentHash": "f947de475b705adcf8a2d1887e0a122bf902458f3eb63c3ced8a9b5f8ea9fdec",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-MESO",
+    "timestamp": "2026-10-14T09:53:18.696Z",
+    "repository": "BAAI/bge-base-en-v1.5",
+    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv7xmep8",
+    "contentHash": "57c97e9d8d9394f275fb2513a0b0bb9e841d04c55b7450dcd7b67d18f1d7c3a0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
