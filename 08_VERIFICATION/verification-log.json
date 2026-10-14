@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-5O9Z",
-    "timestamp": "2026-10-13T00:32:45.095Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv5y5o7j",
-    "contentHash": "10e22ac680d0352545ffc752f91b2da8bda3e604d1568f51a2086862fd9707c8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-9M3S",
     "timestamp": "2026-10-13T00:35:48.904Z",
     "repository": "bigscience/bloom",
@@ -7490,6 +7475,21 @@
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
     "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv7oyb2g",
     "contentHash": "062d355d9aa6382a96d31f0d974dd8cf63a3f1a778b7ad87fc1f2f2165c8f3a2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-2026",
+    "timestamp": "2026-10-14T05:53:29.550Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv7p2007",
+    "contentHash": "671946c3047fd31fcf43636a0e554938febb8ebad9daae74f39d76050aa17314",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
