@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:22:53.555Z",
-  "total_cycles_completed": 1130,
-  "total_learnings_persisted": 1130,
+  "last_updated": "2026-10-14T00:25:59.417Z",
+  "total_cycles_completed": 1131,
+  "total_learnings_persisted": 1131,
   "total_rules_promoted": 544,
   "history": [
-    {
-      "timestamp": "2026-10-13T11:52:54.778Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv6mgd55",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T11:57:01.582Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T00:22:53.555Z",
       "repository": "speridlabs/iris-3b",
       "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv7d8uew",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T00:25:59.417Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv7dcttv",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
