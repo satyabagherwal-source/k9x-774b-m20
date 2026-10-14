@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-HN7D",
-    "timestamp": "2026-10-12T20:30:07.033Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv5phn5n",
-    "contentHash": "8dbc7edad6a99aca8f7ee79e49ea0d0f39764f5f8d97c65c6f034406b9e086db",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-LGBI",
     "timestamp": "2026-10-12T20:33:04.734Z",
     "repository": "FrancisRing/Prism",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-27B-VL",
     "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv7gp8y7",
     "contentHash": "359f46baf1b2207708bd554d3f2cf1f34c13a5c887005af300a1353ebba848a0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-TLVQ",
+    "timestamp": "2026-10-14T02:03:00.998Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv7gtlsf",
+    "contentHash": "20f390f783229ce8a6dad6cb6462472650c4b4c52e005c41f326c2d77421492e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
