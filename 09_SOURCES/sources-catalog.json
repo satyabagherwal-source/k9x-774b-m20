@@ -865,9 +865,9 @@
     "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceVersion": "hf-hexgrad-kokoro-82m",
     "license": "Open-Source",
-    "contentHash": "984e236fab61caedee53b52ebf50365cd4278c87ff9a91b8915fa7f918d7ad0c",
-    "lastHarvestedAt": "2026-10-14T06:05:46.122Z",
-    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv7phsb2"
+    "contentHash": "17d6fe3d8104fdb05113b27ec6e90c04e348ee66221ea37e5635cc3191080661",
+    "lastHarvestedAt": "2026-10-14T15:13:11.817Z",
+    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv891s7q"
   },
   "hf-openai-whisper-large-v3": {
     "repository": "openai/whisper-large-v3",

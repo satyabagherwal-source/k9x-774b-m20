@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T15:09:59.451Z",
-  "total_cycles_completed": 1371,
-  "total_learnings_persisted": 1371,
+  "last_updated": "2026-10-14T15:13:11.819Z",
+  "total_cycles_completed": 1372,
+  "total_learnings_persisted": 1372,
   "total_rules_promoted": 685,
   "history": [
-    {
-      "timestamp": "2026-10-14T02:34:19.419Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv7hxv83",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T02:37:16.684Z",
       "repository": "Qwen/Qwen3.8-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T15:09:59.451Z",
       "repository": "microsoft/FrogNano-4B-2609",
       "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv88xntc",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T15:13:11.819Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv891s7q",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
