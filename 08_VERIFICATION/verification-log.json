@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-CSSB",
-    "timestamp": "2026-10-13T05:18:13.691Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv68cspq",
-    "contentHash": "475b433125cf895ba85ac72a9247b2cd31e5087c0b5c5d856a02594d5f4b4a1c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-GPY5",
     "timestamp": "2026-10-13T05:21:16.637Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "apple/LensVLM-9B",
     "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv82r080",
     "contentHash": "e51a9638266e674a640eee9754c8d85d58b5c912d8c592cb5f1c09e8cbb2da02",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-V0RR",
+    "timestamp": "2026-10-14T12:19:58.503Z",
+    "repository": "Altworld/Hemmingway-1",
+    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv82v0ma",
+    "contentHash": "a257adc69e6b946bf5985f7d5e26c45f99dc2febcf28b37211b9a9b10ac4aecf",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

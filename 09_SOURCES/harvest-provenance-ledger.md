@@ -1370,3 +1370,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-mv82felm` | `https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | `hf-dealign` | Multi-dimensional audit evidence | 2026-10-14T12:07:50.044Z |
 | `learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv82jnj9` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-10-14T12:11:08.254Z |
 | `learn-huggingface-hf-apple-lensvlm-9b-mv82r080` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-10-14T12:16:51.371Z |
+| `learn-huggingface-hf-altworld-hemmingway-1-mv82v0ma` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-14T12:19:58.505Z |

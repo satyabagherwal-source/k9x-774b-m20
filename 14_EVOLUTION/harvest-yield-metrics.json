@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:16:51.372Z",
-  "total_cycles_completed": 1328,
-  "total_learnings_persisted": 1328,
-  "total_rules_promoted": 651,
+  "last_updated": "2026-10-14T12:19:58.507Z",
+  "total_cycles_completed": 1329,
+  "total_learnings_persisted": 1329,
+  "total_rules_promoted": 654,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:19:51.209Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv7d4xqj",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:22:53.555Z",
       "repository": "speridlabs/iris-3b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T12:16:51.372Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv82r080",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:19:58.507Z",
+      "repository": "Altworld/Hemmingway-1",
+      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv82v0ma",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
