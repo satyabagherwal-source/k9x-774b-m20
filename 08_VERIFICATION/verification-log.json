@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-IBMA",
-    "timestamp": "2026-10-13T00:14:35.602Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv5xibjc",
-    "contentHash": "66f89af15ea92f279ba478f4a7f4034050781fefb1aa5ee4eb54b5342dc90314",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-M5BZ",
     "timestamp": "2026-10-13T00:17:34.079Z",
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7490,6 +7475,21 @@
     "repository": "google/electra-base-discriminator",
     "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv7oapsi",
     "contentHash": "2c737d6cfe18f85cfe91476eea96e170cd864be63c27133848642c05cb119015",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-ENNY",
+    "timestamp": "2026-10-14T05:35:20.398Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-m3-mv7oenkr",
+    "contentHash": "3f5032be56a7e336e48d333e5c49c903072a11216bf97ce1a058152017e1b904",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1288,3 +1288,4 @@
 | `CYCLE-20261014-1GJI` | `2026-10-14T05:25:04.638Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`616545a5...`) |
 | `CYCLE-20261014-5OL4` | `2026-10-14T05:28:21.688Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule 827, Rule 828` | Yes (`a7a91e39...`) |
 | `CYCLE-20261014-APV2` | `2026-10-14T05:32:16.622Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`2c737d6c...`) |
+| `CYCLE-20261014-ENNY` | `2026-10-14T05:35:20.398Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`3f5032be...`) |

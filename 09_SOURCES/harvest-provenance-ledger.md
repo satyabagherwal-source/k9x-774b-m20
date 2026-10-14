@@ -1271,3 +1271,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv7o1gg9` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-14T05:25:04.640Z |
 | `learn-huggingface-hf-google-bert-bert-base-uncased-mv7o5ogj` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-14T05:28:21.690Z |
 | `learn-huggingface-hf-google-electra-base-discriminator-mv7oapsi` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-14T05:32:16.624Z |
+| `learn-huggingface-hf-baai-bge-m3-mv7oenkr` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-14T05:35:20.400Z |
