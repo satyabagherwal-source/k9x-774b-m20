@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-Z9TI",
-    "timestamp": "2026-10-13T06:59:41.046Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv6bz9r4",
-    "contentHash": "ad5fd5bdea753b079cfb240a1197ee85b0cbca2afcc03a6dee2062d2657df31b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-L3NC",
     "timestamp": "2026-10-13T07:16:39.480Z",
     "repository": "bigscience/bloom",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-m3",
     "learningId": "learn-huggingface-hf-baai-bge-m3-mv872bsw",
     "contentHash": "04497d4d58f4d0f28a9eb582b91336ac2dd5af16653a6defae3b8a1886776136",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-6AZB",
+    "timestamp": "2026-10-14T14:20:43.415Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv876aw7",
+    "contentHash": "31ce0057c685a6de5da45941cc2a93a01a9e5c62aac745d2b115bd0b9b935e89",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
