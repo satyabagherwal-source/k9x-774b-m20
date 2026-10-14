@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:19:54.040Z",
+  "last_updated": "2026-10-14T04:22:51.671Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -580,15 +580,15 @@
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv77dktm",
-      "content_hash": "1a927ce7189aa663b9f7991e3ae81f9923010bab13b6035ae82cb16359a2f60a",
-      "verified_at": "2026-10-13T21:38:36.766Z",
+      "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv7ltg2k",
+      "content_hash": "cc2087c962d2dd81b4cf7be5bf7962813f25c98740b2258dee6038f7f3c7ec3c",
+      "verified_at": "2026-10-14T04:22:51.671Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T21:38:36.766Z"
+      "last_updated": "2026-10-14T04:22:51.671Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",

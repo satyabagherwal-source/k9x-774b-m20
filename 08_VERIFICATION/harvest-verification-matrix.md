@@ -1265,3 +1265,4 @@
 | `CYCLE-20261014-ICYY` | `2026-10-14T04:14:14.314Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 813, Rule 814` | Yes (`dea7b3ff...`) |
 | `CYCLE-20261014-LWY7` | `2026-10-14T04:17:00.175Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`1b10f612...`) |
 | `CYCLE-20261014-PN3B` | `2026-10-14T04:19:54.023Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 815, Rule 816, Rule 817` | Yes (`8c444d74...`) |
+| `CYCLE-20261014-TG5U` | `2026-10-14T04:22:51.666Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`cc2087c9...`) |

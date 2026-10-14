@@ -1248,3 +1248,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-comfy-org-qwen-image-2-1-mv7licuf` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-14T04:14:14.316Z |
 | `learn-huggingface-hf-akhilaaa3-jev-omni-mv7llww3` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-10-14T04:17:00.177Z |
 | `learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv7lpn00` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-10-14T04:19:54.024Z |
+| `learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv7ltg2k` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-10-14T04:22:51.668Z |
