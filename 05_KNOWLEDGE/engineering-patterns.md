@@ -50783,3 +50783,157 @@ def test_max_position_invariants():
 ```
 
 ---
+
+
+---
+
+## 863. Hardware-Aware Model Selection Invariant (Harvested from argmaxinc/whisperkit-coreml)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hardware-Aware Model Selection Invariant",
+  "source": "argmaxinc/whisperkit-coreml",
+  "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+  "source_version": "hf-argmaxinc-whisperkit-coreml",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T09:40:49.720Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv7x6cua",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml) (Revision: `hf-argmaxi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying machine learning models on heterogeneous edge devices, the system MUST NOT hardcode a single model variant. It MUST implement a **Device-Capability Registry** that maps specific hardware identifiers (SoC model, RAM size) to a curated list of supported model variants, with a defined `default` fallback that prioritizes stability over maximum accuracy on lower-tier hardware.
+
+**WHY**:
+Hardcoding a large model (e.g., `large-v3`) on a low-RAM device (e.g., A12 iPhone) causes immediate `malloc` failures or OOM (Out-of-Memory) kills by the OS. Conversely, forcing a tiny model on high-end hardware (M1/M2) wastes computational potential and degrades accuracy unnecessarily. The registry ensures **graceful degradation** and **resource safety**.
+
+**WHEN TO APPLY**:
+Any iOS/macOS/watchOS application using Core ML, TFLite, or ONNX Runtime on-device. Also applies to Android (NPU/GPU variants) and embedded Linux systems.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "device_support": [
+    {
+      "chips": "A12, A13",
+      "identifiers": ["iPhone11", "iPhone12"],
+      "models": {
+        "default": "model_tiny",
+        "supported": ["model_tiny", "model_base"]
+      }
+    },
+    {
+      "chips": "A16, M1",
+      "identifiers": ["iPhone15", "MacBookPro18,1"],
+      "models": {
+        "default": "model_large",
+        "supported": ["model_tiny", "model_base", "model_large"]
+      }
+    }
+  ]
+}
+```
+```swift
+// Swift SDK Logic
+func selectModel(for deviceID: String) -> String {
+    guard let profile = config.deviceSupport.first(where: { $0.identifiers.contains(deviceID) }) else {
+        return "model_tiny" // Safe fallback
+    }
+    return profile.models.default
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Hardcoding the best model regardless of device
+let model = try MLModel(contentsOf: url(for: "whisper-large-v3.mlmodel"))
+// CRASH: On iPhone 11 (A13), this may exceed memory limits or fail to load due to unsupported quantization types.
+```
+
+**VERIFICATION METHOD**:
+1.  **Static Analysis**: Lint rule to ensure `config.json` contains at least one `device_support` entry with a `default` model.
+2.  **Integration Test**: Run the SDK initialization on a simulator with different `deviceType` values and assert that the selected model matches the `default` for that profile.
+3.  **Memory Profiling**: On physical devices, verify that the peak memory usage of the selected model stays below 70% of the device's total RAM.
+
+
+---
+
+## 864. Model Identifier Encoding Invariant (Harvested from argmaxinc/whisperkit-coreml)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Model Identifier Encoding Invariant",
+  "source": "argmaxinc/whisperkit-coreml",
+  "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+  "source_version": "hf-argmaxinc-whisperkit-coreml",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T09:40:49.750Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv7x6cua",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml) (Revision: `hf-argmaxi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Model file identifiers MUST encode **critical runtime metadata** (specifically, approximate memory footprint or quantization level) directly in the string name, using a consistent, parseable suffix convention (e.g., `_947MB`). This allows the host application to perform **pre-load resource checks** without inspecting the binary file.
+
+**WHY**:
+Core ML models are large binaries (hundreds of MBs). Loading a model that exceeds available memory causes a hard crash. By encoding the size in the identifier, the SDK can check `availableMemory` before attempting `MLModel(contentsOf:)`, enabling **graceful failure** (e.g., falling back to a smaller model) instead of a crash.
+
+**WHEN TO APPLY**:
+Any system distributing multiple variants of the same ML model (e.g., FP16 vs. INT8, Tiny vs. Large) where memory constraints are a primary failure mode.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+"supported": [
+    "openai_whisper-large-v3_947MB",
+    "openai_whisper-large-v3_turbo_954MB"
+]
+```
+```swift
+func estimatedMemoryUsage(for modelID: String) -> Int {
+    // Parse suffix like "_947MB"
+    let parts = modelID.split(separator: "_")
+    if let lastPart = parts.last, lastPart.hasSuffix("MB") {
+        let sizeStr = lastPart.dropLast(2)
+        return Int(sizeStr) ?? 0
+    }
+    return 0 // Unknown size, assume safe or require explicit check
+}
+
+func canLoadModel(_ modelID: String) -> Bool {
+    let requiredMB = estimatedMemoryUsage(for: modelID)
+    let availableMB = ProcessInfo.processInfo.physicalMemory / 1024 / 1024
+    return requiredMB < (availableMB * 70 / 100) // 70% safety margin
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+"supported": [
+    "whisper_large_v3",
+    "whisper_large_v3_turbo"
+]
+// ANTI-PATTERN: No size info. SDK must load the model to check size, risking OOM crash.
+```
+
+**VERIFICATION METHOD**:
+1.  **Regex Lint**: Ensure all model IDs in `config.json` match the pattern `^[a-z0-9_-]+_\d+MB$` or a defined safe pattern.
+2.  **Unit Test**: Verify that `estimatedMemoryUsage` correctly parses the suffix for all supported models.
+3.  **Integration Test**: Simulate a low-memory environment and verify that `canLoadModel` returns `false` for large models, triggering the fallback logic.

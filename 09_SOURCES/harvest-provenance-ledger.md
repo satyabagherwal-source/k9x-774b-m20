@@ -1320,3 +1320,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7wu1eg` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-14T09:31:15.070Z |
 | `learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv7wy347` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-14T09:34:23.938Z |
 | `learn-huggingface-hf-intfloat-multilingual-e5-small-mv7x23nw` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-14T09:37:31.254Z |
+| `learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv7x6cua` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-14T09:40:49.836Z |
