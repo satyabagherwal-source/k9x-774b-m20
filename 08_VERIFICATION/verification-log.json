@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-Y52L",
-    "timestamp": "2026-10-13T03:14:51.309Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv63y4yg",
-    "contentHash": "59394ab60628cb6dcc0ea04afe076b876a593d23fb4ba1bdde3dddc4d224eb09",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-1WKM",
     "timestamp": "2026-10-13T03:17:46.918Z",
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -7492,6 +7477,21 @@
     "contentHash": "e233eb72b3e487837137f10e6ae4849ce35ec8491bb5e702a539eb552d90a0bf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-AH7U",
+    "timestamp": "2026-10-14T10:12:01.578Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7yah35",
+    "contentHash": "6c8539a6199d236e7a2762f9451eee9e3e531b301fc23efa91e19dbd5fcba078",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

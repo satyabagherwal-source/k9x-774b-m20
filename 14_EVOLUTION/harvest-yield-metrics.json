@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T10:08:45.903Z",
-  "total_cycles_completed": 1288,
-  "total_learnings_persisted": 1288,
-  "total_rules_promoted": 629,
+  "last_updated": "2026-10-14T10:12:01.583Z",
+  "total_cycles_completed": 1289,
+  "total_learnings_persisted": 1289,
+  "total_rules_promoted": 631,
   "history": [
-    {
-      "timestamp": "2026-10-13T22:14:15.639Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv78nf8g",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T22:17:28.500Z",
       "repository": "facebook/sam3",
@@ -1403,6 +1396,13 @@
       "repository": "zai-org/GLM-5.3",
       "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv7y6a56",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T10:12:01.583Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7yah35",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T10:08:45.841Z",
-  "total_verified_learnings": 5243,
+  "last_updated": "2026-10-14T10:12:01.526Z",
+  "total_verified_learnings": 5244,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -129170,6 +129170,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T10:08:45.841Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7yah35": {
+      "learning_id": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7yah35",
+      "source": "mudler/locate-anything.cpp-gguf",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "slug": "hf-mudler-locate-anything.cpp-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+      "source_version": "hf-mudler-locate-anything.cpp-gguf",
+      "content_hash": "6c8539a6199d236e7a2762f9451eee9e3e531b301fc23efa91e19dbd5fcba078",
+      "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 865,
+          "title": "Selective Quantization Boundary for Vision-Language Parity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 866,
+          "title": "Zero-Copy Memory-Mapped Model Loading for Low-Latency Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T10:12:01.526Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:59:47.274Z",
+  "last_updated": "2026-10-14T10:12:01.582Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1300,6 +1300,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Generic header title rejected",
       "learning_id": "learn-huggingface-hf-facebook-sam3-mv7n4xns"
+    },
+    {
+      "id": "CD-AH7Y",
+      "directive_title": "Parity-Gated Benchmarking for Quantized Models",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "mudler/locate-anything.cpp-gguf",
+      "source_commit": "hf-mudler-lo",
+      "date_staged": "2026-10-14",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7yah35"
     }
   ]
 }
