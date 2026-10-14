@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:15:17.320Z",
-  "total_cycles_completed": 1346,
-  "total_learnings_persisted": 1346,
-  "total_rules_promoted": 665,
+  "last_updated": "2026-10-14T13:18:44.350Z",
+  "total_cycles_completed": 1347,
+  "total_learnings_persisted": 1347,
+  "total_rules_promoted": 667,
   "history": [
-    {
-      "timestamp": "2026-10-14T01:16:08.513Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv7f5boy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T01:19:06.882Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1403,6 +1396,13 @@
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv84u5he",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T13:18:44.350Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-hf-psrben-visionhope-mv84yl6y",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

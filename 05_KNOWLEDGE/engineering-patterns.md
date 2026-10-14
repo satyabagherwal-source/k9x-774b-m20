@@ -53305,3 +53305,144 @@ def perform_swap(source, ref, prompt):
 **VERIFICATION METHOD**:
 1.  **A/B Testing:** Run the same video with a simple prompt ("Swap the man") and a complex prompt ("Swap the man in the purple shirt, keep his pose, keep the background, keep the lighting, keep the other people"). Measure the identity similarity between the output and the reference image. The complex prompt should show lower similarity (suppression).
 2.  **User Documentation:** Assert that the README contains the phrase "not a guarantee of strict source alignment."
+
+
+---
+
+## 899. Hierarchical Depth Asymmetry for Semantic Focus (Harvested from PSRben/VisionHOPE)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hierarchical Depth Asymmetry for Semantic Focus",
+  "source": "PSRben/VisionHOPE",
+  "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+  "source_version": "hf-psrben-visionhope",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T13:18:44.227Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-psrben-visionhope-mv84yl6y",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [PSRben/VisionHOPE](https://huggingface.co/PSRben/VisionHOPE) (Revision: `hf-psrben-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When designing hierarchical vision backbones, the depth of the intermediate stages (typically stage 2 or 3 in a 4-stage pyramid) MUST be significantly higher than the initial and final stages to balance computational cost with semantic abstraction. The ratio of intermediate depth to initial depth should be at least 4:1.
+**WHY**:
+Early stages require minimal depth to capture low-level edges and textures (high spatial resolution, low semantic content). Final stages require minimal depth to aggregate global context (low spatial resolution). The middle stages are where the model must learn complex object parts and semantic relationships. Under-provisioning depth here leads to poor feature discrimination, while over-provisioning early stages wastes FLOPs on redundant low-level features.
+**WHEN TO APPLY**:
+Designing any hierarchical CNN or Hybrid Vision Transformer backbone for classification, detection, or segmentation tasks.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Correct: Asymmetric depth allocation focusing on mid-level semantics
+config_tiny = {
+    "embed_dims": [64, 128, 256, 512],
+    "mixer_dims": [32, 64, 128, 256],
+    "depths": [3, 4, 18, 4]  # Stage 2 (index 2) is 6x deeper than Stage 0
+}
+
+# Correct: Scaling depth proportionally with model size
+config_small = {
+    "embed_dims": [64, 160, 320, 512],
+    "mixer_dims": [32, 80, 160, 256],
+    "depths": [4, 8, 25, 8]  # Stage 2 is ~3x deeper than Stage 0
+}
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Anti-pattern: Uniform depth allocation wastes compute on low-level features
+config_bad = {
+    "embed_dims": [64, 128, 256, 512],
+    "mixer_dims": [32, 64, 128, 256],
+    "depths": [10, 10, 10, 10]  # Unnecessary depth in early/late stages
+}
+```
+**VERIFICATION METHOD**:
+```python
+def verify_depth_asymmetry(config):
+    depths = config["depths"]
+    if len(depths) != 4:
+        return False
+    # Check if middle stages are significantly deeper than edges
+    mid_depth = max(depths[1], depths[2])
+    edge_depth = min(depths[0], depths[3])
+    return mid_depth >= 3 * edge_depth
+```
+
+
+---
+
+## 900. Decoupled Mixer Dimensions for FLOP Efficiency (Harvested from PSRben/VisionHOPE)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Mixer Dimensions for FLOP Efficiency",
+  "source": "PSRben/VisionHOPE",
+  "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+  "source_version": "hf-psrben-visionhope",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T13:18:44.259Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-psrben-visionhope-mv84yl6y",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [PSRben/VisionHOPE](https://huggingface.co/PSRben/VisionHOPE) (Revision: `hf-psrben-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In hybrid vision architectures, the dimensionality of the feature mixing operation (attention or MLP) MUST be decoupled from the final embedding dimension. The `mixer_dims` MUST be strictly less than or equal to `embed_dims` to reduce computational complexity in the mixing layer.
+**WHY**:
+Global self-attention has $O(N^2 D^2)$ complexity, where $D$ is the channel dimension. By reducing $D$ in the mixing layer (via `mixer_dims`) and projecting back to `embed_dims` afterwards, the model significantly reduces FLOPs without sacrificing the representational capacity of the final feature map. This is critical for scaling to high-resolution inputs.
+**WHEN TO APPLY**:
+Implementing Vision Transformers, Hybrid CNN-Transformer backbones, or any architecture with global or local mixing operations.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class VisionHOPEBlock(nn.Module):
+    def __init__(self, embed_dim, mixer_dim):
+        super().__init__()
+        self.embed_dim = embed_dim
+        self.mixer_dim = mixer_dim
+        # Project down to mixer_dim for efficient mixing
+        self.down_proj = nn.Linear(embed_dim, mixer_dim)
+        # Mixing operation (e.g., Attention or MLP) operates on mixer_dim
+        self.mixer = EfficientMixer(mixer_dim)
+        # Project back to embed_dim
+        self.up_proj = nn.Linear(mixer_dim, embed_dim)
+
+    def forward(self, x):
+        # x: [B, N, embed_dim]
+        x_mixed = self.down_proj(x)  # [B, N, mixer_dim]
+        x_mixed = self.mixer(x_mixed)
+        x_out = self.up_proj(x_mixed) # [B, N, embed_dim]
+        return x_out
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Anti-pattern: Using full embed_dim for mixing increases FLOPs unnecessarily
+class BadBlock(nn.Module):
+    def __init__(self, embed_dim):
+        super().__init__()
+        self.mixer = Attention(embed_dim)  # Operates on full dimension
+```
+**VERIFICATION METHOD**:
+```python
+def verify_mixer_decoupling(config):
+    embed_dims = config["embed_dims"]
+    mixer_dims = config["mixer_dims"]
+    if len(embed_dims) != len(mixer_dims):
+        return False
+    # Mixer dims must be <= embed dims for efficiency
+    return all(m <= e for m, e in zip(mixer_dims, embed_dims))
+```

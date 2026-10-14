@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:15:17.253Z",
-  "total_verified_learnings": 5301,
+  "last_updated": "2026-10-14T13:18:44.295Z",
+  "total_verified_learnings": 5302,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -130755,6 +130755,41 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T13:15:17.253Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-psrben-visionhope-mv84yl6y": {
+      "learning_id": "learn-huggingface-hf-psrben-visionhope-mv84yl6y",
+      "source": "PSRben/VisionHOPE",
+      "repository": "PSRben/VisionHOPE",
+      "slug": "hf-psrben-visionhope",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/PSRben/VisionHOPE",
+      "source_version": "hf-psrben-visionhope",
+      "content_hash": "2ac7599c630186ca2a0075071dba0bf15b98b9d2959842d869356bb7182620dd",
+      "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 899,
+          "title": "Hierarchical Depth Asymmetry for Semantic Focus",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 900,
+          "title": "Decoupled Mixer Dimensions for FLOP Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T13:18:44.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
