@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T03:21:44.076Z",
-  "total_cycles_completed": 1187,
-  "total_learnings_persisted": 1187,
+  "last_updated": "2026-10-14T03:24:53.332Z",
+  "total_cycles_completed": 1188,
+  "total_learnings_persisted": 1188,
   "total_rules_promoted": 565,
   "history": [
-    {
-      "timestamp": "2026-10-13T15:52:25.700Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv6v0dro",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T15:55:25.045Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T03:21:44.076Z",
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv7jmu5z",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T03:24:53.332Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv7jqw5y",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
