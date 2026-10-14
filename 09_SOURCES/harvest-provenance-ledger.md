@@ -1290,3 +1290,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv7q5n63` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-14T06:24:19.188Z |
 | `learn-huggingface-hf-tongyi-mai-z-image-turbo-mv7q9i23` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-10-14T06:27:19.182Z |
 | `learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv7qdsxv` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-14T06:30:39.983Z |
+| `learn-huggingface-hf-openai-gpt-oss-120b-mv7qiyti` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-14T06:34:40.833Z |

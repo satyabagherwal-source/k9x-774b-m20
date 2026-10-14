@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:30:39.985Z",
-  "total_cycles_completed": 1248,
-  "total_learnings_persisted": 1248,
+  "last_updated": "2026-10-14T06:34:40.834Z",
+  "total_cycles_completed": 1249,
+  "total_learnings_persisted": 1249,
   "total_rules_promoted": 600,
   "history": [
-    {
-      "timestamp": "2026-10-13T19:25:36.726Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv72mjfo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T19:28:40.054Z",
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv7qdsxv",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T06:34:40.834Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv7qiyti",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
