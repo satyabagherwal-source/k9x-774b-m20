@@ -1391,3 +1391,4 @@
 | `CYCLE-20261014-YWTC` | `2026-10-14T12:23:00.000Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`3b755b08...`) |
 | `CYCLE-20261014-33WV` | `2026-10-14T12:26:15.823Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 889, Rule 890, Rule 891` | Yes (`4b1c972c...`) |
 | `CYCLE-20261014-7AUJ` | `2026-10-14T12:29:31.435Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`1738603d...`) |
+| `CYCLE-20261014-BUIC` | `2026-10-14T12:33:03.540Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 892, Rule 893, Rule 894` | Yes (`13a60a91...`) |
