@@ -1416,3 +1416,4 @@
 | `CYCLE-20261014-8TOZ` | `2026-10-14T13:54:41.363Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 901, Rule 902, Rule 903` | Yes (`b9ae788b...`) |
 | `CYCLE-20261014-CXB2` | `2026-10-14T13:57:52.670Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 904, Rule 905, Rule 906` | Yes (`65edfe54...`) |
 | `CYCLE-20261014-IH5V` | `2026-10-14T14:02:11.683Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 907, Rule 908, Rule 909` | Yes (`b9be8c51...`) |
+| `CYCLE-20261014-OTPZ` | `2026-10-14T14:07:07.895Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 910, Rule 911` | Yes (`aec522d6...`) |

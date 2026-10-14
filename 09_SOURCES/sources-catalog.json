@@ -735,9 +735,9 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "616545a5a405fe36f30f37d98fb8bc2d1b422b62a0a81b82976803637f08ef1f",
-    "lastHarvestedAt": "2026-10-14T05:25:04.640Z",
-    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv7o1gg9"
+    "contentHash": "aec522d65a7452a9573664ec7c063acb0c5d46c773d272db7849d10c85f3fd71",
+    "lastHarvestedAt": "2026-10-14T14:07:07.898Z",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv86otkt"
   },
   "hf-google-bert-bert-base-uncased": {
     "repository": "google-bert/bert-base-uncased",

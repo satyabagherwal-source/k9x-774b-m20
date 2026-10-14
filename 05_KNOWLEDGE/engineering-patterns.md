@@ -54006,3 +54006,210 @@ assert model.generation_config["use_cache"] is True, "Cache must be enabled"
 ```
 
 ---
+
+
+---
+
+## 910. Epsilon-Clamped Masked Tensor Reduction Invariant (Harvested from sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Epsilon-Clamped Masked Tensor Reduction Invariant",
+  "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T14:07:07.772Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv86otkt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When reducing a tensor along a masked sequence dimension (such as mean pooling, masked softmax, or masked layer normalization), the denominator MUST be clamped with a strictly positive epsilon ($\ge 10^{-9}$ for FP32, $\ge 10^{-4}$ for FP16/BF16) or protected via a conditional branch before division. Developers MUST NOT divide directly by the un-clamped sum of the mask.
+
+**WHY**:
+In production batch inference, batch elements containing zero valid tokens (e.g., empty string inputs, strings composed entirely of stripped unprintable characters, or bad client payloads) produce an `attention_mask` containing only zeros. An unclamped reduction performs $\frac{0.0}{0.0} \to \text{NaN}$. In PyTorch and CUDA kernels, a single `NaN` value propagates through downstream layers, matrix multiplications, index lookups, and Vector DB ingest pipelines, corrupting entire vector indexes (e.g., HNSW or IVF graphs in Faiss, Milvus, Qdrant).
+
+**WHEN TO APPLY**:
+Any time multidimensional PyTorch, TensorFlow, JAX, or ONNX tensors are aggregated across a variable-length spatial or temporal dimension using a binary or floating-point attention mask.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def masked_mean_pooling(
+    token_embeddings: torch.Tensor, 
+    attention_mask: torch.Tensor,
+    eps: float = 1e-9
+) -> torch.Tensor:
+    """
+    Safely computes mean-pooled sentence embeddings accounting for padding masks.
+    
+    Args:
+        token_embeddings: Shape (Batch_Size, Seq_Len, Hidden_Dim)
+        attention_mask: Shape (Batch_Size, Seq_Len), dtype int or float
+        eps: Float floor to prevent zero-division NaN propagation.
+             Must be >= 1e-4 if running under torch.cuda.amp (FP16).
+             
+    Returns:
+        torch.Tensor: Shape (Batch_Size, Hidden_Dim)
+    """
+    # Invariant: Verify input dimensionality
+    if token_embeddings.dim() != 3 or attention_mask.dim() != 2:
+        raise ValueError(
+            f"Expected token_embeddings (B, S, D) and attention_mask (B, S). "
+            f"Got shapes {token_embeddings.shape} and {attention_mask.shape}"
+        )
+    
+    # Expand mask from (B, S) -> (B, S, D) to align with token_embeddings broadcast
+    input_mask_expanded = (
+        attention_mask.unsqueeze(-1)
+        .expand_as(token_embeddings)
+        .to(dtype=token_embeddings.dtype)
+    )
+    
+    # Sum across sequence dimension (dim=1)
+    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, dim=1)
+    
+    # Calculate token counts per batch item: (B, D)
+    sum_mask = input_mask_expanded.sum(dim=1)
+    
+    # Enforce numerical stability floor
+    clamped_mask = torch.clamp(sum_mask, min=eps)
+    
+    # Compute mean
+    mean_pooled = sum_embeddings / clamped_mask
+    return mean_pooled
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: NEVER DIVIDE BY UNCLAMPED SUM OF MASKS
+def unsafe_mean_pooling(token_embeddings, attention_mask):
+    # If a sentence is empty or masked out, mask.sum(1) produces 0.
+    # 0.0 / 0.0 -> NaN, poisoning downstream search vectors and databases.
+    mask_expanded = attention_mask.unsqueeze(-1).expand_as(token_embeddings).float()
+    return torch.sum(token_embeddings * mask_expanded, 1) / mask_expanded.sum(1)
+```
+
+**VERIFICATION METHOD**:
+Run an edge-case property-based unit test with an all-zero attention mask and verify zero `NaN` or `Inf` outputs:
+```python
+def test_masked_mean_pooling_zero_mask():
+    batch_size, seq_len, hidden_dim = 4, 16, 384
+    embeddings = torch.randn(batch_size, seq_len, hidden_dim)
+    # Batch element 0 has tokens, batch element 1 is completely masked out (zeros)
+    mask = torch.ones(batch_size, seq_len)
+    mask[1, :] = 0.0
+    
+    pooled = masked_mean_pooling(embeddings, mask, eps=1e-9)
+    assert not torch.isnan(pooled).any(), "NaN detected in pooled output!"
+    assert not torch.isinf(pooled).any(), "Inf detected in pooled output!"
+    # The completely masked vector should safely evaluate to 0.0
+    assert torch.allclose(pooled[1], torch.zeros(hidden_dim), atol=1e-6)
+```
+
+---
+
+
+---
+
+## 911. Multi-Component Sequence Length Truncation Invariant (Harvested from sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Component Sequence Length Truncation Invariant",
+  "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T14:07:07.802Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv86otkt",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When serving or packaging a dual-component Transformer pipeline (Tokenizer + Underlying Model Module), the tokenizer's truncation length (`max_length` / `model_max_length`) MUST NOT exceed the operational `max_seq_length` specified in the downstream pooling or feature extraction module wrapper. If configs disagree, runtime code MUST explicitly bind truncation to `min(tokenizer.model_max_length, model.max_seq_length, config.max_position_embeddings)`.
+
+**WHY**:
+In `sentence-transformers`, the underlying `BertModel` configuration often allows `max_position_embeddings: 512`, while the SentenceTransformer module configuration restricts processing to `max_seq_length: 128` (for performance/throughput optimization during student distillation). If an engineer switches from high-level `SentenceTransformer.encode()` to raw Hugging Face `AutoModel` + `AutoTokenizer` and relies on `tokenizer(..., padding=True, truncation=True)`, the tokenizer defaults to 512. This introduces a $4\times$ attention matrix scaling penalty ($O(S^2)$ compute blowup) and causes out-of-distribution positional embedding evaluation if the model was only fine-tuned on sequences up to 128 tokens.
+
+**WHEN TO APPLY**:
+Every ML inference pipeline, deployment wrapper (Triton, TorchScript, ONNX Runtime), or data engineering preprocessing script that combines a tokenizer with a pretrained transformer encoder.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Dict, Any
+from transformers import PreTrainedTokenizerFast, BertModel
+import torch
+
+class SafeTransformerPipeline:
+    def __init__(
+        self, 
+        tokenizer: PreTrainedTokenizerFast, 
+        model: BertModel, 
+        module_max_seq_len: int = 128
+    ):
+        self.tokenizer = tokenizer
+        self.model = model
+        
+        # Enforce canonical invariant: strictly take minimum across all layers
+        config_max_pos = getattr(model.config, "max_position_embeddings", module_max_seq_len)
+        tokenizer_max_len = getattr(tokenizer, "model_max_length", module_max_seq_len)
+        
+        # Defensive bound against huge arbitrary values like 1e30 in some tokenizers
+        if tokenizer_max_len > 1_000_000:
+            tokenizer_max_len = config_max_pos
+            
+        self.effective_max_len = min(module_max_seq_len, config_max_pos, tokenizer_max_len)
+        
+    def tokenize(self, texts: list[str]) -> Dict[str, torch.Tensor]:
+        return self.tokenizer(
+            texts,
+            padding=True,
+            truncation=True,
+            max_length=self.effective_max_len,
+            return_tensors="pt"
+        )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Relying on default tokenizer truncation without passing max_length
+# When tokenizer_config specifies 512 but the model was trained/tuned for 128!
+def unsafe_tokenize(texts, tokenizer):
+    # This truncates to 512! Consumes 16x more attention memory than intended 128 limit.
+    return tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
+```
+
+**VERIFICATION METHOD**:
+Assert that tokenization length of an artificially long string (e.g., $10^4$ characters) strictly adheres to `effective_max_len`:
+```python
+def test_truncation_invariant(safe_pipeline):
+    huge_text = ["word " * 1000]
+    tokens = safe_pipeline.tokenize(huge_text)
+    seq_len = tokens["input_ids"].shape[1]
+    assert seq_len <= safe_pipeline.effective_max_len, (
+        f"Sequence length {seq_len} exceeded strict bound {safe_pipeline.effective_max_len}"
+    )
+```
+
+---

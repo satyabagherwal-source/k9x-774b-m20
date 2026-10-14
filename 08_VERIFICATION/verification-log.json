@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-JQVZ",
-    "timestamp": "2026-10-13T06:47:36.671Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv6bjqs0",
-    "contentHash": "2e26ca726714509b42f559f2e6023ade178f691598bc615fac88213cc6188ac5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-NGTH",
     "timestamp": "2026-10-13T06:50:30.245Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7492,6 +7477,21 @@
     "contentHash": "b9be8c512363509f160482b03f9b71441f7f6ac59f66066406852f6c376f826c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-OTPZ",
+    "timestamp": "2026-10-14T14:07:07.895Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv86otkt",
+    "contentHash": "aec522d65a7452a9573664ec7c063acb0c5d46c773d272db7849d10c85f3fd71",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

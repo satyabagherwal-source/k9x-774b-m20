@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T14:02:11.687Z",
-  "total_cycles_completed": 1357,
-  "total_learnings_persisted": 1357,
-  "total_rules_promoted": 676,
+  "last_updated": "2026-10-14T14:07:07.900Z",
+  "total_cycles_completed": 1358,
+  "total_learnings_persisted": 1358,
+  "total_rules_promoted": 678,
   "history": [
-    {
-      "timestamp": "2026-10-14T01:50:31.991Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv7gdjug",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T01:53:31.583Z",
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -1403,6 +1396,13 @@
       "repository": "Cloudflare/clef-flash",
       "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv86igy0",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T14:07:07.900Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv86otkt",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
