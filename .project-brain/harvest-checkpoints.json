@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T13:24:38.701Z",
+  "last_updated": "2026-10-14T13:27:49.784Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1784,15 +1784,15 @@
       "repository": "facebook/sam3",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-facebook-sam3-mv7n4xns",
-      "content_hash": "ef614ec3297e7e98a7e195575ad6d1dd9462ab71e61a87f2660b04542b5c19aa",
-      "verified_at": "2026-10-14T04:59:47.276Z",
+      "learning_id": "learn-huggingface-hf-facebook-sam3-mv85aa3h",
+      "content_hash": "6235ecf420cf1cc02c5fe97c229993d7b17fd71fa87721a1edafd2476de491f9",
+      "verified_at": "2026-10-14T13:27:49.784Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T04:59:47.276Z"
+      "last_updated": "2026-10-14T13:27:49.784Z"
     },
     "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF": {
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",

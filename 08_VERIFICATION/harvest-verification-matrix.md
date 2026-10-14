@@ -1408,3 +1408,4 @@
 | `CYCLE-20261014-YLBU` | `2026-10-14T13:18:44.346Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `VERIFIED` | `Rule 899, Rule 900` | Yes (`2ac7599c...`) |
 | `CYCLE-20261014-2FE3` | `2026-10-14T13:21:43.275Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`cff42c4a...`) |
 | `CYCLE-20261014-66QY` | `2026-10-14T13:24:38.698Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`42c22374...`) |
+| `CYCLE-20261014-AA6Q` | `2026-10-14T13:27:49.778Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`6235ecf4...`) |
