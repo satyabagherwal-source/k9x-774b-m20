@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T01:53:31.583Z",
-  "total_cycles_completed": 1159,
-  "total_learnings_persisted": 1159,
+  "last_updated": "2026-10-14T01:56:34.041Z",
+  "total_cycles_completed": 1160,
+  "total_learnings_persisted": 1160,
   "total_rules_promoted": 552,
   "history": [
-    {
-      "timestamp": "2026-10-13T13:52:49.774Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-hf-facebook-sam3-mv6qqksb",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T13:55:49.678Z",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T01:53:31.583Z",
       "repository": "mudler/locate-anything.cpp-gguf",
       "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7ghefw",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T01:56:34.041Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv7glb7l",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

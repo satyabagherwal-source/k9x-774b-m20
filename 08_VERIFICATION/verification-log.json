@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-9BMC",
-    "timestamp": "2026-10-12T20:23:38.772Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv5p9bi6",
-    "contentHash": "fbff2b1c1d70fb091c55e0537a324b1901a9f13513935e8198aab7d5794fb93c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-E5BQ",
     "timestamp": "2026-10-12T20:27:23.894Z",
     "repository": "Qwen/Qwen3.8-27B",
@@ -7490,6 +7475,21 @@
     "repository": "mudler/locate-anything.cpp-gguf",
     "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7ghefw",
     "contentHash": "f12a25237717c6d79642db7ddef68f280651f14dc6cec0dee0850762ca6beb51",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-LBAT",
+    "timestamp": "2026-10-14T01:56:34.037Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv7glb7l",
+    "contentHash": "97566bc7da43f6469566eec568291b6e3d6cee3dad2923f2af1bfa20dfa505c0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
