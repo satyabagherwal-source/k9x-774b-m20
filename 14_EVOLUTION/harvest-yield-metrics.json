@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T14:54:41.370Z",
-  "total_cycles_completed": 1368,
-  "total_learnings_persisted": 1368,
+  "last_updated": "2026-10-14T14:59:46.914Z",
+  "total_cycles_completed": 1369,
+  "total_learnings_persisted": 1369,
   "total_rules_promoted": 682,
   "history": [
-    {
-      "timestamp": "2026-10-14T02:24:08.287Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv7hkrmt",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T02:28:13.557Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T14:54:41.370Z",
       "repository": "amazon/chronos-2",
       "learningId": "learn-huggingface-hf-amazon-chronos-2-mv88dzds",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T14:59:46.914Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv88kj5o",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

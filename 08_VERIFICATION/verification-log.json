@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-TLL3",
-    "timestamp": "2026-10-13T07:51:15.591Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv6dtli4",
-    "contentHash": "0fe4dd4fd58395d3e77f9c90100c184b9a2ebe4aef37ab53860cd07ec14b13fb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-XTCJ",
     "timestamp": "2026-10-13T07:54:32.275Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7490,6 +7475,21 @@
     "repository": "amazon/chronos-2",
     "learningId": "learn-huggingface-hf-amazon-chronos-2-mv88dzds",
     "contentHash": "97f48939dcce50b6af02b6978c0b0e39acfce5429cefad9fc167c1bc683a5bad",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-KJ8E",
+    "timestamp": "2026-10-14T14:59:46.910Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv88kj5o",
+    "contentHash": "5f52fdf12c74275e74abaa2ecbd5a807605baa262f8660c2ae8c46936cdbfeb1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
