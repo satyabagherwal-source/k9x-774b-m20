@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-SZK7",
-    "timestamp": "2026-10-13T01:18:52.423Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv5zszh9",
-    "contentHash": "78ef94c1da95ae632a372e8e4d789969694f5893e24f1bc936bb9356e0dbf36e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-WR90",
     "timestamp": "2026-10-13T01:21:48.276Z",
     "repository": "openai/clip-vit-base-patch32",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.2",
     "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv7qn5jq",
     "contentHash": "147abcedf185d4186bd4fd5af1cacee4e0593eed52e8b2e365348b1686e9be76",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-QVCD",
+    "timestamp": "2026-10-14T06:40:49.453Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv7qqvaf",
+    "contentHash": "d6c4c90575fd9a2ee91f3e1629ffd1a870bc74e7140e0e0ef9b8222433bb67ee",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
