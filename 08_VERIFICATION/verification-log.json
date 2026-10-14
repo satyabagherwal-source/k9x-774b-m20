@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-XXPJ",
-    "timestamp": "2026-10-13T04:38:40.615Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv66xxl8",
-    "contentHash": "a4ad0f8964c98d006b0cf10d380b591922c103b9336c8d5b461c05ce91d807cc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-1G7S",
     "timestamp": "2026-10-13T04:41:24.568Z",
     "repository": "akhilaaa3/Jev-Omni",
@@ -7492,6 +7477,21 @@
     "contentHash": "a793dcdb5d8733758137ae1069195f3db6af0876acf48fe6d79fea1cfc054f83",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-AH9T",
+    "timestamp": "2026-10-14T11:36:00.497Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv81ah6j",
+    "contentHash": "5e7c44334c76859c5d0ca1d9921052cb4aef506bb79e4d2d6c8921b392acffca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
