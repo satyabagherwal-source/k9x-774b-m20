@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-SVQY",
-    "timestamp": "2026-10-13T00:50:47.866Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv5ysvny",
-    "contentHash": "23d3e7d67947b9008ba716865badab4f57721d7582046f4b1076eb6dad4030e2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-X9WI",
     "timestamp": "2026-10-13T00:54:12.834Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7492,6 +7477,21 @@
     "contentHash": "ebe8b637b6db4134b082b2f2068ebeafc9347a5fea97d6e7789a8526cf7be26a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-PVM9",
+    "timestamp": "2026-10-14T06:12:03.537Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv7ppvgd",
+    "contentHash": "8bd7f42589a573a3578378211b70f115159fc2df9e933e06f117a2283bfce83b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

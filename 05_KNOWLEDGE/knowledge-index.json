@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:08:48.675Z",
-  "total_verified_learnings": 5196,
+  "last_updated": "2026-10-14T06:12:03.479Z",
+  "total_verified_learnings": 5197,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -127853,6 +127853,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T06:08:48.675Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv7ppvgd": {
+      "learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv7ppvgd",
+      "source": "black-forest-labs/FLUX.1-schnell",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "slug": "hf-black-forest-labs-flux.1-schnell",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+      "source_version": "hf-black-forest-labs-flux.1-schnell",
+      "content_hash": "8bd7f42589a573a3578378211b70f115159fc2df9e933e06f117a2283bfce83b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 831,
+          "title": "Distilled Model Scheduler Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 832,
+          "title": "Dual-Encoder Memory Partitioning & Precision Lock",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 833,
+          "title": "Guidance Scale (CFG) Nullification for Distilled Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T06:12:03.479Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
