@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T02:28:13.557Z",
-  "total_cycles_completed": 1170,
-  "total_learnings_persisted": 1170,
+  "last_updated": "2026-10-14T02:31:10.291Z",
+  "total_cycles_completed": 1171,
+  "total_learnings_persisted": 1171,
   "total_rules_promoted": 554,
   "history": [
-    {
-      "timestamp": "2026-10-13T14:35:40.502Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-m3-mv6s9ofa",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T14:38:35.519Z",
       "repository": "Qwen/Qwen3-0.6B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T02:28:13.557Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv7hq0vy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T02:31:10.291Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv7htta0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

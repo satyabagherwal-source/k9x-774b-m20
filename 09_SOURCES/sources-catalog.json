@@ -215,9 +215,9 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "d6c65d3839af24f24b5a1d140e908b6af7f35f3a0430122cac96c7d4462bae22",
-    "lastHarvestedAt": "2026-10-13T19:02:18.230Z",
-    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv71skci"
+    "contentHash": "746cff110f7bf4fb5e478873606a8fa57630062182af3f7d37f25979495c64e8",
+    "lastHarvestedAt": "2026-10-14T02:31:10.290Z",
+    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv7htta0"
   },
   "hf-cactus-compute-whistle": {
     "repository": "Cactus-Compute/whistle",
