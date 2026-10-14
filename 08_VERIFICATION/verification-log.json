@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-MBAE",
-    "timestamp": "2026-10-13T08:41:34.886Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv6fmb82",
-    "contentHash": "8abc4b842d6a7e5af4014b4e9d3c628d5c0310377f9e89093c4104950576b5f5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-302R",
     "timestamp": "2026-10-13T08:54:33.507Z",
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "3710bdc27e76d260fd7b80e34ab2184b7aa6dc88d1d415e53a40e72c9f2c9714",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-LQG4",
+    "timestamp": "2026-10-14T15:28:42.532Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv89lqcs",
+    "contentHash": "aafc1f39042eb3f80f51dd1fbdb30e8feb4f084abfca1746845ebf1d0ad01ef6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
