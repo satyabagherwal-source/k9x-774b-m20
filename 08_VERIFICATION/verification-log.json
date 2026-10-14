@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-URHF",
-    "timestamp": "2026-10-12T22:32:17.571Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-hf-psrben-visionhope-mv5turf5",
-    "contentHash": "50954c8220922474bc2058d5f555ed80745a9e913ef17b3e1ca98eb01e1dcf62",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-YO2Q",
     "timestamp": "2026-10-12T22:35:19.778Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv7l1zey",
     "contentHash": "754ef3288f9480929cf9e1dd9fef953e2d429a692768690ae381eca54d5d00b5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-5TQL",
+    "timestamp": "2026-10-14T04:04:29.517Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv7l5tna",
+    "contentHash": "e315a069d496ca8c18c3a235831ee162ad962db03ed1b41bd5c8b3fd3dd485db",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
