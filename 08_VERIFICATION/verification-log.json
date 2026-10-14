@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-KWV0",
-    "timestamp": "2026-10-13T05:24:32.220Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-hf-facebook-sam3-mv68kwre",
-    "contentHash": "de644153bf119d351eb745772e69ab7a0de6d889ed492cfb9f858d4d56d94390",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ONP4",
     "timestamp": "2026-10-13T05:27:26.968Z",
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "3b755b08fccc0f33c6f7bcb2aca931f294bb7bf9fe35a5d7277bb1b3869d5428",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-33WV",
+    "timestamp": "2026-10-14T12:26:15.823Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv8333s5",
+    "contentHash": "4b1c972c3ea71381f36ce5a6cf525a29f21de2f1b16c29ff0ffc1c99d678e17b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

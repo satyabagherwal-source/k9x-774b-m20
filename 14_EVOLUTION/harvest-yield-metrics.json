@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T12:23:00.004Z",
-  "total_cycles_completed": 1330,
-  "total_learnings_persisted": 1330,
-  "total_rules_promoted": 654,
+  "last_updated": "2026-10-14T12:26:15.826Z",
+  "total_cycles_completed": 1331,
+  "total_learnings_persisted": 1331,
+  "total_rules_promoted": 657,
   "history": [
-    {
-      "timestamp": "2026-10-14T00:25:59.417Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv7dcttv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T00:29:18.425Z",
       "repository": "FermionResearch/Phonon-2",
@@ -1403,6 +1396,13 @@
       "repository": "fastino/GLiNER2.5-Decide",
       "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv82ywpw",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T12:26:15.826Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv8333s5",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
