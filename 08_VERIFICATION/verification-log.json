@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-RMYO",
-    "timestamp": "2026-10-13T02:13:48.672Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv61rmuk",
-    "contentHash": "84f4e766b75d16a6c8c9df9669727d2f200261f1ade6c609a3fad2ce175d69bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-VD8P",
     "timestamp": "2026-10-13T02:16:42.697Z",
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -7492,6 +7477,21 @@
     "contentHash": "1be65988318ac94796ed961298e3615e8cda28374e86749dfe30c5a3cb421034",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-0E0L",
+    "timestamp": "2026-10-14T09:08:11.637Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv7w0dyh",
+    "contentHash": "a55304da34c35fbccc8fe1c601490ab7d6ed76399dc5220c5c43e754786d2707",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

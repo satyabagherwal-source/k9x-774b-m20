@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T09:05:07.837Z",
-  "total_cycles_completed": 1268,
-  "total_learnings_persisted": 1268,
+  "last_updated": "2026-10-14T09:08:11.639Z",
+  "total_cycles_completed": 1269,
+  "total_learnings_persisted": 1269,
   "total_rules_promoted": 624,
   "history": [
-    {
-      "timestamp": "2026-10-13T20:31:26.836Z",
-      "repository": "Altworld/Hemmingway-1",
-      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T20:35:23.745Z",
       "repository": "fastino/GLiNER2.5-Decide",
@@ -1403,6 +1396,13 @@
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7vwg4a",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T09:08:11.639Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv7w0dyh",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
