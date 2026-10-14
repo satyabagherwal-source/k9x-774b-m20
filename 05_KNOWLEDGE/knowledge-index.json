@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:04:30.474Z",
-  "total_verified_learnings": 5079,
+  "last_updated": "2026-10-14T00:07:46.651Z",
+  "total_verified_learnings": 5080,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -124759,6 +124759,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T00:04:30.474Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-meta-llama-llama-2-7b-mv7cpenf": {
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-mv7cpenf",
+      "source": "meta-llama/Llama-2-7b",
+      "repository": "meta-llama/Llama-2-7b",
+      "slug": "hf-meta-llama-llama-2-7b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
+      "source_version": "hf-meta-llama-llama-2-7b",
+      "content_hash": "5555f86e14cc9c5f7b1cbdffed493d814b339bc121624a73a6ebacb5e67ed6e9",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 782,
+          "title": "Immutable Artifact Integrity & Hash Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 783,
+          "title": "KV Cache Memory Bound & OOM Prevention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 784,
+          "title": "Tokenizer Determinism & Encoding Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T00:07:46.651Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-YR6E",
-    "timestamp": "2026-10-12T18:23:27.254Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv5kyr3f",
-    "contentHash": "f646002d7de2b9beba470f1f55d1a859c6cfef51abbf5c90e1e2f3478812fae6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-30LV",
     "timestamp": "2026-10-12T18:26:46.099Z",
     "repository": "openai/clip-vit-base-patch32",
@@ -7492,6 +7477,21 @@
     "contentHash": "cf335252deabad99431a04894dcd4d203508ca7bb4ef68fcd3337e5a58c84406",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-PERM",
+    "timestamp": "2026-10-14T00:07:46.690Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv7cpenf",
+    "contentHash": "5555f86e14cc9c5f7b1cbdffed493d814b339bc121624a73a6ebacb5e67ed6e9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
