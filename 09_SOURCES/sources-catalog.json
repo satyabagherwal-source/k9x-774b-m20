@@ -475,9 +475,9 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "e315a069d496ca8c18c3a235831ee162ad962db03ed1b41bd5c8b3fd3dd485db",
-    "lastHarvestedAt": "2026-10-14T04:04:29.519Z",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv7l5tna"
+    "contentHash": "1738603dbd9eb673b640db8afe1cd528fd53237ca91896541ae1f381c467e8da",
+    "lastHarvestedAt": "2026-10-14T12:29:31.438Z",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv837ar7"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
     "repository": "TaichuAI/ZDTaichu5.0-9B",

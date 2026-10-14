@@ -1373,3 +1373,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-altworld-hemmingway-1-mv82v0ma` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-10-14T12:19:58.505Z |
 | `learn-huggingface-hf-fastino-gliner2-5-decide-mv82ywpw` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-10-14T12:23:00.003Z |
 | `learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv8333s5` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-14T12:26:15.825Z |
+| `learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv837ar7` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-10-14T12:29:31.438Z |
