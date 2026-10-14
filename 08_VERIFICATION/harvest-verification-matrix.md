@@ -1350,3 +1350,4 @@
 | `CYCLE-20261014-AH7U` | `2026-10-14T10:12:01.578Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 865, Rule 866` | Yes (`6c8539a6...`) |
 | `CYCLE-20261014-E4ZA` | `2026-10-14T10:14:52.342Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`7c75686d...`) |
 | `CYCLE-20261014-IAG4` | `2026-10-14T10:18:06.052Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`ca25af33...`) |
+| `CYCLE-20261014-MG41` | `2026-10-14T10:21:20.017Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`3dc2d9b7...`) |
