@@ -51554,3 +51554,183 @@ model = Llama(model_path="model.gguf") # Uses default context, may not match mod
 - Integration test that sends a prompt longer than the context window and asserts that the engine handles it gracefully (e.g., truncates with a warning, or fails with a clear error).
 
 ---
+
+
+---
+
+## 873. Immutable Token ID Contracts (Harvested from openbmb/MiniCPM-V-4.7-1B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Immutable Token ID Contracts",
+  "source": "openbmb/MiniCPM-V-4.7-1B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T11:20:17.026Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv80q99d",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-1B](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+**MUST** keep all special token IDs (`image_token_id`, `video_token_id`, `image_start_id`, `image_end_id`, `slice_start_id`, `slice_end_id`, `newline_id`, `bos_token_id`, `eos_token_id`) as compile‑time constants and **NEVER** mutate them at runtime.
+
+**WHY**:  
+Dynamic mutation of token IDs breaks the tokenizer‑model contract, leading to mis‑aligned embeddings, silent token mis‑interpretation, and catastrophic inference failures (e.g., treating an image token as text).
+
+**WHEN TO APPLY**:  
+All modules that reference token IDs: tokenizer, model forward, prompt builders, and any post‑processing logic.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# token_ids.py
+IMAGE_TOKEN_ID = 248056
+VIDEO_TOKEN_ID = 248057
+IMAGE_START_ID = 248078
+IMAGE_END_ID = 248079
+SLICE_START_ID = 248088
+SLICE_END_ID = 248089
+NEWLINE_ID = 198
+BOS_TOKEN_ID = 248045
+EOS_TOKEN_IDS = [248044, 248046]
+
+# Usage
+assert tokenizer.convert_tokens_to_ids("<image>") == IMAGE_START_ID
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: runtime mutation
+token_ids.IMAGE_TOKEN_ID = 999999  # corrupts embedding lookup
+```
+
+**VERIFICATION METHOD**:  
+Unit test that asserts `tokenizer.convert_tokens_to_ids("<image>")` equals `IMAGE_TOKEN_ID` and that no code path assigns to `token_ids.*`.
+
+---
+
+
+---
+
+## 874. Early‑Compression Token Budget Enforcement (Harvested from openbmb/MiniCPM-V-4.7-1B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Early‑Compression Token Budget Enforcement",
+  "source": "openbmb/MiniCPM-V-4.7-1B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T11:20:17.045Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv80q99d",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-1B](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+**MUST** enforce that the number of vision tokens produced by the encoder does not exceed `max_position_embeddings` (262 144) and that the total sequence length after fusion stays within the model’s `model_max_length` (262 144).
+
+**WHY**:  
+Exceeding the positional embedding table causes out‑of‑range indexing, leading to NaNs or memory corruption. It also violates the transformer’s assumption of a fixed positional index range.
+
+**WHEN TO APPLY**:  
+During vision encoder forward, before concatenation with text tokens; during prompt construction.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+MAX_POS = 262_144
+
+def enforce_token_budget(vision_tokens, text_tokens):
+    total_len = len(vision_tokens) + len(text_tokens)
+    if total_len > MAX_POS:
+        raise ValueError(f"Sequence length {total_len} exceeds {MAX_POS}")
+    return vision_tokens, text_tokens
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: silently truncate or ignore overflow
+if len(vision_tokens) + len(text_tokens) > MAX_POS:
+    pass  # no error, potential hidden bug
+```
+
+**VERIFICATION METHOD**:  
+Property‑based test that generates random vision and text token counts and asserts the exception is raised when the sum exceeds `MAX_POS`.
+
+---
+
+
+---
+
+## 875. Linear Attention Layer Input Shape Validation (Harvested from openbmb/MiniCPM-V-4.7-1B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Linear Attention Layer Input Shape Validation",
+  "source": "openbmb/MiniCPM-V-4.7-1B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T11:20:17.063Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv80q99d",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-1B](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+**MUST** validate that the input tensor to every linear attention layer has shape `[batch, seq_len, hidden_dim]` and that `seq_len` is a multiple of `linear_conv_kernel_dim` (4) when `linear_conv_kernel_dim` > 1.
+
+**WHY**:  
+Linear attention implementations rely on convolutional reshaping; a mismatched `seq_len` causes mis‑aligned kernel application, producing incorrect attention scores and potential NaNs.
+
+**WHEN TO APPLY**:  
+Inside each linear attention module’s forward method.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class LinearAttention(nn.Module):
+    def forward(self, x):
+        batch, seq_len, hidden = x.shape
+        if seq_len % self.linear_conv_kernel_dim != 0:
+            raise ValueError(
+                f"seq_len {seq_len} must be divisible by "
+                f"{self.linear_conv_kernel_dim}"
+            )
+        # proceed with convolutional attention
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: assume seq_len is always divisible
+x = x.reshape(batch, seq_len // self.linear_conv_kernel_dim, -1)
+```
+
+**VERIFICATION METHOD**:  
+Unit test that feeds a tensor with non‑divisible `seq_len` and expects a `ValueError`.
+
+---

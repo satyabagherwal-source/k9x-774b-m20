@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:17:13.225Z",
-  "total_verified_learnings": 5265,
+  "last_updated": "2026-10-14T11:20:17.083Z",
+  "total_verified_learnings": 5266,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -129741,6 +129741,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T11:17:13.225Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv80q99d": {
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv80q99d",
+      "source": "openbmb/MiniCPM-V-4.7-1B",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "slug": "hf-openbmb-minicpm-v-4.7-1b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+      "content_hash": "562de50a9954701856593bf1d0738b102462736ce4e873c9468bb52ff05d3824",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 873,
+          "title": "Immutable Token ID Contracts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 874,
+          "title": "Early‑Compression Token Budget Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 875,
+          "title": "Linear Attention Layer Input Shape Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T11:20:17.083Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
