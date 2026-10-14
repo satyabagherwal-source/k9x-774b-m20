@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-D2WE",
-    "timestamp": "2026-10-13T04:50:27.182Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv67d2u0",
-    "contentHash": "0b0cd2015cd74ee908563eb411e8c5f520e6d73b6eb5427b309a11c684ba894f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-HAPZ",
     "timestamp": "2026-10-13T04:53:43.943Z",
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "nvidia/Nemotron-3-Diarization",
     "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv81mhm0",
     "contentHash": "8027be2e52afd76087566a123d87f81a5e002597416c3cdfa6dfac92725db059",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-Q72U",
+    "timestamp": "2026-10-14T11:48:13.782Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv81q70u",
+    "contentHash": "df866a5fee0c9fca0635b825f1e7862e84b393fd733b2406ac958114ca0409c6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:45:20.890Z",
-  "total_cycles_completed": 1319,
-  "total_learnings_persisted": 1319,
+  "last_updated": "2026-10-14T11:48:13.784Z",
+  "total_cycles_completed": 1320,
+  "total_learnings_persisted": 1320,
   "total_rules_promoted": 646,
   "history": [
-    {
-      "timestamp": "2026-10-13T23:50:12.458Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv7c2t82",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T23:52:59.669Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T11:45:20.890Z",
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv81mhm0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T11:48:13.784Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv81q70u",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

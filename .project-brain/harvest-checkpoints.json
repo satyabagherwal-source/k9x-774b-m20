@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:45:20.890Z",
+  "last_updated": "2026-10-14T11:48:13.785Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -384,15 +384,15 @@
       "repository": "Lightricks/LTX-2.5",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-lightricks-ltx-2-5-mv7jyp05",
-      "content_hash": "d6efaad6a60254f9d98c0c732f694db26e6d36e7ee77be6dd00c72b5324eb40c",
-      "verified_at": "2026-10-14T03:30:57.275Z",
+      "learning_id": "learn-huggingface-hf-lightricks-ltx-2-5-mv81q70u",
+      "content_hash": "df866a5fee0c9fca0635b825f1e7862e84b393fd733b2406ac958114ca0409c6",
+      "verified_at": "2026-10-14T11:48:13.785Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T03:30:57.275Z"
+      "last_updated": "2026-10-14T11:48:13.785Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
