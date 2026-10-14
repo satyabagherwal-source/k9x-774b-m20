@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-EFAR",
-    "timestamp": "2026-10-13T00:11:33.747Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv5xef7v",
-    "contentHash": "cc012ddf1fe9988bd2134827514ea354e38cd22d937e967b05adfd5c12988a23",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-IBMA",
     "timestamp": "2026-10-13T00:14:35.602Z",
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -7492,6 +7477,21 @@
     "contentHash": "a7a91e399bd325e948a21f5c5f5db34d3137d46fde64295aff0cd668323e2aea",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-APV2",
+    "timestamp": "2026-10-14T05:32:16.622Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv7oapsi",
+    "contentHash": "2c737d6cfe18f85cfe91476eea96e170cd864be63c27133848642c05cb119015",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
