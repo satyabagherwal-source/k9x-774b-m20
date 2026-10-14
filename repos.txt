@@ -3936,3 +3936,7 @@ https://github.com/Leonxlnx/taste-skill
 # --- Automatically Discovered by AI Scout Engine [2026-10-14T00:53:20.210Z] ---
 # [HUGGINGFACE-AI-MODELS] LiquidAI/LFM2.5-24B-A2B (3560 score) - Verified Hugging Face Model: LiquidAI/LFM2.5-24B-A2B (156 likes, 2565 downloads)
 https://huggingface.co/LiquidAI/LFM2.5-24B-A2B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T06:21:07.941Z] ---
+# [HUGGINGFACE-AI-MODELS] fishaudio/drama-3 (1603 score) - Verified Hugging Face Model: fishaudio/drama-3 (158 likes, 23 downloads)
+https://huggingface.co/fishaudio/drama-3

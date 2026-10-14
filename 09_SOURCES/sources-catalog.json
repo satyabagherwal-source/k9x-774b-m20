@@ -1478,5 +1478,15 @@
     "contentHash": "dcf67087a6899a8d9a9fe69d7162f5b3d381083c9b92bec3d965da037f79e226",
     "lastHarvestedAt": "2026-10-14T00:53:32.389Z",
     "learningId": "learn-huggingface-hf-liquidai-lfm2-5-24b-a2b-mv7ec99r"
+  },
+  "hf-fishaudio-drama-3": {
+    "repository": "fishaudio/drama-3",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/fishaudio/drama-3",
+    "sourceVersion": "hf-fishaudio-drama-3",
+    "license": "Open-Source",
+    "contentHash": "a29abd7125a184786d653139a9391895c5287c68c78e8df87df477ad3b837f5e",
+    "lastHarvestedAt": "2026-10-14T06:21:20.515Z",
+    "learningId": "learn-huggingface-hf-fishaudio-drama-3-mv7q1taj"
   }
 }

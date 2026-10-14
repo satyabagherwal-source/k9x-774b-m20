@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:17:58.763Z",
-  "total_cycles_completed": 1244,
-  "total_learnings_persisted": 1244,
+  "last_updated": "2026-10-14T06:21:20.516Z",
+  "total_cycles_completed": 1245,
+  "total_learnings_persisted": 1245,
   "total_rules_promoted": 597,
   "history": [
-    {
-      "timestamp": "2026-10-13T19:11:26.765Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv724blg",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T19:14:33.119Z",
       "repository": "FrancisRing/Prism",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T06:17:58.763Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
       "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv7pxhn4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T06:21:20.516Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-hf-fishaudio-drama-3-mv7q1taj",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

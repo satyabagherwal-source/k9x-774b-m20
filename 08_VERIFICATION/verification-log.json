@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-558E",
-    "timestamp": "2026-10-13T01:00:20.030Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv5z555k",
-    "contentHash": "7744b97173e24e29e126c51a3a3e21f0c2cfa91feb0712f5806a1ef68816eab0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-8YU8",
     "timestamp": "2026-10-13T01:03:18.368Z",
     "repository": "Qwen/Qwen3-4B",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3.8-Flash-Next",
     "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv7pxhn4",
     "contentHash": "f7168b79b59d1bbbb9c9100fd8824e1bc58aeeb88028c973f5b7f63438250a2a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-1TDS",
+    "timestamp": "2026-10-14T06:21:20.512Z",
+    "repository": "fishaudio/drama-3",
+    "learningId": "learn-huggingface-hf-fishaudio-drama-3-mv7q1taj",
+    "contentHash": "a29abd7125a184786d653139a9391895c5287c68c78e8df87df477ad3b837f5e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

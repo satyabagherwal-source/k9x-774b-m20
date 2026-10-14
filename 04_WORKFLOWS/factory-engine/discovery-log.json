@@ -17611,5 +17611,17 @@
     "downloads": 2565,
     "qualityScore": 3560,
     "discoveredAt": "2026-10-14T00:53:20.209Z"
+  },
+  {
+    "name": "fishaudio/drama-3",
+    "fullName": "fishaudio/drama-3",
+    "url": "https://huggingface.co/fishaudio/drama-3",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: fishaudio/drama-3 (158 likes, 23 downloads)",
+    "likes": 158,
+    "downloads": 23,
+    "qualityScore": 1603,
+    "discoveredAt": "2026-10-14T06:21:07.939Z"
   }
 ]
