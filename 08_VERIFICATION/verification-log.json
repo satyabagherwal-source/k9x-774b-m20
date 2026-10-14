@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-6IHW",
-    "timestamp": "2026-10-13T00:05:24.644Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv5x6if0",
-    "contentHash": "6fee0780e7e949e7328aead8fc431768a17365c2044aecc4c543a68971b47113",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-A8EE",
     "timestamp": "2026-10-13T00:08:18.182Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7492,6 +7477,21 @@
     "contentHash": "07e7c68d78f6764a1ffcc6076a07029678189605c2a295a2f7875365a22d371b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-1GJI",
+    "timestamp": "2026-10-14T05:25:04.638Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv7o1gg9",
+    "contentHash": "616545a5a405fe36f30f37d98fb8bc2d1b422b62a0a81b82976803637f08ef1f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
