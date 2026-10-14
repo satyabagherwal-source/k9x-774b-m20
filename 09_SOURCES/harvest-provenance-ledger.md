@@ -1434,3 +1434,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-deepseek-ai-deepseek-v3-mv8b764j` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-14T16:13:22.368Z |
 | `learn-github-nguyenphutrong-quotio-mv8bh96o` | `https://github.com/nguyenphutrong/quotio` | `dfa5beeb` | Multi-dimensional audit evidence | 2026-10-14T16:21:12.921Z |
 | `learn-github-pathwaycom-serviette-mv8c0rd1` | `https://github.com/pathwaycom/serviette` | `beb17f1e` | Multi-dimensional audit evidence | 2026-10-14T16:36:22.940Z |
+| `learn-huggingface-hf-baidu-unlimited-ocr-mv8cgrgg` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-14T16:48:49.569Z |
