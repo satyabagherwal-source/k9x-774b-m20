@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-Y0HD",
-    "timestamp": "2026-10-12T19:46:51.505Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv5ny0f0",
-    "contentHash": "2d2c84a118d0ca04eb3dbd7378906042d097768dea54e5534bc86ad03be170fb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-27MZ",
     "timestamp": "2026-10-12T19:50:07.403Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "google/vit-base-patch16-224",
     "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv7fkxji",
     "contentHash": "0e12e62731269c0b9487d4dc4fd524318d634bbbdfd83a000712dd74d4f4bb4b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-P7UJ",
+    "timestamp": "2026-10-14T01:31:36.571Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv7fp7re",
+    "contentHash": "b71f626df0a84d930c1e60b2dd1f63442c953db3ceafe4928fe0847a5b5616fe",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
