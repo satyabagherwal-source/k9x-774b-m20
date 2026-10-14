@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T03:27:56.931Z",
-  "total_cycles_completed": 1189,
-  "total_learnings_persisted": 1189,
+  "last_updated": "2026-10-14T03:30:57.274Z",
+  "total_cycles_completed": 1190,
+  "total_learnings_persisted": 1190,
   "total_rules_promoted": 565,
   "history": [
-    {
-      "timestamp": "2026-10-13T15:58:31.085Z",
-      "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6v87qw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T16:03:30.624Z",
       "repository": "zai-org/GLM-5.2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T03:27:56.931Z",
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv7jutu9",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T03:30:57.274Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv7jyp05",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
