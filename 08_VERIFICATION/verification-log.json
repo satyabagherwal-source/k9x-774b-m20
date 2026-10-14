@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-3QVG",
-    "timestamp": "2026-10-13T06:35:10.156Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv6b3qsi",
-    "contentHash": "e312d68978342bb093180d4f2723e50ad8d3e873893ef23914c05af6ea6aa0d1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-7K5G",
     "timestamp": "2026-10-13T06:38:08.068Z",
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "canberkkkkkk/ema-lightning",
     "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv85tvic",
     "contentHash": "3c6ad03656bc9e0f5b329166d6faece4d98700bf45eacead9a323a47f65cca7f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-4FLN",
+    "timestamp": "2026-10-14T13:51:16.475Z",
+    "repository": "google/embeddinggemma-2",
+    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv864fi8",
+    "contentHash": "874b730f703b49c3d7d6962b56aecbad65d08add30f5cdc0b6b3e2b7efe48e99",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
