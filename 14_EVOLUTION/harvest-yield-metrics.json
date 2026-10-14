@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:59:47.275Z",
-  "total_cycles_completed": 1219,
-  "total_learnings_persisted": 1219,
+  "last_updated": "2026-10-14T05:02:49.447Z",
+  "total_cycles_completed": 1220,
+  "total_learnings_persisted": 1220,
   "total_rules_promoted": 584,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:36:29.427Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv6yq7i4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:39:39.767Z",
       "repository": "google/vit-base-patch16-224",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T04:59:47.275Z",
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-hf-facebook-sam3-mv7n4xns",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T05:02:49.447Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv7n8u7e",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

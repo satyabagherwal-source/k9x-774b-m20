@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-F42Z",
-    "timestamp": "2026-10-12T23:44:06.251Z",
-    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv5wf416",
-    "contentHash": "e365d75177b94909931e33b16d7ba9cb0c7a69367b7cc6495c2471eb5f660130",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-IX2K",
     "timestamp": "2026-10-12T23:47:03.788Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7490,6 +7475,21 @@
     "repository": "facebook/sam3",
     "learningId": "learn-huggingface-hf-facebook-sam3-mv7n4xns",
     "contentHash": "ef614ec3297e7e98a7e195575ad6d1dd9462ab71e61a87f2660b04542b5c19aa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-8UAR",
+    "timestamp": "2026-10-14T05:02:49.443Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv7n8u7e",
+    "contentHash": "f85c1a6d299242687ea3829f3169266e2bfd8686df40ff323fefe0fbd1cd62ee",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
