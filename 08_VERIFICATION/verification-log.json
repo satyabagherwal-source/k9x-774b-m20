@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-XBU1",
-    "timestamp": "2026-10-13T09:18:08.425Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv6gxbqq",
-    "contentHash": "682ad6b4eafa3e631eb242b012a92377b4b7935d1cd32766b6d3fd058e630d2e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-18B5",
     "timestamp": "2026-10-13T09:21:10.481Z",
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv8aadce",
     "contentHash": "015535ebd5cdd7e60eaf21d44f490502cf6d0fb54c758540addaa876688af9e8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-EMYS",
+    "timestamp": "2026-10-14T15:51:11.044Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv8aemw3",
+    "contentHash": "f54e72b96a02f23e518500bb2f6a9465fe39a7b9f9edb6ca59fef70d03204b8b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
