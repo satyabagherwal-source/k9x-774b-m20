@@ -1221,3 +1221,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv7ijdlx` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-14T02:51:03.124Z |
 | `learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv7in5cl` | `https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | `hf-sc117-q` | Multi-dimensional audit evidence | 2026-10-14T02:53:58.983Z |
 | `learn-huggingface-hf-deepseek-ai-deepseek-r1-mv7ir7r2` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-14T02:57:08.728Z |
+| `learn-huggingface-hf-moonshotai-kimi-k3-mv7iv1hm` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-10-14T03:00:07.202Z |

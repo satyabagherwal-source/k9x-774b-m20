@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-FK5T",
-    "timestamp": "2026-10-12T21:24:29.009Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv5rfk31",
-    "contentHash": "effc1799798d70c7cefe79ccfc456654108bd3d64c785078ed39e96827f33e7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-JPCF",
     "timestamp": "2026-10-12T21:27:42.351Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-R1",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv7ir7r2",
     "contentHash": "3e47484920269e840df353cbd086f7483062eed575ba68f58ad51eed596a2da0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-V1K0",
+    "timestamp": "2026-10-14T03:00:07.200Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv7iv1hm",
+    "contentHash": "28f81880582520ee683ed79a73b08309acdea5c802ac4fb2e49f4bb50b532bd5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
