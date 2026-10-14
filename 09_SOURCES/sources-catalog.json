@@ -1095,9 +1095,9 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "11ac4d15ad143239a25d21d1434a9ea127fe98246ef778c5438bbb18281c94ed",
-    "lastHarvestedAt": "2026-10-13T16:48:00.521Z",
-    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv6wzuxa"
+    "contentHash": "50dca94ce7b3f713ceacf4933025693c7eb1874cee5965e7046d361c7ccd83d7",
+    "lastHarvestedAt": "2026-10-14T00:35:22.543Z",
+    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv7dowc6"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",

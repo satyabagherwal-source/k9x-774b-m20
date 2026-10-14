@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-YOQ5",
-    "timestamp": "2026-10-12T18:51:23.693Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv5lyoly",
-    "contentHash": "03fd4846aef458dc0d9f21a926bdd91817a1bf34485c45add7aeadcd77607afc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-2EJU",
     "timestamp": "2026-10-12T18:54:17.130Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7492,6 +7477,21 @@
     "contentHash": "ab34896a528e56ba87ae65a53f3d3317e57f52cf192886c718e613495f0d3d7a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-OWFH",
+    "timestamp": "2026-10-14T00:35:22.541Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv7dowc6",
+    "contentHash": "50dca94ce7b3f713ceacf4933025693c7eb1874cee5965e7046d361c7ccd83d7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
