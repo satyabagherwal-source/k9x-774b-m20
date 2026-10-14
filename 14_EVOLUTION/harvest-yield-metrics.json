@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:07:46.694Z",
-  "total_cycles_completed": 1125,
-  "total_learnings_persisted": 1125,
+  "last_updated": "2026-10-14T00:10:42.036Z",
+  "total_cycles_completed": 1126,
+  "total_learnings_persisted": 1126,
   "total_rules_promoted": 544,
   "history": [
-    {
-      "timestamp": "2026-10-13T11:37:37.410Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv6lwpal",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T11:40:49.475Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv7cpenf",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T00:10:42.036Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv7ct5yx",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
