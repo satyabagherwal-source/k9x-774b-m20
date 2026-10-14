@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-X9WI",
-    "timestamp": "2026-10-13T00:54:12.834Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv5yx9tn",
-    "contentHash": "2f2bb510df5e56ffd8a7f3002a9b06091533e326135ecbc7ccb576a3c05d9499",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-1C9F",
     "timestamp": "2026-10-13T00:57:22.515Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "8bd7f42589a573a3578378211b70f115159fc2df9e933e06f117a2283bfce83b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-TOUZ",
+    "timestamp": "2026-10-14T06:15:01.403Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv7ptoro",
+    "contentHash": "e64e87beb7873fdd8bf7cb92d49990eae13232ea05e9b57a05cffcb7d450cf66",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
