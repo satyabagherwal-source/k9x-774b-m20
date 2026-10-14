@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:56:25.402Z",
-  "total_cycles_completed": 1141,
-  "total_learnings_persisted": 1141,
+  "last_updated": "2026-10-14T00:59:47.900Z",
+  "total_cycles_completed": 1142,
+  "total_learnings_persisted": 1142,
   "total_rules_promoted": 546,
   "history": [
-    {
-      "timestamp": "2026-10-13T12:41:36.385Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T12:44:30.909Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T00:56:25.402Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv7efyt2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T00:59:47.900Z",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv7ekb0j",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
