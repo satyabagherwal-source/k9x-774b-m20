@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:10:14.640Z",
-  "total_cycles_completed": 1389,
-  "total_learnings_persisted": 1389,
+  "last_updated": "2026-10-14T16:13:22.370Z",
+  "total_cycles_completed": 1390,
+  "total_learnings_persisted": 1390,
   "total_rules_promoted": 691,
   "history": [
-    {
-      "timestamp": "2026-10-14T03:30:57.274Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv7jyp05",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T03:33:58.733Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T16:10:14.640Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
       "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv8b358s",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T16:13:22.370Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv8b764j",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
