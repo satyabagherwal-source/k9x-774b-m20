@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-14T09:40:38.633Z",
+  "lastUpdated": "2026-10-14T09:43:58.773Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-14T09:40:52.360Z",
-        "lastHarvestedAt": "2026-10-14T09:40:52.360Z",
-        "totalHarvested": 3409,
+        "lastActiveAt": "2026-10-14T09:44:00.579Z",
+        "lastHarvestedAt": "2026-10-14T09:44:00.579Z",
+        "totalHarvested": 3410,
         "lastError": null
       },
       {
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-14T09:34:25.301Z",
+        "lastActiveAt": "2026-10-14T09:43:59.675Z",
         "lastHarvestedAt": "2026-10-13T14:51:27.007Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-14T09:37:35.035Z",
+        "lastActiveAt": "2026-10-14T09:44:02.124Z",
         "lastHarvestedAt": "2026-10-13T21:27:20.979Z",
         "totalHarvested": 1101,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-14T09:37:37.461Z",
+        "lastActiveAt": "2026-10-14T09:44:04.621Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-14T09:37:39.978Z",
+        "lastActiveAt": "2026-10-14T09:44:07.109Z",
         "lastHarvestedAt": "2026-10-13T18:17:59.784Z",
         "totalHarvested": 1098,
         "lastError": null
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
+      "status": "HEALTHY",
       "remaining": 0,
-      "resetEpoch": 1791974439566,
-      "resetAt": "2026-10-14T10:40:39.566Z",
-      "trippedAt": "2026-10-14T09:40:24.566Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Adesign-system%20language%3Atypescript%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=2)",
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-14T09:43:42.399Z",
+      "reason": null,
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
