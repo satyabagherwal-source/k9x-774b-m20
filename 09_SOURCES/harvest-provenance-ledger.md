@@ -1408,3 +1408,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-google-t5-t5-small-mv87x1v4` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-14T14:41:31.540Z |
 | `learn-huggingface-hf-comfy-org-minimax-h3-mv880ntt` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-10-14T14:44:19.817Z |
 | `learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv885s4e` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-14T14:48:18.672Z |
+| `learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv889tq5` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-14T14:51:27.418Z |

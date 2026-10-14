@@ -1425,3 +1425,4 @@
 | `CYCLE-20261014-X21D` | `2026-10-14T14:41:31.537Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 913, Rule 914, Rule 915` | Yes (`4347c95f...`) |
 | `CYCLE-20261014-0NVR` | `2026-10-14T14:44:19.815Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`ba05fdc1...`) |
 | `CYCLE-20261014-5S6N` | `2026-10-14T14:48:18.671Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`7b90a207...`) |
+| `CYCLE-20261014-9TTJ` | `2026-10-14T14:51:27.415Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`6397c5f9...`) |
