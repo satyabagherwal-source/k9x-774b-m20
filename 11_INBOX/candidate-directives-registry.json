@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-11T16:21:54.934Z",
+  "last_updated": "2026-10-13T19:34:58.330Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1146,6 +1146,149 @@
         "Empirical reproduction or test pass",
         "Non-destructive invariant verified"
       ]
+    },
+    {
+      "id": "CD-DVLL",
+      "directive_title": "Permutation-Invariant Multi-Choice Logit Aggregation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Phocinae/Phocinae-Largha-150M-v1",
+      "source_commit": "hf-phocinae-",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4ydvid"
+    },
+    {
+      "id": "CD-LS1B",
+      "directive_title": "Quantization Fallback Hierarchy Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Comfy-Org/MiniMax-H3",
+      "source_commit": "hf-comfy-org",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv52lrx9"
+    },
+    {
+      "id": "CD-KZ7M",
+      "directive_title": "Weight-Code Separation & Versioning Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "CompVis/stable-diffusion-v1-4",
+      "source_commit": "hf-compvis-s",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv53kz3n"
+    },
+    {
+      "id": "CD-KZ7M",
+      "directive_title": "Fine-Tuning Lineage & Data Provenance Documentation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "CompVis/stable-diffusion-v1-4",
+      "source_commit": "hf-compvis-s",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv53kz3n"
+    },
+    {
+      "id": "CD-CKH3",
+      "directive_title": "ui): upload files directly in task artifacts (#15964)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "paperclipai/paperclip",
+      "source_commit": "fb21a3f3",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-github-paperclipai-paperclip-mv5bckez"
+    },
+    {
+      "id": "CD-KBVW",
+      "directive_title": "Consistent Special Token Alignment",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Altworld/Hemmingway-1",
+      "source_commit": "hf-altworld-",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8"
+    },
+    {
+      "id": "CD-KBVW",
+      "directive_title": "Alignment of Generation Config EOS Tokens",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Altworld/Hemmingway-1",
+      "source_commit": "hf-altworld-",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-altworld-hemmingway-1-mv5dkbt8"
+    },
+    {
+      "id": "CD-1P7Q",
+      "directive_title": "Rule",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "source_commit": "hf-meta-llam",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Invalid or missing rule title",
+      "learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv5j1p1b"
+    },
+    {
+      "id": "CD-8V35",
+      "directive_title": "**Token ID Uniqueness Rule**",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "TaichuAI/ZDTaichu5.0-9B",
+      "source_commit": "hf-taichuai-",
+      "date_staged": "2026-10-12",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv5s8v03"
+    },
+    {
+      "id": "CD-8DHN",
+      "directive_title": "Quantization-Backend Compatibility Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Comfy-Org/MiniMax-H3",
+      "source_commit": "hf-comfy-org",
+      "date_staged": "2026-10-13",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-comfy-org-minimax-h3-mv6t8ddi"
+    },
+    {
+      "id": "CD-YKUY",
+      "directive_title": "Unique Special Token ID Allocation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-10-13",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0"
+    },
+    {
+      "id": "CD-YKUY",
+      "directive_title": "Consistent Dtype Across the Model Graph",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-10-13",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0"
+    },
+    {
+      "id": "CD-YKUY",
+      "directive_title": "Patch Size Divisibility for Vision Encoder",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-10-13",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0"
     }
   ]
 }

@@ -3868,3 +3868,63 @@ https://github.com/Infisical/infisical
 # --- Automatically Discovered by AI Scout Engine [2026-10-11T16:42:55.167Z] ---
 # [AI-AGENTS] autonomous-ai/openharness (979 score) - The ultimate harness for coding agents and beyond. All your agents. All your mac
 https://github.com/autonomous-ai/openharness
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T04:43:42.963Z] ---
+# [AI-AGENTS] Fei2411/DeepSeek-Bot (813 score) - A team of long-lived bots for DeepSeek Harness, with main bots, bot-to-bot messa
+https://github.com/Fei2411/DeepSeek-Bot
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T07:12:22.707Z] ---
+# [HUGGINGFACE-AI-MODELS] abenzerps/Qwen-Image-2.1-Uncensored-Quantized (42160 score) - Verified Hugging Face Model: abenzerps/Qwen-Image-2.1-Uncensored-Quantized (4016
+https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T08:34:42.333Z] ---
+# [MOBILE-CROSS-PLATFORM] iliyami/MacSai (1230 score) - Mac Sai: the open-source Mac cleaner, optimizer, and malware scanner. A free, Ap
+https://github.com/iliyami/MacSai
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T09:55:09.816Z] ---
+# [AI-AGENTS] duty1g/x64dbg-mcp-server (1562 score) - x64dbg-MCP Server is a native MCP (Model Context Protocol) plugin for x64dbg tha
+https://github.com/duty1g/x64dbg-mcp-server
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T13:47:31.106Z] ---
+# [AI-AGENTS] paperclipai/paperclip (55882 score) - The open-source app everyone uses to manage agents at work
+https://github.com/paperclipai/paperclip
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T19:55:51.338Z] ---
+# [FULLSTACK-UI] cosscom/ui (5770 score) - coss.com/ui is the official design system of Cal.com
+https://github.com/cosscom/ui
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-12T22:38:16.211Z] ---
+# [AI-AGENTS] Ebony-Vinyl/dsh-our-free-model (6342 score) - 在 dsh 里装上这个插件即可，无需登录、注册或填 API Key，就能使用包括 DeepSeek V4.1 Flash、Kimi K3 在内的前沿模型——完全
+https://github.com/Ebony-Vinyl/dsh-our-free-model
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T03:29:53.010Z] ---
+# [HUGGINGFACE-AI-MODELS] autotrust/JEV-35B (4190 score) - Verified Hugging Face Model: autotrust/JEV-35B (219 likes, 6262 downloads)
+https://huggingface.co/autotrust/JEV-35B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T03:38:56.124Z] ---
+# [HUGGINGFACE-AI-MODELS] openbmb/MiniCPM-V-4.7-35B-A3B (1746 score) - Verified Hugging Face Model: openbmb/MiniCPM-V-4.7-35B-A3B (158 likes, 166 downl
+https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T11:18:30.670Z] ---
+# [HUGGINGFACE-AI-MODELS] openbmb/MiniCPM-V-4.7-1B (1853 score) - Verified Hugging Face Model: openbmb/MiniCPM-V-4.7-1B (159 likes, 263 downloads)
+https://huggingface.co/openbmb/MiniCPM-V-4.7-1B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T12:08:59.931Z] ---
+# [AI-AGENTS] ccfos/nightingale (7654 score) - Open-source, self-hosted alerting for metrics, logs, and databases. Includes a b
+https://github.com/ccfos/nightingale
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T12:56:44.180Z] ---
+# [AI-AGENTS] trailhq/Trail-Code (5687 score) - Turbocharge Claude Code, Cursor, Codex, Gemini & every coding agent: faster, che
+https://github.com/trailhq/Trail-Code
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T14:41:26.868Z] ---
+# [AI-AGENTS] MaxMiksa/Autonomous-Company (1982 score) - An autonomous company working 24/7 on your own PC - Windows/Linux/macOS.
+https://github.com/MaxMiksa/Autonomous-Company
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T18:09:11.775Z] ---
+# [DATABASE-STORAGE-ENGINES] tickernelz/opencode-mem (1083 score) - OpenCode plugin that gives coding agents persistent memory using local vector da
+https://github.com/tickernelz/opencode-mem
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T18:52:48.125Z] ---
+# [HUGGINGFACE-AI-MODELS] autotrust/JEV-35B-NVFP4 (4330 score) - Verified Hugging Face Model: autotrust/JEV-35B-NVFP4 (233 likes, 20494 downloads
+https://huggingface.co/autotrust/JEV-35B-NVFP4

@@ -20,7 +20,11 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
+<<<<<<< HEAD
   "lastUpdated": "2026-10-13T17:58:40.625Z",
+=======
+  "lastUpdated": "2026-10-13T19:54:10.088Z",
+>>>>>>> 9a6fbda9580b22ce4eaa5cedb62bf32156f4121e
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -188,7 +192,7 @@
         "domain": "ai-agents",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-09T13:05:59.317Z",
+        "lastActiveAt": "2026-10-13T14:21:46.039Z",
         "lastHarvestedAt": "2026-10-09T02:57:19.056Z",
         "totalHarvested": 1090,
         "lastError": null
@@ -198,7 +202,7 @@
         "domain": "fullstack-ui",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-09T13:06:02.372Z",
+        "lastActiveAt": "2026-10-13T14:21:49.172Z",
         "lastHarvestedAt": "2026-10-09T03:02:14.971Z",
         "totalHarvested": 1103,
         "lastError": null
@@ -208,7 +212,7 @@
         "domain": "high-perf-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-09T13:06:04.878Z",
+        "lastActiveAt": "2026-10-13T14:21:51.677Z",
         "lastHarvestedAt": "2026-10-09T03:02:14.971Z",
         "totalHarvested": 1098,
         "lastError": null
@@ -218,9 +222,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T03:16:09.010Z",
-        "lastHarvestedAt": "2026-10-12T03:16:09.010Z",
-        "totalHarvested": 2499,
+        "lastActiveAt": "2026-10-13T19:54:11.834Z",
+        "lastHarvestedAt": "2026-10-13T19:54:11.834Z",
+        "totalHarvested": 3189,
         "lastError": null
       },
       {
@@ -228,7 +232,7 @@
         "domain": "mobile-cross-platform",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-11T12:34:55.176Z",
+        "lastActiveAt": "2026-10-13T14:21:56.671Z",
         "lastHarvestedAt": "2026-10-09T02:57:39.568Z",
         "totalHarvested": 1101,
         "lastError": null
@@ -238,9 +242,9 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T02:39:51.445Z",
-        "lastHarvestedAt": "2026-10-09T05:58:24.660Z",
-        "totalHarvested": 1091,
+        "lastActiveAt": "2026-10-13T19:54:10.811Z",
+        "lastHarvestedAt": "2026-10-13T14:51:27.007Z",
+        "totalHarvested": 1094,
         "lastError": null
       },
       {
@@ -248,9 +252,9 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T03:16:11.025Z",
-        "lastHarvestedAt": "2026-10-11T16:46:47.541Z",
-        "totalHarvested": 1094,
+        "lastActiveAt": "2026-10-13T19:54:13.270Z",
+        "lastHarvestedAt": "2026-10-13T13:00:40.443Z",
+        "totalHarvested": 1100,
         "lastError": null
       },
       {
@@ -258,7 +262,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T03:16:13.493Z",
+        "lastActiveAt": "2026-10-13T19:54:15.768Z",
         "lastHarvestedAt": "2026-10-10T11:55:12.417Z",
         "totalHarvested": 1094,
         "lastError": null
@@ -268,9 +272,9 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-12T03:13:20.988Z",
-        "lastHarvestedAt": "2026-10-09T02:57:39.408Z",
-        "totalHarvested": 1097,
+        "lastActiveAt": "2026-10-13T19:54:18.264Z",
+        "lastHarvestedAt": "2026-10-13T18:17:59.784Z",
+        "totalHarvested": 1098,
         "lastError": null
       }
     ],
@@ -297,7 +301,11 @@
       "remaining": 0,
       "resetEpoch": 0,
       "resetAt": null,
+<<<<<<< HEAD
       "trippedAt": "2026-10-11T08:30:47.198Z",
+=======
+      "trippedAt": "2026-10-13T19:53:53.853Z",
+>>>>>>> 9a6fbda9580b22ce4eaa5cedb62bf32156f4121e
       "reason": null,
       "consecutiveBlocks": 24
     },

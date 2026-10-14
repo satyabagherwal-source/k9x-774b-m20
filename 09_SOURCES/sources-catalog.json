@@ -65,9 +65,9 @@
     "sourceUrl": "https://huggingface.co/Bingsu/adetailer",
     "sourceVersion": "hf-bingsu-adetailer",
     "license": "Open-Source",
-    "contentHash": "6789d109ba44ce1e8a4c4e0f47b34cd5b0f5ebad71f34ee8772ae4d09c605603",
-    "lastHarvestedAt": "2026-10-11T22:41:25.363Z",
-    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv4eqnev"
+    "contentHash": "e40d0ba2b1d76c17fdd5c2456cdd35221dc301e7a04e001c50f873ed7b4ccd2f",
+    "lastHarvestedAt": "2026-10-13T17:52:10.201Z",
+    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv6zaddu"
   },
   "hf-lilylilith-qi_2.1_anyangle": {
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -75,9 +75,9 @@
     "sourceUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
     "sourceVersion": "hf-lilylilith-qi_2.1_anyangle",
     "license": "Open-Source",
-    "contentHash": "830edd66d55155ea020655949565553797e65b6d65b37f162d0c4f93a20142c8",
-    "lastHarvestedAt": "2026-10-11T22:44:13.170Z",
-    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
+    "contentHash": "54f13d9e0747c398333f730db6207de66dfcadf320ca7993d4acfbdb59763cba",
+    "lastHarvestedAt": "2026-10-13T17:55:02.574Z",
+    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ze2g6"
   },
   "hf-baai-bge-large-en-v1.5": {
     "repository": "BAAI/bge-large-en-v1.5",
@@ -85,9 +85,9 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "ec0be1897018c6e414656a001a287cee16a9712478594afe4b0ef3d9a6d3d4de",
-    "lastHarvestedAt": "2026-10-11T22:47:01.498Z",
-    "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx"
+    "contentHash": "06e180b10c83c68b90b576275f0f9651ff474c3dab8caf342599fd74a1169e5d",
+    "lastHarvestedAt": "2026-10-13T17:58:06.071Z",
+    "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv6zi008"
   },
   "hf-zai-org-glm-5.3": {
     "repository": "zai-org/GLM-5.3",
@@ -95,9 +95,9 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "929d4170b85bb8fe726e7e9d9e24457e0a5cde982089af84691f30f7abdfdd09",
-    "lastHarvestedAt": "2026-10-11T22:50:08.320Z",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu"
+    "contentHash": "7f265e7433cfa15525295741aac71c2de73ee6c9836c28e36a3055251bb9216f",
+    "lastHarvestedAt": "2026-10-13T18:01:07.363Z",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv6zlvwk"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
     "repository": "mudler/locate-anything.cpp-gguf",
@@ -105,9 +105,9 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "0be1b9c85c3552b626b02ec171379644498bb8e2cc4161f93a331c0021623abf",
-    "lastHarvestedAt": "2026-10-11T22:53:17.531Z",
-    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
+    "contentHash": "ce7f914b8e679371407dcc4ce16d37aab8e7b5ec3451ea49a498d621ec412442",
+    "lastHarvestedAt": "2026-10-13T18:04:12.886Z",
+    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv6zpv1e"
   },
   "hf-jialinyyzz-humanizer": {
     "repository": "jialinyyzz/humanizer",
@@ -115,9 +115,9 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "a746f64d8295d73450e949b53bf39f8dbf8072934858daddbabaa889adf834b3",
-    "lastHarvestedAt": "2026-10-11T22:56:34.067Z",
-    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
+    "contentHash": "9f68d8752597821fe22e333bff8ec15deea575d38b229634cc1cba38be86209f",
+    "lastHarvestedAt": "2026-10-13T18:27:09.456Z",
+    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv70jd7b"
   },
   "hf-autotrust-jev-27b-vl": {
     "repository": "autotrust/JEV-27B-VL",
@@ -125,9 +125,9 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "7710436864d6ba61348af3f6666b141d6ca0f4bbbf02e583c998d2e49983a28a",
-    "lastHarvestedAt": "2026-10-11T22:59:28.855Z",
-    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
+    "contentHash": "8adad22dbd2ffb77b5ca37c5e3cbe5504c315e66a3d42e2c0f99deab2d93f994",
+    "lastHarvestedAt": "2026-10-13T18:30:13.626Z",
+    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv70nbai"
   },
   "hf-autotrust-gev-26b-decide": {
     "repository": "autotrust/GEV-26B-Decide",
@@ -135,9 +135,9 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "6f6709f1c794237031a127796f7b6e9e4fced36ce0ab194d9db0d8e3b2648bd7",
-    "lastHarvestedAt": "2026-10-11T23:02:20.779Z",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v"
+    "contentHash": "186595e4b9f81e2f10b6a054c6ce86f6b93c897dcf5df47f85a0e588de6a78ae",
+    "lastHarvestedAt": "2026-10-13T18:33:11.655Z",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv70r4om"
   },
   "hf-convaiinnovations-laya": {
     "repository": "convaiinnovations/laya",
@@ -145,9 +145,9 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "b5ff1a0812a9aa2addf1517663912f3a8845ac18b6a1d11cf200d3b6cc0a5202",
-    "lastHarvestedAt": "2026-10-11T23:05:35.768Z",
-    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
+    "contentHash": "ac17467cf9c4a218dacf66f19795c52defcbd64120d2fd59bff338dc04609766",
+    "lastHarvestedAt": "2026-10-13T18:36:37.048Z",
+    "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv70vj5x"
   },
   "hf-edge0-audio8-asr-infinite": {
     "repository": "Edge0/Audio8-ASR-Infinite",
@@ -155,19 +155,19 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "13ff1623804c9177c5dd481cb68505f1e9819f05c76c8a373eff304df586e1d1",
-    "lastHarvestedAt": "2026-10-11T23:08:31.420Z",
-    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
+    "contentHash": "9d725b9fcb766d74266a81ff8a2a592d7d2adacedfd9f97dd35ccd65ff8324cf",
+    "lastHarvestedAt": "2026-10-13T18:39:45.094Z",
+    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv70zk96"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "platform": "huggingface",
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "a7a12644e407c6f35437d9de28f8527a0b208775a40b4d85ff566cdb2b175bbc",
-    "lastHarvestedAt": "2026-10-11T23:11:35.952Z",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
+    "contentHash": "ce2d8523bc5742e8186429c9d00b997b1d64f9e8eb628573d46359e3feff33b5",
+    "lastHarvestedAt": "2026-10-13T18:42:54.420Z",
+    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv713mby"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -175,9 +175,9 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceVersion": "hf-sentence-transformers-all-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "b42bf7853f856dcbc2abc739715fbbe628fb592917d44ec9e197becfcc09a8d1",
-    "lastHarvestedAt": "2026-10-11T23:14:39.603Z",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
+    "contentHash": "6bf26a3868a8fc75e456f33dbb9816c36d068275e647e82d4dccae3aeddcbd03",
+    "lastHarvestedAt": "2026-10-13T18:47:01.432Z",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv718wxy"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -185,9 +185,9 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "f010fa775f959ed06080c8cee958bf04b8c5a91605b44a0fe2937f029cf804d5",
-    "lastHarvestedAt": "2026-10-11T23:17:25.752Z",
-    "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2"
+    "contentHash": "64f26d9e46f76170a966467f31ff870e81fea59aecc0714992ed16c23c3768be",
+    "lastHarvestedAt": "2026-10-13T18:49:57.142Z",
+    "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv71cok1"
   },
   "hf-baai-bge-small-en-v1.5": {
     "repository": "BAAI/bge-small-en-v1.5",
@@ -195,9 +195,9 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "9b4e72aee45ab9e3ef71cc66d155af119fc0fee49bba97ebf91c6d5c41f7a4ec",
-    "lastHarvestedAt": "2026-10-11T23:20:33.758Z",
-    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
+    "contentHash": "c1c15dd66968b26cf3c0396bb6d7affdf3849fe933261fd8f501bab945c748aa",
+    "lastHarvestedAt": "2026-10-13T18:56:12.212Z",
+    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv71kpx8"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -205,9 +205,9 @@
     "sourceUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "sourceVersion": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
     "license": "Open-Source",
-    "contentHash": "5ff19330558112271998f8d7341f130e9e4392f54cf65634f85ab9d6387b8973",
-    "lastHarvestedAt": "2026-10-11T23:23:43.014Z",
-    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4g91hj"
+    "contentHash": "ba85fd9c758321acca3c329655ebb3c57ca919e3ed38919cd39d9e3ae29cf6df",
+    "lastHarvestedAt": "2026-10-13T18:59:11.184Z",
+    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv71ok19"
   },
   "hf-liquidai-d1-3b": {
     "repository": "LiquidAI/d1-3B",
@@ -215,9 +215,9 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "5e95037448913123b95e1c3d976554535033ef7e9e7c0961b7c0fe50c667040b",
-    "lastHarvestedAt": "2026-10-11T23:26:55.001Z",
-    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv4gd5ma"
+    "contentHash": "d6c65d3839af24f24b5a1d140e908b6af7f35f3a0430122cac96c7d4462bae22",
+    "lastHarvestedAt": "2026-10-13T19:02:18.230Z",
+    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv71skci"
   },
   "hf-cactus-compute-whistle": {
     "repository": "Cactus-Compute/whistle",
@@ -225,9 +225,9 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "ba4166b488d17326de99d66130b4c2157bb95e09ec5d74768f01e777777cc582",
-    "lastHarvestedAt": "2026-10-11T23:29:47.083Z",
-    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv4gguek"
+    "contentHash": "41fede634649f4475663858fde890e116529726a23cb352a45584124952db908",
+    "lastHarvestedAt": "2026-10-13T19:05:24.055Z",
+    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv71wjqf"
   },
   "hf-qwen-qwen3.8-27b": {
     "repository": "Qwen/Qwen3.8-27B",
@@ -235,9 +235,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "3373ae297b8927d467f2da63ef5be3300ab62b66817f06e3c770bff5eebb052c",
-    "lastHarvestedAt": "2026-10-11T23:32:43.073Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75"
+    "contentHash": "c833d77af00f083580f25efb387da5a763efb8b35ad8e91cf43995093a2fc50a",
+    "lastHarvestedAt": "2026-10-13T19:08:21.888Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv720cy3"
   },
   "hf-black-forest-labs-flux.1-dev": {
     "repository": "black-forest-labs/FLUX.1-dev",
@@ -245,9 +245,9 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "4ffac1115dc33f304179839983b7e2e3e5e0f129d5752c2033883120e1e76308",
-    "lastHarvestedAt": "2026-10-11T23:35:54.959Z",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
+    "contentHash": "13601d3f8a15eb3d0fc133109552a12527e6be97036e846d6604168636d3f102",
+    "lastHarvestedAt": "2026-10-13T19:11:26.763Z",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv724blg"
   },
   "hf-francisring-prism": {
     "repository": "FrancisRing/Prism",
@@ -255,9 +255,9 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "5f192c0945a5b50e9251d4a679583768e45042f5983a488e7f5558f9071bb9f1",
-    "lastHarvestedAt": "2026-10-11T23:38:59.610Z",
-    "learningId": "learn-huggingface-hf-francisring-prism-mv4gsoqj"
+    "contentHash": "5f51e071375eb476ea1e79588e1476ade974e15128b9be8e4c8a23d102b7a04a",
+    "lastHarvestedAt": "2026-10-13T19:14:33.118Z",
+    "learningId": "learn-huggingface-hf-francisring-prism-mv728be1"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -265,9 +265,9 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "3586164fc594020cb2f5c174d262d0e0a5ae8f87f05a767389b00961a54f85e0",
-    "lastHarvestedAt": "2026-10-11T23:42:15.736Z",
-    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
+    "contentHash": "ea2f83cdf699fc2f861ccb7be32d306eb6fae0bf30e7904005e23d9ef7a1600a",
+    "lastHarvestedAt": "2026-10-13T19:19:34.450Z",
+    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv72erwz"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -275,9 +275,9 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "16380150cb970f514f23f5c1f178af3fad6b7b95f575bf1e90f0cd934a438262",
-    "lastHarvestedAt": "2026-10-11T23:45:02.369Z",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
+    "contentHash": "6736f1ed535bd88cdc3a44d9b93a825ed00d804c6f205d9e32fedcc717c96401",
+    "lastHarvestedAt": "2026-10-13T19:22:34.893Z",
+    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv72in5c"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -285,9 +285,9 @@
     "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "b33ef1165e0f175c26cd9b987e040c7732a2bd6f6e1f921098e7c8c8baebd324",
-    "lastHarvestedAt": "2026-10-11T23:47:57.606Z",
-    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur"
+    "contentHash": "1288c3e9d0bdeb64d8bb862d551d07afbbaa9ce706690ac57546c49684b698d9",
+    "lastHarvestedAt": "2026-10-13T19:25:36.725Z",
+    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv72mjfo"
   },
   "hf-deepseek-ai-deepseek-r1": {
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -295,9 +295,9 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
     "sourceVersion": "hf-deepseek-ai-deepseek-r1",
     "license": "Open-Source",
-    "contentHash": "dcdc1983501a4921b2ca93de307912d08bfc6771ae7807442cd25708b5bf4913",
-    "lastHarvestedAt": "2026-10-11T23:51:12.153Z",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv"
+    "contentHash": "810caec0f535ee82f7a288eb6c9a3e95f7df920056d0f905f8ac2b16dafb9054",
+    "lastHarvestedAt": "2026-10-13T19:28:40.053Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv72qgwk"
   },
   "hf-moonshotai-kimi-k3": {
     "repository": "moonshotai/Kimi-K3",
@@ -305,9 +305,9 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "49bf2e2a712aeb331c1ee0255c8bef8642b1c15545fb8ee20f775368a1c18ee9",
-    "lastHarvestedAt": "2026-10-11T23:54:05.928Z",
-    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y"
+    "contentHash": "fb3a4068c2e6d80791dba26192694e16db74acb0f2e94bd6eee2b9b358fb691f",
+    "lastHarvestedAt": "2026-10-13T19:31:45.123Z",
+    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv72ufoq"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -315,9 +315,9 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "7b1d6ea5d68368a3626616b26d4812554de53cead27be0e17f59fd4603a0e248",
-    "lastHarvestedAt": "2026-10-11T23:57:18.987Z",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
+    "contentHash": "77316d135f2db652b37b856f4310c64d9fb123ba2cf5b745a8e4c2a036c5d03c",
+    "lastHarvestedAt": "2026-10-13T19:41:20.359Z",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv736rge"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -325,9 +325,9 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceVersion": "hf-meta-llama-llama-3.1-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "e477c27769d1b8995342d71b7467fec3ae4b3e9d8a8635f25981d28ec38f6866",
-    "lastHarvestedAt": "2026-10-12T00:00:24.000Z",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
+    "contentHash": "9fd866518226e87e37855e602e699016c1c775b3aade4596fecb16864749df39",
+    "lastHarvestedAt": "2026-10-13T19:44:17.213Z",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv73ak06"
   },
   "hf-xingchen-agi-teleocr": {
     "repository": "XingChen-AGI/TeleOCR",
@@ -335,9 +335,9 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "11ee874fe71e76e37e1d6740963a0f1efa3106b98ea5502bbc6d1e5374e38569",
-    "lastHarvestedAt": "2026-10-12T00:03:11.143Z",
-    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
+    "contentHash": "2868be3f2fc74f2dd9789455055d02bdeae62520a34b420c0d0270c1b7f1e27c",
+    "lastHarvestedAt": "2026-10-13T19:51:03.237Z",
+    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv73j9aj"
   },
   "hf-qwen-qwen-image-2.1": {
     "repository": "Qwen/Qwen-Image-2.1",
@@ -345,9 +345,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "15f9ebd550366a21cb480a2afdcb3ec8d4157cb9b882f439bf031b64588e3b72",
-    "lastHarvestedAt": "2026-10-12T00:06:17.059Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t"
+    "contentHash": "a04e2bbef65ec71a21ebe7fac32a02a66bde80e2127b00132d643c21a3870790",
+    "lastHarvestedAt": "2026-10-13T19:54:09.313Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv73n8vj"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -355,9 +355,9 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "8d185c29d8a6b32eedd9fdcd199978a3b85745d29135839d9713ba3e4f1bc204",
-    "lastHarvestedAt": "2026-10-12T00:09:14.213Z",
-    "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7"
+    "contentHash": "4115e1310b8bfaca7a69cf67dd0bc8b0a6fef9863741da977eff17b6fbfbfd4a",
+    "lastHarvestedAt": "2026-10-13T11:40:49.474Z",
+    "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv6m0thg"
   },
   "hf-nvidia-nemotron-3-diarization": {
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -365,9 +365,9 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "4c2411163dea4d56d22e4b86a8eb040aba2f9c9d46d2daf76a5787560b9938d7",
-    "lastHarvestedAt": "2026-10-12T00:12:27.122Z",
-    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi"
+    "contentHash": "10b59cbaff3ee24da986f3f5994d6b4b617bb3bdbf5d1ccef5b82804551ada33",
+    "lastHarvestedAt": "2026-10-13T11:43:47.276Z",
+    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv6m4mpe"
   },
   "hf-lightricks-ltx-2.5": {
     "repository": "Lightricks/LTX-2.5",
@@ -375,9 +375,9 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "659f2a6be465dad84bc2f1f4425a0473ef9ff5916f5ae4ab574c677b386a2c5f",
-    "lastHarvestedAt": "2026-10-12T00:15:22.220Z",
-    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
+    "contentHash": "31da1dd8b21e38580e54d5b66a83cb4e53fa4d7a52e8022c37f69954c5779747",
+    "lastHarvestedAt": "2026-10-13T11:46:57.067Z",
+    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv6m8p2n"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -385,9 +385,9 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "fc8a2f0cd7b6b4e7292682454e420924587e6655fc46b71d687ec278c627ca52",
-    "lastHarvestedAt": "2026-10-12T00:18:18.480Z",
-    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo"
+    "contentHash": "382a8603e45bee6788c22f37755b3993a2663ce10ceee292ed03e327cba05d73",
+    "lastHarvestedAt": "2026-10-13T11:49:53.564Z",
+    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv6mchby"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -395,9 +395,9 @@
     "sourceUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceVersion": "hf-viggle-qwen-image-2.1-viggle-turbo",
     "license": "Open-Source",
-    "contentHash": "44358a9ccff545cd02187b6f8100f3bbee48696af3c7ae21736afe5ea94cf066",
-    "lastHarvestedAt": "2026-10-12T00:21:29.735Z",
-    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4"
+    "contentHash": "231991feec35e41b9fa014947332b0fc0869965eba4c705cf848547891705f88",
+    "lastHarvestedAt": "2026-10-13T11:52:54.777Z",
+    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv6mgd55"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -405,9 +405,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "ad8c016e43e47b07a6ab6b2ff8b29dc6a1f607682533aea308a203e14d5168a8",
-    "lastHarvestedAt": "2026-10-12T00:24:26.494Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl"
+    "contentHash": "a472d86b99a317f2ed4cde49b074a15a95148f2e91baa9d23486aee784f0dad0",
+    "lastHarvestedAt": "2026-10-13T11:57:01.581Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv6mlnle"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -415,9 +415,9 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "7970cb5a008bf6ec4f39386e7e059dc1f8973ee09a0ca8c735e801b1faa7e46e",
-    "lastHarvestedAt": "2026-10-12T00:27:28.262Z",
-    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
+    "contentHash": "c280e025cdb8997e71899f1fa2ab6c41c06ec431f1102518d3d43b04f6220395",
+    "lastHarvestedAt": "2026-10-13T12:00:02.384Z",
+    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv6mpj2y"
   },
   "hf-supersoniclabs-julia-1": {
     "repository": "SupersonicLabs/Julia-1",
@@ -425,9 +425,9 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "b3e576915c81e2c11bd22b7f45bb7a0ec67e1af3c1251446a08bffaf105b3cba",
-    "lastHarvestedAt": "2026-10-12T00:30:22.256Z",
-    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
+    "contentHash": "1a9936ed15315ffa3b4325402965f8f0b429d0d3d1f29fbf045da612affd3956",
+    "lastHarvestedAt": "2026-10-13T12:03:05.136Z",
+    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv6mtg43"
   },
   "hf-apple-lensvlm-9b": {
     "repository": "apple/LensVLM-9B",
@@ -435,9 +435,9 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "c3c6aab9a37bf7af7ab76dfe799ba2d128443887259b7fe08ae9cb27a609a5d0",
-    "lastHarvestedAt": "2026-10-12T00:33:23.849Z",
-    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
+    "contentHash": "0ecae87a1723dd40a17867e14fb31aecc345e8b1fec0cd72c3df5be14698ed6d",
+    "lastHarvestedAt": "2026-10-13T12:26:18.341Z",
+    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a"
   },
   "hf-altworld-hemmingway-1": {
     "repository": "Altworld/Hemmingway-1",
@@ -445,9 +445,9 @@
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "835ddb7f3b1942a7eff964657fd4d9a771f7beac1f27bdcd4b404c5a12715be5",
-    "lastHarvestedAt": "2026-10-12T00:36:37.707Z",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
+    "contentHash": "eada004a51e480df22aaed92842f72078d2c61713110584ce15b18ea21a501a7",
+    "lastHarvestedAt": "2026-10-13T12:29:24.463Z",
+    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv6nrao5"
   },
   "hf-fastino-gliner2.5-decide": {
     "repository": "fastino/GLiNER2.5-Decide",
@@ -455,9 +455,9 @@
     "sourceUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceVersion": "hf-fastino-gliner2.5-decide",
     "license": "Open-Source",
-    "contentHash": "5bd4248300cfa2afbd3fe0df648f48a57ad0440c70110eeb9b220b1a865124ce",
-    "lastHarvestedAt": "2026-10-12T00:39:23.621Z",
-    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f"
+    "contentHash": "994e58140d65db272de72bc6e0950376361484fc19e26a79174cdcefa61e8871",
+    "lastHarvestedAt": "2026-10-13T12:32:33.199Z",
+    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -465,9 +465,9 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "fdb6ee1e42cacbf1e6900dcd078d217bcff4a53422d3b42615b30728257b1bff",
-    "lastHarvestedAt": "2026-10-12T00:42:36.829Z",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
+    "contentHash": "c819b2ae35cfea2a9befcf3e269d489a7992c02407ae57547d8bde21fb75581c",
+    "lastHarvestedAt": "2026-10-13T12:35:19.858Z",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv6nywz1"
   },
   "hf-orcarouter-orcasaq-2-27b": {
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -475,9 +475,9 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "76acce05c73dd4aa5e0df1fd2c95e983da870aa7cf0a543afdbf9e6341b1db3c",
-    "lastHarvestedAt": "2026-10-12T00:45:31.476Z",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm"
+    "contentHash": "d553ff5d9030d975a82e8f29969d2885821704cfe7e4c0f80cb18c825dfa2340",
+    "lastHarvestedAt": "2026-10-13T12:38:28.039Z",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv6o2y4v"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -485,9 +485,9 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "bcae827d6e7fe80cefec2c2036346656c57b185e7faafdffc27af677670e0373",
-    "lastHarvestedAt": "2026-10-12T00:48:35.300Z",
-    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
+    "contentHash": "a1212cab9e31871305948f85315c224b6cc29fe57d2e8feb447a4454d7ce9cf1",
+    "lastHarvestedAt": "2026-10-13T12:41:36.384Z",
+    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -495,9 +495,9 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "049de2656f2b9a6ac8ce13241125eb6eb10dcf7c1cfee4d75c2d7ccf6db835c1",
-    "lastHarvestedAt": "2026-10-12T00:51:46.655Z",
-    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc"
+    "contentHash": "0df27d0d140fd4ad8468df53cb0147d5a32f93084440b01efd9d2117412be7c1",
+    "lastHarvestedAt": "2026-10-13T12:44:30.907Z",
+    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv6oaq4r"
   },
   "hf-comfy-org-qwen-image-2.1": {
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -505,9 +505,9 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "1548b0500589f840de5ad7cf845a3ddf69fcf350a88b2acb949ea264668f4b07",
-    "lastHarvestedAt": "2026-10-12T00:54:52.377Z",
-    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no"
+    "contentHash": "fcb3e2de36d3c22de662cbe4137ac534df35fa3651cb6ed1c78a7aa8ea404aed",
+    "lastHarvestedAt": "2026-10-13T12:47:34.714Z",
+    "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv6oenyn"
   },
   "hf-akhilaaa3-jev-omni": {
     "repository": "akhilaaa3/Jev-Omni",
@@ -515,9 +515,9 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "1c2fc639478cb7432a2176bfd3dc66bccbd8467fe9d705aecbbe6479c0917c66",
-    "lastHarvestedAt": "2026-10-12T00:57:41.073Z",
-    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj"
+    "contentHash": "43a575c73ac8c552e7a703759d2b0472d8f0afbd677bfabde8562448905f75a7",
+    "lastHarvestedAt": "2026-10-13T12:50:40.702Z",
+    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv6oingw"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
     "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -525,9 +525,9 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
     "license": "Open-Source",
-    "contentHash": "8f1717fe83e223b7556d07ff4e41b776182b5b2dd07b9ec0e7f2565eefba1897",
-    "lastHarvestedAt": "2026-10-12T01:00:36.669Z",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
+    "contentHash": "2b7eb7a2400284f1e321b19a68a05d19ff2af67bd5ac9bcd1cab41715fb1adcb",
+    "lastHarvestedAt": "2026-10-13T12:53:38.866Z",
+    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv6omgxr"
   },
   "hf-inclusionai-ming-image-0.1-design": {
     "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -535,9 +535,9 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "522d2df24b7cc146cfe63c7cee04b33fd5b11762873f141a0c0dfc8a8167f2b7",
-    "lastHarvestedAt": "2026-10-12T01:03:27.183Z",
-    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
+    "contentHash": "52f29eaca7bfeca9b648ee39b3605451aa3069cd5eeaa1a178caf6ccbd34bab5",
+    "lastHarvestedAt": "2026-10-13T13:14:43.640Z",
+    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv6pdkuf"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -545,9 +545,9 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "bd8edcbd500fc895a6d0d87d55bd4c955120134b0860bdd3dba95e2bd844ba23",
-    "lastHarvestedAt": "2026-10-12T01:06:39.170Z",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
+    "contentHash": "7c352bd909e14760e55f3b2b1ca15a6be619f1ffda0d8b7cc4c435b3702548cf",
+    "lastHarvestedAt": "2026-10-13T13:17:45.713Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv6phhby"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -555,9 +555,9 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "2093b7073539a65f18b52689a155150e8ddce556ee6fad73f852bc06d3179d11",
-    "lastHarvestedAt": "2026-10-12T01:09:48.666Z",
-    "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
+    "contentHash": "3a321530801fcea686a32ae23b3c798aebeb4f2269c8d572b82ccdfcfd531e92",
+    "lastHarvestedAt": "2026-10-13T13:20:39.952Z",
+    "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv6pl7t8"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -565,9 +565,9 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "923aacb9c7d41b6214980d92407f652accbaf27c1534bf4deebff33c02ed0bce",
-    "lastHarvestedAt": "2026-10-12T01:12:41.021Z",
-    "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v"
+    "contentHash": "8173580cb1a5eba601479a0d6ddb125bc223425da23da930c15bba28b2fa905b",
+    "lastHarvestedAt": "2026-10-13T13:23:43.615Z",
+    "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv6pp5i4"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -575,9 +575,9 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-pro-rl",
     "license": "Open-Source",
-    "contentHash": "f19821686f1ea401afac4bfae0ceea25a3f7632eac7314249db2092b94af28cd",
-    "lastHarvestedAt": "2026-10-12T01:15:36.212Z",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
+    "contentHash": "c2bf356598057b01d02f5e2a69f432e186bb473b6c1c1f3e564a41067c0e7b7a",
+    "lastHarvestedAt": "2026-10-13T13:26:51.123Z",
+    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv6pt65c"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -585,9 +585,9 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "4cb9a993e8828d60c422d37607b9a380bdff561fc9a5c67051dc40c9d3ecea4e",
-    "lastHarvestedAt": "2026-10-12T01:18:46.078Z",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
+    "contentHash": "e2eb6a3b44f6849a5a212af4c3eea1aa747f53af3bdf105c520a21a51e55d93d",
+    "lastHarvestedAt": "2026-10-13T13:31:07.876Z",
+    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv6pyo9c"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -595,9 +595,9 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "484097e6d4ff6e63fde4834e7fcd36b495a815819f470d9aabdc8a4e05f6f537",
-    "lastHarvestedAt": "2026-10-12T01:21:48.737Z",
-    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz"
+    "contentHash": "b18a48d28637fb602d7ff456562a96b69cc071c5fd768a48311514589e9b0f9d",
+    "lastHarvestedAt": "2026-10-13T13:34:05.472Z",
+    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv6q2hbp"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -605,9 +605,9 @@
     "sourceUrl": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "843f34760817c23ed1c501cf981d94d4a1dd762d4a7bd8aededd1831d1c98448",
-    "lastHarvestedAt": "2026-10-12T01:24:57.977Z",
-    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
+    "contentHash": "3a58cf9bc293ba655fe99acf6ae2b0f99749a4c8fe003249cdd8fa558c6670f9",
+    "lastHarvestedAt": "2026-10-13T13:37:21.881Z",
+    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv6q6ov5"
   },
   "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -615,9 +615,9 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "5f0a0c7ee9c537af62b655b74316a55c9122541f566fbbd035cc7526dd690546",
-    "lastHarvestedAt": "2026-10-12T01:27:49.356Z",
-    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv4kon4a"
+    "contentHash": "75dc293fb4170d1d54af5a20dfb2dd3b51be5f86af128bd86d5cf9711b9e2e9d",
+    "lastHarvestedAt": "2026-10-13T13:40:29.573Z",
+    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv6qapp4"
   },
   "hf-psrben-visionhope": {
     "repository": "PSRben/VisionHOPE",
@@ -625,9 +625,9 @@
     "sourceUrl": "https://huggingface.co/PSRben/VisionHOPE",
     "sourceVersion": "hf-psrben-visionhope",
     "license": "Open-Source",
-    "contentHash": "54da7e8ec6c25ba867e74c73976d4071c78ac389753b46df0bf2d92f48e9715b",
-    "lastHarvestedAt": "2026-10-12T01:30:43.454Z",
-    "learningId": "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
+    "contentHash": "5e51a06b48cd410b162cdd6d391315a8cb1f8ad0ff359bfdc4bbbe45876182e6",
+    "lastHarvestedAt": "2026-10-13T13:43:29.289Z",
+    "learningId": "learn-huggingface-hf-psrben-visionhope-mv6qekdo"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf": {
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -635,9 +635,9 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "57f265f2581f16613b2f8f027aac921ab856c92576c410bed2e2dce91678ac3d",
-    "lastHarvestedAt": "2026-10-12T01:33:36.593Z",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
+    "contentHash": "eabf96c6fbfa675dfefedd867cfb9bc6a8cdf45152367638f1178ff5d95d3f0f",
+    "lastHarvestedAt": "2026-10-13T13:46:39.059Z",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv6qimse"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -645,9 +645,9 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "89ff961c2660c3ed82988ff2eef3cb6d1bfc715e69a5d14eb9a6ba74487b1225",
-    "lastHarvestedAt": "2026-10-12T01:36:51.974Z",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk"
+    "contentHash": "f3d62dc906be9b8cc7a4dd147433019a67a6272f424b795f836535c4deb09f4c",
+    "lastHarvestedAt": "2026-10-13T13:49:32.786Z",
+    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv6qmcvj"
   },
   "hf-facebook-sam3": {
     "repository": "facebook/sam3",
@@ -655,9 +655,9 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "05ba38f4a00d488f0cdec073648c50a5ff0bb8d3ee97458725db4f752f7e596a",
-    "lastHarvestedAt": "2026-10-12T01:40:06.976Z",
-    "learningId": "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
+    "contentHash": "618eded94fd4843aeaf506815e45a8ed8919df75da7cf991e482e3322d87be9b",
+    "lastHarvestedAt": "2026-10-13T13:52:49.772Z",
+    "learningId": "learn-huggingface-hf-facebook-sam3-mv6qqksb"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -665,9 +665,9 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "6ab7a5baf32943ddee3c4ee04e0d59c30386fd745224ca3c4c01c129fa86569a",
-    "lastHarvestedAt": "2026-10-12T01:42:59.964Z",
-    "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv"
+    "contentHash": "5b53a9b3c9fb6e5862337516953324360ffdd545481a2d3e5b0a6b9038ce5574",
+    "lastHarvestedAt": "2026-10-13T13:55:49.676Z",
+    "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv6qufnc"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
     "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -675,9 +675,9 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "f4bd8840105c1461518001807b4d87341be3be71511279b771584edeebe0e77c",
-    "lastHarvestedAt": "2026-10-12T01:45:45.677Z",
-    "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
+    "contentHash": "e9a323fe60b9b09c27abf5e3e84106cb672894e54745bfc9a8f552a93b46e537",
+    "lastHarvestedAt": "2026-10-13T13:58:56.985Z",
+    "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv6qyg6e"
   },
   "hf-canberkkkkkk-ema-lightning": {
     "repository": "canberkkkkkk/ema-lightning",
@@ -685,9 +685,9 @@
     "sourceUrl": "https://huggingface.co/canberkkkkkk/ema-lightning",
     "sourceVersion": "hf-canberkkkkkk-ema-lightning",
     "license": "Open-Source",
-    "contentHash": "d51c50f73b15acdbcd027ff451a035ffebd30448722b3a2801e348888177b1d9",
-    "lastHarvestedAt": "2026-10-12T01:48:32.236Z",
-    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g"
+    "contentHash": "398cc2d1f2831ea15b1ba6b9927d12046b89c251d1d4024fcadff5beadc0997a",
+    "lastHarvestedAt": "2026-10-13T14:04:24.886Z",
+    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv6r5h7b"
   },
   "hf-google-embeddinggemma-2": {
     "repository": "google/embeddinggemma-2",
@@ -695,9 +695,9 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "a9813a33c97015da24b4e3d43bfe8086ae215adf78fa94787ecb5fa39b906a8b",
-    "lastHarvestedAt": "2026-10-12T01:51:44.279Z",
-    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv4ljeb8"
+    "contentHash": "dfe06d96fdbe07ec726fbdf855205ab87d2ab1a9557cd4134167abbfce82dca4",
+    "lastHarvestedAt": "2026-10-13T14:07:17.242Z",
+    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv6r967u"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -705,9 +705,9 @@
     "sourceUrl": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
     "sourceVersion": "hf-unsloth-embeddinggemma-2-gguf",
     "license": "Open-Source",
-    "contentHash": "24d0e3acbb7366bd52050a79e938ef024ead58447f78e440567a629c46c97251",
-    "lastHarvestedAt": "2026-10-12T01:54:55.456Z",
-    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
+    "contentHash": "d7a350f01249e7a1869e05ede95126e88695db47eb7a7bcaba1b95920ea8da62",
+    "lastHarvestedAt": "2026-10-13T14:10:22.089Z",
+    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv6rd4t2"
   },
   "hf-cloudflare-clef": {
     "repository": "Cloudflare/clef",
@@ -715,9 +715,9 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "21386929be69faf01a4fae36312e5710c7af66a7692ea59432e4ae7f82808853",
-    "lastHarvestedAt": "2026-10-12T02:01:11.336Z",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
+    "contentHash": "d9b482ce6b40931b56098440646883b85e65298ad7f8f13ade89ad8be3395c60",
+    "lastHarvestedAt": "2026-10-13T14:13:29.603Z",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-mv6rh5gf"
   },
   "hf-cloudflare-clef-flash": {
     "repository": "Cloudflare/clef-flash",
@@ -725,9 +725,9 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceVersion": "hf-cloudflare-clef-flash",
     "license": "Open-Source",
-    "contentHash": "3181bdfb619135b98662fd2d806d9af96dd9801abe77304c89848fc1d81d0fe9",
-    "lastHarvestedAt": "2026-10-12T02:04:01.157Z",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
+    "contentHash": "5f1ce5247a833b8b69aa2bc075b6265d2a3475512cfd73bcf92c6db3761db756",
+    "lastHarvestedAt": "2026-10-13T14:16:27.188Z",
+    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv6rkyiu"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -735,9 +735,9 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "ff4074c525f2048d6254b9189dc5a5343716fc333352dd34a1834a61162fa990",
-    "lastHarvestedAt": "2026-10-12T02:06:47.392Z",
-    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
+    "contentHash": "d4a13e029e0603db9dd3ae4c6562ed65d8548aec70139b2d884e060b73c37996",
+    "lastHarvestedAt": "2026-10-13T14:21:57.499Z",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv6rs1dv"
   },
   "hf-google-bert-bert-base-uncased": {
     "repository": "google-bert/bert-base-uncased",
@@ -745,9 +745,9 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "f375ba3265da7b34ba276b88e810122bd41f3ce8b89e592e3e3bb03a3edbef66",
-    "lastHarvestedAt": "2026-10-12T02:09:46.874Z",
-    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
+    "contentHash": "ac2d60348694e3203c80a5641a60ac231df232d0abcac66a50da6e250afa3c1f",
+    "lastHarvestedAt": "2026-10-13T14:27:22.998Z",
+    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv6rz0hx"
   },
   "hf-google-electra-base-discriminator": {
     "repository": "google/electra-base-discriminator",
@@ -755,9 +755,9 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "fd567dcb871f46cb7570fed315f2ed26edf8b9d71da2c2756cb985a58249cb2e",
-    "lastHarvestedAt": "2026-10-12T02:13:09.959Z",
-    "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt"
+    "contentHash": "45f42219b84513a5ec30dd9a9cbe218ef4ae95f3962cf8e828020690029fdca3",
+    "lastHarvestedAt": "2026-10-13T14:30:34.522Z",
+    "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv6s34bk"
   },
   "hf-baai-bge-m3": {
     "repository": "BAAI/bge-m3",
@@ -765,9 +765,9 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "763d16ddc8bdc21566f383c78c7dfa721d90ce996e4a5128a5581605364d7ecc",
-    "lastHarvestedAt": "2026-10-12T02:16:11.113Z",
-    "learningId": "learn-huggingface-hf-baai-bge-m3-mv4meu5h"
+    "contentHash": "55e8675e705e45381c2e469276f61fc0bd2c0532cc45d036dabdaaf3aff9ffe6",
+    "lastHarvestedAt": "2026-10-13T14:35:40.501Z",
+    "learningId": "learn-huggingface-hf-baai-bge-m3-mv6s9ofa"
   },
   "hf-qwen-qwen3-0.6b": {
     "repository": "Qwen/Qwen3-0.6B",
@@ -775,9 +775,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "f0657bcb97555bfdf3b1f7e1cc6535bf9ffcce119edf85cdfd668ea335fa0254",
-    "lastHarvestedAt": "2026-10-12T02:18:56.977Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v"
+    "contentHash": "ee82692024dd838b794be804ba189f48cd8427595b4a967865c078d5f2a20172",
+    "lastHarvestedAt": "2026-10-13T14:38:35.518Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv6sdfhz"
   },
   "hf-google-t5-t5-small": {
     "repository": "google-t5/t5-small",
@@ -785,9 +785,9 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "c3f7854035fc6df077f8acd1a5de9f24c4eb37360933eb6ed15e54315da2b839",
-    "lastHarvestedAt": "2026-10-12T02:21:50.985Z",
-    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm"
+    "contentHash": "5f729b164485ec682192e96a8634774b71dcd222ac53e0b16d8cfe81a54d8db3",
+    "lastHarvestedAt": "2026-10-13T14:57:20.460Z",
+    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv6t1jig"
   },
   "hf-comfy-org-minimax-h3": {
     "repository": "Comfy-Org/MiniMax-H3",
@@ -795,9 +795,9 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "2aa986d8a88993339e360eae68a053bccfc316779cfa101397d96aabf77b7047",
-    "lastHarvestedAt": "2026-10-12T02:24:45.671Z",
-    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o"
+    "contentHash": "a4ddf0f541af762608a7dd7fda522d781d1e12780d49a9cf4ea299dd48df4c1f",
+    "lastHarvestedAt": "2026-10-13T15:02:39.177Z",
+    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv6t8ddi"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -805,9 +805,9 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "208007357cf5f3280c42e96a32fc7a541e2e3c989b669b6eb53c693eb9092cba",
-    "lastHarvestedAt": "2026-10-12T02:27:55.598Z",
-    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo"
+    "contentHash": "d978e6e33ea08d05315275483e7a9ef8afa3a2299150f922eae3dd43b3ab1ac7",
+    "lastHarvestedAt": "2026-10-13T15:05:38.197Z",
+    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv6tc7j6"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -815,9 +815,9 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "836882f8cbb25e4badb1c6e15b348b201f4d340f2b4040519440d0bd91ea31a2",
-    "lastHarvestedAt": "2026-10-12T02:30:50.569Z",
-    "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2"
+    "contentHash": "cd22fb32be523642796a0c4e7c586cbfe152c1560d080f74956c0eca64344576",
+    "lastHarvestedAt": "2026-10-13T15:11:04.238Z",
+    "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv6tj73m"
   },
   "hf-amazon-chronos-2": {
     "repository": "amazon/chronos-2",
@@ -825,9 +825,9 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "3be9a782d97e42944190e6e57e0df66f0b354d18d9eac643c5e41fd3f924a43c",
-    "lastHarvestedAt": "2026-10-12T02:34:04.274Z",
-    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n"
+    "contentHash": "903f5178026064b57642394070943f79d1d517d037778c025e5c199d1a95760e",
+    "lastHarvestedAt": "2026-10-13T15:14:13.122Z",
+    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv6tn8uj"
   },
   "hf-compvis-stable-diffusion-v1-4": {
     "repository": "CompVis/stable-diffusion-v1-4",
@@ -835,9 +835,9 @@
     "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
     "license": "Open-Source",
-    "contentHash": "aa76c071cfcd6dfc073bc54c03676801f94e7f63ac41ee7b837fd21b54df8eae",
-    "lastHarvestedAt": "2026-10-12T02:37:01.447Z",
-    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6"
+    "contentHash": "89ac8b51639a36c4e427d0d5590baeb874741e55823f9a7a69f580c95714caec",
+    "lastHarvestedAt": "2026-10-13T15:19:11.095Z",
+    "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv6ttmsd"
   },
   "hf-meta-llama-meta-llama-3-8b": {
     "repository": "meta-llama/Meta-Llama-3-8B",
@@ -845,9 +845,9 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "267dfe484debebf50e6be90fdfa37a33ed9525c95ccc70ff5d2234db05b73202",
-    "lastHarvestedAt": "2026-10-12T02:39:57.248Z",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx"
+    "contentHash": "90a0fefc18c246d649d9b91b155dcbe5b17ef939f2e6390e493efe3a5ba7b1df",
+    "lastHarvestedAt": "2026-10-13T15:22:30.158Z",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv6txwbf"
   },
   "hf-microsoft-frognano-4b-2609": {
     "repository": "microsoft/FrogNano-4B-2609",
@@ -855,9 +855,9 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "1d7caf386b683c036006d8d93641465bb2e4b3993cd2bbc3b77bbbdcbc028097",
-    "lastHarvestedAt": "2026-10-12T02:42:44.204Z",
-    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv4nczd5"
+    "contentHash": "59bbdc6f9e21160533478448738ae8f5140f73f5884582c3c97eb09b0f034131",
+    "lastHarvestedAt": "2026-10-13T15:25:35.398Z",
+    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv6u1vaq"
   },
   "hf-hexgrad-kokoro-82m": {
     "repository": "hexgrad/Kokoro-82M",
@@ -865,9 +865,9 @@
     "sourceUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
     "sourceVersion": "hf-hexgrad-kokoro-82m",
     "license": "Open-Source",
-    "contentHash": "46a3db0330584aec3f783c2cf8d71168ed47a8570092b04037f3e586bc081a4b",
-    "lastHarvestedAt": "2026-10-12T02:45:54.428Z",
-    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv4nh25q"
+    "contentHash": "eb916a43696bf574ff0923056bde7dfe4e168aaf661a08b94fd78ddfb7037b15",
+    "lastHarvestedAt": "2026-10-13T15:29:59.832Z",
+    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv6u7jcp"
   },
   "hf-openai-whisper-large-v3": {
     "repository": "openai/whisper-large-v3",
@@ -875,9 +875,9 @@
     "sourceUrl": "https://huggingface.co/openai/whisper-large-v3",
     "sourceVersion": "hf-openai-whisper-large-v3",
     "license": "Open-Source",
-    "contentHash": "e304598dd6bc9b01dccfed5606386503452298cb4b8b799c5d9ddac807eddced",
-    "lastHarvestedAt": "2026-10-12T02:49:00.642Z",
-    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq"
+    "contentHash": "8ca0cbd7305477a4e14ecc5fda7a8bbace1cb0ee88ccc0baed4c5ab538a7ec2b",
+    "lastHarvestedAt": "2026-10-13T15:35:01.216Z",
+    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv6udzwl"
   },
   "hf-black-forest-labs-flux.1-schnell": {
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -885,9 +885,9 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
     "sourceVersion": "hf-black-forest-labs-flux.1-schnell",
     "license": "Open-Source",
-    "contentHash": "2b0f3bf78a4fe926b9bf76e1007d9ffb679bffc60392347a9c12a1bfce0530ec",
-    "lastHarvestedAt": "2026-10-12T02:52:13.120Z",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
+    "contentHash": "a0ab33dbfb5d135401a37711ab7a074679816d1a23d0d7277764f2905d60eebc",
+    "lastHarvestedAt": "2026-10-13T15:38:00.679Z",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv6uhudo"
   },
   "hf-minimaxai-minimax-h3": {
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -895,9 +895,9 @@
     "sourceUrl": "https://huggingface.co/MiniMaxAI/MiniMax-H3",
     "sourceVersion": "hf-minimaxai-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "acedc7a99b303f037726efd5df320fa6366ed6a32b1d300818db15812908ff16",
-    "lastHarvestedAt": "2026-10-12T02:54:59.772Z",
-    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu"
+    "contentHash": "11f5927b8e88221f4cf5d6f4587f18bbf9bea15cc6e8d7874a5a95aacb4e69d5",
+    "lastHarvestedAt": "2026-10-13T15:41:07.473Z",
+    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv6uluhq"
   },
   "hf-qwen-qwen3.8-flash-next": {
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -905,9 +905,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "ec578ef942b2acd91875b5ebf4345dcb02ff2b6e888d4f9713b8cf03e065d430",
-    "lastHarvestedAt": "2026-10-12T02:57:52.430Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64"
+    "contentHash": "a30fb1fc4628a349a81ac5c3358c59407d2dd595480d165db4d7e90bd59a6e41",
+    "lastHarvestedAt": "2026-10-13T15:46:08.403Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv6usape"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -915,9 +915,9 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "bb60761ed8faa0f372d0e00eb184ebdffef3ec9ee6b6fb061fdf8d891d1a21cc",
-    "lastHarvestedAt": "2026-10-12T03:01:09.725Z",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx"
+    "contentHash": "6a65dd37bf54777065d6b879d97025b68d1f59125625f5c2ab3d028a68140aca",
+    "lastHarvestedAt": "2026-10-13T15:49:07.589Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv6uw4yx"
   },
   "hf-tongyi-mai-z-image-turbo": {
     "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -925,9 +925,9 @@
     "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceVersion": "hf-tongyi-mai-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "36193f2c0817773bf95e723828a207f96f349afe7df5a4fd19f3dbe3efdae3d6",
-    "lastHarvestedAt": "2026-10-12T03:04:25.191Z",
-    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p"
+    "contentHash": "36a876f1e55cb73a216e577120dc87ef9faffe2d1c220d09111b3aae63a32a50",
+    "lastHarvestedAt": "2026-10-13T15:52:25.699Z",
+    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv6v0dro"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -935,9 +935,9 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "fa8b726de6dc78872c63e4a00a5d69aa2fa31cfd71c1563a710d9086b3bbcb53",
-    "lastHarvestedAt": "2026-10-12T03:07:21.693Z",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
+    "contentHash": "04fd137e8ddcbe44b44925bf572594eb5672740b4b4aaf85f29254f829c1c8d8",
+    "lastHarvestedAt": "2026-10-13T15:55:25.044Z",
+    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv6v4878"
   },
   "hf-openai-gpt-oss-120b": {
     "repository": "openai/gpt-oss-120b",
@@ -945,9 +945,9 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-120b",
     "sourceVersion": "hf-openai-gpt-oss-120b",
     "license": "Open-Source",
-    "contentHash": "3bef4bb5d5d4fc452871189d280a5b0a869c736d9c28f55aca6671db50b5d8be",
-    "lastHarvestedAt": "2026-10-12T03:10:08.966Z",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1"
+    "contentHash": "980c00153ccce8c48813f402f405ec6dc3124be427b5a4a88a5c0c06d1d0341d",
+    "lastHarvestedAt": "2026-10-13T15:58:31.084Z",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6v87qw"
   },
   "hf-zai-org-glm-5.2": {
     "repository": "zai-org/GLM-5.2",
@@ -955,9 +955,9 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceVersion": "hf-zai-org-glm-5.2",
     "license": "Open-Source",
-    "contentHash": "ead0812bb04b6de4aa3ae6bd323421bf5b4411909e94f3c3a8fb158daa7867c2",
-    "lastHarvestedAt": "2026-10-12T03:13:11.799Z",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv4og5jo"
+    "contentHash": "a9378e58fab346c37417be1bce84d5f441dc80ee92622fa2d230e28b931e2130",
+    "lastHarvestedAt": "2026-10-13T16:03:30.622Z",
+    "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv6vemvd"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
     "repository": "stabilityai/stable-diffusion-3-medium",
@@ -965,9 +965,9 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "5706bdd2ec9b5c5d45ae6f0e3ac2d540b4da04206e85bab6df3c8daff7590689",
-    "lastHarvestedAt": "2026-10-12T03:16:06.489Z",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4ojwc0"
+    "contentHash": "17cb85ef375aceced9e3aa8b69b2eeb5fec07f8b47b9026e1f70e88c39e6d1c4",
+    "lastHarvestedAt": "2026-10-13T16:06:33.097Z",
+    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv6vijov"
   },
   "hf-bigscience-bloom": {
     "repository": "bigscience/bloom",
@@ -975,9 +975,9 @@
     "sourceUrl": "https://huggingface.co/bigscience/bloom",
     "sourceVersion": "hf-bigscience-bloom",
     "license": "Open-Source",
-    "contentHash": "24f015a9882946ef734a593825f866531e64148884257704a07239fc4f59e04c",
-    "lastHarvestedAt": "2026-10-11T21:04:33.684Z",
-    "learningId": "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
+    "contentHash": "b0ec7d2504227cca9bd06567e4958a006d71f7a45600115e71b85e362dc666b6",
+    "lastHarvestedAt": "2026-10-13T16:09:40.963Z",
+    "learningId": "learn-huggingface-hf-bigscience-bloom-mv6vmkmp"
   },
   "hf-openai-gpt-oss-20b": {
     "repository": "openai/gpt-oss-20b",
@@ -985,9 +985,9 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceVersion": "hf-openai-gpt-oss-20b",
     "license": "Open-Source",
-    "contentHash": "b32500a0613ca69f8874546a9031df64608eacf32d6501319456ade61ce32f46",
-    "lastHarvestedAt": "2026-10-11T21:07:49.991Z",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv4beakp"
+    "contentHash": "bbbd95b4e43fb7cad197ccf0efc56611ec332d761260a57d2cd2274515cdc648",
+    "lastHarvestedAt": "2026-10-13T16:12:53.935Z",
+    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv6vqpiu"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
     "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -995,9 +995,9 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "440c870976bce401e7ff40c0e550df81bc168a356547bc454c2910d745082fb7",
-    "lastHarvestedAt": "2026-10-11T21:10:41.357Z",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
+    "contentHash": "1d62e042a25a57b08aa0202b7ab543b2bbbf7e558bb09f34b1456531ce68de55",
+    "lastHarvestedAt": "2026-10-13T16:16:21.307Z",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv6vv5h3"
   },
   "hf-meta-llama-llama-2-7b": {
     "repository": "meta-llama/Llama-2-7b",
@@ -1005,9 +1005,9 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "1efbe2626f2c4c27089b2b477d3176a4ccb3d21d47c3fdcbb56bcfcd762934bb",
-    "lastHarvestedAt": "2026-10-11T21:13:32.412Z",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv4blmsc"
+    "contentHash": "bf20f671588bf27214b59016e56b2bcc43d0fc0821fa956dc66db9951b404ffb",
+    "lastHarvestedAt": "2026-10-13T16:19:19.062Z",
+    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv6vyyp3"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1015,9 +1015,9 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
     "license": "Open-Source",
-    "contentHash": "b96d5f0a7119848f75cdf9ccfad14a611df23bc5df192dd1bcf4ab2ea2bd90e3",
-    "lastHarvestedAt": "2026-10-11T21:16:43.051Z",
-    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4bppvo"
+    "contentHash": "7e1c899c5b268e68a168e37e2812f616b09cb07c090ca2c0b2ff54ce7f5a9123",
+    "lastHarvestedAt": "2026-10-13T16:22:26.480Z",
+    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv6w2zb2"
   },
   "hf-deepseek-ai-deepseek-v3": {
     "repository": "deepseek-ai/DeepSeek-V3",
@@ -1025,9 +1025,9 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
     "sourceVersion": "hf-deepseek-ai-deepseek-v3",
     "license": "Open-Source",
-    "contentHash": "88978d03df91cd210bd9996ea95f15e202e30f5157ab9bfa38f3985405ff1082",
-    "lastHarvestedAt": "2026-10-11T21:19:33.229Z",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4btd7d"
+    "contentHash": "ed1a2d4e4051e298fd27e7b8018210e24447b038aa7473896220e2a76df5dab1",
+    "lastHarvestedAt": "2026-10-13T16:25:42.983Z",
+    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6w76yr"
   },
   "hf-baidu-unlimited-ocr": {
     "repository": "baidu/Unlimited-OCR",
@@ -1035,9 +1035,9 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "5576c26eef65a64b907dc019eccf9f88bcda554533facbc217354e50e8712865",
-    "lastHarvestedAt": "2026-10-11T21:22:35.382Z",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt"
+    "contentHash": "f1c08f5929968553a7f115d10af5d4c53530a1482029b7ceee0dfcd1dfb3bd9e",
+    "lastHarvestedAt": "2026-10-13T16:28:59.586Z",
+    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv6wben8"
   },
   "hf-aleph-alpha-kolibri-1": {
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -1045,9 +1045,9 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1",
     "license": "Open-Source",
-    "contentHash": "c42ba1472a1485912a9149061f02f4c30b6d18b0007480d0ac5ab79fa2ae8390",
-    "lastHarvestedAt": "2026-10-11T21:25:29.225Z",
-    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx"
+    "contentHash": "da86ab58371e66698c7c4c0ab37f50caf73e47d6f00adaf0afe278ab9a557f8b",
+    "lastHarvestedAt": "2026-10-13T16:32:11.248Z",
+    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6wfiiq"
   },
   "hf-speridlabs-iris-3b": {
     "repository": "speridlabs/iris-3b",
@@ -1055,9 +1055,9 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "1f249f88ee75ce9a7d2c57d1f616359efb3a9f64369be26f843cfcc24f603054",
-    "lastHarvestedAt": "2026-10-11T21:28:36.888Z",
-    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3"
+    "contentHash": "dfabc363bd9a2c5dd757b45eeece799506953878afdbe458eaea34332bdc9fe9",
+    "lastHarvestedAt": "2026-10-13T16:35:34.576Z",
+    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv6wjve5"
   },
   "hf-qwen-qwen3-4b": {
     "repository": "Qwen/Qwen3-4B",
@@ -1065,9 +1065,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "8a040370d61f2e4c09dd0bcc815734724882e15a013759dd0f7d555501f61be2",
-    "lastHarvestedAt": "2026-10-11T21:31:20.777Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv4c8j52"
+    "contentHash": "f54b2ac37f01aa75019226682fb6e37849b25f927409a79501cda9cbcbb3259c",
+    "lastHarvestedAt": "2026-10-13T16:38:37.882Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv6wnsuy"
   },
   "hf-fermionresearch-phonon-2": {
     "repository": "FermionResearch/Phonon-2",
@@ -1075,9 +1075,9 @@
     "sourceUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceVersion": "hf-fermionresearch-phonon-2",
     "license": "Open-Source",
-    "contentHash": "8e584ffa8cc95be4d97ff145e374b5bd1f9a1e730680f82e0d439421b582b2ae",
-    "lastHarvestedAt": "2026-10-11T21:34:35.003Z",
-    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv4ccp0f"
+    "contentHash": "b62efeb096fe9de4223a66214a2e91132aaea51d68dc889057f121be5abd6ca6",
+    "lastHarvestedAt": "2026-10-13T16:41:41.639Z",
+    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv6wrqmu"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -1085,9 +1085,9 @@
     "sourceUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
     "sourceVersion": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
     "license": "Open-Source",
-    "contentHash": "34bd7ef3c6e2ae0cc7c2771ed3c12a06b2a3030faa9f14e6c063c9fbbb122adb",
-    "lastHarvestedAt": "2026-10-11T21:37:29.852Z",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7"
+    "contentHash": "232871ea6717853a858d3a728b09a2c00079679881724d7169b899e54e5e61f8",
+    "lastHarvestedAt": "2026-10-13T16:44:45.996Z",
+    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv6wvovt"
   },
   "hf-pablodawson-minimax-h3-360-orbit-lora": {
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1095,9 +1095,9 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "6a798f97d4d4781f2fb23c0b887915e6f153901f5573906cda02bdfe55afe931",
-    "lastHarvestedAt": "2026-10-11T21:40:37.001Z",
-    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
+    "contentHash": "11ac4d15ad143239a25d21d1434a9ea127fe98246ef778c5438bbb18281c94ed",
+    "lastHarvestedAt": "2026-10-13T16:48:00.521Z",
+    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv6wzuxa"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1105,9 +1105,9 @@
     "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
     "license": "Open-Source",
-    "contentHash": "530430f856094584234622d996c296c23a2554f7afef4bdde165bae54c255177",
-    "lastHarvestedAt": "2026-10-11T21:43:28.542Z",
-    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
+    "contentHash": "00a47ea2f1fbfdc69dbc751bc21c3b684107858fb1a93ca95cbedb10c865a1b8",
+    "lastHarvestedAt": "2026-10-13T16:50:56.606Z",
+    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv6x3mum"
   },
   "hf-naiveai-naive-n0.5-flash": {
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1115,9 +1115,9 @@
     "sourceUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
     "sourceVersion": "hf-naiveai-naive-n0.5-flash",
     "license": "Open-Source",
-    "contentHash": "3a9e2058b244bee6974411b08d97850b0dd99f5a9a9fc03ce92722b7e1162317",
-    "lastHarvestedAt": "2026-10-11T21:46:18.948Z",
-    "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv4crs6s"
+    "contentHash": "f84932558ac0775e0ea051f134cd83175e62db2fd12d35206a7cbcf41c7f546e",
+    "lastHarvestedAt": "2026-10-13T16:54:00.355Z",
+    "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv6x7kmp"
   },
   "hf-openai-clip-vit-base-patch32": {
     "repository": "openai/clip-vit-base-patch32",
@@ -1125,9 +1125,9 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "86dd080ff8d3757393c91890d70de6a4ee0f846b375f5e3766e96d3b0bab0628",
-    "lastHarvestedAt": "2026-10-11T21:49:22.884Z",
-    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
+    "contentHash": "a3b37ba6ebde8b3aaf1dae45ed421302c62e65ed50cce83977c3a025bb9736fc",
+    "lastHarvestedAt": "2026-10-13T16:57:05.523Z",
+    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv6xbjia"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1135,9 +1135,9 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "e04c3f41197c64074b49ce6dc99ad45d7ded4c93dbd5f7246a802de1215f95d2",
-    "lastHarvestedAt": "2026-10-11T21:52:33.306Z",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14"
+    "contentHash": "bb0c65474425dcb921765143225da76fcc936954068b7e5ceb39112744665cc1",
+    "lastHarvestedAt": "2026-10-13T17:00:01.461Z",
+    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6xfbaj"
   },
   "hf-baai-bge-reranker-v2-m3": {
     "repository": "BAAI/bge-reranker-v2-m3",
@@ -1145,9 +1145,9 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceVersion": "hf-baai-bge-reranker-v2-m3",
     "license": "Open-Source",
-    "contentHash": "e8cddf25687528b69a6024401d3319e76617d9f31bbdbb71f26daaf28d9bf194",
-    "lastHarvestedAt": "2026-10-11T21:55:48.909Z",
-    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp"
+    "contentHash": "8d32cc4e19b72821ac5cdb1afa7420d194de18000f0ec97728abf7f7e796841b",
+    "lastHarvestedAt": "2026-10-13T17:03:16.986Z",
+    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6xji5s"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1155,9 +1155,9 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "cd6045de8027960dc9b627c6209c82dcacafec471daff52ebf1292df0cf44b08",
-    "lastHarvestedAt": "2026-10-11T21:58:38.121Z",
-    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
+    "contentHash": "81bdf7ba7375584fe52b735733cf2c2e1a05f64fbc08d77d7119aeee5a226a3c",
+    "lastHarvestedAt": "2026-10-13T17:06:29.611Z",
+    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6xnmrd"
   },
   "hf-facebookai-xlm-roberta-base": {
     "repository": "FacebookAI/xlm-roberta-base",
@@ -1165,9 +1165,9 @@
     "sourceUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceVersion": "hf-facebookai-xlm-roberta-base",
     "license": "Open-Source",
-    "contentHash": "102d508eead78d8711a878d65fbb5458c25df7aa7d2685b87784eb51ab46fcf0",
-    "lastHarvestedAt": "2026-10-11T22:01:38.914Z",
-    "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d"
+    "contentHash": "0b3b7ccb9fbc2d97d2aaaffba9f1cd9275ef54960f196dac9006f776a29132a3",
+    "lastHarvestedAt": "2026-10-13T17:09:25.510Z",
+    "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv6xreim"
   },
   "hf-openai-community-gpt2": {
     "repository": "openai-community/gpt2",
@@ -1175,9 +1175,9 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "4dc88b7ebeb2ec526e3b3f513b8c419bd8132a0799765906bca2f7743456e1e3",
-    "lastHarvestedAt": "2026-10-11T22:04:43.533Z",
-    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv4dfghb"
+    "contentHash": "81865f3f87b542ba727285bf6394a794df7f1af0c960ab6a0b13f7ca1a5a40c2",
+    "lastHarvestedAt": "2026-10-13T17:12:30.823Z",
+    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv6xvdgv"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1185,9 +1185,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "31b09193f16b7add63a5ccd7c97dffdb34bafc30fa4c73ecec66fc068ea24368",
-    "lastHarvestedAt": "2026-10-11T22:07:39.095Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1"
+    "contentHash": "fe5985902847f4fa023ebd8cee923e07a38d6c9c51a0ba7816aceeba0f87f2e9",
+    "lastHarvestedAt": "2026-10-13T17:15:36.465Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv6xzcpo"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1195,9 +1195,9 @@
     "sourceUrl": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
     "sourceVersion": "hf-nomic-ai-nomic-embed-text-v1.5",
     "license": "Open-Source",
-    "contentHash": "a1ead13c8491a0dbd6a4136a6b09fc032b7b54bf1996216f2d9a0ef5e111d0e3",
-    "lastHarvestedAt": "2026-10-11T22:10:52.379Z",
-    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
+    "contentHash": "eaa4bb26cc7b3a3b0b5ddfd4057d651094a981cc7e1cdf952158d19907fefc1e",
+    "lastHarvestedAt": "2026-10-13T17:18:29.759Z",
+    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv6y32gr"
   },
   "hf-conwayresearch-underdog-saluki-27b-1.0": {
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -1205,9 +1205,9 @@
     "sourceUrl": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
     "sourceVersion": "hf-conwayresearch-underdog-saluki-27b-1.0",
     "license": "Open-Source",
-    "contentHash": "218b4e6b376dc59ad058d24b5f6be737f46aaa5782c0b574edd57c833546ab6f",
-    "lastHarvestedAt": "2026-10-11T22:13:49.435Z",
-    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
+    "contentHash": "99ddc4a5884bc7045eeff480b807d77a06161a7a9f6851030f20c88812581bce",
+    "lastHarvestedAt": "2026-10-13T17:23:05.759Z",
+    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6y8zcb"
   },
   "hf-google-gemma-4-26b-a4b-it": {
     "repository": "google/gemma-4-26B-A4B-it",
@@ -1215,9 +1215,9 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
     "license": "Open-Source",
-    "contentHash": "c5ca9b952882db4cfacd36f0986a7279bfce8c8af95c69fafa0134eb24e7552a",
-    "lastHarvestedAt": "2026-10-11T22:16:49.118Z",
-    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4dv0ce"
+    "contentHash": "15429ed81a741df020bed224f5ba5c6b4f62f28be013ccc77b15b19a7eb65e3d",
+    "lastHarvestedAt": "2026-10-13T17:27:02.875Z",
+    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv6ye2da"
   },
   "infisical-infisical": {
     "repository": "Infisical/infisical",
@@ -1235,9 +1235,9 @@
     "sourceUrl": "https://huggingface.co/intfloat/multilingual-e5-small",
     "sourceVersion": "hf-intfloat-multilingual-e5-small",
     "license": "Open-Source",
-    "contentHash": "edad5c5fd192b35d1dc039ee8e24f2fe2ccf5a8a1f847d6cfb7b2ab2ad0803d1",
-    "lastHarvestedAt": "2026-10-11T22:20:01.585Z",
-    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0"
+    "contentHash": "2b3448abc3cc352599d0c5c0b4d493176c6d9e886525a7753363772b9a78624c",
+    "lastHarvestedAt": "2026-10-13T17:30:12.537Z",
+    "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv6yi4pg"
   },
   "hf-argmaxinc-whisperkit-coreml": {
     "repository": "argmaxinc/whisperkit-coreml",
@@ -1245,9 +1245,9 @@
     "sourceUrl": "https://huggingface.co/argmaxinc/whisperkit-coreml",
     "sourceVersion": "hf-argmaxinc-whisperkit-coreml",
     "license": "Open-Source",
-    "contentHash": "849ae816f3aa5a7ea719093d1207568d053e64d26a0b0b7159b5156dd5ddad47",
-    "lastHarvestedAt": "2026-10-11T22:22:52.924Z",
-    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
+    "contentHash": "1839364a827f545f3efd1c33342f42ecfd75d941ff51453ce932bcc124cfbc94",
+    "lastHarvestedAt": "2026-10-13T17:33:25.291Z",
+    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv6ym9fg"
   },
   "hf-qwen-qwen3-8b": {
     "repository": "Qwen/Qwen3-8B",
@@ -1255,9 +1255,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "136d3f860feef8e9096c458b1ed0d8edcb0f72e6d24b19b1a38d2e60ed417de6",
-    "lastHarvestedAt": "2026-10-11T22:26:02.710Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv4e6vig"
+    "contentHash": "1e89caa00aa8bef7166a621e3a511a51c7695bd687bff164622bb55e01f55f39",
+    "lastHarvestedAt": "2026-10-13T17:36:29.426Z",
+    "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv6yq7i4"
   },
   "hf-google-vit-base-patch16-224": {
     "repository": "google/vit-base-patch16-224",
@@ -1265,9 +1265,9 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "d5f34f3af49629648c2aca16c02791a5a6f4601eeec988acf07a6f5a1271a60e",
-    "lastHarvestedAt": "2026-10-11T22:28:52.935Z",
-    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
+    "contentHash": "d0b5884fefee93aa3bd1bfe0574b95e071ed7b0f712ab24ccb285264f7c3624a",
+    "lastHarvestedAt": "2026-10-13T17:39:39.766Z",
+    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv6yuaen"
   },
   "hf-google-gemma-4-31b-it": {
     "repository": "google/gemma-4-31B-it",
@@ -1275,9 +1275,9 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-31B-it",
     "sourceVersion": "hf-google-gemma-4-31b-it",
     "license": "Open-Source",
-    "contentHash": "ffe2dfe1ed717adacbfc5142d5ce16335bd7f6f34c3d743544d65844fc89e1f1",
-    "lastHarvestedAt": "2026-10-11T22:31:38.181Z",
-    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
+    "contentHash": "c22599bca0df9039a88702a73cced19801e594419dbc3f64e893525822d02dff",
+    "lastHarvestedAt": "2026-10-13T17:42:47.221Z",
+    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv6yyb0h"
   },
   "hf-baai-bge-base-en-v1.5": {
     "repository": "BAAI/bge-base-en-v1.5",
@@ -1285,9 +1285,9 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceVersion": "hf-baai-bge-base-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "7b0a3a2a25b3ee5cbdae95e40e5a27431c61e68539f1c1ed677a3a4f763bf6eb",
-    "lastHarvestedAt": "2026-10-11T22:34:51.992Z",
-    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
+    "contentHash": "3b33420e13fad106ce87cbdd8beb91e5f0b6c49a676d425f14600714e5aefae7",
+    "lastHarvestedAt": "2026-10-13T17:45:50.453Z",
+    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6z28e8"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -1295,9 +1295,9 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "9dc97aa4140f1d2c935f031b4e1b8c553967b5f65f6767a198a810805f4ff015",
-    "lastHarvestedAt": "2026-10-11T22:38:02.312Z",
-    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
+    "contentHash": "dc8dc18885ef2fce984e2f45474a58a9e6ddb92ba5bcdddecb874e08188353c0",
+    "lastHarvestedAt": "2026-10-13T17:48:58.523Z",
+    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv6z69ii"
   },
   "autonomous-ai-openharness": {
     "repository": "autonomous-ai/openharness",
@@ -1309,6 +1309,7 @@
     "lastHarvestedAt": "2026-10-11T16:46:45.020Z",
     "learningId": "learn-github-autonomous-ai-openharness-mv422jff"
   },
+<<<<<<< HEAD
   "test-idempotent-slug": {
     "repository": "test-idempotent-org/test-repo",
     "platform": "github",
@@ -1328,5 +1329,156 @@
     "contentHash": "19edfb6bfa6518959f063410111422fe6b03ac63689a0bfd099fdeeaaf71d0ce",
     "lastHarvestedAt": "2026-10-13T17:43:45.427Z",
     "learningId": "learn-github-test-update-org-test-update-repo"
+=======
+  "fei2411-deepseek-bot": {
+    "repository": "Fei2411/DeepSeek-Bot",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Fei2411/DeepSeek-Bot",
+    "sourceVersion": "62394312",
+    "license": "Apache-2.0",
+    "contentHash": "3d033e108b8b932f013f6401dd3cc9ea26e969f11599ff8b24a152f47e9ab32f",
+    "lastHarvestedAt": "2026-10-12T04:47:30.653Z",
+    "learningId": "learn-github-fei2411-deepseek-bot-mv4rtfyk"
+  },
+  "hf-abenzerps-qwen-image-2.1-uncensored-quantized": {
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+    "license": "Open-Source",
+    "contentHash": "7ed5edcdc1b7417edac7448391f87ab4770502f49a6e3d54294decee70bfb028",
+    "lastHarvestedAt": "2026-10-13T12:06:06.744Z",
+    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv6mxc84"
+  },
+  "iliyami-macsai": {
+    "repository": "iliyami/MacSai",
+    "platform": "github",
+    "sourceUrl": "https://github.com/iliyami/MacSai",
+    "sourceVersion": "06271a8f",
+    "license": "BSD-3-Clause",
+    "contentHash": "7aab75b7616976bb3a59cedbf160d872b117959d7affab447edfbc6839441961",
+    "lastHarvestedAt": "2026-10-12T08:38:18.764Z",
+    "learningId": "learn-github-iliyami-macsai-mv50297p"
+  },
+  "duty1g-x64dbg-mcp-server": {
+    "repository": "duty1g/x64dbg-mcp-server",
+    "platform": "github",
+    "sourceUrl": "https://github.com/duty1g/x64dbg-mcp-server",
+    "sourceVersion": "18be30ab",
+    "license": "MIT",
+    "contentHash": "5a62b5e227d874691f28643800e99a028f300dcea3d6b6c81ce81f5242901138",
+    "lastHarvestedAt": "2026-10-12T09:58:39.532Z",
+    "learningId": "learn-github-duty1g-x64dbg-mcp-server-mv52xkxd"
+  },
+  "paperclipai-paperclip": {
+    "repository": "paperclipai/paperclip",
+    "platform": "github",
+    "sourceUrl": "https://github.com/paperclipai/paperclip",
+    "sourceVersion": "fb21a3f3",
+    "license": "MIT",
+    "contentHash": "4b05325c29df6e1f9888cc1a978c8d9fc9976e2c0fca993b15a4a1f4180996f2",
+    "lastHarvestedAt": "2026-10-12T13:54:15.590Z",
+    "learningId": "learn-github-paperclipai-paperclip-mv5bckez"
+  },
+  "cosscom-ui": {
+    "repository": "cosscom/ui",
+    "platform": "github",
+    "sourceUrl": "https://github.com/cosscom/ui",
+    "sourceVersion": "28645cd8",
+    "license": "AGPL-3.0",
+    "contentHash": "b0b6b233b446e06ab95e6410d88046819990fb657168f77596bdbddfcd6ac60b",
+    "lastHarvestedAt": "2026-10-12T19:59:38.672Z",
+    "learningId": "learn-github-cosscom-ui-mv5oegcc"
+  },
+  "ebony-vinyl-dsh-our-free-model": {
+    "repository": "Ebony-Vinyl/dsh-our-free-model",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Ebony-Vinyl/dsh-our-free-model",
+    "sourceVersion": "ddb451c2",
+    "license": "MIT",
+    "contentHash": "27bbe78cd23740f523edbe38e6c4a2a931d3d7ebc4c3a2107cca2979c1d3e036",
+    "lastHarvestedAt": "2026-10-12T22:42:23.011Z",
+    "learningId": "learn-github-ebony-vinyl-dsh-our-free-model-mv5u7qjj"
+  },
+  "hf-autotrust-jev-35b": {
+    "repository": "autotrust/JEV-35B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
+    "sourceVersion": "hf-autotrust-jev-35b",
+    "license": "Open-Source",
+    "contentHash": "0ce5413d774f2e439952c8e4078514ef6d11f126e65d9911e500de827e87e0c7",
+    "lastHarvestedAt": "2026-10-13T19:37:55.839Z",
+    "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv732dr6"
+  },
+  "hf-openbmb-minicpm-v-4.7-35b-a3b": {
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+    "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+    "license": "Open-Source",
+    "contentHash": "9b9bade393b42dec81e3fd61329d2bcea9e067cb7a772150f5afca8e3cacd5d5",
+    "lastHarvestedAt": "2026-10-13T19:48:05.963Z",
+    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv73fgj9"
+  },
+  "hf-openbmb-minicpm-v-4.7-1b": {
+    "repository": "openbmb/MiniCPM-V-4.7-1B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+    "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
+    "license": "Open-Source",
+    "contentHash": "271f683674f7488c365ab9361f3a7c02dcc739cc4bd5db51b0772ddae02967ce",
+    "lastHarvestedAt": "2026-10-13T19:34:58.329Z",
+    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0"
+  },
+  "ccfos-nightingale": {
+    "repository": "ccfos/nightingale",
+    "platform": "github",
+    "sourceUrl": "https://github.com/ccfos/nightingale",
+    "sourceVersion": "97fe9297",
+    "license": "Apache-2.0",
+    "contentHash": "dd46b355fb975626e372af5eb1d2b6c6a2313d250aba90372fa28f57612e3831",
+    "lastHarvestedAt": "2026-10-13T12:12:52.808Z",
+    "learningId": "learn-github-ccfos-nightingale-mv6n61ix"
+  },
+  "trailhq-trail-code": {
+    "repository": "trailhq/Trail-Code",
+    "platform": "github",
+    "sourceUrl": "https://github.com/trailhq/Trail-Code",
+    "sourceVersion": "fe30ead3",
+    "license": "MIT",
+    "contentHash": "a3e3d17d1797f46c54475022aca228dc21bde024de195594897ae62ef8ab5156",
+    "lastHarvestedAt": "2026-10-13T13:00:37.921Z",
+    "learningId": "learn-github-trailhq-trail-code-mv6ovg9f"
+  },
+  "maxmiksa-autonomous-company": {
+    "repository": "MaxMiksa/Autonomous-Company",
+    "platform": "github",
+    "sourceUrl": "https://github.com/MaxMiksa/Autonomous-Company",
+    "sourceVersion": "c7c60dbd",
+    "license": "MIT",
+    "contentHash": "24bfd9ae257d9c76196707d2994c223f9eacf8dfcefc8542498e09a11ffc9ffc",
+    "lastHarvestedAt": "2026-10-13T14:51:24.484Z",
+    "learningId": "learn-github-maxmiksa-autonomous-company-mv6stwsa"
+  },
+  "tickernelz-opencode-mem": {
+    "repository": "tickernelz/opencode-mem",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tickernelz/opencode-mem",
+    "sourceVersion": "a2072d75",
+    "license": "MIT",
+    "contentHash": "cf2267e3fe0e904a62ad3c95aa3ad370f130a8bd45d03bc64cab1b29aae8cc42",
+    "lastHarvestedAt": "2026-10-13T18:17:57.254Z",
+    "learningId": "learn-github-tickernelz-opencode-mem-mv707j1j"
+  },
+  "hf-autotrust-jev-35b-nvfp4": {
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+    "sourceVersion": "hf-autotrust-jev-35b-nvfp4",
+    "license": "Open-Source",
+    "contentHash": "13de9f4208db95d3b5bc34db6051806f43921720c1f6680ba614f302934753a5",
+    "lastHarvestedAt": "2026-10-13T18:53:00.121Z",
+    "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi"
+>>>>>>> 9a6fbda9580b22ce4eaa5cedb62bf32156f4121e
   }
 }

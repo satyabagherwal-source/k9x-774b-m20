@@ -3,8 +3,8 @@
 > **Source Version**: `hf-viggle-qw`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-12T00:21:29.632Z  
-> **Learning ID**: `learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4`  
+> **Timestamp**: 2026-10-13T11:52:54.665Z  
+> **Learning ID**: `learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv6mgd55`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-12T00:21:28.790Z  
+> **Harvest Timestamp**: 2026-10-13T11:52:53.932Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 453180 downloads | 712 likes
+- **Stars / Engagement**: 472230 downloads | 723 likes
 
 ---
 

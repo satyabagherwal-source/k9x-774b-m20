@@ -1,5 +1,6 @@
 {
   "version": "1.0.0",
+<<<<<<< HEAD
   "last_updated": "2026-10-13T17:43:45.462Z",
   "total_cycles_completed": 363,
   "total_learnings_persisted": 363,
@@ -483,890 +484,1410 @@
     },
     {
       "timestamp": "2026-10-11T20:52:44.392Z",
+=======
+  "last_updated": "2026-10-13T19:54:09.314Z",
+  "total_cycles_completed": 1058,
+  "total_learnings_persisted": 1058,
+  "total_rules_promoted": 506,
+  "history": [
+    {
+      "timestamp": "2026-10-13T06:50:30.249Z",
+>>>>>>> 9a6fbda9580b22ce4eaa5cedb62bf32156f4121e
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv6bngqx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T20:55:35.688Z",
+      "timestamp": "2026-10-13T06:53:29.406Z",
       "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv4ayjzd",
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6brb0d",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T20:58:31.330Z",
+      "timestamp": "2026-10-13T06:56:37.452Z",
       "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv4b2bic",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv6bvc2l",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:01:52.131Z",
+      "timestamp": "2026-10-13T06:59:41.050Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4b6mg5",
-      "promotedRulesCount": 3,
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv6bz9r4",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:04:33.685Z",
+      "timestamp": "2026-10-13T07:16:39.484Z",
       "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-hf-bigscience-bloom-mv4ba34m",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-bigscience-bloom-mv6cl3jg",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:07:49.992Z",
+      "timestamp": "2026-10-13T07:23:57.314Z",
       "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv4beakp",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv6cuhbr",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:10:41.358Z",
+      "timestamp": "2026-10-13T07:29:25.248Z",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv6d1iec",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:13:32.413Z",
+      "timestamp": "2026-10-13T07:33:30.493Z",
       "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv4blmsc",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv6d6rnk",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:16:43.052Z",
+      "timestamp": "2026-10-13T07:42:45.951Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4bppvo",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv6dio83",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:19:33.230Z",
+      "timestamp": "2026-10-13T07:46:50.103Z",
       "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv4btd7d",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6dnwn0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:22:35.383Z",
+      "timestamp": "2026-10-13T07:51:15.595Z",
       "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv4bx9rt",
+      "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv6dtli4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:25:29.226Z",
+      "timestamp": "2026-10-13T07:54:32.279Z",
       "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx",
+      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6dxt9f",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:28:36.889Z",
+      "timestamp": "2026-10-13T08:15:12.073Z",
       "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv4c50o3",
+      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv6eodvz",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:31:20.778Z",
+      "timestamp": "2026-10-13T08:26:36.759Z",
       "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv4c8j52",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv6f327b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:34:35.005Z",
+      "timestamp": "2026-10-13T08:31:36.126Z",
       "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv4ccp0f",
+      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv6f9h6z",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:37:29.854Z",
+      "timestamp": "2026-10-13T08:34:34.303Z",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7",
+      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv6fdapi",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:40:37.002Z",
+      "timestamp": "2026-10-13T08:38:30.487Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv6ficw5",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:43:28.543Z",
+      "timestamp": "2026-10-13T08:41:34.889Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot",
+      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv6fmb82",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:46:18.948Z",
+      "timestamp": "2026-10-13T08:54:33.511Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv4crs6s",
+      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv6g2zzw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:49:22.884Z",
+      "timestamp": "2026-10-13T09:00:29.395Z",
       "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q",
+      "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv6gaml4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:52:33.307Z",
+      "timestamp": "2026-10-13T09:03:45.822Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6geu4x",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:55:48.910Z",
+      "timestamp": "2026-10-13T09:07:43.892Z",
       "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp",
+      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6gjxum",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T21:58:38.122Z",
+      "timestamp": "2026-10-13T09:12:00.964Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje",
+      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6gpg8j",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:01:38.915Z",
+      "timestamp": "2026-10-13T09:15:03.087Z",
       "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d",
-      "promotedRulesCount": 2,
+      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv6gtcqp",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:04:43.534Z",
+      "timestamp": "2026-10-13T09:18:08.429Z",
       "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv4dfghb",
+      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv6gxbqq",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:07:39.096Z",
+      "timestamp": "2026-10-13T09:21:10.484Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv6h1885",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:10:52.380Z",
+      "timestamp": "2026-10-13T09:24:17.221Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y",
+      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv6h58ba",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:13:49.436Z",
+      "timestamp": "2026-10-13T09:27:28.079Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-      "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5",
+      "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6h9blz",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:16:49.119Z",
+      "timestamp": "2026-10-13T09:30:16.919Z",
       "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4dv0ce",
+      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv6hcxw6",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:20:01.586Z",
+      "timestamp": "2026-10-13T09:33:08.727Z",
       "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv4dz4v0",
+      "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv6hgmgy",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:22:52.926Z",
+      "timestamp": "2026-10-13T09:36:21.249Z",
       "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv6hkqx7",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:26:02.711Z",
+      "timestamp": "2026-10-13T09:39:15.694Z",
       "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv4e6vig",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv6hohkw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:28:52.936Z",
+      "timestamp": "2026-10-13T09:44:16.314Z",
       "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut",
+      "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv6huxk0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:31:38.182Z",
+      "timestamp": "2026-10-13T09:47:19.220Z",
       "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq",
+      "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv6hyunz",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:34:51.992Z",
+      "timestamp": "2026-10-13T09:52:20.112Z",
       "repository": "BAAI/bge-base-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc",
+      "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6i5au8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:38:02.313Z",
+      "timestamp": "2026-10-13T09:55:24.888Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv6i99ep",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:41:25.364Z",
+      "timestamp": "2026-10-13T09:58:25.141Z",
       "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv4eqnev",
-      "promotedRulesCount": 2,
+      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv6id4ii",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:44:13.171Z",
+      "timestamp": "2026-10-13T10:01:37.356Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg",
+      "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ih8t4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:47:01.499Z",
+      "timestamp": "2026-10-13T10:04:52.916Z",
       "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv4exusx",
+      "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv6ilfpa",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:50:08.321Z",
+      "timestamp": "2026-10-13T10:07:58.659Z",
       "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv6ipf1c",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:53:17.532Z",
+      "timestamp": "2026-10-13T10:11:09.672Z",
       "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv6itidh",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:56:34.068Z",
+      "timestamp": "2026-10-13T10:14:03.772Z",
       "repository": "jialinyyzz/humanizer",
-      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf",
+      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv6ix8rk",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T22:59:28.856Z",
+      "timestamp": "2026-10-13T10:18:07.452Z",
       "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8",
+      "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv6j2gs9",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:02:20.780Z",
+      "timestamp": "2026-10-13T10:21:27.225Z",
       "repository": "autotrust/GEV-26B-Decide",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v",
+      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv6j6qx2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:05:35.769Z",
+      "timestamp": "2026-10-13T10:24:27.934Z",
       "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7",
+      "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv6jamcu",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:08:31.421Z",
+      "timestamp": "2026-10-13T10:27:18.963Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i",
+      "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv6jeacz",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:11:35.953Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho",
+      "timestamp": "2026-10-13T10:30:16.915Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv6ji3nb",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:14:39.605Z",
+      "timestamp": "2026-10-13T10:33:18.302Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65",
-      "promotedRulesCount": 2,
+      "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv6jlzlu",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:17:25.753Z",
+      "timestamp": "2026-10-13T10:36:17.544Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2",
+      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv6jptw6",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:20:33.758Z",
+      "timestamp": "2026-10-13T10:39:10.506Z",
       "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk",
+      "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv6jtjdt",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:23:43.015Z",
+      "timestamp": "2026-10-13T10:42:18.305Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4g91hj",
+      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv6jxk9a",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:26:55.002Z",
+      "timestamp": "2026-10-13T10:45:13.131Z",
       "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv4gd5ma",
+      "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv6k1b6s",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:29:47.084Z",
+      "timestamp": "2026-10-13T10:48:29.286Z",
       "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv4gguek",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv6k5igt",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:32:43.074Z",
+      "timestamp": "2026-10-13T10:51:27.012Z",
       "repository": "Qwen/Qwen3.8-27B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv4gkm75",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv6k9bn9",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:35:54.960Z",
+      "timestamp": "2026-10-13T10:54:24.114Z",
       "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m",
-      "promotedRulesCount": 3,
+      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv6kd4ar",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:38:59.611Z",
+      "timestamp": "2026-10-13T10:57:16.248Z",
       "repository": "FrancisRing/Prism",
-      "learningId": "learn-huggingface-hf-francisring-prism-mv4gsoqj",
+      "learningId": "learn-huggingface-hf-francisring-prism-mv6kgt5g",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:42:15.737Z",
+      "timestamp": "2026-10-13T11:00:18.818Z",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z",
+      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv6kkpzp",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:45:02.370Z",
+      "timestamp": "2026-10-13T11:06:35.103Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4",
+      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv6kssbw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:47:57.607Z",
+      "timestamp": "2026-10-13T11:09:34.223Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur",
+      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv6kwmk5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:51:12.155Z",
+      "timestamp": "2026-10-13T11:12:39.866Z",
       "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv6l0lsa",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:54:05.929Z",
+      "timestamp": "2026-10-13T11:15:51.241Z",
       "repository": "moonshotai/Kimi-K3",
-      "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y",
+      "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv6l4pg5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-11T23:57:18.988Z",
+      "timestamp": "2026-10-13T11:18:46.736Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv6l8gvf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:22:06.861Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv6lcra4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:25:17.244Z",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv6lgu5i",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:00:24.001Z",
+      "timestamp": "2026-10-13T11:28:03.698Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv6lken7",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T11:31:16.474Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv6lojb9",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:03:11.144Z",
+      "timestamp": "2026-10-13T11:34:16.988Z",
       "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw",
+      "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv6lsenc",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:06:17.060Z",
+      "timestamp": "2026-10-13T11:37:37.410Z",
       "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t",
+      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv6lwpal",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:09:14.214Z",
+      "timestamp": "2026-10-13T11:40:49.475Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7",
+      "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv6m0thg",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:12:27.123Z",
+      "timestamp": "2026-10-13T11:43:47.277Z",
       "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv4hzpqi",
+      "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv6m4mpe",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:15:22.221Z",
+      "timestamp": "2026-10-13T11:46:57.074Z",
       "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub",
+      "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv6m8p2n",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:18:18.481Z",
+      "timestamp": "2026-10-13T11:49:53.565Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv4i78uo",
+      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv6mchby",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:21:29.737Z",
+      "timestamp": "2026-10-13T11:52:54.778Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv4ibcf4",
+      "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv6mgd55",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:24:26.495Z",
+      "timestamp": "2026-10-13T11:57:01.582Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl",
-      "promotedRulesCount": 3,
+      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv6mlnle",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:27:28.263Z",
+      "timestamp": "2026-10-13T12:00:02.386Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129",
+      "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv6mpj2y",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:30:22.257Z",
+      "timestamp": "2026-10-13T12:03:05.137Z",
       "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh",
+      "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv6mtg43",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:33:23.850Z",
+      "timestamp": "2026-10-13T12:06:06.745Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv6mxc84",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T12:12:52.810Z",
+      "repository": "ccfos/nightingale",
+      "learningId": "learn-github-ccfos-nightingale-mv6n61ix",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T12:26:18.342Z",
       "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex",
+      "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:36:37.708Z",
+      "timestamp": "2026-10-13T12:29:24.465Z",
       "repository": "Altworld/Hemmingway-1",
-      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04",
+      "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv6nrao5",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:39:23.622Z",
+      "timestamp": "2026-10-13T12:32:33.200Z",
       "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:42:36.830Z",
+      "timestamp": "2026-10-13T12:35:19.858Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv6nywz1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:45:31.477Z",
+      "timestamp": "2026-10-13T12:38:28.040Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm",
+      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv6o2y4v",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:48:35.301Z",
+      "timestamp": "2026-10-13T12:41:36.385Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo",
+      "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:51:46.656Z",
+      "timestamp": "2026-10-13T12:44:30.909Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc",
+      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv6oaq4r",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:54:52.378Z",
+      "timestamp": "2026-10-13T12:47:34.715Z",
       "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no",
-      "promotedRulesCount": 2,
+      "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv6oenyn",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T00:57:41.075Z",
+      "timestamp": "2026-10-13T12:50:40.704Z",
       "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv4jlvuj",
+      "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv6oingw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T01:00:36.669Z",
+      "timestamp": "2026-10-13T12:53:38.867Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5",
+      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv6omgxr",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T01:03:27.184Z",
+      "timestamp": "2026-10-13T13:00:37.922Z",
+      "repository": "trailhq/Trail-Code",
+      "learningId": "learn-github-trailhq-trail-code-mv6ovg9f",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:14:43.642Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv6pdkuf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T01:06:39.171Z",
+      "timestamp": "2026-10-13T13:17:45.714Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv6phhby",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T01:09:48.667Z",
+      "timestamp": "2026-10-13T13:20:39.953Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95",
+      "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv6pl7t8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T01:12:41.022Z",
+      "timestamp": "2026-10-13T13:23:43.616Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv4k568v",
+      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv6pp5i4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T01:15:36.213Z",
+      "timestamp": "2026-10-13T13:26:51.125Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7",
+      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv6pt65c",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T01:18:46.079Z",
+      "timestamp": "2026-10-13T13:31:07.877Z",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:21:48.738Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:24:57.978Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:27:49.357Z",
-      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-      "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv4kon4a",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:30:43.455Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-hf-psrben-visionhope-mv4ksdgc",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:33:36.594Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:36:51.975Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:40:06.977Z",
-      "repository": "facebook/sam3",
-      "learningId": "learn-huggingface-hf-facebook-sam3-mv4l4ga1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:42:59.967Z",
-      "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:45:45.677Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:48:32.236Z",
-      "repository": "canberkkkkkk/ema-lightning",
-      "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:51:44.280Z",
-      "repository": "google/embeddinggemma-2",
-      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv4ljeb8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T01:54:55.457Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T02:01:11.337Z",
-      "repository": "Cloudflare/clef",
-      "learningId": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T02:04:01.158Z",
-      "repository": "Cloudflare/clef-flash",
-      "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T02:06:47.393Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T02:09:46.876Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T02:13:09.960Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv4maybt",
+      "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv6pyo9c",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:16:11.114Z",
+      "timestamp": "2026-10-13T13:34:05.473Z",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
+      "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv6q2hbp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:37:21.882Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv6q6ov5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:40:29.575Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv6qapp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:43:29.290Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-hf-psrben-visionhope-mv6qekdo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:46:39.060Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv6qimse",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:49:32.787Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv6qmcvj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:52:49.774Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-hf-facebook-sam3-mv6qqksb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:55:49.678Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv6qufnc",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T13:58:56.986Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv6qyg6e",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:04:24.887Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv6r5h7b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:07:17.242Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv6r967u",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:10:22.090Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv6rd4t2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:13:29.604Z",
+      "repository": "Cloudflare/clef",
+      "learningId": "learn-huggingface-hf-cloudflare-clef-mv6rh5gf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:16:27.189Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv6rkyiu",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:21:57.500Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv6rs1dv",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:27:22.999Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv6rz0hx",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:30:34.524Z",
+      "repository": "google/electra-base-discriminator",
+      "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv6s34bk",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:35:40.502Z",
       "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-m3-mv4meu5h",
+      "learningId": "learn-huggingface-hf-baai-bge-m3-mv6s9ofa",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:18:56.978Z",
+      "timestamp": "2026-10-13T14:38:35.519Z",
       "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv6sdfhz",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:21:50.986Z",
+      "timestamp": "2026-10-13T14:51:24.486Z",
+      "repository": "MaxMiksa/Autonomous-Company",
+      "learningId": "learn-github-maxmiksa-autonomous-company-mv6stwsa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T14:57:20.461Z",
       "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm",
+      "learningId": "learn-huggingface-hf-google-t5-t5-small-mv6t1jig",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:24:45.672Z",
+      "timestamp": "2026-10-13T15:02:39.180Z",
       "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o",
-      "promotedRulesCount": 0,
+      "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv6t8ddi",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:27:55.600Z",
+      "timestamp": "2026-10-13T15:05:38.198Z",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv4mtxpo",
+      "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv6tc7j6",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:30:50.570Z",
+      "timestamp": "2026-10-13T15:11:04.239Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2",
+      "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv6tj73m",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:34:04.275Z",
+      "timestamp": "2026-10-13T15:14:13.123Z",
       "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n",
+      "learningId": "learn-huggingface-hf-amazon-chronos-2-mv6tn8uj",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:37:01.448Z",
+      "timestamp": "2026-10-13T15:19:11.097Z",
       "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6",
+      "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv6ttmsd",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:39:57.251Z",
+      "timestamp": "2026-10-13T15:22:30.159Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv4n9ejx",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv6txwbf",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:42:44.205Z",
+      "timestamp": "2026-10-13T15:25:35.399Z",
       "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv4nczd5",
+      "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv6u1vaq",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:45:54.429Z",
+      "timestamp": "2026-10-13T15:29:59.833Z",
       "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv4nh25q",
+      "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv6u7jcp",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:49:00.643Z",
+      "timestamp": "2026-10-13T15:35:01.218Z",
       "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq",
+      "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv6udzwl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:52:13.121Z",
+      "timestamp": "2026-10-13T15:38:00.680Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca",
+      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv6uhudo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:54:59.773Z",
+      "timestamp": "2026-10-13T15:41:07.475Z",
       "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv4nsqyu",
+      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv6uluhq",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T02:57:52.431Z",
+      "timestamp": "2026-10-13T15:46:08.404Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv6usape",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T03:01:09.726Z",
+      "timestamp": "2026-10-13T15:49:07.591Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv4o0odx",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv6uw4yx",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T03:04:25.192Z",
+      "timestamp": "2026-10-13T15:52:25.700Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv4o4v7p",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-12T03:07:21.694Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney",
+      "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv6v0dro",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T03:10:08.967Z",
+      "timestamp": "2026-10-13T15:55:25.045Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv6v4878",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T15:58:31.085Z",
       "repository": "openai/gpt-oss-120b",
-      "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv4oc8h1",
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6v87qw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T03:13:11.800Z",
+      "timestamp": "2026-10-13T16:03:30.624Z",
       "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv4og5jo",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv6vemvd",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
     {
-      "timestamp": "2026-10-12T03:16:06.490Z",
+      "timestamp": "2026-10-13T16:06:33.098Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4ojwc0",
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv6vijov",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:09:40.964Z",
+      "repository": "bigscience/bloom",
+      "learningId": "learn-huggingface-hf-bigscience-bloom-mv6vmkmp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:12:53.936Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv6vqpiu",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:16:21.308Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv6vv5h3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:19:19.064Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv6vyyp3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:22:26.481Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv6w2zb2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:25:42.984Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6w76yr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:28:59.587Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv6wben8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:32:11.250Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6wfiiq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:35:34.577Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv6wjve5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:38:37.883Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-4b-mv6wnsuy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:41:41.641Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv6wrqmu",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:44:45.997Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv6wvovt",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:48:00.523Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv6wzuxa",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:50:56.610Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv6x3mum",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:54:00.356Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv6x7kmp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T16:57:05.524Z",
+      "repository": "openai/clip-vit-base-patch32",
+      "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv6xbjia",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:00:01.462Z",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6xfbaj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:03:16.987Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6xji5s",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:06:29.613Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6xnmrd",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:09:25.511Z",
+      "repository": "FacebookAI/xlm-roberta-base",
+      "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv6xreim",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:12:30.824Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-hf-openai-community-gpt2-mv6xvdgv",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:15:36.466Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv6xzcpo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:18:29.760Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv6y32gr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:23:05.760Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6y8zcb",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:27:02.877Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv6ye2da",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:30:12.538Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-hf-intfloat-multilingual-e5-small-mv6yi4pg",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:33:25.292Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv6ym9fg",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:36:29.427Z",
+      "repository": "Qwen/Qwen3-8B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8b-mv6yq7i4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:39:39.767Z",
+      "repository": "google/vit-base-patch16-224",
+      "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv6yuaen",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:42:47.225Z",
+      "repository": "google/gemma-4-31B-it",
+      "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv6yyb0h",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:45:50.455Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv6z28e8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:48:58.525Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv6z69ii",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:52:10.203Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv6zaddu",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:55:02.575Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ze2g6",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T17:58:06.073Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv6zi008",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:01:07.364Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv6zlvwk",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:04:12.887Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv6zpv1e",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:17:57.256Z",
+      "repository": "tickernelz/opencode-mem",
+      "learningId": "learn-github-tickernelz-opencode-mem-mv707j1j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:27:09.458Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv70jd7b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:30:13.628Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv70nbai",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:33:11.656Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv70r4om",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:36:37.049Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-hf-convaiinnovations-laya-mv70vj5x",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:39:45.095Z",
+      "repository": "Edge0/Audio8-ASR-Infinite",
+      "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv70zk96",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:42:54.421Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv713mby",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:47:01.434Z",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv718wxy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:49:57.143Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv71cok1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:53:00.122Z",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:56:12.213Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv71kpx8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T18:59:11.185Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv71ok19",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:02:18.231Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv71skci",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:05:24.056Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv71wjqf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:08:21.889Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-hf-qwen-qwen3-8-27b-mv720cy3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:11:26.765Z",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv724blg",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:14:33.119Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-hf-francisring-prism-mv728be1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:19:34.451Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv72erwz",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:22:34.894Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv72in5c",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:25:36.726Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv72mjfo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:28:40.054Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv72qgwk",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:31:45.124Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv72ufoq",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:34:58.331Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:37:55.840Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv732dr6",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:41:20.360Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv736rge",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:44:17.215Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv73ak06",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:48:05.964Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv73fgj9",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:51:03.238Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv73j9aj",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-13T19:54:09.314Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv73n8vj",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     },
