@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-26LO",
-    "timestamp": "2026-10-13T04:13:59.148Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv6626iq",
-    "contentHash": "2ce7591d12f914eb56e055694bf96f45279b71953e2ca681be813664b5b08aad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-66GI",
     "timestamp": "2026-10-13T04:17:05.586Z",
     "repository": "apple/LensVLM-9B",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
     "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv80abq0",
     "contentHash": "063c67fa2f7ba2e4aa4f28288c4de0fdee0270ae3e469f0b8635154b8775c74e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-ECRR",
+    "timestamp": "2026-10-14T11:11:01.671Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv80ecoj",
+    "contentHash": "82cc53dca7d53485ed865a80e880c166563967fd85adbf7725ca740bac8e4567",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

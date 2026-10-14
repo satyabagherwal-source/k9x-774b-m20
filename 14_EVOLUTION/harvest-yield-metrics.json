@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:07:53.808Z",
-  "total_cycles_completed": 1307,
-  "total_learnings_persisted": 1307,
+  "last_updated": "2026-10-14T11:11:01.674Z",
+  "total_cycles_completed": 1308,
+  "total_learnings_persisted": 1308,
   "total_rules_promoted": 637,
   "history": [
-    {
-      "timestamp": "2026-10-13T23:12:57.331Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv7aqwl7",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T23:16:16.583Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T11:07:53.808Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv80abq0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T11:11:01.674Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv80ecoj",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

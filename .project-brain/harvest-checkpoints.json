@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T11:07:53.809Z",
+  "last_updated": "2026-10-14T11:11:01.675Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -258,15 +258,15 @@
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv7in5cl",
-      "content_hash": "1637aa46ce0492442e67b7aee31edefaab06db28a093f4de35bb625ae42b5e73",
-      "verified_at": "2026-10-14T02:53:58.986Z",
+      "learning_id": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv80ecoj",
+      "content_hash": "82cc53dca7d53485ed865a80e880c166563967fd85adbf7725ca740bac8e4567",
+      "verified_at": "2026-10-14T11:11:01.675Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T02:53:58.986Z"
+      "last_updated": "2026-10-14T11:11:01.675Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
