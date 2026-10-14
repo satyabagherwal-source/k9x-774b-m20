@@ -1357,3 +1357,4 @@
 | `CYCLE-20261014-2XWA` | `2026-10-14T10:34:09.562Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`b1865445...`) |
 | `CYCLE-20261014-6Z2I` | `2026-10-14T10:37:17.706Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`2c641720...`) |
 | `CYCLE-20261014-B0OK` | `2026-10-14T10:40:26.420Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`ff8ba6b3...`) |
+| `CYCLE-20261014-EU5U` | `2026-10-14T10:43:24.594Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`8b041900...`) |

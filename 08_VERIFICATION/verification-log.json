@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-1ES5",
-    "timestamp": "2026-10-13T03:45:23.477Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv651epb",
-    "contentHash": "16042037f5cbfd7510901c856a05587e1f934bf5db8ad61301db2b5403d6318a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-56PH",
     "timestamp": "2026-10-13T03:48:19.637Z",
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B-NVFP4",
     "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7zb0lb",
     "contentHash": "ff8ba6b3059cda30c99aa1c075172b4b1e2a8ba197367ae42a3b8c07d0be0eef",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-EU5U",
+    "timestamp": "2026-10-14T10:43:24.594Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv7zeu3c",
+    "contentHash": "8b041900b92151e360cdd5547adcb73b206cff44cbbd6687855b9d9e5b4be089",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T10:40:26.424Z",
-  "total_cycles_completed": 1298,
-  "total_learnings_persisted": 1298,
+  "last_updated": "2026-10-14T10:43:24.599Z",
+  "total_cycles_completed": 1299,
+  "total_learnings_persisted": 1299,
   "total_rules_promoted": 631,
   "history": [
-    {
-      "timestamp": "2026-10-13T22:45:12.593Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv79r82g",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T22:48:26.950Z",
       "repository": "google/electra-base-discriminator",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T10:40:26.424Z",
       "repository": "autotrust/JEV-35B-NVFP4",
       "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7zb0lb",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T10:43:24.599Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv7zeu3c",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
