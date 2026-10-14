@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T05:44:10.268Z",
+  "last_updated": "2026-10-14T05:47:17.826Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1798,15 +1798,15 @@
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv7aeyhm",
-      "content_hash": "ec0ab5e0e49dcba4954b5d110282ec1f6176852d2a2fa27881196e8b7c870b8c",
-      "verified_at": "2026-10-13T23:03:39.919Z",
+      "learning_id": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv7ou154",
+      "content_hash": "4a793c10d9b05ececaaa9a2fb7d9ffc8f2b5f30411a0b7f41d03484b631b0506",
+      "verified_at": "2026-10-14T05:47:17.826Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-13T23:03:39.919Z"
+      "last_updated": "2026-10-14T05:47:17.826Z"
     },
     "slopus/happy": {
       "repository": "slopus/happy",
