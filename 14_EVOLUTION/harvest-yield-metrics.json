@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T04:25:59.925Z",
-  "total_cycles_completed": 1208,
-  "total_learnings_persisted": 1208,
+  "last_updated": "2026-10-14T04:28:54.914Z",
+  "total_cycles_completed": 1209,
+  "total_learnings_persisted": 1209,
   "total_rules_promoted": 581,
   "history": [
-    {
-      "timestamp": "2026-10-13T17:00:01.462Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6xfbaj",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T17:03:16.987Z",
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T04:25:59.925Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv7lxhbp",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T04:28:54.914Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv7m18du",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

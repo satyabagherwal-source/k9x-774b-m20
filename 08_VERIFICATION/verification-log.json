@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-8BBS",
-    "timestamp": "2026-10-12T23:10:49.432Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv5v8b8n",
-    "contentHash": "48dbcf2c0aebce663238b9033fb7d09ec2f3191bf356408146baac84702631f5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-C4ND",
     "timestamp": "2026-10-12T23:13:47.401Z",
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
     "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv7lxhbp",
     "contentHash": "e656e84c8b6d8250e4432b9852991a147d2dc6be3badffa4f12ebb1d33377bdd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-18FZ",
+    "timestamp": "2026-10-14T04:28:54.911Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv7m18du",
+    "contentHash": "feb5e17171af5821920d6fc9879efe7fcfcb8c4291748ad36c77b97f684878f7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
