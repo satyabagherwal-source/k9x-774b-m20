@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-2EJU",
-    "timestamp": "2026-10-12T18:54:17.130Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv5m2egv",
-    "contentHash": "7b0b0fb8cb309757e6e227fe9ffdec5a0378957215fac98996534d241fd696a8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-64RF",
     "timestamp": "2026-10-12T18:57:11.067Z",
     "repository": "intfloat/multilingual-e5-small",
@@ -7492,6 +7477,21 @@
     "contentHash": "50dca94ce7b3f713ceacf4933025693c7eb1874cee5965e7046d361c7ccd83d7",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-SIEP",
+    "timestamp": "2026-10-14T00:38:10.993Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv7dsicu",
+    "contentHash": "d2674ecd353696d1c8725c34a9a282dbdd1c3e5e6282bc5ddffa5e66891dac4e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

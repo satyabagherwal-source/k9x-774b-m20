@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T00:35:22.544Z",
-  "total_cycles_completed": 1134,
-  "total_learnings_persisted": 1134,
+  "last_updated": "2026-10-14T00:38:10.996Z",
+  "total_cycles_completed": 1135,
+  "total_learnings_persisted": 1135,
   "total_rules_promoted": 546,
   "history": [
-    {
-      "timestamp": "2026-10-13T12:06:06.745Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv6mxc84",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T12:12:52.810Z",
       "repository": "ccfos/nightingale",
@@ -1403,6 +1396,13 @@
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv7dowc6",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T00:38:10.996Z",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv7dsicu",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
