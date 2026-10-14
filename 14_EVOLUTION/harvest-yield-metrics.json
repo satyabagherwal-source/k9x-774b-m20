@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T01:47:27.634Z",
-  "total_cycles_completed": 1157,
-  "total_learnings_persisted": 1157,
+  "last_updated": "2026-10-14T01:50:31.991Z",
+  "total_cycles_completed": 1158,
+  "total_learnings_persisted": 1158,
   "total_rules_promoted": 552,
   "history": [
-    {
-      "timestamp": "2026-10-13T13:46:39.060Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv6qimse",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T13:49:32.787Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-14T01:47:27.634Z",
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv7g9lln",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T01:50:31.991Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv7gdjug",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
