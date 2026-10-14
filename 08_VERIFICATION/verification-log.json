@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-4VNH",
-    "timestamp": "2026-10-12T20:20:11.453Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv5p4vka",
-    "contentHash": "b4e87b4c004b485bc9cfa11cea2f16c16570fb63fbc41edd84aacfdb661916dc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-9BMC",
     "timestamp": "2026-10-12T20:23:38.772Z",
     "repository": "Cactus-Compute/whistle",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.3",
     "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv7gdjug",
     "contentHash": "3e792697561e1521380c0ff1c480a7f98a4f0d08f49c2a5dd3c594c343975114",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-HEIK",
+    "timestamp": "2026-10-14T01:53:31.580Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7ghefw",
+    "contentHash": "f12a25237717c6d79642db7ddef68f280651f14dc6cec0dee0850762ca6beb51",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

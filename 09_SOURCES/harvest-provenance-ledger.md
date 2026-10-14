@@ -1200,3 +1200,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv7g5bnv` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-14T01:44:08.126Z |
 | `learn-huggingface-hf-baai-bge-large-en-v1-5-mv7g9lln` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-14T01:47:27.633Z |
 | `learn-huggingface-hf-zai-org-glm-5-3-mv7gdjug` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-14T01:50:31.990Z |
+| `learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7ghefw` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-10-14T01:53:31.582Z |
