@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:46:56.438Z",
-  "total_cycles_completed": 1253,
-  "total_learnings_persisted": 1253,
-  "total_rules_promoted": 600,
+  "last_updated": "2026-10-14T06:50:16.556Z",
+  "total_cycles_completed": 1254,
+  "total_learnings_persisted": 1254,
+  "total_rules_promoted": 603,
   "history": [
-    {
-      "timestamp": "2026-10-13T19:41:20.360Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv736rge",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-13T19:44:17.215Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1403,6 +1396,13 @@
       "repository": "openai/gpt-oss-20b",
       "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv7qyqfk",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-14T06:50:16.556Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv7r30qx",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

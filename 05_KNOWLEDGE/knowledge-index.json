@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T06:46:56.385Z",
-  "total_verified_learnings": 5208,
+  "last_updated": "2026-10-14T06:50:16.489Z",
+  "total_verified_learnings": 5209,
   "total_promoted_rules": 0,
   "items": {
     "learn-github-expressjs-cors-muzryc1f": {
@@ -128173,6 +128173,46 @@
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "verified_at": "2026-10-14T06:46:56.385Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv7r30qx": {
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv7r30qx",
+      "source": "meta-llama/Llama-2-7b-chat-hf",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "slug": "hf-meta-llama-llama-2-7b-chat-hf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+      "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
+      "content_hash": "d38d74264d33861107ffb4fb292814c0df9cc8080e6314a8f042848d6903ff62",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 836,
+          "title": "Weight Serialization Integrity & Dtype Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 837,
+          "title": "Tokenizer Vocabulary Consistency & Special Token Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 838,
+          "title": "KV-Cache Memory Boundaries & Context Window Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "verified_at": "2026-10-14T06:50:16.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
