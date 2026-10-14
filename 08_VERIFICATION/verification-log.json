@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-8NUA",
-    "timestamp": "2026-10-12T20:51:07.570Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv5q8nr7",
-    "contentHash": "dcab2914b2b30a9bed6f4408a25524b74d89e6c9b4d2b89927bf3031e15c650c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-CVC7",
     "timestamp": "2026-10-12T20:54:23.911Z",
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B-NVFP4",
     "learningId": "learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7hgud8",
     "contentHash": "31b7309ef745527ad7050f82c1f4752e61de30128b28030e65cab4ee430a6cbd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-KRQ3",
+    "timestamp": "2026-10-14T02:24:08.283Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv7hkrmt",
+    "contentHash": "c5a11698dccff9be360292fb46ef86f827a76bac939abac459d0b19a08a5a134",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
