@@ -245,9 +245,9 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "2b51d6875cc6d46c0a029d341147e8017f0f1193663761a2592e3f36c4f5c501",
-    "lastHarvestedAt": "2026-10-14T02:40:32.396Z",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv7i5uxf"
+    "contentHash": "e2473595434352dffb9136591c974b8ed403e88806776f9d3ea8339d1271cf91",
+    "lastHarvestedAt": "2026-10-14T10:58:27.634Z",
+    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv7zy6w3"
   },
   "hf-francisring-prism": {
     "repository": "FrancisRing/Prism",
