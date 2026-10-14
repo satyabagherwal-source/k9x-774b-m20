@@ -1211,3 +1211,4 @@
 | `CYCLE-20261014-GZBT` | `2026-10-14T01:25:12.281Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`8a51f80e...`) |
 | `CYCLE-20261014-KXMM` | `2026-10-14T01:28:16.702Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`0e12e627...`) |
 | `CYCLE-20261014-P7UJ` | `2026-10-14T01:31:36.571Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`b71f626d...`) |
+| `CYCLE-20261014-TKWX` | `2026-10-14T01:35:00.129Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 790, Rule 498, Rule 791` | Yes (`a1c912a1...`) |

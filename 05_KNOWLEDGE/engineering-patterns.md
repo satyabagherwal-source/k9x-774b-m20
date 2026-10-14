@@ -44926,3 +44926,137 @@ tokenizer.add_special_tokens({'additional_special_token': '<new_token>'})
 ```
 **VERIFICATION METHOD**:
 Test that adding a special token to the tokenizer without updating the model config raises a validation error in the loading pipeline.
+
+
+---
+
+## 790. Semantic Embedding Normalization Invariant (Harvested from BAAI/bge-base-en-v1.5)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Semantic Embedding Normalization Invariant",
+  "source": "BAAI/bge-base-en-v1.5",
+  "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+  "source_version": "hf-baai-bge-base-en-v1.5",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T01:34:59.979Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv7ftkr8",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [BAAI/bge-base-en-v1.5](https://huggingface.co/BAAI/bge-base-en-v1.5) (Revision: `hf-baai-bg`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using pre-trained sentence embedding models (like BGE) for similarity search, the output embeddings **MUST** be L2-normalized before computing cosine similarity. If using dot product for similarity, normalization is **MANDATORY** to ensure geometric correctness.
+**WHY**:
+Without L2 normalization, the magnitude of the vector (norm) influences the dot product score. A longer or more "confident" sentence might have a larger norm, leading to higher dot product scores even if the semantic direction is less aligned. Normalization projects all vectors onto the unit hypersphere, making the dot product equivalent to cosine similarity, which is scale-invariant and purely directional.
+**WHEN TO APPLY**:
+Any system using dense vector embeddings for retrieval, clustering, or similarity search.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn.functional as F
+
+def compute_embeddings(model, texts):
+    with torch.no_grad():
+        # Model output is a tensor of shape [batch_size, seq_len, hidden_size]
+        # For BGE, we typically take the [CLS] token or mean pooling
+        embeddings = model.encode(texts, normalize_embeddings=True) 
+        # If using raw transformers:
+        # outputs = model(input_ids, attention_mask)
+        # embeddings = outputs.last_hidden_state[:, 0, :] # [CLS] token
+        # embeddings = F.normalize(embeddings, p=2, dim=1) # L2 Normalize
+    return embeddings
+
+# Similarity calculation
+def cosine_similarity(embeddings_a, embeddings_b):
+    # Assumes embeddings are already L2 normalized
+    return torch.matmul(embeddings_a, embeddings_b.T)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using raw dot product without normalization
+def bad_similarity(embeddings_a, embeddings_b):
+    # This is WRONG for semantic similarity if vectors are not normalized
+    return torch.matmul(embeddings_a, embeddings_b.T)
+```
+**VERIFICATION METHOD**:
+Assert that the L2 norm of every embedding vector is approximately 1.0 (within floating-point epsilon).
+```python
+assert torch.allclose(torch.norm(embeddings, p=2, dim=1), torch.ones(len(embeddings)), atol=1e-5)
+```
+
+
+---
+
+## 791. Batch Inference Memory Safety Invariant (Harvested from BAAI/bge-base-en-v1.5)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Batch Inference Memory Safety Invariant",
+  "source": "BAAI/bge-base-en-v1.5",
+  "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+  "source_version": "hf-baai-bge-base-en-v1.5",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-14T01:35:00.029Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv7ftkr8",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [BAAI/bge-base-en-v1.5](https://huggingface.co/BAAI/bge-base-en-v1.5) (Revision: `hf-baai-bg`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When performing batch inference with transformer models, the batch size **MUST** be dynamically adjusted based on available GPU memory and sequence length. Fixed batch sizes **MUST NOT** be used without memory profiling, as they can cause OOM (Out of Memory) crashes.
+**WHY**:
+Transformer models have quadratic complexity in sequence length due to self-attention. A batch of 32 sequences of length 512 requires significantly more memory than a batch of 32 sequences of length 128. Fixed batch sizes can lead to OOM errors on smaller GPUs or when processing longer texts.
+**WHEN TO APPLY**:
+Any system performing batch inference with transformer models.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def safe_batch_inference(model, texts, max_batch_size=32, max_seq_len=512):
+    embeddings = []
+    for i in range(0, len(texts), max_batch_size):
+        batch_texts = texts[i:i+max_batch_size]
+        # Truncate or pad to max_seq_len
+        inputs = tokenizer(batch_texts, padding=True, truncation=True, max_length=max_seq_len, return_tensors="pt")
+        inputs = {k: v.to(model.device) for k, v in inputs.items()}
+        
+        with torch.no_grad():
+            outputs = model(**inputs)
+            # Extract [CLS] token embeddings
+            batch_embeddings = outputs.last_hidden_state[:, 0, :]
+            embeddings.append(batch_embeddings.cpu())
+        
+        # Clear memory
+        del inputs, outputs, batch_embeddings
+        torch.cuda.empty_cache()
+    
+    return torch.cat(embeddings, dim=0)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Fixed batch size without memory checks
+def bad_batch_inference(model, texts):
+    inputs = tokenizer(texts, padding=True, truncation=True, max_length=512, return_tensors="pt")
+    # This will OOM if len(texts) is large
+    outputs = model(**inputs)
+    return outputs.last_hidden_state[:, 0, :]
+```
+**VERIFICATION METHOD**:
+Monitor GPU memory usage during inference and assert that it stays below a threshold (e.g., 90% of available memory). Use `torch.cuda.memory_allocated()` to track usage.

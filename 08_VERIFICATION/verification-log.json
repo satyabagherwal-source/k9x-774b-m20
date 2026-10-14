@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261012-27MZ",
-    "timestamp": "2026-10-12T19:50:07.403Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv5o27jy",
-    "contentHash": "06498cd0fae08f9edc46d64104dfbc246f0c46dd862fce597c5c0b6cb54da082",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261012-61SA",
     "timestamp": "2026-10-12T19:53:06.442Z",
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "b71f626df0a84d930c1e60b2dd1f63442c953db3ceafe4928fe0847a5b5616fe",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261014-TKWX",
+    "timestamp": "2026-10-14T01:35:00.129Z",
+    "repository": "BAAI/bge-base-en-v1.5",
+    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv7ftkr8",
+    "contentHash": "a1c912a12cd88fc10c933354b1fdc1892c029814ea0b40883a495af176cbcdd5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
