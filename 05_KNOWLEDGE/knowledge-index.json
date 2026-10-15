@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T22:08:58.976Z",
+  "last_updated": "2026-10-15T22:12:18.855Z",
   "total_verified_learnings": 168,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14029,12 +14029,13 @@
     "learn-huggingface-meta-llama-llama-3-1-8b-instruct": {
       "learning_id": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-meta-llama-llama-3.1-8b-instruct",
+      "source": "meta-llama/Llama-3.1-8B-Instruct",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "slug": "hf-meta-llama-llama-3.1-8b-instruct",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "56b2274c789b495af0253946fd179e7486357534e1dccc500ccbcddb73b6e1bf",
+      "content_hash": "9e3ef0bd5ab1c1de58e01c54ef04728d8840431817f3447febeee2cb9729a069",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -14079,11 +14080,25 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf",
           "verified_at": "2026-10-12T00:00:23.954Z"
+        },
+        {
+          "number": 416,
+          "title": "Tokenizer Special Token Isolation",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1010,
+          "title": "Tensor Shard Integrity & Index Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1011,
+          "title": "Generation Config Immutability & Override Safety",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -14100,7 +14115,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-10-14T11:29:46.527Z",
+      "verified_at": "2026-10-15T22:12:18.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

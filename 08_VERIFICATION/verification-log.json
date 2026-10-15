@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-APS3",
-    "timestamp": "2026-10-13T13:40:29.571Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv6qapp4",
-    "contentHash": "75dc293fb4170d1d54af5a20dfb2dd3b51be5f86af128bd86d5cf9711b9e2e9d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-EKG7",
     "timestamp": "2026-10-13T13:43:29.287Z",
     "repository": "PSRben/VisionHOPE",
@@ -7492,6 +7477,21 @@
     "contentHash": "6a72ae24e7df7969984032415b02b902f29194deae6aee4af93ddbf37a9aef5c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-GMKG",
+    "timestamp": "2026-10-15T22:12:18.880Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "9e3ef0bd5ab1c1de58e01c54ef04728d8840431817f3447febeee2cb9729a069",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

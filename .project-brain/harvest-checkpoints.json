@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T22:08:59.020Z",
+  "last_updated": "2026-10-15T22:12:18.886Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -329,17 +329,18 @@
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv812gm9",
-      "content_hash": "56b2274c789b495af0253946fd179e7486357534e1dccc500ccbcddb73b6e1bf",
-      "verified_at": "2026-10-14T11:29:46.583Z",
+      "learning_id": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "content_hash": "9e3ef0bd5ab1c1de58e01c54ef04728d8840431817f3447febeee2cb9729a069",
+      "verified_at": "2026-10-15T22:12:18.886Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T11:29:46.583Z"
+      "last_updated": "2026-10-15T22:12:18.886Z"
     },
     "XingChen-AGI/TeleOCR": {
       "repository": "XingChen-AGI/TeleOCR",

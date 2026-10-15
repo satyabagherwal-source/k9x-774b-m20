@@ -1478,3 +1478,4 @@
 | `CYCLE-20261015-44GM` | `2026-10-15T22:02:35.542Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1007, Rule 1008, Rule 1009` | Yes (`7b9e1fcd...`) |
 | `CYCLE-20261015-856N` | `2026-10-15T22:05:43.103Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`683ff30a...`) |
 | `CYCLE-20261015-CCCM` | `2026-10-15T22:08:59.014Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`6a72ae24...`) |
+| `CYCLE-20261015-GMKG` | `2026-10-15T22:12:18.880Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1010, Rule 416, Rule 1011` | Yes (`9e3ef0bd...`) |
