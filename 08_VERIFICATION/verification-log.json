@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-GT7A",
-    "timestamp": "2026-10-13T10:57:16.246Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-hf-francisring-prism-mv6kgt5g",
-    "contentHash": "044b68f74f958b42f89de0bf0d2e1a195714ed8305dd0275652139fef831c0a8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-KQ2M",
     "timestamp": "2026-10-13T11:00:18.814Z",
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "8f23c8f7624cc9dc439c3031a40cb77c43388a42e58881f5d2b2d15aaac10d0f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-L90C",
+    "timestamp": "2026-10-15T19:55:56.508Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "b3263c14bfbf5afc15b79315c8246de2bbdebdb68b8ed2ae9f34a014439814d5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
