@@ -17692,5 +17692,35 @@
     "qualityScore": 30013,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-14T16:32:14.822Z"
+  },
+  {
+    "name": "Raven",
+    "fullName": "EverMind-AI/Raven",
+    "url": "https://github.com/EverMind-AI/Raven",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The Harness of Harnesses • built for RSI: a trusted, persistent, self-evolving multi-agent ecosystem for all-domain collaboration.",
+    "stars": 5461,
+    "forks": 168,
+    "openIssues": 75,
+    "language": "Python",
+    "qualityScore": 3181,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-15T18:47:29.561Z"
+  },
+  {
+    "name": "openmeld",
+    "fullName": "amplifthq/openmeld",
+    "url": "https://github.com/amplifthq/openmeld",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The open-source collaboration system for people and AI agents. Share context, coordinate tasks, and work in parallel with your team, cloud agents, Codex, Claude Code, Grok, Grok Bot, OpenCode, Antigravity, and Cursor.",
+    "stars": 1359,
+    "forks": 77,
+    "openIssues": 3,
+    "language": "TypeScript",
+    "qualityScore": 959,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-15T18:47:37.851Z"
   }
 ]

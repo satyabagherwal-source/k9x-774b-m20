@@ -3960,3 +3960,9 @@ https://github.com/nguyenphutrong/quotio
 # --- Automatically Discovered by AI Scout Engine [2026-10-14T16:32:33.146Z] ---
 # [DATABASE-STORAGE-ENGINES] pathwaycom/serviette (30013 score) - Ready-to-run cloud templates for RAG, AI pipelines, and enterprise search with l
 https://github.com/pathwaycom/serviette
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-15T18:48:18.871Z] ---
+# [AI-AGENTS] EverMind-AI/Raven (3181 score) - The Harness of Harnesses • built for RSI: a trusted, persistent, self-evolving m
+https://github.com/EverMind-AI/Raven
+# [AI-AGENTS] amplifthq/openmeld (959 score) - The open-source collaboration system for people and AI agents. Share context, co
+https://github.com/amplifthq/openmeld
