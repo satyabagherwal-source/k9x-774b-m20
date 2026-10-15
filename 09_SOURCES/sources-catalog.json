@@ -1235,9 +1235,9 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "83aaa67669ef661fced30179bb99b632bcb6da0e6b26e44a1b06abd6c15adb0d",
-    "lastHarvestedAt": "2026-10-14T09:47:05.223Z",
-    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv7xeejm"
+    "contentHash": "35c7332908d0b4b090a0be1d2ed7cde450ccec391ccffb9f4c11628579867a1e",
+    "lastHarvestedAt": "2026-10-15T20:24:44.103Z",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
     "repository": "google/gemma-4-31B-it",
