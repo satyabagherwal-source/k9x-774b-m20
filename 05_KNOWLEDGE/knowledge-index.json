@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T23:02:07.030Z",
+  "last_updated": "2026-10-15T23:04:59.158Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13591,18 +13591,18 @@
     "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "source": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "slug": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "4b1c972c3ea71381f36ce5a6cf525a29f21de2f1b16c29ff0ffc1c99d678e17b",
+      "content_hash": "a8235362dfe63df1d7b447525db0272879efc02ff64dd41306278d5b8540aaf8",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -13619,7 +13619,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
       ],
-      "verified_at": "2026-10-14T12:26:15.781Z",
+      "verified_at": "2026-10-15T23:04:59.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
