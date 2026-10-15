@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:28:34.460Z",
-  "total_cycles_completed": 1442,
-  "total_learnings_persisted": 1442,
+  "last_updated": "2026-10-15T21:31:36.407Z",
+  "total_cycles_completed": 1443,
+  "total_learnings_persisted": 1443,
   "total_rules_promoted": 778,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:15:01.407Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv7ptoro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T06:17:58.763Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T21:28:34.460Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T21:31:36.407Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-liquidai-d1-3b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

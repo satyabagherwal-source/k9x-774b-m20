@@ -1465,3 +1465,4 @@
 | `CYCLE-20261015-OIFU` | `2026-10-15T21:22:27.546Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1003, Rule 1004` | Yes (`996374f6...`) |
 | `CYCLE-20261015-S8NO` | `2026-10-15T21:25:21.492Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 790, Rule 498` | Yes (`f7c00e3e...`) |
 | `CYCLE-20261015-WDJR` | `2026-10-15T21:28:34.455Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`0fa6d583...`) |
+| `CYCLE-20261015-09XV` | `2026-10-15T21:31:36.403Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`4c55837e...`) |

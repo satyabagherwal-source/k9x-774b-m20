@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-AQ7T",
-    "timestamp": "2026-10-13T12:44:30.905Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv6oaq4r",
-    "contentHash": "0df27d0d140fd4ad8468df53cb0147d5a32f93084440b01efd9d2117412be7c1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-EO1K",
     "timestamp": "2026-10-13T12:47:34.712Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
     "contentHash": "0fa6d5835f08d4fcc4c59a2fd05430fdfea739367601458f3005f5c117475beb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-09XV",
+    "timestamp": "2026-10-15T21:31:36.403Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "4c55837e230888622d405984964d21d376693c3896fcfe686fd22b5d568aec05",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
