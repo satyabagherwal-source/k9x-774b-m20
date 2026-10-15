@@ -1464,3 +1464,4 @@
 | `CYCLE-20261015-KFJT` | `2026-10-15T21:19:17.177Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1000, Rule 1001, Rule 1002` | Yes (`21db9e42...`) |
 | `CYCLE-20261015-OIFU` | `2026-10-15T21:22:27.546Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1003, Rule 1004` | Yes (`996374f6...`) |
 | `CYCLE-20261015-S8NO` | `2026-10-15T21:25:21.492Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 790, Rule 498` | Yes (`f7c00e3e...`) |
+| `CYCLE-20261015-WDJR` | `2026-10-15T21:28:34.455Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`0fa6d583...`) |

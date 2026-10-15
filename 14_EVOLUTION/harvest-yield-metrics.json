@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:25:21.495Z",
-  "total_cycles_completed": 1441,
-  "total_learnings_persisted": 1441,
+  "last_updated": "2026-10-15T21:28:34.460Z",
+  "total_cycles_completed": 1442,
+  "total_learnings_persisted": 1442,
   "total_rules_promoted": 778,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:12:03.541Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv7ppvgd",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T06:15:01.407Z",
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -1403,6 +1396,13 @@
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T21:28:34.460Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

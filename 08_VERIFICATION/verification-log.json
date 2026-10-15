@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-6ZJX",
-    "timestamp": "2026-10-13T12:41:36.381Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv6o6zf2",
-    "contentHash": "a1212cab9e31871305948f85315c224b6cc29fe57d2e8feb447a4454d7ce9cf1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-AQ7T",
     "timestamp": "2026-10-13T12:44:30.905Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7492,6 +7477,21 @@
     "contentHash": "f7c00e3e02c2fed4583c3b47769ada2182c70151afacf16782c9473987052fdc",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-WDJR",
+    "timestamp": "2026-10-15T21:28:34.455Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "0fa6d5835f08d4fcc4c59a2fd05430fdfea739367601458f3005f5c117475beb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
