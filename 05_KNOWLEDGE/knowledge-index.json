@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:02:57.604Z",
+  "last_updated": "2026-10-15T20:06:20.486Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11677,18 +11677,34 @@
     "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0": {
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-conwayresearch-underdog-saluki-27b-1.0",
+      "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "slug": "hf-conwayresearch-underdog-saluki-27b-1.0",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "a960c3058ee9e534358a8f6e65c58391f5d0eb24d889b698189cdfebc4d786d0",
+      "content_hash": "32bbb0a2340d314460e76d54bbd285c555fdc785528fac03531a9e354804bbce",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 959,
+          "title": "Quantization-Aware Capability Preservation (The \"Tool-Call Integrity\" Rule)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 960,
+          "title": "Decoupled Modality Projection (The \"Vision Add-On\" Rule)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 961,
+          "title": "Thinking Mode as a Runtime State (The \"Per-Request Toggle\" Rule)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 10,
       "historical_learning_ids": [
@@ -11703,7 +11719,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-10-14T09:31:15.019Z",
+      "verified_at": "2026-10-15T20:06:20.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

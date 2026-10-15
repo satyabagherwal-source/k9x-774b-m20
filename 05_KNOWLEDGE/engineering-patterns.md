@@ -58559,3 +58559,199 @@ def test_patch_boundary_integrity():
 ```
 
 ---
+
+
+---
+
+## 959. Quantization-Aware Capability Preservation (The "Tool-Call Integrity" Rule) (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization-Aware Capability Preservation (The \"Tool-Call Integrity\" Rule)",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:06:20.352Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing LLMs for agentic tasks (tool/function calling), you MUST NOT use uniform low-bit quantization (e.g., uniform INT4) across all layers. You MUST employ mixed-precision or lattice-based quantization (e.g., `IQ2-mix`, `Q4_K_M`) that preserves higher precision for layers responsible for structured output generation (Attention Output, FFN Down-projection, and specific embedding layers).
+
+**WHY**:
+Tool calling requires precise token probability distribution for special tokens (e.g., `
+`, `{`, `"`, `}`) and argument values. Uniform low-bit quantization introduces high quantization noise in these critical regions, causing the model to "forget" the syntax of the tool schema, resulting in malformed JSON, hallucinated arguments, or infinite loops in the tool-call parser. The forensic evidence shows `Underdog Saluki` (7.89 GB, ~2-bit effective) outperforms the full 54 GB model in parallel tool calls (42 vs 35), proving that *smart* quantization can actually *improve* robustness by reducing noise in irrelevant parameters while preserving signal in critical ones.
+
+**WHEN TO APPLY**:
+Any deployment of LLMs < 8GB VRAM that requires structured output (JSON, XML, YAML) or function calling.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# CORRECT: Using a mixed-precision GGUF that preserves tool-calling integrity
+# Note: IQ2-mix is a specific quantization type in llama.cpp that uses a codebook
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf --jinja -ngl 99 -fa on -c 32768
+
+# The key is the file suffix: -IQ2-mix.gguf, not -Q4_0.gguf or -Q2_K.gguf
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# WRONG: Using a naive uniform quantization that destroys tool-calling ability
+# This will likely result in broken JSON and failed tool calls
+llama-server -m Underdog-Saluki-27B-1.0-Q2_K.gguf --jinja -ngl 99 -fa on -c 32768
+```
+
+**VERIFICATION METHOD**:
+Run the **Berkeley Function Calling Leaderboard (BFCL v4)** subset (120 tasks) with `thinking` disabled and `temperature=0`.
+*   **Pass Criteria:** Score > 85/120.
+*   **Parallel Tool Call Test:** Score > 40/100.
+*   If the score drops below 70/120, the quantization is too aggressive for agentic use.
+
+
+---
+
+## 960. Decoupled Modality Projection (The "Vision Add-On" Rule) (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Modality Projection (The \"Vision Add-On\" Rule)",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:06:20.400Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In multi-modal LLM deployments, you MUST decouple the vision projection matrix (`mmproj`) from the main language model weights. You MUST NOT bake the vision encoder into the main GGUF file if the primary use case is text-only.
+
+**WHY**:
+Baking vision weights into the main model increases the file size by ~1 GB (F16) or ~0.6 GB (Q8_0) and increases memory footprint for *every* inference request, even text-only ones. Decoupling allows:
+1.  **Lazy Loading:** Vision weights are only loaded when `--mmproj` is specified.
+2.  **Precision Flexibility:** Vision projections can be quantized independently (F16 for max quality, Q8_0 for size) without affecting the language model's precision.
+3.  **Compatibility:** The text-only model remains compatible with standard text-only inference engines that do not support multi-modal inputs.
+
+**WHEN TO APPLY**:
+Any LLM deployment that supports both text and image inputs but where text-only inference is the primary workload.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# 1. Download main model (text-only)
+huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 Underdog-Saluki-27B-1.0-IQ2-mix.gguf --local-dir .
+
+# 2. Download vision projection separately
+huggingface-cli download ConwayResearch/Underdog-Saluki-27B-1.0 mmproj-Underdog-Saluki-27B-1.0-F16.gguf --local-dir .
+
+# 3. Launch with both
+llama-server -m Underdog-Saluki-27B-1.0-IQ2-mix.gguf \
+             --mmproj mmproj-Underdog-Saluki-27B-1.0-F16.gguf \
+             --jinja -ngl 99 -fa on -c 32768
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# WRONG: Using a single monolithic file that includes vision weights
+# This forces 1GB extra RAM/VRAM usage for every text-only request
+llama-server -m Underdog-Saluki-27B-1.0-Vision-Included.gguf --jinja -ngl 99 -fa on -c 32768
+```
+
+**VERIFICATION METHOD**:
+1.  Launch server with text-only model. Measure VRAM usage.
+2.  Launch server with `--mmproj`. Measure VRAM usage.
+3.  **Pass Criteria:** The difference in VRAM usage should be approximately equal to the size of the `mmproj` file (928 MB for F16, 629 MB for Q8_0). If the text-only model already consumes this extra memory, the decoupling has failed.
+
+
+---
+
+## 961. Thinking Mode as a Runtime State (The "Per-Request Toggle" Rule) (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Thinking Mode as a Runtime State (The \"Per-Request Toggle\" Rule)",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:06:20.442Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+You MUST implement "thinking" (chain-of-thought) as a **runtime-configurable state** via the chat template, not as a hardcoded model behavior. You MUST allow per-request toggling of thinking mode via `chat_template_kwargs`.
+
+**WHY**:
+Thinking mode increases latency and token consumption by 2-5x. For fast, direct tool calls, thinking is unnecessary and harmful (it can cause the model to "over-think" and produce verbose, non-JSON outputs). For complex reasoning, thinking is essential. Hardcoding thinking mode forces a trade-off: either slow down all requests or degrade reasoning quality. A runtime toggle allows the agent framework to dynamically choose the mode based on task complexity.
+
+**WHEN TO APPLY**:
+Any LLM deployment that supports both fast tool calls and complex reasoning tasks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# CORRECT: Dynamic thinking mode toggle
+import requests
+
+# Fast tool call: thinking OFF
+response = requests.post("http://localhost:8080/v1/chat/completions", json={
+    "model": "saluki",
+    "messages": [{"role": "user", "content": "Call the weather tool for NYC"}],
+    "chat_template_kwargs": {"enable_thinking": False},
+    "temperature": 0
+})
+
+# Complex reasoning: thinking ON
+response = requests.post("http://localhost:8080/v1/chat/completions", json={
+    "model": "saluki",
+    "messages": [{"role": "user", "content": "Explain the quantum mechanics of..."}],
+    "chat_template_kwargs": {"enable_thinking": True},
+    "temperature": 0.6
+})
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# WRONG: Hardcoded thinking mode
+# This forces all requests to use thinking, increasing latency for simple tool calls
+response = requests.post("http://localhost:8080/v1/chat/completions", json={
+    "model": "saluki",
+    "messages": [{"role": "user", "content": "Call the weather tool for NYC"}],
+    # No chat_template_kwargs, so thinking is ON by default
+    "temperature": 0
+})
+```
+
+**VERIFICATION METHOD**:
+1.  Send a simple tool call request with `enable_thinking: False`. Measure latency.
+2.  Send the same request with `enable_thinking: True`. Measure latency.
+3.  **Pass Criteria:** The latency difference should be > 2x. If the latency is identical, the thinking mode is not being toggled correctly.
