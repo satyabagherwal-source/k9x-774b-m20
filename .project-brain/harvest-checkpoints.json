@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T23:26:39.492Z",
+  "last_updated": "2026-10-15T23:29:44.918Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -629,17 +629,18 @@
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv840g2v",
-      "content_hash": "f64d1f98541ab9d708c365eaab808002e14b4d2c12cbcd03d212f6b83c4b2978",
-      "verified_at": "2026-10-14T12:52:11.317Z",
+      "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "content_hash": "6b0fa6286407c581b31ca13a2f8741968e2ba6d5404c7463c0450145e814dc44",
+      "verified_at": "2026-10-15T23:29:44.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T12:52:11.317Z"
+      "last_updated": "2026-10-15T23:29:44.917Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",

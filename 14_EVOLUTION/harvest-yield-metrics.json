@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T23:26:39.491Z",
-  "total_cycles_completed": 1480,
-  "total_learnings_persisted": 1480,
+  "last_updated": "2026-10-15T23:29:44.916Z",
+  "total_cycles_completed": 1481,
+  "total_learnings_persisted": 1481,
   "total_rules_promoted": 808,
   "history": [
-    {
-      "timestamp": "2026-10-14T09:47:05.225Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv7xeejm",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T09:50:06.905Z",
       "repository": "google/gemma-4-31B-it",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T23:26:39.491Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T23:29:44.916Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
