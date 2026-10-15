@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:00:53.256Z",
-  "total_cycles_completed": 1433,
-  "total_learnings_persisted": 1433,
-  "total_rules_promoted": 760,
+  "last_updated": "2026-10-15T21:03:49.908Z",
+  "total_cycles_completed": 1434,
+  "total_learnings_persisted": 1434,
+  "total_rules_promoted": 763,
   "history": [
-    {
-      "timestamp": "2026-10-14T05:47:17.825Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv7ou154",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T05:50:37.314Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T21:00:53.256Z",
       "repository": "autotrust/GEV-26B-Decide",
       "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T21:03:49.908Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

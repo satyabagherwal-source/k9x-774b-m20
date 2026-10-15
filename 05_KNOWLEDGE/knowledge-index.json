@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:00:53.229Z",
+  "last_updated": "2026-10-15T21:03:49.889Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11360,12 +11360,13 @@
     "learn-huggingface-convaiinnovations-laya": {
       "learning_id": "learn-huggingface-convaiinnovations-laya",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-convaiinnovations-laya",
+      "source": "convaiinnovations/laya",
+      "repository": "convaiinnovations/laya",
       "slug": "hf-convaiinnovations-laya",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "d345443b787bd7ce33c03555bd6a8a5706b00ba38eb42205550b6f47636a7ea6",
+      "content_hash": "2001face40dcf6e90111c0ce4ddf671cdc22f07cbd361946913b57911cdb832e",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -11389,11 +11390,25 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
           "verified_at": "2026-10-11T16:37:33.600Z"
+        },
+        {
+          "number": 431,
+          "title": "Non-Autoregressive Structured Output Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 991,
+          "title": "Strictly Proper Scoring Rule Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 992,
+          "title": "Language-Aware Routing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 336,
       "historical_learning_ids": [
@@ -11734,7 +11749,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-14T10:24:28.330Z",
+      "verified_at": "2026-10-15T21:03:49.886Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
