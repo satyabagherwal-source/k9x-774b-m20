@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-XKCD",
-    "timestamp": "2026-10-13T10:42:18.301Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv6jxk9a",
-    "contentHash": "f7a11ee2018cae7332dc244e46ba53a71560863a7ddf94910f5186ae489c3867",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-1B8P",
     "timestamp": "2026-10-13T10:45:13.129Z",
     "repository": "LiquidAI/d1-3B",
@@ -7492,6 +7477,21 @@
     "contentHash": "15875d580f816bee8e3a13accdc1f5bcbc3596dc5b3425917d2b929883a95d4d",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-YGHU",
+    "timestamp": "2026-10-15T19:38:13.122Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "f5e06d3b675aa58fd80e6ac5014b1a3bd95acbbe0b199f77e02f6c623667c56e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

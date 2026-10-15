@@ -1431,3 +1431,4 @@
 | `CYCLE-20261015-Y9R4` | `2026-10-15T19:10:04.768Z` | `amplifthq/openmeld` | Commit diff / Patch analysis | `VERIFIED` | `Rule 937` | Yes (`b4f2eeda...`) |
 | `CYCLE-20261015-E2SB` | `2026-10-15T19:22:22.235Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 938, Rule 939, Rule 940` | Yes (`670795e9...`) |
 | `CYCLE-20261015-MG33` | `2026-10-15T19:28:52.719Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 941, Rule 942` | Yes (`15875d58...`) |
+| `CYCLE-20261015-YGHU` | `2026-10-15T19:38:13.122Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 943, Rule 944, Rule 945` | Yes (`f5e06d3b...`) |

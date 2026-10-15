@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T19:28:52.723Z",
-  "total_cycles_completed": 1408,
-  "total_learnings_persisted": 1408,
-  "total_rules_promoted": 709,
+  "last_updated": "2026-10-15T19:38:13.127Z",
+  "total_cycles_completed": 1409,
+  "total_learnings_persisted": 1409,
+  "total_rules_promoted": 712,
   "history": [
-    {
-      "timestamp": "2026-10-14T04:28:54.914Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv7m18du",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T04:31:57.412Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "pyannote/speaker-diarization-community-1",
       "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T19:38:13.127Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
