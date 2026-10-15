@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-DZZ2",
-    "timestamp": "2026-10-13T15:35:01.214Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv6udzwl",
-    "contentHash": "8ca0cbd7305477a4e14ecc5fda7a8bbace1cb0ee88ccc0baed4c5ab538a7ec2b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-HUG5",
     "timestamp": "2026-10-13T15:38:00.677Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7490,6 +7475,21 @@
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
     "contentHash": "31d53ca575ec5e97f827e6013501a3bcc1159eca14434eb67c52a9f80356d37b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-GBAP",
+    "timestamp": "2026-10-15T23:36:03.121Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "4e03389530f6853f537e53ff9dbc85e123ab89e91f1170de26389cba3a0d93c8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
