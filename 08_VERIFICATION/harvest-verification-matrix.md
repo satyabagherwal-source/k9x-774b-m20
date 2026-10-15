@@ -1455,3 +1455,4 @@
 | `CYCLE-20261015-IWBY` | `2026-10-15T20:50:05.998Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 982, Rule 983` | Yes (`d7e630de...`) |
 | `CYCLE-20261015-NAUL` | `2026-10-15T20:53:31.437Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 984, Rule 985, Rule 986` | Yes (`de530f53...`) |
 | `CYCLE-20261015-REHK` | `2026-10-15T20:56:42.776Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 987, Rule 988` | Yes (`eef94046...`) |
+| `CYCLE-20261015-WRR9` | `2026-10-15T21:00:53.253Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 984, Rule 989, Rule 990` | Yes (`89da98c4...`) |

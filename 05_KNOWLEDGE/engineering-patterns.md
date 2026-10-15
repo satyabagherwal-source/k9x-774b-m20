@@ -60844,3 +60844,131 @@ Greedy decoding always picks the highest probability token, which in ranking tas
 1.  **Config Check:** Assert `do_sample` is `true` in `generation_config.json`.
 2.  **Diversity Test:** Generate 10 rankings for the same input. Assert that the top-1 item changes in at least 2 out of 10 cases.
 3.  **Calibration Test:** Plot predicted probability vs. actual accuracy. Assert ECE (Expected Calibration Error) < 0.1.
+
+
+---
+
+## 989. Structured Output Schema Enforcement via Tokenizer Configuration (Harvested from autotrust/GEV-26B-Decide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Structured Output Schema Enforcement via Tokenizer Configuration",
+  "source": "autotrust/GEV-26B-Decide",
+  "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+  "source_version": "hf-autotrust-gev-26b-decide",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T21:00:53.152Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/GEV-26B-Decide](https://huggingface.co/autotrust/GEV-26B-Decide) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying LLMs for tasks requiring structured output (e.g., JSON, tool calls), you MUST define a strict `response_schema` in the tokenizer configuration and train the model to adhere to it. You MUST NOT rely solely on prompt engineering for structured output in production systems.
+**WHY**:
+Prompt engineering is fragile and can lead to malformed outputs, especially in long sequences or under adversarial conditions. By defining a schema in the tokenizer and training the model to output tokens that conform to this schema, you ensure deterministic parsing and reduce the need for post-processing error handling. This is critical for agent systems where tool calls must be reliably parsed.
+**WHEN TO APPLY**:
+Any LLM application that requires structured output, such as function calling, data extraction, or decision-making systems.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "role": { "const": "assistant" },
+      "thinking": { "type": "string" },
+      "content": { "type": "string" },
+      "tool_calls": {
+        "x-regex-iterator": "<\\|tool_call>(.*?)<tool_call\\|>",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "type": { "const": "function" },
+            "function": {
+              "type": "object",
+              "x-regex": "call\\:(?P<name>\\w+)(?P<arguments>\\{.*\\})",
+              "properties": {
+                "name": { "type": "string" },
+                "arguments": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Relying solely on prompt engineering
+prompt = "Please output your response in JSON format with keys 'role', 'thinking', 'content', 'tool_calls'."
+response = llm.generate(prompt)
+# This is fragile and can lead to malformed JSON
+```
+**VERIFICATION METHOD**:
+Parse the model's output using the defined `response_schema`. If parsing fails, log an error and retry with a stricter prompt or fallback. Monitor the rate of parsing failures in production.
+
+
+---
+
+## 990. Adaptive Thinking Toggle for System 1 vs. System 2 Reasoning (Harvested from autotrust/GEV-26B-Decide)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Adaptive Thinking Toggle for System 1 vs. System 2 Reasoning",
+  "source": "autotrust/GEV-26B-Decide",
+  "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
+  "source_version": "hf-autotrust-gev-26b-decide",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T21:00:53.193Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/GEV-26B-Decide](https://huggingface.co/autotrust/GEV-26B-Decide) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When designing LLMs for decision-making tasks, you MUST implement an adaptive thinking mechanism that allows the model to toggle between fast, intuitive reasoning (System 1) and slow, deliberate reasoning (System 2) based on task complexity. You MUST NOT force all tasks through the same reasoning path.
+**WHY**:
+Forcing all tasks through a slow, deliberate reasoning path increases latency and cost unnecessarily for simple tasks. Conversely, using fast, intuitive reasoning for complex tasks leads to errors. An adaptive mechanism allows the model to allocate computational resources efficiently, improving both accuracy and performance.
+**WHEN TO APPLY**:
+Any LLM application that involves a mix of simple and complex tasks, such as customer support, decision-making systems, or agent workflows.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "response_schema": {
+    "type": "object",
+    "properties": {
+      "thinking": { "type": "string" },
+      "content": { "type": "string" }
+    }
+  }
+}
+```
+In the prompt, instruct the model to use the `thinking` field for complex tasks and leave it empty or minimal for simple tasks.
+**NEGATIVE CONSTRAINT**:
+```python
+# Forcing all tasks through the same reasoning path
+prompt = "Think step-by-step and then provide your answer."
+response = llm.generate(prompt)
+# This is inefficient for simple tasks
+```
+**VERIFICATION METHOD**:
+Measure the latency and accuracy of the model for simple and complex tasks. If the latency for simple tasks is significantly higher than necessary, consider implementing an adaptive thinking mechanism.

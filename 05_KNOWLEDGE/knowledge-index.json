@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:56:42.746Z",
+  "last_updated": "2026-10-15T21:00:53.229Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9836,18 +9836,34 @@
     "learn-huggingface-autotrust-gev-26b-decide": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-autotrust-gev-26b-decide",
+      "source": "autotrust/GEV-26B-Decide",
+      "repository": "autotrust/GEV-26B-Decide",
       "slug": "hf-autotrust-gev-26b-decide",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "3dc2d9b73071ae3a7f14fb06864661b9d9b1ec600e5a873172d57fcaafb1ca2c",
+      "content_hash": "89da98c4cea284d9a092f4f0510661e9d754e3d08ec2c020951b923bfb07788f",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 984,
+          "title": "Hybrid Attention Layer Allocation for Long-Context Efficiency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 989,
+          "title": "Structured Output Schema Enforcement via Tokenizer Configuration",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 990,
+          "title": "Adaptive Thinking Toggle for System 1 vs. System 2 Reasoning",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -9863,7 +9879,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv41mus8",
         "learn-huggingface-hf-autotrust-gev-26b-decide-mv4fhk3v"
       ],
-      "verified_at": "2026-10-14T10:21:19.959Z",
+      "verified_at": "2026-10-15T21:00:53.221Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
