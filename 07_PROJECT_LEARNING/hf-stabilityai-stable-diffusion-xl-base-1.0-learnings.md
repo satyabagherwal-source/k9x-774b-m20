@@ -3,8 +3,8 @@
 > **Source Version**: `hf-stability`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-14T11:26:29.504Z  
-> **Learning ID**: `learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv80y8ow`  
+> **Timestamp**: 2026-10-15T22:08:58.914Z  
+> **Learning ID**: `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0](https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-14T11:26:28.854Z  
+> **Harvest Timestamp**: 2026-10-15T22:08:58.260Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4295405 downloads | 8337 likes
+- **Stars / Engagement**: 4276998 downloads | 8342 likes
 
 ---
 

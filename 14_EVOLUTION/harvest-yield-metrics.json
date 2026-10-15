@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T22:05:43.107Z",
-  "total_cycles_completed": 1454,
-  "total_learnings_persisted": 1454,
+  "last_updated": "2026-10-15T22:08:59.019Z",
+  "total_cycles_completed": 1455,
+  "total_learnings_persisted": 1455,
   "total_rules_promoted": 784,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:53:13.543Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv7r6te4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T06:56:33.999Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T22:05:43.107Z",
       "repository": "autotrust/JEV-35B",
       "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T22:08:59.019Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

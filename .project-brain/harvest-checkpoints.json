@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T22:05:43.108Z",
+  "last_updated": "2026-10-15T22:08:59.020Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -314,17 +314,18 @@
     },
     "stabilityai/stable-diffusion-xl-base-1.0": {
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv80y8ow",
-      "content_hash": "d5282fa9165ad5acdac6583ea21cfde9f698432ca4ab018f7a181931d1ac00ad",
-      "verified_at": "2026-10-14T11:26:29.626Z",
+      "learning_id": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "content_hash": "6a72ae24e7df7969984032415b02b902f29194deae6aee4af93ddbf37a9aef5c",
+      "verified_at": "2026-10-15T22:08:59.020Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T11:26:29.626Z"
+      "last_updated": "2026-10-15T22:08:59.020Z"
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-6OYE",
-    "timestamp": "2026-10-13T13:37:21.878Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv6q6ov5",
-    "contentHash": "3a58cf9bc293ba655fe99acf6ae2b0f99749a4c8fe003249cdd8fa558c6670f9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-APS3",
     "timestamp": "2026-10-13T13:40:29.571Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B",
     "learningId": "learn-huggingface-autotrust-jev-35b",
     "contentHash": "683ff30ad7e41f810f58cdefab67ef8f282765736e038f92b6add8f3ef45a43b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-CCCM",
+    "timestamp": "2026-10-15T22:08:59.014Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "6a72ae24e7df7969984032415b02b902f29194deae6aee4af93ddbf37a9aef5c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
