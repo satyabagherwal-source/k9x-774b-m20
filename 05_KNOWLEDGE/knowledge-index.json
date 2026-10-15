@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:22:27.521Z",
+  "last_updated": "2026-10-15T21:25:21.469Z",
   "total_verified_learnings": 166,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10229,12 +10229,13 @@
     "learn-huggingface-baai-bge-small-en-v1-5": {
       "learning_id": "learn-huggingface-baai-bge-small-en-v1-5",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-baai-bge-small-en-v1.5",
+      "source": "BAAI/bge-small-en-v1.5",
+      "repository": "BAAI/bge-small-en-v1.5",
       "slug": "hf-baai-bge-small-en-v1.5",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
       "source_version": "hf-baai-bge-small-en-v1.5",
-      "content_hash": "8b041900b92151e360cdd5547adcb73b206cff44cbbd6687855b9d9e5b4be089",
+      "content_hash": "f7c00e3e02c2fed4583c3b47769ada2182c70151afacf16782c9473987052fdc",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -10258,11 +10259,20 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
           "verified_at": "2026-10-11T17:10:20.413Z"
+        },
+        {
+          "number": 498,
+          "title": "Tokenizer-Model Alignment Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 790,
+          "title": "Semantic Embedding Normalization Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 329,
       "historical_learning_ids": [
@@ -10596,7 +10606,7 @@
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
       ],
-      "verified_at": "2026-10-14T10:43:24.549Z",
+      "verified_at": "2026-10-15T21:25:21.466Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

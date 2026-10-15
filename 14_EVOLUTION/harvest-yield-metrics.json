@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:22:27.550Z",
-  "total_cycles_completed": 1440,
-  "total_learnings_persisted": 1440,
-  "total_rules_promoted": 776,
+  "last_updated": "2026-10-15T21:25:21.495Z",
+  "total_cycles_completed": 1441,
+  "total_learnings_persisted": 1441,
+  "total_rules_promoted": 778,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:08:48.738Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv7plp7u",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T06:12:03.541Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T21:22:27.550Z",
       "repository": "autotrust/JEV-35B-NVFP4",
       "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T21:25:21.495Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

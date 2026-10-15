@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-2Y84",
-    "timestamp": "2026-10-13T12:38:28.036Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv6o2y4v",
-    "contentHash": "d553ff5d9030d975a82e8f29969d2885821704cfe7e4c0f80cb18c825dfa2340",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-6ZJX",
     "timestamp": "2026-10-13T12:41:36.381Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B-NVFP4",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
     "contentHash": "996374f6a708171da82c52aa13d66a14b362cf659680c8bf64ef076f47feb1d0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-S8NO",
+    "timestamp": "2026-10-15T21:25:21.492Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "f7c00e3e02c2fed4583c3b47769ada2182c70151afacf16782c9473987052fdc",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

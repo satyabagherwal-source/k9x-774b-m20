@@ -1463,3 +1463,4 @@
 | `CYCLE-20261015-GDJK` | `2026-10-15T21:16:07.952Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 998, Rule 999` | Yes (`52253723...`) |
 | `CYCLE-20261015-KFJT` | `2026-10-15T21:19:17.177Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1000, Rule 1001, Rule 1002` | Yes (`21db9e42...`) |
 | `CYCLE-20261015-OIFU` | `2026-10-15T21:22:27.546Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1003, Rule 1004` | Yes (`996374f6...`) |
+| `CYCLE-20261015-S8NO` | `2026-10-15T21:25:21.492Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 790, Rule 498` | Yes (`f7c00e3e...`) |
