@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-87U1",
-    "timestamp": "2026-10-13T15:58:31.081Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-120b-mv6v87qw",
-    "contentHash": "980c00153ccce8c48813f402f405ec6dc3124be427b5a4a88a5c0c06d1d0341d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-EMYK",
     "timestamp": "2026-10-13T16:03:30.620Z",
     "repository": "zai-org/GLM-5.2",
@@ -7490,6 +7475,21 @@
     "repository": "PSRben/VisionHOPE",
     "learningId": "learn-huggingface-psrben-visionhope",
     "contentHash": "8b356c8bb0d2a4d621de64dc8c67e33714978a2867a275601830de43aa6fee89",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-8IZ6",
+    "timestamp": "2026-10-15T23:57:59.442Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+    "contentHash": "da5c8e9a1ec80653c9aa345208b68527125d4bf8efc91483b66dc19d21be810d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
