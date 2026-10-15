@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:31:10.633Z",
+  "last_updated": "2026-10-15T20:34:19.458Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16315,18 +16315,29 @@
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "source": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "slug": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "630c225847d8f174b156b7c2d2eb2cb93b9cef30bfa55715983ef74dc8ea3704",
+      "content_hash": "8acd8026714cd6bd7a6b909c56bb7493f937866292fbe2fd6980ba69413711e6",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": "EXISTING",
+          "title": "Attention-Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 974,
+          "title": "Tokenizer Truncation & Padding Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 10,
       "historical_learning_ids": [
@@ -16341,7 +16352,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-14T09:56:24.456Z",
+      "verified_at": "2026-10-15T20:34:19.452Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

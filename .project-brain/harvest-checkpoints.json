@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T20:31:10.663Z",
+  "last_updated": "2026-10-15T20:34:19.490Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1573,17 +1573,18 @@
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv7xqe35",
-      "content_hash": "630c225847d8f174b156b7c2d2eb2cb93b9cef30bfa55715983ef74dc8ea3704",
-      "verified_at": "2026-10-14T09:56:24.512Z",
+      "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "content_hash": "8acd8026714cd6bd7a6b909c56bb7493f937866292fbe2fd6980ba69413711e6",
+      "verified_at": "2026-10-15T20:34:19.490Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T09:56:24.512Z"
+      "last_updated": "2026-10-15T20:34:19.490Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
