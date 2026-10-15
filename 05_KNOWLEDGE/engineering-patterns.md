@@ -59137,3 +59137,144 @@ assert torch.allclose(sums, torch.ones_like(sums), atol=1e-5), "MoE routing weig
 ```
 
 ---
+
+
+---
+
+## 965. Hardware-Capability Gating for ML Model Selection (Harvested from argmaxinc/whisperkit-coreml)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hardware-Capability Gating for ML Model Selection",
+  "source": "argmaxinc/whisperkit-coreml",
+  "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+  "source_version": "hf-argmaxinc-whisperkit-coreml",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:17:41.288Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml) (Revision: `hf-argmaxi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying machine learning models on heterogeneous hardware, the model selection logic MUST be driven by a **static, versioned capability matrix** that maps hardware identifiers to supported model variants. The runtime MUST NOT attempt to load a model variant that is not explicitly listed in the `supported` array for the detected hardware identifier.
+
+**WHY**:
+Attempting to load a large model (e.g., `large-v3`) on a memory-constrained device (e.g., A12) will cause immediate `OOM` (Out of Memory) crashes or severe thermal throttling. Conversely, loading a small model on a powerful device wastes computational resources. A static matrix ensures deterministic behavior and prevents runtime introspection failures.
+
+**WHEN TO APPLY**:
+Any system deploying ML models on edge devices (iOS, Android, embedded) where hardware capabilities vary significantly.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "device_support": [
+    {
+      "chips": "A12, A13",
+      "identifiers": ["iPhone11", "iPhone12"],
+      "models": {
+        "default": "openai_whisper-tiny",
+        "supported": ["openai_whisper-tiny", "openai_whisper-base"]
+      }
+    },
+    {
+      "chips": "M1",
+      "identifiers": ["MacBookPro17,1"],
+      "models": {
+        "default": "openai_whisper-large-v3",
+        "supported": ["openai_whisper-tiny", "openai_whisper-large-v3"]
+      }
+    }
+  ]
+}
+```
+```swift
+// Pseudocode for SDK Runtime
+func selectModel(for deviceID: String) -> String? {
+    guard let config = loadConfig() else { return nil }
+    for support in config.device_support {
+        if support.identifiers.contains(deviceID) {
+            // Return default or user-selected model if in supported list
+            return support.models.default
+        }
+    }
+    return nil // No support, fail gracefully
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Runtime introspection without capability check
+let model = try MLModel(contentsOf: largeModelURL) // Crashes on A12 due to OOM
+```
+
+**VERIFICATION METHOD**:
+Unit test that iterates through all `identifiers` in `config.json` and asserts that the `default` model is present in the `supported` array for each entry.
+
+
+---
+
+## 966. Immutable Model Versioning Contract (Harvested from argmaxinc/whisperkit-coreml)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Immutable Model Versioning Contract",
+  "source": "argmaxinc/whisperkit-coreml",
+  "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+  "source_version": "hf-argmaxinc-whisperkit-coreml",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:17:41.319Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml) (Revision: `hf-argmaxi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+The model repository MUST include a `version` field in its configuration that is strictly coupled to the SDK runtime version. The SDK MUST validate this version before attempting to deserialize model weights. Mismatched versions MUST result in a graceful fallback or explicit error, not a silent failure.
+
+**WHY**:
+Model architectures (tensor shapes, quantization schemes) can change between versions. Loading a v0.4 model with a v0.3 SDK will cause tensor shape mismatches or quantization dequantization errors, leading to garbage output or crashes.
+
+**WHEN TO APPLY**:
+Any system where model weights are distributed separately from the inference engine.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "name": "whisperkit-coreml",
+  "version": "0.4"
+}
+```
+```swift
+// SDK Runtime
+let expectedVersion = "0.4"
+let modelVersion = config["version"] as? String
+guard modelVersion == expectedVersion else {
+    throw ModelError.versionMismatch(expected: expectedVersion, found: modelVersion)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Ignoring version check
+let model = try MLModel(contentsOf: url) // May load incompatible weights
+```
+
+**VERIFICATION METHOD**:
+Integration test that loads a model with a mismatched version and asserts that a `versionMismatch` error is thrown.

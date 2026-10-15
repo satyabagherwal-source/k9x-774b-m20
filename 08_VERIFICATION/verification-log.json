@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-8GY6",
-    "timestamp": "2026-10-13T11:18:46.734Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv6l8gvf",
-    "contentHash": "f98f1d50be9ec448e85e47c0549761a0ac73eb516b047ba302ca3934b1102772",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-CRD4",
     "timestamp": "2026-10-13T11:22:06.856Z",
     "repository": "autotrust/JEV-35B",
@@ -7492,6 +7477,21 @@
     "contentHash": "8ec770b485781996be637edb61ef1975221f72ad5827f732aa2c89a0774b4ec1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-D7UK",
+    "timestamp": "2026-10-15T20:17:41.372Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "6a95584707b93b6a7acaac594419cc6546ca33e92e093c93f4d114931ecf2301",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

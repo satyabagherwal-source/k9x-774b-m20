@@ -1442,3 +1442,4 @@
 | `CYCLE-20261015-YMHT` | `2026-10-15T20:06:20.513Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 959, Rule 960, Rule 961` | Yes (`32bbb0a2...`) |
 | `CYCLE-20261015-3SZP` | `2026-10-15T20:10:22.213Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 962, Rule 963, Rule 964` | Yes (`ba7feaa9...`) |
 | `CYCLE-20261015-94IE` | `2026-10-15T20:14:30.422Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`8ec770b4...`) |
+| `CYCLE-20261015-D7UK` | `2026-10-15T20:17:41.372Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 965, Rule 966` | Yes (`6a955847...`) |

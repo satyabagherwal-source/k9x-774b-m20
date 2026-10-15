@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:14:30.386Z",
+  "last_updated": "2026-10-15T20:17:41.348Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9752,18 +9752,29 @@
     "learn-huggingface-argmaxinc-whisperkit-coreml": {
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-argmaxinc-whisperkit-coreml",
+      "source": "argmaxinc/whisperkit-coreml",
+      "repository": "argmaxinc/whisperkit-coreml",
       "slug": "hf-argmaxinc-whisperkit-coreml",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "4ae03d7f1ae9ac4dae927470544ce4cb8b1ef099614acb0f9ebe13bcca5a68b8",
+      "content_hash": "6a95584707b93b6a7acaac594419cc6546ca33e92e093c93f4d114931ecf2301",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 965,
+          "title": "Hardware-Capability Gating for ML Model Selection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 966,
+          "title": "Immutable Model Versioning Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -9779,7 +9790,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-14T09:40:49.783Z",
+      "verified_at": "2026-10-15T20:17:41.343Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
