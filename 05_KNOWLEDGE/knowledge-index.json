@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:03:49.889Z",
+  "last_updated": "2026-10-15T21:07:00.425Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12392,18 +12392,34 @@
     "learn-huggingface-edge0-audio8-asr-infinite": {
       "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-edge0-audio8-asr-infinite",
+      "source": "Edge0/Audio8-ASR-Infinite",
+      "repository": "Edge0/Audio8-ASR-Infinite",
       "slug": "hf-edge0-audio8-asr-infinite",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "c4a2c7a9cbf7707859455a928fd712cdc27c0b3048c347b0ad402d0d859cc410",
+      "content_hash": "b2fdd441eba8423f5deaccaaa883dff3be529af313145ad4083f90a4ce71ad18",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 993,
+          "title": "Bounded Context Streaming Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 994,
+          "title": "Semantic VAD Over Acoustic VAD Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 995,
+          "title": "Frame-Length Conditioning Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 334,
       "historical_learning_ids": [
@@ -12742,7 +12758,7 @@
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv41u2xc",
         "learn-huggingface-hf-edge0-audio8-asr-infinite-mv4fpi3i"
       ],
-      "verified_at": "2026-10-14T10:27:39.715Z",
+      "verified_at": "2026-10-15T21:07:00.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

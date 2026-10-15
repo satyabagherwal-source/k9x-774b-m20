@@ -1457,3 +1457,4 @@
 | `CYCLE-20261015-REHK` | `2026-10-15T20:56:42.776Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 987, Rule 988` | Yes (`eef94046...`) |
 | `CYCLE-20261015-WRR9` | `2026-10-15T21:00:53.253Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 984, Rule 989, Rule 990` | Yes (`89da98c4...`) |
 | `CYCLE-20261015-0K29` | `2026-10-15T21:03:49.905Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 431, Rule 991, Rule 992` | Yes (`2001face...`) |
+| `CYCLE-20261015-4N36` | `2026-10-15T21:07:00.450Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 993, Rule 994, Rule 995` | Yes (`b2fdd441...`) |
