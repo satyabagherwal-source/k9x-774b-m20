@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T23:29:44.881Z",
+  "last_updated": "2026-10-15T23:33:07.659Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9336,18 +9336,18 @@
     "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora": {
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-akatz-ai-minimax-h3-character-swap-lora",
+      "source": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "slug": "hf-akatz-ai-minimax-h3-character-swap-lora",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "29a29c4217abf2085d756cd720905bb58f9c125bf49d06d6a6f297a350d78dc5",
+      "content_hash": "31d53ca575ec5e97f827e6013501a3bcc1159eca14434eb67c52a9f80356d37b",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -9364,7 +9364,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-10-14T12:55:28.926Z",
+      "verified_at": "2026-10-15T23:33:07.649Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

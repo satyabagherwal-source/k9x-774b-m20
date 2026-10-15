@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-7JFA",
-    "timestamp": "2026-10-13T15:29:59.830Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv6u7jcp",
-    "contentHash": "eb916a43696bf574ff0923056bde7dfe4e168aaf661a08b94fd78ddfb7037b15",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-DZZ2",
     "timestamp": "2026-10-13T15:35:01.214Z",
     "repository": "openai/whisper-large-v3",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
     "contentHash": "6b0fa6286407c581b31ca13a2f8741968e2ba6d5404c7463c0450145e814dc44",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-CJXO",
+    "timestamp": "2026-10-15T23:33:07.692Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "31d53ca575ec5e97f827e6013501a3bcc1159eca14434eb67c52a9f80356d37b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
