@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-T69C",
-    "timestamp": "2026-10-13T13:26:51.120Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv6pt65c",
-    "contentHash": "c2bf356598057b01d02f5e2a69f432e186bb473b6c1c1f3e564a41067c0e7b7a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-YODD",
     "timestamp": "2026-10-13T13:31:07.873Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-R1",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
     "contentHash": "261c87582dac247df23a3a61e9e273a356b92376edaedfefaa9b2d692c629d71",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-05KO",
+    "timestamp": "2026-10-15T21:59:30.360Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3",
+    "contentHash": "5110d0391e81ddb44944ae40ace973dc08111e538f6f85eebf195fafc8af6d24",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

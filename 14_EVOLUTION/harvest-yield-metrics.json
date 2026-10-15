@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:56:05.645Z",
-  "total_cycles_completed": 1451,
-  "total_learnings_persisted": 1451,
+  "last_updated": "2026-10-15T21:59:30.364Z",
+  "total_cycles_completed": 1452,
+  "total_learnings_persisted": 1452,
   "total_rules_promoted": 781,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:43:56.901Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-hf-bigscience-bloom-mv7quvvw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T06:46:56.438Z",
       "repository": "openai/gpt-oss-20b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T21:56:05.645Z",
       "repository": "deepseek-ai/DeepSeek-R1",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T21:59:30.364Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
