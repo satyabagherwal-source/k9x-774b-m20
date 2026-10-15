@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:31:36.407Z",
-  "total_cycles_completed": 1443,
-  "total_learnings_persisted": 1443,
+  "last_updated": "2026-10-15T21:34:40.908Z",
+  "total_cycles_completed": 1444,
+  "total_learnings_persisted": 1444,
   "total_rules_promoted": 778,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:17:58.763Z",
-      "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv7pxhn4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T06:21:20.516Z",
       "repository": "fishaudio/drama-3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T21:31:36.407Z",
       "repository": "LiquidAI/d1-3B",
       "learningId": "learn-huggingface-liquidai-d1-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T21:34:40.908Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
