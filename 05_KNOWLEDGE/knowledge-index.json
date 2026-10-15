@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T22:27:24.344Z",
+  "last_updated": "2026-10-15T22:30:38.046Z",
   "total_verified_learnings": 169,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13786,12 +13786,13 @@
     "learn-huggingface-lightricks-ltx-2-5": {
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-lightricks-ltx-2.5",
+      "source": "Lightricks/LTX-2.5",
+      "repository": "Lightricks/LTX-2.5",
       "slug": "hf-lightricks-ltx-2.5",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "df866a5fee0c9fca0635b825f1e7862e84b393fd733b2406ac958114ca0409c6",
+      "content_hash": "150b25f9c21a24917ba1a6d429463788097e949b2403268840dab6ddf9507034",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -13812,7 +13813,6 @@
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -13829,7 +13829,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-14T11:48:13.746Z",
+      "verified_at": "2026-10-15T22:30:38.041Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

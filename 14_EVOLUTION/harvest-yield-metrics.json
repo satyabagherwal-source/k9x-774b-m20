@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T22:27:24.384Z",
-  "total_cycles_completed": 1461,
-  "total_learnings_persisted": 1461,
+  "last_updated": "2026-10-15T22:30:38.073Z",
+  "total_cycles_completed": 1462,
+  "total_learnings_persisted": 1462,
   "total_rules_promoted": 790,
   "history": [
-    {
-      "timestamp": "2026-10-14T08:10:27.930Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv7ty58m",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T08:28:11.071Z",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T22:27:24.384Z",
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T22:30:38.073Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
