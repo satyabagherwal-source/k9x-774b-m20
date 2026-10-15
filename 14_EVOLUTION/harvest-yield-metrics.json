@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:50:15.807Z",
-  "total_cycles_completed": 1449,
-  "total_learnings_persisted": 1449,
+  "last_updated": "2026-10-15T21:53:08.704Z",
+  "total_cycles_completed": 1450,
+  "total_learnings_persisted": 1450,
   "total_rules_promoted": 781,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:37:56.129Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-hf-zai-org-glm-5-2-mv7qn5jq",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T06:40:49.456Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T21:50:15.807Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T21:53:08.704Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
