@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-5ILF",
-    "timestamp": "2026-10-13T10:48:29.283Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv6k5igt",
-    "contentHash": "427a97eee997f852039a8c10a5750d70f87fdf770aea8c96f85d048a7c080089",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-9BQ8",
     "timestamp": "2026-10-13T10:51:27.008Z",
     "repository": "Qwen/Qwen3.8-27B",
@@ -7492,6 +7477,21 @@
     "contentHash": "a113cc2c64379122a671f63effcf685c782d99d12ebe4e25335d23b74dcac945",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-76EB",
+    "timestamp": "2026-10-15T19:44:59.939Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "4dbc733b9879cc086e9f899c3c5b652b3f53a33973e67c4b18271848b5690fd5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

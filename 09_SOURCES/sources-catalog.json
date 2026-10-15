@@ -1125,9 +1125,9 @@
     "sourceUrl": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "sourceVersion": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "license": "Open-Source",
-    "contentHash": "ab061ba2392d906c5ea0844af737cf4311e2fc4243d72c6f0994a1782b7a5c85",
-    "lastHarvestedAt": "2026-10-14T09:14:22.442Z",
-    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv7w8c1d"
+    "contentHash": "4dbc733b9879cc086e9f899c3c5b652b3f53a33973e67c4b18271848b5690fd5",
+    "lastHarvestedAt": "2026-10-15T19:44:59.942Z",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese"
   },
   "hf-facebookai-xlm-roberta-base": {
     "repository": "FacebookAI/xlm-roberta-base",

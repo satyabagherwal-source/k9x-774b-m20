@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T19:41:32.713Z",
+  "last_updated": "2026-10-15T19:44:59.913Z",
   "total_verified_learnings": 163,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13525,18 +13525,29 @@
     "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
       "learning_id": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "source": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "slug": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "ab061ba2392d906c5ea0844af737cf4311e2fc4243d72c6f0994a1782b7a5c85",
+      "content_hash": "4dbc733b9879cc086e9f899c3c5b652b3f53a33973e67c4b18271848b5690fd5",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 949,
+          "title": "Strict Sampling Rate Invariance in Audio Pipelines",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 950,
+          "title": "CTC Decoding Requires Attention Mask Propagation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -13552,7 +13563,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-10-14T09:14:22.380Z",
+      "verified_at": "2026-10-15T19:44:59.909Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

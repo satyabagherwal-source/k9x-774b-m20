@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T19:41:32.735Z",
-  "total_cycles_completed": 1410,
-  "total_learnings_persisted": 1410,
-  "total_rules_promoted": 715,
+  "last_updated": "2026-10-15T19:44:59.944Z",
+  "total_cycles_completed": 1411,
+  "total_learnings_persisted": 1411,
+  "total_rules_promoted": 717,
   "history": [
-    {
-      "timestamp": "2026-10-14T04:35:08.406Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv7m98iq",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T04:38:22.199Z",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "LiquidAI/LFM2.5-24B-A2B",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T19:44:59.944Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
