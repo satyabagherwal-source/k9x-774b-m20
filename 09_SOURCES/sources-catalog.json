@@ -1375,9 +1375,9 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "562de50a9954701856593bf1d0738b102462736ce4e873c9468bb52ff05d3824",
-    "lastHarvestedAt": "2026-10-14T11:20:17.112Z",
-    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv80q99d"
+    "contentHash": "7b9e1fcd7d801518f477c8d5a0905fa44aa4866df714b9b95c20b6592585111f",
+    "lastHarvestedAt": "2026-10-15T22:02:35.544Z",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
     "repository": "ccfos/nightingale",
