@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-MCXD",
-    "timestamp": "2026-10-13T13:49:32.785Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv6qmcvj",
-    "contentHash": "f3d62dc906be9b8cc7a4dd147433019a67a6272f424b795f836535c4deb09f4c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-QKX6",
     "timestamp": "2026-10-13T13:52:49.770Z",
     "repository": "facebook/sam3",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/TeleOCR",
     "learningId": "learn-huggingface-xingchen-agi-teleocr",
     "contentHash": "ebcfabed946330c76a06ee170b1840f74ee8ad110b07693b188c1ce73483fa06",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-S1X4",
+    "timestamp": "2026-10-15T22:21:11.992Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "9de4345033b3ff300b72fbfa73c815ffb2ebc4ac71d8ba3faf7b0fa687eb7cf6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

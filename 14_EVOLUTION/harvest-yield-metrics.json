@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T22:18:19.189Z",
-  "total_cycles_completed": 1458,
-  "total_learnings_persisted": 1458,
+  "last_updated": "2026-10-15T22:21:11.999Z",
+  "total_cycles_completed": 1459,
+  "total_learnings_persisted": 1459,
   "total_rules_promoted": 790,
   "history": [
-    {
-      "timestamp": "2026-10-14T07:11:36.826Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv7rugop",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T07:28:07.906Z",
       "repository": "speridlabs/iris-3b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T22:18:19.189Z",
       "repository": "XingChen-AGI/TeleOCR",
       "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T22:21:11.999Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
