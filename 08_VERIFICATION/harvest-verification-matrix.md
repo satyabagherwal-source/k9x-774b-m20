@@ -1469,3 +1469,4 @@
 | `CYCLE-20261015-48AW` | `2026-10-15T21:34:40.904Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`0aa1246a...`) |
 | `CYCLE-20261015-88D1` | `2026-10-15T21:37:47.605Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`e65c9061...`) |
 | `CYCLE-20261015-CBN2` | `2026-10-15T21:40:58.478Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`969f0329...`) |
+| `CYCLE-20261015-GBXS` | `2026-10-15T21:44:05.488Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`c88cd0a5...`) |

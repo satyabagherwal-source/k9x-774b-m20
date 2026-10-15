@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T21:40:58.483Z",
+  "last_updated": "2026-10-15T21:44:05.495Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1775,17 +1775,18 @@
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-francisring-prism-mv8029js",
-      "content_hash": "2bb740a156ea3cf2e26907ddf216424a73da17704d03aa2d772c555a53b0bcd0",
-      "verified_at": "2026-10-14T11:01:37.750Z",
+      "learning_id": "learn-huggingface-francisring-prism",
+      "content_hash": "c88cd0a5c17801c9cf4e9938f2e60749d666d8bc66a2cd3e86175a0a53b6cf57",
+      "verified_at": "2026-10-15T21:44:05.494Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T11:01:37.750Z"
+      "last_updated": "2026-10-15T21:44:05.494Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
