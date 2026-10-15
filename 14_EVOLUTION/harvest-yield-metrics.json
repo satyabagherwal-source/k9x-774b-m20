@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T22:15:19.807Z",
-  "total_cycles_completed": 1457,
-  "total_learnings_persisted": 1457,
+  "last_updated": "2026-10-15T22:18:19.189Z",
+  "total_cycles_completed": 1458,
+  "total_learnings_persisted": 1458,
   "total_rules_promoted": 790,
   "history": [
-    {
-      "timestamp": "2026-10-14T07:05:51.401Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv7rn238",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T07:11:36.826Z",
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -1403,6 +1396,13 @@
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T22:18:19.189Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

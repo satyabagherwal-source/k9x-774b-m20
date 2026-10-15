@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-IMVK",
-    "timestamp": "2026-10-13T13:46:39.056Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv6qimse",
-    "contentHash": "eabf96c6fbfa675dfefedd867cfb9bc6a8cdf45152367638f1178ff5d95d3f0f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-MCXD",
     "timestamp": "2026-10-13T13:49:32.785Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "b80f5195ae74490ae59982d495d6cc3e971bc706afff12c916c76e5926243b83",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-OCKX",
+    "timestamp": "2026-10-15T22:18:19.185Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr",
+    "contentHash": "ebcfabed946330c76a06ee170b1840f74ee8ad110b07693b188c1ce73483fa06",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

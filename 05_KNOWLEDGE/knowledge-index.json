@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T22:15:19.779Z",
+  "last_updated": "2026-10-15T22:18:19.152Z",
   "total_verified_learnings": 169,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17344,12 +17344,13 @@
     "learn-huggingface-xingchen-agi-teleocr": {
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-xingchen-agi-teleocr",
+      "source": "XingChen-AGI/TeleOCR",
+      "repository": "XingChen-AGI/TeleOCR",
       "slug": "hf-xingchen-agi-teleocr",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "5e7c44334c76859c5d0ca1d9921052cb4aef506bb79e4d2d6c8921b392acffca",
+      "content_hash": "ebcfabed946330c76a06ee170b1840f74ee8ad110b07693b188c1ce73483fa06",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -17370,7 +17371,6 @@
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -17387,7 +17387,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-10-14T11:36:00.437Z",
+      "verified_at": "2026-10-15T22:18:19.145Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

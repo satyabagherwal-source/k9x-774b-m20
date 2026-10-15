@@ -305,9 +305,9 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "5e7c44334c76859c5d0ca1d9921052cb4aef506bb79e4d2d6c8921b392acffca",
-    "lastHarvestedAt": "2026-10-14T11:36:00.499Z",
-    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv81ah6j"
+    "contentHash": "ebcfabed946330c76a06ee170b1840f74ee8ad110b07693b188c1ce73483fa06",
+    "lastHarvestedAt": "2026-10-15T22:18:19.188Z",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
     "repository": "Qwen/Qwen-Image-2.1",
