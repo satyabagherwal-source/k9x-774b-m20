@@ -1494,3 +1494,4 @@
 | `CYCLE-20261015-WVX4` | `2026-10-15T22:52:57.112Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`aaea91f4...`) |
 | `CYCLE-20261015-0MQS` | `2026-10-15T22:55:51.844Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1018, Rule 1019, Rule 1020` | Yes (`5175ff63...`) |
 | `CYCLE-20261015-4GJ1` | `2026-10-15T22:58:50.413Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1021, Rule 1022, Rule 1023` | Yes (`4ebb9032...`) |
+| `CYCLE-20261015-8O9L` | `2026-10-15T23:02:07.065Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`7db46bd5...`) |
