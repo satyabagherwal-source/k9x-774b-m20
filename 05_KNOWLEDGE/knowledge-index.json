@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:06:20.486Z",
+  "last_updated": "2026-10-15T20:10:22.188Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13038,18 +13038,34 @@
     "learn-huggingface-google-gemma-4-26b-a4b-it": {
       "learning_id": "learn-huggingface-google-gemma-4-26b-a4b-it",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-google-gemma-4-26b-a4b-it",
+      "source": "google/gemma-4-26B-A4B-it",
+      "repository": "google/gemma-4-26B-A4B-it",
       "slug": "hf-google-gemma-4-26b-a4b-it",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-26B-A4B-it",
       "source_version": "hf-google-gemma-4-26b-a4b-it",
-      "content_hash": "b7b1e2ae50abff0e64b253f3aa81df45d7fc45d74750afd8d89b97f9f8745661",
+      "content_hash": "ba7feaa94a8bfa61679aee92ac5129d14c7d25e74699cb9c441386b424340e7d",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 962,
+          "title": "Dual-Phase Hybrid RoPE & KV-Cache Decoupling Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 963,
+          "title": "Numerically Invariant Logit Softcapping & Multi-Stop Boundary Enforcement Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 964,
+          "title": "Sparse MoE Top-K Dynamic Capacity Gating & Softmax Renormalization Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -13065,7 +13081,7 @@
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv3z9d9l",
         "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv4dv0ce"
       ],
-      "verified_at": "2026-10-14T09:34:23.874Z",
+      "verified_at": "2026-10-15T20:10:22.181Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

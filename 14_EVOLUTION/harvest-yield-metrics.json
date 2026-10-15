@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T20:06:20.518Z",
-  "total_cycles_completed": 1417,
-  "total_learnings_persisted": 1417,
-  "total_rules_promoted": 728,
+  "last_updated": "2026-10-15T20:10:22.218Z",
+  "total_cycles_completed": 1418,
+  "total_learnings_persisted": 1418,
+  "total_rules_promoted": 731,
   "history": [
-    {
-      "timestamp": "2026-10-14T04:56:44.391Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv7n10j3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T04:59:47.275Z",
       "repository": "facebook/sam3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T20:06:20.518Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T20:10:22.218Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
