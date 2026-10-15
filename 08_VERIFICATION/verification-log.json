@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-W51G",
-    "timestamp": "2026-10-13T15:49:07.588Z",
-    "repository": "deepseek-ai/DeepSeek-V4-Pro",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv6uw4yx",
-    "contentHash": "6a65dd37bf54777065d6b879d97025b68d1f59125625f5c2ab3d028a68140aca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-0DWG",
     "timestamp": "2026-10-13T15:52:25.696Z",
     "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -7490,6 +7475,21 @@
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
     "contentHash": "c262642cd3483121870e3ba9b5610a5745deb009a1f0ca160547ac454d4783ae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-WFX3",
+    "timestamp": "2026-10-15T23:48:35.607Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "64fba08bf28adacb3e58d9409aa33663d167874cc9d56b26096462fde93cbfd7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

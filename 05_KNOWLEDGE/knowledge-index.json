@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T23:45:09.039Z",
+  "last_updated": "2026-10-15T23:48:35.572Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17046,18 +17046,18 @@
     "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "slug": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "95037d13c72b08002c12a4061d78bb4d0f926e84a7f2271edffadf10e6c26817",
+      "content_hash": "64fba08bf28adacb3e58d9409aa33663d167874cc9d56b26096462fde93cbfd7",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -17074,7 +17074,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-10-14T13:11:57.468Z",
+      "verified_at": "2026-10-15T23:48:35.564Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
