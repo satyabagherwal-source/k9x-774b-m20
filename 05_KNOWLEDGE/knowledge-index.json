@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:13:13.801Z",
+  "last_updated": "2026-10-15T21:16:07.928Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11815,18 +11815,29 @@
     "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2": {
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "source": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "slug": "hf-cross-encoder-ms-marco-minilm-l6-v2",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
       "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "2c64172091a9b2fb684b45c60286fd685dacda3f71b1546c66a6992a6c3cf27f",
+      "content_hash": "52253723874eb545a1766f845aec78d23c4b4ebbf9939a4a1fe6e111d9572b8f",
       "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 998,
+          "title": "Cross-Encoder Input Concatenation & Truncation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 999,
+          "title": "Raw Logit vs. Probability Interpretation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 334,
       "historical_learning_ids": [
@@ -12165,7 +12176,7 @@
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv42syia",
         "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv4g0ye2"
       ],
-      "verified_at": "2026-10-14T10:37:17.646Z",
+      "verified_at": "2026-10-15T21:16:07.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

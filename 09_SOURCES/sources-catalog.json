@@ -155,9 +155,9 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "2c64172091a9b2fb684b45c60286fd685dacda3f71b1546c66a6992a6c3cf27f",
-    "lastHarvestedAt": "2026-10-14T10:37:17.708Z",
-    "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv7z6yz6"
+    "contentHash": "52253723874eb545a1766f845aec78d23c4b4ebbf9939a4a1fe6e111d9572b8f",
+    "lastHarvestedAt": "2026-10-15T21:16:07.954Z",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2"
   },
   "hf-baai-bge-small-en-v1.5": {
     "repository": "BAAI/bge-small-en-v1.5",

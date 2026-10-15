@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-RAST",
-    "timestamp": "2026-10-13T12:29:24.461Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv6nrao5",
-    "contentHash": "eada004a51e480df22aaed92842f72078d2c61713110584ce15b18ea21a501a7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-VCFG",
     "timestamp": "2026-10-13T12:32:33.196Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7492,6 +7477,21 @@
     "contentHash": "f00d6c245cf2bc898903809ad0c380b47549807af10621158bb83676e1f2fa42",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-GDJK",
+    "timestamp": "2026-10-15T21:16:07.952Z",
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+    "contentHash": "52253723874eb545a1766f845aec78d23c4b4ebbf9939a4a1fe6e111d9572b8f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
