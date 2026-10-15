@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T19:55:56.512Z",
+  "last_updated": "2026-10-15T19:59:54.190Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1438,17 +1438,18 @@
     },
     "Qwen/Qwen3-VL-8B-Instruct": {
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv7wlq70",
-      "content_hash": "3e81c4f9ddd95b0e29a7718e583091f49086cea2bc957ddf8985930dbdb4fb4c",
-      "verified_at": "2026-10-14T09:24:47.314Z",
+      "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "content_hash": "f9f93b9b47f5279a3e193ff4c929d9f934cccdcfc7239c18d025067118555d39",
+      "verified_at": "2026-10-15T19:59:54.190Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T09:24:47.314Z"
+      "last_updated": "2026-10-15T19:59:54.190Z"
     },
     "nomic-ai/nomic-embed-text-v1.5": {
       "repository": "nomic-ai/nomic-embed-text-v1.5",

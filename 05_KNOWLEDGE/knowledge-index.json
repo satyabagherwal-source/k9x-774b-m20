@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T19:55:56.487Z",
+  "last_updated": "2026-10-15T19:59:54.161Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15556,18 +15556,34 @@
     "learn-huggingface-qwen-qwen3-vl-8b-instruct": {
       "learning_id": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-qwen-qwen3-vl-8b-instruct",
+      "source": "Qwen/Qwen3-VL-8B-Instruct",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "slug": "hf-qwen-qwen3-vl-8b-instruct",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "3e81c4f9ddd95b0e29a7718e583091f49086cea2bc957ddf8985930dbdb4fb4c",
+      "content_hash": "f9f93b9b47f5279a3e193ff4c929d9f934cccdcfc7239c18d025067118555d39",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 956,
+          "title": "Interleaved Multi-Axis Rotary Position Embedding (Interleaved-MRoPE) Section Partitioning",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 957,
+          "title": "DeepStack Multi-Stage Intermediate ViT Feature Tapping & Projection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 958,
+          "title": "Spatial-Temporal 3D Patch Downsampling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -15583,7 +15599,7 @@
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1"
       ],
-      "verified_at": "2026-10-14T09:24:47.252Z",
+      "verified_at": "2026-10-15T19:59:54.153Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
