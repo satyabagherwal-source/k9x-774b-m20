@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:24:44.075Z",
+  "last_updated": "2026-10-15T20:27:59.078Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13104,18 +13104,34 @@
     "learn-huggingface-google-gemma-4-31b-it": {
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-google-gemma-4-31b-it",
+      "source": "google/gemma-4-31B-it",
+      "repository": "google/gemma-4-31B-it",
       "slug": "hf-google-gemma-4-31b-it",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "f947de475b705adcf8a2d1887e0a122bf902458f3eb63c3ced8a9b5f8ea9fdec",
+      "content_hash": "2898650555bed4e11348b05143d35d0f97e68cab0c675094a84ba0abbba85b63",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 969,
+          "title": "Hybrid Attention Layer Interleaving Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 970,
+          "title": "Agentic Tool-Call Schema Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 971,
+          "title": "Multimodal Token Boundary Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -13131,7 +13147,7 @@
         "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
         "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
       ],
-      "verified_at": "2026-10-14T09:50:06.853Z",
+      "verified_at": "2026-10-15T20:27:59.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
