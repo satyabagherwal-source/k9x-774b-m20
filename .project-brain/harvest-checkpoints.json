@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T21:16:07.957Z",
+  "last_updated": "2026-10-15T21:19:17.183Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2320,6 +2320,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-15T19:49:51.037Z"
+    },
+    "black-forest-labs/flux-3-image-klein-comfy": {
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "content_hash": "21db9e42039102713401b64c19f0fadde5ae4983e4c02107da1dc3d2b0170b4e",
+      "verified_at": "2026-10-15T21:19:17.183Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-15T21:19:17.183Z"
     }
   }
 }

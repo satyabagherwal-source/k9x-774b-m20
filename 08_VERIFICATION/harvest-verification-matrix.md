@@ -1461,3 +1461,4 @@
 | `CYCLE-20261015-8KGN` | `2026-10-15T21:10:03.671Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`9e021a39...`) |
 | `CYCLE-20261015-CN6T` | `2026-10-15T21:13:13.829Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule EXISTING, Rule 997` | Yes (`f00d6c24...`) |
 | `CYCLE-20261015-GDJK` | `2026-10-15T21:16:07.952Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 998, Rule 999` | Yes (`52253723...`) |
+| `CYCLE-20261015-KFJT` | `2026-10-15T21:19:17.177Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1000, Rule 1001, Rule 1002` | Yes (`21db9e42...`) |

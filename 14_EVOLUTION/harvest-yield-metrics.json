@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:16:07.956Z",
-  "total_cycles_completed": 1438,
-  "total_learnings_persisted": 1438,
-  "total_rules_promoted": 771,
+  "last_updated": "2026-10-15T21:19:17.181Z",
+  "total_cycles_completed": 1439,
+  "total_learnings_persisted": 1439,
+  "total_rules_promoted": 774,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:02:26.209Z",
-      "repository": "microsoft/FrogNano-4B-2609",
-      "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv7pdi24",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T06:05:46.124Z",
       "repository": "hexgrad/Kokoro-82M",
@@ -1403,6 +1396,13 @@
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T21:19:17.181Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

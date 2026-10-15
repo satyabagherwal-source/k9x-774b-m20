@@ -17770,5 +17770,17 @@
     "downloads": 402,
     "qualityScore": 1832,
     "discoveredAt": "2026-10-15T19:48:18.771Z"
+  },
+  {
+    "name": "black-forest-labs/flux-3-image-klein-comfy",
+    "fullName": "black-forest-labs/flux-3-image-klein-comfy",
+    "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: black-forest-labs/flux-3-image-klein-comfy (159 likes, 39 downloads)",
+    "likes": 159,
+    "downloads": 39,
+    "qualityScore": 1629,
+    "discoveredAt": "2026-10-15T21:18:55.615Z"
   }
 ]

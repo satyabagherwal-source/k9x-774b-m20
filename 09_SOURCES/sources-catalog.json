@@ -1568,5 +1568,15 @@
     "contentHash": "16ee29da663cc1c38e3d33061b94b3669470e959d5ad11a5f537308773d1f14b",
     "lastHarvestedAt": "2026-10-15T19:49:51.033Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
+  },
+  "hf-black-forest-labs-flux-3-image-klein-comfy": {
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+    "sourceVersion": "hf-black-forest-labs-flux-3-image-klein-comfy",
+    "license": "Open-Source",
+    "contentHash": "21db9e42039102713401b64c19f0fadde5ae4983e4c02107da1dc3d2b0170b4e",
+    "lastHarvestedAt": "2026-10-15T21:19:17.180Z",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy"
   }
 }

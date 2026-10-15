@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-VCFG",
-    "timestamp": "2026-10-13T12:32:33.196Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv6nvcaq",
-    "contentHash": "994e58140d65db272de72bc6e0950376361484fc19e26a79174cdcefa61e8871",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-YX0W",
     "timestamp": "2026-10-13T12:35:19.856Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "52253723874eb545a1766f845aec78d23c4b4ebbf9939a4a1fe6e111d9572b8f",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-KFJT",
+    "timestamp": "2026-10-15T21:19:17.177Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "21db9e42039102713401b64c19f0fadde5ae4983e4c02107da1dc3d2b0170b4e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

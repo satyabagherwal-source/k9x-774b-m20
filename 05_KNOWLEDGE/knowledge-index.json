@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:16:07.928Z",
-  "total_verified_learnings": 164,
+  "last_updated": "2026-10-15T21:19:17.152Z",
+  "total_verified_learnings": 165,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -40125,6 +40125,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-15T19:49:50.999Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy": {
+      "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "black-forest-labs/flux-3-image-klein-comfy",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "slug": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
+      "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
+      "content_hash": "21db9e42039102713401b64c19f0fadde5ae4983e4c02107da1dc3d2b0170b4e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1000,
+          "title": "ComfyUI Node State Isolation & Memory Safety",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1001,
+          "title": "ComfyUI Workflow JSON Schema Immutability",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1002,
+          "title": "Hugging Face Model Weight Integrity & LFS Pointer Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T21:19:17.147Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
