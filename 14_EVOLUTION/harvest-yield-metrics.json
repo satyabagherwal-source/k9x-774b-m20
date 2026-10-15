@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T20:34:19.489Z",
-  "total_cycles_completed": 1425,
-  "total_learnings_persisted": 1425,
-  "total_rules_promoted": 742,
+  "last_updated": "2026-10-15T20:37:34.943Z",
+  "total_cycles_completed": 1426,
+  "total_learnings_persisted": 1426,
+  "total_rules_promoted": 744,
   "history": [
-    {
-      "timestamp": "2026-10-14T05:22:06.356Z",
-      "repository": "Cloudflare/clef-flash",
-      "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T05:25:04.642Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T20:34:19.489Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T20:37:34.943Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-bingsu-adetailer",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
