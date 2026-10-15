@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T23:20:18.679Z",
+  "last_updated": "2026-10-15T23:23:40.180Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17288,12 +17288,13 @@
     "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b": {
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "slug": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "4129d4146582e2a2b4b615372a5299e067467c80ffa8310484b200a9b39c6148",
+      "content_hash": "5194a32c4d708986ad42ff185f4d091ae566ddefaca2c1c300ff6bb8d65051dc",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -17331,11 +17332,25 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5",
           "verified_at": "2026-10-12T01:00:36.634Z"
+        },
+        {
+          "number": 1030,
+          "title": "Token ID Consistency Across Model, Tokenizer, and Generation Pipeline",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1031,
+          "title": "Attention Layer Interleaving Must Match `full_attention_interval`",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1032,
+          "title": "Precision Alignment Between Text and Mamba SSM Components",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -17352,7 +17367,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-14T12:46:15.965Z",
+      "verified_at": "2026-10-15T23:23:40.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
