@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T22:49:46.684Z",
-  "total_cycles_completed": 1468,
-  "total_learnings_persisted": 1468,
+  "last_updated": "2026-10-15T22:52:57.117Z",
+  "total_cycles_completed": 1469,
+  "total_learnings_persisted": 1469,
   "total_rules_promoted": 793,
   "history": [
-    {
-      "timestamp": "2026-10-14T09:08:11.639Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv7w0dyh",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T09:11:12.130Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T22:49:46.684Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T22:52:57.117Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
