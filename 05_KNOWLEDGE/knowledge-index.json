@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:19:17.152Z",
-  "total_verified_learnings": 165,
+  "last_updated": "2026-10-15T21:22:27.521Z",
+  "total_verified_learnings": 166,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -40168,6 +40168,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-15T21:19:17.147Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-autotrust-jev-35b-nvfp4": {
+      "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "autotrust/JEV-35B-NVFP4",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "slug": "hf-autotrust-jev-35b-nvfp4",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+      "source_version": "hf-autotrust-jev-35b-nvfp4",
+      "content_hash": "996374f6a708171da82c52aa13d66a14b362cf659680c8bf64ef076f47feb1d0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1003,
+          "title": "Hybrid Precision MoE Routing Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1004,
+          "title": "Linear Attention State Precision Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T21:22:27.516Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-YX0W",
-    "timestamp": "2026-10-13T12:35:19.856Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv6nywz1",
-    "contentHash": "c819b2ae35cfea2a9befcf3e269d489a7992c02407ae57547d8bde21fb75581c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-2Y84",
     "timestamp": "2026-10-13T12:38:28.036Z",
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -7492,6 +7477,21 @@
     "contentHash": "21db9e42039102713401b64c19f0fadde5ae4983e4c02107da1dc3d2b0170b4e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-OIFU",
+    "timestamp": "2026-10-15T21:22:27.546Z",
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+    "contentHash": "996374f6a708171da82c52aa13d66a14b362cf659680c8bf64ef076f47feb1d0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

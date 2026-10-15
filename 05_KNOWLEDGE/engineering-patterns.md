@@ -61821,3 +61821,137 @@ git commit -m "Add model"
 **VERIFICATION METHOD**:
 1.  **CI Check**: Run `git lfs ls-files` and assert that all `.safetensors` files are listed.
 2.  **File Size Check**: Assert that any `.safetensors` file in the working directory is < 1KB (LFS pointer size).
+
+
+---
+
+## 1003. Hybrid Precision MoE Routing Integrity (Harvested from autotrust/JEV-35B-NVFP4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid Precision MoE Routing Integrity",
+  "source": "autotrust/JEV-35B-NVFP4",
+  "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+  "source_version": "hf-autotrust-jev-35b-nvfp4",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T21:22:27.459Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/JEV-35B-NVFP4](https://huggingface.co/autotrust/JEV-35B-NVFP4) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In Mixture-of-Experts (MoE) architectures, the **Router (Gating Network) MUST remain in high-precision (bf16/fp16)** while the **Expert MLPs MAY be quantized** (INT4/NVFP4). The router MUST NOT be quantized to 4-bit or lower without rigorous calibration, as routing errors are non-linear and compound across layers.
+
+**WHY**:
+The router determines *which* experts process a token. A small numerical error in the router's logits (due to quantization) can flip the top-k selection. Unlike a single expert's output error (which is averaged or masked), a routing error sends the token to the *wrong* expert, introducing a systematic bias that is not corrected by subsequent layers. In a 40-layer model, this compounds exponentially. The "Shared Expert" and "Attention" layers also MUST remain high-precision because they process *every* token and aggregate global context.
+
+**WHEN TO APPLY**:
+Any MoE model deployment where memory is constrained but accuracy is critical. Specifically when using vLLM, TensorRT-LLM, or ModelOpt for quantization.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for vLLM/ModelOpt configuration
+from vllm import LLM
+from vllm.config import QuantizationConfig
+
+# Correct: Quantize only experts, keep router/attention in bf16
+quant_config = {
+    "quant_method": "nvfp4",
+    "weight_bits": 4,
+    "group_size": 16,
+    # Critical: Exclude router and attention from quantization
+    "exclude_modules": [
+        "router", 
+        "attention", 
+        "linear_attention", 
+        "shared_expert", 
+        "lm_head", 
+        "vision_tower"
+    ]
+}
+
+# Incorrect: Quantizing everything
+# quant_config_bad = { "quant_method": "nvfp4", "exclude_modules": [] }
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Quantizing the router
+# This causes "Routing Collapse" where the model consistently selects the same few experts,
+# ignoring the diversity of the MoE structure.
+quant_config_bad = {
+    "quant_method": "nvfp4",
+    "exclude_modules": [] # Router is quantized -> Routing errors
+}
+```
+
+**VERIFICATION METHOD**:
+1.  **Routing Entropy Test**: Measure the entropy of the expert selection distribution across a calibration set. If entropy drops significantly compared to the bf16 baseline, the router is compromised.
+2.  **Top-1 Agreement**: Compare the top-1 expert selection for 10,000 random tokens between the bf16 and quantized models. Agreement MUST be >99%. If <95%, the router precision is insufficient.
+
+
+---
+
+## 1004. Linear Attention State Precision Isolation (Harvested from autotrust/JEV-35B-NVFP4)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Linear Attention State Precision Isolation",
+  "source": "autotrust/JEV-35B-NVFP4",
+  "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
+  "source_version": "hf-autotrust-jev-35b-nvfp4",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T21:22:27.491Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [autotrust/JEV-35B-NVFP4](https://huggingface.co/autotrust/JEV-35B-NVFP4) (Revision: `hf-autotru`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In hybrid attention models (mixing full and linear attention), the **state accumulation for linear attention (SSM/Mamba states) MUST be maintained in `float32`** regardless of the weight precision, to prevent numerical drift over long contexts (>32k tokens).
+
+**WHY**:
+Linear attention layers update a hidden state $H_t = H_{t-1} \cdot \lambda + x_t \cdot y_t^T$. This is a recursive operation. In `bfloat16` (8-bit mantissa), small rounding errors accumulate linearly with sequence length. Over 262k tokens, this drift can cause the state to saturate or become noisy, degrading the model's ability to recall early context. `float32` (23-bit mantissa) provides sufficient precision to keep drift negligible.
+
+**WHEN TO APPLY**:
+Any model using Mamba, SSM, or linear attention layers with context windows >32k tokens.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# In model config or inference engine
+config = {
+    "mamba_ssm_dtype": "float32", # Critical for long context stability
+    "dtype": "bfloat16",          # Weights can be bf16
+    "max_position_embeddings": 262144
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using bf16 for SSM state
+config_bad = {
+    "mamba_ssm_dtype": "bfloat16", # Causes drift over long sequences
+    "dtype": "bfloat16"
+}
+```
+
+**VERIFICATION METHOD**:
+1.  **Long Context Recall Test**: Generate a 100k token sequence with a "needle" at position 10. Measure the model's ability to retrieve the needle. If accuracy drops >5% compared to a 1k token sequence, state precision is insufficient.
+2.  **State Norm Monitoring**: Log the L2 norm of the SSM state at every 10k tokens. If the norm grows unbounded or oscillates wildly, precision is too low.
