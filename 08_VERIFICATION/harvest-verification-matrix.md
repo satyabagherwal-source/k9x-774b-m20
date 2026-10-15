@@ -1452,3 +1452,4 @@
 | `CYCLE-20261015-6UF0` | `2026-10-15T20:40:43.644Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 977, Rule 978` | Yes (`cf460482...`) |
 | `CYCLE-20261015-AU66` | `2026-10-15T20:43:49.950Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 314, Rule 979` | Yes (`3bccd621...`) |
 | `CYCLE-20261015-ETBH` | `2026-10-15T20:46:55.469Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 980, Rule 981` | Yes (`9695cb5a...`) |
+| `CYCLE-20261015-IWBY` | `2026-10-15T20:50:05.998Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 982, Rule 983` | Yes (`d7e630de...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T20:46:55.474Z",
-  "total_cycles_completed": 1429,
-  "total_learnings_persisted": 1429,
-  "total_rules_promoted": 750,
+  "last_updated": "2026-10-15T20:50:06.004Z",
+  "total_cycles_completed": 1430,
+  "total_learnings_persisted": 1430,
+  "total_rules_promoted": 752,
   "history": [
-    {
-      "timestamp": "2026-10-14T05:35:20.402Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-hf-baai-bge-m3-mv7oenkr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T05:38:12.609Z",
       "repository": "Qwen/Qwen3-0.6B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T20:46:55.474Z",
       "repository": "zai-org/GLM-5.3",
       "learningId": "learn-huggingface-zai-org-glm-5-3",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T20:50:06.004Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

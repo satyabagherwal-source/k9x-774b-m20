@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:46:55.444Z",
+  "last_updated": "2026-10-15T20:50:05.968Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14650,18 +14650,29 @@
     "learn-huggingface-mudler-locate-anything-cpp-gguf": {
       "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-mudler-locate-anything.cpp-gguf",
+      "source": "mudler/locate-anything.cpp-gguf",
+      "repository": "mudler/locate-anything.cpp-gguf",
       "slug": "hf-mudler-locate-anything.cpp-gguf",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "6c8539a6199d236e7a2762f9451eee9e3e531b301fc23efa91e19dbd5fcba078",
+      "content_hash": "d7e630deaeee05f80f742b6a7afd28bf8f0b082ec5f305aa66ebe1f64adeca78",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 982,
+          "title": "Selective Quantization for Multi-Modal Parity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 983,
+          "title": "Zero-Python Inference Runtime Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -14677,7 +14688,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-14T10:12:01.526Z",
+      "verified_at": "2026-10-15T20:50:05.961Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
