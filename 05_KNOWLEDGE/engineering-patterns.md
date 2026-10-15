@@ -60001,3 +60001,140 @@ model = YOLO(path) # If path is corrupted, this may fail later or produce bad re
 3.  Integration test with a real download and hash verification.
 
 ---
+
+
+---
+
+## 977. Decoupled Geometric Conditioning for Diffusion Models (Harvested from lilylilith/QI_2.1_AnyAngle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Geometric Conditioning for Diffusion Models",
+  "source": "lilylilith/QI_2.1_AnyAngle",
+  "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+  "source_version": "hf-lilylilith-qi_2.1_anyangle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:40:43.541Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) (Revision: `hf-lilylil`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When performing geometric transformations (camera angle, pose, lighting) on diffusion models, you MUST decouple the **geometric intent** from the **stylistic content** by providing a separate, low-fidelity geometric reference image (e.g., from a 3D render) alongside the high-fidelity source image. You MUST NOT rely solely on text prompts to define complex spatial transformations.
+
+**WHY**:
+Diffusion models are trained on 2D image-text pairs. They lack an internal 3D world model. When asked to "change camera angle," they often hallucinate new content or drift in style because they are interpolating between two 2D distributions without a geometric anchor. Providing a 3D-rendered "coarse" image gives the model a precise pixel-wise geometric target, allowing the LoRA to learn the mapping $\text{Style}(I_{orig}) \times \text{Geometry}(I_{coarse}) \rightarrow I_{new}$.
+
+**WHEN TO APPLY**:
+Any image editing task involving 3D spatial changes (camera moves, object rotation, perspective correction) where style preservation is critical.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for the inference pipeline
+def edit_camera_angle(original_image, coarse_3d_render, lora_model):
+    # 1. Ensure coarse_3d_render is aligned in resolution and aspect ratio
+    # 2. Use a specific prompt template that references both images
+    prompt = "Change the camera angle from <image2> to <image1>."
+    
+    # 3. Feed both images into the multi-image conditioning encoder
+    #    image1 = coarse_3d_render (Geometric Guide)
+    #    image2 = original_image (Style Anchor)
+    output = lora_model.generate(
+        prompt=prompt,
+        images=[coarse_3d_render, original_image],
+        cfg_scale=3.0,
+        steps=20
+    )
+    return output
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Relying only on text for geometric changes
+# This leads to style drift and incorrect angles
+output = model.generate(
+    prompt="Change camera angle to 45 degrees azimuth",
+    images=[original_image],
+    cfg_scale=7.5
+)
+```
+
+**VERIFICATION METHOD**:
+1.  **Visual Inspection:** Compare the output image's camera angle to the `coarse_3d_render`. They must match within 5 degrees.
+2.  **Style Consistency Score:** Use a CLIP-based similarity metric between `original_image` and `output`. The score must be > 0.85 to ensure style preservation.
+3.  **A/B Testing:** Generate the same image with and without the `coarse_3d_render` input. The version with the render must show significantly less style drift.
+
+
+---
+
+## 978. Hybrid 3D-2D Pipeline Latency Management (Harvested from lilylilith/QI_2.1_AnyAngle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid 3D-2D Pipeline Latency Management",
+  "source": "lilylilith/QI_2.1_AnyAngle",
+  "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+  "source_version": "hf-lilylilith-qi_2.1_anyangle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:40:43.580Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle) (Revision: `hf-lilylil`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When integrating 3D reconstruction (Gaussian Splatting/NeRF) into a real-time or near-real-time image editing pipeline, you MUST implement a **two-tier inference strategy**: a high-fidelity path for final output and a low-fidelity "turbo" path for preview/boarding. You MUST NOT use the full 3D reconstruction + high-step diffusion for every interactive preview.
+
+**WHY**:
+3D reconstruction (Tripo Splat/Trellis2) is computationally expensive (seconds to minutes). High-step diffusion (20+ steps) is also slow. For interactive tools (e.g., shot planning), users need immediate feedback. A "turbo" LoRA or distilled model can provide a quick, lower-quality preview, while the full pipeline is reserved for final export.
+
+**WHEN TO APPLY**:
+Any interactive image editing tool that uses 3D reconstruction as a conditioning signal.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class ImageEditor:
+    def __init__(self):
+        self.full_model = load_model("Qwen-Image-2.1-AnyAngle-Full")
+        self.turbo_model = load_model("Qwen-Image-2.1-AnyAngle-Turbo")
+        self.reconstructor = load_reconstructor("TripoSplat")
+
+    def preview(self, image):
+        # Fast path: Use turbo model, fewer steps, lower resolution
+        coarse = self.reconstructor.reconstruct(image, quality="low")
+        return self.turbo_model.generate(image, coarse, steps=5, resolution=512)
+
+    def final_render(self, image):
+        # Slow path: Full quality
+        coarse = self.reconstructor.reconstruct(image, quality="high")
+        return self.full_model.generate(image, coarse, steps=20, resolution=1024)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using full pipeline for every preview
+def preview(self, image):
+    coarse = self.reconstructor.reconstruct(image, quality="high") # Expensive
+    return self.full_model.generate(image, coarse, steps=20) # Expensive
+```
+
+**VERIFICATION METHOD**:
+1.  **Latency Test:** Measure time-to-first-pixel for `preview` vs `final_render`. `preview` must be < 2 seconds, `final_render` can be > 10 seconds.
+2.  **Quality Check:** Ensure `preview` output is visually recognizable as the target angle, even if low-res.

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T20:37:34.943Z",
-  "total_cycles_completed": 1426,
-  "total_learnings_persisted": 1426,
-  "total_rules_promoted": 744,
+  "last_updated": "2026-10-15T20:40:43.648Z",
+  "total_cycles_completed": 1427,
+  "total_learnings_persisted": 1427,
+  "total_rules_promoted": 746,
   "history": [
-    {
-      "timestamp": "2026-10-14T05:25:04.642Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv7o1gg9",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T05:28:21.692Z",
       "repository": "google-bert/bert-base-uncased",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T20:37:34.943Z",
       "repository": "Bingsu/adetailer",
       "learningId": "learn-huggingface-bingsu-adetailer",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T20:40:43.648Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

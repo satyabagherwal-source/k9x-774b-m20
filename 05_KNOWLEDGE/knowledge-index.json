@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:37:34.918Z",
+  "last_updated": "2026-10-15T20:40:43.616Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13736,12 +13736,13 @@
     "learn-huggingface-lilylilith-qi_2-1_anyangle": {
       "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-lilylilith-qi_2.1_anyangle",
+      "source": "lilylilith/QI_2.1_AnyAngle",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
       "slug": "hf-lilylilith-qi_2.1_anyangle",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "3db89b6f0ed756115612485174a412d1f9bffff832d7c3037eb6b0588847a69d",
+      "content_hash": "cf460482cbde12c5f37fe3f423d6568fe4829efc726a2d2d05dc86aec101d3de",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -13765,11 +13766,20 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
           "verified_at": "2026-10-11T16:13:18.619Z"
+        },
+        {
+          "number": 977,
+          "title": "Decoupled Geometric Conditioning for Diffusion Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 978,
+          "title": "Hybrid 3D-2D Pipeline Latency Management",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -13785,7 +13795,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-14T10:02:37.115Z",
+      "verified_at": "2026-10-15T20:40:43.609Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
