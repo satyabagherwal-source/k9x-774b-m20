@@ -1454,3 +1454,4 @@
 | `CYCLE-20261015-ETBH` | `2026-10-15T20:46:55.469Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 980, Rule 981` | Yes (`9695cb5a...`) |
 | `CYCLE-20261015-IWBY` | `2026-10-15T20:50:05.998Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 982, Rule 983` | Yes (`d7e630de...`) |
 | `CYCLE-20261015-NAUL` | `2026-10-15T20:53:31.437Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 984, Rule 985, Rule 986` | Yes (`de530f53...`) |
+| `CYCLE-20261015-REHK` | `2026-10-15T20:56:42.776Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 987, Rule 988` | Yes (`eef94046...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:53:31.412Z",
+  "last_updated": "2026-10-15T20:56:42.746Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9955,12 +9955,13 @@
     "learn-huggingface-autotrust-jev-27b-vl": {
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-autotrust-jev-27b-vl",
+      "source": "autotrust/JEV-27B-VL",
+      "repository": "autotrust/JEV-27B-VL",
       "slug": "hf-autotrust-jev-27b-vl",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "ca25af33349f4c3c0842af8c1f5475ce212c5543756366059a82519574a1f2c9",
+      "content_hash": "eef94046af6fb42a91f9cb5fa7099dbd781a7af69da75c1f00624bf3456268e7",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -9977,11 +9978,20 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-autotrust-jev-27b-vl-mv3l4ytp",
           "verified_at": "2026-10-11T08:52:44.791Z"
+        },
+        {
+          "number": 987,
+          "title": "Hybrid Attention Interleaving for Latency-Accuracy Trade-off",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 988,
+          "title": "Calibrated Stochastic Sampling for Decision Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -9997,7 +10007,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-14T10:18:05.991Z",
+      "verified_at": "2026-10-15T20:56:42.741Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

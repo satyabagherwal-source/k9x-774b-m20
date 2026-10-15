@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-LNNV",
-    "timestamp": "2026-10-13T11:57:01.579Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv6mlnle",
-    "contentHash": "a472d86b99a317f2ed4cde49b074a15a95148f2e91baa9d23486aee784f0dad0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-PJ66",
     "timestamp": "2026-10-13T12:00:02.382Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7492,6 +7477,21 @@
     "contentHash": "de530f53c32be60a4bf9a543c5601f14d88e8a0beeb06fe21e3bd0e372606736",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-REHK",
+    "timestamp": "2026-10-15T20:56:42.776Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "eef94046af6fb42a91f9cb5fa7099dbd781a7af69da75c1f00624bf3456268e7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
