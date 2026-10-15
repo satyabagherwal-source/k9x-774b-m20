@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-HHF2",
-    "timestamp": "2026-10-13T13:17:45.710Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv6phhby",
-    "contentHash": "7c352bd909e14760e55f3b2b1ca15a6be619f1ffda0d8b7cc4c435b3702548cf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-L7V2",
     "timestamp": "2026-10-13T13:20:39.950Z",
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7492,6 +7477,21 @@
     "contentHash": "c47edcd3c388b3b4dafedc0c04d19bed240342ee06a951f0c0ed277bc40b17d9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-O9OB",
+    "timestamp": "2026-10-15T21:50:15.803Z",
+    "repository": "autotrust/GEV-26B-Decide-NVFP4",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+    "contentHash": "3602bf98d476f421a3ff4736dd33bcc5e8711079d63cd9ef343b12eb51cd2b26",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

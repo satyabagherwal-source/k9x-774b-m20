@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:47:17.968Z",
+  "last_updated": "2026-10-15T21:50:15.768Z",
   "total_verified_learnings": 166,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9891,18 +9891,18 @@
     "learn-huggingface-autotrust-gev-26b-decide-nvfp4": {
       "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-autotrust-gev-26b-decide-nvfp4",
+      "source": "autotrust/GEV-26B-Decide-NVFP4",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "slug": "hf-autotrust-gev-26b-decide-nvfp4",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "063c67fa2f7ba2e4aa4f28288c4de0fdee0270ae3e469f0b8635154b8775c74e",
+      "content_hash": "3602bf98d476f421a3ff4736dd33bcc5e8711079d63cd9ef343b12eb51cd2b26",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -9919,7 +9919,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
       ],
-      "verified_at": "2026-10-14T11:07:53.745Z",
+      "verified_at": "2026-10-15T21:50:15.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
