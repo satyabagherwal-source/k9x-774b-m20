@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-XWGB",
-    "timestamp": "2026-10-13T15:22:30.155Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-mv6txwbf",
-    "contentHash": "90a0fefc18c246d649d9b91b155dcbe5b17ef939f2e6390e493efe3a5ba7b1df",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-1VDV",
     "timestamp": "2026-10-13T15:25:35.395Z",
     "repository": "microsoft/FrogNano-4B-2609",
@@ -7492,6 +7477,21 @@
     "contentHash": "5194a32c4d708986ad42ff185f4d091ae566ddefaca2c1c300ff6bb8d65051dc",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-48E7",
+    "timestamp": "2026-10-15T23:26:39.487Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "72066ec6c3d47e72fd41cb7e99d1fdd406cb31950784c54c403b64bbddeeff1b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

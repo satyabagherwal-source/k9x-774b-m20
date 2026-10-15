@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T23:23:40.214Z",
+  "last_updated": "2026-10-15T23:26:39.492Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -614,17 +614,18 @@
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv83wqb7",
-      "content_hash": "a538a12c4210547a7a171487f55666b69d07b53d43c22696d2a72c1d14ed5327",
-      "verified_at": "2026-10-14T12:49:18.000Z",
+      "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "content_hash": "72066ec6c3d47e72fd41cb7e99d1fdd406cb31950784c54c403b64bbddeeff1b",
+      "verified_at": "2026-10-15T23:26:39.492Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T12:49:18.000Z"
+      "last_updated": "2026-10-15T23:26:39.492Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
