@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T23:42:08.029Z",
+  "last_updated": "2026-10-15T23:45:09.039Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9470,12 +9470,13 @@
     "learn-huggingface-alissonerdx-bfs-best-face-swap": {
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-alissonerdx-bfs-best-face-swap",
+      "source": "Alissonerdx/BFS-Best-Face-Swap",
+      "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "slug": "hf-alissonerdx-bfs-best-face-swap",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "c0dd254830913e8dba254c97b9df0ad697509a311fe1d960f538672f66cfb51f",
+      "content_hash": "c262642cd3483121870e3ba9b5610a5745deb009a1f0ca160547ac454d4783ae",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [
@@ -9489,7 +9490,6 @@
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -9506,7 +9506,7 @@
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz"
       ],
-      "verified_at": "2026-10-14T13:08:22.291Z",
+      "verified_at": "2026-10-15T23:45:09.032Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
