@@ -1508,5 +1508,35 @@
     "contentHash": "a24ccc15521ccdc8ffea3d84b4979663af1359492997d219676448250cd025cb",
     "lastHarvestedAt": "2026-10-14T16:36:22.940Z",
     "learningId": "learn-github-pathwaycom-serviette-mv8c0rd1"
+  },
+  "evermind-ai-raven": {
+    "repository": "EverMind-AI/Raven",
+    "platform": "github",
+    "sourceUrl": "https://github.com/EverMind-AI/Raven",
+    "sourceVersion": "a71b488e",
+    "license": "Apache-2.0",
+    "contentHash": "033a30262ca35f7966768bcf7f7f93db002c0a86649670df29022ce9154f43da",
+    "lastHarvestedAt": "2026-10-15T19:00:18.519Z",
+    "learningId": "learn-github-evermind-ai-raven"
+  },
+  "hf-liquidai-lfm2.5-24b-a2b-gguf": {
+    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+    "license": "Open-Source",
+    "contentHash": "44fd9e3f9439a49284d651c3051beb0f1439c3a2a4e43fe39aca444492dd6edb",
+    "lastHarvestedAt": "2026-10-15T19:00:26.050Z",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
+  },
+  "amplifthq-openmeld": {
+    "repository": "amplifthq/openmeld",
+    "platform": "github",
+    "sourceUrl": "https://github.com/amplifthq/openmeld",
+    "sourceVersion": "a6d67597",
+    "license": "MIT",
+    "contentHash": "b4f2eedaafeac545851abe198648bb1e70bcde2f2d8e00c318fb0eb85bce1057",
+    "lastHarvestedAt": "2026-10-15T19:10:04.770Z",
+    "learningId": "learn-github-amplifthq-openmeld"
   }
 }

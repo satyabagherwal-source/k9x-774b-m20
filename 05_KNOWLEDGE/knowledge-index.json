@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T18:31:06.041Z",
-  "total_verified_learnings": 157,
+  "last_updated": "2026-10-15T19:10:04.743Z",
+  "total_verified_learnings": 160,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -39554,6 +39554,120 @@
         "index_read_back_verified": true
       },
       "verified_at": "2026-10-14T16:36:22.886Z"
+    },
+    "learn-github-evermind-ai-raven": {
+      "learning_id": "learn-github-evermind-ai-raven",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "EverMind-AI/Raven",
+      "repository": "EverMind-AI/Raven",
+      "slug": "evermind-ai-raven",
+      "platform": "github",
+      "source_url": "https://github.com/EverMind-AI/Raven",
+      "source_version": "a71b488e",
+      "content_hash": "033a30262ca35f7966768bcf7f7f93db002c0a86649670df29022ce9154f43da",
+      "dossier_path": "07_PROJECT_LEARNING/evermind-ai-raven-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/evermind-ai-raven-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 932,
+          "title": "Host-Coupled Process Group Lifetime Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 933,
+          "title": "State Truncation Generational Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 934,
+          "title": "Tool Pagination Progress Invariant for Massive Single Records",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T19:00:18.488Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf": {
+      "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "slug": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "content_hash": "44fd9e3f9439a49284d651c3051beb0f1439c3a2a4e43fe39aca444492dd6edb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 935,
+          "title": "GGUF Sampling Metadata Enforcement Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 936,
+          "title": "Quantization-Aware Distillation (QAD) Weight Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T19:00:26.015Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-amplifthq-openmeld": {
+      "learning_id": "learn-github-amplifthq-openmeld",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "amplifthq/openmeld",
+      "repository": "amplifthq/openmeld",
+      "slug": "amplifthq-openmeld",
+      "platform": "github",
+      "source_url": "https://github.com/amplifthq/openmeld",
+      "source_version": "a6d67597",
+      "content_hash": "b4f2eedaafeac545851abe198648bb1e70bcde2f2d8e00c318fb0eb85bce1057",
+      "dossier_path": "07_PROJECT_LEARNING/amplifthq-openmeld-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/amplifthq-openmeld-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 937,
+          "title": "merge: include fork credential guidance from PR 181",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T19:10:04.735Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

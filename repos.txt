@@ -3966,3 +3966,11 @@ https://github.com/pathwaycom/serviette
 https://github.com/EverMind-AI/Raven
 # [AI-AGENTS] amplifthq/openmeld (959 score) - The open-source collaboration system for people and AI agents. Share context, co
 https://github.com/amplifthq/openmeld
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-15T18:56:50.547Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/LFM2.5-24B-A2B-GGUF (3630 score) - Verified Hugging Face Model: LiquidAI/LFM2.5-24B-A2B-GGUF (163 likes, 45676 down
+https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF
+# [HUGGINGFACE-AI-MODELS] black-forest-labs/flux-3-image-klein (3470 score) - Verified Hugging Face Model: black-forest-labs/flux-3-image-klein (147 likes, 32
+https://huggingface.co/black-forest-labs/flux-3-image-klein
+# [HUGGINGFACE-AI-MODELS] pyannote/speaker-diarization-community-1 (31530 score) - Verified Hugging Face Model: pyannote/speaker-diarization-community-1 (2953 like
+https://huggingface.co/pyannote/speaker-diarization-community-1

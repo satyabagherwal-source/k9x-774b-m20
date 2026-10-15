@@ -1426,3 +1426,6 @@
 | `CYCLE-20261014-CK2H` | `2026-10-14T17:13:32.825Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`04eb55b4...`) |
 | `CYCLE-20261014-J28Y` | `2026-10-14T17:18:36.322Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`5265197f...`) |
 | `CYCLE-20261015-K579` | `2026-10-15T18:31:06.069Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 930, Rule 931` | Yes (`de4e8e9b...`) |
+| `CYCLE-20261015-LPEC` | `2026-10-15T19:00:18.516Z` | `EverMind-AI/Raven` | Commit diff / Patch analysis | `VERIFIED` | `Rule 932, Rule 933, Rule 934` | Yes (`033a3026...`) |
+| `CYCLE-20261015-LV7K` | `2026-10-15T19:00:26.048Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 935, Rule 936` | Yes (`44fd9e3f...`) |
+| `CYCLE-20261015-Y9R4` | `2026-10-15T19:10:04.768Z` | `amplifthq/openmeld` | Commit diff / Patch analysis | `VERIFIED` | `Rule 937` | Yes (`b4f2eeda...`) |

@@ -17722,5 +17722,41 @@
     "qualityScore": 959,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-15T18:47:37.851Z"
+  },
+  {
+    "name": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "fullName": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: LiquidAI/LFM2.5-24B-A2B-GGUF (163 likes, 45676 downloads)",
+    "likes": 163,
+    "downloads": 45676,
+    "qualityScore": 3630,
+    "discoveredAt": "2026-10-15T18:56:50.545Z"
+  },
+  {
+    "name": "black-forest-labs/flux-3-image-klein",
+    "fullName": "black-forest-labs/flux-3-image-klein",
+    "url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: black-forest-labs/flux-3-image-klein (147 likes, 3241 downloads)",
+    "likes": 147,
+    "downloads": 3241,
+    "qualityScore": 3470,
+    "discoveredAt": "2026-10-15T18:56:50.545Z"
+  },
+  {
+    "name": "pyannote/speaker-diarization-community-1",
+    "fullName": "pyannote/speaker-diarization-community-1",
+    "url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: pyannote/speaker-diarization-community-1 (2953 likes, 5463487 downloads)",
+    "likes": 2953,
+    "downloads": 5463487,
+    "qualityScore": 31530,
+    "discoveredAt": "2026-10-15T18:56:50.545Z"
   }
 ]

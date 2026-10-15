@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-EAEP",
-    "timestamp": "2026-10-13T10:27:18.961Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv6jeacz",
-    "contentHash": "4d980b94d3022b3b5dcb1f4eef532e96efcc2996987910bfa35f643ad86948b2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261013-I3PS",
-    "timestamp": "2026-10-13T10:30:16.912Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv6ji3nb",
-    "contentHash": "35f3c4c2049f42a17477b3ed89f5aebd939dfaf101ec37c645bd9de093eddded",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261013-LZOB",
-    "timestamp": "2026-10-13T10:33:18.299Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv6jlzlu",
-    "contentHash": "9a96c6e475925a806772fa26ac072ce02f9eb07d45915a1499c85321274ed9b9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-PTZ9",
     "timestamp": "2026-10-13T10:36:17.541Z",
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -7492,6 +7447,51 @@
     "contentHash": "de4e8e9b6dacf98fbd6c01ea754137a34f3e81be9a458b8e92a034217fb91e0c",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-LPEC",
+    "timestamp": "2026-10-15T19:00:18.516Z",
+    "repository": "EverMind-AI/Raven",
+    "learningId": "learn-github-evermind-ai-raven",
+    "contentHash": "033a30262ca35f7966768bcf7f7f93db002c0a86649670df29022ce9154f43da",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-LV7K",
+    "timestamp": "2026-10-15T19:00:26.048Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+    "contentHash": "44fd9e3f9439a49284d651c3051beb0f1439c3a2a4e43fe39aca444492dd6edb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-Y9R4",
+    "timestamp": "2026-10-15T19:10:04.768Z",
+    "repository": "amplifthq/openmeld",
+    "learningId": "learn-github-amplifthq-openmeld",
+    "contentHash": "b4f2eedaafeac545851abe198648bb1e70bcde2f2d8e00c318fb0eb85bce1057",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

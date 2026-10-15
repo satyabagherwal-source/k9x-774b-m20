@@ -1428,3 +1428,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hf-naiveai-naive-n0-5-flash-mv8dcjz1` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-10-14T17:13:32.828Z |
 | `learn-huggingface-hf-openai-clip-vit-base-patch32-mv8dj262` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-14T17:18:36.324Z |
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-15T18:31:06.072Z |
+| `learn-github-evermind-ai-raven` | `https://github.com/EverMind-AI/Raven` | `a71b488e` | Multi-dimensional audit evidence | 2026-10-15T19:00:18.519Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-15T19:00:26.050Z |
+| `learn-github-amplifthq-openmeld` | `https://github.com/amplifthq/openmeld` | `a6d67597` | Multi-dimensional audit evidence | 2026-10-15T19:10:04.770Z |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T18:31:06.074Z",
-  "total_cycles_completed": 1403,
-  "total_learnings_persisted": 1403,
-  "total_rules_promoted": 698,
+  "last_updated": "2026-10-15T19:10:04.772Z",
+  "total_cycles_completed": 1406,
+  "total_learnings_persisted": 1406,
+  "total_rules_promoted": 704,
   "history": [
-    {
-      "timestamp": "2026-10-14T04:14:14.318Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv7licuf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-14T04:17:00.178Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv7llww3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-10-14T04:19:54.025Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv7lpn00",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T04:22:51.670Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1403,6 +1382,27 @@
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T19:00:18.521Z",
+      "repository": "EverMind-AI/Raven",
+      "learningId": "learn-github-evermind-ai-raven",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T19:00:26.052Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T19:10:04.772Z",
+      "repository": "amplifthq/openmeld",
+      "learningId": "learn-github-amplifthq-openmeld",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
