@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-LUKV",
-    "timestamp": "2026-10-13T15:41:07.471Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv6uluhq",
-    "contentHash": "11f5927b8e88221f4cf5d6f4587f18bbf9bea15cc6e8d7874a5a95aacb4e69d5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-SAS0",
     "timestamp": "2026-10-13T15:46:08.400Z",
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -7492,6 +7477,21 @@
     "contentHash": "6b1beec79be63e85edd1a4a649fc2ecae3c62892d322f895533f20ec4f71fae2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-O4VL",
+    "timestamp": "2026-10-15T23:42:08.049Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+    "contentHash": "c3babd9afea954614ad207009e03ddaad24e67d93f29650bf632df724791afe8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

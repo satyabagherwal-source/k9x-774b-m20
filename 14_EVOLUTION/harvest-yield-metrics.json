@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T23:39:04.717Z",
-  "total_cycles_completed": 1484,
-  "total_learnings_persisted": 1484,
-  "total_rules_promoted": 808,
+  "last_updated": "2026-10-15T23:42:08.057Z",
+  "total_cycles_completed": 1485,
+  "total_learnings_persisted": 1485,
+  "total_rules_promoted": 809,
   "history": [
-    {
-      "timestamp": "2026-10-14T09:59:30.716Z",
-      "repository": "Bingsu/adetailer",
-      "learningId": "learn-huggingface-hf-bingsu-adetailer-mv7xudro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T10:02:37.181Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -1403,6 +1396,13 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T23:42:08.057Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

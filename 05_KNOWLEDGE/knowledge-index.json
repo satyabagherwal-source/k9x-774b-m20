@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T23:39:04.681Z",
+  "last_updated": "2026-10-15T23:42:08.029Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15260,12 +15260,13 @@
     "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "source": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "slug": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "14e115b8ad4e947afbe42e387bb73e82678161f1759ffe22c7663c6cf22665a2",
+      "content_hash": "c3babd9afea954614ad207009e03ddaad24e67d93f29650bf632df724791afe8",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -15296,11 +15297,15 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh",
           "verified_at": "2026-10-12T01:18:46.028Z"
+        },
+        {
+          "number": 1033,
+          "title": "Binary Model Artifact Integrity & Provenance Verification",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -15317,7 +15322,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-14T13:05:09.964Z",
+      "verified_at": "2026-10-15T23:42:08.025Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
