@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-1JKA",
-    "timestamp": "2026-10-13T14:57:20.458Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-hf-google-t5-t5-small-mv6t1jig",
-    "contentHash": "5f729b164485ec682192e96a8634774b71dcd222ac53e0b16d8cfe81a54d8db3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-8DHJ",
     "timestamp": "2026-10-13T15:02:39.175Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
     "contentHash": "a8235362dfe63df1d7b447525db0272879efc02ff64dd41306278d5b8540aaf8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-GBH2",
+    "timestamp": "2026-10-15T23:08:03.734Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "2f70919dbc4e6ae6fdfa574e6a3e2ad2bed763e8edd74ddd56b1739d2020b1d5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

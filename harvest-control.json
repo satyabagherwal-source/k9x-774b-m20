@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-15T23:05:03.031Z",
+  "lastUpdated": "2026-10-15T23:08:07.636Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-15T23:05:01.699Z",
-        "lastHarvestedAt": "2026-10-15T23:05:01.699Z",
-        "totalHarvested": 3597,
+        "lastActiveAt": "2026-10-15T23:08:06.259Z",
+        "lastHarvestedAt": "2026-10-15T23:08:06.259Z",
+        "totalHarvested": 3598,
         "lastError": null
       },
       {
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-15T23:05:03.114Z",
+        "lastActiveAt": "2026-10-15T23:08:07.756Z",
         "lastHarvestedAt": "2026-10-15T19:00:21.044Z",
         "totalHarvested": 1103,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-15T23:05:05.596Z",
+        "lastActiveAt": "2026-10-15T23:08:10.231Z",
         "lastHarvestedAt": "2026-10-15T19:10:07.292Z",
         "totalHarvested": 1095,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-15T23:05:08.098Z",
+        "lastActiveAt": "2026-10-15T23:08:12.732Z",
         "lastHarvestedAt": "2026-10-15T19:00:28.576Z",
         "totalHarvested": 1099,
         "lastError": null
@@ -297,7 +297,7 @@
       "remaining": 0,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-15T23:04:44.818Z",
+      "trippedAt": "2026-10-15T23:07:49.515Z",
       "reason": null,
       "consecutiveBlocks": 1
     },
