@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-4PJ8",
-    "timestamp": "2026-10-13T11:15:51.236Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv6l4pg5",
-    "contentHash": "b23a24349314539b18fdd5af8d610b10c79c18bcafd89913540090d5423ba6cd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-8GY6",
     "timestamp": "2026-10-13T11:18:46.734Z",
     "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7492,6 +7477,21 @@
     "contentHash": "ba7feaa94a8bfa61679aee92ac5129d14c7d25e74699cb9c441386b424340e7d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-94IE",
+    "timestamp": "2026-10-15T20:14:30.422Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "8ec770b485781996be637edb61ef1975221f72ad5827f732aa2c89a0774b4ec1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
