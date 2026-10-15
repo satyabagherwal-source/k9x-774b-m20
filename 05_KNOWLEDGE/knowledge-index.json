@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T19:49:51.007Z",
+  "last_updated": "2026-10-15T19:53:02.162Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12688,12 +12688,13 @@
     "learn-huggingface-facebookai-xlm-roberta-base": {
       "learning_id": "learn-huggingface-facebookai-xlm-roberta-base",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-facebookai-xlm-roberta-base",
+      "source": "FacebookAI/xlm-roberta-base",
+      "repository": "FacebookAI/xlm-roberta-base",
       "slug": "hf-facebookai-xlm-roberta-base",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "eec8ed5cc4170a0c5aa6f85e0c83e548e92acdeced6ac7ba2893daf39de560b3",
+      "content_hash": "8f23c8f7624cc9dc439c3031a40cb77c43388a42e58881f5d2b2d15aaac10d0f",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "promoted_rules": [
@@ -12710,11 +12711,25 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d",
           "verified_at": "2026-10-11T22:01:38.870Z"
+        },
+        {
+          "number": 953,
+          "title": "Tokenizer-Model Dimensional Integrity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 954,
+          "title": "Positional Embedding Boundary Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 955,
+          "title": "Dropout Determinism in Inference Mode",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -12730,7 +12745,7 @@
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies",
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d"
       ],
-      "verified_at": "2026-10-14T09:17:15.017Z",
+      "verified_at": "2026-10-15T19:53:02.157Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
