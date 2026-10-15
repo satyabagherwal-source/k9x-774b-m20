@@ -1443,3 +1443,4 @@
 | `CYCLE-20261015-3SZP` | `2026-10-15T20:10:22.213Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 962, Rule 963, Rule 964` | Yes (`ba7feaa9...`) |
 | `CYCLE-20261015-94IE` | `2026-10-15T20:14:30.422Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`8ec770b4...`) |
 | `CYCLE-20261015-D7UK` | `2026-10-15T20:17:41.372Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 965, Rule 966` | Yes (`6a955847...`) |
+| `CYCLE-20261015-H8KJ` | `2026-10-15T20:20:48.931Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`e51f30ff...`) |
