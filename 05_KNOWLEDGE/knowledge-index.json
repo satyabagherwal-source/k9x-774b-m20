@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T23:08:03.702Z",
+  "last_updated": "2026-10-15T23:11:02.488Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16848,12 +16848,13 @@
     "learn-huggingface-taichuai-zdtaichu5-0-9b": {
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-taichuai-zdtaichu5.0-9b",
+      "source": "TaichuAI/ZDTaichu5.0-9B",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
       "slug": "hf-taichuai-zdtaichu5.0-9b",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "13a60a91ae55cf4b852f0505efa43ecb116bde471415695f1613d9c4da021171",
+      "content_hash": "33ad00f5cdfc5568fa3a53b71ca07cac7c6a38a1040a1b91a68d3fe3923d2cc8",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -16898,11 +16899,25 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo",
           "verified_at": "2026-10-12T00:48:35.257Z"
+        },
+        {
+          "number": 1024,
+          "title": "Tokenization Consistency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1025,
+          "title": "Vision‑Encoder Output Alignment Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1026,
+          "title": "Generation Configuration Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -16919,7 +16934,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-14T12:33:03.469Z",
+      "verified_at": "2026-10-15T23:11:02.484Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
