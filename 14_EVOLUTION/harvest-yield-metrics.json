@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T22:12:18.885Z",
-  "total_cycles_completed": 1456,
-  "total_learnings_persisted": 1456,
-  "total_rules_promoted": 787,
+  "last_updated": "2026-10-15T22:15:19.807Z",
+  "total_cycles_completed": 1457,
+  "total_learnings_persisted": 1457,
+  "total_rules_promoted": 790,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:59:25.297Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv7res9v",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T07:05:51.401Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T22:12:18.885Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T22:15:19.807Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

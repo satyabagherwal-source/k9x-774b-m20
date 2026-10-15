@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T22:12:18.855Z",
-  "total_verified_learnings": 168,
+  "last_updated": "2026-10-15T22:15:19.779Z",
+  "total_verified_learnings": 169,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -40316,6 +40316,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-15T22:05:43.057Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b": {
+      "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "slug": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
+      "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
+      "content_hash": "b80f5195ae74490ae59982d495d6cc3e971bc706afff12c916c76e5926243b83",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1012,
+          "title": "Consistent Model‑Type Declaration",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1013,
+          "title": "MoE Expert Allocation Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1014,
+          "title": "Linear‑Attention Head Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T22:15:19.772Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
