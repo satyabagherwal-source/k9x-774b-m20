@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T20:27:59.107Z",
-  "total_cycles_completed": 1423,
-  "total_learnings_persisted": 1423,
-  "total_rules_promoted": 738,
+  "last_updated": "2026-10-15T20:31:10.662Z",
+  "total_cycles_completed": 1424,
+  "total_learnings_persisted": 1424,
+  "total_rules_promoted": 740,
   "history": [
-    {
-      "timestamp": "2026-10-14T05:15:30.968Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv7np5t3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T05:18:43.242Z",
       "repository": "Cloudflare/clef",
@@ -1403,6 +1396,13 @@
       "repository": "google/gemma-4-31B-it",
       "learningId": "learn-huggingface-google-gemma-4-31b-it",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T20:31:10.662Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

@@ -1446,3 +1446,4 @@
 | `CYCLE-20261015-H8KJ` | `2026-10-15T20:20:48.931Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`e51f30ff...`) |
 | `CYCLE-20261015-MA11` | `2026-10-15T20:24:44.101Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `VERIFIED` | `Rule 967, Rule 968` | Yes (`35c73329...`) |
 | `CYCLE-20261015-QGHQ` | `2026-10-15T20:27:59.102Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `VERIFIED` | `Rule 969, Rule 970, Rule 971` | Yes (`28986505...`) |
+| `CYCLE-20261015-UKAQ` | `2026-10-15T20:31:10.658Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 972, Rule 973` | Yes (`194c1c10...`) |

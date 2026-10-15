@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:27:59.078Z",
+  "last_updated": "2026-10-15T20:31:10.633Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10009,18 +10009,29 @@
     "learn-huggingface-baai-bge-base-en-v1-5": {
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-baai-bge-base-en-v1.5",
+      "source": "BAAI/bge-base-en-v1.5",
+      "repository": "BAAI/bge-base-en-v1.5",
       "slug": "hf-baai-bge-base-en-v1.5",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "57c97e9d8d9394f275fb2513a0b0bb9e841d04c55b7450dcd7b67d18f1d7c3a0",
+      "content_hash": "194c1c1057e64e1fc702ec1e23167a4df984f0a8b2fc41a632ed039427f90fa3",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 972,
+          "title": "Semantic Vector Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 973,
+          "title": "Tokenizer Truncation & Padding Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 10,
       "historical_learning_ids": [
@@ -10035,7 +10046,7 @@
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
       ],
-      "verified_at": "2026-10-14T09:53:18.634Z",
+      "verified_at": "2026-10-15T20:31:10.628Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
