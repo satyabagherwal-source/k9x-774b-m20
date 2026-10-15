@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-14T17:18:36.326Z",
+  "last_updated": "2026-10-15T18:31:06.075Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1363,17 +1363,18 @@
     },
     "sentence-transformers/all-mpnet-base-v2": {
       "repository": "sentence-transformers/all-mpnet-base-v2",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7vwg4a",
-      "content_hash": "1be65988318ac94796ed961298e3615e8cda28374e86749dfe30c5a3cb421034",
-      "verified_at": "2026-10-14T09:05:07.838Z",
+      "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "content_hash": "de4e8e9b6dacf98fbd6c01ea754137a34f3e81be9a458b8e92a034217fb91e0c",
+      "verified_at": "2026-10-15T18:31:06.075Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T09:05:07.838Z"
+      "last_updated": "2026-10-15T18:31:06.075Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-14T17:18:36.270Z",
+  "last_updated": "2026-10-15T18:31:06.041Z",
   "total_verified_learnings": 157,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16057,18 +16057,29 @@
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-sentence-transformers-all-mpnet-base-v2",
+      "source": "sentence-transformers/all-mpnet-base-v2",
+      "repository": "sentence-transformers/all-mpnet-base-v2",
       "slug": "hf-sentence-transformers-all-mpnet-base-v2",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "1be65988318ac94796ed961298e3615e8cda28374e86749dfe30c5a3cb421034",
+      "content_hash": "de4e8e9b6dacf98fbd6c01ea754137a34f3e81be9a458b8e92a034217fb91e0c",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 930,
+          "title": "Vector Space Masked Mean Pooling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 931,
+          "title": "Relative Position Embedding Truncation & Offset Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -16084,7 +16095,7 @@
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14"
       ],
-      "verified_at": "2026-10-14T09:05:07.806Z",
+      "verified_at": "2026-10-15T18:31:06.036Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
