@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-H5KW",
-    "timestamp": "2026-10-13T14:13:29.600Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-mv6rh5gf",
-    "contentHash": "d9b482ce6b40931b56098440646883b85e65298ad7f8f13ade89ad8be3395c60",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-KYLV",
     "timestamp": "2026-10-13T14:16:27.187Z",
     "repository": "Cloudflare/clef-flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "74bb7bfb2e420a702f5640f477637a4bd93cc21d9ac6d194b2627880002372b5",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-KG2S",
+    "timestamp": "2026-10-15T22:43:16.708Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "cd1fb557b4abd9f4acc4c3f3166f36cf4fc6c6db8209bd0b640572948b83af9a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
