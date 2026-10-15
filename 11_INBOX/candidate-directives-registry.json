@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-13T19:34:58.330Z",
+  "last_updated": "2026-10-14T16:03:53.815Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1289,6 +1289,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0"
+    },
+    {
+      "id": "CD-4XQI",
+      "directive_title": "Forensic Data Integrity & Null-State Handling",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "facebook/sam3",
+      "source_commit": "hf-facebook-",
+      "date_staged": "2026-10-14",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Generic header title rejected",
+      "learning_id": "learn-huggingface-hf-facebook-sam3-mv7n4xns"
+    },
+    {
+      "id": "CD-AH7Y",
+      "directive_title": "Parity-Gated Benchmarking for Quantized Models",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "mudler/locate-anything.cpp-gguf",
+      "source_commit": "hf-mudler-lo",
+      "date_staged": "2026-10-14",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv7yah35"
+    },
+    {
+      "id": "CD-UZIV",
+      "directive_title": "Tokenizer Special Token Integrity & Chat Template Consistency",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "meta-llama/Llama-2-7b-chat-hf",
+      "source_commit": "hf-meta-llam",
+      "date_staged": "2026-10-14",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv8auzfh"
     }
   ]
 }

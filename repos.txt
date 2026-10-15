@@ -3928,3 +3928,35 @@ https://github.com/tickernelz/opencode-mem
 # --- Automatically Discovered by AI Scout Engine [2026-10-13T18:52:48.125Z] ---
 # [HUGGINGFACE-AI-MODELS] autotrust/JEV-35B-NVFP4 (4330 score) - Verified Hugging Face Model: autotrust/JEV-35B-NVFP4 (233 likes, 20494 downloads
 https://huggingface.co/autotrust/JEV-35B-NVFP4
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-13T21:16:29.521Z] ---
+# [AI-AGENTS] Leonxlnx/taste-skill (49875 score) - Agent skills that give coding agents taste: art direction, reference images and 
+https://github.com/Leonxlnx/taste-skill
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T00:53:20.210Z] ---
+# [HUGGINGFACE-AI-MODELS] LiquidAI/LFM2.5-24B-A2B (3560 score) - Verified Hugging Face Model: LiquidAI/LFM2.5-24B-A2B (156 likes, 2565 downloads)
+https://huggingface.co/LiquidAI/LFM2.5-24B-A2B
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T06:21:07.941Z] ---
+# [HUGGINGFACE-AI-MODELS] fishaudio/drama-3 (1603 score) - Verified Hugging Face Model: fishaudio/drama-3 (158 likes, 23 downloads)
+https://huggingface.co/fishaudio/drama-3
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T12:07:37.718Z] ---
+# [HUGGINGFACE-AI-MODELS] dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 (8280 score) - Verified Hugging Face Model: dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8 (628 l
+https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T14:23:45.417Z] ---
+# [AI-AGENTS] amplifthq/opentag (970 score) - OpenMeld: the open-source collaboration system for people and AI agents. Share c
+https://github.com/amplifthq/opentag
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T15:17:15.039Z] ---
+# [HUGGINGFACE-AI-MODELS] vllm-sr/d3 (3335 score) - Verified Hugging Face Model: vllm-sr/d3 (153 likes, 1805 downloads)
+https://huggingface.co/vllm-sr/d3
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T16:17:20.392Z] ---
+# [HIGH-PERF-SYSTEMS] nguyenphutrong/quotio (2892 score) - Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that 
+https://github.com/nguyenphutrong/quotio
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-14T16:32:33.146Z] ---
+# [DATABASE-STORAGE-ENGINES] pathwaycom/serviette (30013 score) - Ready-to-run cloud templates for RAG, AI pipelines, and enterprise search with l
+https://github.com/pathwaycom/serviette

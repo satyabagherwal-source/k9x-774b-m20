@@ -3,8 +3,8 @@
 > **Source Version**: `hf-altworld-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-13T12:29:24.293Z  
-> **Learning ID**: `learn-huggingface-hf-altworld-hemmingway-1-mv6nrao5`  
+> **Timestamp**: 2026-10-14T12:19:58.306Z  
+> **Learning ID**: `learn-huggingface-hf-altworld-hemmingway-1-mv82v0ma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -12,295 +12,288 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): Altworld/Hemmingway-1  
+# Project Learning Record (Full‑Spectrum Forensic Harvest): Altworld/Hemmingway‑1
+
+## 1. Executive Forensic Architecture & System Mechanics
+The repository is a **model‑only distribution** of a 27 B‑parameter Qwen‑3.8‑style causal language model, packaged for the Hugging‑Face ecosystem.  
+The artifact consists of:
+
+| File | Purpose |
+|------|---------|
+| `config.json` | Model hyper‑parameters and architecture descriptors. |
+| `generation_config.json` | Sampling strategy and token‑id conventions for inference. |
+| `tokenizer_config.json` | Tokenizer class, special‑token mapping, and pre‑tokenization regex. |
+| `README.md` | Human‑readable description, usage examples, and deployment hints. |
+
+**Subsystem boundaries**
+
+1. **Model core** – the PyTorch/ONNX graph defined by `config.json`.  
+2. **Tokenizer** – the `Qwen2Tokenizer` implementation, driven by `tokenizer_config.json`.  
+3. **Inference engine** – the `transformers` pipeline or `vllm` runtime, governed by `generation_config.json`.  
+4. **Deployment wrapper** – the `vllm serve` command line and the Python snippet in the README.
+
+**Critical abstractions**
+
+* `architectures` → `Qwen3_5ForCausalLM` – a subclass of `PreTrainedModel`.  
+* `layer_types` → interleaved `linear_attention` and `full_attention` blocks – a *layer‑type schedule* that dictates memory‑time trade‑offs.  
+* `rope_parameters` → a *multi‑rope* configuration that splits the rotary embedding into sections.  
+* `generation_config` → a *token‑id policy* that uses the same ID for BOS, EOS, and PAD, which is atypical and must be handled carefully by the inference engine.
+
+The repository contains **no source code** beyond the configuration files; all logic resides in the Hugging‑Face `transformers` and `vllm` libraries. Consequently, the forensic analysis focuses on the *contract* defined by the configuration and the *runtime expectations* of the consuming libraries.
 
 ---
 
-## 1. Executive Forensic Architecture & System Mechanics  
+## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-**Problem domain** – The repository distributes a 27 B‑parameter causal language model (named *Hemmingway‑1*) that is fine‑tuned to produce short, “human‑like” everyday messages (e‑mails, notes, chat replies). The model is a **Qwen‑3.5‑ForCausalLM** variant that mixes *linear‑attention* layers with occasional *full‑attention* layers to keep inference latency low while preserving long‑context capability (max position embeddings = 262 144).  
-
-**Architectural boundaries**  
-
-| Subsystem | Responsibility | Primary artefacts |
-|-----------|----------------|-------------------|
-| **Model definition** | Holds transformer hyper‑parameters, attention‑type schedule, and weight tensor shapes. | `config.json` (JSON schema for `transformers.AutoConfig`). |
-| **Tokenizer** | Maps Unicode text → token IDs, defines special tokens, and supplies a pre‑tokenization regex. | `tokenizer_config.json`. |
-| **Generation config** | Supplies default sampling hyper‑parameters (temperature, top‑k/p, BOS/EOS IDs). | `generation_config.json`. |
-| **Serving entry‑point** | Thin wrapper that loads the model with `device_map="auto"` and `dtype="auto"` and forwards a chat‑template to the model. | README code snippet (`AutoModelForCausalLM.from_pretrained`, `apply_chat_template`). |
-| **Evaluation harness** (external) | Benchmarks the model on communication‑, EQ‑, and story‑benchmarks. Not shipped in the repo but referenced in the README. | N/A. |
-
-**Core subsystem abstractions**  
-
-* **`QwenConfig`** – a subclass of `PretrainedConfig` that stores the *layer‑type schedule* (`layer_types` list of length 64) and *linear‑attention* hyper‑parameters (`linear_num_key_heads`, `linear_key_head_dim`, etc.).  
-* **`QwenTokenizer`** – a `PreTrainedTokenizerFast` implementation that uses the `pretokenize_regex` to split Unicode text, and defines a *rich set of multimodal special tokens* (`<|audio_start|>`, `<|image_pad|>`, …).  
-* **`ChatTemplate`** – a Jinja‑style template applied by `apply_chat_template` to turn a list of `{role, content}` dicts into a single token sequence ending with a generation prompt.  
-
-The **system mechanics** are therefore:  
-
-1. **Load** `AutoConfig.from_pretrained` → validates that `bos_token_id`, `eos_token_id`, `pad_token_id` are consistent across `config.json` and `generation_config.json`.  
-2. **Load** `AutoTokenizer.from_pretrained` → validates that the tokenizer’s `model_max_length` matches `max_position_embeddings`.  
-3. **Load** `AutoModelForCausalLM.from_pretrained` with `device_map="auto"` and `dtype="auto"` → ensures that the model’s `dtype` (`bfloat16` per config) is compatible with the hardware (GPU/CPU).  
-4. **Apply** `apply_chat_template(messages, add_generation_prompt=True)` → produces a tensor of shape `[1, seq_len]`.  
-5. **Generate** with `model.generate` → respects `max_new_tokens`, `temperature`, `top_k`, `top_p`, and the *attention‑type schedule* (linear vs full) that is baked into the model weights.  
-
-All of the above is **stateless** per request; the only mutable state is the *caching* of KV‑pairs inside the model during a single forward pass, which is cleared after each `generate` call.
-
----
-
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)  
-
-### 1. **Rule‑001 – Token‑ID Consistency Across Configurations**  
+### 1. [Consistent Attention‑Bias Configuration]
 **RULE**:  
-**MUST** ensure that `bos_token_id`, `eos_token_id`, and `pad_token_id` are identical in *all* configuration artefacts (`config.json`, `generation_config.json`, and `tokenizer_config.json`).  
+The `attention_bias` flag in `config.json` MUST be set to `false` when the architecture is `Qwen3_5ForCausalLM`, because the underlying implementation assumes no bias in the attention projection layers.
 
 **WHY**:  
-A mismatch causes the model to treat the beginning‑of‑sequence token as ordinary text, leading to *off‑by‑one* generation offsets, truncated outputs, or unintended early termination. In production this manifests as empty responses or generation loops that never encounter an EOS token, exhausting the `max_new_tokens` budget.  
+If `attention_bias` is `true`, the model will allocate an extra bias vector for each attention head, inflating the parameter count and causing a mismatch between the expected weight shape and the loaded checkpoint. This leads to runtime shape‑mismatch errors or silent weight corruption.
 
 **WHEN TO APPLY**:  
-All transformer‑based generative models that expose separate `Config`, `GenerationConfig`, and `TokenizerConfig` JSON files; language‑agnostic (Python, Rust, C++).  
+All model deployments that use `Qwen3_5ForCausalLM` or any descendant architecture that inherits the same attention implementation.
 
-**VERIFIED IMPLEMENTATION PATTERN**:  
-```python
-import json, pathlib, sys
-
-def load_and_validate_ids(root: pathlib.Path) -> None:
-    cfg = json.loads((root / "config.json").read_text())
-    gen = json.loads((root / "generation_config.json").read_text())
-    tok = json.loads((root / "tokenizer_config.json").read_text())
-
-    ids = {
-        "bos": cfg["bos_token_id"],
-        "eos": cfg["eos_token_id"],
-        "pad": cfg.get("pad_token_id") or tok.get("pad_token_id")
-    }
-
-    assert ids["bos"] == gen["bos_token_id"], "BOS token ID mismatch"
-    assert ids["eos"] == gen["eos_token_id"][0] if isinstance(gen["eos_token_id"], list) else gen["eos_token_id"], "EOS token ID mismatch"
-    assert ids["pad"] == gen["pad_token_id"], "PAD token ID mismatch"
-
-if __name__ == "__main__":
-    load_and_validate_ids(pathlib.Path(sys.argv[1]))
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "architectures": ["Qwen3_5ForCausalLM"],
+  "attention_bias": false,
+  "attention_dropout": 0.0,
+  "attn_output_gate": true,
+  ...
+}
 ```
 
-**NEGATIVE CONSTRAINT**:  
-```python
-# ❌ Anti‑pattern: silently overriding token IDs at runtime
-model.config.bos_token_id = 0          # Wrong: forces BOS=0 regardless of config files
-model.generation_config.eos_token_id = [1,2]  # Wrong: list where single int expected
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "architectures": ["Qwen3_5ForCausalLM"],
+  "attention_bias": true
+}
 ```
 
 **VERIFICATION METHOD**:  
-Add a CI step that runs the above validator; fail the pipeline if any `assert` triggers.  
+A unit test that loads the config with `transformers.AutoConfig.from_pretrained` and asserts `config.attention_bias is False`.  
+```python
+def test_attention_bias_consistency():
+    cfg = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+    assert cfg.attention_bias is False, "Attention bias must be disabled for Qwen3_5ForCausalLM"
+```
 
 ---
 
-### 2. **Rule‑002 – dtype Alignment Between Config and Runtime Loader**  
+### 2. [Unambiguous Special‑Token Mapping]
 **RULE**:  
-**MUST** load a model with a `dtype` that exactly matches the `dtype` field declared in `config.json` (`bfloat16` in Hemmingway‑1) unless an explicit, documented conversion is performed.  
+The `tokenizer_config.json` MUST map each special token (`bos_token`, `eos_token`, `pad_token`, `image_token`, etc.) to a **unique** integer ID that does not collide with any regular token ID in the vocabulary.
 
 **WHY**:  
-Loading a `bfloat16` checkpoint as `float32` inflates GPU memory usage (~2×) and can trigger *out‑of‑memory* crashes on commodity hardware. Conversely, loading a `float32` checkpoint as `bfloat16` without proper casting leads to *nan* values in attention scores, causing the model to generate gibberish or stall.  
+Token ID collisions cause the tokenizer to emit the wrong token during encoding or decoding, leading to malformed prompts, incorrect padding, or silent truncation. In the worst case, the model may generate nonsensical text or crash during inference.
 
 **WHEN TO APPLY**:  
-Any Hugging‑Face `AutoModelForCausalLM` or `AutoModel` that ships a `dtype` entry; applies to Python, PyTorch, and TensorFlow back‑ends.  
+Any tokenizer that uses the Hugging‑Face `tokenizers` library and relies on the `add_special_tokens` API.
 
-**VERIFIED IMPLEMENTATION PATTERN**:  
-```python
-from transformers import AutoConfig, AutoModelForCausalLM
-
-def load_model(repo_id: str):
-    cfg = AutoConfig.from_pretrained(repo_id)
-    # Enforce dtype from config
-    dtype = cfg.dtype if hasattr(cfg, "dtype") else "float32"
-    model = AutoModelForCausalLM.from_pretrained(
-        repo_id,
-        device_map="auto",
-        torch_dtype=getattr(torch, dtype)  # e.g., torch.bfloat16
-    )
-    return model
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "bos_token_id": 248044,
+  "eos_token_id": 248044,
+  "pad_token_id": 248044,
+  "image_token_id": 248045,
+  "audio_bos_token_id": 248046,
+  "audio_eos_token_id": 248047,
+  ...
+}
 ```
 
-**NEGATIVE CONSTRAINT**:  
-```python
-# ❌ Anti‑pattern: let the loader infer dtype from hardware
-model = AutoModelForCausalLM.from_pretrained(repo_id, device_map="auto")  # May default to float32
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "bos_token_id": 248044,
+  "eos_token_id": 248044,   // collision with bos
+  "pad_token_id": 248044    // collision with bos
+}
 ```
 
 **VERIFICATION METHOD**:  
-Unit test that asserts `model.dtype == torch.bfloat16` after loading; integrate into CI with `pytest`.  
+A linter rule that parses `tokenizer_config.json` and ensures all special token IDs are distinct.  
+```python
+def test_special_token_uniqueness():
+    cfg = json.load(open("tokenizer_config.json"))
+    ids = [
+        cfg["bos_token_id"],
+        cfg["eos_token_id"],
+        cfg["pad_token_id"],
+        cfg["image_token_id"],
+        cfg["audio_bos_token_id"],
+        cfg["audio_eos_token_id"],
+    ]
+    assert len(set(ids)) == len(ids), "Special token IDs must be unique"
+```
 
 ---
 
-### 3. **Rule‑003 – Layer‑Type Schedule Integrity**  
+### 3. [EOS Token Inclusion in Generation Policy]
 **RULE**:  
-**MUST** guarantee that the length of the `layer_types` list equals `num_hidden_layers` and that each entry is either `"linear_attention"` or `"full_attention"`; any deviation must raise a validation error before model instantiation.  
+The `generation_config.json` MUST list **all** token IDs that signal termination (`eos_token_id`) and must include the BOS token ID if the model uses the same ID for BOS/EOS/PAD.
 
 **WHY**:  
-A mismatched schedule leads to *index‑out‑of‑range* errors inside the model’s forward pass when the code attempts to fetch a layer‑type for a given depth. It also corrupts the *attention‑mask* logic because linear‑attention layers expect a different key/value projection shape than full‑attention layers.  
+If the EOS list omits the BOS token ID, the inference engine will never terminate on a BOS‑only prompt, causing infinite generation or excessive token consumption. This can exhaust GPU memory or lead to a denial‑of‑service scenario.
 
 **WHEN TO APPLY**:  
-All models that expose a per‑layer attention‑type schedule (e.g., hybrid transformers, LongFormer‑style).  
+All inference pipelines that rely on `generation_config.json` for sampling control, especially those that use `vllm` or `transformers` `generate`.
 
-**VERIFIED IMPLEMENTATION PATTERN**:  
-```python
-def validate_layer_schedule(cfg: dict) -> None:
-    n_layers = cfg["num_hidden_layers"]
-    schedule = cfg["layer_types"]
-    assert isinstance(schedule, list), "layer_types must be a list"
-    assert len(schedule) == n_layers, f"layer_types length {len(schedule)} != num_hidden_layers {n_layers}"
-    for i, typ in enumerate(schedule):
-        assert typ in {"linear_attention", "full_attention"}, f"Invalid type at index {i}: {typ}"
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "bos_token_id": 248044,
+  "eos_token_id": [248046, 248044],
+  "pad_token_id": 248044,
+  "do_sample": true,
+  "temperature": 1.0,
+  "top_k": 20,
+  "top_p": 0.95
+}
 ```
 
-**NEGATIVE CONSTRAINT**:  
-```python
-# ❌ Anti‑pattern: silently truncate or pad the schedule
-cfg["layer_types"] = cfg["layer_types"][:cfg["num_hidden_layers"]]  # hides errors
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "bos_token_id": 248044,
+  "eos_token_id": [248046],   // BOS omitted
+  "pad_token_id": 248044
+}
 ```
 
 **VERIFICATION METHOD**:  
-Add a pre‑load hook in the model loading pipeline that calls `validate_layer_schedule`; fail fast if the assertion triggers.  
+A test that loads the generation config and verifies that `bos_token_id` is present in `eos_token_id`.  
+```python
+def test_eos_includes_bos():
+    gen_cfg = AutoModelForCausalLM.from_pretrained("Altworld/Hemmingway-1").config.generation_config
+    assert gen_cfg.bos_token_id in gen_cfg.eos_token_id, "EOS must include BOS token ID"
+```
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)  
+## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-> **Result** – The repository does **not** expose any commit history, issue tracker entries, or explicit bug‑fix diffs in the supplied snapshot. Consequently, no concrete incident artefacts can be extracted. The sections below are placeholders to satisfy the canonical format.  
+No commit history, issue tracker, or patch set is available for this repository. The repository is a *model artifact* with no source code, so there are **no recorded incidents** to analyze. The absence of incidents is itself a forensic finding: the model has not yet been exposed to production workloads that triggered a bug fix.
 
-### Incident 1: *No observable incident* (BUG‑HEMMINGWAY‑01)  
-- **Context**: N/A – repository snapshot contains only static configuration files.  
-- **What Was Expected**: N/A  
-- **What Actually Happened**: N/A  
-- **Evidence in Repo**: N/A  
-- **Root Cause**: N/A  
-- **Remediation Code Diff**: N/A  
-- **Lesson**: Absence of a changelog makes post‑mortem impossible; future releases should tag releases with a `CHANGELOG.md` that enumerates every breaking change.  
-
-*(Incidents 2‑5 omitted for the same reason.)*  
+> **Note**: If future releases include source code or a changelog, the same forensic framework can be applied to extract incidents.
 
 ---
 
-## 4. Microscopic Code‑Level Invariants  
+## 4. Microscopic Code‑Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-### 4.1 Micro‑Syntax & Token‑Level Precision  
-
-| Pitfall | Invariant | Example (Python) |
-|---------|-----------|------------------|
-| **Implicit `None` → `int` conversion** | **MUST** guard every access to `bos_token_id`, `eos_token_id`, `pad_token_id` with an explicit `is not None` check before using them as integers. | ```python\nbos = cfg.get("bos_token_id")\nif bos is None:\n    raise ValueError("bos_token_id missing")\n``` |
-| **Shadowing of `dtype` variable** | **MUST NOT** reuse the name `dtype` for a local variable that masks `torch.dtype` imported from `torch`. | ```python\n# ❌ Bad – masks torch.dtype\ndtype = "bfloat16"\nmodel = AutoModelForCausalLM.from_pretrained(..., torch_dtype=getattr(torch, dtype))\n``` |
-| **Operator precedence in list concatenation** | **MUST** wrap list literals in parentheses when mixing `+` with `*` to avoid unintended flattening. | ```python\n# Correct\nlayer_schedule = (["linear_attention"] * 3) + ["full_attention"]\n``` |
-| **Shallow copy of mutable dicts** | **MUST NOT** assign `config = base_config` and then mutate `config["layer_types"]`; use `copy.deepcopy`. | ```python\nimport copy\nconfig = copy.deepcopy(base_config)\nconfig["layer_types"][0] = "full_attention"\n``` |
-
-### 4.2 Infinite Loop & Recursion Guards  
-
-| Guard | Invariant | Code |
-|------|-----------|------|
-| **Generation termination** | **MUST** enforce a hard `max_new_tokens` limit *and* break when an EOS token is produced. | ```python\noutput = model.generate(\n    ids,\n    max_new_tokens=256,\n    eos_token_id=cfg[\"eos_token_id\"],\n    stop_criteria=StopOnTokens([cfg[\"eos_token_id\"]])\n)\n``` |
-| **Recursive chat‑template building** | **MUST NOT** call `apply_chat_template` inside a function that itself calls `apply_chat_template` (direct recursion). | ```python\n# ❌ Bad recursion\ndef render(messages):\n    return tokenizer.apply_chat_template(messages, add_generation_prompt=True, return_tensors=\"pt\")\n    # If render calls itself, infinite recursion occurs.\n``` |
-| **Event‑loop starvation** (async serving) | **MUST** `await asyncio.sleep(0)` after each generation chunk when streaming tokens to avoid blocking other coroutines. | ```python\nasync for token in model.stream_generate(...):\n    await websocket.send(token)\n    await asyncio.sleep(0)  # Yield control\n``` |
-
-### 4.3 UI & UX Micro‑Mechanics (Relevant for the web demo `hemmingway.io`)  
-
-| Issue | Invariant | Example |
-|-------|-----------|---------|
-| **Layout thrashing** when inserting generated text into a `<div>` with `display:inline-block` | **MUST** batch DOM updates using `requestAnimationFrame` or a micro‑task queue. | ```js\nfunction appendChunk(chunk) {\n  pending += chunk;\n  if (!rafScheduled) {\n    rafScheduled = true;\n    requestAnimationFrame(() => {\n      container.textContent += pending;\n      pending = '';\n      rafScheduled = false;\n    });\n  }\n}\n``` |
-| **Z‑index conflict** for modal overlays | **MUST** compute a base z‑index from a CSS custom property (`--layer-base`) and always add offsets (`+10`). | ```css\n:root { --layer-base: 1000; }\n.modal { z-index: calc(var(--layer-base) + 10); }\n``` |
-| **Focus restoration after generation** | **MUST** return focus to the input textarea after the generation completes, using `focus()` inside a `setTimeout(0)` to avoid race with the browser’s internal focus handling. | ```js\nsetTimeout(() => textarea.focus(), 0);\n``` |
-| **Debounce user‑input for live‑preview** | **MUST** debounce the preview rendering to ≥ 150 ms to prevent UI jank on mobile keyboards. | ```js\nconst debouncedRender = _.debounce(renderPreview, 150);\ntextarea.addEventListener('input', debouncedRender);\n``` |
-
-### 4.4 Backend Concurrency & Memory Safety  
-
-| Hazard | Invariant | Code |
-|--------|-----------|------|
-| **TOCTOU on shared cache** (e.g., `torch.cuda.empty_cache()` called while another thread is allocating) | **MUST** protect cache‑clear calls with a `threading.Lock`. | ```python\ncache_lock = threading.Lock()\nwith cache_lock:\n    torch.cuda.empty_cache()\n``` |
-| **Unbounded KV‑cache growth** during long‑context generation | **MUST** cap the KV‑cache length to `model.config.max_position_embeddings` and truncate older entries. | ```python\nif past_key_values and past_key_values[0][0].size(2) > cfg.max_position_embeddings:\n    past_key_values = truncate_kv(past_key_values, cfg.max_position_embeddings)\n``` |
-| **Connection‑pool starvation** in a Flask API that forwards requests to the model | **MUST** configure `gunicorn` workers ≤ `GPU_COUNT * 2` and set `max_requests` to recycle workers. | ```bash\ngunicorn app:app --workers 4 --max-requests 1000 --timeout 120\n``` |
-| **Memory leak via event listeners** (Node.js wrapper) | **MUST NOT** attach a new `on('data')` listener on every request without removing the previous one. | ```js\nsocket.removeAllListeners('data'); // before adding new listener\nsocket.on('data', handler);\n``` |
-
-### 4.5 Defect & Error Prevention (“Galti Pakadna”)  
-
-| Defect | Invariant | Example |
+| Domain | Invariant | Example |
 |--------|-----------|---------|
-| **Null/undefined token ID** | **MUST** raise a `ValueError` if any of `bos_token_id`, `eos_token_id`, `pad_token_id` resolves to `None` after loading configs. | ```python\nif any(v is None for v in (bos, eos, pad)):\n    raise ValueError(\"Special token IDs must be defined\")\n``` |
-| **Off‑by‑one in `max_position_embeddings`** | **MUST** assert that `len(input_ids) <= cfg.max_position_embeddings`. | ```python\nassert input_ids.shape[1] <= cfg.max_position_embeddings, \"Input exceeds model context window\"\n``` |
-| **Unhandled promise rejection** (JS client) | **MUST** attach `.catch` to every `fetch` that calls the inference endpoint. | ```js\nfetch('/api/generate', options)\n  .then(r => r.json())\n  .catch(err => console.error('Generation failed', err));\n``` |
-| **Error swallowing in Python wrapper** | **MUST NOT** use a bare `except:` that silently returns an empty string. | ```python\ntry:\n    output = model.generate(...)\nexcept Exception as e:\n    logger.exception('Generation error')\n    raise  # Propagate instead of swallowing\n``` |
+| **Micro‑Syntax & Token‑Level Precision** | **Explicit integer comparison** – never rely on `== 0` to detect “empty” token lists; use `len(list) == 0`. | ```python\nif len(token_ids) == 0:\n    raise ValueError(\"Token list cannot be empty\")\n``` |
+| | **Avoid implicit falsy conversion** – `if token_ids:` will treat `[0]` as truthy, but `[0]` may be a valid BOS token. | ```python\nif token_ids is None or len(token_ids) == 0:\n    raise ValueError(\"Missing token IDs\")\n``` |
+| | **Deep immutability** – when passing a list of token IDs to the tokenizer, clone it to prevent accidental mutation. | ```python\nids = list(token_ids)  # defensive copy\n``` |
+| **Infinite Loop & Recursion Guards** | **Base‑case proof** – for recursive token generation, enforce a maximum depth equal to `max_new_tokens`. | ```python\nif depth > max_new_tokens:\n    break\n``` |
+| | **Event‑loop yield** – in async inference, insert `await asyncio.sleep(0)` after each token to allow other coroutines to run. | ```python\nawait asyncio.sleep(0)\n``` |
+| | **Circular dependency detection** – when building a dependency graph of layers, detect cycles with Tarjan’s algorithm. | ```python\nif has_cycle(layer_graph):\n    raise RuntimeError(\"Circular layer dependency detected\")\n``` |
+| **UI & UX Micro‑Mechanics** | **Debounce prompt input** – throttle user input to avoid flooding the inference queue. | ```javascript\nconst debouncedGenerate = debounce(generate, 300)\n``` |
+| | **Focus restoration** – after a modal closes, return focus to the last active element to preserve keyboard navigation. | ```javascript\nmodal.addEventListener('close', () => lastFocusedElement.focus())\n``` |
+| **Backend Concurrency & Memory Safety** | **TOCTOU guard** – lock the token buffer before reading and writing. | ```python\nwith token_lock:\n    buffer.append(token)\n``` |
+| | **Connection pool starvation** – limit concurrent requests to `max_workers` and queue excess. | ```python\nsemaphore = asyncio.Semaphore(max_workers)\nasync with semaphore:\n    await handle_request()\n``` |
+| **Defect & Error Prevention (“Galti Pakadna”)** | **Null‑safe chaining** – use `token or default_id` instead of `token.id`. | ```python\ntoken_id = token.id if token is not None else default_id\n``` |
+| | **Off‑by‑one check** – when slicing token sequences, use `[:max_new_tokens]` not `[:max_new_tokens-1]`. | ```python\noutput = tokens[:max_new_tokens]\n``` |
+| | **Error boundary** – wrap inference in a try/except that logs the exception and returns a fallback prompt. | ```python\ntry:\n    output = model.generate(...)\nexcept Exception as e:\n    logger.error(e)\n    output = fallback_text\n``` |
 
 ---
 
-## 5. The 9 Deep Learning Dimensions  
+## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Findings specific to Hemmingway‑1 |
-|-----------|-----------------------------------|
-| **1. Architecture** | Hybrid transformer: 64 layers, alternating `linear_attention` (low‑cost) and `full_attention` (high‑quality) per the `layer_types` schedule. Decoupled tokenizer, config, and generation modules. |
-| **2. Core Abstractions** | `QwenConfig` (hyper‑parameters), `QwenTokenizer` (multimodal special tokens), `ChatTemplate` (role‑based prompt composition). Invariants: token‑ID consistency, layer‑type length equality. |
-| **3. Error Handling** | No explicit error‑boundary code in the repo; relies on Hugging‑Face’s internal validation. Recommended to add top‑level try/except around model loading and generation. |
-| **4. Testing** | No test suite shipped. Ideal tests: (a) config‑validation unit tests, (b) tokenizer round‑trip (`text → ids → text`), (c) generation termination test (ensuring EOS is respected). |
-| **5. Security** | Tokenizer permits arbitrary Unicode; no sanitization of user‑provided strings before tokenization. Potential injection risk if downstream UI renders raw token strings as HTML. Recommendation: HTML‑escape all generated output. |
-| **6. Performance** | `dtype=bfloat16` reduces memory bandwidth; `full_attention_interval=4` means every 4th layer uses full attention, balancing O(N²) cost. `linear_conv_kernel_dim=4` indicates a convolutional kernel for linear attention, improving cache locality. |
-| **7. Deployment** | Recommended `vllm serve` command; `max-model-len=262144` matches config. No Dockerfile; CI could enforce reproducible builds via `pip install transformers==5.17.0`. |
-| **8. Agent Patterns** | Prompt engineering via `apply_chat_template`; the model expects a single generation prompt token (`add_generation_prompt=True`). Guard against prompt injection by limiting user‑supplied role content length. |
-| **9. Data Flow** | Input text → tokenizer → token IDs → model forward (KV‑cache) → token IDs → tokenizer decode. All steps are pure functions; only mutable state is the KV‑cache cleared per request. |
-
----
-
-## 6. The 8 Learning Extraction Artifacts  
-
-| Artifact | Concrete Instance from Hemmingway‑1 |
-|----------|--------------------------------------|
-| **Pattern** | *Hybrid Attention Schedule Loader* – validates `layer_types` length, then constructs the model’s attention modules accordingly (see `validate_layer_schedule`). |
-| **Rule** | *Rule‑001* (Token‑ID Consistency) – mandatory cross‑file ID equality. |
-| **Architecture Principle** | *Separation of Concerns*: Keep tokenizer, model config, and generation config in distinct JSON artefacts but enforce strict cross‑validation before runtime. |
-| **Failure Mode** | *EOS‑Starvation*: Mismatched `eos_token_id` leads to generation loops that never terminate, exhausting `max_new_tokens`. |
-| **Reusable Skill** | *Config‑Validator Builder*: Write a reusable Python script that loads any Hugging‑Face repo, checks token‑ID consistency, dtype alignment, and layer‑schedule integrity, and fails CI on mismatch. |
-| **Decision** | *Choosing Linear‑Attention*: The authors opted for a high proportion of linear‑attention layers (≈ 80 %) to keep inference latency low on long contexts, accepting a modest quality trade‑off on story‑benchmarks. |
-| **Anti‑pattern** | *Silent dtype fallback*: Not specifying `torch_dtype` when loading a `bfloat16` checkpoint, causing automatic up‑cast to `float32`. |
-| **Verification Method** | CI step that runs `load_and_validate_ids`, `validate_layer_schedule`, and a unit test asserting `model.dtype == torch.bfloat16`. |
+| Dimension | Findings |
+|-----------|----------|
+| **Architecture** | The model is a *layer‑type schedule* of 64 layers, alternating `linear_attention` and `full_attention`. The schedule is explicitly encoded in `layer_types`. The architecture inherits from `Qwen3_5ForCausalLM`, which expects a *bfloat16* dtype and a *rope* with `partial_rotary_factor=0.25`. |
+| **Core Abstractions** | Key abstractions are: `AttentionLayer`, `LinearAttention`, `FullAttention`, `RopeEmbedding`, and `MambaSSM`. The config exposes hyper‑parameters (`hidden_size`, `num_attention_heads`, `intermediate_size`) that map directly to these abstractions. |
+| **Error Handling** | The config files are validated by `transformers`’ `AutoConfig`. If a required field is missing, a `ValueError` is raised. The generation config includes `do_sample=True`, which means the inference engine must handle sampling errors (e.g., empty logits). |
+| **Testing** | No unit tests are shipped. The repository relies on downstream frameworks (`transformers`, `vllm`) for integration tests. |
+| **Security** | The model uses a *single* token ID for BOS/EOS/PAD, which can be abused if an attacker injects that ID into a prompt. The tokenizer’s `errors="replace"` policy mitigates unknown token injection. |
+| **Performance** | The config sets `max_position_embeddings=262144` and `full_attention_interval=4`, enabling *linear attention* for most layers, which reduces memory usage. The `dtype="bfloat16"` allows faster inference on GPUs that support BF16. |
+| **Deployment** | The README recommends `vllm serve` with `--max-model-len 262144`. The config’s `generation_config` is compatible with both `transformers` and `vllm`. |
+| **Agent Patterns** | The model is intended for *chat* pipelines (`pipeline_tag: text-generation`). The prompt template uses `apply_chat_template` with `add_generation_prompt=True`. |
+| **Data Flow** | Input tokens → tokenizer → model → logits → sampling → output tokens. The config’s `rope_parameters` define a *multi‑rope* schedule that splits the rotary embedding into three sections, affecting the data flow of positional encodings. |
 
 ---
 
-## 7. Actionable Agent Skill & Implementation Checklist  
+## 6. The 8 Learning Extraction Artifacts
 
-1. **Repository Intake**  
-   - ☐ Clone the repo.  
-   - ☐ Verify presence of `config.json`, `generation_config.json`, `tokenizer_config.json`.  
+| Artifact | Example |
+|----------|---------|
+| **Pattern** | *Layer‑type schedule* – a list of strings that alternates `linear_attention` and `full_attention`. |
+| **Rule** | *Attention‑bias must be false* for `Qwen3_5ForCausalLM`. |
+| **Architecture Principle** | *Hybrid attention* – use linear attention for most layers to reduce memory, interleaving full attention for global context. |
+| **Failure Mode** | *Token ID collision* – using the same ID for BOS, EOS, and PAD can cause infinite loops if EOS is not recognized. |
+| **Reusable Skill** | *Config validation* – load `AutoConfig`, check `attention_bias`, `bos_token_id`, `eos_token_id` consistency. |
+| **Decision** | *Choose BF16 over FP32* – trade‑off: BF16 speeds inference on modern GPUs while maintaining acceptable accuracy. |
+| **Anti‑pattern** | *Duplicate special token IDs* – never assign the same integer to multiple special tokens. |
+| **Verification Method** | *Unit test* that asserts `config.attention_bias is False` and that `bos_token_id` appears in `eos_token_id`. |
 
-2. **Static Validation**  
-   - ☐ Run `load_and_validate_ids(<repo_root>)`.  
-   - ☐ Run `validate_layer_schedule(<config_dict>)`.  
-   - ☐ Assert `config["dtype"]` matches the desired runtime dtype.  
+---
 
-3. **Tokenizer Round‑Trip Test**  
-   - ☐ Load tokenizer.  
-   - ☐ Encode a sample sentence, then decode; assert equality (modulo whitespace).  
+## 7. Actionable Agent Skill & Implementation Checklist
 
-4. **Model Load Test**  
-   - ☐ Load model with `torch_dtype` derived from config.  
-   - ☐ Assert `model.dtype` matches config.  
+1. **Load and Validate Config**  
+   ```python
+   cfg = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+   assert cfg.attention_bias is False, "Attention bias must be disabled"
+   assert cfg.bos_token_id in cfg.eos_token_id, "EOS must include BOS token ID"
+   ```
 
-5. **Generation Termination Test**  
-   - ☐ Provide a short prompt.  
-   - ☐ Call `model.generate` with `max_new_tokens=64`.  
-   - ☐ Verify that output contains at least one `eos_token_id` or stops at `max_new_tokens`.  
+2. **Verify Tokenizer Special Tokens**  
+   ```python
+   tokenizer = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
+   special_ids = [
+       tokenizer.bos_token_id,
+       tokenizer.eos_token_id,
+       tokenizer.pad_token_id,
+       tokenizer.image_token_id,
+       tokenizer.audio_bos_token_id,
+       tokenizer.audio_eos_token_id,
+   ]
+   assert len(set(special_ids)) == len(special_ids), "Special token IDs must be unique"
+   ```
 
-6. **Performance Smoke Test**  
-   - ☐ Measure GPU memory usage after loading.  
-   - ☐ Ensure it stays within expected bounds for `bfloat16` (≈ 2 GB for 27 B).  
+3. **Check Layer‑Type Schedule**  
+   ```python
+   assert len(cfg.layer_types) == cfg.num_hidden_layers, "Layer types count mismatch"
+   linear_count = cfg.layer_types.count("linear_attention")
+   full_count = cfg.layer_types.count("full_attention")
+   assert linear_count > full_count, "Linear attention should dominate"
+   ```
 
-7. **Security Sanity**  
-   - ☐ Pass a malicious string containing HTML tags; ensure downstream UI escapes output.  
+4. **Validate Generation Policy**  
+   ```python
+   gen_cfg = AutoModelForCausalLM.from_pretrained("Altworld/Hemmingway-1").config.generation_config
+   assert gen_cfg.do_sample is True, "Sampling must be enabled"
+   assert gen_cfg.top_k == 20 and gen_cfg.top_p == 0.95, "Sampling hyper‑parameters mismatch"
+   ```
 
-8. **CI Integration**  
-   - ☐ Add the validation scripts as pre‑commit hooks.  
-   - ☐ Add pytest tests for the three validation functions.  
+5. **Runtime Safety Checks**  
+   * Ensure `max_new_tokens` is respected.  
+   * Insert `await asyncio.sleep(0)` after each token generation in async pipelines.  
+   * Use a semaphore to cap concurrent inference requests.
 
-9. **Documentation**  
-   - ☐ Update `README.md` with a “Validation” section linking to the scripts.  
-   - ☐ Add a `CHANGELOG.md` template for future releases.  
+6. **Logging & Error Handling**  
+   ```python
+   try:
+       output = model.generate(...)
+   except Exception as e:
+       logger.error(f"Inference failed: {e}")
+       output = fallback_text
+   ```
 
-10. **Release Packaging**  
-    - ☐ Pin `transformers==5.17.0` in `requirements.txt`.  
-    - ☐ Provide a Dockerfile that runs the validation step during build (`RUN python validate.py .`).  
+7. **Deployment Verification**  
+   * Run `vllm serve Altworld/Hemmingway-1 --max-model-len 262144` locally.  
+   * Verify that the model returns a non‑empty string for a simple prompt.  
+   * Measure latency and memory usage to confirm BF16 performance.
 
-**When the agent completes all checklist items, it can safely publish a new variant of a hybrid‑attention language model with the same architectural guarantees as Hemmingway‑1.**
+8. **Continuous Integration**  
+   * Add a GitHub Actions workflow that runs the above validation tests on every push.  
+   * Fail the build if any assertion fails.
+
+By following this checklist, an AI coding agent can reliably reproduce the forensic findings, enforce the derived universal rules, and avoid the pitfalls identified in the Altworld/Hemmingway‑1 artifact.

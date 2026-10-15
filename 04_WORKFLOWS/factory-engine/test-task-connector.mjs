@@ -117,6 +117,10 @@ assert(promptPackage.withinBudget === true,
 // ---------------------------------------------------------------------------
 console.log('\n[TEST 4] Testing Checkpoint Persistence & State Recovery...');
 
+const sessionMemFile = path.join(BRAIN_ROOT, '.project-brain', 'session-memory.json');
+const beforeCheckpointsRaw = fs.existsSync(CHECKPOINTS_FILE) ? fs.readFileSync(CHECKPOINTS_FILE, 'utf-8') : null;
+const beforeSessionMemRaw = fs.existsSync(sessionMemFile) ? fs.readFileSync(sessionMemFile, 'utf-8') : null;
+
 recordTaskCheckpoint(resolvedContract, 1, {
   filesModified: ['src/parser.js'],
   tempDiffLength: 142
@@ -162,12 +166,15 @@ const finalCheckpoint = loadTaskCheckpoint(resolvedContract.task_id);
 assert(finalCheckpoint.status === TASK_STATUS.VERIFIED, 'Final checkpoint reflects VERIFIED state');
 
 // ---------------------------------------------------------------------------
-// CLEANUP TEST RECORD
+// CLEANUP TEST RECORD: 100% BYTE-FOR-BYTE RESTORATION
 // ---------------------------------------------------------------------------
 try {
-  const db = JSON.parse(fs.readFileSync(CHECKPOINTS_FILE, 'utf-8'));
-  delete db.tasks[resolvedContract.task_id];
-  fs.writeFileSync(CHECKPOINTS_FILE, JSON.stringify(db, null, 2), 'utf-8');
+  if (beforeCheckpointsRaw !== null) {
+    fs.writeFileSync(CHECKPOINTS_FILE, beforeCheckpointsRaw, 'utf-8');
+  }
+  if (beforeSessionMemRaw !== null) {
+    fs.writeFileSync(sessionMemFile, beforeSessionMemRaw, 'utf-8');
+  }
 } catch (e) {}
 
 // ---------------------------------------------------------------------------

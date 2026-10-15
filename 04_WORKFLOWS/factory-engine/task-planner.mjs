@@ -245,6 +245,33 @@ export function planTaskDecomposition(contract) {
           status: 'PENDING'
         }
       );
+    case 'REFACTOR':
+      steps.push(
+        {
+          step_id: 1,
+          title: 'Establish Regression Test Baseline',
+          action: 'Audit existing behavior and verify test harness baseline before refactoring.',
+          depends_on: [],
+          verification_probe: 'component_unit_test',
+          status: 'PENDING'
+        },
+        {
+          step_id: 2,
+          title: 'Execute Non-Destructive Structural Refactor',
+          action: 'Refactor target modules preserving public API contracts and mathematical invariants.',
+          depends_on: [1],
+          verification_probe: 'syntax_lint_pass',
+          status: 'PENDING'
+        },
+        {
+          step_id: 3,
+          title: 'Run Complete Regression & Integration Suite',
+          action: 'Verify zero broken contracts, zero performance regressions, and exit code 0.',
+          depends_on: [2],
+          verification_probe: 'npm run build',
+          status: 'PENDING'
+        }
+      );
       break;
 
     default:

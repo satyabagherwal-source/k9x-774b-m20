@@ -25,9 +25,27 @@ export const TASK_STATUS = {
   CONTEXT_RESOLVED: 'CONTEXT_RESOLVED',
   IN_PROGRESS: 'IN_PROGRESS',
   AWAITING_VERIFICATION: 'AWAITING_VERIFICATION',
+  AWAITING_HUMAN_APPROVAL: 'AWAITING_HUMAN_APPROVAL',
+  PAUSED: 'PAUSED',
+  RETRYING: 'RETRYING',
   VERIFIED: 'VERIFIED',
   COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED',
   FAILED: 'FAILED'
+};
+
+export const FAILURE_CLASSES = {
+  SYNTAX_ERROR: 'SYNTAX_ERROR',
+  TEST_FAILURE: 'TEST_FAILURE',
+  RUNTIME_EXCEPTION: 'RUNTIME_EXCEPTION',
+  QUOTA_EXHAUSTED: 'QUOTA_EXHAUSTED',
+  RATE_LIMIT: 'RATE_LIMIT',
+  AUTH_FAILURE: 'AUTH_FAILURE',
+  PROVIDER_OUTAGE: 'PROVIDER_OUTAGE',
+  CONTEXT_EXHAUSTION: 'CONTEXT_EXHAUSTION',
+  TIMEOUT: 'TIMEOUT',
+  SAFETY_BOUNDARY_BLOCKED: 'SAFETY_BOUNDARY_BLOCKED',
+  PROCESS_TERMINATED: 'PROCESS_TERMINATED'
 };
 
 export const EVIDENCE_TYPES = [
@@ -262,4 +280,88 @@ export function createTaskContract(options = {}) {
   }
 
   return contract;
+}
+
+/**
+ * Creates a standardized Agent Handoff Contract payload.
+ * Preserves original objective, criteria, repo/workspace identity, git state,
+ * completed & pending steps, artifacts, test evidence, known failures, and safety bounds.
+ *
+ * @param {object} contract - The task contract
+ * @param {object} options - Additional handoff options
+ * @returns {object} Standardized handoff payload
+ */
+export function createAgentHandoffPayload(contract, options = {}) {
+  const completedSteps = (contract.execution_plan || [])
+    .filter(s => s.status === 'COMPLETED')
+    .map(s => ({ step_id: s.step_id, title: s.title, evidence: s.evidence }));
+
+  const pendingSteps = (contract.execution_plan || [])
+    .filter(s => s.status === 'PENDING')
+    .map(s => ({ step_id: s.step_id, title: s.title, depends_on: s.depends_on }));
+
+  const nextStep = pendingSteps[0] || null;
+
+  return {
+    handoff_id: `handoff_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`,
+    task_id: contract.task_id,
+    timestamp: new Date().toISOString(),
+    from_provider: options.from_provider || 'CURRENT_AGENT',
+    to_provider: options.to_provider || 'NEXT_CASCADE_AGENT',
+    switch_reason: options.switch_reason || 'PROACTIVE_QUOTA_THRESHOLD',
+    objective: contract.objective,
+    acceptance_criteria: contract.verification_criteria,
+    workspace: {
+      project_root: options.project_root || contract.context.project_root || process.cwd(),
+      git_branch: options.git_branch || 'main',
+      git_commit: options.git_commit || null,
+      workspace_verified_by_successor: false
+    },
+    plan_progress: {
+      current_step: contract.checkpoint.current_step,
+      total_steps: contract.checkpoint.total_steps,
+      completed_steps: completedSteps,
+      pending_steps: pendingSteps,
+      next_action: nextStep ? nextStep.title : null
+    },
+    changed_files: options.changed_files || contract.checkpoint.state_payload?.changed_files || [],
+    artifact_references: options.artifact_references || contract.checkpoint.state_payload?.artifacts || [],
+    test_evidence: options.test_evidence || contract.checkpoint.state_payload?.test_evidence || [],
+    known_failures: options.known_failures || [],
+    unresolved_risks: options.unresolved_risks || [],
+    safety_restrictions: [
+      'NO_DIRECT_GIT_PUSH',
+      'NO_DIRECT_GIT_MERGE',
+      'NO_DESTRUCTIVE_RESET',
+      'NO_DELETE_USER_DATA_OR_BACKUPS',
+      'NO_SECRET_MODIFICATION',
+      'WORKSPACE_VERIFICATION_REQUIRED_BEFORE_WRITE'
+    ]
+  };
+}
+
+/**
+ * Validates an Agent Handoff Contract
+ *
+ * @param {object} handoff - Handoff object
+ * @returns {object} { valid: boolean, errors: string[] }
+ */
+export function validateAgentHandoffContract(handoff) {
+  const errors = [];
+  if (!handoff || typeof handoff !== 'object') {
+    return { valid: false, errors: ['Handoff contract must be a non-null object.'] };
+  }
+  if (!handoff.handoff_id) errors.push('handoff_id is required.');
+  if (!handoff.task_id) errors.push('task_id is required.');
+  if (!handoff.objective) errors.push('objective is required.');
+  if (!handoff.workspace || !handoff.workspace.project_root) errors.push('workspace.project_root is required.');
+  if (!handoff.plan_progress) errors.push('plan_progress is required.');
+  if (!Array.isArray(handoff.safety_restrictions) || handoff.safety_restrictions.length === 0) {
+    errors.push('safety_restrictions must be a non-empty array.');
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors
+  };
 }

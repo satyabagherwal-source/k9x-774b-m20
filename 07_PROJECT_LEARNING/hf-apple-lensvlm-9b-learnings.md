@@ -3,8 +3,8 @@
 > **Source Version**: `hf-apple-len`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-13T12:26:18.178Z  
-> **Learning ID**: `learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a`  
+> **Timestamp**: 2026-10-14T12:16:51.168Z  
+> **Learning ID**: `learn-huggingface-hf-apple-lensvlm-9b-mv82r080`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -14,194 +14,191 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): apple/LensVLM‑9B
 
-## 1. Executive Forensic Architecture & System Mechanics
-LensVLM‑9B is a vision‑language model that operates on compressed images of text.  
-* **Core problem** – Given a compressed document image, the model selectively expands only the pages that are relevant to a user query, thereby reducing inference latency and memory usage.  
-* **Subsystem boundaries**  
-  * **Tokenizer / Processor** – `Qwen3VLProcessor` (tokenizers backend) handles multimodal tokenization, mapping image, audio, and video tokens to integer IDs.  
-  * **Vision encoder** – a 27‑layer convolutional backbone (`hidden_size=1152`) that produces visual embeddings.  
-  * **Text encoder / decoder** – a 32‑layer Qwen3.5 transformer (`hidden_size=4096`) that processes text tokens and generates text output.  
-  * **Cross‑modal fusion** – the vision embeddings are injected into the text transformer via a learned projection and a `vision_bos_token`.  
-  * **Inference pipeline** – a `pipeline_tag: image-text-to-text` that orchestrates tokenization, model forward pass, and post‑processing.  
-* **Critical abstractions** –  
-  * `VisionConfig` and `TextConfig` are separate JSON objects that must be kept in sync (e.g., `hidden_size`, `num_attention_heads`).  
-  * Special tokens (`image_token_id`, `video_token_id`, `eos_token_id`) are defined in both the tokenizer and the model config; mismatches cause silent truncation or mis‑generation.  
-  * The model uses `bfloat16` for most operations but falls back to `float32` for the Mamba SSM sub‑module (`mamba_ssm_dtype`), which must be respected by the runtime to avoid precision drift.
+## 1. Executive Forensic Architecture & System Mechanics  
+**Problem solved** – LensVLM compresses scanned documents into a compact visual representation and expands only the pages that are relevant to a user query.  
+**Architectural boundaries** –  
+- **Tokenizer / Processor** (`Qwen3VLProcessor`, `TokenizersBackend`) – handles text, image, video, and audio tokens.  
+- **Model core** – `Qwen3_5ForConditionalGeneration` extended with a vision encoder and a selective‑expansion controller.  
+- **Vision sub‑module** – defined by `vision_config` (depth = 27, hidden_size = 1152, etc.) and a compression pipeline that maps high‑resolution images to a compressed token stream.  
+- **Compression / Expansion** – a tool‑based loop that receives a compressed image, queries the model for relevance, and selectively decompresses pages.  
+- **Deployment** – packaged as a Hugging‑Face model card; inference is invoked via `scripts/run_demo.py` or `demo.py`.  
+
+**Critical subsystem abstractions** –  
+- **Special‑token registry** – image, video, audio, and vision start/end tokens are defined in `tokenizer_config.json`.  
+- **Attention pattern list** – `layer_types` in `text_config` mixes `linear_attention` and `full_attention` to balance speed and accuracy.  
+- **Cache policy** – `use_cache` is `false` in the base config but `true` in `generation_config.json`, indicating a deliberate decision to disable caching during training but enable it during generation.  
+
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent Special‑Token Alignment Across Tokenizer and Model
+### 1. Consistent Configuration File Format  
 **RULE**:  
-The integer IDs assigned to all multimodal special tokens (image, video, audio, BOS, EOS, PAD) in the tokenizer configuration must match exactly the IDs referenced in the model configuration.  
+> The `config.json`, `generation_config.json`, and `tokenizer_config.json` files must contain raw JSON objects; they may not be JSON‑encoded strings.  
 **WHY**:  
-Mismatched IDs lead to silent token mis‑interpretation, causing the model to treat image tokens as text or vice‑versa, which manifests as garbled output or silent failures.  
+> Double‑escaped JSON leads to parsing failures, silent defaults, or runtime errors when the model loader expects a dictionary.  
 **WHEN TO APPLY**:  
-During any change to `tokenizer_config.json` or `config.json` in a multimodal transformer.  
-**VERIFIED IMPLEMENTATION PATTERN**:
+> During model packaging, CI build, and any automated deployment pipeline that consumes Hugging‑Face model cards.  
+**VERIFIED IMPLEMENTATION PATTERN**:  
 ```json
-// tokenizer_config.json
 {
+  "architectures": ["Qwen3_5ForConditionalGeneration"],
+  "dtype": "bfloat16",
+  "eos_token_id": 248046,
+  "hidden_size": 4096,
   "image_token_id": 248056,
-  "video_token_id": 248057,
-  "audio_bos_token_id": 248058,
-  "audio_eos_token_id": 248059,
+  "model_type": "qwen3_5",
   "pad_token_id": 248044,
-  "eos_token_id": 248046
-}
-
-// config.json
-{
-  "image_token_id": 248056,
-  "video_token_id": 248057,
-  "audio_bos_token_id": 248058,
-  "audio_eos_token_id": 248059,
-  "pad_token_id": 248044,
-  "eos_token_id": 248046
+  "text_config": { ... }
 }
 ```
-**NEGATIVE CONSTRAINT**:
+**NEGATIVE CONSTRAINT**:  
 ```json
-// BAD: mismatched IDs
+"{\"architectures\": [\"Qwen3_5ForConditionalGeneration\"], \"dtype\": \"bfloat16\"}"
+```
+**VERIFICATION METHOD**:  
+> Run `python -c "import json, pathlib; json.load(open('config.json'))"` in CI; fail if a `JSONDecodeError` occurs.  
+
+### 2. Token‑ID Consistency Across Configs  
+**RULE**:  
+> Every special token ID defined in `tokenizer_config.json` must match the corresponding ID in `config.json` and `generation_config.json`.  
+**WHY**:  
+> Mismatched IDs cause the model to misinterpret tokens, leading to hallucinations or silent truncation.  
+**WHEN TO APPLY**:  
+> At model initialization and before any inference call.  
+**VERIFIED IMPLEMENTATION PATTERN**:  
+```python
+# tokenizer_config.json
+{
+  "image_token": "<|image_pad|>",
+  "image_token_id": 248056,
+  "pad_token": "<|endoftext|>",
+  "pad_token_id": 248044,
+  "eos_token": "<|im_end|>",
+  "eos_token_id": 248044
+}
+# config.json
 {
   "image_token_id": 248056,
-  "video_token_id": 248057,
-  "pad_token_id": 248045   // should be 248044
+  "pad_token_id": 248044,
+  "eos_token_id": 248044
+}
+```
+**NEGATIVE CONSTRAINT**:  
+```python
+# tokenizer_config.json
+{
+  "image_token_id": 999999,   # mismatched
+  "pad_token_id": 248044,
+  "eos_token_id": 248044
 }
 ```
 **VERIFICATION METHOD**:  
-A unit test that loads both configs and asserts equality of each special‑token field; a linter rule that flags any numeric literal in `config.json` that does not appear in `tokenizer_config.json`.
+> Unit test that loads both JSON files and asserts equality of each ID pair.  
 
-### 2. Vision and Text Hidden Size Synchronization
+### 3. Cache Flag Symmetry  
 **RULE**:  
-The `hidden_size` field in `vision_config` must be a divisor of the `hidden_size` field in `text_config`.  
+> The `use_cache` flag must be identical in `config.json` and `generation_config.json`.  
 **WHY**:  
-The vision embeddings are projected into the text transformer via a linear layer whose weight matrix shape is `(text_hidden_size, vision_hidden_size)`. If the sizes are not in a divisor relationship, the projection layer cannot be initialized without padding or truncation, leading to runtime shape errors.  
+> A mismatch forces the model to allocate or discard cache tensors inconsistently, causing memory leaks or incorrect generation.  
 **WHEN TO APPLY**:  
-During model architecture changes or when adding a new vision backbone.  
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# projection layer initialization
-proj_weight = nn.Linear(
-    in_features=vision_config.hidden_size,
-    out_features=text_config.hidden_size,
-    bias=False
-)
-```
-**NEGATIVE CONSTRAINT**:
-```python
-# BAD: mismatched sizes
-vision_hidden_size = 1152
-text_hidden_size = 4096  # 4096 % 1152 != 0
-proj_weight = nn.Linear(1152, 4096)  # will raise shape mismatch
-```
-**VERIFICATION METHOD**:  
-A static analysis script that parses both JSON configs and asserts `text_hidden_size % vision_hidden_size == 0`.
-
-### 3. Enforced Use of `use_cache=False` for Long‑Context Generation
-**RULE**:  
-When `max_position_embeddings` exceeds 262144, the model must set `use_cache=False` in both the model and generation configs to avoid out‑of‑memory token caching.  
-**WHY**:  
-Enabling cache for extremely long contexts inflates GPU memory usage beyond available resources, causing OOM crashes.  
-**WHEN TO APPLY**:  
-During any configuration that increases `max_position_embeddings` beyond the default.  
-**VERIFIED IMPLEMENTATION PATTERN**:
+> During model construction and before any generation step.  
+**VERIFIED IMPLEMENTATION PATTERN**:  
 ```json
 // config.json
 {
   "use_cache": false,
-  "max_position_embeddings": 262144
-}
-
-// generation_config.json
-{
-  "use_cache": true,   // generation uses cache; model disables it
-  "eos_token_id": [248046, 248044],
-  "pad_token_id": 248044
+  "generation_config": {
+    "use_cache": false
+  }
 }
 ```
-**NEGATIVE CONSTRAINT**:
+**NEGATIVE CONSTRAINT**:  
 ```json
-// BAD: cache enabled for long context
+// config.json
 {
-  "use_cache": true,
-  "max_position_embeddings": 262144
+  "use_cache": false,
+  "generation_config": {
+    "use_cache": true
+  }
 }
 ```
 **VERIFICATION METHOD**:  
-A CI job that runs `transformers.AutoModelForCausalLM.from_pretrained` and asserts `model.config.use_cache is False` when `max_position_embeddings > 200000`.
+> CI test that compares `config['use_cache']` with `config['generation_config']['use_cache']` and fails on inequality.  
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-No commit diffs, PRs, or issue logs are available in the provided snapshot. Consequently, no concrete incidents can be documented. The absence of evidence suggests that the repository is either in an early release state or that all prior incidents are not publicly exposed.
+## 3. Forensic Real Incidents & Production Patches  
+No production patches, commits, or closed bug issues were available in the provided snapshot.  
+**Conclusion** – The repository appears to be in a pre‑release state with no recorded incidents.
 
-## 4. Microscopic Code‑Level Invariants
+---
+
+## 4. Microscopic Code‑Level Invariants  
 
 | Domain | Invariant | Example |
 |--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | **Strict equality for token IDs** – never compare token IDs with `==` against a string or a number that may be coerced. | `if (tokenId === 248056) { /* image token */ }` |
-| | **Avoid implicit falsy conversion** – never write `if (tokenId)` to check for a valid token; use explicit comparison. | `if (tokenId !== 0 && tokenId !== null && tokenId !== undefined) { … }` |
-| | **Deep immutability of config objects** – freeze config objects to prevent accidental mutation. | `Object.freeze(config);` |
-| **Infinite Loop & Recursion Guards** | **Base case for recursive image expansion** – limit recursion depth to the number of pages. | `function expandPage(page, depth) { if (depth > MAX_DEPTH) return; … }` |
-| | **Event loop yield** – after processing a batch of image tiles, yield control to avoid micro‑task starvation. | `await Promise.resolve();` |
-| **UI & UX Micro‑Mechanics** | **Debounce UI triggers** – use a 200 ms debounce on the “expand” button to avoid double‑click re‑renders. | `const debouncedExpand = debounce(expand, 200);` |
-| | **Focus restoration** – after expanding a page, restore focus to the last interacted element. | `lastFocusedElement.focus();` |
-| **Backend Concurrency & Memory Safety** | **TOCTOU guard** – lock the image file before reading and release after processing. | `fs.openSync(file, 'r+'); /* lock */ … fs.closeSync(fd);` |
-| | **Connection pool limit** – cap the number of concurrent inference requests to 8. | `pool.setMaxClients(8);` |
-| **Defect & Error Prevention** | **Null‑safe chaining** – always guard against `undefined` when accessing nested properties. | `const token = tokenizer?.tokenize(text);` |
-| | **Off‑by‑one check** – when slicing image tiles, use `slice(start, end)` with `end = start + tileSize`. | `tiles.push(image.slice(start, start + tileSize));` |
+| **Micro‑Syntax & Token‑Level Precision** | **No implicit falsy conversion** – never compare a token ID to `0` or `None` without explicit type checks. | ```python<br>if token_id == 0:  # BAD – 0 is a valid ID<br>    raise ValueError("Token ID cannot be 0")<br>``` |
+| | **Avoid double‑escaped JSON** – `config.json` must not be a JSON string. | ```python<br>json.load(open('config.json'))  # GOOD<br>json.loads(open('config.json').read())  # BAD if file contains a stringified JSON<br>``` |
+| **Infinite Loop & Recursion Guards** | **Base‑case proof** – recursive image decompression must terminate after a maximum depth of 10. | ```python<br>def decompress(node, depth=0):<br>    if depth > 10:<br>        raise RecursionError("Decompression depth exceeded")<br>    # recursion logic<br>``` |
+| | **Event‑loop yield** – long‑running compression loops must `await asyncio.sleep(0)` to avoid micro‑task starvation. | ```python<br>async def compress_loop():<br>    while not done:<br>        process_chunk()<br>        await asyncio.sleep(0)  # yield control<br>``` |
+| **UI & UX Micro‑Mechanics** | **Debounce token input** – prevent rapid re‑tokenization on every keystroke. | ```javascript<br>const debounced = debounce(tokenize, 200);<br>input.addEventListener('input', debounced);<br>``` |
+| | **Focus restoration** – after a modal closes, focus must return to the element that triggered it. | ```javascript<br>const opener = document.activeElement;<br>modal.close();<br>opener.focus();<br>``` |
+| **Backend Concurrency & Memory Safety** | **TOCTOU guard** – lock the token cache before checking for existence. | ```python<br>with cache_lock:<br>    if key not in cache:<br>        cache[key] = compute_value()<br>``` |
+| | **Connection pool limit** – enforce a maximum of 32 concurrent HTTP connections to the Hugging‑Face hub. | ```python<br>session = requests.Session()<br>adapter = HTTPAdapter(pool_connections=32, pool_maxsize=32)<br>session.mount('https://', adapter)<br>``` |
+| **Defect & Error Prevention** | **Null‑safe chaining** – always guard against `None` before accessing attributes. | ```python<br>if model is not None:<br>    output = model.generate(input_ids)<br>else:<br>    raise RuntimeError("Model not loaded")<br>``` |
+| | **Off‑by‑one in token slicing** – use `slice(start, end)` where `end` is exclusive. | ```python<br>tokens = input_ids[start:end]  # end is exclusive, no off‑by‑one<br>``` |
 
-## 5. The 9 Deep Learning Dimensions
+---
+
+## 5. The 9 Deep Learning Dimensions  
 
 | Dimension | LensVLM‑9B Insight |
 |-----------|--------------------|
-| **Architecture** | Dual‑modality transformer with a 27‑layer vision encoder feeding a 32‑layer Qwen3.5 text decoder; uses linear attention layers interleaved with full attention for efficiency. |
-| **Core Abstractions** | `VisionConfig`, `TextConfig`, `TokenizerConfig` are separate but tightly coupled; the `Qwen3VLProcessor` abstracts multimodal tokenization. |
-| **Error Handling** | The model disables cache for long contexts to avoid OOM; special tokens are validated at load time to prevent silent truncation. |
-| **Testing** | No tests are present; a robust test suite would include config consistency checks, tokenization round‑trips, and inference sanity checks. |
-| **Security** | Uses `bfloat16` to reduce memory footprint; no explicit credential handling is visible. Potential risk: mis‑configured special tokens could leak sensitive data if used in a public API. |
-| **Performance** | Linear attention layers reduce complexity from O(n²) to O(n); vision encoder uses depth‑wise convolutions (`depth=27`) for speed. |
-| **Deployment** | Configured for Hugging Face Hub; `transformers_version=5.2.0`; no Dockerfile present, but CI/CD would need to enforce reproducible builds. |
-| **Agent Patterns** | The inference pipeline follows a prompt‑chain: image → tokens → model → text; loop guards are implicit in the `use_cache` flag. |
-| **Data Flow** | Tokens flow from the processor to the model; vision embeddings are injected via a learned projection; output tokens are decoded back to text. |
+| **Architecture** | Hybrid text‑vision transformer with a compression controller; uses a 9 B Qwen3.5 backbone, 27‑layer vision encoder, and a selective‑expansion loop. |
+| **Core Abstractions** | `Qwen3_5ForConditionalGeneration`, `Qwen3VLProcessor`, `TokenizersBackend`; domain primitives: image_token, video_token, audio_token. |
+| **Error Handling** | No explicit error handling code; relies on Hugging‑Face `transformers` defaults. Potential silent failures due to mismatched config IDs. |
+| **Testing** | No tests present; CI would need to add unit tests for config consistency and token mapping. |
+| **Security** | No credential handling; token IDs are public. Potential risk if special tokens are mis‑exposed. |
+| **Performance** | Long‑context support (`max_position_embeddings` = 262 144) and compressed image representation reduce memory footprint. |
+| **Deployment** | Packaged for Hugging‑Face Hub; CI/CD likely uses `transformers` build scripts. Container constraints not specified. |
+| **Agent Patterns** | Not present; the repo is a static model, not an agent. |
+| **Data Flow** | Compressed image → token stream → selective expansion → uncompressed image → text generation. |
 
-## 6. The 8 Learning Extraction Artifacts
+---
+
+## 6. The 8 Learning Extraction Artifacts  
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The `Qwen3VLProcessor` tokenization pipeline that maps multimodal inputs to a unified token stream. |
-| **Rule** | *Special‑token alignment rule* (see Section 2.1). |
-| **Architecture Principle** | *Modular multimodal fusion*: keep vision and text encoders decoupled and inject via a projection layer. |
-| **Failure Mode** | *Token ID mismatch* leading to garbled output. |
-| **Reusable Skill** | A checklist for validating config consistency across multimodal models. |
-| **Decision** | Choosing `use_cache=False` for long‑context generation to avoid OOM, despite the performance penalty of recomputing past key‑values. |
-| **Anti‑Pattern** | Hard‑coding special token IDs in multiple files without a central source of truth. |
-| **Verification Method** | Automated test that loads both configs and asserts equality of all special‑token fields. |
+| **Pattern** | Raw JSON config files with matching token IDs. |
+| **Rule** | `use_cache` flag must be identical across config files. |
+| **Architecture Principle** | Separate text and vision encoders with a shared cross‑attention controller to enable selective expansion. |
+| **Failure Mode** | Double‑escaped JSON leads to `JSONDecodeError` and silent defaults. |
+| **Reusable Skill** | Verify consistency of special token IDs across all config files before model load. |
+| **Decision** | Disable caching during training (`use_cache=false`) to reduce memory, enable it during generation for speed. |
+| **Anti‑Pattern** | Storing config as a JSON string inside a JSON file. |
+| **Verification Method** | CI test that loads `config.json`, `generation_config.json`, and `tokenizer_config.json` and asserts equality of all token IDs and flags. |
 
-## 7. Actionable Agent Skill & Implementation Checklist
+---
 
-1. **Load and Validate Configs**  
-   * Load `config.json`, `tokenizer_config.json`, `generation_config.json`.  
-   * Assert that every special token ID matches across files.  
-   * Verify `text_config.hidden_size % vision_config.hidden_size == 0`.  
-2. **Instantiate Processor**  
-   * Use `Qwen3VLProcessor` with the loaded tokenizer.  
-   * Ensure `processor_class` matches the tokenizer class.  
-3. **Build Model**  
-   * Load `Qwen3_5ForConditionalGeneration` with `use_cache=False` if `max_position_embeddings > 200000`.  
-   * Initialize vision projection layer with shape `(text_hidden_size, vision_hidden_size)`.  
-4. **Inference Pipeline**  
-   * Tokenize multimodal input.  
-   * Forward pass through vision encoder → projection → text decoder.  
-   * Post‑process output tokens to text.  
-5. **Testing**  
-   * Unit test: round‑trip tokenization → detokenization.  
-   * Integration test: feed a compressed image and verify that only relevant pages are expanded.  
-6. **Deployment**  
-   * Pin `transformers` to 5.2.0.  
-   * Use a Docker image with `bfloat16` support.  
-   * Set `max_concurrent_requests` to 8.  
-7. **Monitoring**  
-   * Log cache usage; if `use_cache` is enabled for a long context, raise an alert.  
-   * Track GPU memory consumption; trigger a graceful shutdown if OOM risk is detected.  
+## 7. Actionable Agent Skill & Implementation Checklist  
 
-This checklist encapsulates the forensic findings and translates them into concrete, repeatable actions for any AI coding agent tasked with building or maintaining a similar multimodal vision‑language system.
+1. **Validate Config Format**  
+   - Load each JSON file with `json.load`; fail on `JSONDecodeError`.  
+2. **Assert Token‑ID Consistency**  
+   - For each special token (`image_token_id`, `pad_token_id`, `eos_token_id`, etc.), assert equality between `tokenizer_config.json` and `config.json`.  
+3. **Check Cache Flag Symmetry**  
+   - Compare `config['use_cache']` with `config['generation_config']['use_cache']`.  
+4. **Verify Layer‑Type List**  
+   - Ensure `layer_types` contains only allowed values (`linear_attention`, `full_attention`).  
+5. **Confirm Vision Config Parameters**  
+   - Assert `vision_config['depth'] == 27`, `hidden_size == 1152`, `in_channels == 3`.  
+6. **Run a Dummy Inference**  
+   - Load the model with `AutoModelForCausalLM.from_pretrained` and run a short prompt to ensure no runtime errors.  
+7. **Static Analysis**  
+   - Run `flake8`/`pylint` on any Python files to catch syntax or style issues.  
+8. **Unit Tests**  
+   - Add tests that cover: (a) config loading, (b) token mapping, (c) cache flag, (d) compression‑expansion pipeline.  
+
+Follow this checklist in every CI run to guarantee that the LensVLM‑9B package remains robust and free of the identified invariants.

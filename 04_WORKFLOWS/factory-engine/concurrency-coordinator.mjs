@@ -63,14 +63,24 @@ export function generateAgentId(prefix = 'agent') {
  * Target-level Distributed Lock:
  * Prevents multiple agents from harvesting the same repository simultaneously.
  */
-export function acquireTargetLock(targetKey, agentId = generateAgentId(), ttlMinutes = 30) {
-  ensureLocksDir();
+export function acquireTargetLock(targetKey, agentId = generateAgentId(), ttlMinutes = 30, customRoot = null) {
+  const locksDir = customRoot ? path.join(customRoot, '.harvest-locks') : LOCKS_DIR;
+  if (!fs.existsSync(locksDir)) {
+    fs.mkdirSync(locksDir, { recursive: true });
+  }
   const safeSlug = targetKey.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
-  const lockFile = path.join(LOCKS_DIR, `${safeSlug}.lock`);
+  const lockFile = path.join(locksDir, `${safeSlug}.lock`);
 
   // Check if global mutex is in effect
-  const mode = getConcurrencyMode();
-  const globalLockFile = path.join(LOCKS_DIR, 'global-mutex.lock');
+  const controlPath = customRoot ? path.join(customRoot, 'harvest-control.json') : CONTROL_PATH;
+  let mode = 'PARALLEL_MULTI_AGENT';
+  if (fs.existsSync(controlPath)) {
+    try {
+      const data = JSON.parse(fs.readFileSync(controlPath, 'utf-8'));
+      mode = data.concurrencyMode || 'PARALLEL_MULTI_AGENT';
+    } catch (e) {}
+  }
+  const globalLockFile = path.join(locksDir, 'global-mutex.lock');
 
   if (mode === 'SINGLE_AGENT_MUTEX') {
     if (fs.existsSync(globalLockFile)) {
@@ -129,10 +139,11 @@ export function acquireTargetLock(targetKey, agentId = generateAgentId(), ttlMin
 /**
  * Releases target lock
  */
-export function releaseTargetLock(targetKey) {
-  ensureLocksDir();
+export function releaseTargetLock(targetKey, customRoot = null) {
+  const locksDir = customRoot ? path.join(customRoot, '.harvest-locks') : LOCKS_DIR;
+  if (!fs.existsSync(locksDir)) return true;
   const safeSlug = targetKey.toLowerCase().replace(/[^a-z0-9_-]/g, '-');
-  const lockFile = path.join(LOCKS_DIR, `${safeSlug}.lock`);
+  const lockFile = path.join(locksDir, `${safeSlug}.lock`);
 
   if (fs.existsSync(lockFile)) {
     try {
@@ -140,7 +151,7 @@ export function releaseTargetLock(targetKey) {
     } catch (e) {}
   }
 
-  const globalLockFile = path.join(LOCKS_DIR, 'global-mutex.lock');
+  const globalLockFile = path.join(locksDir, 'global-mutex.lock');
   if (fs.existsSync(globalLockFile)) {
     try {
       fs.unlinkSync(globalLockFile);
@@ -258,8 +269,8 @@ export async function pushWithRebaseRetry(commitMsg, maxRetries = 5, cwd = BRAIN
  * Resolves the next available engineering pattern rule number dynamically
  * Prevents rule number collisions across concurrent agents.
  */
-export function resolveNextRuleNumber() {
-  const patternsPath = path.join(BRAIN_ROOT, '05_KNOWLEDGE', 'engineering-patterns.md');
+export function resolveNextRuleNumber(customPatternsPath = null) {
+  const patternsPath = customPatternsPath || path.join(BRAIN_ROOT, '05_KNOWLEDGE', 'engineering-patterns.md');
   if (!fs.existsSync(patternsPath)) return 1;
 
   const content = fs.readFileSync(patternsPath, 'utf-8');

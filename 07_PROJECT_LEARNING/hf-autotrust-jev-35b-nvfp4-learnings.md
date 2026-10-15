@@ -3,8 +3,8 @@
 > **Source Version**: `hf-autotrust`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-13T18:53:00.006Z  
-> **Learning ID**: `learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv71glpi`  
+> **Timestamp**: 2026-10-14T10:40:26.303Z  
+> **Learning ID**: `learn-huggingface-hf-autotrust-jev-35b-nvfp4-mv7zb0lb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/JEV-35B-NVFP4](https://huggingface.co/autotrust/JEV-35B-NVFP4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-13T18:52:59.181Z  
+> **Harvest Timestamp**: 2026-10-14T10:40:25.665Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 20494 downloads | 233 likes
+- **Stars / Engagement**: 33343 downloads | 304 likes
 
 ---
 

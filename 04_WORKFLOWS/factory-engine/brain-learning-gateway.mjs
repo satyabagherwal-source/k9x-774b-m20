@@ -24,6 +24,33 @@ export const EVOLUTION_LOG_PATH = path.join(BRAIN_ROOT, '14_EVOLUTION', 'brain-e
 export const TAXONOMY_PATH = path.join(BRAIN_ROOT, '15_METADATA', 'knowledge-taxonomy.json');
 
 /**
+ * Resolves all canonical Brain storage paths dynamically relative to a provided root.
+ * Defaults to master BRAIN_ROOT if no custom root is specified.
+ */
+export function getBrainPaths(customRoot = null) {
+  const root = customRoot || BRAIN_ROOT;
+  return {
+    brainRoot: root,
+    learningDir: path.join(root, '07_PROJECT_LEARNING'),
+    patternsPath: path.join(root, '05_KNOWLEDGE', 'engineering-patterns.md'),
+    indexPath: path.join(root, '05_KNOWLEDGE', 'knowledge-index.json'),
+    checkpointsPath: path.join(root, '.project-brain', 'harvest-checkpoints.json'),
+    localCheckpointsPath: path.join(root, '.project-brain', 'local-learning-checkpoints.json'),
+    localMetricsPath: path.join(root, '.project-brain', 'local-learning-metrics.json'),
+    taskCheckpointsPath: path.join(root, '.project-brain', 'task-checkpoints.json'),
+    verificationMatrixPath: path.join(root, '08_VERIFICATION', 'harvest-verification-matrix.md'),
+    verificationLogPath: path.join(root, '08_VERIFICATION', 'verification-log.json'),
+    provenanceLedgerPath: path.join(root, '09_SOURCES', 'harvest-provenance-ledger.md'),
+    sourcesCatalogPath: path.join(root, '09_SOURCES', 'sources-catalog.json'),
+    inboxDir: path.join(root, '11_INBOX'),
+    inboxRegistryPath: path.join(root, '11_INBOX', 'candidate-directives-registry.json'),
+    evolutionMetricsPath: path.join(root, '14_EVOLUTION', 'harvest-yield-metrics.json'),
+    evolutionLogPath: path.join(root, '14_EVOLUTION', 'brain-evolution-log.md'),
+    taxonomyPath: path.join(root, '15_METADATA', 'knowledge-taxonomy.json')
+  };
+}
+
+/**
  * The Discrete Lifecycle States for Harvesting Intelligence
  * DISCOVERED -> EXTRACTED -> VALIDATED -> PERSISTED -> PROMOTED -> VERIFIED
  */
@@ -76,16 +103,16 @@ export function extractCandidateRulesFromText(rawText) {
   // CRITICAL ARCHITECTURAL INVARIANT:
   // In JavaScript RegExp with the /i flag, NEVER use \Z because \Z matches literal 'z' or 'Z'!
   // In standard JS, end-of-string is strictly '$'.
-  const sectionRegex = /(?:^|\r?\n)(?:##|###)\s+(?:(?:Rule\s+)?(?:X|\d+)[:.]?\s*|\d+\.\s+)?([^\r\n]+)\r?\n([\s\S]*?)(?=(?:\r?\n(?:##|###)\s+(?:(?:Rule\s+)?(?:X|\d+)[:.]|\d+\.|[A-Z0-9][\w\s-]{2,}:)|\r?\n##\s+|$))/g;
+  const sectionRegex = /(?:^|\r?\n)(?:##|###)\s+(?:(?:(?:Rule|Pattern)\s+)?(?:X|\d+)[:.]?\s*|\d+\.\s+)?([^\r\n]+)\r?\n([\s\S]*?)(?=(?:\r?\n(?:##|###)\s+(?:(?:(?:Rule|Pattern)\s+)?(?:X|\d+)[:.]|\d+\.|[A-Z0-9][\w\s-]{2,}:)|\r?\n##\s+|$))/g;
   let match;
   const candidates = [];
   while ((match = sectionRegex.exec(rawText)) !== null) {
     const rawHeading = (match[1] || '').trim();
     const body = (match[2] || '').trim();
     if (/\*\*RULE\*\*:?/i.test(body)) {
-      const cleanTitle = rawHeading.replace(/^(?:(?:Rule\s+)?(?:X|\d+)[:.]?\s*|\d+\.\s+)/i, '').trim();
-      // Filter out high-level section container titles (e.g. "Net-New Universal Engineering Rules")
-      if (/^(?:net-new\s+universal|universal\s+engineering\s+rules|forensic\s+real|executive\s+forensic|microscopic|the\s+\d+|actionable)/i.test(cleanTitle)) {
+      const cleanTitle = rawHeading.replace(/^(?:(?:(?:Rule|Pattern)\s+)?(?:X|\d+)[:.]?\s*|\d+\.\s+)/i, '').trim();
+      // Filter out high-level section container titles (e.g. "Net-New Universal Engineering Rules", "Discovered Engineering Invariants")
+      if (/^(?:net-new\s+universal|universal\s+engineering\s+rules|forensic\s+real|executive\s+forensic|microscopic|the\s+\d+|actionable|discovered\s+engineering|empirical\s+architectural|compliance\s+&)/i.test(cleanTitle)) {
         continue;
       }
       candidates.push({ title: cleanTitle || rawHeading, body });
@@ -96,10 +123,71 @@ export function extractCandidateRulesFromText(rawText) {
 
 
 /**
+ * Helper to recover items from JSON with conflict markers or partial corruptions
+ * Provides an explicitly isolated read-only recovery view and tracks conflict ambiguities.
+ */
+function recoverItemsFromRawJson(raw) {
+  const items = {};
+  const hasConflictMarkers = raw.includes('<<<<<<<') || raw.includes('=======') || raw.includes('>>>>>>>');
+  const duplicateKeysInConflict = [];
+  const seenKeys = new Set();
+
+  // 1. Direct regex-based object extraction (fast, memory-efficient)
+  const itemRegex = /"([a-zA-Z0-9_-]+)":\s*(\{[\s\S]*?\n\s*\})(?=,\s*"[a-zA-Z0-9_-]+":|\s*\n\s*\}|\s*=======|\s*<<<<<<<|\s*>>>>>>>)/g;
+  let m;
+  while ((m = itemRegex.exec(raw)) !== null) {
+    const key = m[1];
+    if (seenKeys.has(key)) {
+      duplicateKeysInConflict.push(key);
+    }
+    seenKeys.add(key);
+    const objStr = m[2].replace(/^<{7}[^\n]*\n/gm, '').replace(/^={7}[^\n]*\n/gm, '').replace(/^>{7}[^\n]*\n/gm, '');
+    try {
+      const parsed = JSON.parse(objStr);
+      items[key] = parsed;
+    } catch (e) {}
+  }
+
+  // 2. Fallback only if regex found 0 items
+  if (Object.keys(items).length === 0) {
+    try {
+      const cleaned = raw.replace(/^[<>=]{7}[^\r\n]*\r?\n/gm, '');
+      const parsed = JSON.parse(cleaned);
+      const candidateItems = parsed.items || parsed.checkpoints;
+      if (candidateItems && typeof candidateItems === 'object') {
+        return {
+          items: candidateItems,
+          isConflicted: hasConflictMarkers,
+          ambiguities: duplicateKeysInConflict
+        };
+      }
+    } catch (e) {}
+  }
+
+  return {
+    items,
+    isConflicted: hasConflictMarkers,
+    ambiguities: duplicateKeysInConflict
+  };
+}
+
+/**
+ * Writes JSON file atomically using a temporary file and rename
+ */
+function atomicWriteJsonSync(targetPath, data) {
+  const dir = path.dirname(targetPath);
+  fs.mkdirSync(dir, { recursive: true });
+  const tmpPath = `${targetPath}.tmp.${process.pid}.${Date.now()}`;
+  fs.writeFileSync(tmpPath, JSON.stringify(data, null, 2), 'utf-8');
+  fs.renameSync(tmpPath, targetPath);
+}
+
+/**
  * Loads the canonical Knowledge Index (05_KNOWLEDGE/knowledge-index.json)
  */
-export function loadKnowledgeIndex() {
-  if (!fs.existsSync(INDEX_PATH)) {
+export function loadKnowledgeIndex(brainRoot = null) {
+  const p = getBrainPaths(brainRoot);
+  if (!fs.existsSync(p.indexPath)) {
     return {
       version: '1.0.0',
       last_updated: new Date().toISOString(),
@@ -109,54 +197,125 @@ export function loadKnowledgeIndex() {
     };
   }
   try {
-    return JSON.parse(fs.readFileSync(INDEX_PATH, 'utf-8'));
+    const raw = fs.readFileSync(p.indexPath, 'utf-8');
+    try {
+      return JSON.parse(raw);
+    } catch (parseErr) {
+      console.warn(`[GATEWAY NOTICE] Recovering knowledge index with conflict resilience at ${p.indexPath}: ${parseErr.message}`);
+      const recovery = recoverItemsFromRawJson(raw);
+      const recoveredItems = recovery.items;
+      if (Object.keys(recoveredItems).length > 0) {
+        return {
+          version: '1.0.0',
+          schema_format: 'canonical_hierarchical_knowledge_index',
+          last_updated: new Date().toISOString(),
+          total_verified_learnings: Object.keys(recoveredItems).length,
+          total_promoted_rules: 0,
+          items: recoveredItems,
+          is_read_only_recovery_view: recovery.isConflicted,
+          has_unresolved_git_conflicts: recovery.isConflicted,
+          ambiguity_count: recovery.ambiguities.length,
+          ambiguous_keys: recovery.ambiguities
+        };
+      }
+      throw parseErr;
+    }
   } catch (err) {
-    console.error(`[GATEWAY CRITICAL] Failed to parse existing knowledge index at ${INDEX_PATH}: ${err.message}`);
-    const backupPath = `${INDEX_PATH}.corrupted.${Date.now()}.bak`;
-    try { fs.copyFileSync(INDEX_PATH, backupPath); } catch (e) {}
+    console.error(`[GATEWAY CRITICAL] Failed to parse existing knowledge index at ${p.indexPath}: ${err.message}`);
+    const backupPath = `${p.indexPath}.corrupted.${Date.now()}.bak`;
+    try { fs.copyFileSync(p.indexPath, backupPath); } catch (e) {}
     throw new Error(`KNOWLEDGE_INDEX_PARSE_FAILURE: Refusing to silently clobber existing index. Backup created at ${backupPath}. Error: ${err.message}`);
   }
 }
 
 /**
  * Saves the canonical Knowledge Index atomically with flush
+ * HARD SAFETY INVARIANT: Strictly refuses to overwrite canonical conflicted index.
  */
-export function saveKnowledgeIndex(indexData) {
+export function saveKnowledgeIndex(indexData, brainRoot = null) {
+  const p = getBrainPaths(brainRoot);
+
+  if (indexData.has_unresolved_git_conflicts || indexData.is_read_only_recovery_view) {
+    throw new Error(`PRODUCTION_SAFETY_VIOLATION: Refusing to save an in-memory recovery view while unresolved git conflicts exist. Canonical knowledge-index.json must remain unchanged.`);
+  }
+
+  if (fs.existsSync(p.indexPath)) {
+    const rawExisting = fs.readFileSync(p.indexPath, 'utf-8');
+    if (rawExisting.includes('<<<<<<<') || rawExisting.includes('>>>>>>>')) {
+      throw new Error(`PRODUCTION_SAFETY_VIOLATION: Refusing to overwrite canonical knowledge-index.json containing active Git conflict markers without explicit authorized reconciliation.`);
+    }
+  }
+
   indexData.last_updated = new Date().toISOString();
   indexData.total_verified_learnings = Object.values(indexData.items || {}).filter(i => i.verification_status === 'VERIFIED_LEARNING').length;
-  fs.mkdirSync(path.dirname(INDEX_PATH), { recursive: true });
-  fs.writeFileSync(INDEX_PATH, JSON.stringify(indexData, null, 2), 'utf-8');
+  atomicWriteJsonSync(p.indexPath, indexData);
   return indexData;
 }
 
 /**
  * Loads harvest checkpoints (.project-brain/harvest-checkpoints.json)
  */
-export function loadCheckpoints() {
-  if (!fs.existsSync(CHECKPOINTS_PATH)) {
+export function loadCheckpoints(brainRoot = null, pipelineMode = 'CLOUD_HARVEST') {
+  const p = getBrainPaths(brainRoot);
+  const targetPath = pipelineMode === 'LOCAL_LEARNING' ? p.localCheckpointsPath : p.checkpointsPath;
+  if (!fs.existsSync(targetPath)) {
     return {
       version: '1.0.0',
+      pipeline_mode: pipelineMode,
       last_updated: new Date().toISOString(),
       checkpoints: {}
     };
   }
   try {
-    return JSON.parse(fs.readFileSync(CHECKPOINTS_PATH, 'utf-8'));
+    const raw = fs.readFileSync(targetPath, 'utf-8');
+    try {
+      return JSON.parse(raw);
+    } catch (parseErr) {
+      console.warn(`[GATEWAY NOTICE] Recovering checkpoints with conflict resilience at ${targetPath}: ${parseErr.message}`);
+      const recovery = recoverItemsFromRawJson(raw);
+      const recovered = recovery.items;
+      if (Object.keys(recovered).length > 0) {
+        return {
+          version: '1.0.0',
+          pipeline_mode: pipelineMode,
+          last_updated: new Date().toISOString(),
+          checkpoints: recovered,
+          is_read_only_recovery_view: recovery.isConflicted,
+          has_unresolved_git_conflicts: recovery.isConflicted,
+          ambiguity_count: recovery.ambiguities.length
+        };
+      }
+      throw parseErr;
+    }
   } catch (err) {
-    console.error(`[GATEWAY CRITICAL] Failed to parse checkpoints at ${CHECKPOINTS_PATH}: ${err.message}`);
-    const backupPath = `${CHECKPOINTS_PATH}.corrupted.${Date.now()}.bak`;
-    try { fs.copyFileSync(CHECKPOINTS_PATH, backupPath); } catch (e) {}
+    console.error(`[GATEWAY CRITICAL] Failed to parse checkpoints at ${targetPath}: ${err.message}`);
+    const backupPath = `${targetPath}.corrupted.${Date.now()}.bak`;
+    try { fs.copyFileSync(targetPath, backupPath); } catch (e) {}
     throw new Error(`CHECKPOINTS_PARSE_FAILURE: Refusing to clobber existing checkpoints: ${err.message}`);
   }
 }
 
 /**
  * Saves harvest checkpoints atomically
+ * HARD SAFETY INVARIANT: Strictly refuses to overwrite canonical conflicted checkpoints.
  */
-export function saveCheckpoints(checkpointData) {
+export function saveCheckpoints(checkpointData, brainRoot = null, pipelineMode = 'CLOUD_HARVEST') {
+  const p = getBrainPaths(brainRoot);
+  const targetPath = pipelineMode === 'LOCAL_LEARNING' ? p.localCheckpointsPath : p.checkpointsPath;
+
+  if (checkpointData.has_unresolved_git_conflicts || checkpointData.is_read_only_recovery_view) {
+    throw new Error(`PRODUCTION_SAFETY_VIOLATION: Refusing to save an in-memory recovery view while unresolved git conflicts exist in checkpoints.`);
+  }
+
+  if (fs.existsSync(targetPath)) {
+    const rawExisting = fs.readFileSync(targetPath, 'utf-8');
+    if (rawExisting.includes('<<<<<<<') || rawExisting.includes('>>>>>>>')) {
+      throw new Error(`PRODUCTION_SAFETY_VIOLATION: Refusing to overwrite canonical checkpoints file (${path.basename(targetPath)}) containing active Git conflict markers without explicit authorized reconciliation.`);
+    }
+  }
+
   checkpointData.last_updated = new Date().toISOString();
-  fs.mkdirSync(path.dirname(CHECKPOINTS_PATH), { recursive: true });
-  fs.writeFileSync(CHECKPOINTS_PATH, JSON.stringify(checkpointData, null, 2), 'utf-8');
+  atomicWriteJsonSync(targetPath, checkpointData);
   return checkpointData;
 }
 
@@ -193,11 +352,13 @@ export function createLearningPackage({
   dossierText = '',
   candidateRules = [],
   auditEvidence = null,
-  metadata = {}
-}) {
+  metadata = {},
+  brainRoot = null
+}, options = {}) {
   const normSlug = slug || repository.replace(/\//g, '-').toLowerCase();
   const timestamp = new Date().toISOString();
   const learningId = metadata.learning_id || deriveCanonicalPackageId(platform, repository, normSlug);
+  const targetBrainRoot = brainRoot || options.brainRoot || metadata.brainRoot || null;
 
   // Header template with strict governance metadata
   const header = `> **Canonical Learning Artifact**: \`07_PROJECT_LEARNING/${normSlug}-learnings.md\`  
@@ -219,10 +380,11 @@ export function createLearningPackage({
   const completeDossierContent = header + dossierText;
   const contentHash = calculateContentHash(completeDossierContent);
 
-  // Check if identical content hash already verified in index
-  const currentIndex = loadKnowledgeIndex();
+  // Check if identical content hash or repository/slug already verified in index
+  const currentIndex = loadKnowledgeIndex(targetBrainRoot);
   const existingVerified = Object.values(currentIndex.items || {}).find(
-    (item) => item.content_hash === contentHash && (item.repository === repository || item.slug === normSlug)
+    (item) => (item.content_hash === contentHash || item.repository === repository || item.slug === normSlug) &&
+              (item.verification_status === 'VERIFIED_LEARNING' || item.status === 'VERIFIED_LEARNING' || item.verified === true)
   );
 
   const learningPackage = {
@@ -345,13 +507,14 @@ export function readBackVerifyFile(filePath, expectedHash) {
 /**
  * Read-back verification for promoted rules in 05_KNOWLEDGE/engineering-patterns.md
  */
-export function readBackVerifyRuleInPatterns(ruleNumber, ruleTitle) {
-  if (!fs.existsSync(PATTERNS_PATH)) {
+export function readBackVerifyRuleInPatterns(ruleNumber, ruleTitle, brainRoot = null) {
+  const p = getBrainPaths(brainRoot);
+  if (!fs.existsSync(p.patternsPath)) {
     return { verified: false, reason: 'engineering-patterns.md not found' };
   }
 
   try {
-    const patternsContent = fs.readFileSync(PATTERNS_PATH, 'utf-8');
+    const patternsContent = fs.readFileSync(p.patternsPath, 'utf-8');
     const headerRegex = new RegExp(`##\\s+${ruleNumber}\\.\\s+`, 'i');
     const hasHeader = headerRegex.test(patternsContent);
     const hasTitle = patternsContent.toLowerCase().includes(ruleTitle.toLowerCase());
@@ -373,8 +536,9 @@ export function readBackVerifyRuleInPatterns(ruleNumber, ruleTitle) {
  * with mandatory read-back verification for every promoted rule.
  * Duplicate rules are verified as ALREADY_PRESENT_VERIFIED rather than treated as false failure.
  */
-export function promoteValidatedRules(learningPackage) {
-  if (!fs.existsSync(PATTERNS_PATH)) {
+export function promoteValidatedRules(learningPackage, options = {}) {
+  const p = getBrainPaths(options.brainRoot || learningPackage.metadata?.brainRoot || null);
+  if (!fs.existsSync(p.patternsPath)) {
     return { success: false, promoted: [], error: 'engineering-patterns.md missing' };
   }
 
@@ -382,7 +546,7 @@ export function promoteValidatedRules(learningPackage) {
   const rulesToPromote = learningPackage.validated_rules || [];
 
   for (const rule of rulesToPromote) {
-    const currentPatterns = fs.readFileSync(PATTERNS_PATH, 'utf-8');
+    const currentPatterns = fs.readFileSync(p.patternsPath, 'utf-8');
     if (currentPatterns.toLowerCase().includes(rule.title.toLowerCase())) {
       const escapedTitle = rule.title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const match = currentPatterns.match(new RegExp(`##\\s+(\\d+)\\.\\s+${escapedTitle}`, 'i'));
@@ -396,7 +560,7 @@ export function promoteValidatedRules(learningPackage) {
       continue;
     }
 
-    const nextRuleNum = resolveNextRuleNumber();
+    const nextRuleNum = resolveNextRuleNumber(p.patternsPath);
     const sourceUrl = learningPackage.source_url;
     const sourceRepoName = learningPackage.repository;
     const sourceVersion = learningPackage.source_version || 'HEAD';
@@ -423,10 +587,10 @@ export function promoteValidatedRules(learningPackage) {
     const formattedRule = `\n\n---\n\n## ${nextRuleNum}. ${rule.title} (Harvested from ${sourceRepoName})\n\n${provenanceBlock}\n\n${rule.body}\n`;
 
     // Durable append
-    fs.appendFileSync(PATTERNS_PATH, formattedRule, 'utf-8');
+    fs.appendFileSync(p.patternsPath, formattedRule, 'utf-8');
 
     // READ-BACK VERIFICATION FOR RULE
-    const ruleReadBack = readBackVerifyRuleInPatterns(nextRuleNum, rule.title);
+    const ruleReadBack = readBackVerifyRuleInPatterns(nextRuleNum, rule.title, p.brainRoot);
     if (!ruleReadBack.verified) {
       throw new Error(`RULE_PROMOTION_READBACK_FAILED: ${ruleReadBack.reason}`);
     }
@@ -446,26 +610,27 @@ export function promoteValidatedRules(learningPackage) {
 /**
  * Records verification evidence into 08_VERIFICATION with read-back verification
  */
-export function recordVerificationEvidence(learningPackage, results) {
-  fs.mkdirSync(path.dirname(VERIFICATION_MATRIX_PATH), { recursive: true });
+export function recordVerificationEvidence(learningPackage, results, options = {}) {
+  const p = getBrainPaths(options.brainRoot || learningPackage.metadata?.brainRoot || null);
+  fs.mkdirSync(path.dirname(p.verificationMatrixPath), { recursive: true });
   const cycleId = `CYCLE-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Date.now().toString(36).slice(-4).toUpperCase()}`;
   const timestamp = new Date().toISOString();
   const status = (results.promoted_rules && results.promoted_rules.length > 0) ? 'VERIFIED' : 'PROJECT_ONLY';
   const promotedTarget = (results.promoted_rules && results.promoted_rules.length > 0)
     ? results.promoted_rules.map(r => `Rule ${r.number}`).join(', ')
-    : results.dossier_path ? path.relative(BRAIN_ROOT, results.dossier_path).replace(/\\/g, '/') : '07_PROJECT_LEARNING';
+    : results.dossier_path ? path.relative(p.brainRoot, results.dossier_path).replace(/\\/g, '/') : '07_PROJECT_LEARNING';
   
   const row = `| \`${cycleId}\` | \`${timestamp}\` | \`${learningPackage.repository}\` | Commit diff / Patch analysis | \`${status}\` | \`${promotedTarget}\` | Yes (\`${learningPackage.content_hash.slice(0, 8)}...\`) |\n`;
 
-  if (!fs.existsSync(VERIFICATION_MATRIX_PATH)) {
-    fs.writeFileSync(VERIFICATION_MATRIX_PATH, '# Daily Harvesting Verification Matrix & Evidence Ledger\n\n| Cycle ID | Timestamp (UTC) | Source Inspected | Evidence Type | Verification Status | Promoted Target / Dossier | SHA-256 Verified |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n', 'utf-8');
+  if (!fs.existsSync(p.verificationMatrixPath)) {
+    fs.writeFileSync(p.verificationMatrixPath, '# Daily Harvesting Verification Matrix & Evidence Ledger\n\n| Cycle ID | Timestamp (UTC) | Source Inspected | Evidence Type | Verification Status | Promoted Target / Dossier | SHA-256 Verified |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n', 'utf-8');
   }
-  fs.appendFileSync(VERIFICATION_MATRIX_PATH, row, 'utf-8');
+  fs.appendFileSync(p.verificationMatrixPath, row, 'utf-8');
 
   // Structured verification log
   let verLog = [];
-  if (fs.existsSync(VERIFICATION_LOG_PATH)) {
-    try { verLog = JSON.parse(fs.readFileSync(VERIFICATION_LOG_PATH, 'utf-8')); } catch (e) { verLog = []; }
+  if (fs.existsSync(p.verificationLogPath)) {
+    try { verLog = JSON.parse(fs.readFileSync(p.verificationLogPath, 'utf-8')); } catch (e) { verLog = []; }
   }
   verLog.push({
     cycleId,
@@ -483,10 +648,10 @@ export function recordVerificationEvidence(learningPackage, results) {
     }
   });
   if (verLog.length > 500) verLog = verLog.slice(-500);
-  fs.writeFileSync(VERIFICATION_LOG_PATH, JSON.stringify(verLog, null, 2), 'utf-8');
+  fs.writeFileSync(p.verificationLogPath, JSON.stringify(verLog, null, 2), 'utf-8');
 
   // Read-back verification
-  const readBackMatrix = fs.readFileSync(VERIFICATION_MATRIX_PATH, 'utf-8');
+  const readBackMatrix = fs.readFileSync(p.verificationMatrixPath, 'utf-8');
   if (!readBackMatrix.includes(cycleId)) {
     throw new Error(`Verification matrix read-back failed: entry ${cycleId} not found`);
   }
@@ -496,21 +661,22 @@ export function recordVerificationEvidence(learningPackage, results) {
 /**
  * Records source provenance into 09_SOURCES with read-back verification
  */
-export function recordSourceProvenance(learningPackage) {
-  fs.mkdirSync(path.dirname(PROVENANCE_LEDGER_PATH), { recursive: true });
+export function recordSourceProvenance(learningPackage, options = {}) {
+  const p = getBrainPaths(options.brainRoot || learningPackage.metadata?.brainRoot || null);
+  fs.mkdirSync(path.dirname(p.provenanceLedgerPath), { recursive: true });
   const timestamp = new Date().toISOString();
   const commitSha = (learningPackage.source_version || 'HEAD').slice(0, 10);
   const row = `| \`${learningPackage.learning_id}\` | \`${learningPackage.source_url}\` | \`${commitSha}\` | Multi-dimensional audit evidence | ${timestamp} |\n`;
 
-  if (!fs.existsSync(PROVENANCE_LEDGER_PATH)) {
-    fs.writeFileSync(PROVENANCE_LEDGER_PATH, '# Daily Harvesting Source Provenance Ledger\n\n| Learning ID | Source Repository | Commit SHA / Tag | File & Line Provenance | Extraction Date |\n| :--- | :--- | :--- | :--- | :--- |\n', 'utf-8');
+  if (!fs.existsSync(p.provenanceLedgerPath)) {
+    fs.writeFileSync(p.provenanceLedgerPath, '# Daily Harvesting Source Provenance Ledger\n\n| Learning ID | Source Repository | Commit SHA / Tag | File & Line Provenance | Extraction Date |\n| :--- | :--- | :--- | :--- | :--- |\n', 'utf-8');
   }
-  fs.appendFileSync(PROVENANCE_LEDGER_PATH, row, 'utf-8');
+  fs.appendFileSync(p.provenanceLedgerPath, row, 'utf-8');
 
   // Update sources catalog
   let catalog = {};
-  if (fs.existsSync(SOURCES_CATALOG_PATH)) {
-    try { catalog = JSON.parse(fs.readFileSync(SOURCES_CATALOG_PATH, 'utf-8')); } catch (e) { catalog = {}; }
+  if (fs.existsSync(p.sourcesCatalogPath)) {
+    try { catalog = JSON.parse(fs.readFileSync(p.sourcesCatalogPath, 'utf-8')); } catch (e) { catalog = {}; }
   }
   catalog[learningPackage.slug] = {
     repository: learningPackage.repository,
@@ -522,10 +688,10 @@ export function recordSourceProvenance(learningPackage) {
     lastHarvestedAt: timestamp,
     learningId: learningPackage.learning_id
   };
-  fs.writeFileSync(SOURCES_CATALOG_PATH, JSON.stringify(catalog, null, 2), 'utf-8');
+  fs.writeFileSync(p.sourcesCatalogPath, JSON.stringify(catalog, null, 2), 'utf-8');
 
   // Read-back verification
-  const readBackLedger = fs.readFileSync(PROVENANCE_LEDGER_PATH, 'utf-8');
+  const readBackLedger = fs.readFileSync(p.provenanceLedgerPath, 'utf-8');
   if (!readBackLedger.includes(learningPackage.learning_id)) {
     throw new Error(`Provenance ledger read-back failed: entry ${learningPackage.learning_id} not found`);
   }
@@ -535,13 +701,14 @@ export function recordSourceProvenance(learningPackage) {
 /**
  * Stages unverified or rejected candidate rules into 11_INBOX so no candidate disappears silently
  */
-export function stageUnverifiedCandidates(learningPackage, rejectedCandidates = []) {
+export function stageUnverifiedCandidates(learningPackage, rejectedCandidates = [], options = {}) {
   if (!Array.isArray(rejectedCandidates) || rejectedCandidates.length === 0) return true;
-  fs.mkdirSync(INBOX_DIR, { recursive: true });
+  const p = getBrainPaths(options.brainRoot || learningPackage.metadata?.brainRoot || null);
+  fs.mkdirSync(p.inboxDir, { recursive: true });
 
   let registry = { version: '1.0.0', last_updated: new Date().toISOString(), directives: [] };
-  if (fs.existsSync(INBOX_REGISTRY_PATH)) {
-    try { registry = JSON.parse(fs.readFileSync(INBOX_REGISTRY_PATH, 'utf-8')); } catch (e) {}
+  if (fs.existsSync(p.inboxRegistryPath)) {
+    try { registry = JSON.parse(fs.readFileSync(p.inboxRegistryPath, 'utf-8')); } catch (e) {}
   }
   if (!Array.isArray(registry.directives)) registry.directives = [];
 
@@ -560,10 +727,10 @@ export function stageUnverifiedCandidates(learningPackage, rejectedCandidates = 
     });
   }
   registry.last_updated = new Date().toISOString();
-  fs.writeFileSync(INBOX_REGISTRY_PATH, JSON.stringify(registry, null, 2), 'utf-8');
+  fs.writeFileSync(p.inboxRegistryPath, JSON.stringify(registry, null, 2), 'utf-8');
 
   // Read-back verification
-  const reloaded = JSON.parse(fs.readFileSync(INBOX_REGISTRY_PATH, 'utf-8'));
+  const reloaded = JSON.parse(fs.readFileSync(p.inboxRegistryPath, 'utf-8'));
   if (!Array.isArray(reloaded.directives)) {
     throw new Error('Inbox registry read-back verification failed');
   }
@@ -573,8 +740,9 @@ export function stageUnverifiedCandidates(learningPackage, rejectedCandidates = 
 /**
  * Records evolution metrics into 14_EVOLUTION with read-back verification
  */
-export function recordEvolutionMetrics(results) {
-  fs.mkdirSync(path.dirname(EVOLUTION_METRICS_PATH), { recursive: true });
+export function recordEvolutionMetrics(results, options = {}) {
+  const p = getBrainPaths(options.brainRoot || results.brainRoot || null);
+  fs.mkdirSync(path.dirname(p.evolutionMetricsPath), { recursive: true });
   let metrics = {
     version: '1.0.0',
     last_updated: new Date().toISOString(),
@@ -584,8 +752,8 @@ export function recordEvolutionMetrics(results) {
     history: []
   };
 
-  if (fs.existsSync(EVOLUTION_METRICS_PATH)) {
-    try { metrics = JSON.parse(fs.readFileSync(EVOLUTION_METRICS_PATH, 'utf-8')); } catch (e) {}
+  if (fs.existsSync(p.evolutionMetricsPath)) {
+    try { metrics = JSON.parse(fs.readFileSync(p.evolutionMetricsPath, 'utf-8')); } catch (e) {}
   }
 
   metrics.total_cycles_completed = (metrics.total_cycles_completed || 0) + 1;
@@ -603,10 +771,10 @@ export function recordEvolutionMetrics(results) {
   });
   if (metrics.history.length > 200) metrics.history = metrics.history.slice(-200);
 
-  fs.writeFileSync(EVOLUTION_METRICS_PATH, JSON.stringify(metrics, null, 2), 'utf-8');
+  fs.writeFileSync(p.evolutionMetricsPath, JSON.stringify(metrics, null, 2), 'utf-8');
 
   // Read-back verification
-  const reloaded = JSON.parse(fs.readFileSync(EVOLUTION_METRICS_PATH, 'utf-8'));
+  const reloaded = JSON.parse(fs.readFileSync(p.evolutionMetricsPath, 'utf-8'));
   if (reloaded.total_cycles_completed !== metrics.total_cycles_completed) {
     throw new Error('Evolution metrics read-back verification failed: count mismatch');
   }
@@ -626,12 +794,14 @@ export function recordEvolutionMetrics(results) {
 
  */
 export async function submitToBrainGateway(learningPackage, options = {}) {
+  const p = getBrainPaths(options.brainRoot || learningPackage.metadata?.brainRoot || null);
   const startTime = Date.now();
   console.log(`\n======================================================================`);
   console.log(`🏛️  BRAIN LEARNING GATEWAY: PERSISTENCE & PROMOTION PIPELINE`);
   console.log(`   Target Repository : ${learningPackage.repository}`);
   console.log(`   Learning ID       : ${learningPackage.learning_id}`);
   console.log(`   Content Hash      : ${learningPackage.content_hash.slice(0, 16)}...`);
+  console.log(`   Target Brain Root : ${p.brainRoot}`);
   console.log(`======================================================================`);
 
   const results = {
@@ -652,7 +822,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
   };
 
   // 0. Idempotency Invariant: If package has identical content hash and is already verified, return safely
-  const currentIndex = loadKnowledgeIndex();
+  const currentIndex = loadKnowledgeIndex(p.brainRoot);
   const existingItem = currentIndex.items[learningPackage.learning_id] || 
     Object.values(currentIndex.items || {}).find(i => (i.slug === learningPackage.slug || i.repository === learningPackage.repository) && i.content_hash === learningPackage.content_hash);
 
@@ -666,7 +836,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     results.brain_readback = true;
     results.knowledge_index_updated = true;
     results.already_indexed = true;
-    results.dossier_path = path.join(LEARNING_DIR, `${learningPackage.slug}-learnings.md`);
+    results.dossier_path = path.join(p.learningDir, `${learningPackage.slug}-learnings.md`);
     results.promoted_rules = existingItem.promoted_rules || [];
     return { success: true, already_indexed: true, ...results };
   }
@@ -677,7 +847,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     results.status = LEARNING_STATUS.FAILED_VALIDATION;
     results.errors.push(`Validation failure: ${valResult.reason}`);
     console.error(`❌ [GATEWAY REJECTED] Validation failed: ${valResult.reason}`);
-    updateCheckpoint(learningPackage.repository, results);
+    updateCheckpoint(learningPackage.repository, results, options);
     return { success: false, ...results };
   }
   results.validated = true;
@@ -685,9 +855,9 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
   console.log(`✅ [GATEWAY STAGE 1: VALIDATED] Structure and rules verified.`);
 
   // 2. Durable Dossier Storage Write
-  fs.mkdirSync(LEARNING_DIR, { recursive: true });
+  fs.mkdirSync(p.learningDir, { recursive: true });
   const filename = `${learningPackage.slug}-learnings.md`;
-  const dossierPath = path.join(LEARNING_DIR, filename);
+  const dossierPath = path.join(p.learningDir, filename);
 
   try {
     fs.writeFileSync(dossierPath, learningPackage.dossier_content, 'utf-8');
@@ -698,7 +868,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     results.status = LEARNING_STATUS.FAILED_PERSISTENCE;
     results.errors.push(`Dossier write failed: ${err.message}`);
     console.error(`❌ [GATEWAY WRITE FAILED] ${err.message}`);
-    updateCheckpoint(learningPackage.repository, results);
+    updateCheckpoint(learningPackage.repository, results, options);
     dispatchIPCResult(results);
     return { success: false, ...results };
   }
@@ -709,7 +879,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     results.status = LEARNING_STATUS.FAILED_PERSISTENCE;
     results.errors.push(`Dossier readback failed: ${readBack.reason}`);
     console.error(`❌ [GATEWAY READBACK FAILED] ${readBack.reason}`);
-    updateCheckpoint(learningPackage.repository, results);
+    updateCheckpoint(learningPackage.repository, results, options);
     dispatchIPCResult(results);
     return { success: false, ...results };
   }
@@ -720,7 +890,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
 
   // 4. Gated Master Brain Rule Promotion
   try {
-    const promoResult = promoteValidatedRules(learningPackage);
+    const promoResult = promoteValidatedRules(learningPackage, options);
     results.promoted_rules = promoResult.promoted || [];
     results.promoted_to_brain = true;
     results.stage = LEARNING_STAGES.PROMOTED;
@@ -734,14 +904,14 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     results.status = LEARNING_STATUS.FAILED_PROMOTION;
     results.errors.push(`Rule promotion failed: ${err.message}`);
     console.error(`❌ [GATEWAY PROMOTION FAILED] ${err.message}`);
-    updateCheckpoint(learningPackage.repository, results);
+    updateCheckpoint(learningPackage.repository, results, options);
     dispatchIPCResult(results);
     return { success: false, ...results };
   }
 
   // 5. Canonical Knowledge Index Update with Read-Back Verification Barrier
   try {
-    const index = loadKnowledgeIndex();
+    const index = loadKnowledgeIndex(p.brainRoot);
     const existing = index.items[learningPackage.learning_id];
     const rulesMap = new Map();
     for (const r of (existing?.promoted_rules || [])) {
@@ -778,10 +948,10 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
         index_read_back_verified: true
       }
     };
-    saveKnowledgeIndex(index);
+    saveKnowledgeIndex(index, p.brainRoot);
 
     // Read-back verification for Knowledge Index
-    const reloadedIndex = loadKnowledgeIndex();
+    const reloadedIndex = loadKnowledgeIndex(p.brainRoot);
     const recordedItem = reloadedIndex.items[learningPackage.learning_id];
     if (!recordedItem || recordedItem.content_hash !== learningPackage.content_hash || recordedItem.verification_status !== LEARNING_STATUS.VERIFIED_LEARNING) {
       throw new Error('Knowledge index read-back verification failed: record missing or hash mismatch');
@@ -793,7 +963,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     // 6. Multi-Folder Canonical Intelligence Routing & Ledgers
     // A. 08_VERIFICATION: Verification Matrix and Empirical Evidence Ledger
     try {
-      const verEvidence = recordVerificationEvidence(learningPackage, results);
+      const verEvidence = recordVerificationEvidence(learningPackage, results, options);
       results.verification_ledger_updated = true;
       console.log(`📊 [GATEWAY STAGE 6: VERIFICATION RECORDED] Cycle ${verEvidence.cycleId} written to 08_VERIFICATION/harvest-verification-matrix.md`);
     } catch (verErr) {
@@ -803,7 +973,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
 
     // B. 09_SOURCES: Cryptographic Source Provenance Ledger
     try {
-      recordSourceProvenance(learningPackage);
+      recordSourceProvenance(learningPackage, options);
       results.source_provenance_updated = true;
       console.log(`🔗 [GATEWAY STAGE 7: PROVENANCE RECORDED] Recorded in 09_SOURCES/harvest-provenance-ledger.md`);
     } catch (provErr) {
@@ -814,7 +984,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     // C. 11_INBOX: Stage Rejected / Uncertain Candidates (No candidate lost silently!)
     if (learningPackage.rejected_rules && learningPackage.rejected_rules.length > 0) {
       try {
-        stageUnverifiedCandidates(learningPackage, learningPackage.rejected_rules);
+        stageUnverifiedCandidates(learningPackage, learningPackage.rejected_rules, options);
         console.log(`📥 [GATEWAY STAGE 8: CANDIDATES STAGED] ${learningPackage.rejected_rules.length} unpromoted candidate(s) staged in 11_INBOX/candidate-directives-registry.json`);
       } catch (inboxErr) {
         console.error(`❌ [GATEWAY INBOX FAILED] ${inboxErr.message}`);
@@ -823,7 +993,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
 
     // D. 14_EVOLUTION: Quantified Harvest Yield Metrics
     try {
-      recordEvolutionMetrics(results);
+      recordEvolutionMetrics(results, options);
       results.evolution_metrics_updated = true;
       console.log(`📈 [GATEWAY STAGE 9: EVOLUTION METRICS UPDATED] Yield logged to 14_EVOLUTION/harvest-yield-metrics.json`);
     } catch (evoErr) {
@@ -833,7 +1003,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
     results.status = LEARNING_STATUS.FAILED_PERSISTENCE;
     results.errors.push(`Index update failed: ${err.message}`);
     console.error(`❌ [GATEWAY INDEX FAILED] ${err.message}`);
-    updateCheckpoint(learningPackage.repository, results);
+    updateCheckpoint(learningPackage.repository, results, options);
     dispatchIPCResult(results);
     return { success: false, ...results };
   }
@@ -853,7 +1023,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
   if (!learningSuccess) {
     results.status = LEARNING_STATUS.FAILED_PERSISTENCE;
     console.error(`❌ [HARD INVARIANT BREACHED] Learning persistence was incomplete across canonical folders. Status set to FAILED_PERSISTENCE.`);
-    updateCheckpoint(learningPackage.repository, results);
+    updateCheckpoint(learningPackage.repository, results, options);
     dispatchIPCResult(results);
     return { success: false, ...results };
   }
@@ -861,7 +1031,7 @@ export async function submitToBrainGateway(learningPackage, options = {}) {
   // SUCCESS! Mark strictly VERIFIED_LEARNING
   results.status = LEARNING_STATUS.VERIFIED_LEARNING;
   results.stage = LEARNING_STAGES.VERIFIED;
-  updateCheckpoint(learningPackage.repository, results);
+  updateCheckpoint(learningPackage.repository, results, options);
   dispatchIPCResult(results);
 
   const durationMs = Date.now() - startTime;
@@ -912,11 +1082,14 @@ export function dispatchIPCResult(results) {
 /**
  * Updates harvest checkpoint for durable progress tracking with read-back verification
  */
-export function updateCheckpoint(repository, statusRecord) {
+export function updateCheckpoint(repository, statusRecord, options = {}) {
   try {
-    const checkpoints = loadCheckpoints();
+    const p = getBrainPaths(options.brainRoot || null);
+    const pipelineMode = options.pipelineMode || 'CLOUD_HARVEST';
+    const checkpoints = loadCheckpoints(p.brainRoot, pipelineMode);
     checkpoints.checkpoints[repository] = {
       repository,
+      pipeline_mode: pipelineMode,
       stage: statusRecord.stage,
       status: statusRecord.status,
       learning_id: statusRecord.learning_id,
@@ -929,10 +1102,10 @@ export function updateCheckpoint(repository, statusRecord) {
       knowledge_index_updated: Boolean(statusRecord.knowledge_index_updated),
       last_updated: new Date().toISOString()
     };
-    saveCheckpoints(checkpoints);
+    saveCheckpoints(checkpoints, p.brainRoot, pipelineMode);
 
     // Read-back verification for checkpoint
-    const reloaded = loadCheckpoints();
+    const reloaded = loadCheckpoints(p.brainRoot, pipelineMode);
     if (!reloaded.checkpoints || !reloaded.checkpoints[repository] || reloaded.checkpoints[repository].stage !== statusRecord.stage) {
       console.warn(`[CHECKPOINT WARNING] Checkpoint read-back mismatch for ${repository}`);
     }
@@ -944,9 +1117,10 @@ export function updateCheckpoint(repository, statusRecord) {
 /**
  * Inspects a repository or learning ID's current verification status
  */
-export function getLearningStatus(repositoryOrSlug) {
-  const index = loadKnowledgeIndex();
-  const checkpoints = loadCheckpoints();
+export function getLearningStatus(repositoryOrSlug, brainRoot = null) {
+  const p = getBrainPaths(brainRoot);
+  const index = loadKnowledgeIndex(brainRoot);
+  const checkpoints = loadCheckpoints(brainRoot);
 
   // 1. Direct search in index
   for (const item of Object.values(index.items || {})) {
@@ -962,7 +1136,7 @@ export function getLearningStatus(repositoryOrSlug) {
 
   // 3. Fallback: check disk directly
   const slug = repositoryOrSlug.replace(/\//g, '-').toLowerCase();
-  const dossierPath = path.join(LEARNING_DIR, `${slug}-learnings.md`);
+  const dossierPath = path.join(p.learningDir, `${slug}-learnings.md`);
   if (fs.existsSync(dossierPath)) {
     return {
       repository: repositoryOrSlug,

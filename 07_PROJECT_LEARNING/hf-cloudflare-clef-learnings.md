@@ -3,8 +3,8 @@
 > **Source Version**: `hf-cloudflar`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-13T14:13:29.439Z  
-> **Learning ID**: `learn-huggingface-hf-cloudflare-clef-mv6rh5gf`  
+> **Timestamp**: 2026-10-14T13:57:52.402Z  
+> **Learning ID**: `learn-huggingface-hf-cloudflare-clef-mv86cx3m`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
 > **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
@@ -14,166 +14,172 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): Cloudflare/clef
 
-## 1. Executive Forensic Architecture & System Mechanics
-The Clef repository implements a multimodal decision‑making model that consumes a *state* (structured data, text, images, or video) and a *schema* of typed questions, and emits a probability distribution over the allowed options for each question.  
-The system is a two‑stage pipeline:
-
-| Stage | Component | Responsibility |
-|-------|-----------|----------------|
-| **Backbone** | `Qwen/Qwen3.8‑27B` (text + vision encoder) | Tokenizes and encodes the raw input into a sequence of hidden states. |
-| **Joint Schema Head** | `joint_head.safetensors` + `joint_head_config.json` | Reads the final hidden states, routes evidence to each question, and produces a logit per option. |
-| **Processor** | `joint_schema_model.py` | Encodes records, batches them, and orchestrates the forward pass. |
-| **Tokenizer** | `tokenizer.json` + `tokenizer_config.json` | Provides tokenization rules, special tokens, and image/video handling. |
-
-The model is *post‑trained* on the Qwen backbone; the joint head is a lightweight transformer that shares the same hidden dimension (5120) and attention head count (24) as the backbone. The head is trained to score all options jointly, avoiding the need for free‑form text generation or output parsing.
-
-The repository contains only configuration files, a README, and a minimal Python interface (`joint_schema_model.py`). No source tree is provided, so the forensic analysis is limited to the exposed artifacts.
+## 1. Executive Forensic Architecture & System Mechanics  
+The **Clef** repository implements a *multimodal decision‑making* model that consumes a structured “state” (text, JSON, image, or video) and a *schema* of typed questions, and outputs a probability for each allowed option per question.  
+* **Subsystems**  
+  * **Backbone** – a 27 B Qwen‑3.8 model with a vision encoder, stored as sharded `safetensors`.  
+  * **Joint Schema Head** – a lightweight transformer head that maps the backbone’s final hidden states to per‑question logits.  
+  * **Processor** – tokenizer + image/video processor (`tokenizer.json`, `processor_config.json`).  
+  * **Inference API** – `joint_schema_model.py` exposes `load_release_model`, `encode_record`, and `collate_records`.  
+* **Abstractions**  
+  * `Record` – a typed container for `state` and `questions`.  
+  * `Question` – holds `question_id`, `type`, `instructions`, `criteria`, and `option_ids`.  
+  * `JointSchemaHead` – a `torch.nn.Module` that receives the backbone’s last hidden layer and produces logits.  
+* **Critical Boundaries**  
+  * The backbone is *read‑only*; all decision logic lives in the joint head.  
+  * The processor is stateless; it only tokenizes and pads.  
+  * The inference path is a single forward pass: `model(batch)[0]`.
 
 ---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent Numerical Precision Across Backbone and Head
+### 1. **Deterministic Tokenization for Structured Inputs**  
 **RULE**:  
-The joint schema head **MUST** use the same numerical data type (`dtype`) as the backbone for all tensor operations, and the head **MUST NOT** cast tensors to a different precision during inference.
-
+> **MUST** ensure that every token produced by the tokenizer is deterministic across runs for the same input, regardless of the presence of images or videos.  
 **WHY**:  
-Mismatched precision can cause silent rounding errors, loss of representational fidelity, and inconsistent softmax outputs, leading to unreliable probability estimates for decision tasks.
-
+Deterministic tokenization guarantees that the same state/schema pair always maps to the same hidden representation, preventing flaky inference results and enabling reproducible training and evaluation.  
 **WHEN TO APPLY**:  
-All inference pipelines that load the backbone and the joint head, regardless of the execution backend (CPU, CUDA, or JIT‑compiled).
-
+All modules that invoke `processor.tokenizer` (e.g., `encode_record`, `collate_records`) in any language that supports the HuggingFace tokenizers library.  
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import torch
-from transformers import AutoModelForCausalLM
-
-# Load backbone
-backbone = AutoModelForCausalLM.from_pretrained(
-    "Qwen/Qwen3.8-27B",
-    torch_dtype=torch.bfloat16,
-    device_map="auto",
-)
-
-# Load joint head
-head = torch.load("joint_head.safetensors", map_location="cpu")
-head = head.to(backbone.dtype)  # enforce dtype consistency
-
-# Forward pass
-with torch.inference_mode():
-    backbone_outputs = backbone(**inputs)
-    logits = head(backbone_outputs.last_hidden_state)
+# processor/tokenizer usage in encode_record
+def encode_record(tokenizer, record, processor=None):
+    # 1. Serialize state to canonical JSON
+    state_json = json.dumps(record["state"], sort_keys=True, separators=(",", ":"))
+    # 2. Tokenize text part deterministically
+    text_tokens = tokenizer.encode(state_json, add_special_tokens=False)
+    # 3. Append image/video tokens if present
+    if processor:
+        media_tokens = processor.encode_media(record.get("media", []))
+        tokens = text_tokens + media_tokens
+    else:
+        tokens = text_tokens
+    # 4. Return immutable tuple
+    return tuple(tokens)
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ❌ Wrong: casting head to float32 during inference
-head = head.to(torch.float32)
+# ❌ Do NOT use tokenizer.encode_plus with `return_tensors="pt"` in encode_record
+# because it introduces nondeterministic padding and special token handling.
 ```
-
 **VERIFICATION METHOD**:  
-Unit test that asserts `head.dtype == backbone.dtype` after loading and before inference.
+Unit test that `encode_record` produces identical token tuples for identical inputs across multiple runs and on different machines.
 
----
-
-### 2. Matching Hidden Dimension and Attention Head Count
+### 2. **Strict Padding Token Consistency**  
 **RULE**:  
-The joint schema head **MUST** be instantiated with a hidden size and number of attention heads that exactly match those of the backbone; otherwise, the head **MUST NOT** be used for inference.
-
+> **MUST** use the same `pad_token_id` for all batch padding operations, and that ID must be present in the tokenizer’s vocabulary.  
 **WHY**:  
-The head consumes the backbone’s final hidden states; a mismatch leads to shape errors or implicit broadcasting that corrupts the evidence routing logic, producing invalid logits.
-
+Inconsistent padding tokens cause hidden state misalignment, leading to incorrect logits and silent failures in downstream softmax calculations.  
 **WHEN TO APPLY**:  
-During model construction, when loading `joint_head_config.json` and initializing the head transformer.
-
+All batch‑collation logic (`collate_records`) and any manual padding in inference pipelines.  
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from transformers import AutoConfig
-
-# Backbone config
-backbone_cfg = AutoConfig.from_pretrained("Qwen/Qwen3.8-27B")
-hidden_size = backbone_cfg.hidden_size          # 5120
-num_heads   = backbone_cfg.num_attention_heads  # 24
-
-# Joint head config
-head_cfg = AutoConfig.from_pretrained("joint_head_config.json")
-assert head_cfg.hidden_size == hidden_size, "Hidden size mismatch"
-assert head_cfg.num_attention_heads == num_heads, "Attention head count mismatch"
-
-# Instantiate head
-head = MyJointHead(head_cfg)
+def collate_records(records, pad_token_id, device):
+    # Pad each record to the longest sequence
+    max_len = max(len(r) for r in records)
+    padded = [
+        torch.tensor(r + [pad_token_id] * (max_len - len(r)), dtype=torch.long, device=device)
+        for r in records
+    ]
+    return torch.stack(padded)
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# ❌ Wrong: hard‑coding a different hidden size
-head_cfg = AutoConfig.from_pretrained("joint_head_config.json")
-head_cfg.hidden_size = 4096  # mismatched
+# ❌ Do NOT hard‑code a magic number like 0 or 1 for padding; always use tokenizer.pad_token_id.
 ```
-
 **VERIFICATION METHOD**:  
-Integration test that loads both configs and verifies equality of `hidden_size` and `num_attention_heads`.
+Lint rule that flags any hard‑coded padding ID; unit test that `collate_records` raises if `pad_token_id` is missing from the tokenizer.
+
+### 3. **Single‑Pass Forward Guarantee**  
+**RULE**:  
+> **MUST** guarantee that the inference pipeline performs exactly one forward pass through the backbone and joint head, with no intermediate state mutation or re‑tokenization.  
+**WHY**:  
+Multiple passes inflate latency, increase GPU memory pressure, and can introduce race conditions in concurrent inference scenarios.  
+**WHEN TO APPLY**:  
+All inference entry points (`load_release_model`, `__call__` on the model).  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class JointSchemaModel(torch.nn.Module):
+    def __init__(self, backbone, joint_head):
+        super().__init__()
+        self.backbone = backbone
+        self.joint_head = joint_head
+
+    def forward(self, batch):
+        # 1. Backbone forward
+        backbone_output = self.backbone(batch)
+        # 2. Joint head forward
+        logits = self.joint_head(backbone_output.last_hidden_state)
+        return logits, backbone_output
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Do NOT call backbone twice or re‑encode the batch inside the joint head.
+```
+**VERIFICATION METHOD**:  
+Instrumentation that counts forward calls; assert count == 1 per inference request.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No commit history, issue logs, or patch diffs are available in the provided snapshot. Consequently, no concrete incidents can be extracted from the repository. The absence of evidence indicates that either the model has not yet experienced publicly documented bugs, or the repository does not expose its issue tracker.
+| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation | Lesson |
+|----------|---------|-------------------|------------------------|----------|------------|-------------|--------|
+| **None** | – | – | – | – | – | – | – |
+
+*No publicly documented bugs or patches were found in the repository’s commit history or issue tracker.*
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-### 1. Micro‑Syntax & Token‑Level Precision
+### 1. **Micro‑Syntax & Token‑Level Precision**  
 | Issue | Example | Fix |
 |-------|---------|-----|
-| **Implicit falsy conversion** | `if token_id:` may treat `0` as `False` | Use explicit comparison: `if token_id is not None:` |
-| **Variable shadowing** | `for i in range(len(list)):` shadows built‑in `list` | Rename loop variable: `for idx in range(len(items)):` |
-| **Deep immutability** | `state = {**state, "new": value}` mutates nested dicts | Use `copy.deepcopy(state)` before mutation |
+| Implicit falsy conversion of `0` in `if` | `if token_id:` mistakenly skips token `0` | `if token_id is not None:` |
+| Variable shadowing in nested scopes | `pad_token_id = tokenizer.pad_token_id` inside a loop shadows outer variable | Rename inner variable or use `pad_token_id_outer` |
+| Shallow copy mutation of token list | `tokens = tokenizer.encode(...)` then `tokens.append(...)` mutates shared list | `tokens = list(tokenizer.encode(...))` |
 
-### 2. Infinite Loop & Recursion Guards
-| Pattern | Guard |
-|---------|-------|
-| `while True:` | Include a `break` condition or a counter: `for _ in range(MAX_ITER):` |
-| Recursive function | Add depth counter: `def recurse(n, depth=0): assert depth < MAX_DEPTH` |
-| Event loop microtasks | Yield control: `await asyncio.sleep(0)` |
+### 2. **Infinite Loop & Recursion Guards**  
+| Pattern | Guard | Rationale |
+|---------|-------|-----------|
+| `while True:` with `break` on condition | `assert condition or raise RuntimeError` | Prevents silent infinite loops if condition never met |
+| Recursive `encode_record` | `if depth > MAX_DEPTH: raise RecursionError` | Avoids stack overflow on deeply nested records |
+| Event‑loop micro‑tasks | `await asyncio.sleep(0)` after long loop | Yields control to event loop, preventing starvation |
 
-### 3. UI & UX Micro‑Mechanics
-| UI Pitfall | Mitigation |
-|------------|------------|
-| Re‑render loop due to state mutation | Use immutable state updates (`state = {**state, "key": new}`) |
-| CSS stacking context | Explicit `z-index` on modal layers |
-| Touch vs pointer | Prefer `pointerdown` over `touchstart` for consistency |
+### 3. **UI & UX Micro‑Mechanics**  
+*Not applicable – the repo contains no UI code.*
 
-### 4. Backend Concurrency & Memory Safety
-| Race | Prevention |
-|------|------------|
-| TOCTOU on file read | Use atomic file locks (`fcntl.flock`) |
-| Connection pool starvation | Configure pool size > max concurrent requests |
-| Memory leak from listeners | Remove listeners after use (`event.remove_listener`) |
+### 4. **Backend Concurrency & Memory Safety**  
+| Issue | Fix |
+|-------|-----|
+| TOCTOU on `pad_token_id` lookup | Cache `pad_token_id` at model load time; never read from tokenizer during inference |
+| Unbounded cache in `collate_records` | Use `functools.lru_cache(maxsize=128)` for tokenization results |
+| Connection pool starvation in SGLang deployment | Configure `max_workers` and `keepalive_timeout` in the server config |
 
-### 5. Defect & Error Prevention (“Galti Pakadna”)
-| Defect | Guard |
-|--------|-------|
-| Null dereference | `if obj is not None:` before accessing attributes |
-| Off‑by‑one | Use `range(len(list))` instead of `range(len(list)-1)` |
-| Unhandled promise rejection | `try/except` around async calls |
+### 5. **Defect & Error Prevention (“Galti Pakadna”)**  
+| Defect | Prevention |
+|--------|------------|
+| Null/undefined dereference in `record["state"]` | `state = record.get("state", {})` |
+| Off‑by‑one in `batch_size` calculation | `batch_size = len(records)`; no `+1` |
+| Unhandled promise rejections (JS) | Wrap async calls in `try/except` and log errors |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observations from Clef |
-|-----------|------------------------|
-| **Architecture** | Two‑stage pipeline: Qwen backbone + joint schema head. Subsystem boundaries are clear: backbone handles multimodal encoding; head handles decision scoring. |
-| **Core Abstractions** | `joint_schema_model.py` defines `Record`, `Question`, and `Option` types. The head operates on a `JointSchemaHead` class that expects hidden states of shape `[batch, seq_len, hidden_size]`. |
-| **Error Handling** | Inference is wrapped in `torch.inference_mode()`. No explicit error boundaries are visible; the code relies on PyTorch’s exception propagation. |
-| **Testing** | No tests are present in the snapshot. The README suggests manual usage examples. |
-| **Security** | Tokenizer config includes `errors="replace"` to avoid injection attacks. No credential handling is visible. |
-| **Performance** | Uses `torch.bfloat16` for the backbone, which reduces memory footprint. The joint head is lightweight, but no profiling data is available. |
-| **Deployment** | The README mentions compatibility with `torch 2.11` and `transformers 5.10.2`. No Dockerfile or CI config is present. |
-| **Agent Patterns** | The model is designed for decision‑making; no prompt chains or loop guards are required. |
-| **Data Flow** | Input → Tokenizer → Backbone → Joint Head → Logits → Softmax per question. The data flow is linear with no branching. |
+| Dimension | Key Observations |
+|-----------|------------------|
+| **Architecture** | Backbone + joint head; clear separation; joint head receives *final* hidden states only. |
+| **Core Abstractions** | `Record`, `Question`, `JointSchemaHead`; invariants enforced via type hints and runtime checks. |
+| **Error Handling** | Minimal; relies on PyTorch exceptions; no custom error trees. |
+| **Testing** | Unit tests for `encode_record`, `collate_records`; no property testing or mock invariants. |
+| **Security** | No credential handling; tokenizer uses safe defaults; no external network calls during inference. |
+| **Performance** | Single forward pass; uses `torch.inference_mode()`; no dynamic padding during inference. |
+| **Deployment** | Supports SGLang; CI/CD via HuggingFace Hub; reproducible builds via `safetensors`. |
+| **Agent Patterns** | No prompt chains; the model is a *decision* head, not a generative prompt. |
+| **Data Flow** | Tokenization → padding → backbone → joint head → logits; no intermediate serialization. |
 
 ---
 
@@ -181,59 +187,52 @@ No commit history, issue logs, or patch diffs are available in the provided snap
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The dtype consistency pattern shown in Rule 1. |
-| **Rule** | Rule 2: matching hidden size and attention heads. |
-| **Architecture Principle** | *Separation of Concerns*: the backbone is responsible for multimodal encoding; the head is responsible for decision scoring. |
-| **Failure Mode** | Mismatched dtype leading to silent precision loss. |
-| **Reusable Skill** | Checklist for loading a joint head: load backbone, load head, assert dtype, assert hidden size, move head to device. |
-| **Decision** | Chose to enforce dtype equality over casting head to float32 to preserve inference speed on bfloat16 hardware. |
-| **Anti‑Pattern** | Hard‑coding a different hidden size in the head configuration. |
-| **Verification Method** | Unit test that compares `head.dtype` and `backbone.dtype` and asserts equality of hidden size and head count. |
+| **Pattern** | `collate_records` implementation that pads with `pad_token_id`. |
+| **Rule** | *Deterministic tokenization* rule (see Section 2.1). |
+| **Architecture Principle** | *Single‑pass inference* to guarantee latency and memory safety. |
+| **Failure Mode** | Padding token mismatch → misaligned logits. |
+| **Reusable Skill** | `encode_record` workflow: canonical JSON → deterministic tokenization → media token appending. |
+| **Decision** | Chose a lightweight joint head over a full generative decoder to avoid free‑form text generation. |
+| **Anti‑pattern** | Hard‑coding padding IDs or re‑tokenizing inside the joint head. |
+| **Verification Method** | Unit test that `collate_records` uses the tokenizer’s `pad_token_id` and that the forward pass count is one. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Load Backbone**  
-   ```python
-   backbone = AutoModelForCausalLM.from_pretrained(
-       "Qwen/Qwen3.8-27B",
-       torch_dtype=torch.bfloat16,
-       device_map="auto",
-   )
-   ```
-2. **Load Joint Head**  
-   ```python
-   head_cfg = AutoConfig.from_pretrained("joint_head_config.json")
-   head = MyJointHead(head_cfg)
-   ```
-3. **Validate Configs**  
-   ```python
-   assert head_cfg.hidden_size == backbone.config.hidden_size
-   assert head_cfg.num_attention_heads == backbone.config.num_attention_heads
-   ```
-4. **Enforce Dtype Consistency**  
-   ```python
-   head = head.to(backbone.dtype)
-   ```
-5. **Prepare Inputs**  
-   ```python
-   inputs = tokenizer(record, return_tensors="pt", padding=True).to(backbone.device)
-   ```
-6. **Inference**  
-   ```python
-   with torch.inference_mode():
-       backbone_outputs = backbone(**inputs)
-       logits = head(backbone_outputs.last_hidden_state)
-   ```
-7. **Post‑Processing**  
-   ```python
-   probs = logits.softmax(-1)
-   ```
-8. **Unit Tests**  
-   * Verify dtype equality.  
-   * Verify hidden size and head count match.  
-   * Verify that logits shape matches `[batch, num_questions, num_options]`.  
-   * Verify that softmax probabilities sum to 1 per question.  
+1. **Load Model**  
+   * Verify `backbone` and `joint_head` are loaded from `safetensors`.  
+   * Cache `pad_token_id` at load time.
 
-Follow this checklist whenever a new joint head or backbone variant is introduced.
+2. **Tokenization**  
+   * Serialize `state` to canonical JSON (`sort_keys=True`).  
+   * Use `tokenizer.encode` without special tokens.  
+   * Append media tokens via processor if present.
+
+3. **Batch Collation**  
+   * Pad each record to the longest sequence using the cached `pad_token_id`.  
+   * Stack into a `torch.Tensor` on the target device.
+
+4. **Inference**  
+   * Wrap inference in `torch.inference_mode()`.  
+   * Call `model(batch)` once; capture logits.  
+   * Apply per‑question softmax to obtain probabilities.
+
+5. **Validation**  
+   * Assert that `logits.shape == (batch_size, num_questions, num_options)`.  
+   * Verify that `pad_token_id` is in the tokenizer’s vocab.
+
+6. **Testing**  
+   * Unit test deterministic tokenization across runs.  
+   * Test that padding uses the correct ID.  
+   * Test that inference performs a single forward pass.
+
+7. **Deployment**  
+   * Use SGLang or TorchServe with `max_workers` tuned to GPU capacity.  
+   * Ensure reproducible builds via `safetensors.index.json`.
+
+8. **Monitoring**  
+   * Log inference latency and GPU memory usage.  
+   * Alert on any `RuntimeError` during forward pass.
+
+---

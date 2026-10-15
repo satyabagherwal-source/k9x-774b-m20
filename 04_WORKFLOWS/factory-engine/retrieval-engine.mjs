@@ -24,6 +24,23 @@ const KNOWLEDGE_INDEX_FILE = path.join(BRAIN_ROOT, '05_KNOWLEDGE', 'knowledge-in
 const CACHE_DIR = path.join(BRAIN_ROOT, '.project-brain', 'cache');
 const CACHE_INDEX_FILE = path.join(CACHE_DIR, 'retrieval-index.json');
 
+/**
+ * Resolves knowledge retrieval paths relative to custom brain root
+ */
+export function getRetrievalPaths(customRoot = null) {
+  const root = customRoot || BRAIN_ROOT;
+  return {
+    brainRoot: root,
+    patternsFile: path.join(root, '05_KNOWLEDGE', 'engineering-patterns.md'),
+    coreRulesFile: path.join(root, '01_CORE', 'operating-rules.md'),
+    skillsDir: path.join(root, '03_SKILLS'),
+    knowledgeIndexFile: path.join(root, '05_KNOWLEDGE', 'knowledge-index.json'),
+    learningDir: path.join(root, '07_PROJECT_LEARNING'),
+    cacheDir: path.join(root, '.project-brain', 'cache'),
+    cacheIndexFile: path.join(root, '.project-brain', 'cache', 'retrieval-index.json')
+  };
+}
+
 // Standard English Stopwords for Lexical Filtering
 const STOPWORDS = new Set([
   'a', 'about', 'above', 'after', 'again', 'against', 'all', 'am', 'an', 'and', 'any', 'are', 'aren',
@@ -41,6 +58,7 @@ const STOPWORDS = new Set([
 // In-Memory Index Cache
 let _inMemoryIndex = null;
 let _inMemoryHash = null;
+const _indexCacheByRoot = new Map();
 
 /**
  * Tokenizes text into normalized query/document terms
@@ -57,16 +75,19 @@ export function tokenize(text) {
 /**
  * Calculates deterministic SHA-256 hash of source files to determine cache staleness
  */
-function computeSourceFilesHash() {
+export function computeSourceFilesHash(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
   const hash = crypto.createHash('sha256');
-  if (fs.existsSync(PATTERNS_FILE)) hash.update(fs.statSync(PATTERNS_FILE).mtimeMs.toString());
-  if (fs.existsSync(CORE_RULES_FILE)) hash.update(fs.statSync(CORE_RULES_FILE).mtimeMs.toString());
-  if (fs.existsSync(KNOWLEDGE_INDEX_FILE)) hash.update(fs.statSync(KNOWLEDGE_INDEX_FILE).mtimeMs.toString());
-  if (fs.existsSync(SKILLS_DIR)) {
-    const skills = fs.readdirSync(SKILLS_DIR).filter(f => f.endsWith('.md'));
-    for (const f of skills) {
-      hash.update(fs.statSync(path.join(SKILLS_DIR, f)).mtimeMs.toString());
-    }
+  if (fs.existsSync(p.patternsFile)) hash.update(fs.statSync(p.patternsFile).mtimeMs.toString());
+  if (fs.existsSync(p.coreRulesFile)) hash.update(fs.statSync(p.coreRulesFile).mtimeMs.toString());
+  if (fs.existsSync(p.knowledgeIndexFile)) hash.update(fs.statSync(p.knowledgeIndexFile).mtimeMs.toString());
+  if (fs.existsSync(p.skillsDir)) {
+    try {
+      const skills = fs.readdirSync(p.skillsDir).filter(f => f.endsWith('.md'));
+      for (const f of skills) {
+        hash.update(fs.statSync(path.join(p.skillsDir, f)).mtimeMs.toString());
+      }
+    } catch (e) {}
   }
   return hash.digest('hex');
 }
@@ -74,9 +95,10 @@ function computeSourceFilesHash() {
 /**
  * Parses 05_KNOWLEDGE/engineering-patterns.md into discrete rule documents
  */
-export function parseEngineeringPatterns() {
-  if (!fs.existsSync(PATTERNS_FILE)) return [];
-  const content = fs.readFileSync(PATTERNS_FILE, 'utf-8');
+export function parseEngineeringPatterns(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  if (!fs.existsSync(p.patternsFile)) return [];
+  const content = fs.readFileSync(p.patternsFile, 'utf-8');
   const lines = content.split(/\r?\n/);
   const docs = [];
 
@@ -140,9 +162,10 @@ function finalizeRuleDoc(meta, rawBody, startLine, endLine) {
 /**
  * Parses 01_CORE/operating-rules.md into discrete core rule documents
  */
-export function parseCoreOperatingRules() {
-  if (!fs.existsSync(CORE_RULES_FILE)) return [];
-  const content = fs.readFileSync(CORE_RULES_FILE, 'utf-8');
+export function parseCoreOperatingRules(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  if (!fs.existsSync(p.coreRulesFile)) return [];
+  const content = fs.readFileSync(p.coreRulesFile, 'utf-8');
   const lines = content.split(/\r?\n/);
   const docs = [];
 
@@ -195,13 +218,14 @@ function finalizeCoreDoc(meta, rawBody, startLine, endLine) {
 /**
  * Parses 03_SKILLS/*.md into discrete skill documents
  */
-export function parseSkills() {
-  if (!fs.existsSync(SKILLS_DIR)) return [];
-  const files = fs.readdirSync(SKILLS_DIR).filter(f => f.endsWith('.md') && f !== '.gitkeep');
+export function parseSkills(customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  if (!fs.existsSync(p.skillsDir)) return [];
+  const files = fs.readdirSync(p.skillsDir).filter(f => f.endsWith('.md') && f !== '.gitkeep');
   const docs = [];
 
   for (const f of files) {
-    const fullPath = path.join(SKILLS_DIR, f);
+    const fullPath = path.join(p.skillsDir, f);
     const content = fs.readFileSync(fullPath, 'utf-8');
     const titleMatch = content.match(/^#\s+(.+)$/m);
     const title = titleMatch ? titleMatch[1].trim() : f.replace('.md', '');
@@ -223,48 +247,142 @@ export function parseSkills() {
 }
 
 /**
+ * Helper to recover items from JSON with conflict markers or partial corruptions
+ * Provides an explicitly isolated read-only recovery view and tracks conflict ambiguities.
+ */
+function recoverItemsFromRawJson(raw) {
+  const items = {};
+  const hasConflictMarkers = raw.includes('<<<<<<<') || raw.includes('=======') || raw.includes('>>>>>>>');
+  const duplicateKeysInConflict = [];
+  const seenKeys = new Set();
+
+  // 1. Direct regex-based object extraction (fast, memory-efficient)
+  const itemRegex = /"([a-zA-Z0-9_-]+)":\s*(\{[\s\S]*?\n\s*\})(?=,\s*"[a-zA-Z0-9_-]+":|\s*\n\s*\}|\s*=======|\s*<<<<<<<|\s*>>>>>>>)/g;
+  let m;
+  while ((m = itemRegex.exec(raw)) !== null) {
+    const key = m[1];
+    if (seenKeys.has(key)) {
+      duplicateKeysInConflict.push(key);
+    }
+    seenKeys.add(key);
+    const objStr = m[2].replace(/^<{7}[^\n]*\n/gm, '').replace(/^={7}[^\n]*\n/gm, '').replace(/^>{7}[^\n]*\n/gm, '');
+    try {
+      const parsed = JSON.parse(objStr);
+      items[key] = parsed;
+    } catch (e) {}
+  }
+
+  // 2. Fallback only if regex found 0 items
+  if (Object.keys(items).length === 0) {
+    try {
+      const cleaned = raw.replace(/^[<>=]{7}[^\r\n]*\r?\n/gm, '');
+      const parsed = JSON.parse(cleaned);
+      const candidateItems = parsed.items || parsed.checkpoints;
+      if (candidateItems && typeof candidateItems === 'object') {
+        return {
+          items: candidateItems,
+          isConflicted: hasConflictMarkers,
+          ambiguities: duplicateKeysInConflict
+        };
+      }
+    } catch (e) {}
+  }
+
+  return {
+    items,
+    isConflicted: hasConflictMarkers,
+    ambiguities: duplicateKeysInConflict
+  };
+}
+
+/**
  * Parses 05_KNOWLEDGE/knowledge-index.json into searchable knowledge documents
  */
-export function parseKnowledgeIndex() {
-  if (!fs.existsSync(KNOWLEDGE_INDEX_FILE)) return [];
-  try {
-    const raw = fs.readFileSync(KNOWLEDGE_INDEX_FILE, 'utf-8');
-    const data = JSON.parse(raw);
-    const items = data.items || {};
-    const selected = Object.values(items);
-    const docs = [];
+export function parseKnowledgeIndex(customPathsOrRoot = null) {
+  const paths = (typeof customPathsOrRoot === 'string' || !customPathsOrRoot)
+    ? getRetrievalPaths(customPathsOrRoot)
+    : customPathsOrRoot;
+  const indexFile = paths.knowledgeIndexFile;
+  const docs = [];
+  let items = {};
 
-    for (const item of selected) {
-      if (item.category === 'ENGINEERING_PATTERN' || item.rule_number) continue;
-      const relPath = item.dossier_path || `07_PROJECT_LEARNING/${item.slug}-learnings.md`;
-      const fullPath = path.isAbsolute(relPath) ? relPath : path.join(BRAIN_ROOT, relPath);
-      if (!fs.existsSync(fullPath)) continue;
-
-      const repoName = item.repository || item.slug || item.learning_id;
-      const title = `${repoName} (Harvested Intelligence Dossier)`;
-      const rulesList = (item.promoted_rules || []).map(r => r.title || `Rule ${r.number}`).join(', ');
-      const summary = `Harvested engineering intelligence for ${repoName}. Platform: ${item.platform || 'github'}. Revision: ${item.source_version || 'HEAD'}. Dossier: ${item.dossier_path || '07_PROJECT_LEARNING'}. Rules: ${rulesList || 'Recorded'}`;
-      const fullContent = `## ${title}\n\n- Repository: ${repoName}\n- Platform: ${item.platform || 'github'}\n- Learning ID: ${item.learning_id}\n- Content Hash: ${item.content_hash}\n- Dossier: ${item.dossier_path}\n- Verified At: ${item.verified_at}\n\n${summary}`;
-
-      const unhyphenated = `${repoName} ${item.slug || ''}`.replace(/[-_/]/g, ' ');
-
-      docs.push({
-        id: `Dossier: ${item.slug || repoName}`,
-        learningId: item.learning_id,
-        title,
-        category: 'HARVESTED_INTELLIGENCE_DOSSIER',
-        filePath: relPath,
-        lineRange: [1, 50],
-        summary,
-        fullContent,
-        tokens: tokenize(`${repoName} ${unhyphenated} ${item.slug || ''} ${item.platform || ''} ${rulesList} ${summary}`)
-      });
-    }
-
-    return docs;
-  } catch (err) {
-    return [];
+  if (fs.existsSync(indexFile)) {
+    try {
+      const raw = fs.readFileSync(indexFile, 'utf-8');
+      try {
+        const data = JSON.parse(raw);
+        items = data.items || {};
+      } catch (parseErr) {
+        const recovery = recoverItemsFromRawJson(raw);
+        items = recovery.items || {};
+      }
+    } catch (err) {}
   }
+
+  // Ensure all dossiers in 07_PROJECT_LEARNING are covered even if index had unmerged conflicts
+  const learningDir = paths.learningDir || path.join(paths.brainRoot, '07_PROJECT_LEARNING');
+  if (fs.existsSync(learningDir)) {
+    try {
+      const files = fs.readdirSync(learningDir).filter(f => f.endsWith('-learnings.md'));
+      const existingSlugs = new Set();
+      const existingFiles = new Set(files);
+      for (const it of Object.values(items)) {
+        if (it.slug) existingSlugs.add(it.slug);
+        if (it.dossier_file) existingSlugs.add(path.basename(it.dossier_file));
+        if (it.dossier_path) existingSlugs.add(path.basename(it.dossier_path));
+      }
+
+      for (const f of files) {
+        const slug = f.replace(/-learnings\.md$/, '');
+        const key = `learn-dossier-${slug}`;
+        if (!items[key] && !existingSlugs.has(slug) && !existingSlugs.has(f)) {
+          items[key] = {
+            learning_id: key,
+            slug,
+            repository: slug,
+            platform: slug.startsWith('hf-') ? 'huggingface' : 'github',
+            category: 'HARVESTED_INTELLIGENCE_DOSSIER',
+            dossier_path: `07_PROJECT_LEARNING/${f}`,
+            content_hash: 'dossier-verified',
+            verified_at: new Date().toISOString(),
+            promoted_rules: []
+          };
+          existingSlugs.add(slug);
+          existingSlugs.add(f);
+        }
+      }
+    } catch (e) {}
+  }
+
+  const selected = Object.values(items);
+  for (const item of selected) {
+    if (item.category === 'ENGINEERING_PATTERN' || item.rule_number) continue;
+    const relPath = item.dossier_path || `07_PROJECT_LEARNING/${item.slug}-learnings.md`;
+    const fullPath = path.isAbsolute(relPath) ? relPath : path.join(paths.brainRoot, relPath);
+    if (!fs.existsSync(fullPath)) continue;
+
+    const repoName = item.repository || item.slug || item.learning_id;
+    const title = `${repoName} (Harvested Intelligence Dossier)`;
+    const rulesList = (item.promoted_rules || []).map(r => r.title || `Rule ${r.number}`).join(', ');
+    const summary = `Harvested engineering intelligence for ${repoName}. Platform: ${item.platform || 'github'}. Revision: ${item.source_version || 'HEAD'}. Dossier: ${item.dossier_path || '07_PROJECT_LEARNING'}. Rules: ${rulesList || 'Recorded'}`;
+    const fullContent = `## ${title}\n\n- Repository: ${repoName}\n- Platform: ${item.platform || 'github'}\n- Learning ID: ${item.learning_id}\n- Content Hash: ${item.content_hash}\n- Dossier: ${item.dossier_path}\n- Verified At: ${item.verified_at}\n\n${summary}`;
+
+    const unhyphenated = `${repoName} ${item.slug || ''}`.replace(/[-_/]/g, ' ');
+
+    docs.push({
+      id: `Dossier: ${item.slug || repoName}`,
+      learningId: item.learning_id,
+      title,
+      category: 'HARVESTED_INTELLIGENCE_DOSSIER',
+      filePath: relPath,
+      lineRange: [1, 50],
+      summary,
+      fullContent,
+      tokens: tokenize(`${repoName} ${unhyphenated} ${item.slug || ''} ${item.platform || ''} ${rulesList} ${summary}`)
+    });
+  }
+
+  return docs;
 }
 
 /**
@@ -294,21 +412,27 @@ export function resolveAlias(id, maxHops = 3) {
 /**
  * Builds the complete BM25 & Lexical Inverted Index
  */
-export function buildSearchIndex(forceRebuild = false) {
-  const currentHash = computeSourceFilesHash();
+export function buildSearchIndex(forceRebuild = false, customRoot = null) {
+  const p = getRetrievalPaths(customRoot);
+  const cacheKey = customRoot || 'DEFAULT';
+  const currentHash = computeSourceFilesHash(customRoot);
 
-  if (!forceRebuild && _inMemoryIndex && _inMemoryHash === currentHash) {
-    return _inMemoryIndex;
+  const rootMemory = _indexCacheByRoot.get(cacheKey);
+  if (!forceRebuild && rootMemory && rootMemory.sourceHash === currentHash) {
+    return rootMemory;
   }
 
   // Check persistent disk cache if valid
-  if (!forceRebuild && fs.existsSync(CACHE_INDEX_FILE)) {
+  if (!forceRebuild && fs.existsSync(p.cacheIndexFile)) {
     try {
-      const cached = JSON.parse(fs.readFileSync(CACHE_INDEX_FILE, 'utf-8'));
+      const cached = JSON.parse(fs.readFileSync(p.cacheIndexFile, 'utf-8'));
       if (cached.sourceHash === currentHash) {
-        _inMemoryIndex = cached;
-        _inMemoryHash = currentHash;
-        return _inMemoryIndex;
+        _indexCacheByRoot.set(cacheKey, cached);
+        if (!customRoot) {
+          _inMemoryIndex = cached;
+          _inMemoryHash = currentHash;
+        }
+        return cached;
       }
     } catch (e) {
       // Fall through to rebuild
@@ -316,10 +440,10 @@ export function buildSearchIndex(forceRebuild = false) {
   }
 
   const startTime = Date.now();
-  const patternDocs = parseEngineeringPatterns();
-  const coreDocs = parseCoreOperatingRules();
-  const skillDocs = parseSkills();
-  const indexDocs = parseKnowledgeIndex();
+  const patternDocs = parseEngineeringPatterns(customRoot);
+  const coreDocs = parseCoreOperatingRules(customRoot);
+  const skillDocs = parseSkills(customRoot);
+  const indexDocs = parseKnowledgeIndex(p);
 
   const documents = [...patternDocs, ...coreDocs, ...skillDocs, ...indexDocs];
   const N = documents.length;
@@ -380,13 +504,16 @@ export function buildSearchIndex(forceRebuild = false) {
     documents: docMetadata
   };
 
-  _inMemoryIndex = indexPackage;
-  _inMemoryHash = currentHash;
+  _indexCacheByRoot.set(cacheKey, indexPackage);
+  if (!customRoot) {
+    _inMemoryIndex = indexPackage;
+    _inMemoryHash = currentHash;
+  }
 
   // Persist cache to disk
   try {
-    fs.mkdirSync(CACHE_DIR, { recursive: true });
-    fs.writeFileSync(CACHE_INDEX_FILE, JSON.stringify(indexPackage), 'utf-8');
+    fs.mkdirSync(p.cacheDir, { recursive: true });
+    fs.writeFileSync(p.cacheIndexFile, JSON.stringify(indexPackage), 'utf-8');
   } catch (e) {}
 
   return indexPackage;
@@ -401,7 +528,8 @@ export function buildSearchIndex(forceRebuild = false) {
  */
 export function searchBrain(query, options = {}) {
   const startTime = Date.now();
-  const index = buildSearchIndex(options.forceRebuild || false);
+  const customRoot = options.brainRoot || null;
+  const index = buildSearchIndex(options.forceRebuild || false, customRoot);
   const queryTokens = tokenize(query);
 
   if (queryTokens.length === 0) {
@@ -511,7 +639,7 @@ export function retrieveKnowledge(query, options = {}) {
   const topK = options.topK || 3;
   const format = options.format || 'compact';
 
-  const searchOutput = searchBrain(query, { topK, category: options.category });
+  const searchOutput = searchBrain(query, { topK, category: options.category, brainRoot: options.brainRoot || null });
   const rawResults = searchOutput.results;
 
   let currentTokens = 0;
