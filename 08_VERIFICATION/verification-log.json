@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-GD86",
-    "timestamp": "2026-10-13T11:52:54.774Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv6mgd55",
-    "contentHash": "231991feec35e41b9fa014947332b0fc0869965eba4c705cf848547891705f88",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-LNNV",
     "timestamp": "2026-10-13T11:57:01.579Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7492,6 +7477,21 @@
     "contentHash": "d7e630deaeee05f80f742b6a7afd28bf8f0b082ec5f305aa66ebe1f64adeca78",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-NAUL",
+    "timestamp": "2026-10-15T20:53:31.437Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-jialinyyzz-humanizer",
+    "contentHash": "de530f53c32be60a4bf9a543c5601f14d88e8a0beeb06fe21e3bd0e372606736",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

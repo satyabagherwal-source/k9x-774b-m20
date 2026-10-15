@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:50:05.968Z",
+  "last_updated": "2026-10-15T20:53:31.412Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13603,18 +13603,34 @@
     "learn-huggingface-jialinyyzz-humanizer": {
       "learning_id": "learn-huggingface-jialinyyzz-humanizer",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-jialinyyzz-humanizer",
+      "source": "jialinyyzz/humanizer",
+      "repository": "jialinyyzz/humanizer",
       "slug": "hf-jialinyyzz-humanizer",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "7c75686d9fed942cefe7738d277fc1e81b17ec279b34c4377e4fd6fe021696d7",
+      "content_hash": "de530f53c32be60a4bf9a543c5601f14d88e8a0beeb06fe21e3bd0e372606736",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 984,
+          "title": "Hybrid Attention Layer Allocation for Long-Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 985,
+          "title": "Strict Factual Preservation Constraint in Stylistic Rewriting",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 986,
+          "title": "Left-Padding Invariant for Batched Causal LM Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -13630,7 +13646,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-10-14T10:14:52.307Z",
+      "verified_at": "2026-10-15T20:53:31.407Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

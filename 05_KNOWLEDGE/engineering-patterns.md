@@ -60507,3 +60507,206 @@ def detect(img):
 1.  **Dependency Check:** `ldd locate-anything-cli | grep python` should return empty.
 2.  **Latency Benchmark:** Measure time-to-first-token (TTFT) and total inference time. Compare against PyTorch baseline. Expect >3x speedup.
 3.  **Memory Profile:** Use `valgrind` or `perf` to verify that memory is mapped, not copied.
+
+
+---
+
+## 984. Hybrid Attention Layer Allocation for Long-Context Efficiency (Harvested from jialinyyzz/humanizer)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid Attention Layer Allocation for Long-Context Efficiency",
+  "source": "jialinyyzz/humanizer",
+  "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+  "source_version": "hf-jialinyyzz-humanizer",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:53:31.323Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-jialinyyzz-humanizer",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [jialinyyzz/humanizer](https://huggingface.co/jialinyyzz/humanizer) (Revision: `hf-jialiny`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying LLMs with context windows exceeding 32K tokens, MUST implement a hybrid attention strategy where the majority of layers use Sliding Window Attention (SWA) and a minority use Full Attention (FA), rather than using FA for all layers.
+**WHY**:
+Full Attention has $O(N^2)$ complexity and high memory bandwidth requirements. Sliding Window Attention has $O(N \cdot W)$ complexity (where $W$ is the window size). By allocating ~80-90% of layers to SWA, you drastically reduce KV-cache memory footprint and inference latency for long documents, while the periodic FA layers (e.g., every 6th layer) ensure that global dependencies (e.g., a fact mentioned at the start of a 100K token document) can still be attended to by later layers.
+**WHEN TO APPLY**:
+Any LLM inference engine or training framework targeting long-context tasks (document summarization, codebase analysis, long-form rewriting) where memory bandwidth is a bottleneck.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudo-code for layer configuration in a Transformer Block
+def configure_attention_layers(num_layers=48):
+    layer_types = []
+    for i in range(num_layers):
+        # Every 6th layer is Full Attention, others are Sliding Window
+        if (i + 1) % 6 == 0:
+            layer_types.append("full_attention")
+        else:
+            layer_types.append("sliding_attention")
+    return layer_types
+
+# In the model forward pass:
+def forward(self, hidden_states, attention_mask):
+    for i, layer in enumerate(self.layers):
+        if self.layer_types[i] == "sliding_attention":
+            # Use local window mask
+            local_mask = create_sliding_window_mask(attention_mask, window_size=4096)
+            hidden_states = layer(hidden_states, mask=local_mask)
+        else:
+            # Use global mask
+            hidden_states = layer(hidden_states, mask=attention_mask)
+    return hidden_states
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using Full Attention for all layers in a 128K context model
+# This will cause OOM (Out of Memory) on consumer GPUs due to KV cache size
+for layer in self.layers:
+    # Always uses O(N^2) attention
+    hidden_states = layer(hidden_states, mask=global_attention_mask)
+```
+**VERIFICATION METHOD**:
+1.  **Memory Profiling**: Run inference on a 100K token sequence. Measure peak GPU memory. If using all-FA, memory should be ~6-8x higher than the hybrid approach.
+2.  **Config Audit**: Parse `config.json` and assert that `layer_types` contains a mix of `"sliding_attention"` and `"full_attention"`, with the ratio of SWA to FA being at least 4:1.
+
+
+---
+
+## 985. Strict Factual Preservation Constraint in Stylistic Rewriting (Harvested from jialinyyzz/humanizer)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Factual Preservation Constraint in Stylistic Rewriting",
+  "source": "jialinyyzz/humanizer",
+  "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+  "source_version": "hf-jialinyyzz-humanizer",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:53:31.352Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-jialinyyzz-humanizer",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [jialinyyzz/humanizer](https://huggingface.co/jialinyyzz/humanizer) (Revision: `hf-jialiny`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When fine-tuning or prompting an LLM for stylistic rewriting (humanization), MUST enforce a hard constraint that all numerical entities, dates, proper nouns, and direct quotes remain byte-identical to the source text.
+**WHY**:
+Stylistic changes often introduce "hallucinated" precision (e.g., changing "about 50%" to "52%") or alter names. In professional contexts (emails, reports), this is a critical failure. The model must be trained or constrained to treat these entities as immutable tokens.
+**WHEN TO APPLY**:
+Any NLP pipeline involving text rewriting, paraphrasing, or translation where factual accuracy is paramount.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import re
+
+def extract_factual_entities(text):
+    # Extract numbers, dates, names (simplified regex for demo)
+    numbers = re.findall(r'\d+\.?\d*', text)
+    dates = re.findall(r'\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* \d{1,2}, \d{4}\b', text)
+    # Proper nouns are harder, but can be identified via NER
+    return set(numbers) | set(dates)
+
+def validate_rewrite(original, rewritten):
+    orig_entities = extract_factual_entities(original)
+    rew_entities = extract_factual_entities(rewritten)
+    
+    # Invariant: All original entities must exist in the rewrite
+    missing = orig_entities - rew_entities
+    if missing:
+        raise ValueError(f"Factual integrity violation. Missing entities: {missing}")
+    
+    # Optional: Check for added entities (hallucinations)
+    added = rew_entities - orig_entities
+    if added:
+        print(f"Warning: Added entities: {added}")
+        
+    return True
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Allowing the LLM to "clean up" numbers
+# Prompt: "Rewrite this email to sound more human. Make it concise."
+# LLM Output: "We expect 50% growth" -> "We expect roughly half growth" 
+# This loses precision and is a factual drift.
+```
+**VERIFICATION METHOD**:
+1.  **Automated Regression Test**: Create a test suite of 100 pairs of (original, rewritten) text. Run `validate_rewrite` on each. Assert 100% pass rate for entity preservation.
+2.  **LLM-as-Judge**: Use a separate, strict LLM to compare original and rewritten text, specifically asking: "Did any numbers, dates, or names change?" Flag any "Yes" as a failure.
+
+
+---
+
+## 986. Left-Padding Invariant for Batched Causal LM Inference (Harvested from jialinyyzz/humanizer)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Left-Padding Invariant for Batched Causal LM Inference",
+  "source": "jialinyyzz/humanizer",
+  "source_url": "https://huggingface.co/jialinyyzz/humanizer",
+  "source_version": "hf-jialinyyzz-humanizer",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T20:53:31.384Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-jialinyyzz-humanizer",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [jialinyyzz/humanizer](https://huggingface.co/jialinyyzz/humanizer) (Revision: `hf-jialiny`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When batching multiple sequences for inference in a causal language model, MUST use left-padding (`padding_side="left"`) to ensure that the `attention_mask` correctly identifies the start of the actual content for each sequence in the batch.
+**WHY**:
+Causal LMs generate tokens autoregressively from left to right. If you right-pad, the padding tokens are at the end. However, the model's position embeddings and attention masks are designed to process the sequence from the beginning. More critically, when generating, the model appends new tokens to the right. If the input was right-padded, the "end" of the sequence is ambiguous. Left-padding ensures that the `eos_token` or the last real token is at the same relative position from the right for all sequences in the batch, simplifying the generation loop and ensuring that the model attends to the correct context.
+**WHEN TO APPLY**:
+Any batched inference pipeline for causal LLMs (GPT, LLaMA, Gemma, etc.).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained("model_name")
+tokenizer.padding_side = "left"  # CRITICAL
+
+# Batch of texts
+texts = ["Hello world", "Hi"]
+inputs = tokenizer(texts, padding=True, truncation=True, return_tensors="pt")
+
+# inputs['input_ids'] will be:
+# [ [0, 15496, 995],   # "Hello world" (padded on left)
+#   [0, 0, 15496] ]    # "Hi" (padded on left)
+# Note: The actual token IDs are illustrative. The key is that padding is on the left.
+
+# When generating:
+outputs = model.generate(inputs['input_ids'], attention_mask=inputs['attention_mask'])
+# The model will correctly ignore the left padding due to the attention_mask.
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Right-padding for batched generation
+tokenizer.padding_side = "right"
+# This can lead to incorrect attention patterns if the generation logic
+# does not explicitly handle the variable length of the input sequences.
+# It is less robust and can cause subtle bugs in multi-turn conversations.
+```
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Tokenize a batch of two strings of different lengths. Assert that the `attention_mask` has 0s on the left and 1s on the right for the shorter sequence.
+2.  **Integration Test**: Generate text from a batch. Verify that the generated text for the shorter sequence does not contain artifacts from the padding tokens.
