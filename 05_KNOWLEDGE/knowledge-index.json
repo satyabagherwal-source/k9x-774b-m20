@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T22:02:35.523Z",
-  "total_verified_learnings": 167,
+  "last_updated": "2026-10-15T22:05:43.066Z",
+  "total_verified_learnings": 168,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -40274,6 +40274,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-15T22:02:35.518Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-autotrust-jev-35b": {
+      "learning_id": "learn-huggingface-autotrust-jev-35b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "autotrust/JEV-35B",
+      "repository": "autotrust/JEV-35B",
+      "slug": "hf-autotrust-jev-35b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/autotrust/JEV-35B",
+      "source_version": "hf-autotrust-jev-35b",
+      "content_hash": "683ff30ad7e41f810f58cdefab67ef8f282765736e038f92b6add8f3ef45a43b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T22:05:43.057Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

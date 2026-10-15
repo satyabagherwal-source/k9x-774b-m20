@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T22:02:35.547Z",
+  "last_updated": "2026-10-15T22:05:43.108Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2020,17 +2020,18 @@
     },
     "autotrust/JEV-35B": {
       "repository": "autotrust/JEV-35B",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-autotrust-jev-35b-mv80u6w7",
-      "content_hash": "18a67592b0acce365620af2051b43147fec91322899f39fe445972f24910f55b",
-      "verified_at": "2026-10-14T11:23:20.679Z",
+      "learning_id": "learn-huggingface-autotrust-jev-35b",
+      "content_hash": "683ff30ad7e41f810f58cdefab67ef8f282765736e038f92b6add8f3ef45a43b",
+      "verified_at": "2026-10-15T22:05:43.108Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T11:23:20.679Z"
+      "last_updated": "2026-10-15T22:05:43.108Z"
     },
     "openbmb/MiniCPM-V-4.7-35B-A3B": {
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",

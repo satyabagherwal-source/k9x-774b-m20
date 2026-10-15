@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-2HEL",
-    "timestamp": "2026-10-13T13:34:05.469Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv6q2hbp",
-    "contentHash": "b18a48d28637fb602d7ff456562a96b69cc071c5fd768a48311514589e9b0f9d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-6OYE",
     "timestamp": "2026-10-13T13:37:21.878Z",
     "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "7b9e1fcd7d801518f477c8d5a0905fa44aa4866df714b9b95c20b6592585111f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-856N",
+    "timestamp": "2026-10-15T22:05:43.103Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "683ff30ad7e41f810f58cdefab67ef8f282765736e038f92b6add8f3ef45a43b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
