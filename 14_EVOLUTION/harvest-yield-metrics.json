@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T19:38:13.127Z",
-  "total_cycles_completed": 1409,
-  "total_learnings_persisted": 1409,
-  "total_rules_promoted": 712,
+  "last_updated": "2026-10-15T19:41:32.735Z",
+  "total_cycles_completed": 1410,
+  "total_learnings_persisted": 1410,
+  "total_rules_promoted": 715,
   "history": [
-    {
-      "timestamp": "2026-10-14T04:31:57.412Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-hf-unsloth-qwen-image-2-1-gguf-mv7m556s",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T04:35:08.406Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T19:38:13.127Z",
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T19:41:32.735Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

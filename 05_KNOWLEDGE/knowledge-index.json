@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T19:38:13.097Z",
-  "total_verified_learnings": 162,
+  "last_updated": "2026-10-15T19:41:32.713Z",
+  "total_verified_learnings": 163,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -39758,6 +39758,49 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-15T19:28:52.687Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-liquidai-lfm2-5-24b-a2b": {
+      "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "LiquidAI/LFM2.5-24B-A2B",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "slug": "hf-liquidai-lfm2.5-24b-a2b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b",
+      "content_hash": "a113cc2c64379122a671f63effcf685c782d99d12ebe4e25335d23b74dcac945",
+      "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 946,
+          "title": "Hybrid Attention/Convolution Layer Interleaving Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 947,
+          "title": "MoE Expert Load Balancing via Bias Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 948,
+          "title": "Context Window Enforcement Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T19:41:32.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
