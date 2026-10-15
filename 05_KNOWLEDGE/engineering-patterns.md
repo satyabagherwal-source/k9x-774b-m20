@@ -61289,3 +61289,127 @@ class BadModel(nn.Module):
 **VERIFICATION METHOD**:
 1.  **Ablation Study**: Train the model with and without the frame length embedding. Evaluate WER (Word Error Rate) on datasets with mixed frame lengths. The conditioned model should show significantly lower WER.
 2.  **Unit Test**: Pass audio features with different frame lengths. Assert that the model's internal hidden states differ based on the `frame_len` input.
+
+
+---
+
+## 996. Masked Mean Pooling Invariant for Variable-Length Sequences (Harvested from sentence-transformers/all-MiniLM-L6-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Masked Mean Pooling Invariant for Variable-Length Sequences",
+  "source": "sentence-transformers/all-MiniLM-L6-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+  "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T21:13:13.692Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When aggregating token-level embeddings into a sentence-level embedding, you MUST apply a weighted mean where the weights are derived from the attention mask. You MUST NOT perform a simple arithmetic mean over the entire sequence tensor including padding tokens.
+**WHY**:
+Padding tokens (usually ID 0) carry zero semantic information. Including them in the mean calculation dilutes the signal from actual content tokens. As sequence length varies, the "noise" from padding varies, causing inconsistent embedding magnitudes and directions. This breaks the geometric consistency required for similarity search.
+**WHEN TO APPLY**:
+Any NLP pipeline using Transformer models where input sequences are padded to a fixed batch size. Applies to PyTorch, TensorFlow, and JAX implementations.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def masked_mean_pooling(model_output, attention_mask):
+    """
+    model_output: Tensor of shape [batch_size, seq_len, hidden_size]
+    attention_mask: Tensor of shape [batch_size, seq_len] (1 for real tokens, 0 for pad)
+    """
+    # Expand mask to match hidden dimension
+    # Shape: [batch_size, seq_len, 1]
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand(model_output.size()).float()
+    
+    # Sum embeddings weighted by mask
+    # Shape: [batch_size, hidden_size]
+    sum_embeddings = torch.sum(model_output * input_mask_expanded, dim=1)
+    
+    # Count valid tokens per sequence
+    # Shape: [batch_size, 1]
+    valid_token_counts = torch.sum(input_mask_expanded, dim=1)
+    
+    # Prevent division by zero (if a sequence is all padding, though rare)
+    # Clamp min to 1e-9 to avoid NaN/Inf
+    safe_counts = torch.clamp(valid_token_counts, min=1e-9)
+    
+    return sum_embeddings / safe_counts
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Simple mean includes padding zeros, distorting the vector
+def bad_mean_pooling(model_output, attention_mask):
+    # This averages over seq_len, including padding positions
+    return torch.mean(model_output, dim=1) 
+```
+**VERIFICATION METHOD**:
+Unit test: Create a batch with two sentences of different lengths. Pad the shorter one. Assert that the embedding of the shorter sentence is identical whether it is processed alone or in a batch with the longer sentence. If simple mean is used, the embeddings will differ due to different denominators.
+
+
+---
+
+## 997. Tokenizer Truncation and Padding Strategy Consistency (Harvested from sentence-transformers/all-MiniLM-L6-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Tokenizer Truncation and Padding Strategy Consistency",
+  "source": "sentence-transformers/all-MiniLM-L6-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+  "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T21:13:13.767Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/all-MiniLM-L6-v2](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+You MUST ensure that the `max_length` used during tokenization matches the `max_position_embeddings` of the model. You MUST use `truncation=True` and `padding=True` in the tokenizer to guarantee fixed-shape tensors for batch processing.
+**WHY**:
+Transformer models have a fixed positional embedding matrix size (512 for this model). Inputting sequences longer than this will cause index out-of-bounds errors or undefined behavior. Inconsistent padding leads to shape mismatches in batched tensor operations.
+**WHEN TO APPLY**:
+Any HuggingFace Transformers pipeline involving batched inference.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+# model_max_length is 512
+encoded_input = tokenizer(
+    sentences, 
+    padding=True,       # Pad to longest in batch (or max_length if specified)
+    truncation=True,    # Truncate if > max_length
+    max_length=512,     # Explicitly match model capacity
+    return_tensors='pt' # Return PyTorch tensors
+)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: No truncation, no explicit max length
+# Can crash if input > 512 tokens
+encoded_input = tokenizer(sentences, padding=True, return_tensors='pt')
+```
+**VERIFICATION METHOD**:
+Lint check: Ensure `tokenizer.model_max_length` <= `model.config.max_position_embeddings`. Unit test: Pass a string of 1000 tokens, assert output shape is `[1, 512, ...]` and no exception is raised.

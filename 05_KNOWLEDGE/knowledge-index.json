@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:10:03.635Z",
+  "last_updated": "2026-10-15T21:13:13.801Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15935,12 +15935,13 @@
     "learn-huggingface-sentence-transformers-all-minilm-l6-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-sentence-transformers-all-minilm-l6-v2",
+      "source": "sentence-transformers/all-MiniLM-L6-v2",
+      "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "slug": "hf-sentence-transformers-all-minilm-l6-v2",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "b1865445632366a646394df623233c2f9eb817e0cf1794fae86cc8b1ef7c247f",
+      "content_hash": "f00d6c245cf2bc898903809ad0c380b47549807af10621158bb83676e1f2fa42",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -15957,11 +15958,25 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65",
           "verified_at": "2026-10-11T23:14:39.562Z"
+        },
+        {
+          "number": 996,
+          "title": "Masked Mean Pooling Invariant for Variable-Length Sequences",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "L2 Normalization for Cosine Similarity Optimization",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 997,
+          "title": "Tokenizer Truncation and Padding Strategy Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 333,
       "historical_learning_ids": [
@@ -16299,7 +16314,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-10-14T10:34:09.502Z",
+      "verified_at": "2026-10-15T21:13:13.795Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

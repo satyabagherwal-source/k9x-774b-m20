@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-NB6Q",
-    "timestamp": "2026-10-13T12:26:18.338Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv6nnb2a",
-    "contentHash": "0ecae87a1723dd40a17867e14fb31aecc345e8b1fec0cd72c3df5be14698ed6d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-RAST",
     "timestamp": "2026-10-13T12:29:24.461Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "9e021a39a5324e9e04e156cbba994baaac4f61bbbe929fb986c0218f37924259",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-CN6T",
+    "timestamp": "2026-10-15T21:13:13.829Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "f00d6c245cf2bc898903809ad0c380b47549807af10621158bb83676e1f2fa42",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
