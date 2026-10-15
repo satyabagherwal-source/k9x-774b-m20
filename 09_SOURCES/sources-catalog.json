@@ -1538,5 +1538,15 @@
     "contentHash": "b4f2eedaafeac545851abe198648bb1e70bcde2f2d8e00c318fb0eb85bce1057",
     "lastHarvestedAt": "2026-10-15T19:10:04.770Z",
     "learningId": "learn-github-amplifthq-openmeld"
+  },
+  "hf-black-forest-labs-flux-3-image-klein": {
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+    "sourceVersion": "hf-black-forest-labs-flux-3-image-klein",
+    "license": "Open-Source",
+    "contentHash": "670795e9d07edbbceaf1481a85f22ff02f5ddc77be679a8e9ac9e32b43e2d86c",
+    "lastHarvestedAt": "2026-10-15T19:22:22.237Z",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein"
   }
 }

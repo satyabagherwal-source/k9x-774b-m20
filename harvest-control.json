@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-15T18:57:28.118Z",
+  "lastUpdated": "2026-10-15T19:21:34.587Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -216,12 +216,12 @@
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "COOLING_DOWN",
-        "cooldownUntil": "2026-10-15T19:03:26.492Z",
-        "lastActiveAt": "2026-10-15T18:48:26.435Z",
-        "lastHarvestedAt": "2026-10-15T18:31:08.595Z",
-        "totalHarvested": 3530,
-        "lastError": "GitHub/AI Rate Limit on Target"
+        "status": "ACTIVE",
+        "cooldownUntil": null,
+        "lastActiveAt": "2026-10-15T19:22:24.758Z",
+        "lastHarvestedAt": "2026-10-15T19:22:24.758Z",
+        "totalHarvested": 3531,
+        "lastError": null
       },
       {
         "id": "Agent-Epsilon",
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "HEALTHY",
-      "remaining": 4943,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": "2026-10-15T18:56:47.484Z",
-      "reason": null,
+      "status": "EXHAUSTED",
+      "remaining": 0,
+      "resetEpoch": 1792095696521,
+      "resetAt": "2026-10-15T20:21:36.521Z",
+      "trippedAt": "2026-10-15T19:21:21.522Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aui-components%20language%3Atypescript%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=3)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {

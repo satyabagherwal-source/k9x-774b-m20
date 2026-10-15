@@ -21954,5 +21954,22 @@
     "closedIssuesCount": 8,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-black-forest-labs-flux-3-image-klein": {
+    "name": "black-forest-labs/flux-3-image-klein",
+    "officialUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-10-15T19:21:34.588Z",
+    "lastVerified": "2026-10-15T19:21:34.588Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "670795e9d07edbbceaf1481a85f22ff02f5ddc77be679a8e9ac9e32b43e2d86c",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
