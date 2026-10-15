@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T22:37:02.475Z",
+  "last_updated": "2026-10-15T22:40:17.680Z",
   "total_verified_learnings": 169,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15611,12 +15611,13 @@
     "learn-huggingface-qwen-qwen-image-2-1-turbo": {
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-qwen-qwen-image-2.1-turbo",
+      "source": "Qwen/Qwen-Image-2.1-Turbo",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "slug": "hf-qwen-qwen-image-2.1-turbo",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
       "source_version": "hf-qwen-qwen-image-2.1-turbo",
-      "content_hash": "7196350a58645065cfe886da56cb178350710c934f0a3dc82500864f18229b58",
+      "content_hash": "74bb7bfb2e420a702f5640f477637a4bd93cc21d9ac6d194b2627880002372b5",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md",
       "promoted_rules": [
@@ -15654,11 +15655,25 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl",
           "verified_at": "2026-10-12T00:24:26.462Z"
+        },
+        {
+          "number": 1015,
+          "title": "Distilled Model Guidance Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1016,
+          "title": "BF16 Precision & Hardware Affinity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1017,
+          "title": "KV Caching Context Reuse Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 10,
       "historical_learning_ids": [
@@ -15673,7 +15688,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv455o5m",
         "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv4if4tl"
       ],
-      "verified_at": "2026-10-14T11:57:34.893Z",
+      "verified_at": "2026-10-15T22:40:17.673Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
