@@ -17758,5 +17758,17 @@
     "downloads": 5463487,
     "qualityScore": 31530,
     "discoveredAt": "2026-10-15T18:56:50.545Z"
+  },
+  {
+    "name": "meta-models/Muse-Spark-Open-816B-A42B",
+    "fullName": "meta-models/Muse-Spark-Open-816B-A42B",
+    "url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: meta-models/Muse-Spark-Open-816B-A42B (143 likes, 402 downloads)",
+    "likes": 143,
+    "downloads": 402,
+    "qualityScore": 1832,
+    "discoveredAt": "2026-10-15T19:48:18.771Z"
   }
 ]

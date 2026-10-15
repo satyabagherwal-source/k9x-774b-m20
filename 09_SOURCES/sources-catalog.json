@@ -1558,5 +1558,15 @@
     "contentHash": "15875d580f816bee8e3a13accdc1f5bcbc3596dc5b3425917d2b929883a95d4d",
     "lastHarvestedAt": "2026-10-15T19:28:52.721Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1"
+  },
+  "hf-meta-models-muse-spark-open-816b-a42b": {
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+    "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
+    "license": "Open-Source",
+    "contentHash": "16ee29da663cc1c38e3d33061b94b3669470e959d5ad11a5f537308773d1f14b",
+    "lastHarvestedAt": "2026-10-15T19:49:51.033Z",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   }
 }

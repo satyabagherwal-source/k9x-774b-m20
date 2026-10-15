@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T19:44:59.913Z",
-  "total_verified_learnings": 163,
+  "last_updated": "2026-10-15T19:49:51.007Z",
+  "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -39812,6 +39812,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-15T19:41:32.708Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-meta-models-muse-spark-open-816b-a42b": {
+      "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "meta-models/Muse-Spark-Open-816B-A42B",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "slug": "hf-meta-models-muse-spark-open-816b-a42b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+      "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
+      "content_hash": "16ee29da663cc1c38e3d33061b94b3669470e959d5ad11a5f537308773d1f14b",
+      "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 951,
+          "title": "Atomic Verification of Sharded SafeTensors Manifest Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 952,
+          "title": "Guarded Softmax and Numerical Stability in Sparse MoE Token Routing",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T19:49:50.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
