@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T23:36:03.093Z",
+  "last_updated": "2026-10-15T23:39:04.681Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17379,12 +17379,13 @@
     "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl": {
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-xiaomimimo-mimo-v2.6-pro-rl",
+      "source": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "slug": "hf-xiaomimimo-mimo-v2.6-pro-rl",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "0dfa86d81843af4f895e1ad2c27e2b1bbcf0fe0331df0adcadb887af17ad0370",
+      "content_hash": "6b1beec79be63e85edd1a4a649fc2ecae3c62892d322f895533f20ec4f71fae2",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -17405,7 +17406,6 @@
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -17422,7 +17422,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-10-14T13:02:01.728Z",
+      "verified_at": "2026-10-15T23:39:04.674Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

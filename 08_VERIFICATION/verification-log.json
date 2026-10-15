@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-HUG5",
-    "timestamp": "2026-10-13T15:38:00.677Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv6uhudo",
-    "contentHash": "a0ab33dbfb5d135401a37711ab7a074679816d1a23d0d7277764f2905d60eebc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-LUKV",
     "timestamp": "2026-10-13T15:41:07.471Z",
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
     "contentHash": "4e03389530f6853f537e53ff9dbc85e123ab89e91f1170de26389cba3a0d93c8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-K7EX",
+    "timestamp": "2026-10-15T23:39:04.713Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "6b1beec79be63e85edd1a4a649fc2ecae3c62892d322f895533f20ec4f71fae2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
