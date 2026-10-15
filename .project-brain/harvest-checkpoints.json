@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T22:46:41.420Z",
+  "last_updated": "2026-10-15T22:49:46.685Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2191,17 +2191,18 @@
     },
     "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8": {
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-mv82felm",
-      "content_hash": "14e5db31117e43b93566d692ab902ff0686a26878a78b6d2ac3d9a62bdb4c4eb",
-      "verified_at": "2026-10-14T12:07:50.046Z",
+      "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+      "content_hash": "7023fbb3fc2bf0d6d7c7975b48dc1629d385714e09d743379205e3e33bc7c1cd",
+      "verified_at": "2026-10-15T22:49:46.685Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T12:07:50.046Z"
+      "last_updated": "2026-10-15T22:49:46.685Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",

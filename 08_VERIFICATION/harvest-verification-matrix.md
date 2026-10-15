@@ -1490,3 +1490,4 @@
 | `CYCLE-20261015-GLYG` | `2026-10-15T22:40:17.704Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1015, Rule 1016, Rule 1017` | Yes (`74bb7bfb...`) |
 | `CYCLE-20261015-KG2S` | `2026-10-15T22:43:16.708Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`cd1fb557...`) |
 | `CYCLE-20261015-OU11` | `2026-10-15T22:46:41.413Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`4d1d9fcf...`) |
+| `CYCLE-20261015-SSZB` | `2026-10-15T22:49:46.679Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`7023fbb3...`) |
