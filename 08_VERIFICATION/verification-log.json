@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-C7MA",
-    "timestamp": "2026-10-13T15:05:38.194Z",
-    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv6tc7j6",
-    "contentHash": "d978e6e33ea08d05315275483e7a9ef8afa3a2299150f922eae3dd43b3ab1ac7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-J76Y",
     "timestamp": "2026-10-13T15:11:04.234Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7492,6 +7477,21 @@
     "contentHash": "33ad00f5cdfc5568fa3a53b71ca07cac7c6a38a1040a1b91a68d3fe3923d2cc8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-O3P4",
+    "timestamp": "2026-10-15T23:14:06.904Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "3f6280c8ff0f24bb8af3e4b75f3e760f44f31209c956a7abbe6212e333544c0a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
