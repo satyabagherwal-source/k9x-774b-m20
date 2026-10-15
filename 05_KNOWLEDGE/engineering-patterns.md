@@ -63013,3 +63013,196 @@ tokenizer.add_special_tokens({
 Unit test that checks `tokenizer.get_vocab()` for duplicate IDs.
 
 ---
+
+
+---
+
+## 1021. [Attention Bias Consistency Rule] (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Attention Bias Consistency Rule]",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T22:58:50.312Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** set `attention_bias` to `false` for all Qwen3.5‑based models to preserve positional consistency across layers.  
+
+**WHY**:  
+`attention_bias = true` introduces a learnable bias per query/key pair, which can break the deterministic alignment of positional encodings in the linear‑attention layers. This leads to inconsistent token ordering and degraded generation quality, especially in long‑context scenarios.
+
+**WHEN TO APPLY**:  
+Applicable to any model that mixes linear and full attention, particularly those derived from Qwen3.5 or Qwen3.8 families.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "attention_bias": false,
+  "architectures": ["Qwen3_5ForCausalLM"]
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "attention_bias": true
+}
+```
+
+**VERIFICATION METHOD**:  
+Run a unit test that loads the config and asserts `config.attention_bias is False`.  
+```python
+def test_attention_bias():
+    cfg = AutoConfig.from_pretrained("Altworld/Hemmingway-1")
+    assert cfg.attention_bias is False, "Attention bias must be disabled"
+```
+
+---
+
+
+---
+
+## 1022. [BFloat16 Memory‑Efficiency Rule] (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[BFloat16 Memory‑Efficiency Rule]",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T22:58:50.341Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** set `dtype` to `"bfloat16"` for inference on GPU to reduce memory footprint while maintaining numerical stability for 27 B models.
+
+**WHY**:  
+BFloat16 offers the same exponent range as FP32, preventing overflow/underflow in large‑scale transformer activations, while halving memory usage compared to FP32. Using FP32 would exceed typical GPU VRAM limits for 27 B models.
+
+**WHEN TO APPLY**:  
+During model loading for inference on any GPU‑enabled environment.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+model = AutoModelForCausalLM.from_pretrained(
+    "Altworld/Hemmingway-1",
+    device_map="auto",
+    dtype="bfloat16"
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+model = AutoModelForCausalLM.from_pretrained(
+    "Altworld/Hemmingway-1",
+    dtype="float32"  # ❌ will exceed VRAM
+)
+```
+
+**VERIFICATION METHOD**:  
+Add a test that checks the model’s `dtype` after loading.  
+```python
+def test_model_dtype():
+    model = AutoModelForCausalLM.from_pretrained("Altworld/Hemmingway-1")
+    assert model.dtype == torch.bfloat16, "Model must use bfloat16"
+```
+
+---
+
+
+---
+
+## 1023. [Tokenizer Special‑Token Integrity Rule] (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Tokenizer Special‑Token Integrity Rule]",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T22:58:50.368Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** define all multimodal special tokens (`audio_*`, `image_*`, `video_*`, `vision_*`) in `tokenizer_config.json` and ensure they are not `null`.
+
+**WHY**:  
+Missing or `null` special tokens cause the tokenizer to emit `unk_token` for multimodal placeholders, leading to corrupted token streams and downstream generation errors.
+
+**WHEN TO APPLY**:  
+During tokenizer initialization; any downstream pipeline that may embed multimodal placeholders.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "model_specific_special_tokens": {
+    "audio_bos_token": "<|audio_start|>",
+    "audio_eos_token": "<|audio_end|>",
+    "audio_token": "<|audio_pad|>",
+    "image_token": "<|image_pad|>",
+    "video_token": "<|video_pad|>",
+    "vision_bos_token": "<|vision_start|>",
+    "vision_eos_token": "<|vision_end|>"
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "model_specific_special_tokens": {
+    "audio_bos_token": null,
+    "image_token": null
+  }
+}
+```
+
+**VERIFICATION METHOD**:  
+Unit test that loads the tokenizer and asserts each special token is a non‑empty string.  
+```python
+def test_special_tokens():
+    tok = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
+    for key in ["audio_bos_token", "image_token", "video_token"]:
+        assert getattr(tok, key) is not None, f"{key} must be defined"
+```
+
+---

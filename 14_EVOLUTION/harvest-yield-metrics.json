@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T22:55:51.847Z",
-  "total_cycles_completed": 1470,
-  "total_learnings_persisted": 1470,
-  "total_rules_promoted": 796,
+  "last_updated": "2026-10-15T22:58:50.417Z",
+  "total_cycles_completed": 1471,
+  "total_learnings_persisted": 1471,
+  "total_rules_promoted": 799,
   "history": [
-    {
-      "timestamp": "2026-10-14T09:14:22.444Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv7w8c1d",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T09:17:15.061Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T22:55:51.847Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T22:58:50.417Z",
+      "repository": "Altworld/Hemmingway-1",
+      "learningId": "learn-huggingface-altworld-hemmingway-1",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
