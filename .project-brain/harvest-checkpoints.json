@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T22:43:16.713Z",
+  "last_updated": "2026-10-15T22:46:41.420Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -464,17 +464,18 @@
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-supersoniclabs-julia-1-mv829yi1",
-      "content_hash": "daecc2e82accb8e9f607b06ab592d37bcaa9c3cafc2dd44aba6eac5d7767a546",
-      "verified_at": "2026-10-14T12:03:35.868Z",
+      "learning_id": "learn-huggingface-supersoniclabs-julia-1",
+      "content_hash": "4d1d9fcf8d6b2e038280b64d78f6293cbb378dfb89bfa8c36a736edae635f6a5",
+      "verified_at": "2026-10-15T22:46:41.420Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T12:03:35.868Z"
+      "last_updated": "2026-10-15T22:46:41.420Z"
     },
     "apple/LensVLM-9B": {
       "repository": "apple/LensVLM-9B",

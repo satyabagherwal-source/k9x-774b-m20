@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-KYLV",
-    "timestamp": "2026-10-13T14:16:27.187Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv6rkyiu",
-    "contentHash": "5f1ce5247a833b8b69aa2bc075b6265d2a3475512cfd73bcf92c6db3761db756",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-S1H5",
     "timestamp": "2026-10-13T14:21:57.497Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
     "contentHash": "cd1fb557b4abd9f4acc4c3f3166f36cf4fc6c6db8209bd0b640572948b83af9a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-OU11",
+    "timestamp": "2026-10-15T22:46:41.413Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "4d1d9fcf8d6b2e038280b64d78f6293cbb378dfb89bfa8c36a736edae635f6a5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
