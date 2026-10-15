@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:53:08.704Z",
-  "total_cycles_completed": 1450,
-  "total_learnings_persisted": 1450,
+  "last_updated": "2026-10-15T21:56:05.645Z",
+  "total_cycles_completed": 1451,
+  "total_learnings_persisted": 1451,
   "total_rules_promoted": 781,
   "history": [
-    {
-      "timestamp": "2026-10-14T06:40:49.456Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv7qqvaf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T06:43:56.901Z",
       "repository": "bigscience/bloom",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T21:53:08.704Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T21:56:05.645Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
