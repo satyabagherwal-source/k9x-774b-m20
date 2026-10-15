@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-48A9",
-    "timestamp": "2026-10-13T15:55:25.041Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv6v4878",
-    "contentHash": "04fd137e8ddcbe44b44925bf572594eb5672740b4b4aaf85f29254f829c1c8d8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-87U1",
     "timestamp": "2026-10-13T15:58:31.081Z",
     "repository": "openai/gpt-oss-120b",
@@ -7490,6 +7475,21 @@
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "contentHash": "ed89c39398faf0985749a312e0547f876c63d00382006daf7c60a30d6c71af79",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-4HDN",
+    "timestamp": "2026-10-15T23:54:50.747Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "8b356c8bb0d2a4d621de64dc8c67e33714978a2867a275601830de43aa6fee89",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
