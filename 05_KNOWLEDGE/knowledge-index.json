@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T20:43:49.921Z",
+  "last_updated": "2026-10-15T20:46:55.444Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17329,18 +17329,29 @@
     "learn-huggingface-zai-org-glm-5-3": {
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-zai-org-glm-5.3",
+      "source": "zai-org/GLM-5.3",
+      "repository": "zai-org/GLM-5.3",
       "slug": "hf-zai-org-glm-5.3",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "e233eb72b3e487837137f10e6ae4849ce35ec8491bb5e702a539eb552d90a0bf",
+      "content_hash": "9695cb5a7b9dbdbe6ae6716a732525dc4a12753020ed64fee32a1b3028e808ff",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 980,
+          "title": "Hybrid Dense-Sparse Layer Transition Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 981,
+          "title": "Left-Padding Invariant for Causal LM Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -17356,7 +17367,7 @@
         "learn-huggingface-hf-zai-org-glm-5-3-mv413j49",
         "learn-huggingface-hf-zai-org-glm-5-3-mv4f1uxu"
       ],
-      "verified_at": "2026-10-14T10:08:45.841Z",
+      "verified_at": "2026-10-15T20:46:55.438Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

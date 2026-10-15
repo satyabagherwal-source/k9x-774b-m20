@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-14T16:03:53.815Z",
+  "last_updated": "2026-10-15T20:46:55.473Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1322,6 +1322,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv8auzfh"
+    },
+    {
+      "id": "CD-ETBL",
+      "directive_title": "Multi-EOS Token Handling Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "zai-org/GLM-5.3",
+      "source_commit": "hf-zai-org-g",
+      "date_staged": "2026-10-15",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHEN TO APPLY** context",
+      "learning_id": "learn-huggingface-zai-org-glm-5-3"
     }
   ]
 }

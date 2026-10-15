@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T20:43:49.954Z",
-  "total_cycles_completed": 1428,
-  "total_learnings_persisted": 1428,
-  "total_rules_promoted": 748,
+  "last_updated": "2026-10-15T20:46:55.474Z",
+  "total_cycles_completed": 1429,
+  "total_learnings_persisted": 1429,
+  "total_rules_promoted": 750,
   "history": [
-    {
-      "timestamp": "2026-10-14T05:32:16.625Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv7oapsi",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T05:35:20.402Z",
       "repository": "BAAI/bge-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-15T20:43:49.954Z",
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-15T20:46:55.474Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-8P7T",
-    "timestamp": "2026-10-13T11:46:57.065Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv6m8p2n",
-    "contentHash": "31da1dd8b21e38580e54d5b66a83cb4e53fa4d7a52e8022c37f69954c5779747",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-CHEI",
     "timestamp": "2026-10-13T11:49:53.562Z",
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-large-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
     "contentHash": "3bccd6215feadff293324141aafcbfd340916267e437af5c456fcb6304d3cfa8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-ETBH",
+    "timestamp": "2026-10-15T20:46:55.469Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "9695cb5a7b9dbdbe6ae6716a732525dc4a12753020ed64fee32a1b3028e808ff",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {
