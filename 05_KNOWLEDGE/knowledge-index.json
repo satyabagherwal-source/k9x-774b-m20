@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T19:22:22.214Z",
-  "total_verified_learnings": 161,
+  "last_updated": "2026-10-15T19:28:52.695Z",
+  "total_verified_learnings": 162,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -39704,6 +39704,44 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-15T19:22:22.211Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-pyannote-speaker-diarization-community-1": {
+      "learning_id": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "pyannote/speaker-diarization-community-1",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "slug": "hf-pyannote-speaker-diarization-community-1",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
+      "source_version": "hf-pyannote-speaker-diarization-community-1",
+      "content_hash": "15875d580f816bee8e3a13accdc1f5bcbc3596dc5b3425917d2b929883a95d4d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 941,
+          "title": "Model Artifact Integrity & Serialization Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 942,
+          "title": "Inference Pipeline Determinism & Reproducibility",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-15T19:28:52.687Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
