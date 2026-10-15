@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-15T21:44:05.495Z",
+  "last_updated": "2026-10-15T21:47:17.998Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -239,17 +239,18 @@
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv806dfb",
-      "content_hash": "26cc5e0704940739363a8782ad0810aeee87c22b62f53dd39c1c17a36d02c94f",
-      "verified_at": "2026-10-14T11:04:49.436Z",
+      "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "content_hash": "c47edcd3c388b3b4dafedc0c04d19bed240342ee06a951f0c0ed277bc40b17d9",
+      "verified_at": "2026-10-15T21:47:17.998Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T11:04:49.436Z"
+      "last_updated": "2026-10-15T21:47:17.998Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",

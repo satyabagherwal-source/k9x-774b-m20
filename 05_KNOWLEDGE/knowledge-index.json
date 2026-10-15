@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:44:05.451Z",
+  "last_updated": "2026-10-15T21:47:17.968Z",
   "total_verified_learnings": 166,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15269,12 +15269,13 @@
     "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf": {
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "source": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "slug": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "26cc5e0704940739363a8782ad0810aeee87c22b62f53dd39c1c17a36d02c94f",
+      "content_hash": "c47edcd3c388b3b4dafedc0c04d19bed240342ee06a951f0c0ed277bc40b17d9",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -15305,11 +15306,25 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
           "verified_at": "2026-10-11T17:31:18.086Z"
+        },
+        {
+          "number": 820,
+          "title": "Uncensored Model Safety Boundary & Content Filtering",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1005,
+          "title": "LLM Artifact Integrity & Quantization Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1006,
+          "title": "Inference Engine Decoupling & Format Abstraction",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -15326,7 +15341,7 @@
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
       ],
-      "verified_at": "2026-10-14T11:04:49.392Z",
+      "verified_at": "2026-10-15T21:47:17.963Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
