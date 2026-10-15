@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-15T21:07:00.425Z",
+  "last_updated": "2026-10-15T21:10:03.635Z",
   "total_verified_learnings": 164,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -8974,18 +8974,18 @@
     "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf": {
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
+      "source": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "slug": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "e87b683fd8f95b7fa393932fddce8824447a28f07db17679088d4c59e4606813",
+      "content_hash": "9e021a39a5324e9e04e156cbba994baaac4f61bbbe929fb986c0218f37924259",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 334,
       "historical_learning_ids": [
@@ -9324,7 +9324,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-10-12T05:44:53.153Z",
+      "verified_at": "2026-10-15T21:10:03.629Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

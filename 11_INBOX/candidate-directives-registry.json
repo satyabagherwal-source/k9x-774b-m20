@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T20:46:55.473Z",
+  "last_updated": "2026-10-15T21:10:03.675Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1333,6 +1333,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHEN TO APPLY** context",
       "learning_id": "learn-huggingface-zai-org-glm-5-3"
+    },
+    {
+      "id": "CD-8KGR",
+      "directive_title": "Binary Artifact Versioning & Format Compatibility Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_commit": "hf-abenzerps",
+      "date_staged": "2026-10-15",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
+    },
+    {
+      "id": "CD-8KGR",
+      "directive_title": "Memory Footprint vs. Quality Trade-off Documentation Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_commit": "hf-abenzerps",
+      "date_staged": "2026-10-15",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
+    },
+    {
+      "id": "CD-8KGR",
+      "directive_title": "Format-Specific Optimization Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "source_commit": "hf-abenzerps",
+      "date_staged": "2026-10-15",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
     }
   ]
 }
