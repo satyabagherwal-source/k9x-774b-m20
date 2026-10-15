@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-5H9W",
-    "timestamp": "2026-10-13T14:04:24.884Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv6r5h7b",
-    "contentHash": "398cc2d1f2831ea15b1ba6b9927d12046b89c251d1d4024fcadff5beadc0997a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-969K",
     "timestamp": "2026-10-13T14:07:17.240Z",
     "repository": "google/embeddinggemma-2",
@@ -7490,6 +7475,21 @@
     "repository": "Lightricks/LTX-2.5",
     "learningId": "learn-huggingface-lightricks-ltx-2-5",
     "contentHash": "150b25f9c21a24917ba1a6d429463788097e949b2403268840dab6ddf9507034",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-858G",
+    "timestamp": "2026-10-15T22:33:42.784Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+    "contentHash": "7ce34040cffa61581faa6d858d0bcef92ab4f97ab5163078a62557d56f4c047f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

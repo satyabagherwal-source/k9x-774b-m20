@@ -1485,3 +1485,4 @@
 | `CYCLE-20261015-VZFT` | `2026-10-15T22:24:15.401Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`553921df...`) |
 | `CYCLE-20261015-0198` | `2026-10-15T22:27:24.380Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`087e1506...`) |
 | `CYCLE-20261015-46PH` | `2026-10-15T22:30:38.069Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`150b25f9...`) |
+| `CYCLE-20261015-858G` | `2026-10-15T22:33:42.784Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`7ce34040...`) |
