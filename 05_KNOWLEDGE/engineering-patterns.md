@@ -63414,3 +63414,172 @@ When loading, the pipeline merges the generation config with the model config bu
 Integration test that loads the model with a custom tokenizer and asserts that the `bos_token_id` used during generation matches the tokenizer’s `bos_token_id`, not the hard‑coded value.
 
 ---
+
+
+---
+
+## 1027. Atomic Model Artifact Integrity (Harvested from Comfy-Org/Qwen-Image-2.1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Atomic Model Artifact Integrity",
+  "source": "Comfy-Org/Qwen-Image-2.1",
+  "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+  "source_version": "hf-comfy-org-qwen-image-2.1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T23:17:23.421Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing machine learning models for inference engines that do not support sharded loading, **MUST** package weights into a single atomic file (e.g., `.safetensors`) and **MUST NOT** rely on external config files for weight mapping if the target engine expects self-describing tensors.
+**WHY**:
+Sharded models (e.g., `model-00001-of-00004.safetensors`) introduce race conditions in file I/O, partial load failures, and version mismatch risks between shards. Atomic files ensure that if the file is corrupted, the entire load fails cleanly rather than resulting in a partially initialized neural network with silent numerical instability.
+**WHEN TO APPLY**:
+Any ML model distribution for edge devices, single-GPU inference, or engines like ComfyUI, ONNX Runtime, or TensorRT that prefer monolithic weight files.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudo-code for model packaging
+import safetensors.torch
+
+def package_model(sharded_weights: dict, output_path: str):
+    # Merge all shards into a single state_dict
+    merged_state_dict = {}
+    for shard in sharded_weights:
+        merged_state_dict.update(shard)
+    
+    # Save as atomic safetensors
+    safetensors.torch.save_file(merged_state_dict, output_path)
+    
+    # Verify integrity
+    loaded = safetensors.torch.load_file(output_path)
+    assert len(loaded) == len(merged_state_dict), "Integrity check failed"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Distributing sharded files without a manifest
+# This leads to "KeyError: 'layer.0.weight'" if one shard is missing
+files_to_distribute = [
+    "model-00001-of-00004.safetensors",
+    "model-00002-of-00004.safetensors",
+    # ... user might forget to download all shards
+]
+```
+**VERIFICATION METHOD**:
+1.  **Checksum Validation:** Compute SHA256 of the final `.safetensors` file and store it in the repo metadata.
+2.  **Load Test:** In CI, attempt to load the model into a dummy inference engine and assert that all expected tensor keys are present.
+
+
+---
+
+## 1028. Quantization Variant Separation (Harvested from Comfy-Org/Qwen-Image-2.1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization Variant Separation",
+  "source": "Comfy-Org/Qwen-Image-2.1",
+  "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+  "source_version": "hf-comfy-org-qwen-image-2.1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T23:17:23.453Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When providing quantized model variants (e.g., BF16, INT8, W4A8), **MUST** store them in the same directory with distinct, explicit suffixes and **MUST NOT** overwrite the base model. **MUST** document the exact quantization algorithm (e.g., `convrot`) in the filename or metadata.
+**WHY**:
+Users often mix and match components (e.g., loading a BF16 VAE with an INT8 UNet). If filenames are ambiguous, users may load incompatible precision pairs, leading to `dtype mismatch` errors or silent precision loss. Explicit suffixes prevent this.
+**WHEN TO APPLY**:
+Any ML repository offering multiple precision levels for the same architecture.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```text
+models/
+├── diffusion_models/
+│   ├── qwen_image_2.1_bf16.safetensors       # Base
+│   ├── qwen_image_2.1_int8_convrot.safetensors # Quantized
+│   └── qwen_image_2.1_w4a8.safetensors        # Aggressive Quantization
+```
+**NEGATIVE CONSTRAINT**:
+```text
+models/
+├── diffusion_models/
+│   ├── qwen_image_2.1.safetensors       # Ambiguous: Which precision?
+│   ├── qwen_image_2.1_quant.safetensors # Ambiguous: What quantization?
+```
+**VERIFICATION METHOD**:
+1.  **Filename Lint:** A CI script that checks all `.safetensors` files in `diffusion_models/` for a valid precision suffix (`bf16`, `fp16`, `int8`, `w4a8`).
+2.  **Metadata Check:** Ensure `config.json` (if present) matches the filename precision.
+
+
+---
+
+## 1029. Decoupled Text Encoder & Diffusion Model Loading (Harvested from Comfy-Org/Qwen-Image-2.1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Decoupled Text Encoder & Diffusion Model Loading",
+  "source": "Comfy-Org/Qwen-Image-2.1",
+  "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+  "source_version": "hf-comfy-org-qwen-image-2.1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-15T23:17:23.486Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For models with separate text encoders and diffusion backbones, **MUST** store them in distinct directories (`text_encoders/` vs `diffusion_models/`) and **MUST NOT** bundle them into a single file unless the inference engine explicitly supports multi-component single-file loading.
+**WHY**:
+Text encoders (LLMs) and diffusion models (U-Nets) have different update frequencies, memory footprints, and quantization strategies. Bundling them prevents users from swapping in a lighter text encoder (e.g., for prompt enhancement) without re-downloading the entire diffusion model.
+**WHEN TO APPLY**:
+Any multimodal generation model (Text-to-Image, Text-to-Video) where the text encoder is a large LLM.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# ComfyUI-style loading logic
+def load_model_components(model_dir: str):
+    diffusion_model = load_safetensors(f"{model_dir}/diffusion_models/qwen_image_2.1_bf16.safetensors")
+    text_encoder = load_safetensors(f"{model_dir}/text_encoders/qwen3vl_8b_bf16.safetensors")
+    vae = load_safetensors(f"{model_dir}/vae/qwen_image_2.1_vae_bf16.safetensors")
+    
+    # Verify compatibility
+    assert diffusion_model.config.text_encoder_type == text_encoder.config.type, "Mismatched encoder"
+    return diffusion_model, text_encoder, vae
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Bundling everything
+# This forces users to download 20GB even if they only want to swap the VAE
+full_model = load_safetensors("qwen_image_2.1_full_bundle.safetensors")
+```
+**VERIFICATION METHOD**:
+1.  **Directory Structure Test:** Assert that `text_encoders/` and `diffusion_models/` are separate directories.
+2.  **Cross-Reference Check:** Ensure that every diffusion model has a corresponding text encoder in the repo.

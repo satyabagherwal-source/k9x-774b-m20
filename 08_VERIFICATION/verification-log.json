@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-J76Y",
-    "timestamp": "2026-10-13T15:11:04.234Z",
-    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-    "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv6tj73m",
-    "contentHash": "cd22fb32be523642796a0c4e7c586cbfe152c1560d080f74956c0eca64344576",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-N8XR",
     "timestamp": "2026-10-13T15:14:13.119Z",
     "repository": "amazon/chronos-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "3f6280c8ff0f24bb8af3e4b75f3e760f44f31209c956a7abbe6212e333544c0a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261015-SBF8",
+    "timestamp": "2026-10-15T23:17:23.540Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "9da5d899b2d0f4631ae938e4613843753fb577d14725fb16071d585c59ec8cab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
