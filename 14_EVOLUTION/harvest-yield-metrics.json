@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T16:18:37.406Z",
-  "total_cycles_completed": 1772,
-  "total_learnings_persisted": 1772,
-  "total_rules_promoted": 958,
+  "last_updated": "2026-10-16T16:22:55.672Z",
+  "total_cycles_completed": 1773,
+  "total_learnings_persisted": 1773,
+  "total_rules_promoted": 961,
   "history": [
-    {
-      "timestamp": "2026-10-16T04:23:03.780Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T04:25:53.832Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1403,6 +1396,13 @@
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T16:22:55.672Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
