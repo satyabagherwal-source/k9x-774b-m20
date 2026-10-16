@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-DKYH",
-    "timestamp": "2026-10-13T21:38:36.761Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv77dktm",
-    "contentHash": "1a927ce7189aa663b9f7991e3ae81f9923010bab13b6035ae82cb16359a2f60a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-HBC4",
     "timestamp": "2026-10-13T21:41:30.916Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "81c6d704e8e91d2df023023f28336e59b47a1edf2c554b9e119702d8a5f68957",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-PDGW",
+    "timestamp": "2026-10-16T04:51:01.616Z",
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+    "contentHash": "6653125b4d5a80d2126af34668819531fb7e3c17470a40be31c945b49f05cfd7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
