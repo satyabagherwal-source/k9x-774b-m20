@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T15:03:16.352Z",
-  "total_cycles_completed": 1752,
-  "total_learnings_persisted": 1752,
+  "last_updated": "2026-10-16T15:06:15.007Z",
+  "total_cycles_completed": 1753,
+  "total_learnings_persisted": 1753,
   "total_rules_promoted": 951,
   "history": [
-    {
-      "timestamp": "2026-10-16T03:13:45.301Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T03:17:01.751Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T15:03:16.352Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T15:06:15.007Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

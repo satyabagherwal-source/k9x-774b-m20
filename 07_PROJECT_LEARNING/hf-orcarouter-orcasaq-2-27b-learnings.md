@@ -3,7 +3,7 @@
 > **Source Version**: `hf-orcaroute`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-16T06:39:40.241Z  
+> **Timestamp**: 2026-10-16T15:06:14.954Z  
 > **Learning ID**: `learn-huggingface-orcarouter-orcasaq-2-27b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/orcarouter/OrcaSAQ-2-27B](https://huggingface.co/orcarouter/OrcaSAQ-2-27B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-16T06:39:39.367Z  
+> **Harvest Timestamp**: 2026-10-16T15:06:14.068Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5719 downloads | 280 likes
+- **Stars / Engagement**: 5784 downloads | 281 likes
 
 ---
 
