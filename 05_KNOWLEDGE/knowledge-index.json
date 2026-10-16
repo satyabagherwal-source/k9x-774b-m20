@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T15:49:51.378Z",
+  "last_updated": "2026-10-16T15:53:02.693Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9503,7 +9503,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "c0c026f2336935196f480a0c4ede2e75a532655d6b2fdbd71556a73db758108e",
+      "content_hash": "c20f51b3ac5d830176a6d35ea4641478c45890f86effc04fd63809321c77d113",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [
@@ -9533,7 +9533,7 @@
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz"
       ],
-      "verified_at": "2026-10-16T07:26:57.648Z",
+      "verified_at": "2026-10-16T15:53:02.684Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
