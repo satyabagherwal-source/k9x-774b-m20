@@ -47218,6 +47218,398 @@
       "learningFile": "07_PROJECT_LEARNING/nuxt-nuxt-learnings.md",
       "harvestDate": "2026-10-16T15:28:11.344Z",
       "commitHash": "58124741a02e73debc7f304c78aef097151d6cda"
+    },
+    "sveltejs/kit": {
+      "name": "sveltejs/kit",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/sveltejs/kit",
+      "learningFile": "07_PROJECT_LEARNING/sveltejs-kit-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "2506bc86"
+    },
+    "unjs/unhead": {
+      "name": "unjs/unhead",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/unjs/unhead",
+      "learningFile": "07_PROJECT_LEARNING/unjs-unhead-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "a82348da"
+    },
+    "staylor/react-helmet-async": {
+      "name": "staylor/react-helmet-async",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/staylor/react-helmet-async",
+      "learningFile": "07_PROJECT_LEARNING/staylor-react-helmet-async-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "131d2799"
+    },
+    "jekyll/jekyll": {
+      "name": "jekyll/jekyll",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/jekyll/jekyll",
+      "learningFile": "07_PROJECT_LEARNING/jekyll-jekyll-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "dfd13c7e"
+    },
+    "gohugoio/hugo": {
+      "name": "gohugoio/hugo",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/gohugoio/hugo",
+      "learningFile": "07_PROJECT_LEARNING/gohugoio-hugo-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "85fb23f1"
+    },
+    "hexojs/hexo": {
+      "name": "hexojs/hexo",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/hexojs/hexo",
+      "learningFile": "07_PROJECT_LEARNING/hexojs-hexo-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "5cf82715"
+    },
+    "11ty/eleventy": {
+      "name": "11ty/eleventy",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/11ty/eleventy",
+      "learningFile": "07_PROJECT_LEARNING/11ty-eleventy-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "7b233a75"
+    },
+    "remix-run/react-router": {
+      "name": "remix-run/react-router",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/remix-run/react-router",
+      "learningFile": "07_PROJECT_LEARNING/remix-run-react-router-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "90d81577"
+    },
+    "wordpress/wordpress-develop": {
+      "name": "WordPress/wordpress-develop",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/WordPress/wordpress-develop",
+      "learningFile": "07_PROJECT_LEARNING/wordpress-develop-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "17a6ba23"
+    },
+    "facebook/docusaurus": {
+      "name": "facebook/docusaurus",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/facebook/docusaurus",
+      "learningFile": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "5fc1be5c"
+    },
+    "schemaorg/schemaorg": {
+      "name": "schemaorg/schemaorg",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/schemaorg/schemaorg",
+      "learningFile": "07_PROJECT_LEARNING/schemaorg-schemaorg-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "6f38a9ab"
+    },
+    "google/schema-dts": {
+      "name": "google/schema-dts",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/google/schema-dts",
+      "learningFile": "07_PROJECT_LEARNING/google-schema-dts-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "037adca1"
+    },
+    "schemastore/schemastore": {
+      "name": "SchemaStore/schemastore",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/SchemaStore/schemastore",
+      "learningFile": "07_PROJECT_LEARNING/schemastore-schemastore-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "eb945785"
+    },
+    "google/structured-data-testing-tool": {
+      "name": "google/structured-data-testing-tool",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/google/structured-data-testing-tool",
+      "learningFile": "07_PROJECT_LEARNING/google-structured-data-testing-tool-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "83921820"
+    },
+    "googlechrome/web-vitals": {
+      "name": "GoogleChrome/web-vitals",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/GoogleChrome/web-vitals",
+      "learningFile": "07_PROJECT_LEARNING/googlechrome-web-vitals-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "d90bf530"
+    },
+    "googlechrome/lighthouse-ci": {
+      "name": "GoogleChrome/lighthouse-ci",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/GoogleChrome/lighthouse-ci",
+      "learningFile": "07_PROJECT_LEARNING/googlechrome-lighthouse-ci-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "772c9a93"
+    },
+    "googlechromelabs/psi": {
+      "name": "GoogleChromeLabs/psi",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/GoogleChromeLabs/psi",
+      "learningFile": "07_PROJECT_LEARNING/googlechromelabs-psi-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "57a0ea63"
+    },
+    "googlechrome/web.dev": {
+      "name": "GoogleChrome/web.dev",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/GoogleChrome/web.dev",
+      "learningFile": "07_PROJECT_LEARNING/googlechrome-web-dev-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "a64d870f"
+    },
+    "googlechrome/crux": {
+      "name": "GoogleChrome/CrUX",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/GoogleChrome/CrUX",
+      "learningFile": "07_PROJECT_LEARNING/googlechrome-crux-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "b62877a0"
+    },
+    "webhintio/hint": {
+      "name": "webhintio/hint",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/webhintio/hint",
+      "learningFile": "07_PROJECT_LEARNING/webhintio-hint-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "62bfce68"
+    },
+    "googleapis/google-api-nodejs-client": {
+      "name": "googleapis/google-api-nodejs-client",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/googleapis/google-api-nodejs-client",
+      "learningFile": "07_PROJECT_LEARNING/googleapis-google-api-nodejs-client-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "992a0e28"
+    },
+    "googleapis/google-api-python-client": {
+      "name": "googleapis/google-api-python-client",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/googleapis/google-api-python-client",
+      "learningFile": "07_PROJECT_LEARNING/googleapis-google-api-python-client-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "6ee20fa2"
+    },
+    "googleapis/google-auth-library-nodejs": {
+      "name": "googleapis/google-auth-library-nodejs",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/googleapis/google-auth-library-nodejs",
+      "learningFile": "07_PROJECT_LEARNING/googleapis-google-auth-library-nodejs-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "a95b8272"
+    },
+    "googleapis/google-auth-library-python": {
+      "name": "googleapis/google-auth-library-python",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/googleapis/google-auth-library-python",
+      "learningFile": "07_PROJECT_LEARNING/googleapis-google-auth-library-python-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "2ea24b03"
+    },
+    "googleapis/google-api-php-client": {
+      "name": "googleapis/google-api-php-client",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/googleapis/google-api-php-client",
+      "learningFile": "07_PROJECT_LEARNING/googleapis-google-api-php-client-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "31b577e7"
+    },
+    "googleapis/google-api-ruby-client": {
+      "name": "googleapis/google-api-ruby-client",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/googleapis/google-api-ruby-client",
+      "learningFile": "07_PROJECT_LEARNING/googleapis-google-api-ruby-client-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "4e26e9bc"
+    },
+    "googleapis/google-api-go-client": {
+      "name": "googleapis/google-api-go-client",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/googleapis/google-api-go-client",
+      "learningFile": "07_PROJECT_LEARNING/googleapis-google-api-go-client-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "d5374f16"
+    },
+    "googleapis/google-api-java-client": {
+      "name": "googleapis/google-api-java-client",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/googleapis/google-api-java-client",
+      "learningFile": "07_PROJECT_LEARNING/googleapis-google-api-java-client-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "e0db26df"
+    },
+    "google/robotstxt": {
+      "name": "google/robotstxt",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/google/robotstxt",
+      "learningFile": "07_PROJECT_LEARNING/google-robotstxt-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "22b355ff"
+    },
+    "ekalinin/sitemap.js": {
+      "name": "ekalinin/sitemap.js",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/ekalinin/sitemap.js",
+      "learningFile": "07_PROJECT_LEARNING/ekalinin-sitemap-js-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "523f8ae2"
+    },
+    "prerender/prerender": {
+      "name": "prerender/prerender",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/prerender/prerender",
+      "learningFile": "07_PROJECT_LEARNING/prerender-prerender-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "c1202e7a"
+    },
+    "puppeteer/puppeteer": {
+      "name": "puppeteer/puppeteer",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/puppeteer/puppeteer",
+      "learningFile": "07_PROJECT_LEARNING/puppeteer-puppeteer-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "38b931dc"
+    },
+    "microsoft/playwright": {
+      "name": "microsoft/playwright",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/microsoft/playwright",
+      "learningFile": "07_PROJECT_LEARNING/microsoft-playwright-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "05e1ea16"
+    },
+    "cheeriojs/cheerio": {
+      "name": "cheeriojs/cheerio",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/cheeriojs/cheerio",
+      "learningFile": "07_PROJECT_LEARNING/cheeriojs-cheerio-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "5ecf91a2"
+    },
+    "jsdom/jsdom": {
+      "name": "jsdom/jsdom",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/jsdom/jsdom",
+      "learningFile": "07_PROJECT_LEARNING/jsdom-jsdom-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "992a0134"
+    },
+    "postlight/parser": {
+      "name": "postlight/parser",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/postlight/parser",
+      "learningFile": "07_PROJECT_LEARNING/postlight-parser-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "57df8951"
+    },
+    "pa11y/pa11y": {
+      "name": "pa11y/pa11y",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/pa11y/pa11y",
+      "learningFile": "07_PROJECT_LEARNING/pa11y-pa11y-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "4df5e55e"
+    },
+    "dequelabs/axe-core": {
+      "name": "dequelabs/axe-core",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/dequelabs/axe-core",
+      "learningFile": "07_PROJECT_LEARNING/dequelabs-axe-core-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "16d6ef7d"
+    },
+    "sitespeedio/sitespeed.io": {
+      "name": "sitespeedio/sitespeed.io",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/sitespeedio/sitespeed.io",
+      "learningFile": "07_PROJECT_LEARNING/sitespeedio-sitespeed-io-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "1b8966c8"
+    },
+    "sitespeedio/browsertime": {
+      "name": "sitespeedio/browsertime",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/sitespeedio/browsertime",
+      "learningFile": "07_PROJECT_LEARNING/sitespeedio-browsertime-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "b12a878d"
+    },
+    "addyosmani/critical": {
+      "name": "addyosmani/critical",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/addyosmani/critical",
+      "learningFile": "07_PROJECT_LEARNING/addyosmani-critical-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "83f5a54d"
+    },
+    "vercel/satori": {
+      "name": "vercel/satori",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/vercel/satori",
+      "learningFile": "07_PROJECT_LEARNING/vercel-satori-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "0b2e88a3"
+    },
+    "hexojs/hexo-generator-sitemap": {
+      "name": "hexojs/hexo-generator-sitemap",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/hexojs/hexo-generator-sitemap",
+      "learningFile": "07_PROJECT_LEARNING/hexojs-hexo-generator-sitemap-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "e5b22b10"
+    },
+    "hexojs/hexo-generator-feed": {
+      "name": "hexojs/hexo-generator-feed",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/hexojs/hexo-generator-feed",
+      "learningFile": "07_PROJECT_LEARNING/hexojs-hexo-generator-feed-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "5561a357"
+    },
+    "jekyll/jekyll-feed": {
+      "name": "jekyll/jekyll-feed",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/jekyll/jekyll-feed",
+      "learningFile": "07_PROJECT_LEARNING/jekyll-jekyll-feed-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "a571da28"
+    },
+    "mkdocs/mkdocs": {
+      "name": "mkdocs/mkdocs",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/mkdocs/mkdocs",
+      "learningFile": "07_PROJECT_LEARNING/mkdocs-mkdocs-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "3aa2c65a"
+    },
+    "squidfunk/mkdocs-material": {
+      "name": "squidfunk/mkdocs-material",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/squidfunk/mkdocs-material",
+      "learningFile": "07_PROJECT_LEARNING/squidfunk-mkdocs-material-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "ee5d8a0f"
+    },
+    "rust-lang/mdbook": {
+      "name": "rust-lang/mdBook",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/rust-lang/mdBook",
+      "learningFile": "07_PROJECT_LEARNING/rust-lang-mdBook-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "83f5e921"
+    },
+    "microsoft/accessibility-insights-web": {
+      "name": "microsoft/accessibility-insights-web",
+      "category": "advanced-seo-frameworks-and-telemetry",
+      "canonicalUrl": "https://github.com/microsoft/accessibility-insights-web",
+      "learningFile": "07_PROJECT_LEARNING/microsoft-accessibility-insights-web-learnings.md",
+      "harvestDate": "2026-10-16T15:59:07.384Z",
+      "commitHash": "728ced26"
     }
   }
 }

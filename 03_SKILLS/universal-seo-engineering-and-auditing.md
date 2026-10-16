@@ -315,3 +315,33 @@ To prevent premature DOM head closure and ensure search crawlers ingest all meta
 ### 16.2 Hydration Mismatch Defense & Zero-JS Static Precedence (Rule 1192)
 - Render 100% of SEO metadata (`<title>`, canonical, robots, schema JSON-LD) into the initial server HTML stream before client delivery (as demonstrated in Astro Islands architecture).
 - Ensure client-side JavaScript hydration algorithms do not mutate, duplicate, or flap `<head>` elements, guaranteeing deterministic search engine indexing without waiting for secondary render queues.
+
+---
+
+## 17. Core Web Vitals 75th Percentile Field Invariant & RFC 9309 500KB Boundary (Rules 1193-1194)
+
+### 17.1 Real-User 75th Percentile (p75) Field Evaluation (Rule 1193)
+- Google Search ranking algorithms evaluate real-user field data from the Chrome User Experience Report (CrUX) at the 75th percentile over a 28-day window:
+  - **LCP**: `<= 2.5s` on mobile networks
+  - **CLS**: `<= 0.1` across the entire session lifecycle
+  - **INP**: `<= 200ms` for all interactive clicks, taps, and keypresses
+  - **TTFB**: `<= 800ms` server response latency
+- Synthetic lab tests (Lighthouse) are diagnostic tools, but field distribution passes are what determine Search Page Experience rankings. Implement real-user monitoring (RUM) via `web-vitals` to detect field regressions.
+
+### 17.2 RFC 9309 Robots Parser Longest-Match & 500KB Boundary (Rule 1194)
+- When a path matches both an `Allow:` and a `Disallow:` directive, the rule with the longer matching string takes precedence. If both strings are equal in length, `Allow:` wins.
+- Never let `/robots.txt` exceed 500KB (512,000 bytes). Googlebot truncates files beyond 500KB and discards all subsequent lines, which can accidentally expose protected directories.
+
+---
+
+## 18. Dynamic Rendering Soft-404 Elimination & Above-the-Fold Critical CSS (Rules 1195-1196)
+
+### 18.1 Dynamic Rendering Soft-404 Elimination (Rule 1195)
+- When using pre-render proxies or SSR for Single-Page Applications (SPAs), missing routes or expired products MUST return an authoritative HTTP status 404 or 410 in response headers.
+- Never return HTTP 200 OK with a visual "Not Found" message in the DOM body, as this triggers destructive Soft 404 penalties and wastes search crawl budgets.
+
+### 18.2 Above-the-Fold Critical CSS Inlining (Rule 1196)
+- Extract styles required for the initial viewport (mobile & desktop) and inline them directly into an early `<style>` block in the HTML `<head>` (budgeted at `<= 14KB` uncompressed).
+- Load remaining non-critical stylesheets asynchronously using the non-blocking pattern:
+  `<link rel="preload" href="/css/app.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">`
+- This completely eliminates render-blocking stylesheet penalties and accelerates First Contentful Paint (FCP) and LCP.

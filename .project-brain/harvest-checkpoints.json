@@ -2797,6 +2797,370 @@
       "status": "COMPLETED",
       "timestamp": "2026-10-16T15:28:11.344Z",
       "dossier": "07_PROJECT_LEARNING/nuxt-nuxt-learnings.md"
+    },
+    "https://github.com/sveltejs/kit": {
+      "repo": "sveltejs/kit",
+      "commit": "2506bc86",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/sveltejs-kit-learnings.md"
+    },
+    "https://github.com/unjs/unhead": {
+      "repo": "unjs/unhead",
+      "commit": "a82348da",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/unjs-unhead-learnings.md"
+    },
+    "https://github.com/unhead-io/unhead": {
+      "repo": "unjs/unhead",
+      "commit": "a82348da",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/unjs-unhead-learnings.md"
+    },
+    "https://github.com/staylor/react-helmet-async": {
+      "repo": "staylor/react-helmet-async",
+      "commit": "131d2799",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/staylor-react-helmet-async-learnings.md"
+    },
+    "https://github.com/jekyll/jekyll": {
+      "repo": "jekyll/jekyll",
+      "commit": "dfd13c7e",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/jekyll-jekyll-learnings.md"
+    },
+    "https://github.com/gohugoio/hugo": {
+      "repo": "gohugoio/hugo",
+      "commit": "85fb23f1",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/gohugoio-hugo-learnings.md"
+    },
+    "https://github.com/hexojs/hexo": {
+      "repo": "hexojs/hexo",
+      "commit": "5cf82715",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/hexojs-hexo-learnings.md"
+    },
+    "https://github.com/11ty/eleventy": {
+      "repo": "11ty/eleventy",
+      "commit": "7b233a75",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/11ty-eleventy-learnings.md"
+    },
+    "https://github.com/remix-run/react-router": {
+      "repo": "remix-run/react-router",
+      "commit": "90d81577",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/remix-run-react-router-learnings.md"
+    },
+    "https://github.com/WordPress/wordpress-develop": {
+      "repo": "WordPress/wordpress-develop",
+      "commit": "17a6ba23",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/wordpress-develop-learnings.md"
+    },
+    "https://github.com/facebook/docusaurus": {
+      "repo": "facebook/docusaurus",
+      "commit": "5fc1be5c",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/facebook-docusaurus-learnings.md"
+    },
+    "https://github.com/schemaorg/schemaorg": {
+      "repo": "schemaorg/schemaorg",
+      "commit": "6f38a9ab",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/schemaorg-schemaorg-learnings.md"
+    },
+    "https://github.com/google/schema-dts": {
+      "repo": "google/schema-dts",
+      "commit": "037adca1",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/google-schema-dts-learnings.md"
+    },
+    "https://github.com/SchemaStore/schemastore": {
+      "repo": "SchemaStore/schemastore",
+      "commit": "eb945785",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/schemastore-schemastore-learnings.md"
+    },
+    "https://github.com/google/structured-data-testing-tool": {
+      "repo": "google/structured-data-testing-tool",
+      "commit": "83921820",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/google-structured-data-testing-tool-learnings.md"
+    },
+    "https://github.com/GoogleChrome/web-vitals": {
+      "repo": "GoogleChrome/web-vitals",
+      "commit": "d90bf530",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googlechrome-web-vitals-learnings.md"
+    },
+    "https://github.com/GoogleChrome/lighthouse-ci": {
+      "repo": "GoogleChrome/lighthouse-ci",
+      "commit": "772c9a93",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googlechrome-lighthouse-ci-learnings.md"
+    },
+    "https://github.com/GoogleChromeLabs/psi": {
+      "repo": "GoogleChromeLabs/psi",
+      "commit": "57a0ea63",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googlechromelabs-psi-learnings.md"
+    },
+    "https://github.com/GoogleChrome/web.dev": {
+      "repo": "GoogleChrome/web.dev",
+      "commit": "a64d870f",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googlechrome-web-dev-learnings.md"
+    },
+    "https://github.com/GoogleChrome/CrUX": {
+      "repo": "GoogleChrome/CrUX",
+      "commit": "b62877a0",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googlechrome-crux-learnings.md"
+    },
+    "https://github.com/GoogleChromeLabs/CrUX-Vis": {
+      "repo": "GoogleChrome/CrUX",
+      "commit": "b62877a0",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googlechrome-crux-learnings.md"
+    },
+    "https://github.com/webhintio/hint": {
+      "repo": "webhintio/hint",
+      "commit": "62bfce68",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/webhintio-hint-learnings.md"
+    },
+    "https://github.com/googleapis/google-api-nodejs-client": {
+      "repo": "googleapis/google-api-nodejs-client",
+      "commit": "992a0e28",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googleapis-google-api-nodejs-client-learnings.md"
+    },
+    "https://github.com/googleapis/google-api-python-client": {
+      "repo": "googleapis/google-api-python-client",
+      "commit": "6ee20fa2",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googleapis-google-api-python-client-learnings.md"
+    },
+    "https://github.com/googleapis/google-auth-library-nodejs": {
+      "repo": "googleapis/google-auth-library-nodejs",
+      "commit": "a95b8272",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googleapis-google-auth-library-nodejs-learnings.md"
+    },
+    "https://github.com/googleapis/google-auth-library-python": {
+      "repo": "googleapis/google-auth-library-python",
+      "commit": "2ea24b03",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googleapis-google-auth-library-python-learnings.md"
+    },
+    "https://github.com/googleapis/google-api-php-client": {
+      "repo": "googleapis/google-api-php-client",
+      "commit": "31b577e7",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googleapis-google-api-php-client-learnings.md"
+    },
+    "https://github.com/googleapis/google-api-ruby-client": {
+      "repo": "googleapis/google-api-ruby-client",
+      "commit": "4e26e9bc",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googleapis-google-api-ruby-client-learnings.md"
+    },
+    "https://github.com/googleapis/google-api-go-client": {
+      "repo": "googleapis/google-api-go-client",
+      "commit": "d5374f16",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googleapis-google-api-go-client-learnings.md"
+    },
+    "https://github.com/googleapis/google-api-java-client": {
+      "repo": "googleapis/google-api-java-client",
+      "commit": "e0db26df",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/googleapis-google-api-java-client-learnings.md"
+    },
+    "https://github.com/google/robotstxt": {
+      "repo": "google/robotstxt",
+      "commit": "22b355ff",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/google-robotstxt-learnings.md"
+    },
+    "https://github.com/ekalinin/sitemap.js": {
+      "repo": "ekalinin/sitemap.js",
+      "commit": "523f8ae2",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/ekalinin-sitemap-js-learnings.md"
+    },
+    "https://github.com/prerender/prerender": {
+      "repo": "prerender/prerender",
+      "commit": "c1202e7a",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/prerender-prerender-learnings.md"
+    },
+    "https://github.com/puppeteer/puppeteer": {
+      "repo": "puppeteer/puppeteer",
+      "commit": "38b931dc",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/puppeteer-puppeteer-learnings.md"
+    },
+    "https://github.com/microsoft/playwright": {
+      "repo": "microsoft/playwright",
+      "commit": "05e1ea16",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/microsoft-playwright-learnings.md"
+    },
+    "https://github.com/cheeriojs/cheerio": {
+      "repo": "cheeriojs/cheerio",
+      "commit": "5ecf91a2",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/cheeriojs-cheerio-learnings.md"
+    },
+    "https://github.com/jsdom/jsdom": {
+      "repo": "jsdom/jsdom",
+      "commit": "992a0134",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/jsdom-jsdom-learnings.md"
+    },
+    "https://github.com/postlight/parser": {
+      "repo": "postlight/parser",
+      "commit": "57df8951",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/postlight-parser-learnings.md"
+    },
+    "https://github.com/pa11y/pa11y": {
+      "repo": "pa11y/pa11y",
+      "commit": "4df5e55e",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/pa11y-pa11y-learnings.md"
+    },
+    "https://github.com/dequelabs/axe-core": {
+      "repo": "dequelabs/axe-core",
+      "commit": "16d6ef7d",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/dequelabs-axe-core-learnings.md"
+    },
+    "https://github.com/sitespeedio/sitespeed.io": {
+      "repo": "sitespeedio/sitespeed.io",
+      "commit": "1b8966c8",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/sitespeedio-sitespeed-io-learnings.md"
+    },
+    "https://github.com/sitespeedio/browsertime": {
+      "repo": "sitespeedio/browsertime",
+      "commit": "b12a878d",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/sitespeedio-browsertime-learnings.md"
+    },
+    "https://github.com/addyosmani/critical": {
+      "repo": "addyosmani/critical",
+      "commit": "83f5a54d",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/addyosmani-critical-learnings.md"
+    },
+    "https://github.com/vercel/satori": {
+      "repo": "vercel/satori",
+      "commit": "0b2e88a3",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/vercel-satori-learnings.md"
+    },
+    "https://github.com/hexojs/hexo-generator-sitemap": {
+      "repo": "hexojs/hexo-generator-sitemap",
+      "commit": "e5b22b10",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/hexojs-hexo-generator-sitemap-learnings.md"
+    },
+    "https://github.com/hexojs/hexo-generator-feed": {
+      "repo": "hexojs/hexo-generator-feed",
+      "commit": "5561a357",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/hexojs-hexo-generator-feed-learnings.md"
+    },
+    "https://github.com/jekyll/jekyll-feed": {
+      "repo": "jekyll/jekyll-feed",
+      "commit": "a571da28",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/jekyll-jekyll-feed-learnings.md"
+    },
+    "https://github.com/mkdocs/mkdocs": {
+      "repo": "mkdocs/mkdocs",
+      "commit": "3aa2c65a",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/mkdocs-mkdocs-learnings.md"
+    },
+    "https://github.com/squidfunk/mkdocs-material": {
+      "repo": "squidfunk/mkdocs-material",
+      "commit": "ee5d8a0f",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/squidfunk-mkdocs-material-learnings.md"
+    },
+    "https://github.com/rust-lang/mdBook": {
+      "repo": "rust-lang/mdBook",
+      "commit": "83f5e921",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/rust-lang-mdBook-learnings.md"
+    },
+    "https://github.com/microsoft/accessibility-insights-web": {
+      "repo": "microsoft/accessibility-insights-web",
+      "commit": "728ced26",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/microsoft-accessibility-insights-web-learnings.md"
+    },
+    "https://github.com/microsoft/AccessibilityInsights-Web": {
+      "repo": "microsoft/accessibility-insights-web",
+      "commit": "728ced26",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:59:07.384Z",
+      "dossier": "07_PROJECT_LEARNING/microsoft-accessibility-insights-web-learnings.md"
     }
   }
 }
