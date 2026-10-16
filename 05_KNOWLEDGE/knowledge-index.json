@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T04:00:23.485Z",
+  "last_updated": "2026-10-16T04:04:36.122Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10007,7 +10007,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "eef94046af6fb42a91f9cb5fa7099dbd781a7af69da75c1f00624bf3456268e7",
+      "content_hash": "8ceaa6761e95bff52878e2ff655269e047d356f79126af91ba9d7f7275727689",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -10034,6 +10034,16 @@
           "number": 988,
           "title": "Calibrated Stochastic Sampling for Decision Models",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1059,
+          "title": "Multi-Token Termination Sentinel Array Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1060,
+          "title": "Dual-State Cache Lifecycle Invariant in Hybrid Transformer-RNN Architectures",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10053,7 +10063,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-15T20:56:42.741Z",
+      "verified_at": "2026-10-16T04:04:36.118Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

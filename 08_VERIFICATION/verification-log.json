@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-Z7G1",
-    "timestamp": "2026-10-13T20:31:26.833Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv74z7bs",
-    "contentHash": "b870e63c4bc218f4c6a9efaeaaf6d919c01d3940262d7b4d2c4236dd2081a754",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-4A8U",
     "timestamp": "2026-10-13T20:35:23.742Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7492,6 +7477,21 @@
     "contentHash": "4344ac124fa2a4a1e8fee9a44bb4396bf393fddd28cdc0d321d2ce3726bde57e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-1O6S",
+    "timestamp": "2026-10-16T04:04:36.148Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "8ceaa6761e95bff52878e2ff655269e047d356f79126af91ba9d7f7275727689",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
