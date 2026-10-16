@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T21:33:07.138Z",
+  "last_updated": "2026-10-16T21:36:38.479Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -169,14 +169,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-liquidai-d1-3b",
-      "content_hash": "2310c3af5b054ac2bb648b485e041d756120f0415d5bb555b8606456a3b1a6f1",
-      "verified_at": "2026-10-16T13:22:48.283Z",
+      "content_hash": "ef0b12a52f49e7ae8cfd6978c9f1c65d49027c314ffebdfafe6f9a7a0bfb3a49",
+      "verified_at": "2026-10-16T21:36:38.479Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T13:22:48.283Z"
+      "last_updated": "2026-10-16T21:36:38.479Z"
     },
     "Cactus-Compute/whistle": {
       "repository": "Cactus-Compute/whistle",
