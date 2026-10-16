@@ -1889,3 +1889,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-10-16T21:39:56.609Z |
 | `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-16T21:42:49.274Z |
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-16T21:46:50.803Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-10-16T21:51:02.973Z |

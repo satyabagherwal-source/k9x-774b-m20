@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-0NVR",
-    "timestamp": "2026-10-14T14:44:19.815Z",
-    "repository": "Comfy-Org/MiniMax-H3",
-    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv880ntt",
-    "contentHash": "ba05fdc1d56eb1dcc2b8be960ae148961c7f8062cc9382a52ff06a654fb10d5f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-5S6N",
     "timestamp": "2026-10-14T14:48:18.671Z",
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "eaa6b717b886041bfc6dc6ce5c7ad0916db566d14acc4c3842876690b895d7f8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-54QJ",
+    "timestamp": "2026-10-16T21:51:02.971Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "3febf4c0382c0bc18b1a4e9ed0e2330a3a0494e300260ae82a5f2c9e1e6ccd0a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

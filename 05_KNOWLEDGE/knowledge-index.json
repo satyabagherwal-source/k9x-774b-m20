@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T21:46:50.774Z",
+  "last_updated": "2026-10-16T21:51:02.942Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13429,7 +13429,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "1176e805cb99f1c2338ec51bbd8b86c550ddcb8f8b6549c415d3a006899c5311",
+      "content_hash": "3febf4c0382c0bc18b1a4e9ed0e2330a3a0494e300260ae82a5f2c9e1e6ccd0a",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [
@@ -13462,7 +13462,7 @@
         "learn-huggingface-hf-francisring-prism-mv43jvl8",
         "learn-huggingface-hf-francisring-prism-mv4gsoqj"
       ],
-      "verified_at": "2026-10-16T13:35:11.128Z",
+      "verified_at": "2026-10-16T21:51:02.936Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
