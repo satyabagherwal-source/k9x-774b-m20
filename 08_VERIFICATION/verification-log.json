@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-JI7S",
-    "timestamp": "2026-10-13T17:03:16.984Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv6xji5s",
-    "contentHash": "8d32cc4e19b72821ac5cdb1afa7420d194de18000f0ec97728abf7f7e796841b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-NMUH",
     "timestamp": "2026-10-13T17:06:29.609Z",
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7492,6 +7477,21 @@
     "contentHash": "77bf6ae1f4b36cb49e1aa11eaf6ae0a585f59ac53091760adf84101c0a2f68d7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-HGHS",
+    "timestamp": "2026-10-16T01:00:55.360Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "36ae5946d751b5b38f65243b6f4c968f07590f19735f7c1c0ea837e454fe726b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

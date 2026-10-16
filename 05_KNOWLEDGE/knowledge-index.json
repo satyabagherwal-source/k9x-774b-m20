@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T00:57:49.090Z",
+  "last_updated": "2026-10-16T01:00:55.345Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11335,12 +11335,13 @@
     "learn-huggingface-compvis-stable-diffusion-v1-4": {
       "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-compvis-stable-diffusion-v1-4",
+      "source": "CompVis/stable-diffusion-v1-4",
+      "repository": "CompVis/stable-diffusion-v1-4",
       "slug": "hf-compvis-stable-diffusion-v1-4",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
       "source_version": "hf-compvis-stable-diffusion-v1-4",
-      "content_hash": "5f52fdf12c74275e74abaa2ecbd5a807605baa262f8660c2ae8c46936cdbfeb1",
+      "content_hash": "36ae5946d751b5b38f65243b6f4c968f07590f19735f7c1c0ea837e454fe726b",
       "dossier_path": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md",
       "promoted_rules": [
@@ -11364,11 +11365,20 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm",
           "verified_at": "2026-10-11T20:22:49.160Z"
+        },
+        {
+          "number": 1045,
+          "title": "Inference Engine Compatibility Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1046,
+          "title": "License Enforcement & Gated Access Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -11385,7 +11395,7 @@
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv49semm",
         "learn-huggingface-hf-compvis-stable-diffusion-v1-4-mv4n5mw6"
       ],
-      "verified_at": "2026-10-14T14:59:46.862Z",
+      "verified_at": "2026-10-16T01:00:55.342Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

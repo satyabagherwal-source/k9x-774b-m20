@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-15T21:10:03.675Z",
+  "last_updated": "2026-10-16T01:00:55.363Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1366,6 +1366,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
+    },
+    {
+      "id": "CD-HGHV",
+      "directive_title": "Weight Artifact Versioning & Lineage Integrity",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "CompVis/stable-diffusion-v1-4",
+      "source_commit": "hf-compvis-s",
+      "date_staged": "2026-10-16",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4"
     }
   ]
 }
