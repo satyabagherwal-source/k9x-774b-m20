@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-5OL4",
-    "timestamp": "2026-10-14T05:28:21.688Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv7o5ogj",
-    "contentHash": "a7a91e399bd325e948a21f5c5f5db34d3137d46fde64295aff0cd668323e2aea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-APV2",
     "timestamp": "2026-10-14T05:32:16.622Z",
     "repository": "google/electra-base-discriminator",
@@ -7490,6 +7475,21 @@
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
     "contentHash": "05ad443667d0ff86ca567f50596514e66a9a6a2ef56abe32551ddf14c8537832",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-NT86",
+    "timestamp": "2026-10-16T13:41:41.430Z",
+    "repository": "autotrust/GEV-26B-Decide-NVFP4",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+    "contentHash": "7abea8c03bea6bd2170acc906d908d2e869cb9bb20d61873b798b06ff1b9f5ee",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
