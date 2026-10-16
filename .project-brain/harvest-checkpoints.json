@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T17:13:22.370Z",
+  "last_updated": "2026-10-16T17:23:07.109Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2586,6 +2586,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-16T17:13:22.369Z"
+    },
+    "dapr/dapr": {
+      "repository": "dapr/dapr",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-dapr-dapr",
+      "content_hash": "6da40ca2bf10c2428cca93e8dfcf569796c239cbc55bb0f7ecf3e2d79d7b7d35",
+      "verified_at": "2026-10-16T17:23:07.109Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-16T17:23:07.109Z"
     }
   },
   "repos": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-6A8B",
-    "timestamp": "2026-10-14T10:08:45.899Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv7y6a56",
-    "contentHash": "e233eb72b3e487837137f10e6ae4849ce35ec8491bb5e702a539eb552d90a0bf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-AH7U",
     "timestamp": "2026-10-14T10:12:01.578Z",
     "repository": "mudler/locate-anything.cpp-gguf",
@@ -7490,6 +7475,21 @@
     "repository": "Zen4-bit/Proxima",
     "learningId": "learn-github-zen4-bit-proxima",
     "contentHash": "52c93b40fbb44527735193a142807bd6498742e9891a05ace8e5da096f79f853",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-KKIN",
+    "timestamp": "2026-10-16T17:23:07.103Z",
+    "repository": "dapr/dapr",
+    "learningId": "learn-github-dapr-dapr",
+    "contentHash": "6da40ca2bf10c2428cca93e8dfcf569796c239cbc55bb0f7ecf3e2d79d7b7d35",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

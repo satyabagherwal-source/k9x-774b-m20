@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T17:13:22.335Z",
-  "total_verified_learnings": 189,
+  "last_updated": "2026-10-16T17:23:07.079Z",
+  "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -41710,6 +41710,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-16T17:13:22.328Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-dapr-dapr": {
+      "learning_id": "learn-github-dapr-dapr",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dapr/dapr",
+      "repository": "dapr/dapr",
+      "slug": "dapr-dapr",
+      "platform": "github",
+      "source_url": "https://github.com/dapr/dapr",
+      "source_version": "180905c6",
+      "content_hash": "6da40ca2bf10c2428cca93e8dfcf569796c239cbc55bb0f7ecf3e2d79d7b7d35",
+      "dossier_path": "07_PROJECT_LEARNING/dapr-dapr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dapr-dapr-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1210,
+          "title": "test(e2e): give the resiliency pubsub publish a 5s timeout (#10806)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-16T17:23:07.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
