@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T04:57:09.761Z",
-  "total_cycles_completed": 1580,
-  "total_learnings_persisted": 1580,
+  "last_updated": "2026-10-16T05:00:13.689Z",
+  "total_cycles_completed": 1581,
+  "total_learnings_persisted": 1581,
   "total_rules_promoted": 845,
   "history": [
-    {
-      "timestamp": "2026-10-14T15:44:45.985Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv8a6dnw",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T15:47:52.078Z",
       "repository": "openai/gpt-oss-120b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T04:57:09.761Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:00:13.689Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-liquidai-d1-3b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
