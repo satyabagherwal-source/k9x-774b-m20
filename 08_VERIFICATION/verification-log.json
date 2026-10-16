@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-0KHU",
-    "timestamp": "2026-10-14T17:04:13.506Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv8d0ked",
-    "contentHash": "62337e032ff15d0134c7d602716a7167e3f50852661051c7cff183a7ae90b25d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-4FSC",
     "timestamp": "2026-10-14T17:07:14.028Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7492,6 +7477,21 @@
     "contentHash": "2914bb18e65d2e60f3be8077cc81fe518a524ecd3b08688d9c1c121f9086a860",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-789A",
+    "timestamp": "2026-10-16T23:44:39.310Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "6a2823a93eb3df9272da02ad7ee5606e4058898f18b14f165b1446f812d50723",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
