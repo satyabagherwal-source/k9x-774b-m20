@@ -175,8 +175,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "sourceVersion": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
     "license": "Open-Source",
-    "contentHash": "0e48c63f9ac69533b4c3aba9df68cf59c8485fa46df6b02beb4c4239c13911a7",
-    "lastHarvestedAt": "2026-10-16T04:57:09.760Z",
+    "contentHash": "b90d43694246fccb429c64e2c8475db2f463249b55419206f7fb83f95d94a4e5",
+    "lastHarvestedAt": "2026-10-16T13:17:26.007Z",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark"
   },
   "hf-liquidai-d1-3b": {

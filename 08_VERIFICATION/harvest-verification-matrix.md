@@ -1743,3 +1743,4 @@
 | `CYCLE-20261016-GF1Z` | `2026-10-16T13:07:56.855Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`f30f15cb...`) |
 | `CYCLE-20261016-KFAD` | `2026-10-16T13:11:03.781Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`8c562aa2...`) |
 | `CYCLE-20261016-OGPW` | `2026-10-16T13:14:12.260Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`0a380622...`) |
+| `CYCLE-20261016-SM7P` | `2026-10-16T13:17:26.005Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`b90d4369...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-D79R",
-    "timestamp": "2026-10-14T05:06:12.879Z",
-    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-    "learningId": "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv7nd76h",
-    "contentHash": "3e2e22a15297b73e424924192a32a80f80be8f71c8d4addb13086668ab06eb42",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-H621",
     "timestamp": "2026-10-14T05:09:17.929Z",
     "repository": "canberkkkkkk/ema-lightning",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-small-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
     "contentHash": "0a3806221f760427d4b8514ab8a74d30bb4f6361f469a291e98903eb42dbb883",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-SM7P",
+    "timestamp": "2026-10-16T13:17:26.005Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "b90d43694246fccb429c64e2c8475db2f463249b55419206f7fb83f95d94a4e5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

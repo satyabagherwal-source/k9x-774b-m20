@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T13:14:12.265Z",
-  "total_cycles_completed": 1720,
-  "total_learnings_persisted": 1720,
+  "last_updated": "2026-10-16T13:17:26.009Z",
+  "total_cycles_completed": 1721,
+  "total_learnings_persisted": 1721,
   "total_rules_promoted": 932,
   "history": [
-    {
-      "timestamp": "2026-10-16T01:34:45.804Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T01:37:39.722Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T13:14:12.265Z",
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T13:17:26.009Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
