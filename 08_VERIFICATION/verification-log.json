@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-P7UJ",
-    "timestamp": "2026-10-14T01:31:36.571Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv7fp7re",
-    "contentHash": "b71f626df0a84d930c1e60b2dd1f63442c953db3ceafe4928fe0847a5b5616fe",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-TKWX",
     "timestamp": "2026-10-14T01:35:00.129Z",
     "repository": "BAAI/bge-base-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "CompVis/stable-diffusion-v1-4",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
     "contentHash": "8b8f8aceb01e4e18fc29394f8382bcd1c771101997aff1cf6f00a7ab29b90352",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-I92M",
+    "timestamp": "2026-10-16T09:25:25.486Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "1eff586f008756e7f2a8e19d3f00503929363e014824d279927c815b1402afd3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

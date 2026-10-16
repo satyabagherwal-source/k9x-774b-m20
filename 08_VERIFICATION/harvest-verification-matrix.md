@@ -1674,3 +1674,4 @@
 | `CYCLE-20261016-5V99` | `2026-10-16T09:15:47.709Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1127, Rule 1128, Rule 1129` | Yes (`0b7b2c47...`) |
 | `CYCLE-20261016-9R2D` | `2026-10-16T09:18:48.901Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`eac0ddb8...`) |
 | `CYCLE-20261016-E63Q` | `2026-10-16T09:22:15.014Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`8b8f8ace...`) |
+| `CYCLE-20261016-I92M` | `2026-10-16T09:25:25.486Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`1eff586f...`) |
