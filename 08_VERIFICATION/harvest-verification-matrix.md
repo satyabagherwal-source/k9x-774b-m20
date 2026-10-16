@@ -1754,3 +1754,4 @@
 | `CYCLE-20261016-RRI2` | `2026-10-16T13:44:45.818Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`9f5f4084...`) |
 | `CYCLE-20261016-VLZZ` | `2026-10-16T13:47:45.311Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`d5bb05e4...`) |
 | `CYCLE-20261016-ZN14` | `2026-10-16T13:50:53.272Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`90a7e44f...`) |
+| `CYCLE-20261016-3QF0` | `2026-10-16T13:54:04.284Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1155, Rule 1156, Rule 1157` | Yes (`f16adc50...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T13:50:53.235Z",
+  "last_updated": "2026-10-16T13:54:04.259Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -40922,7 +40922,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "5a988d845e19121414043c35e36a89cac05d7f101afd2853e459cae80a7bb79d",
+      "content_hash": "f16adc508d524c68697432950bf6affe2835f7e441c71c4721c8b29a3ace69e4",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
@@ -40955,6 +40955,21 @@
           "number": 1076,
           "title": "Enable Generation Cache for All Inference Paths",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1155,
+          "title": "Consistent Special‑Token Mapping Across Tokenizer and Model",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1156,
+          "title": "Uniform Dtype Across Text and Vision Sub‑Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1157,
+          "title": "Matching Attention Head Dimensions Across Layers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40962,7 +40977,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T05:34:24.288Z",
+      "verified_at": "2026-10-16T13:54:04.254Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

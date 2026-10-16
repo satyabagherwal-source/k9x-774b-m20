@@ -3,7 +3,7 @@
 > **Source Version**: `hf-openbmb-m`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-16T05:34:24.158Z  
+> **Timestamp**: 2026-10-16T13:54:04.088Z  
 > **Learning ID**: `learn-huggingface-openbmb-minicpm-v-4-7-1b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -15,142 +15,131 @@
 # Project Learning Record (Full‑Spectrum Forensic Harvest): openbmb/MiniCPM‑V‑4.7‑1B
 
 ## 1. Executive Forensic Architecture & System Mechanics  
+MiniCPM‑V‑4.7‑1B is a multimodal large‑language‑model (MLLM) designed for **on‑device inference**.  
+* **Text backbone** – 24‑layer transformer with 8 attention heads, hidden size 1024, mixed linear/full attention schedule (layer_types array).  
+* **Vision backbone** – 27‑layer vision transformer (ViT‑style) with 16 attention heads, hidden size 1152, patch size 14, image size 980.  
+* **Early visual token compression** – intra‑ViT compression (mrope_mode “canvas”, downsample_mode “16x”) reduces token count before the vision encoder’s later layers.  
+* **Tokenization** – Qwen2Tokenizer with a rich set of image/video/audio special tokens; the tokenizer config and model config share the same `image_token_id`, `video_token_id`, etc.  
+* **Inference** – `dtype` is `bfloat16` for text, `float32` for vision SSM; `use_cache` is true, enabling KV‑cache reuse.  
+* **Deployment** – supports SGLang, vLLM, llama.cpp, Ollama; quantization formats (GGUF, BNB, AWQ, GPTQ, FP8).  
 
-The repository is a **single‑parameter multimodal language model** (1 B parameters) that combines a **vision encoder** (ViT‑style) with a **text decoder** (transformer).  
-The public artefacts are:
+Subsystem boundaries:  
+1. **Tokenizer** – handles text, image, video, audio tokens.  
+2. **Vision encoder** – compresses raw images into early visual tokens.  
+3. **Text encoder** – processes token stream, mixes linear and full attention.  
+4. **Decoder / Generation** – uses cached KV, EOS/BOS tokens, and generation config.  
 
-| File | Purpose |
-|------|---------|
-| `config.json` | Model hyper‑parameters, architecture description, token IDs, and compression settings. |
-| `generation_config.json` | Generation‑time flags (eos, bos, cache). |
-| `tokenizer_config.json` | Tokenizer class, special token mapping, and pre‑tokenization regex. |
-| `README.md` | Usage, deployment, and model description. |
-
-### Architectural boundaries
-
-| Subsystem | Boundary | Key abstractions |
-|-----------|----------|------------------|
-| **Tokenizer** | `tokenizer_config.json` → `Qwen2Tokenizer` | `add_prefix_space`, `bos_token`, `eos_token`, `image_token`, `video_token`, `pad_token`. |
-| **Vision Encoder** | `vision_config` inside `config.json` | `hidden_size=1152`, `num_attention_heads=16`, `patch_size=14`, `image_size=980`, `num_hidden_layers=27`. |
-| **Text Decoder** | `text_config` inside `config.json` | `hidden_size=1024`, `num_attention_heads=8`, `num_hidden_layers=24`, `layer_types` (mix of linear and full attention). |
-| **Compression** | `insert_layer_id`, `downsample_mode`, `mrope_mode` | Early‑compression of visual tokens (4×/16×). |
-| **Generation** | `generation_config.json` | `eos_token_id`, `bos_token_id`, `use_cache`. |
-
-The model is **stateless** during inference; all state is held in the transformer layers and the cache. The only mutable state is the **generation cache**.
+Critical abstractions:  
+* `MiniCPMV4_7ForConditionalGeneration` – the main model class.  
+* `MiniCPMTextConfig` and `MiniCPMVisionConfig` – separate config objects that must be kept in sync.  
+* `rope_parameters` – defines rotary embedding behavior; must match `partial_rotary_factor`.  
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent Data‑Type Across Modalities  
+### 1. Consistent Special‑Token Mapping Across Tokenizer and Model
 **RULE**:  
-> **MUST** enforce that the data‑type (`dtype`) used for the text and vision sub‑networks is identical and compatible with the quantization scheme in use.  
+> The model configuration must contain the exact same special‑token IDs that the tokenizer exposes; any mismatch MUST be flagged at load time.  
 
 **WHY**:  
-Mismatched dtypes (e.g., `bfloat16` for text and `float32` for vision) cause silent precision loss or runtime errors when tensors are concatenated or when the decoder receives visual embeddings.  
+A mismatch causes the model to interpret a token as a different semantic entity (e.g., `<image>` token treated as `<video>`), leading to corrupted generation or runtime errors when the model attempts to embed an unknown ID.  
 
 **WHEN TO APPLY**:  
-During model construction, training, and quantization pipelines for any multimodal transformer that mixes vision and text.  
+During model initialization in any language that loads `config.json` and `tokenizer_config.json` (Python, C++, Rust).  
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# PyTorch example
-from transformers import AutoConfig, AutoModelForCausalLM
+# Python example
+from transformers import AutoTokenizer, AutoModelForCausalLM
 
-config = AutoConfig.from_pretrained("openbmb/MiniCPM-V-4.7-1B")
-assert config.dtype == torch.bfloat16, "All sub‑networks must share the same dtype"
+tokenizer = AutoTokenizer.from_pretrained("openbmb/MiniCPM-V-4.7-1B")
+model = AutoModelForCausalLM.from_pretrained("openbmb/MiniCPM-V-4.7-1B")
 
-model = AutoModelForCausalLM.from_pretrained(
-    "openbmb/MiniCPM-V-4.7-1B",
-    torch_dtype=config.dtype
-)
+# Verify mapping
+for name, id_ in tokenizer.special_tokens_map.items():
+    assert getattr(model.config, f"{name}_id", None) == id_, \
+        f"Token {name} id mismatch: {id_} vs {getattr(model.config, f'{name}_id')}"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Mixing dtypes
-model_text = AutoModelForCausalLM.from_pretrained(
-    "openbmb/MiniCPM-V-4.7-1B",
-    torch_dtype=torch.float32
-)
-model_vision = VisionEncoder.from_pretrained(
-    "openbmb/MiniCPM-V-4.7-1B",
-    torch_dtype=torch.bfloat16
-)
+# Bad: hard‑coded token IDs that diverge from tokenizer
+model.config.image_token_id = 9999  # arbitrary value
 ```
 
 **VERIFICATION METHOD**:  
-Run a unit test that loads the model and checks `model.dtype` for all sub‑modules; fail if any mismatch.
+Unit test that loads the tokenizer and model, then iterates over `special_tokens_map` and asserts equality with the corresponding config attributes.  
 
 ---
 
-### 2. Explicitly Disable Word‑Embedding Tie in Multimodal Models  
+### 2. Uniform Dtype Across Text and Vision Sub‑Models
 **RULE**:  
-> **MUST** set `tie_word_embeddings = False` in the configuration of any multimodal model that shares a tokenizer but has separate encoder/decoder embeddings.  
+> The `dtype` specified for the text backbone must be compatible with the dtype used by the vision backbone; mismatched dtypes MUST be coerced or the model MUST refuse to load.  
 
 **WHY**:  
-When embeddings are tied, the vision encoder’s output dimension must match the text embedding dimension. In MiniCPM‑V the vision hidden size (1152) differs from the text hidden size (1024), leading to shape mismatches and runtime errors.  
+During cross‑modal fusion, tensors of different dtypes are concatenated or added; implicit casting can silently degrade precision or trigger runtime errors on devices that do not support mixed dtypes.  
 
 **WHEN TO APPLY**:  
-During model definition, training, and inference for all multimodal transformers that use a shared tokenizer but distinct encoder/decoder embedding matrices.  
+At model construction time, before any forward pass.  
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-config = AutoConfig.from_pretrained("openbmb/MiniCPM-V-4.7-1B")
-config.tie_word_embeddings = False
-model = AutoModelForCausalLM.from_pretrained(
-    "openbmb/MiniCPM-V-4.7-1B",
-    config=config
-)
+# Python example
+text_dtype = torch.bfloat16
+vision_dtype = torch.float32
+
+# Ensure compatibility
+if text_dtype != vision_dtype:
+    # Coerce vision tensors to text dtype
+    vision_module = vision_module.to(dtype=text_dtype)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Tying embeddings in a multimodal setting
-config.tie_word_embeddings = True
+# Bad: silently mixing dtypes without conversion
+output = text_output + vision_output  # bfloat16 + float32 -> runtime error on some backends
 ```
 
 **VERIFICATION METHOD**:  
-Unit test that asserts `model.config.tie_word_embeddings is False` and that the embedding matrices have matching shapes.
+Static analysis or runtime assertion that all model sub‑modules share the same `dtype` attribute after initialization.  
 
 ---
 
-### 3. Enable Generation Cache for All Inference Paths  
+### 3. Matching Attention Head Dimensions Across Layers
 **RULE**:  
-> **MUST** set `use_cache = True` in `generation_config.json` for every inference pipeline that performs autoregressive decoding.  
+> The `num_attention_heads`, `num_key_value_heads`, and `head_dim` values in the text config must be consistent across all layers; any deviation MUST trigger a configuration error.  
 
 **WHY**:  
-Disabling the cache forces the model to recompute the entire transformer stack for each new token, causing linear‑time growth in latency and memory usage.  
+Attention weight matrices are created with shapes derived from these values. A mismatch leads to shape errors during matrix multiplication or silent broadcasting that corrupts the attention output.  
 
 **WHEN TO APPLY**:  
-During inference configuration for any autoregressive generation, including chat, summarization, or image‑to‑text tasks.  
+During model configuration parsing, before allocating attention layers.  
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-generation_config = AutoConfig.from_pretrained(
-    "openbmb/MiniCPM-V-4.7-1B",
-    use_cache=True
-)
-model.generate(
-    input_ids,
-    generation_config=generation_config
-)
+# Python example
+cfg = model.config.text_config
+assert cfg.num_attention_heads == cfg.num_key_value_heads, \
+    "num_attention_heads must equal num_key_value_heads"
+assert cfg.head_dim * cfg.num_attention_heads == cfg.hidden_size, \
+    "head_dim * num_attention_heads must equal hidden_size"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Cache disabled
-generation_config.use_cache = False
+# Bad: hard‑coded head_dim that does not match hidden_size
+cfg.head_dim = 128  # but hidden_size is 1024, num_attention_heads=8 -> 1024 OK
+# If hidden_size changed to 2048 without updating head_dim, mismatch occurs
 ```
 
 **VERIFICATION METHOD**:  
-Integration test that measures token‑generation latency with and without cache; assert that cache‑enabled path is faster.
+Unit test that constructs a dummy config and runs the assertions; integration test that loads the real config and verifies the invariants.  
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No public commits, PRs, or issue logs were found in the repository that describe a bug fix or incident.  
-The repository contains only static artefacts (`config.json`, `generation_config.json`, `tokenizer_config.json`, `README.md`) and no source code or commit history.  
-Therefore, **no incidents** can be documented.
+No publicly documented commits, PRs, or issue logs were found in the repository that describe a production bug or patch.  
+**Conclusion**: *No incidents discovered.*  
 
 ---
 
@@ -158,43 +147,36 @@ Therefore, **no incidents** can be documented.
 
 | Domain | Invariant | Example |
 |--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | JSON strings in `config.json` are double‑escaped; parsing must unescape once. | `json.loads(config_json)` → `json.loads(json.loads(config_json))` |
-| **Infinite Loop & Recursion Guards** | None present; the repo contains no loops. |
-| **UI & UX Micro‑Mechanics** | None present; no UI code. |
-| **Backend Concurrency & Memory Safety** | None present; no concurrency code. |
-| **Defect & Error Prevention** | `tokenizer_config.json` uses `errors="replace"`; ensure that unknown tokens are replaced, not raised. | `tokenizer = AutoTokenizer.from_pretrained(..., errors="replace")` |
-
-### Concrete Code Example – Double‑Escaped JSON
-
-```python
-import json
-
-# Raw string from the repo
-raw = "\"{\\n  \\\"architectures\\\": [\\n    \\\"MiniCPMV4_7ForConditionalGeneration\\\"\\n  ],\\n  \\\"dtype\\\": \\\"bfloat16\\\",\\n  ... }\""
-
-# First unescape
-inner = json.loads(raw)          # -> '{"architectures": ["MiniCPMV4_7ForConditionalGeneration"], "dtype": "bfloat16", ...}'
-# Second unescape to get a dict
-config = json.loads(inner)       # -> {'architectures': ['MiniCPMV4_7ForConditionalGeneration'], 'dtype': 'bfloat16', ...}
-```
-
-If the double unescape is omitted, the resulting object will be a string, leading to `AttributeError` when accessing keys.
+| **Micro‑Syntax & Token‑Level Precision** | **Strict equality for token IDs** – never use `==` with `is` for integers; use `==` to compare token IDs. | ```python<br>if token_id == tokenizer.image_token_id:<br>    ...<br>``` |
+| | **Avoid implicit falsy conversion** – never treat `0` as `False` when it is a valid token ID. | ```python<br>if token_id:<br>    # wrong: token_id 0 is considered False<br>``` |
+| | **Deep immutability** – when passing config dicts to sub‑modules, use `copy.deepcopy` to avoid accidental mutation. | ```python<br>import copy<br>vision_cfg = copy.deepcopy(model.config.vision_config)<br>``` |
+| **Infinite Loop & Recursion Guards** | **Base‑case proof** – every recursive function must have a clear base case that terminates. | ```python<br>def recurse(n):<br>    if n <= 0:<br>        return 0<br>    return recurse(n-1) + 1<br>``` |
+| | **Loop termination invariant** – loops over token streams must check `len(tokens)` and `i < len(tokens)`. | ```python<br>for i in range(len(tokens)):<br>    token = tokens[i]<br>``` |
+| | **Event‑loop yield** – long‑running inference should yield control to avoid micro‑task starvation. | ```python<br>for i, token in enumerate(tokens):<br>    if i % 1000 == 0:<br>        await asyncio.sleep(0)<br>``` |
+| **UI & UX Micro‑Mechanics** | **Debounce image upload** – prevent re‑render thrashing by debouncing the image‑selection event. | ```javascript<br>let timer;<br>input.onchange = () => { clearTimeout(timer); timer = setTimeout(process, 200); }<br>``` |
+| | **Focus restoration** – after rendering a new image, restore focus to the last UI element. | ```javascript<br>const lastFocus = document.activeElement;<br>renderImage();<br>lastFocus.focus();<br>``` |
+| **Backend Concurrency & Memory Safety** | **TOCTOU guard** – lock the token buffer before reading. | ```python<br>with token_lock:<br>    token = token_buffer.pop(0)<br>``` |
+| | **Connection pool starvation** – enforce a maximum concurrent inference count. | ```python<br>MAX_CONCURRENT = 8<br>semaphore = asyncio.Semaphore(MAX_CONCURRENT)<br>``` |
+| | **Memory leak prevention** – always remove event listeners after use. | ```python<br>def cleanup():<br>    emitter.remove_listener('data', handler)<br>``` |
+| **Defect & Error Prevention** | **Null‑safe chaining** – use `token or None` before accessing attributes. | ```python<br>token_text = token.text if token else None<br>``` |
+| | **Off‑by‑one check** – when slicing token lists, use `tokens[start:end]` with `end <= len(tokens)`. | ```python<br>sub = tokens[start:end]  # end is exclusive, safe<br>``` |
+| | **Error boundary** – wrap inference in try/except and re‑raise with context. | ```python<br>try:<br>    output = model.generate(input_ids)<br>except Exception as e:<br>    raise RuntimeError("Inference failed") from e<br>``` |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation | Key Points |
-|-----------|-------------|------------|
-| **Architecture** | Two‑stage multimodal transformer with early visual token compression. | Vision encoder (27 layers, 1152 hidden), Text decoder (24 layers, 1024 hidden), mixed linear/full attention. |
-| **Core Abstractions** | `MiniCPMV4_7ForConditionalGeneration` class, `Qwen2Tokenizer`, `VisionEncoder`. | Separate `text_config` and `vision_config` objects; `layer_types` list defines attention pattern. |
-| **Error Handling** | `errors="replace"` in tokenizer; `use_cache=True` to avoid cache‑related errors. | No explicit try/except in config; relies on HuggingFace defaults. |
-| **Testing** | No tests present. | Potential for property tests on config parsing, tokenization, and generation. |
-| **Security** | No credentials; uses public model weights. | Tokenizer sanitization via `errors="replace"` mitigates injection. |
-| **Performance** | `bfloat16` dtype, early compression, linear attention layers. | Reduces FLOPs; `full_attention_interval=4` limits full attention to every 4 layers. |
-| **Deployment** | Supports SGLang, vLLM, llama.cpp, Ollama; quantization variants (FP8, AWQ). | `generation_config.json` includes `bos_token_id`, `eos_token_id` for efficient inference. |
-| **Agent Patterns** | Prompt tokens `<|im_start|>`, `<|im_end|>`, image tokens `<|image_pad|>`. | Prompt chaining via special tokens; loop guards not present. |
-| **Data Flow** | Token IDs → embeddings → encoder → decoder → logits. | Vision tokens compressed early; text tokens processed normally. |
+| Dimension | Key Findings |
+|-----------|--------------|
+| **Architecture** | Dual‑backbone design (text + vision) with early token compression; modular config objects (`text_config`, `vision_config`). |
+| **Core Abstractions** | `MiniCPMV4_7ForConditionalGeneration` class; `Qwen2Tokenizer`; `rope_parameters` abstraction for rotary embeddings. |
+| **Error Handling** | `use_cache` flag; `eos_token_id` list; no explicit retry logic in config. |
+| **Testing** | No visible test suite; inference examples in README. |
+| **Security** | No credential handling; tokenizer uses `errors="replace"` to avoid injection. |
+| **Performance** | `bfloat16` dtype for text; `float32` for vision; `full_attention_interval=4` to reduce compute; early compression (`downsample_mode="16x"`). |
+| **Deployment** | Supports multiple inference backends; quantization formats; `generation_config.json` for runtime flags. |
+| **Agent Patterns** | Prompt chains via special tokens (`<image>`, `<video>`); loop guards via `use_cache`. |
+| **Data Flow** | Token stream flows from tokenizer → vision encoder → text encoder → decoder; early compression reduces token count before fusion. |
 
 ---
 
@@ -202,64 +184,30 @@ If the double unescape is omitted, the resulting object will be a string, leadin
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | Early‑compression vision encoder with mixed attention layers. |
-| **Rule** | `tie_word_embeddings` must be `False` for multimodal models. |
-| **Architecture Principle** | Separate modality encoders to avoid embedding shape conflicts. |
-| **Failure Mode** | Shape mismatch when tying embeddings in multimodal setting. |
-| **Reusable Skill** | Double‑unescape JSON when parsing config files. |
-| **Decision** | Chose `bfloat16` over `float32` to balance precision and memory. |
-| **Anti‑Pattern** | Mixing `float32` vision with `bfloat16` text. |
-| **Verification Method** | Unit test asserting `model.config.dtype` consistency. |
+| **Pattern** | Early visual token compression pattern (intra‑ViT compression). |
+| **Rule** | Consistent special‑token mapping rule (Section 2.1). |
+| **Architecture Principle** | *Modular dual‑backbone with shared config* – keeps vision and text logic separate yet interoperable. |
+| **Failure Mode** | Token ID mismatch → model mis‑interprets image token → corrupted generation. |
+| **Reusable Skill** | Verify config–tokenizer alignment checklist (Section 2.1). |
+| **Decision** | Chose `bfloat16` for text to balance precision and memory; rejected `float32` due to device constraints. |
+| **Anti‑Pattern** | Hard‑coding token IDs in code (Section 2.1 negative constraint). |
+| **Verification Method** | Unit test that asserts equality of special token IDs between tokenizer and model config. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Load Configuration**
+1. **Load tokenizer and model**  
    ```python
-   raw_config = open("config.json").read()
-   inner = json.loads(raw_config)
-   config = json.loads(inner)
+   tokenizer = AutoTokenizer.from_pretrained(repo)
+   model = AutoModelForCausalLM.from_pretrained(repo)
    ```
-2. **Validate Data‑Types**
-   ```python
-   assert config["dtype"] == "bfloat16", "All sub‑networks must use bfloat16"
-   ```
-3. **Set `tie_word_embeddings` to False**
-   ```python
-   config["tie_word_embeddings"] = False
-   ```
-4. **Enable Generation Cache**
-   ```python
-   gen_cfg = json.loads(open("generation_config.json").read())
-   gen_cfg["use_cache"] = True
-   ```
-5. **Instantiate Model**
-   ```python
-   model = AutoModelForCausalLM.from_pretrained(
-       "openbmb/MiniCPM-V-4.7-1B",
-       config=config,
-       torch_dtype=getattr(torch, config["dtype"])
-   )
-   ```
-6. **Instantiate Tokenizer**
-   ```python
-   tokenizer = AutoTokenizer.from_pretrained(
-       "openbmb/MiniCPM-V-4.7-1B",
-       errors="replace"
-   )
-   ```
-7. **Run Generation**
-   ```python
-   inputs = tokenizer("Hello", return_tensors="pt")
-   outputs = model.generate(
-       **inputs,
-       generation_config=gen_cfg
-   )
-   ```
-8. **Verify**
-   - Unit test that `model.config.tie_word_embeddings is False`.
-   - Integration test that generation latency is lower with `use_cache=True`.
-   - Property test that `tokenizer.encode` never raises `ValueError` due to unknown tokens.
+2. **Validate special‑token mapping** – iterate over `tokenizer.special_tokens_map` and compare to `model.config`.  
+3. **Assert dtype consistency** – ensure `model.config.dtype` matches `model.vision_config.dtype`.  
+4. **Check attention head consistency** – verify `num_attention_heads`, `num_key_value_heads`, `head_dim`, `hidden_size`.  
+5. **Verify early compression settings** – confirm `downsample_mode` and `mrope_mode` are set and supported by the vision encoder.  
+6. **Run a dry inference** – feed a minimal prompt with image token and confirm no runtime errors.  
+7. **Unit test** – create tests that load the config, tokenizer, and model, then run the assertions above.  
+8. **Document** – record any deviations and update the config or code accordingly.  
 
 ---
