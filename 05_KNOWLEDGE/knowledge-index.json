@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T17:46:01.249Z",
+  "last_updated": "2026-10-16T17:49:14.403Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15671,7 +15671,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/whisper-large-v3",
       "source_version": "hf-openai-whisper-large-v3",
-      "content_hash": "e5e7277d6e3be4b6588d0133f588f8316865ab50a16e2ec0687ad19e6f4fdbcc",
+      "content_hash": "e0c9c34bb9b6f090abcb73d80a60d25cf20c80df0e423d8be96fc1395c0d0ab1",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md",
       "promoted_rules": [],
@@ -15693,7 +15693,7 @@
         "learn-huggingface-hf-openai-whisper-large-v3-mv4a7pcw",
         "learn-huggingface-hf-openai-whisper-large-v3-mv4nl1uq"
       ],
-      "verified_at": "2026-10-16T09:54:04.530Z",
+      "verified_at": "2026-10-16T17:49:14.396Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
