@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-BUIC",
-    "timestamp": "2026-10-14T12:33:03.540Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv83buc0",
-    "contentHash": "13a60a91ae55cf4b852f0505efa43ecb116bde471415695f1613d9c4da021171",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-GFYR",
     "timestamp": "2026-10-14T12:36:37.971Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7492,6 +7477,21 @@
     "contentHash": "2d65363c1079277f8a35ee80646279bd97a35c4bb9318c95e305235ee36599b5",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-2MBS",
+    "timestamp": "2026-10-16T19:57:07.336Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "84c499e7a4ad6f1492a1680b8260ea1fca5e0bd9d558e7ebb73c5687c1c8923e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
