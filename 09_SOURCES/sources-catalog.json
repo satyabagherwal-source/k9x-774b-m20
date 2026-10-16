@@ -545,8 +545,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-pro-rl",
     "license": "Open-Source",
-    "contentHash": "921492968075a4ec243ec49eb1cadb23506b5de3a941d6e6bce0487295911b84",
-    "lastHarvestedAt": "2026-10-16T15:46:40.467Z",
+    "contentHash": "922e15558352b4e3afa5f54442419a1b3dd5906de9f5442131cac70e472b6272",
+    "lastHarvestedAt": "2026-10-16T23:57:26.033Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T23:53:51.689Z",
-  "total_cycles_completed": 1901,
-  "total_learnings_persisted": 1901,
+  "last_updated": "2026-10-16T23:57:26.035Z",
+  "total_cycles_completed": 1902,
+  "total_learnings_persisted": 1902,
   "total_rules_promoted": 1036,
   "history": [
-    {
-      "timestamp": "2026-10-16T12:17:22.172Z",
-      "repository": "google/gemma-4-31B-it",
-      "learningId": "learn-huggingface-google-gemma-4-31b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T12:20:43.509Z",
       "repository": "BAAI/bge-base-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T23:53:51.689Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T23:57:26.035Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
