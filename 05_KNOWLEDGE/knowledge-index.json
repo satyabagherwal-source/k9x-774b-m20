@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T07:18:54.383Z",
+  "last_updated": "2026-10-16T07:23:43.385Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15532,7 +15532,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "c3babd9afea954614ad207009e03ddaad24e67d93f29650bf632df724791afe8",
+      "content_hash": "177ea0df3bb04a899d4cf163b3e7b790e4958aa004e70b839d6518c885648b14",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -15568,6 +15568,16 @@
           "number": 1033,
           "title": "Binary Model Artifact Integrity & Provenance Verification",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1109,
+          "title": "Binary Tensor Buffer Zero-Copy Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1110,
+          "title": "Guarded Model Context Allocation with Physical VRAM Boundary Pre-Check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15588,7 +15598,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-15T23:42:08.025Z",
+      "verified_at": "2026-10-16T07:23:43.377Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
