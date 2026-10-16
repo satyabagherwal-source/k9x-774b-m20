@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T01:52:59.171Z",
+  "last_updated": "2026-10-16T01:56:11.103Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14069,18 +14069,34 @@
     "learn-huggingface-meta-llama-llama-2-7b-chat-hf": {
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-meta-llama-llama-2-7b-chat-hf",
+      "source": "meta-llama/Llama-2-7b-chat-hf",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
       "slug": "hf-meta-llama-llama-2-7b-chat-hf",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "c40ff68f13f28564d929626c987cc2bf81b43a9b0194cc20647c4f524d1e7792",
+      "content_hash": "3f447c516b5d7868bf10fd22dcc192680209329f15dd623b2b04eed38076abf7",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 378,
+          "title": "Tokenizer Determinism & Unicode Normalization",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1050,
+          "title": "Model Artifact Integrity & Supply Chain Security",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1051,
+          "title": "KV-Cache Memory Boundaries & OOM Prevention",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -14096,7 +14112,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-14T16:03:53.771Z",
+      "verified_at": "2026-10-16T01:56:11.098Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

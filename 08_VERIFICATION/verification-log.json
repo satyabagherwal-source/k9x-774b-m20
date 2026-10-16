@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-LVZ5",
-    "timestamp": "2026-10-13T18:01:07.361Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv6zlvwk",
-    "contentHash": "7f265e7433cfa15525295741aac71c2de73ee6c9836c28e36a3055251bb9216f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-PV4J",
     "timestamp": "2026-10-13T18:04:12.883Z",
     "repository": "mudler/locate-anything.cpp-gguf",
@@ -7492,6 +7477,21 @@
     "contentHash": "f85d6b96aab162e37059b6086d9a4c3f1c97b2acf468bb3428ed931f369e894d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-GIYG",
+    "timestamp": "2026-10-16T01:56:11.128Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "3f447c516b5d7868bf10fd22dcc192680209329f15dd623b2b04eed38076abf7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

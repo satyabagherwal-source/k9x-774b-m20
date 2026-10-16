@@ -965,9 +965,9 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "c40ff68f13f28564d929626c987cc2bf81b43a9b0194cc20647c4f524d1e7792",
-    "lastHarvestedAt": "2026-10-14T16:03:53.814Z",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv8auzfh"
+    "contentHash": "3f447c516b5d7868bf10fd22dcc192680209329f15dd623b2b04eed38076abf7",
+    "lastHarvestedAt": "2026-10-16T01:56:11.131Z",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
     "repository": "meta-llama/Llama-2-7b",
