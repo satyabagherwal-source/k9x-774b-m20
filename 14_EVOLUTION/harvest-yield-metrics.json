@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T11:21:25.914Z",
-  "total_cycles_completed": 1684,
-  "total_learnings_persisted": 1684,
+  "last_updated": "2026-10-16T11:24:30.085Z",
+  "total_cycles_completed": 1685,
+  "total_learnings_persisted": 1685,
   "total_rules_promoted": 925,
   "history": [
-    {
-      "timestamp": "2026-10-15T23:42:08.057Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T23:45:09.077Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T11:21:25.914Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T11:24:30.085Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
