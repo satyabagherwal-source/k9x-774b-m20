@@ -1687,3 +1687,4 @@
 | `CYCLE-20261016-2Y82` | `2026-10-16T10:09:30.818Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`fab7150e...`) |
 | `CYCLE-20261016-6Y4M` | `2026-10-16T10:12:37.318Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`328da293...`) |
 | `CYCLE-20261016-B5GZ` | `2026-10-16T10:15:53.459Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1134, Rule 1135, Rule 1136` | Yes (`7e808888...`) |
+| `CYCLE-20261016-ESMS` | `2026-10-16T10:18:43.444Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`494070f6...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-5EGR",
-    "timestamp": "2026-10-14T02:12:11.259Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv7h5edr",
-    "contentHash": "bf23a3ce102cd70496d1df9664334c3f86b8b4e9d9895d1f86f4fbaca8e912d8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-9BYM",
     "timestamp": "2026-10-14T02:15:14.638Z",
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "7e808888ead7d5e7ce6b0d080ea8e21dceeb3fa7d60366d17b99cb5ef1c36c03",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-ESMS",
+    "timestamp": "2026-10-16T10:18:43.444Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "494070f68bf66aa202d1a47eaa6ad76d3a43ba2df51791bdafdb41c0544c6c17",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

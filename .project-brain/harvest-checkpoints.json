@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T10:15:53.464Z",
+  "last_updated": "2026-10-16T10:18:43.448Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1187,14 +1187,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-gpt-oss-120b",
-      "content_hash": "9a78bf81440fd80efa253a709b2542cbb1ea21a9c593af3c67a563effe8eb388",
-      "verified_at": "2026-10-16T01:40:44.326Z",
+      "content_hash": "494070f68bf66aa202d1a47eaa6ad76d3a43ba2df51791bdafdb41c0544c6c17",
+      "verified_at": "2026-10-16T10:18:43.448Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T01:40:44.326Z"
+      "last_updated": "2026-10-16T10:18:43.448Z"
     },
     "zai-org/GLM-5.2": {
       "repository": "zai-org/GLM-5.2",
