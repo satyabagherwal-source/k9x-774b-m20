@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T07:11:19.369Z",
+  "last_updated": "2026-10-16T07:18:54.383Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17729,7 +17729,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "6b1beec79be63e85edd1a4a649fc2ecae3c62892d322f895533f20ec4f71fae2",
+      "content_hash": "671ec48a0d28ca2f1abcd64f95302ad75efcb7e58ad360bb80994b366080beaf",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -17746,6 +17746,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv3scm1v",
           "verified_at": "2026-10-11T12:14:38.802Z"
+        },
+        {
+          "number": 1106,
+          "title": "Hybrid SWA-to-Full Attention Sink Bias Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1107,
+          "title": "Groupwise Advantage Redistribution (GAR) with Token-Length Penalty",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1108,
+          "title": "Speech Zero-Embedding Audio Modality Masking Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17766,7 +17781,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-10-15T23:39:04.674Z",
+      "verified_at": "2026-10-16T07:18:54.380Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

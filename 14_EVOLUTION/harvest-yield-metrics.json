@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T07:11:19.399Z",
-  "total_cycles_completed": 1621,
-  "total_learnings_persisted": 1621,
-  "total_rules_promoted": 885,
+  "last_updated": "2026-10-16T07:18:54.401Z",
+  "total_cycles_completed": 1622,
+  "total_learnings_persisted": 1622,
+  "total_rules_promoted": 888,
   "history": [
-    {
-      "timestamp": "2026-10-15T20:24:44.105Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-google-vit-base-patch16-224",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T20:27:59.107Z",
       "repository": "google/gemma-4-31B-it",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T07:11:19.399Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T07:18:54.401Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

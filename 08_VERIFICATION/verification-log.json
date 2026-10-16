@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-DBHC",
-    "timestamp": "2026-10-13T23:58:22.560Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-hf-bigscience-bloom-mv7cdbe9",
-    "contentHash": "1e5fc8ebc9a5c85988944aa3bb4032090828eecbf6901ee55a0b3dd729f3f1bf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-HAP0",
     "timestamp": "2026-10-14T00:01:28.164Z",
     "repository": "openai/gpt-oss-20b",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
     "contentHash": "85bf05e80fe73b23c80ea38c9fb8f461573b6653d4af388e0ba7366ecc81b9fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-ZJR2",
+    "timestamp": "2026-10-16T07:18:54.398Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "671ec48a0d28ca2f1abcd64f95302ad75efcb7e58ad360bb80994b366080beaf",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
