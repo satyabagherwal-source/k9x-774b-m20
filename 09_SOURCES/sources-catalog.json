@@ -105,8 +105,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "ca0eff14370b67b6df32cb8c60eb9c32e08256b710952927d79e55f9e08152ea",
-    "lastHarvestedAt": "2026-10-16T04:08:52.086Z",
+    "contentHash": "69ad078d4a5ecd57b944b5ca5ad9af7f1125d6598007377cb1a46733ca14edb2",
+    "lastHarvestedAt": "2026-10-16T12:48:50.957Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide"
   },
   "hf-convaiinnovations-laya": {
