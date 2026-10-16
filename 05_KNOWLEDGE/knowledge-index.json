@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T01:06:58.110Z",
+  "last_updated": "2026-10-16T01:09:59.136Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13476,18 +13476,18 @@
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-hexgrad-kokoro-82m",
+      "source": "hexgrad/Kokoro-82M",
+      "repository": "hexgrad/Kokoro-82M",
       "slug": "hf-hexgrad-kokoro-82m",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/hexgrad/Kokoro-82M",
       "source_version": "hf-hexgrad-kokoro-82m",
-      "content_hash": "17d6fe3d8104fdb05113b27ec6e90c04e348ee66221ea37e5635cc3191080661",
+      "content_hash": "a707dc8102d6eedd0395ba61e86e974437b7cf7def65b0ef186f0447a8dc1121",
       "dossier_path": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -13504,7 +13504,7 @@
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4a40uh",
         "learn-huggingface-hf-hexgrad-kokoro-82m-mv4nh25q"
       ],
-      "verified_at": "2026-10-14T15:13:11.763Z",
+      "verified_at": "2026-10-16T01:09:59.129Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

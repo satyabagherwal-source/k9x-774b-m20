@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-VDK5",
-    "timestamp": "2026-10-13T17:12:30.821Z",
-    "repository": "openai-community/gpt2",
-    "learningId": "learn-huggingface-hf-openai-community-gpt2-mv6xvdgv",
-    "contentHash": "81865f3f87b542ba727285bf6394a794df7f1af0c960ab6a0b13f7ca1a5a40c2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ZCSU",
     "timestamp": "2026-10-13T17:15:36.462Z",
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "microsoft/FrogNano-4B-2609",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
     "contentHash": "72c1e80d2dadbf888fa158a9a242a5468d0cde6477fff32b262e5a722fdc12f3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-T43G",
+    "timestamp": "2026-10-16T01:09:59.164Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "a707dc8102d6eedd0395ba61e86e974437b7cf7def65b0ef186f0447a8dc1121",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
