@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "69c8b1fe628e04e1de6bec3a5b797f49a3c410e2081bc58ba45914311312320e",
-    "lastHarvestedAt": "2026-10-15T23:20:18.708Z",
+    "contentHash": "a52c6ed59536053355166f2bcea223d3000f442196f3a6af0f3cb325be2788b5",
+    "lastHarvestedAt": "2026-10-16T06:52:01.565Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
