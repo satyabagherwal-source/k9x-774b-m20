@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T06:02:20.150Z",
-  "total_cycles_completed": 1600,
-  "total_learnings_persisted": 1600,
+  "last_updated": "2026-10-16T06:05:21.944Z",
+  "total_cycles_completed": 1601,
+  "total_learnings_persisted": 1601,
   "total_rules_promoted": 863,
   "history": [
-    {
-      "timestamp": "2026-10-14T17:13:32.830Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv8dcjz1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T17:18:36.325Z",
       "repository": "openai/clip-vit-base-patch32",
@@ -1403,6 +1396,13 @@
       "repository": "Lightricks/LTX-2.5",
       "learningId": "learn-huggingface-lightricks-ltx-2-5",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T06:05:21.944Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
