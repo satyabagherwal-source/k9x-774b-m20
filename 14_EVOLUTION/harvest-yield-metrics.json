@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:41:38.916Z",
-  "total_cycles_completed": 1745,
-  "total_learnings_persisted": 1745,
+  "last_updated": "2026-10-16T14:44:40.161Z",
+  "total_cycles_completed": 1746,
+  "total_learnings_persisted": 1746,
   "total_rules_promoted": 944,
   "history": [
-    {
-      "timestamp": "2026-10-16T02:51:43.925Z",
-      "repository": "BAAI/bge-reranker-v2-m3",
-      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T02:55:03.422Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T14:41:38.916Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T14:44:40.161Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-supersoniclabs-julia-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
