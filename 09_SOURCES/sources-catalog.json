@@ -725,9 +725,9 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "546a6756fa59c58873a4647e810a8dec863ec523524354ab2a471c9be236be6e",
-    "lastHarvestedAt": "2026-10-14T14:13:21.555Z",
-    "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv86wty5"
+    "contentHash": "f8e569c8e481e0b1ccd98e2f1bdc79dc809ba85715c82a29e83a24bb89297fda",
+    "lastHarvestedAt": "2026-10-16T00:35:49.178Z",
+    "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
     "repository": "BAAI/bge-m3",
