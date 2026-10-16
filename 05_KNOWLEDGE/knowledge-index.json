@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T02:33:35.260Z",
+  "last_updated": "2026-10-16T02:36:28.385Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15096,18 +15096,18 @@
     "learn-huggingface-openai-clip-vit-base-patch32": {
       "learning_id": "learn-huggingface-openai-clip-vit-base-patch32",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-openai-clip-vit-base-patch32",
+      "source": "openai/clip-vit-base-patch32",
+      "repository": "openai/clip-vit-base-patch32",
       "slug": "hf-openai-clip-vit-base-patch32",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/clip-vit-base-patch32",
       "source_version": "hf-openai-clip-vit-base-patch32",
-      "content_hash": "5265197f432376ee6649a38bafde37a70ce67fe97a0bfe42ee567ba062628125",
+      "content_hash": "25f20a07854c906669164e6e3855c21a25b6166288db00c989d181f65af9bc93",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -15123,7 +15123,7 @@
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv3y5o08",
         "learn-huggingface-hf-openai-clip-vit-base-patch32-mv4cvq4q"
       ],
-      "verified_at": "2026-10-14T17:18:36.270Z",
+      "verified_at": "2026-10-16T02:36:28.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
