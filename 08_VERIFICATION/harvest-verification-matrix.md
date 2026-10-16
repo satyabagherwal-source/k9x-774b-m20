@@ -1558,3 +1558,4 @@
 | `CYCLE-20261016-ZWTM` | `2026-10-16T02:11:15.562Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`fa45b459...`) |
 | `CYCLE-20261016-49I0` | `2026-10-16T02:14:38.616Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`0210f373...`) |
 | `CYCLE-20261016-87F2` | `2026-10-16T02:17:42.542Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`d389281d...`) |
+| `CYCLE-20261016-CBFN` | `2026-10-16T02:20:54.371Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`032c9f5c...`) |

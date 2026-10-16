@@ -1560,3 +1560,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-16T02:11:15.565Z |
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-10-16T02:14:38.618Z |
 | `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-16T02:17:42.544Z |
+| `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-10-16T02:20:54.374Z |
