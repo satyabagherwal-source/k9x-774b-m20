@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T16:26:15.125Z",
-  "total_cycles_completed": 1774,
-  "total_learnings_persisted": 1774,
+  "last_updated": "2026-10-16T16:30:12.284Z",
+  "total_cycles_completed": 1775,
+  "total_learnings_persisted": 1775,
   "total_rules_promoted": 961,
   "history": [
-    {
-      "timestamp": "2026-10-16T04:28:57.660Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T04:32:21.323Z",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T16:26:15.125Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T16:30:12.284Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
