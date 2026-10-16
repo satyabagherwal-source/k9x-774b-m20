@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-Q4KH",
-    "timestamp": "2026-10-13T20:24:23.201Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv74q4h9",
-    "contentHash": "587503944e16be82cdfd4d925cc76e0d3bf5775156fa430fe005d7a555a8bf09",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-VGPH",
     "timestamp": "2026-10-13T20:28:32.213Z",
     "repository": "apple/LensVLM-9B",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.3",
     "learningId": "learn-huggingface-zai-org-glm-5-3",
     "contentHash": "5bc08ccf9cbe60c2b1adc007e231516a8bb74c36e7682bd95d20ea0ea3457432",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-SJC9",
+    "timestamp": "2026-10-16T03:57:29.961Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+    "contentHash": "57c8eb01c5ce028b91713bc2f9587cd70a1dc2eaba9d4ea3900ccfd340cc02ac",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
