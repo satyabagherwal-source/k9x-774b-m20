@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-1B3S",
-    "timestamp": "2026-10-14T01:41:00.664Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv7g1b0m",
-    "contentHash": "ed941032966044558449e5091d9610587abe13a2bfb421d158bcf3e18789531f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-5BR0",
     "timestamp": "2026-10-14T01:44:08.124Z",
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -7490,6 +7475,21 @@
     "repository": "microsoft/FrogNano-4B-2609",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
     "contentHash": "6013af8fe95a07bfdfada83609d146aed402616f1e91a93cb52cb6c8a65f1763",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-ATDN",
+    "timestamp": "2026-10-16T09:47:38.171Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "aa9689e74ca30c5784048838df2a64544d4e7e883c0d0fd355b6c8a711e89b25",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
