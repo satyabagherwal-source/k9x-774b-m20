@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-HBC4",
-    "timestamp": "2026-10-13T21:41:30.916Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv77hb8w",
-    "contentHash": "4ddbf01f601b854c43f96fe6ede6d388a8e76e59a67c569745fddfdc151f9522",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-LJUD",
     "timestamp": "2026-10-13T21:44:48.565Z",
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7492,6 +7477,21 @@
     "contentHash": "6653125b4d5a80d2126af34668819531fb7e3c17470a40be31c945b49f05cfd7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-TQ5O",
+    "timestamp": "2026-10-16T04:54:24.684Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "e2d81cb6158022c4bf33cd2feffab65f983a78094d4c22a8ac90f685858cd6ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

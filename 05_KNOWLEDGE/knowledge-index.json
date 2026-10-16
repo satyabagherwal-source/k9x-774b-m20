@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T04:51:01.580Z",
+  "last_updated": "2026-10-16T04:54:24.663Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10275,7 +10275,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-small-en-v1.5",
       "source_version": "hf-baai-bge-small-en-v1.5",
-      "content_hash": "f7c00e3e02c2fed4583c3b47769ada2182c70151afacf16782c9473987052fdc",
+      "content_hash": "e2d81cb6158022c4bf33cd2feffab65f983a78094d4c22a8ac90f685858cd6ab",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -10309,6 +10309,21 @@
           "number": 790,
           "title": "Semantic Embedding Normalization Invariant",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1065,
+          "title": "Semantic Retrieval Instruction Prefix Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1066,
+          "title": "Embedding Normalization for Dot-Product Retrieval",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1067,
+          "title": "Tokenizer Truncation and Padding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10646,7 +10661,7 @@
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv42wvjy",
         "learn-huggingface-hf-baai-bge-small-en-v1-5-mv4g4zgk"
       ],
-      "verified_at": "2026-10-15T21:25:21.466Z",
+      "verified_at": "2026-10-16T04:54:24.658Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

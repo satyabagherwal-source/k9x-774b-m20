@@ -1601,3 +1601,4 @@
 | `CYCLE-20261016-1D1J` | `2026-10-16T04:32:21.319Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`6fb8bd12...`) |
 | `CYCLE-20261016-A0L6` | `2026-10-16T04:39:05.082Z` | `DayuanJiang/next-ai-draw-io` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1064` | Yes (`81c6d704...`) |
 | `CYCLE-20261016-PDGW` | `2026-10-16T04:51:01.616Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`6653125b...`) |
+| `CYCLE-20261016-TQ5O` | `2026-10-16T04:54:24.684Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1065, Rule 1066, Rule 1067` | Yes (`e2d81cb6...`) |

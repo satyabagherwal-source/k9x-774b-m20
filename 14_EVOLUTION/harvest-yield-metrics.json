@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T04:51:01.621Z",
-  "total_cycles_completed": 1578,
-  "total_learnings_persisted": 1578,
-  "total_rules_promoted": 842,
+  "last_updated": "2026-10-16T04:54:24.687Z",
+  "total_cycles_completed": 1579,
+  "total_learnings_persisted": 1579,
+  "total_rules_promoted": 845,
   "history": [
-    {
-      "timestamp": "2026-10-14T15:38:00.843Z",
-      "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-pro-mv89xp52",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T15:41:17.497Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -1403,6 +1396,13 @@
       "repository": "autotrust/JEV-35B-NVFP4",
       "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T04:54:24.687Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
