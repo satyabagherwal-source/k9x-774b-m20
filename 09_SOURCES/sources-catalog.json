@@ -775,9 +775,9 @@
     "sourceUrl": "https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "sourceVersion": "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "7b90a207f16c3ff421a8ef58fd336861118d8865923b043a509a74a3d05e7c60",
-    "lastHarvestedAt": "2026-10-14T14:48:18.672Z",
-    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv885s4e"
+    "contentHash": "812b0f1363e9d88648dfa5d03cd43c4e19a76ce6afbbd669a53b6aa96a644a66",
+    "lastHarvestedAt": "2026-10-16T00:51:20.388Z",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf"
   },
   "hf-timm-mobilenetv3_small_100.lamb_in1k": {
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",

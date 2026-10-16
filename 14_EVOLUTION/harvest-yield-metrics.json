@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T00:48:14.970Z",
-  "total_cycles_completed": 1506,
-  "total_learnings_persisted": 1506,
+  "last_updated": "2026-10-16T00:51:20.389Z",
+  "total_cycles_completed": 1507,
+  "total_learnings_persisted": 1507,
   "total_rules_promoted": 821,
   "history": [
-    {
-      "timestamp": "2026-10-14T11:07:53.808Z",
-      "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv80abq0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T11:11:01.674Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T00:48:14.970Z",
       "repository": "Comfy-Org/MiniMax-H3",
       "learningId": "learn-huggingface-comfy-org-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T00:51:20.389Z",
+      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
