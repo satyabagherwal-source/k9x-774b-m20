@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T19:16:33.049Z",
-  "total_cycles_completed": 1823,
-  "total_learnings_persisted": 1823,
+  "last_updated": "2026-10-16T19:19:58.263Z",
+  "total_cycles_completed": 1824,
+  "total_learnings_persisted": 1824,
   "total_rules_promoted": 984,
   "history": [
-    {
-      "timestamp": "2026-10-16T07:26:57.695Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T07:32:37.174Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T19:16:33.049Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T19:19:58.263Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
