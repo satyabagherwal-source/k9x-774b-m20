@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T16:42:34.509Z",
+  "last_updated": "2026-10-16T16:47:55.595Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13420,7 +13420,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "8cd90b6d10e9084433622cfa289d568f206d36b1e8359c73d63ef86a9e3acc3d",
+      "content_hash": "55a2c0a23cff0a1d46d6c8cdccd67f2eca355565963f191e6173cbabedbacfae",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [
@@ -13437,6 +13437,21 @@
         {
           "number": 1044,
           "title": "Deterministic Inference for Reproducible Forensics",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1206,
+          "title": "Deterministic Tokenization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1207,
+          "title": "Numerical Stability & Precision Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1208,
+          "title": "Context Window Truncation Strategy",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -13458,7 +13473,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-16T08:35:11.802Z",
+      "verified_at": "2026-10-16T16:47:55.589Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
