@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T16:30:12.262Z",
+  "last_updated": "2026-10-16T16:33:21.914Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17677,7 +17677,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "d69221bd2fa02647a28e21744903911e63f3512e0403ccf32beb63ad63575079",
+      "content_hash": "85a75a14731c9f5556c13318c6240ea2936a020e1e385e38d0137642b362c0dc",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [],
@@ -17699,7 +17699,7 @@
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
       ],
-      "verified_at": "2026-10-16T08:22:42.035Z",
+      "verified_at": "2026-10-16T16:33:21.906Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

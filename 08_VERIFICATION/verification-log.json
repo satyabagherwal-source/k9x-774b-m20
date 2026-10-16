@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-U1H8",
-    "timestamp": "2026-10-14T09:31:15.068Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7wu1eg",
-    "contentHash": "a960c3058ee9e534358a8f6e65c58391f5d0eb24d889b698189cdfebc4d786d0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-Y37J",
     "timestamp": "2026-10-14T09:34:23.935Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7490,6 +7475,21 @@
     "repository": "google/embeddinggemma-2",
     "learningId": "learn-huggingface-google-embeddinggemma-2",
     "contentHash": "0891d257be9cc6399989d93c464edb5bbaf1fc3b0eb5f0f77c9dbf1b0ded1e63",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-SL5N",
+    "timestamp": "2026-10-16T16:33:21.947Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "85a75a14731c9f5556c13318c6240ea2936a020e1e385e38d0137642b362c0dc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
