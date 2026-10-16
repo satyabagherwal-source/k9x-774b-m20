@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T03:10:38.727Z",
+  "last_updated": "2026-10-16T03:13:45.270Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15023,7 +15023,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "091c9286d1e4266992ca5ff989c68cd1b53d223317d561f0bf46329fee8e1d3e",
+      "content_hash": "db196de361670b3af2f7b905af11cdd785417cedaff3cf948f56b1108d6fab98",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "promoted_rules": [],
@@ -15044,7 +15044,7 @@
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
       ],
-      "verified_at": "2026-10-15T20:02:57.598Z",
+      "verified_at": "2026-10-16T03:13:45.264Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

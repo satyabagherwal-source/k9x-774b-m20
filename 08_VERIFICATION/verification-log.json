@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-2DTP",
-    "timestamp": "2026-10-13T19:37:55.837Z",
-    "repository": "autotrust/JEV-35B",
-    "learningId": "learn-huggingface-hf-autotrust-jev-35b-mv732dr6",
-    "contentHash": "0ce5413d774f2e439952c8e4078514ef6d11f126e65d9911e500de827e87e0c7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-6RMS",
     "timestamp": "2026-10-13T19:41:20.356Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
     "contentHash": "82b139d2157a71ee422f1dfc8f2710441eecde4dbd10b22abd8d4e6e886e8f32",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-8A4X",
+    "timestamp": "2026-10-16T03:13:45.297Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "db196de361670b3af2f7b905af11cdd785417cedaff3cf948f56b1108d6fab98",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
