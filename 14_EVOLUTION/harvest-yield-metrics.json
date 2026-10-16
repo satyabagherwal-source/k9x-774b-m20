@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:57:03.054Z",
-  "total_cycles_completed": 1750,
-  "total_learnings_persisted": 1750,
+  "last_updated": "2026-10-16T15:00:07.897Z",
+  "total_cycles_completed": 1751,
+  "total_learnings_persisted": 1751,
   "total_rules_promoted": 951,
   "history": [
-    {
-      "timestamp": "2026-10-16T03:07:20.814Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T03:10:38.759Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1403,6 +1396,13 @@
       "repository": "Altworld/Hemmingway-1",
       "learningId": "learn-huggingface-altworld-hemmingway-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T15:00:07.897Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

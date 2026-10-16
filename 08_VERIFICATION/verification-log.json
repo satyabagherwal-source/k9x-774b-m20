@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-QVCD",
-    "timestamp": "2026-10-14T06:40:49.453Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv7qqvaf",
-    "contentHash": "d6c4c90575fd9a2ee91f3e1629ffd1a870bc74e7140e0e0ef9b8222433bb67ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-UVZ6",
     "timestamp": "2026-10-14T06:43:56.898Z",
     "repository": "bigscience/bloom",
@@ -7492,6 +7477,21 @@
     "contentHash": "e825cd2129f65cdbac570c8a09a6750a1b7171a9de6409546a3778052128796d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-GOR9",
+    "timestamp": "2026-10-16T15:00:07.893Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+    "contentHash": "efdef16c51c77ff76a3a40531e333764bbc45ceb33f073bb832a5e748df12b6d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

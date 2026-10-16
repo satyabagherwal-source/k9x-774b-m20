@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T14:57:03.036Z",
+  "last_updated": "2026-10-16T15:00:07.859Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13244,7 +13244,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "7002a9385691d55416f04118f7eab9888c2e2aacb52b475ceec1da6d30e69153",
+      "content_hash": "efdef16c51c77ff76a3a40531e333764bbc45ceb33f073bb832a5e748df12b6d",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [],
@@ -13266,7 +13266,7 @@
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv45omuu",
         "learn-huggingface-hf-fastino-gliner2-5-decide-mv4iyd2f"
       ],
-      "verified_at": "2026-10-16T06:33:22.136Z",
+      "verified_at": "2026-10-16T15:00:07.851Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
