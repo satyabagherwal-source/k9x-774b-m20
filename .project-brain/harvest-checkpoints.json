@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T22:37:20.904Z",
+  "last_updated": "2026-10-16T22:40:28.660Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -393,14 +393,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "7e57abe2e3beb56c13b5b4c4f5e46696a36dd84f1ba2fc618a30d91a554e0f41",
-      "verified_at": "2026-10-16T14:20:19.398Z",
+      "content_hash": "0fc3dadc32bef8237b3d0ea75b4f853d8fc090b8ffd5618905399c29946753fd",
+      "verified_at": "2026-10-16T22:40:28.660Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T14:20:19.398Z"
+      "last_updated": "2026-10-16T22:40:28.660Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
