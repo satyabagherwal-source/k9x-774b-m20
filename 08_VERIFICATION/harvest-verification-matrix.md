@@ -1867,3 +1867,4 @@
 | `CYCLE-20261016-4GUQ` | `2026-10-16T20:26:33.170Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`456c6d31...`) |
 | `CYCLE-20261016-DEXG` | `2026-10-16T20:33:30.580Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule 974` | Yes (`e5211619...`) |
 | `CYCLE-20261016-JPXE` | `2026-10-16T20:38:24.770Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`645b6f43...`) |
+| `CYCLE-20261016-NUC4` | `2026-10-16T20:41:37.108Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`176854d2...`) |

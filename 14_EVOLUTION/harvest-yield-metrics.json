@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T20:38:24.773Z",
-  "total_cycles_completed": 1844,
-  "total_learnings_persisted": 1844,
+  "last_updated": "2026-10-16T20:41:37.112Z",
+  "total_cycles_completed": 1845,
+  "total_learnings_persisted": 1845,
   "total_rules_promoted": 995,
   "history": [
-    {
-      "timestamp": "2026-10-16T08:50:49.059Z",
-      "repository": "Comfy-Org/MiniMax-H3",
-      "learningId": "learn-huggingface-comfy-org-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T08:53:56.992Z",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T20:38:24.773Z",
       "repository": "Bingsu/adetailer",
       "learningId": "learn-huggingface-bingsu-adetailer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T20:41:37.112Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

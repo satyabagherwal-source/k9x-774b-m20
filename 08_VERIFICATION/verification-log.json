@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-PVGC",
-    "timestamp": "2026-10-14T13:11:57.564Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv84pv9i",
-    "contentHash": "95037d13c72b08002c12a4061d78bb4d0f926e84a7f2271edffadf10e6c26817",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-U5L0",
     "timestamp": "2026-10-14T13:15:17.316Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7490,6 +7475,21 @@
     "repository": "Bingsu/adetailer",
     "learningId": "learn-huggingface-bingsu-adetailer",
     "contentHash": "645b6f434d2df68b4968f19a8c5cf08b4cc885aab2de001f2271357ae982c81a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-NUC4",
+    "timestamp": "2026-10-16T20:41:37.108Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "176854d2cd7987792b6765434ad6acf419b9dd0e9c4d0d1cd929b2691d30c3d9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
