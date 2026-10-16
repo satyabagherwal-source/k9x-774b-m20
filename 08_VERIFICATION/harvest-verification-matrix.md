@@ -1796,3 +1796,4 @@
 | `CYCLE-20261016-5KKD` | `2026-10-16T16:15:28.093Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`14243c74...`) |
 | `CYCLE-20261016-9MMY` | `2026-10-16T16:18:37.402Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`18683a15...`) |
 | `CYCLE-20261016-F5X0` | `2026-10-16T16:22:55.668Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1198, Rule 1199, Rule 1200` | Yes (`0cd058e2...`) |
+| `CYCLE-20261016-JFTD` | `2026-10-16T16:26:15.121Z` | `canberkkkkkk/ema-lightning` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md` | Yes (`5dfbb96a...`) |
