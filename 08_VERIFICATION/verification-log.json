@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-TOUZ",
-    "timestamp": "2026-10-14T06:15:01.403Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv7ptoro",
-    "contentHash": "e64e87beb7873fdd8bf7cb92d49990eae13232ea05e9b57a05cffcb7d450cf66",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-XHPK",
     "timestamp": "2026-10-14T06:17:58.760Z",
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -7490,6 +7475,21 @@
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
     "contentHash": "a3f570113de4df7a6c032c0a8af1b923c0eea448d8ba35e0234469efab2e3e0e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-KXMK",
+    "timestamp": "2026-10-16T14:35:26.396Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+    "contentHash": "08185b52f876bf3211d25d9416dc0ee14aeef0ed85a9b3d8e7153183aebbfa21",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
