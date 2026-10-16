@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-H6M3",
-    "timestamp": "2026-10-13T21:13:25.179Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-hf-akhilaaa3-jev-omni-mv76h6iu",
-    "contentHash": "4e51b8f907686d1d90ee12b05c3835485ca62cb2e92ad8cb3a05f3a4b23da23a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-Z1KL",
     "timestamp": "2026-10-13T21:27:18.453Z",
     "repository": "Leonxlnx/taste-skill",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
     "contentHash": "5eb78066374abadcfcf1f55e0aa104beb208995c2dc1e39dabd438c4d7325828",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-WZW8",
+    "timestamp": "2026-10-16T04:28:57.656Z",
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+    "contentHash": "953b0a25906d17fc3e68c21cf94d9d3e49a8f410eaf892a2ba50627f29ea8a7e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
