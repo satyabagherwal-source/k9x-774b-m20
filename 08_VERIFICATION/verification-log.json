@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-TJZ1",
-    "timestamp": "2026-10-14T15:34:47.389Z",
-    "repository": "fishaudio/drama-3",
-    "learningId": "learn-huggingface-hf-fishaudio-drama-3-mv89tjwz",
-    "contentHash": "7760dc0c00c97d463ebcc985332bf8948780a5a3807ab8d2dd6bcde233b550b0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-XP8N",
     "timestamp": "2026-10-14T15:38:00.839Z",
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen-Image-2.1",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1",
     "contentHash": "464bb8338f2b7398481c2759abacca0768b0f2353805a990e1eb837116bedc44",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-SO77",
+    "timestamp": "2026-10-16T22:37:20.899Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "f7a3b0a54f23cec6959f4ddf779a3df0e9305a1b9d23f43e8f68ce5cfd73a4a6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

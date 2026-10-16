@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "f20e5d9029c845ae59c5116c1f70185af311623ee44ba10f0bf80727fb5ec413",
-    "lastHarvestedAt": "2026-10-16T14:17:08.945Z",
+    "contentHash": "f7a3b0a54f23cec6959f4ddf779a3df0e9305a1b9d23f43e8f68ce5cfd73a4a6",
+    "lastHarvestedAt": "2026-10-16T22:37:20.901Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {

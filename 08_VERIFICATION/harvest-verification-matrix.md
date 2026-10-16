@@ -1900,3 +1900,4 @@
 | `CYCLE-20261016-CT3C` | `2026-10-16T22:25:00.744Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1247, Rule 1248, Rule 1249` | Yes (`0c355e62...`) |
 | `CYCLE-20261016-GP3A` | `2026-10-16T22:28:02.182Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`e6da15e1...`) |
 | `CYCLE-20261016-L2WS` | `2026-10-16T22:31:26.716Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`464bb833...`) |
+| `CYCLE-20261016-SO77` | `2026-10-16T22:37:20.899Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`f7a3b0a5...`) |
