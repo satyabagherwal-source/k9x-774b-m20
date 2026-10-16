@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T07:26:57.695Z",
-  "total_cycles_completed": 1624,
-  "total_learnings_persisted": 1624,
-  "total_rules_promoted": 890,
+  "last_updated": "2026-10-16T07:32:37.174Z",
+  "total_cycles_completed": 1625,
+  "total_learnings_persisted": 1625,
+  "total_rules_promoted": 892,
   "history": [
-    {
-      "timestamp": "2026-10-15T20:34:19.489Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T20:37:34.943Z",
       "repository": "Bingsu/adetailer",
@@ -1403,6 +1396,13 @@
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T07:32:37.174Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
