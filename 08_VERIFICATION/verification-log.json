@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-FBCI",
-    "timestamp": "2026-10-13T17:00:01.458Z",
-    "repository": "sentence-transformers/all-mpnet-base-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv6xfbaj",
-    "contentHash": "bb0c65474425dcb921765143225da76fcc936954068b7e5ceb39112744665cc1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-JI7S",
     "timestamp": "2026-10-13T17:03:16.984Z",
     "repository": "BAAI/bge-reranker-v2-m3",
@@ -7490,6 +7475,21 @@
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
     "contentHash": "07e38f5e02e05776336f28937c5c1f552aced2be5e71b3b9209d9e655738ff09",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-DGSH",
+    "timestamp": "2026-10-16T00:57:49.121Z",
+    "repository": "amazon/chronos-2",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "77bf6ae1f4b36cb49e1aa11eaf6ae0a585f59ac53091760adf84101c0a2f68d7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

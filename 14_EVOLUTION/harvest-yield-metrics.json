@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T00:54:27.639Z",
-  "total_cycles_completed": 1508,
-  "total_learnings_persisted": 1508,
+  "last_updated": "2026-10-16T00:57:49.126Z",
+  "total_cycles_completed": 1509,
+  "total_learnings_persisted": 1509,
   "total_rules_promoted": 821,
   "history": [
-    {
-      "timestamp": "2026-10-14T11:14:06.881Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv80ibl2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T11:17:13.292Z",
       "repository": "moonshotai/Kimi-K3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T00:54:27.639Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T00:57:49.126Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
