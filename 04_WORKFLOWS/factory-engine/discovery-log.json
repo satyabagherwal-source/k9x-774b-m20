@@ -17842,5 +17842,20 @@
     "qualityScore": 21438,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-16T08:58:57.163Z"
+  },
+  {
+    "name": "textbee",
+    "fullName": "textbee/textbee",
+    "url": "https://github.com/textbee/textbee",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Open-source SMS gateway. Turn your Android phone into an SMS API: send and receive SMS from your apps over REST and webhooks. Self-hostable, with a free hosted plan.",
+    "stars": 3175,
+    "forks": 468,
+    "openIssues": 52,
+    "language": "TypeScript",
+    "qualityScore": 2082,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-16T09:27:24.317Z"
   }
 ]

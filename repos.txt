@@ -4060,3 +4060,7 @@ https://github.com/aleo-labs-protocol/snarkOS
 https://github.com/Saffsanity/sill
 # [DATABASE-STORAGE-ENGINES] volcengine/OpenViking (21438 score) - Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG 
 https://github.com/volcengine/OpenViking
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-16T09:28:14.981Z] ---
+# [AI-AGENTS] textbee/textbee (2082 score) - Open-source SMS gateway. Turn your Android phone into an SMS API: send and recei
+https://github.com/textbee/textbee
