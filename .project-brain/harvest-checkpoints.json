@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T18:32:37.029Z",
+  "last_updated": "2026-10-16T18:35:54.240Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1277,14 +1277,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b",
-      "content_hash": "0a55af0a6a0e74557e09d70c60ce8f875fc9228289fa6d74ec653d5ab0217c02",
-      "verified_at": "2026-10-16T10:38:17.738Z",
+      "content_hash": "ab1bc7f83ec6c8774f8bb31397274b3650f29b72f53413eb95e88416c4dc6c45",
+      "verified_at": "2026-10-16T18:35:54.240Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T10:38:17.738Z"
+      "last_updated": "2026-10-16T18:35:54.240Z"
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",

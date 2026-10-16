@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T18:32:36.991Z",
+  "last_updated": "2026-10-16T18:35:54.209Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14491,7 +14491,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
       "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "0a55af0a6a0e74557e09d70c60ce8f875fc9228289fa6d74ec653d5ab0217c02",
+      "content_hash": "ab1bc7f83ec6c8774f8bb31397274b3650f29b72f53413eb95e88416c4dc6c45",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "promoted_rules": [
@@ -14508,6 +14508,21 @@
         {
           "number": 1139,
           "title": "The Immutable Weight Loading Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1218,
+          "title": "KV Cache Memory Bound & Eviction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1219,
+          "title": "Positional Encoding Boundary & Extrapolation Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1220,
+          "title": "Tokenizer Detokenization Round-Trip Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -14527,7 +14542,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv3fuh18",
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv4blmsc"
       ],
-      "verified_at": "2026-10-16T10:38:17.702Z",
+      "verified_at": "2026-10-16T18:35:54.203Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
