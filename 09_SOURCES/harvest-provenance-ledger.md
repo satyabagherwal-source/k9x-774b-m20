@@ -1850,3 +1850,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-16T19:16:33.048Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-10-16T19:19:58.262Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein` | `https://huggingface.co/black-forest-labs/flux-3-image-klein` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-16T19:23:15.694Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-10-16T19:28:15.095Z |
