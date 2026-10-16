@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T13:41:41.435Z",
-  "total_cycles_completed": 1728,
-  "total_learnings_persisted": 1728,
+  "last_updated": "2026-10-16T13:44:45.822Z",
+  "total_cycles_completed": 1729,
+  "total_learnings_persisted": 1729,
   "total_rules_promoted": 935,
   "history": [
-    {
-      "timestamp": "2026-10-16T01:59:21.062Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T02:02:18.962Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T13:41:41.435Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T13:44:45.822Z",
+      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

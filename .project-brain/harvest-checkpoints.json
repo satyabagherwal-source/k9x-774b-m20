@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T13:41:41.436Z",
+  "last_updated": "2026-10-16T13:44:45.823Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -273,14 +273,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "6fcede512730fe3408ea02e7dc1fa967efcb245cced14cb2243f6bf927e9f653",
-      "verified_at": "2026-10-16T05:25:12.955Z",
+      "content_hash": "9f5f4084b0141e14f2dad8f109310582ca85a2d650a4def0acad957e05c95652",
+      "verified_at": "2026-10-16T13:44:45.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T05:25:12.955Z"
+      "last_updated": "2026-10-16T13:44:45.823Z"
     },
     "deepseek-ai/DeepSeek-R1": {
       "repository": "deepseek-ai/DeepSeek-R1",
