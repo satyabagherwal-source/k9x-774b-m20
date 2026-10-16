@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-B0XJ",
-    "timestamp": "2026-10-13T22:04:37.112Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv78b0um",
-    "contentHash": "c8a3239e0eec90ae349668f05efe205590ad57d98f68575f9742611af8e4b7b7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-FHN3",
     "timestamp": "2026-10-13T22:08:05.391Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7475,21 @@
     "repository": "FrancisRing/Prism",
     "learningId": "learn-huggingface-francisring-prism",
     "contentHash": "3cd15ebb2c27d917acea8e32b5abc454cae077be763d66ef48b43ec5e45a8829",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-P1GM",
+    "timestamp": "2026-10-16T05:18:45.670Z",
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+    "contentHash": "2a564cb64f6984694419ca5a9be4950162d3c21880484d171ca18177c92f272a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

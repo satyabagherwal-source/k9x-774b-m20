@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T05:15:54.041Z",
-  "total_cycles_completed": 1585,
-  "total_learnings_persisted": 1585,
+  "last_updated": "2026-10-16T05:18:45.673Z",
+  "total_cycles_completed": 1586,
+  "total_learnings_persisted": 1586,
   "total_rules_promoted": 851,
   "history": [
-    {
-      "timestamp": "2026-10-14T16:00:44.794Z",
-      "repository": "openai/gpt-oss-20b",
-      "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv8aqxkr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T16:03:53.816Z",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T05:15:54.041Z",
       "repository": "FrancisRing/Prism",
       "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:18:45.673Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
