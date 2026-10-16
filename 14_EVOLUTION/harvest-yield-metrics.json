@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T16:57:02.823Z",
-  "total_cycles_completed": 1783,
-  "total_learnings_persisted": 1783,
+  "last_updated": "2026-10-16T17:00:14.749Z",
+  "total_cycles_completed": 1784,
+  "total_learnings_persisted": 1784,
   "total_rules_promoted": 970,
   "history": [
-    {
-      "timestamp": "2026-10-16T05:13:03.822Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T05:15:54.041Z",
       "repository": "FrancisRing/Prism",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T16:57:02.823Z",
       "repository": "Qwen/Qwen3-0.6B",
       "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T17:00:14.749Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-google-t5-t5-small",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

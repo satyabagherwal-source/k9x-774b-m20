@@ -1806,3 +1806,4 @@
 | `CYCLE-20261016-F9JX` | `2026-10-16T16:50:59.997Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`0d0c8ed9...`) |
 | `CYCLE-20261016-J4CY` | `2026-10-16T16:53:59.890Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`bc61b220...`) |
 | `CYCLE-20261016-N1IB` | `2026-10-16T16:57:02.819Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`4e07c52f...`) |
+| `CYCLE-20261016-R5LL` | `2026-10-16T17:00:14.745Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`60cd9403...`) |

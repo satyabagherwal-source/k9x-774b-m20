@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T16:57:02.792Z",
+  "last_updated": "2026-10-16T17:00:14.716Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13696,7 +13696,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "ae295c90bdf800438d95b1cb03966983c94df1114196e71eebbfbf31da959098",
+      "content_hash": "60cd94039aa8d679372c997ac22f45d3964f2b66df76ec0324e3ac519b17a98e",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "promoted_rules": [],
@@ -13718,7 +13718,7 @@
         "learn-huggingface-hf-google-t5-t5-small-mv498vvv",
         "learn-huggingface-hf-google-t5-t5-small-mv4mm4dm"
       ],
-      "verified_at": "2026-10-16T08:47:48.421Z",
+      "verified_at": "2026-10-16T17:00:14.710Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
