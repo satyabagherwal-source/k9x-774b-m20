@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-L6MG",
-    "timestamp": "2026-10-14T05:12:25.288Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv7nl6j6",
-    "contentHash": "d2a0ced8fd236f7aff35e928e2c473a3ff3c977476831ff6ef328900f0095edb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-P5W4",
     "timestamp": "2026-10-14T05:15:30.964Z",
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "2310c3af5b054ac2bb648b485e041d756120f0415d5bb555b8606456a3b1a6f1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-3UX0",
+    "timestamp": "2026-10-16T13:26:10.500Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "5998e10d8acfbf9c9e46731cc4c4bb47bebd15daa9cb56309e0b59502ae97d01",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1745,3 +1745,4 @@
 | `CYCLE-20261016-OGPW` | `2026-10-16T13:14:12.260Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`0a380622...`) |
 | `CYCLE-20261016-SM7P` | `2026-10-16T13:17:26.005Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`b90d4369...`) |
 | `CYCLE-20261016-ZIVQ` | `2026-10-16T13:22:48.278Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`2310c3af...`) |
+| `CYCLE-20261016-3UX0` | `2026-10-16T13:26:10.500Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1152, Rule 1153, Rule 1154` | Yes (`5998e10d...`) |

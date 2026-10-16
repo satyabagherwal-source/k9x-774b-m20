@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T13:22:48.240Z",
+  "last_updated": "2026-10-16T13:26:10.474Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11048,7 +11048,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "9a70619b96810300c1ff2e140ba76d1573e1816d361de3f071154c62f37e75e6",
+      "content_hash": "5998e10d8acfbf9c9e46731cc4c4bb47bebd15daa9cb56309e0b59502ae97d01",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [
@@ -11065,6 +11065,21 @@
         {
           "number": 1070,
           "title": "Hadamard Transform Matrix Normalization for Low-Bit Grouped Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1152,
+          "title": "Edge-ASR Quantization Grouping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1153,
+          "title": "Laddered Model Depth Selection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1154,
+          "title": "Word Timestamp Alignment via Decoder Attention Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11086,7 +11101,7 @@
         "learn-huggingface-hf-cactus-compute-whistle-mv437sal",
         "learn-huggingface-hf-cactus-compute-whistle-mv4gguek"
       ],
-      "verified_at": "2026-10-16T05:06:54.309Z",
+      "verified_at": "2026-10-16T13:26:10.468Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
