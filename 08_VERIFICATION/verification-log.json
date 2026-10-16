@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-4ONM",
-    "timestamp": "2026-10-14T12:55:28.978Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv844oix",
-    "contentHash": "29a29c4217abf2085d756cd720905bb58f9c125bf49d06d6a6f297a350d78dc5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-8VF7",
     "timestamp": "2026-10-14T12:58:44.371Z",
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-8B",
     "learningId": "learn-huggingface-qwen-qwen3-8b",
     "contentHash": "a717a9b44ffb46eea02fb62632a2854914ae6357acb9cf8fca7123358a1f0a60",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-UETQ",
+    "timestamp": "2026-10-16T20:18:43.982Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "6956f709adaa0ff49737e2ea863508e0a5069e3253fb6a08b5494c10550d34bb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
