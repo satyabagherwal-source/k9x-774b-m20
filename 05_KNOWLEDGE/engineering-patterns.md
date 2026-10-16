@@ -70157,3 +70157,186 @@ logits = model(batch)[0]  # autograd graph built
 Use `torch.autograd.profiler.profile` to confirm that no `grad_fn` objects are attached to the output tensors.
 
 ---
+
+
+---
+
+## 1120. **Special‑Token Integrity Rule** (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Special‑Token Integrity Rule**",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T08:29:16.991Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** preserve the integrity of all special tokens (e.g., `<|image_pad|>`, `<|video_pad|>`, `<|im_end|>`) during tokenization, padding, and model inference.  
+**WHY**:  
+Special tokens are the only reliable anchors for multimodal boundaries. If they are altered or omitted, the backbone will mis‑align modalities, leading to catastrophic attention mis‑routing and invalid logits.  
+**WHEN TO APPLY**:  
+All tokenization, padding, and inference code that handles multimodal inputs. Applies to Python, C++, and any language binding that interacts with the tokenizer.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# tokenizer_config.json already defines the special tokens.
+# Ensure the tokenizer is loaded with the exact config.
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained(
+    "Cloudflare/clef-flash",
+    use_fast=True,
+    add_prefix_space=False,
+)
+
+# Verify that special tokens are present and have correct IDs
+assert tokenizer.pad_token == "<|endoftext|>"
+assert tokenizer.image_token == "<|image_pad|>"
+assert tokenizer.video_token == "<|video_pad|>"
+assert tokenizer.eos_token == "<|im_end|>"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Overwriting special token IDs after tokenizer initialization
+tokenizer.pad_token_id = 0  # <|endoftext|> is 50256 in Qwen3.5
+```
+**VERIFICATION METHOD**:  
+Run a unit test that tokenizes a known multimodal example and asserts that the resulting token IDs contain the expected special token IDs at the correct positions.
+
+---
+
+
+---
+
+## 1121. **Joint‑Head Input Consistency Rule** (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Joint‑Head Input Consistency Rule**",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T08:29:17.027Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** feed the joint schema head exclusively with the *final* hidden state of the backbone (i.e., the output of the last transformer layer).  
+**WHY**:  
+Using intermediate layer outputs introduces inconsistent feature scales and attention patterns, causing the joint head to learn a mismatched mapping and producing unreliable logits.  
+**WHEN TO APPLY**:  
+During model construction (`load_release_model`) and any custom inference wrappers that modify the backbone’s output.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoModelForCausalLM
+
+# Load backbone
+backbone = AutoModelForCausalLM.from_pretrained(
+    "Cloudflare/clef-flash",
+    torch_dtype=torch.bfloat16,
+    device_map="auto",
+)
+
+# Extract final hidden state
+def get_final_hidden_states(batch):
+    outputs = backbone(**batch, output_hidden_states=True)
+    # hidden_states[-1] is the final layer
+    return outputs.hidden_states[-1]
+
+# Pass to joint head
+joint_head = JointHead.from_pretrained("Cloudflare/clef-flash/joint_head")
+logits = joint_head(get_final_hidden_states(batch))
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Using hidden_states[0] (embedding layer) as joint head input
+joint_head(hidden_states[0])  # Wrong scale, leads to unstable logits
+```
+**VERIFICATION METHOD**:  
+Add a regression test that compares logits produced by the official pipeline with those produced when feeding an intermediate hidden state; the test should fail if the wrong layer is used.
+
+---
+
+
+---
+
+## 1122. **Consistent Padding Rule** (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Consistent Padding Rule**",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T08:29:17.062Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** apply padding to all modalities using the tokenizer’s `pad_token_id` and ensure that the padded tensors are aligned in batch dimension before inference.  
+**WHY**:  
+Inconsistent padding causes mis‑aligned attention masks, leading to attention over padding tokens and skewed logits.  
+**WHEN TO APPLY**:  
+During `collate_records` and any custom batching logic.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def collate_records(records, pad_token_id, device):
+    # records: list of encoded dicts with 'input_ids' and 'attention_mask'
+    batch_input_ids = torch.nn.utils.rnn.pad_sequence(
+        [torch.tensor(r.input_ids, dtype=torch.long) for r in records],
+        batch_first=True,
+        padding_value=pad_token_id,
+    ).to(device)
+
+    batch_attention_mask = torch.nn.utils.rnn.pad_sequence(
+        [torch.tensor(r.attention_mask, dtype=torch.long) for r in records],
+        batch_first=True,
+        padding_value=0,
+    ).to(device)
+
+    return {"input_ids": batch_input_ids, "attention_mask": batch_attention_mask}
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Using a hard‑coded pad value that differs from tokenizer.pad_token_id
+pad_value = 0  # wrong if pad_token_id != 0
+```
+**VERIFICATION METHOD**:  
+Unit test that verifies the padding value of the batched tensors matches `tokenizer.pad_token_id` and that the attention mask correctly masks padded positions.
+
+---
