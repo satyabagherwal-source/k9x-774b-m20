@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T05:40:21.672Z",
+  "last_updated": "2026-10-16T05:43:38.731Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14249,7 +14249,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "9e3ef0bd5ab1c1de58e01c54ef04728d8840431817f3447febeee2cb9729a069",
+      "content_hash": "71c277f3d548ce00d6880a7b10a2d503c3ea06801ababe5658d5aa0748fabeec",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -14309,6 +14309,21 @@
           "number": 1011,
           "title": "Generation Config Immutability & Override Safety",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1077,
+          "title": "Safe Deserialization & Memory Safety in Model Loading",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1078,
+          "title": "KV-Cache Management for Long Context (128k)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1079,
+          "title": "Tokenizer Special Token Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14329,7 +14344,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-10-15T22:12:18.850Z",
+      "verified_at": "2026-10-16T05:43:38.727Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

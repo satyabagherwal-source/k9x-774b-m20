@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T05:40:21.704Z",
-  "total_cycles_completed": 1593,
-  "total_learnings_persisted": 1593,
-  "total_rules_promoted": 854,
+  "last_updated": "2026-10-16T05:43:38.760Z",
+  "total_cycles_completed": 1594,
+  "total_learnings_persisted": 1594,
+  "total_rules_promoted": 857,
   "history": [
-    {
-      "timestamp": "2026-10-14T16:51:51.914Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv8cko6k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T16:54:58.186Z",
       "repository": "speridlabs/iris-3b",
@@ -1403,6 +1396,13 @@
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
       "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:43:38.760Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
