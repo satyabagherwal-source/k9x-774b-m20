@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-MKPT",
-    "timestamp": "2026-10-13T16:09:40.961Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-hf-bigscience-bloom-mv6vmkmp",
-    "contentHash": "b0ec7d2504227cca9bd06567e4958a006d71f7a45600115e71b85e362dc666b6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-QPM4",
     "timestamp": "2026-10-13T16:12:53.932Z",
     "repository": "openai/gpt-oss-20b",
@@ -7492,6 +7477,21 @@
     "contentHash": "be1e95edb352a573991a1ba3f8dd9069a4e76211a382f562bd0ce44568e09e5a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-KR0A",
+    "timestamp": "2026-10-16T00:07:29.723Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "dd61a4807f9fb19079394a65b3a193d39e94ada0ce99f69e6f6e61db75173cec",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
