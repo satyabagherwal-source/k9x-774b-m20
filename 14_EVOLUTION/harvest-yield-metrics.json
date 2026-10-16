@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:20:19.397Z",
-  "total_cycles_completed": 1740,
-  "total_learnings_persisted": 1740,
+  "last_updated": "2026-10-16T14:26:53.170Z",
+  "total_cycles_completed": 1741,
+  "total_learnings_persisted": 1741,
   "total_rules_promoted": 944,
   "history": [
-    {
-      "timestamp": "2026-10-16T02:36:28.408Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T02:39:34.319Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T14:20:19.397Z",
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T14:26:53.170Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
