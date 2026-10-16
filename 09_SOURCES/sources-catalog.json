@@ -945,8 +945,8 @@
     "sourceUrl": "https://huggingface.co/bigscience/bloom",
     "sourceVersion": "hf-bigscience-bloom",
     "license": "Open-Source",
-    "contentHash": "25bf5e01ad9532ad01ff9868ef5b592c29445eec38e04ca29b861c956d0148d7",
-    "lastHarvestedAt": "2026-10-16T01:49:55.168Z",
+    "contentHash": "fd8e24b86a2119a593bbd11ed6f6a33ea07a75aeb6ebd68964e5faeb240e0984",
+    "lastHarvestedAt": "2026-10-16T10:28:25.206Z",
     "learningId": "learn-huggingface-bigscience-bloom"
   },
   "hf-openai-gpt-oss-20b": {

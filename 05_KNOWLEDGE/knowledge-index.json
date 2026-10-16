@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T10:25:18.686Z",
+  "last_updated": "2026-10-16T10:28:25.169Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10759,7 +10759,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "25bf5e01ad9532ad01ff9868ef5b592c29445eec38e04ca29b861c956d0148d7",
+      "content_hash": "fd8e24b86a2119a593bbd11ed6f6a33ea07a75aeb6ebd68964e5faeb240e0984",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [],
@@ -10780,7 +10780,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-10-16T01:49:55.131Z",
+      "verified_at": "2026-10-16T10:28:25.162Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
