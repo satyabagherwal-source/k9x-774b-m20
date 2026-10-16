@@ -249,3 +249,40 @@ When auditing and harvesting open-source web systems, NEVER rely on README files
 12. Access Control, Firewalls & Bot Directives (Robots.txt, Googlebot ASN)
 13. CMS & Server Backend Health (Nginx try_files, DB pools, permalinks)
 14. Security, Spam & Legal Removals (Manual actions, malware, DMCA)
+
+---
+
+## 13. HTML Head 10-Layer Ordering & Noindex Suppression Invariant (Rules 1179-1180)
+
+### 13.1 Strict 10-Layer Head Ordering Sequence (Rule 1179)
+To prevent premature DOM head closure and ensure search crawlers ingest all metadata prior to rendering, enforce this precise sequence:
+1. `<meta charset="utf-8">` (MUST be strictly within the first 1024 bytes).
+2. `<meta name="viewport" content="width=device-width, initial-scale=1">`.
+3. `<title>Page Title</title>`.
+4. Core Directives: `<meta name="description">`, `<meta name="robots">`.
+5. Social Sharing: `<meta property="og:*">`, `<meta name="twitter:*">`.
+6. Canonical & Alternate: `<link rel="canonical">`, `<link rel="alternate" hreflang="...">`.
+7. Network Hints: `<link rel="preconnect">`, `<link rel="dns-prefetch">`.
+8. Critical CSS: Inline `<style>` followed by `<link rel="stylesheet">`.
+9. Icons & Manifest: `<link rel="icon">`, `<link rel="manifest">`.
+10. Scripts: `<script defer src="...">` or `<script type="module" src="...">`.
+
+### 13.2 The Noindex Canonical Tag Mutual Exclusivity Invariant (Rule 1180)
+- If an HTML document declares `noindex` (via `<meta name="robots" content="noindex">` or `X-Robots-Tag: noindex`), NEVER output `<link rel="canonical">`.
+- Emitting both sends contradictory signals to search engine indexing pipelines, causing Googlebot to suppress canonical consolidation and drop link equity.
+- The SEO rendering engine must suppress canonical tag output when `robots.index === 'noindex'` (as verified in Yoast's `Canonical_Presenter`).
+
+---
+
+## 14. Slug Mutation Automated 301 Redirection & Schema @graph Architecture (Rules 1181-1182)
+
+### 14.1 Automated Slug Mutation Watcher & Redirect Chain Flattening (Rule 1181)
+- Whenever a resource URL slug is mutated in a database or filesystem, immediately and automatically register an atomic HTTP 301 permanent redirect from the previous URI to the updated URI.
+- Automatically flatten existing redirect chains: if A previously redirected to B, and B is modified to C, update legacy entries so that A points directly to C (A -> C, B -> C) to conserve crawler request budgets and eliminate multi-hop latency.
+- Break circular redirect loops (A -> B -> A) prior to database persistence.
+
+### 14.2 Schema.org Interconnected @graph Architecture (Rule 1182)
+- NEVER emit multiple isolated `<script type="application/ld+json">` blocks with unlinked entities.
+- Merge all structured data into a single unified `@graph` array in one JSON-LD block.
+- Anchor all primary entities with deterministic URIs via `@id` (e.g. `https://example.com/#website`, `https://example.com/#organization`, `https://example.com/article/#article`).
+- Cross-link entities using pointer references (e.g. `"publisher": {"@id": "https://example.com/#organization"}`, `"isPartOf": {"@id": "https://example.com/#website"}`) to empower Google Knowledge Graph entity disambiguation and secure rich snippet rankings.

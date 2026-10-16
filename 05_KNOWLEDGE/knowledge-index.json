@@ -47023,6 +47023,86 @@
       "learningFile": "07_PROJECT_LEARNING/raviqqe-muffet-learnings.md",
       "harvestDate": "2026-10-16T13:56:43.896Z",
       "commitHash": "b7f5bf8bc284dfc06386e08a09a06ab52ef50968"
+    },
+    "nightwatch-seo/awesome-seo-tools": {
+      "name": "nightwatch-seo/awesome-seo-tools",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/nightwatch-seo/awesome-seo-tools",
+      "learningFile": "07_PROJECT_LEARNING/nightwatch-seo-awesome-seo-tools-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "509d1c7a1d43157efcd74a0a54d82e5554b9d512"
+    },
+    "joshbuchea/head": {
+      "name": "joshbuchea/HEAD",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/joshbuchea/HEAD",
+      "learningFile": "07_PROJECT_LEARNING/joshbuchea-head-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "de1304eeb62feb6bec90c28fc78fe29d2500d606"
+    },
+    "goenning/google-indexing-script": {
+      "name": "goenning/google-indexing-script",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/goenning/google-indexing-script",
+      "learningFile": "07_PROJECT_LEARNING/goenning-google-indexing-script-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "c52c2f8c67ad99594c78021ff4b203decdc74976"
+    },
+    "google/site-kit-wp": {
+      "name": "google/site-kit-wp",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/google/site-kit-wp",
+      "learningFile": "07_PROJECT_LEARNING/google-site-kit-wp-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "e32dbef9e0b4dda334c51559ac694d8506e1e377"
+    },
+    "yoast/wordpress-seo": {
+      "name": "Yoast/wordpress-seo",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/Yoast/wordpress-seo",
+      "learningFile": "07_PROJECT_LEARNING/yoast-wordpress-seo-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "f20fa7a6a590988623813963bf9abc6e1cb3f909"
+    },
+    "rankmath/seo-by-rank-math": {
+      "name": "RankMath/seo-by-rank-math",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/RankMath/seo-by-rank-math",
+      "learningFile": "07_PROJECT_LEARNING/rankmath-seo-by-rank-math-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "50fc59587112316ad754ca3c9a26e1282795d49d"
+    },
+    "sybrew/the-seo-framework": {
+      "name": "sybrew/the-seo-framework",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/sybrew/the-seo-framework",
+      "learningFile": "07_PROJECT_LEARNING/sybrew-the-seo-framework-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "9c3977a95191b96b6a2932a9eb981d8480009b59"
+    },
+    "spatie/laravel-sitemap": {
+      "name": "spatie/laravel-sitemap",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/spatie/laravel-sitemap",
+      "learningFile": "07_PROJECT_LEARNING/spatie-laravel-sitemap-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "ac9534b5a8abe694b89a4496b69df0d133889e27"
+    },
+    "artesaos/seotools": {
+      "name": "artesaos/seotools",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/artesaos/seotools",
+      "learningFile": "07_PROJECT_LEARNING/artesaos-seotools-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "c92d09f0ad4491181863850a3ab2e1534361409b"
+    },
+    "spatie/schema-org": {
+      "name": "spatie/schema-org",
+      "category": "seo-engines-and-head-architecture",
+      "canonicalUrl": "https://github.com/spatie/schema-org",
+      "learningFile": "07_PROJECT_LEARNING/spatie-schema-org-learnings.md",
+      "harvestDate": "2026-10-16T15:03:36.787Z",
+      "commitHash": "85af98461b7e899a8f5fd745331fac6ae5c745d9"
     }
   }
 }
