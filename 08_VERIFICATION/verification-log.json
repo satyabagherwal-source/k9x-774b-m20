@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-V39F",
-    "timestamp": "2026-10-13T20:00:15.171Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-hf-nvidia-nemotron-3-diarization-mv73v364",
-    "contentHash": "5e2468f79bd6d64875e321fef8ef5f8fbe3627e318e6137056da507d66d4c309",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ZLJB",
     "timestamp": "2026-10-13T20:03:45.479Z",
     "repository": "Lightricks/LTX-2.5",
@@ -7490,6 +7475,21 @@
     "repository": "google/vit-base-patch16-224",
     "learningId": "learn-huggingface-google-vit-base-patch16-224",
     "contentHash": "01bf1efa8c50a86ee43a35a222d94cb7e292f9e66ca43bf75473928e9ce35a6a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-095D",
+    "timestamp": "2026-10-16T03:35:30.385Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "2ddf5850d4ac4f02a71aec03bca888e796068695f944e5fcaa6681b3bc0f9446",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
