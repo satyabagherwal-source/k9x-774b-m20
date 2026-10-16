@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T16:39:30.467Z",
+  "last_updated": "2026-10-16T16:42:34.509Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17009,7 +17009,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "d625a7f7d8d44d6e7aa3fedf12fb7bca943181d693211a5d7c18100cfdd8b0dc",
+      "content_hash": "e9c31236c6ec14fa2afac6984d7a2833c6abbf7d56b9c76de209c4842d6ed7c6",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
@@ -17070,7 +17070,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-10-16T08:32:24.316Z",
+      "verified_at": "2026-10-16T16:42:34.503Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
