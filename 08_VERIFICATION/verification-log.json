@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-6J2A",
-    "timestamp": "2026-10-13T23:25:06.178Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-hf-openai-whisper-large-v3-mv7b6iz6",
-    "contentHash": "58cf7a1acadd2b21277a5f7b904c0b7e07781bd148754d2e7df94457dedd29b0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ACW9",
     "timestamp": "2026-10-13T23:28:04.809Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7492,6 +7477,21 @@
     "contentHash": "5f8ced8c43a6ceabad573bd41387967e8d4960a725b391106c3fbdf933b3621f",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-L3CI",
+    "timestamp": "2026-10-16T06:39:40.338Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "c102ff0cad6e1ac3a402e7d0cf7a73f11a5876bb9670fd79924ca426b4606bc7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
