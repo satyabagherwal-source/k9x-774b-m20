@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T01:31:30.885Z",
-  "total_cycles_completed": 1520,
-  "total_learnings_persisted": 1520,
-  "total_rules_promoted": 823,
+  "last_updated": "2026-10-16T01:34:45.804Z",
+  "total_cycles_completed": 1521,
+  "total_learnings_persisted": 1521,
+  "total_rules_promoted": 826,
   "history": [
-    {
-      "timestamp": "2026-10-14T11:51:17.711Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv81u4we",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T11:54:25.651Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -1403,6 +1396,13 @@
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T01:34:45.804Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
