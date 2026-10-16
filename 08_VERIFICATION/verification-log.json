@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-VOYX",
-    "timestamp": "2026-10-13T16:44:45.993Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv6wvovt",
-    "contentHash": "232871ea6717853a858d3a728b09a2c00079679881724d7169b899e54e5e61f8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ZV2A",
     "timestamp": "2026-10-13T16:48:00.514Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-m3",
     "learningId": "learn-huggingface-baai-bge-m3",
     "contentHash": "03ba2b7f71be3bfd0d7f8960dc77fb010afb7971fb1a8de7029d0f7f10417e16",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-TF4S",
+    "timestamp": "2026-10-16T00:42:13.852Z",
+    "repository": "Qwen/Qwen3-0.6B",
+    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+    "contentHash": "4154894e7285b0d7df0fa33c829fb436bff6eafa638264507dbff30944222309",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
