@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T17:49:14.403Z",
+  "last_updated": "2026-10-16T17:52:32.811Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10995,7 +10995,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "42c0909ec9b325765f03d935776d9c87b3d0cbc7e13e9db56d7a8102e77b6a20",
+      "content_hash": "33f43b75996d50a28c30a221c6fa93d739e33bcc99b8e61ebf1ce922e4d7b506",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -11040,6 +11040,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
           "verified_at": "2026-10-11T20:38:17.071Z"
+        },
+        {
+          "number": 1213,
+          "title": "Distilled Model Inference Step Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1214,
+          "title": "Dual-Tokenizer Embedding Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11060,7 +11070,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-16T09:57:12.951Z",
+      "verified_at": "2026-10-16T17:52:32.805Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-6Z2I",
-    "timestamp": "2026-10-14T10:37:17.706Z",
-    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-hf-cross-encoder-ms-marco-minilm-l6-v2-mv7z6yz6",
-    "contentHash": "2c64172091a9b2fb684b45c60286fd685dacda3f71b1546c66a6992a6c3cf27f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-B0OK",
     "timestamp": "2026-10-14T10:40:26.420Z",
     "repository": "autotrust/JEV-35B-NVFP4",
@@ -7492,6 +7477,21 @@
     "contentHash": "e0c9c34bb9b6f090abcb73d80a60d25cf20c80df0e423d8be96fc1395c0d0ab1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-MEYW",
+    "timestamp": "2026-10-16T17:52:32.840Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "33f43b75996d50a28c30a221c6fa93d739e33bcc99b8e61ebf1ce922e4d7b506",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
