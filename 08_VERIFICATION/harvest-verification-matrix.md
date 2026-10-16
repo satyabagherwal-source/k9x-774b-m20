@@ -1540,3 +1540,4 @@
 | `CYCLE-20261016-101L` | `2026-10-16T01:16:07.161Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`8c9036ba...`) |
 | `CYCLE-20261016-4YNN` | `2026-10-16T01:19:11.987Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`c9871c15...`) |
 | `CYCLE-20261016-91M0` | `2026-10-16T01:22:22.440Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`1eac4a21...`) |
+| `CYCLE-20261016-CSKJ` | `2026-10-16T01:25:17.347Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`c55a644e...`) |

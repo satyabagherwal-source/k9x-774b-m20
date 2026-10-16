@@ -875,9 +875,9 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "86e4e570d6e8916fa3f70734e900b6e8112c206b6ee5f01ffc17f5ae7b81e6b2",
-    "lastHarvestedAt": "2026-10-14T15:31:51.485Z",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv89ps58"
+    "contentHash": "c55a644ec95c52234deb1f921da7d6c9792934a357a1932088f08e0b47252853",
+    "lastHarvestedAt": "2026-10-16T01:25:17.349Z",
+    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
