@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-2GR5",
-    "timestamp": "2026-10-14T11:29:46.577Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv812gm9",
-    "contentHash": "56b2274c789b495af0253946fd179e7486357534e1dccc500ccbcddb73b6e1bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-6GTS",
     "timestamp": "2026-10-14T11:32:53.296Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7490,6 +7475,21 @@
     "repository": "baidu/Unlimited-OCR",
     "learningId": "learn-huggingface-baidu-unlimited-ocr",
     "contentHash": "3d375464d2e2986014be997aef25a61e420f8bcfea88175d6172dc9f50b39819",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-MC7L",
+    "timestamp": "2026-10-16T18:48:28.497Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "4cdcdfaf9b4964544f2e5f97d0c30f03f85332468728950adbfd795292e6d99c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
