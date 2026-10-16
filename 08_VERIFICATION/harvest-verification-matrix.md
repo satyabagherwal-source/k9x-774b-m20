@@ -1816,3 +1816,4 @@
 | `CYCLE-20261016-WA4S` | `2026-10-16T17:32:13.516Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`23dbfc50...`) |
 | `CYCLE-20261016-0CAB` | `2026-10-16T17:35:22.931Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`ec66f511...`) |
 | `CYCLE-20261016-4VE9` | `2026-10-16T17:38:54.321Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`be8bd630...`) |
+| `CYCLE-20261016-9ZGX` | `2026-10-16T17:42:52.881Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`56440fd9...`) |

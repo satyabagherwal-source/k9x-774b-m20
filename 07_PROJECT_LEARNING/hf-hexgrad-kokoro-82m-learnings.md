@@ -3,7 +3,7 @@
 > **Source Version**: `hf-hexgrad-k`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-16T09:47:38.083Z  
+> **Timestamp**: 2026-10-16T17:42:52.829Z  
 > **Learning ID**: `learn-huggingface-hexgrad-kokoro-82m`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/hexgrad/Kokoro-82M](https://huggingface.co/hexgrad/Kokoro-82M))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-16T09:47:36.961Z  
+> **Harvest Timestamp**: 2026-10-16T17:42:52.187Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

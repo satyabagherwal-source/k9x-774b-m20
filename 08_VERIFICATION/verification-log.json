@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-UL4X",
-    "timestamp": "2026-10-14T10:27:39.777Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv7yul1h",
-    "contentHash": "c4a2c7a9cbf7707859455a928fd712cdc27c0b3048c347b0ad402d0d859cc410",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-YIV1",
     "timestamp": "2026-10-14T10:30:43.453Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "microsoft/FrogNano-4B-2609",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
     "contentHash": "be8bd630978f5f597bc3edeca9642e6abb87af47ee7d05b68da240bcca300eac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-9ZGX",
+    "timestamp": "2026-10-16T17:42:52.881Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "56440fd91e8790458020242bf0417878bb668c9bcbf89c555a99dc9d7ee253bd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
