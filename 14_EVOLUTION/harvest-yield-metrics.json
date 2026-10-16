@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T00:23:26.369Z",
-  "total_cycles_completed": 1498,
-  "total_learnings_persisted": 1498,
-  "total_rules_promoted": 815,
+  "last_updated": "2026-10-16T00:26:41.402Z",
+  "total_cycles_completed": 1499,
+  "total_learnings_persisted": 1499,
+  "total_rules_promoted": 818,
   "history": [
-    {
-      "timestamp": "2026-10-14T10:43:24.599Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-hf-baai-bge-small-en-v1-5-mv7zeu3c",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T10:46:19.244Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T00:23:26.369Z",
       "repository": "Cloudflare/clef",
       "learningId": "learn-huggingface-cloudflare-clef",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T00:26:41.402Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

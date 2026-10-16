@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-16T00:23:20.570Z",
+  "lastUpdated": "2026-10-16T00:26:39.216Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T00:23:28.888Z",
-        "lastHarvestedAt": "2026-10-16T00:23:28.888Z",
-        "totalHarvested": 3622,
+        "lastActiveAt": "2026-10-16T00:26:43.921Z",
+        "lastHarvestedAt": "2026-10-16T00:26:43.921Z",
+        "totalHarvested": 3623,
         "lastError": null
       },
       {
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T00:20:09.838Z",
+        "lastActiveAt": "2026-10-16T00:26:39.310Z",
         "lastHarvestedAt": "2026-10-15T19:00:21.044Z",
         "totalHarvested": 1103,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T00:20:12.323Z",
+        "lastActiveAt": "2026-10-16T00:26:41.825Z",
         "lastHarvestedAt": "2026-10-15T19:10:07.292Z",
         "totalHarvested": 1095,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T00:20:14.813Z",
+        "lastActiveAt": "2026-10-16T00:26:44.297Z",
         "lastHarvestedAt": "2026-10-15T19:00:28.576Z",
         "totalHarvested": 1099,
         "lastError": null
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
+      "status": "HEALTHY",
       "remaining": 0,
-      "resetEpoch": 1792113802210,
-      "resetAt": "2026-10-16T01:23:22.210Z",
-      "trippedAt": "2026-10-16T00:23:07.210Z",
-      "reason": "Rate limit exceeded (HTTP 422 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Asvelte%20OR%20topic%3Avue%20stars%3A%3E2500%20sort%3Astars&per_page=15&page=1)",
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-16T00:26:21.082Z",
+      "reason": null,
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {

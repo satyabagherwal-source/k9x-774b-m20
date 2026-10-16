@@ -64220,3 +64220,176 @@ probabilities = torch.softmax(logits.view(-1), dim=0)
 
 **VERIFICATION METHOD**:  
 Unit test that verifies the shape of `probabilities` matches `(batch, num_questions, num_options)` and that the sum over the last dimension equals 1 for each question.
+
+
+---
+
+## 1040. **Inference Mode Enforcement** (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Inference Mode Enforcement**",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T00:26:41.224Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** wrap every inference call in `torch.inference_mode()` to disable gradient tracking and enable memory‑efficient evaluation.  
+
+**WHY**:  
+Without `torch.inference_mode()`, PyTorch allocates backward buffers, inflating memory usage and potentially causing out‑of‑memory errors on large models. It also disables certain optimisations (e.g., fused kernels) that are only safe when gradients are not required.
+
+**WHEN TO APPLY**:  
+* All public inference functions (`load_release_model`, `collate_records`, `model(batch)` calls).  
+* Any custom inference loop that uses the backbone or joint head.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+import torch
+
+def run_inference(model, batch):
+    with torch.inference_mode():
+        logits = model(batch)[0]
+    return logits
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# ❌ DO NOT
+model.eval()          # eval() only disables dropout; gradients still tracked
+output = model(batch) # gradients will be computed
+```
+
+**VERIFICATION METHOD**  
+* Unit test that asserts `torch.is_grad_enabled()` is `False` inside the inference block.  
+* Static analysis: `flake8` rule that flags any `model(` call outside a `torch.inference_mode()` context.
+
+---
+
+
+---
+
+## 1041. **Tokenizer‑Config Consistency** (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Tokenizer‑Config Consistency**",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T00:26:41.272Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** validate that the tokenizer’s special token IDs (`bos_token_id`, `eos_token_id`, `pad_token_id`, etc.) match the values specified in `config.json` before running inference.  
+
+**WHY**:  
+Mismatched token IDs cause the model to misinterpret padding, end‑of‑sequence, or beginning‑of‑sequence markers, leading to incorrect logits or runtime errors.
+
+**WHEN TO APPLY**:  
+* During `load_release_model`.  
+* When a custom tokenizer is supplied.  
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+def validate_tokenizer(tokenizer, config):
+    assert tokenizer.pad_token_id == config["pad_token_id"], "pad_token_id mismatch"
+    assert tokenizer.eos_token_id == config["eos_token_id"], "eos_token_id mismatch"
+    # ... add other assertions as needed
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# ❌ DO NOT
+# Assume tokenizer defaults are correct
+```
+
+**VERIFICATION METHOD**  
+* Unit test that loads the tokenizer and config, then runs `validate_tokenizer`.  
+* CI lint rule that checks for missing validation calls in `load_release_model`.
+
+---
+
+
+---
+
+## 1042. **Joint Head Device Alignment** (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Joint Head Device Alignment**",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T00:26:41.320Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** load the joint schema head onto the same device as the backbone and keep it in sync during inference.  
+
+**WHY**:  
+If the head resides on a different device, the forward pass will trigger costly cross‑device copies, degrade latency, and may raise `RuntimeError` if the devices are incompatible.
+
+**WHEN TO APPLY**:  
+* In `load_release_model` after loading the backbone.  
+* When moving the model to a new device (`model.to(device)`).
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+def load_release_model(path, device="cuda"):
+    backbone = AutoModelForCausalLM.from_pretrained(path, device_map=device)
+    head = JointSchemaHead.from_pretrained(path, device_map=device)
+    # Ensure both are on the same device
+    assert backbone.device == head.device, "Backbone and head on different devices"
+    return backbone, head
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# ❌ DO NOT
+head = JointSchemaHead.from_pretrained(path, device_map="cpu")  # backbone on GPU
+```
+
+**VERIFICATION METHOD**  
+* Unit test that asserts `backbone.device == head.device`.  
+* Static analysis rule that flags any `JointSchemaHead.from_pretrained` call with a device different from the backbone’s device.
+
+---

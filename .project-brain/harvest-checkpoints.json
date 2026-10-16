@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T00:23:26.370Z",
+  "last_updated": "2026-10-16T00:26:41.403Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -869,17 +869,18 @@
     },
     "Cloudflare/clef-flash": {
       "repository": "Cloudflare/clef-flash",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-cloudflare-clef-flash-mv86igy0",
-      "content_hash": "b9be8c512363509f160482b03f9b71441f7f6ac59f66066406852f6c376f826c",
-      "verified_at": "2026-10-14T14:02:11.688Z",
+      "learning_id": "learn-huggingface-cloudflare-clef-flash",
+      "content_hash": "21eb2de9edd40ffe134f0cb6ec39cca738e30a894fcfbb7d4dcbf545565b1dc1",
+      "verified_at": "2026-10-16T00:26:41.403Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T14:02:11.688Z"
+      "last_updated": "2026-10-16T00:26:41.403Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
