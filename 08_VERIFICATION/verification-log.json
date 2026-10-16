@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-IOUY",
-    "timestamp": "2026-10-14T03:18:30.490Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv7jiorl",
-    "contentHash": "e4b6ea8eba1193179f95a97f0369b0b2ede78c4a3b858d65db1dddcf69f76cd3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-MU89",
     "timestamp": "2026-10-14T03:21:44.073Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
     "contentHash": "db303c846deb9d6815c9124ed5d09baa26b0c94449f784abf9303d636345f46d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-VE68",
+    "timestamp": "2026-10-16T11:27:37.088Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "29b71d7fd1ce72c58fa9cdfdf5586ac7dc2bf5e5f733177a4c4b955a0016d7e5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

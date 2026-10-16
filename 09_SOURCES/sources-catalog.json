@@ -1545,8 +1545,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein",
     "license": "Open-Source",
-    "contentHash": "51ff4ab1d3cfef3cec3a755a876f31f01e60781fb2af724d096d697a3f001dae",
-    "lastHarvestedAt": "2026-10-16T02:45:45.467Z",
+    "contentHash": "29b71d7fd1ce72c58fa9cdfdf5586ac7dc2bf5e5f733177a4c4b955a0016d7e5",
+    "lastHarvestedAt": "2026-10-16T11:27:37.091Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein"
   },
   "hf-pyannote-speaker-diarization-community-1": {

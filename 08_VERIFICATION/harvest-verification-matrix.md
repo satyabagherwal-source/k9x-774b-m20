@@ -1708,3 +1708,4 @@
 | `CYCLE-20261016-JLGJ` | `2026-10-16T11:18:26.659Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`c84d9946...`) |
 | `CYCLE-20261016-NFRQ` | `2026-10-16T11:21:25.910Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`83ff629c...`) |
 | `CYCLE-20261016-RDVL` | `2026-10-16T11:24:30.081Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | Yes (`db303c84...`) |
+| `CYCLE-20261016-VE68` | `2026-10-16T11:27:37.088Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`29b71d7f...`) |
