@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T14:06:46.755Z",
+  "last_updated": "2026-10-16T14:10:55.843Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18010,7 +18010,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "1b08539e61ad88011608fa5e8cb04eb206764b3c11ad98f6062eec018bdb4285",
+      "content_hash": "0f08161d08627331cd17b9673ab22a01377851efc3914fdbc3b95d9fcc489acc",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -18047,7 +18047,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-10-16T05:49:41.237Z",
+      "verified_at": "2026-10-16T14:10:55.834Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

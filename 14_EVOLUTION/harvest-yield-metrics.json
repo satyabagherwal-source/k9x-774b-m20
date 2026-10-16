@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:06:46.786Z",
-  "total_cycles_completed": 1736,
-  "total_learnings_persisted": 1736,
+  "last_updated": "2026-10-16T14:10:55.878Z",
+  "total_cycles_completed": 1737,
+  "total_learnings_persisted": 1737,
   "total_rules_promoted": 944,
   "history": [
-    {
-      "timestamp": "2026-10-16T02:23:58.273Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T02:27:18.123Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1403,6 +1396,13 @@
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T14:10:55.878Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
