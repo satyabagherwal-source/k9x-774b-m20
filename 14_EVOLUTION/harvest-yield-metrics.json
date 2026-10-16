@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T18:42:18.528Z",
-  "total_cycles_completed": 1812,
-  "total_learnings_persisted": 1812,
+  "last_updated": "2026-10-16T18:45:18.333Z",
+  "total_cycles_completed": 1813,
+  "total_learnings_persisted": 1813,
   "total_rules_promoted": 982,
   "history": [
-    {
-      "timestamp": "2026-10-16T06:43:02.671Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T06:46:06.914Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T18:42:18.528Z",
       "repository": "deepseek-ai/DeepSeek-V3",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T18:45:18.333Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

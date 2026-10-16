@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-Y8S5",
-    "timestamp": "2026-10-14T11:26:29.621Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv80y8ow",
-    "contentHash": "d5282fa9165ad5acdac6583ea21cfde9f698432ca4ab018f7a181931d1ac00ad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-2GR5",
     "timestamp": "2026-10-14T11:29:46.577Z",
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V3",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
     "contentHash": "0162e68e5dd42a964e22747b649de46d96631c8a1f23d8ce324c7dc6cc25555b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-I9H5",
+    "timestamp": "2026-10-16T18:45:18.329Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "3d375464d2e2986014be997aef25a61e420f8bcfea88175d6172dc9f50b39819",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
