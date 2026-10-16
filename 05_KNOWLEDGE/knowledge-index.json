@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T23:37:12.206Z",
+  "last_updated": "2026-10-16T23:41:41.937Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18176,7 +18176,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "371da13f4013e7e8b0c76949ecb4b915ab688c7c5f3618d3a7ac4b6fdd905d86",
+      "content_hash": "2914bb18e65d2e60f3be8077cc81fe518a524ecd3b08688d9c1c121f9086a860",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -18259,6 +18259,21 @@
           "number": 1188,
           "title": "**Sampling Configuration Alignment**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1263,
+          "title": "Dual-Terminal Multi-Token EOS Convergence Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1264,
+          "title": "Hybrid SSM-Transformer State Transition & In-Flight Context Management",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1265,
+          "title": "Reasoning Parser Slicing & Boundary Sanitization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18279,7 +18294,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-16T15:22:17.400Z",
+      "verified_at": "2026-10-16T23:41:41.931Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
