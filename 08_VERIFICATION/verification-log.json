@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-47OP",
-    "timestamp": "2026-10-13T21:03:20.041Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv7647js",
-    "contentHash": "4642467d16cca758a7f812708630444a957cc023549106ad33a2de30223879a9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-AGTC",
     "timestamp": "2026-10-13T21:08:11.808Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "Edge0/Audio8-ASR-Infinite",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
     "contentHash": "e4629ff0b235a2da368defa0f63b64e6aae02fb24f8964dfebf52a661f4bd2b1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-PEU8",
+    "timestamp": "2026-10-16T04:23:03.776Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "ebc9febd04b62c63027ea8993e210cf09e261462995a9018610b9df83ca26a02",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
