@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-6AZB",
-    "timestamp": "2026-10-14T14:20:43.415Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv876aw7",
-    "contentHash": "31ce0057c685a6de5da45941cc2a93a01a9e5c62aac745d2b115bd0b9b935e89",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-FB0L",
     "timestamp": "2026-10-14T14:27:43.365Z",
     "repository": "amplifthq/opentag",
@@ -7492,6 +7477,21 @@
     "contentHash": "ef0b12a52f49e7ae8cfd6978c9f1c65d49027c314ffebdfafe6f9a7a0bfb3a49",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-QUKF",
+    "timestamp": "2026-10-16T21:39:56.607Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "1cf618558112a5b0f41463bb7ee67fe247a8f7096291960a718104d64550696e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
