@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-9BYM",
-    "timestamp": "2026-10-14T02:15:14.638Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv7h9bvi",
-    "contentHash": "92126c2455b342fcd23844262e039d7f13de72c397b6923e8f0042f7047d63eb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-D4HT",
     "timestamp": "2026-10-14T02:18:11.585Z",
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-openai-gpt-oss-120b",
     "contentHash": "494070f68bf66aa202d1a47eaa6ad76d3a43ba2df51791bdafdb41c0544c6c17",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-J5KZ",
+    "timestamp": "2026-10-16T10:22:06.851Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "c8fa957d6d168a2c4a7ded7e048fdcf114c07802a963802674de04ae56997fd3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

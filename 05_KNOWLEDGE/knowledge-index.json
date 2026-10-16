@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T10:18:43.421Z",
+  "last_updated": "2026-10-16T10:22:06.818Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18007,7 +18007,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.2",
       "source_version": "hf-zai-org-glm-5.2",
-      "content_hash": "18b2780868988efb43af7836a1da4216aee5df8cac6f6213af42e283eaf5e53f",
+      "content_hash": "c8fa957d6d168a2c4a7ded7e048fdcf114c07802a963802674de04ae56997fd3",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "promoted_rules": [],
@@ -18029,7 +18029,7 @@
         "learn-huggingface-hf-zai-org-glm-5-2-mv4b2bic",
         "learn-huggingface-hf-zai-org-glm-5-2-mv4og5jo"
       ],
-      "verified_at": "2026-10-16T01:43:54.268Z",
+      "verified_at": "2026-10-16T10:22:06.811Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
