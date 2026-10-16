@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T09:00:01.733Z",
+  "last_updated": "2026-10-16T09:06:18.334Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2541,6 +2541,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-16T09:00:01.733Z"
+    },
+    "Saffsanity/sill": {
+      "repository": "Saffsanity/sill",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-saffsanity-sill",
+      "content_hash": "c5c273ac967cdad3a0b3c018db45ecc10524af8347254657196c47c09c3ad3f1",
+      "verified_at": "2026-10-16T09:06:18.334Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-16T09:06:18.334Z"
     }
   }
 }

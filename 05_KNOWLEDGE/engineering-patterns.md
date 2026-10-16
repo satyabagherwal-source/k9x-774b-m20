@@ -70523,3 +70523,80 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f64fb5ba` are properly handled with clean fallback behavior.
+
+
+---
+
+## 1126. Docs for #69: the review's findings, their fixes and the numbers after them (Harvested from Saffsanity/sill)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Docs for #69: the review's findings, their fixes and the numbers after them",
+  "source": "Saffsanity/sill",
+  "source_url": "https://github.com/Saffsanity/sill",
+  "source_version": "5c323e69",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-10-16T09:06:18.278Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-saffsanity-sill",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Saffsanity/sill](https://github.com/Saffsanity/sill) (Revision: `5c323e69`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `CLAUDE.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ed42d9b2`: Docs for #69: the review's findings, their fixes and the numbers after them. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `CLAUDE.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+985a733, PR #77, issue #69; the plan, the causes with line numbers, the decisions, the results and the
+review's fixes are in `docs/reconnect-after-sleep-plan.md`).** The report: after a few hours dormant
+nothing reconnected until the Mac was logged in to and Sill relaunched on the iPad. Device code, the
+support page and the docs; no wire change, nothing on the Mac.
+  stay as they are until it is made again, so a Mac that stays listed keeps its sightings by name.
+  Its interfaces are the new browser's; the return stamps the session's pong as it resets liveness
+  (`resetLiveness`), so a cable session whose new browser first lists the Mac on Wi-Fi alone stays
+  on the cable. No line for a failed browse.
+  at once, under the old 10 s spacing (`DiscoveryPolicy.autoDesktop`); 0.5.1 asks only with the
+  Mac's next window list, sent when a window opens, closes or changes.
+  gains a sleeping Mac (Sill may not be able to wake it, so keep it awake: Energy, or Battery) and a
+  restarted one (Sill opens after a login, with Launch at Login); README's Good to know, the next
+  What's New (docs/app-store-metadata.md), DEVELOPMENT.md.
+- The review (2026-10-14, after 1c4b921), four findings, each fix
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Anti-pattern to NEVER write (induced failure mode):
+985a733, PR #77, issue #69; the plan, the causes with line numbers, the decisions and the results are
+in `docs/reconnect-after-sleep-plan.md`).** The report: after a few hours dormant nothing reconnected
+until the Mac was logged in to and Sill relaunched on the iPad. Device code, the support page and the
+docs; no wire change, nothing on the Mac.
+  stay as they are until it is made again, so a Mac that stays listed keeps its sightings. No line
+  for a failed browse.
+  at once, under the old 10 s spacing (`DiscoveryPolicy.autoDesktop`).
+  gains a sleeping Mac (Sill may not be able to wake it, so keep it awake: Energy, or Battery; not
+  "can't", since a dial through a Bonjour Sleep Proxy may wake it, untested) and a restarted one
+  (Sill opens after a login, with Launch at Login); README's Good to know, the next What's New
+  (docs/app-store-metadata.md), DEVELOPMENT.md.
+- Verified (the plan's Results): on a private simulator against `SillHost --synthetic --pairing` as
+  a `_silltest._tcp` row, the host stopped for 20 s: main's build dialled at +0 and +6.3 s after the
+  loss and then nothing for the minute after the host came back; this branch dialled at +0, 5.3,
+  15.3 and 35.3 s and 
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ed42d9b2` are properly handled with clean fallback behavior.

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T09:00:01.731Z",
-  "total_cycles_completed": 1647,
-  "total_learnings_persisted": 1647,
-  "total_rules_promoted": 906,
+  "last_updated": "2026-10-16T09:06:18.333Z",
+  "total_cycles_completed": 1648,
+  "total_learnings_persisted": 1648,
+  "total_rules_promoted": 907,
   "history": [
-    {
-      "timestamp": "2026-10-15T21:47:17.996Z",
-      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T21:50:15.807Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T09:00:01.731Z",
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T09:06:18.333Z",
+      "repository": "Saffsanity/sill",
+      "learningId": "learn-github-saffsanity-sill",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

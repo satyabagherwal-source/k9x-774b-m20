@@ -1608,5 +1608,15 @@
     "contentHash": "236bf6fadf0eb7b638a4e67fcf39c2dbe1c143a5d03b6410d3f61dac9b7b74bc",
     "lastHarvestedAt": "2026-10-16T09:00:01.729Z",
     "learningId": "learn-github-volcengine-openviking"
+  },
+  "saffsanity-sill": {
+    "repository": "Saffsanity/sill",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Saffsanity/sill",
+    "sourceVersion": "5c323e69",
+    "license": "Apache-2.0",
+    "contentHash": "c5c273ac967cdad3a0b3c018db45ecc10524af8347254657196c47c09c3ad3f1",
+    "lastHarvestedAt": "2026-10-16T09:06:18.331Z",
+    "learningId": "learn-github-saffsanity-sill"
   }
 }

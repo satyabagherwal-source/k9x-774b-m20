@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T09:00:01.701Z",
-  "total_verified_learnings": 186,
+  "last_updated": "2026-10-16T09:06:18.306Z",
+  "total_verified_learnings": 187,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -41272,6 +41272,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-16T09:00:01.696Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-saffsanity-sill": {
+      "learning_id": "learn-github-saffsanity-sill",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Saffsanity/sill",
+      "repository": "Saffsanity/sill",
+      "slug": "saffsanity-sill",
+      "platform": "github",
+      "source_url": "https://github.com/Saffsanity/sill",
+      "source_version": "5c323e69",
+      "content_hash": "c5c273ac967cdad3a0b3c018db45ecc10524af8347254657196c47c09c3ad3f1",
+      "dossier_path": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/saffsanity-sill-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1126,
+          "title": "Docs for #69: the review's findings, their fixes and the numbers after them",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-16T09:06:18.301Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
