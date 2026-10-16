@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-P2SZ",
-    "timestamp": "2026-10-14T04:47:27.347Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2-mv7mp2ps",
-    "contentHash": "f6f96f87b5355b8e5f39c98fceff9fb2f12105223fca34aeeceed394c58bb61f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-TF9T",
     "timestamp": "2026-10-14T04:50:50.129Z",
     "repository": "PSRben/VisionHOPE",
@@ -7490,6 +7475,21 @@
     "repository": "Edge0/Audio8-ASR-Infinite",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
     "contentHash": "db929bfcf8414b03333c3bda4ebb79608fb747081ea5108adccba333f91aa081",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-3ZXQ",
+    "timestamp": "2026-10-16T12:58:17.390Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "dd4a96eb84bf1f8ffba978d386ba42e1d48e51ca94c2942e37829e984a258a1b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
