@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-DJXV",
-    "timestamp": "2026-10-14T01:50:31.987Z",
-    "repository": "zai-org/GLM-5.3",
-    "learningId": "learn-huggingface-hf-zai-org-glm-5-3-mv7gdjug",
-    "contentHash": "3e792697561e1521380c0ff1c480a7f98a4f0d08f49c2a5dd3c594c343975114",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-HEIK",
     "timestamp": "2026-10-14T01:53:31.580Z",
     "repository": "mudler/locate-anything.cpp-gguf",
@@ -7490,6 +7475,21 @@
     "repository": "openai/whisper-large-v3",
     "learningId": "learn-huggingface-openai-whisper-large-v3",
     "contentHash": "e5e7277d6e3be4b6588d0133f588f8316865ab50a16e2ec0687ad19e6f4fdbcc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-N4WV",
+    "timestamp": "2026-10-16T09:57:12.991Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "42c0909ec9b325765f03d935776d9c87b3d0cbc7e13e9db56d7a8102e77b6a20",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

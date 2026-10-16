@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T09:54:04.578Z",
-  "total_cycles_completed": 1657,
-  "total_learnings_persisted": 1657,
+  "last_updated": "2026-10-16T09:57:12.995Z",
+  "total_cycles_completed": 1658,
+  "total_learnings_persisted": 1658,
   "total_rules_promoted": 914,
   "history": [
-    {
-      "timestamp": "2026-10-15T22:18:19.189Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-xingchen-agi-teleocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T22:21:11.999Z",
       "repository": "Qwen/Qwen-Image-2.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T09:54:04.578Z",
       "repository": "openai/whisper-large-v3",
       "learningId": "learn-huggingface-openai-whisper-large-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T09:57:12.995Z",
+      "repository": "black-forest-labs/FLUX.1-schnell",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
