@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T02:11:15.567Z",
-  "total_cycles_completed": 1533,
-  "total_learnings_persisted": 1533,
+  "last_updated": "2026-10-16T02:14:38.620Z",
+  "total_cycles_completed": 1534,
+  "total_learnings_persisted": 1534,
   "total_rules_promoted": 829,
   "history": [
-    {
-      "timestamp": "2026-10-14T12:36:37.976Z",
-      "repository": "Phocinae/Phocinae-Largha-150M-v1",
-      "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv83gfv7",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T12:39:47.424Z",
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T02:11:15.567Z",
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T02:14:38.620Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
