@@ -1845,3 +1845,4 @@
 | `CYCLE-20261016-AL0Z` | `2026-10-16T19:07:19.667Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`068bbe55...`) |
 | `CYCLE-20261016-EKHM` | `2026-10-16T19:10:25.594Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`949f01ee...`) |
 | `CYCLE-20261016-IO9I` | `2026-10-16T19:13:37.110Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`2db70ba0...`) |
+| `CYCLE-20261016-MG0N` | `2026-10-16T19:16:33.047Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`c1871d37...`) |
