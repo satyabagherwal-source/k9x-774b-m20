@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T06:39:40.300Z",
+  "last_updated": "2026-10-16T06:43:02.647Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17125,7 +17125,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "33ad00f5cdfc5568fa3a53b71ca07cac7c6a38a1040a1b91a68d3fe3923d2cc8",
+      "content_hash": "76958cfbc99604ccc7b33bf74bfaecfe5fd6f4f3b1c6ca5226c5fd78b8973bb8",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -17185,6 +17185,21 @@
           "number": 1026,
           "title": "Generation Configuration Isolation Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1092,
+          "title": "Consistent Special‑Token Mapping Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1093,
+          "title": "Vision‑Token Placement Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1094,
+          "title": "Downsample‑Size Consistency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17205,7 +17220,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-15T23:11:02.484Z",
+      "verified_at": "2026-10-16T06:43:02.642Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

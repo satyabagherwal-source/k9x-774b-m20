@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-ACW9",
-    "timestamp": "2026-10-13T23:28:04.809Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv7bactj",
-    "contentHash": "e4962b0ef31267414a72b13a882336bfe658aef9ebddfa3c93d3011741b8d2e7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-EC2F",
     "timestamp": "2026-10-13T23:31:10.359Z",
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -7492,6 +7477,21 @@
     "contentHash": "c102ff0cad6e1ac3a402e7d0cf7a73f11a5876bb9670fd79924ca426b4606bc7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-PFGS",
+    "timestamp": "2026-10-16T06:43:02.668Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "76958cfbc99604ccc7b33bf74bfaecfe5fd6f4f3b1c6ca5226c5fd78b8973bb8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

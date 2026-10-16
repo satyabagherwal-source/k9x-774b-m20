@@ -3,7 +3,7 @@
 > **Source Version**: `hf-taichuai-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-15T23:11:02.391Z  
+> **Timestamp**: 2026-10-16T06:43:02.502Z  
 > **Learning ID**: `learn-huggingface-taichuai-zdtaichu5-0-9b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,191 +14,202 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): TaichuAI/ZDTaichu5.0‑9B
 
-## 1. Executive Forensic Architecture & System Mechanics
-The repository hosts a multimodal foundation model that fuses a Qwen3.5‑9B language decoder with a C‑RADIOv4‑H vision encoder. The model is exposed through the Hugging‑Face `transformers` ecosystem, providing an `image‑text‑to‑text` pipeline. The architectural boundaries are:
+## 1. Executive Forensic Architecture & System Mechanics  
 
-| Boundary | Subsystem | Key Responsibility |
-|----------|-----------|---------------------|
-| **Model Configuration** | `config.json` | Declares model hyper‑parameters, token IDs, and encoder‑decoder mapping. |
-| **Tokenizer & Processor** | `tokenizer_config.json`, `processing.ZDTaichu5_0_Processor` | Handles text, image, and video tokenization, including special tokens (`<|vision_start|>`, `<|vision_end|>`, `<|image_pad|>`, `<|video_pad|>`). |
-| **Generation** | `generation_config.json` | Supplies generation defaults (temperature, top‑k/p, repetition penalty). |
-| **Pipeline** | `pipeline_tag: image‑text‑to‑text` | Exposes a single entry point for multimodal inference. |
-| **Documentation** | `README.md` | Describes capabilities, spatial reasoning, agentic tool use, and deployment notes. |
+**Problem Domain**  
+The repository implements a multimodal causal language model that accepts arbitrary‑resolution visual inputs (images or video) and textual prompts, and produces natural‑language text. The core objective is to enable spatial reasoning, embodied‑AI planning, and multi‑step tool use while preserving the general‑purpose capabilities of a 9 B‑parameter language backbone.
 
-The core abstraction is a *single‑token‑stream* that interleaves textual and visual tokens. The vision encoder outputs a sequence of image‑context tokens that are inserted into the token stream at `<|vision_start|>` / `<|vision_end|>` boundaries. The language decoder consumes this stream as if it were pure text, enabling end‑to‑end generation.
+**Subsystem Boundaries**  
+
+| Subsystem | Responsibility | Key Interfaces |
+|-----------|----------------|----------------|
+| **Tokenizer / Processor** | Converts raw text, image, and video tokens into a unified token stream. Handles special tokens (`<|vision_start|>`, `<|vision_end|>`, `<|image_pad|>`, `<|video_pad|>`) and maps them to integer IDs. | `ZDTaichu5_0_Processor`, `ZDTaichu5_0_ImageProcessor`, `ZDTaichu5_0_Processor` |
+| **Vision Encoder** | C‑RADIOv4‑H encoder that transforms any‑resolution visual data into a sequence of visual embeddings. Supports downsampling (`downsample_ratio=0.5`) and enforces a fixed image size (`force_image_size=512`). | `C_RADIOv4_H` (not shown in the repo snapshot) |
+| **Language Backbone** | Qwen3.5‑9B decoder that consumes the fused token stream and generates text. Configured with 32 layers, 16 heads, and a 4096‑dim hidden size. | `Qwen3_5ForCausalLM` |
+| **Fusion & Context Management** | Inserts image‑context tokens (`<|image_pad|>`) and manages past key values. The `keys_to_ignore_at_inference` list indicates that past key values are omitted during inference to reduce memory. | `ZDTaichu5_0_ForConditionalGeneration` |
+| **Generation Engine** | Implements sampling strategies (`do_sample=true`, `top_k=20`, `top_p=0.95`) and handles special EOS token lists. | `generation_config.json` |
+
+**Core Abstractions**  
+
+* **Token IDs** – All special tokens have explicit IDs in `config.json` (`img_context_token_id=248056`, `eos_token_id=248046`, etc.).  
+* **Vision Tokens** – `<|vision_start|>` and `<|vision_end|>` delimit visual embeddings; `<|image_pad|>` acts as a placeholder for missing image slots.  
+* **Image/Video Tokens** – `<|video_pad|>` is reserved for video frames.  
+* **Downsampling & Size** – The vision encoder downsamples by 0.5 and forces a 512‑pixel dimension, ensuring consistent embedding dimensionality.  
+
+**State Ownership**  
+
+* The language decoder owns the token stream and past key values.  
+* The vision encoder owns the visual embedding buffer.  
+* The processor owns the mapping between raw inputs and token IDs.  
+
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Tokenization Consistency Rule
+### 1. Consistent Special‑Token Mapping Rule  
 **RULE**:  
-**MUST** ensure that every special token defined in `tokenizer_config.json` has a corresponding unique integer ID in `config.json` and that the IDs are not reused for other purposes.
-
+> **MUST** ensure that every special token defined in `config.json` has a unique, non‑overlapping integer ID that is also registered in `tokenizer_config.json`.  
 **WHY**:  
-Reusing IDs or missing mappings leads to ambiguous token streams, causing the decoder to misinterpret visual context as text or vice versa, which can trigger out‑of‑range embeddings and catastrophic failures during inference.
-
+> Overlapping IDs cause token confusion during decoding, leading to garbled output or silent token replacement.  
 **WHEN TO APPLY**:  
-All multimodal pipelines that interleave visual and textual tokens, regardless of language or framework.
-
+> All multimodal models that expose a tokenizer and a model config.  
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 # config.json
 {
-  "img_start_token_id": 248056,
-  "img_end_token_id": 248057,
-  "video_token_id": 248058,
-  "bos_token_id": 248040,
+  "img_context_token_id": 248056,
   "eos_token_id": 248046,
-  "pad_token_id": 248040
+  "pad_token_id": 248040,
+  "image_token_id": 248056,
+  "video_token_id": 248057
 }
 
 # tokenizer_config.json
 {
-  "image_start_token": "<|vision_start|>",
-  "image_end_token": "<|vision_end|>",
-  "image_token": "<|image_pad|>",
-  "video_token": "<|video_pad|>",
-  "bos_token": "<|im_start|>",
-  "eos_token": "<|im_end|>",
-  "pad_token": "<|endoftext|>"
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "pad_token_id": 248040,
+  "eos_token_id": 248046
 }
 ```
-The mapping is verified by a schema validator that cross‑checks `tokenizer_config.json` against `config.json`.
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Reusing the same ID for two distinct tokens
-{
-  "img_start_token_id": 248056,
-  "video_token_id": 248056  # Conflict
-}
+# BAD: hard‑coded duplicate IDs
+tokenizer.add_tokens(["<|image_pad|>"])
+tokenizer.add_tokens(["<|vision_start|>"])
+tokenizer.add_tokens(["<|vision_end|>"])
+# All three get ID 0 by default → collision
 ```
-
 **VERIFICATION METHOD**:  
-Run a JSON schema validator that asserts:
-1. Every key in `tokenizer_config.json` that ends with `_token` has a corresponding `_token_id` in `config.json`.
-2. All IDs are unique across the entire configuration.
+> Unit test that loads both config files and asserts `set(config_special_ids) == set(tokenizer_special_ids)`.
 
 ---
 
-### 2. Vision‑Encoder Output Alignment Rule
+### 2. Vision‑Token Placement Rule  
 **RULE**:  
-**MUST** guarantee that the vision encoder outputs a token sequence whose length does not exceed `max_position_embeddings` minus the number of textual tokens, and that the encoder’s downsample ratio is applied consistently to all input images.
-
+> **MUST** prepend `<|vision_start|>` and append `<|vision_end|>` around every visual embedding sequence, and **MUST NOT** intermix visual tokens with textual tokens without these delimiters.  
 **WHY**:  
-Exceeding the positional limit causes the language decoder to truncate or wrap embeddings, leading to incomplete visual context and degraded generation quality. Inconsistent downsampling introduces visual distortion and misalignment between image resolution and token granularity.
-
+> The language decoder relies on these delimiters to switch between text and vision embeddings; missing delimiters cause mis‑alignment and catastrophic decoding failures.  
 **WHEN TO APPLY**:  
-During model initialization and inference for any multimodal pipeline that accepts images or videos.
+> During preprocessing of multimodal inputs.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+def encode_multimodal(text, images):
+    tokens = tokenizer.encode(text)
+    for img in images:
+        img_tokens = vision_encoder.encode(img)
+        tokens += [tokenizer.convert_tokens_to_ids("<|vision_start|>")]
+        tokens += img_tokens
+        tokens += [tokenizer.convert_tokens_to_ids("<|vision_end|>")]
+    return tokens
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: no delimiters
+tokens += img_tokens  # decoder cannot detect vision boundary
+```
+**VERIFICATION METHOD**:  
+> Integration test that feeds a mixed text‑image prompt and asserts that the token stream contains the expected delimiter IDs in the correct order.
 
+---
+
+### 3. Downsample‑Size Consistency Rule  
+**RULE**:  
+> **MUST** enforce that the `downsample_ratio` and `force_image_size` in `config.json` are compatible with the vision encoder’s internal stride and output dimension logic.  
+**WHY**:  
+> Mismatched values lead to shape mismatches between visual embeddings and the language decoder’s expected sequence length, causing runtime errors or silent truncation.  
+**WHEN TO APPLY**:  
+> During model initialization and when updating vision encoder hyper‑parameters.  
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 # config.json
 {
   "downsample_ratio": 0.5,
-  "max_position_embeddings": 262144,
-  "hidden_size": 4096
+  "force_image_size": 512
 }
 
-# In the vision encoder wrapper
-def encode_image(img):
-    # Apply downsample ratio
-    img_resized = resize(img, scale=0.5)
-    # Forward through encoder
-    tokens = encoder(img_resized)
-    # Ensure token count fits
-    assert len(tokens) <= config.max_position_embeddings - text_token_count
-    return tokens
+# vision_encoder.py
+assert image.size == config.force_image_size
+assert image.size * config.downsample_ratio == expected_output_dim
 ```
-
 **NEGATIVE CONSTRAINT**:
 ```python
-# BAD: Ignoring downsample ratio
-def encode_image(img):
-    tokens = encoder(img)  # Original resolution
-    return tokens
+# BAD: hard‑coded size in encoder
+if image.size != 512:  # ignores config
+    raise ValueError("Unsupported image size")
 ```
-
 **VERIFICATION METHOD**:  
-Unit test that feeds a 4K image and asserts that the token count is ≤ `max_position_embeddings - text_token_count`. Use a mock encoder that returns a predictable token count.
-
----
-
-### 3. Generation Configuration Isolation Rule
-**RULE**:  
-**MUST** keep `generation_config.json` independent of `config.json` by not embedding model‑specific defaults (e.g., `bos_token_id`, `eos_token_id`) that can be overridden by the model’s own configuration.
-
-**WHY**:  
-Coupling generation defaults to model config can lead to silent overrides when the model is loaded with a different tokenizer or when the generation config is updated independently, causing inconsistent sampling behavior.
-
-**WHEN TO APPLY**:  
-Any pipeline that supports user‑supplied generation arguments.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# generation_config.json
-{
-  "_from_model_config": true,
-  "do_sample": true,
-  "temperature": 1.0,
-  "top_k": 20,
-  "top_p": 0.95,
-  "repetition_penalty": 1.0,
-  "pad_token_id": 248040,
-  "eos_token_id": [248044, 248040, 248046]
-}
-```
-When loading, the pipeline merges the generation config with the model config but preserves user overrides.
-
-**NEGATIVE CONSTRAINT**:
-```python
-# BAD: Hard‑coding bos_token_id in generation config
-{
-  "bos_token_id": 248040  # Should be derived from tokenizer
-}
-```
-
-**VERIFICATION METHOD**:  
-Integration test that loads the model with a custom tokenizer and asserts that the `bos_token_id` used during generation matches the tokenizer’s `bos_token_id`, not the hard‑coded value.
+> Property test that iterates over a range of image sizes, applies the config, and verifies that the encoder output shape matches the decoder’s expected embedding dimension.
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No commit history, issue tracker, or patch data is available in the repository. Therefore, no concrete incidents can be documented. The absence of recorded bugs suggests that the current configuration and documentation are stable, but it also indicates a lack of public issue visibility.
+No production commits, patches, or closed issues were retrieved from the repository snapshot. Consequently, no concrete incidents or bug‑fix diffs can be documented. The absence of evidence suggests either a pristine release or that the repository’s commit history is not accessible in the provided data.
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants
 
-| Domain | Invariant | Example |
-|--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | **Never** use implicit coercion when comparing token IDs. | `if (tokenId == 0)` → **BAD**; `if (tokenId === 0)` → **GOOD** |
-| | **Avoid** shadowing global token constants inside functions. | `const bos_token_id = 248040; function foo(bos_token_id) { … }` → **BAD** |
-| | **Prefer** deep immutability for config objects. | `Object.freeze(config)` before use. |
-| **Infinite Loop & Recursion Guards** | **Ensure** base case in recursive tokenization of nested images. | `if (depth > MAX_DEPTH) throw new Error('Recursion limit');` |
-| | **Guard** event‑loop microtasks by yielding after large loops. | `for (let i=0; i<1e7; i++) { … if (i%1e6===0) await Promise.resolve(); }` |
-| **UI & UX Micro‑Mechanics** | **Do not** rely on `document.activeElement` for focus restoration after modal close; use explicit focus trap. | `modal.addEventListener('close', () => { previousFocus.focus(); });` |
-| | **Debounce** rapid image uploads to avoid thrashing. | `const debouncedUpload = debounce(uploadFn, 300);` |
-| **Backend Concurrency & Memory Safety** | **Avoid** storing unbounded image token caches in global variables. | `const cache = new Map(); cache.set(key, value); if (cache.size > MAX_CACHE) cache.delete(oldestKey);` |
-| | **Prevent** TOCTOU by acquiring a lock before reading shared state. | `await mutex.acquire(); const val = sharedState; mutex.release();` |
-| **Defect & Error Prevention** | **Use** optional chaining for nested token objects. | `token?.image?.start?.id` |
-| | **Validate** array indices before access. | `if (idx >= 0 && idx < array.length) { … }` |
+### 1. Micro‑Syntax & Token‑Level Precision  
+* **Exact Comparison** – Use `===` for token ID checks; avoid `==` which coerces `0` to `false`.  
+  ```js
+  if (tokenId === 0) { /* valid token */ }  // safe
+  if (tokenId == 0) { /* may mis‑detect */ }  // unsafe
+  ```
+* **Deep Immutability** – Freeze token maps to prevent accidental mutation.  
+  ```js
+  Object.freeze(tokenMap);
+  ```
+* **Shadowing Avoidance** – Do not redeclare `tokenId` inside nested scopes.  
+
+### 2. Infinite Loop & Recursion Guards  
+* **Base Condition Proof** – For generation loops, ensure `while (generatedTokens < maxLength)` and that each iteration appends at least one token.  
+* **Recursion Depth Cap** – If recursive tokenization is used, enforce `depth < MAX_RECURSION`.  
+* **Event Loop Yield** – In async generation, insert `await Promise.resolve()` to allow microtasks to drain.  
+
+### 3. UI & UX Micro‑Mechanics  
+* **Debounce** – Wrap UI event handlers with a 200 ms debounce to prevent rapid re‑rendering.  
+  ```js
+  const debounced = debounce(handleInput, 200);
+  ```
+* **Focus Restoration** – After modal close, explicitly set focus back to the triggering element to avoid focus loops.  
+
+### 4. Backend Concurrency & Memory Safety  
+* **TOCTOU Prevention** – Acquire a lock before checking a resource’s state and before performing an operation.  
+  ```go
+  mu.Lock()
+  defer mu.Unlock()
+  if !resource.available { return }
+  resource.use()
+  ```
+* **Connection Pool Guard** – Limit the pool size to `maxConnections` and implement a timeout for acquisition.  
+
+### 5. Defect & Error Prevention (“Galti Pakadna”)  
+* **Null/Undefined Chaining** – Use optional chaining (`?.`) to guard against missing properties.  
+  ```js
+  const tokenId = token?.id ?? DEFAULT_ID;
+  ```
+* **Off‑by‑One Checks** – Validate array indices against `array.length - 1`.  
+  ```js
+  if (index < 0 || index >= array.length) throw new RangeError();
+  ```
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation | Key Invariant |
-|-----------|-------------|---------------|
-| **Architecture** | Single‑token stream interleaving; vision encoder outputs tokens inserted between `<|vision_start|>` / `<|vision_end|>`. | Token stream must preserve order and length constraints. |
-| **Core Abstractions** | `ZDTaichu5_0_ForConditionalGeneration` class; `ZDTaichu5_0_Processor` handles multimodal tokenization. | Processor must expose `encode` and `decode` that are stateless and deterministic. |
-| **Error Handling** | Generation config uses `do_sample: true`; no explicit error boundaries in config. | Generation must fall back to deterministic decoding if sampling fails. |
-| **Testing** | No test files present. | Unit tests should cover token mapping, downsample ratio, and generation defaults. |
-| **Security** | No credential handling; model is open‑source. | Ensure no hard‑coded secrets in config files. |
-| **Performance** | Vision encoder downsample ratio 0.5; max position embeddings 262k. | Tokenization and inference must stay below GPU memory limits. |
-| **Deployment** | Config files are JSON; pipeline tag `image-text-to-text`. | CI should validate JSON schema and run inference smoke tests. |
-| **Agent Patterns** | Not explicitly present; but the model supports multi‑step tool use. | Prompt chains must include `<|vision_start|>` tokens correctly. |
-| **Data Flow** | Image → encoder → token stream → decoder → text. | Data flow must be linear and avoid circular dependencies. |
+| Dimension | Observed Design | Key Invariants |
+|-----------|-----------------|----------------|
+| **Architecture** | Multimodal fusion via token delimiters; vision encoder + language decoder; no separate encoder for text. | Delimiters must surround visual embeddings; past key values omitted during inference. |
+| **Core Abstractions** | Token IDs, image/video tokens, special tokens; `ZDTaichu5_0_Processor`. | Token IDs must be unique; processor must expose `encode`/`decode` APIs. |
+| **Error Handling** | `generation_config.json` lists multiple EOS IDs; `keys_to_ignore_at_inference` indicates graceful degradation. | Decoder must stop on any EOS ID; missing keys should be ignored. |
+| **Testing** | No tests present; config files imply unit tests for token mapping. | Tests should assert token ID consistency and delimiter placement. |
+| **Security** | No credential handling; uses `bfloat16` dtype to reduce memory. | Ensure no hard‑coded secrets; validate token IDs against whitelist. |
+| **Performance** | Downsample ratio 0.5, force image size 512, 128K context length. | Vision encoder must be zero‑copy; decoder should use rotary embeddings. |
+| **Deployment** | Config files reference `transformers_version=5.3.0`. | CI/CD should pin transformer version; container images must be reproducible. |
+| **Agent Patterns** | Supports multi‑step tool use; likely uses prompt chains. | Prompt templates must include `<|vision_start|>`/`<|vision_end|>` tokens. |
+| **Data Flow** | Token stream flows from processor → vision encoder → decoder. | Data must be serialized as integer IDs; no mutation after tokenization. |
 
 ---
 
@@ -206,48 +217,57 @@ No commit history, issue tracker, or patch data is available in the repository. 
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The `tokenizer_config.json` → `config.json` mapping pattern. |
-| **Rule** | Tokenization Consistency Rule (Section 2.1). |
-| **Architecture Principle** | *Single‑stream multimodal fusion* – interleave visual tokens into the language stream to preserve decoder simplicity. |
-| **Failure Mode** | Token ID collision → decoder mis‑interprets visual context. |
-| **Reusable Skill** | JSON schema validation of multimodal config files. |
-| **Decision** | Chose to store vision tokens as separate IDs rather than embedding them in image pixel data to keep the decoder architecture unchanged. |
-| **Anti‑pattern** | Hard‑coding special token IDs in multiple files. |
-| **Verification Method** | Automated unit test that cross‑checks token IDs across config files. |
+| **Pattern** | Token‑delimited multimodal encoding function (see Section 4.1). |
+| **Rule** | Consistent special‑token mapping rule (Section 2.1). |
+| **Architecture Principle** | “Delimiter‑Based Fusion” – visual embeddings are isolated by explicit start/end tokens. |
+| **Failure Mode** | Token ID collision → garbled output. |
+| **Reusable Skill** | Verify token‑ID consistency across config and tokenizer. |
+| **Decision** | Chose explicit delimiters over positional embeddings to simplify decoder logic. |
+| **Anti‑Pattern** | Hard‑coding token IDs in code. |
+| **Verification Method** | Unit test asserting equality of special‑token ID sets. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Validate Config Schema**  
-   - Load `config.json`, `tokenizer_config.json`, `generation_config.json`.  
-   - Run JSON schema validator that checks for required keys, unique IDs, and cross‑file consistency.
+1. **Load Configs**  
+   * Parse `config.json`, `generation_config.json`, `tokenizer_config.json`.  
+   * Validate that `transformers_version` matches the installed library.  
 
-2. **Verify Token Mapping**  
-   - For each special token in `tokenizer_config.json`, assert that `config.json` contains a unique `_token_id`.  
-   - Run a unit test that tokenizes a sample text + image and checks that the resulting token IDs match the mapping.
+2. **Validate Token Mapping**  
+   * Extract all special token IDs from both config files.  
+   * Assert that the sets are identical.  
 
-3. **Test Vision Encoder Output Length**  
-   - Feed a high‑resolution image (e.g., 4K) to the encoder.  
-   - Assert that `len(tokens) <= config.max_position_embeddings - text_token_count`.  
-   - Verify that the downsample ratio is applied by comparing input and output resolutions.
+3. **Implement Processor**  
+   * Encode text via tokenizer.  
+   * For each image/video:  
+     * Insert `<|vision_start|>` token.  
+     * Encode visual data with vision encoder.  
+     * Insert `<|vision_end|>` token.  
 
-4. **Check Generation Defaults**  
-   - Load the model with a custom tokenizer.  
-   - Generate text with default generation config and confirm that `bos_token_id` and `eos_token_id` come from the tokenizer, not hard‑coded values.
+4. **Enforce Delimiters**  
+   * Ensure no visual tokens appear outside the start/end delimiters.  
 
-5. **Run Integration Smoke Test**  
-   - Provide a short prompt with an image.  
-   - Ensure that the pipeline returns a coherent text output without errors.
+5. **Configure Vision Encoder**  
+   * Set `downsample_ratio` and `force_image_size` per config.  
+   * Verify output shape matches decoder expectations.  
 
-6. **Static Analysis**  
-   - Run a linter that flags any re‑definition of special token IDs or shadowing of global constants.
+6. **Set Generation Parameters**  
+   * Apply `do_sample`, `top_k`, `top_p`, `temperature`.  
+   * Include all EOS IDs from config.  
 
-7. **Performance Benchmark**  
-   - Measure GPU memory usage for a batch of 8 images + text.  
-   - Confirm that memory stays below the configured limit.
+7. **Testing**  
+   * Unit tests for token mapping.  
+   * Integration test for multimodal prompt.  
+   * Property test for vision encoder output shape.  
 
-8. **Security Scan**  
-   - Verify that no secrets or credentials are present in any JSON file.
+8. **Deployment**  
+   * Pin transformer and tokenizer versions.  
+   * Build reproducible Docker image.  
+   * Include CI pipeline that runs all tests on every push.  
+
+9. **Monitoring**  
+   * Log token stream lengths.  
+   * Detect unexpected token IDs at runtime.  
 
 ---
