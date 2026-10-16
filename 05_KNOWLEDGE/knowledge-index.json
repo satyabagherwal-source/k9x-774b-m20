@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T15:22:17.405Z",
+  "last_updated": "2026-10-16T15:25:28.944Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13765,7 +13765,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "997f425f3b79c30905038acfd53456bbe3ee8cec9327932197288e465ac8aaed",
+      "content_hash": "850df199488e93b37af9ea8727b1a28f299c5f0722978a1d99ba9bd9b9b5fcf3",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [
@@ -13816,7 +13816,7 @@
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
       ],
-      "verified_at": "2026-10-16T06:58:23.423Z",
+      "verified_at": "2026-10-16T15:25:28.937Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

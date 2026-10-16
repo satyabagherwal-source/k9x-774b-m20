@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-UGS5",
-    "timestamp": "2026-10-14T07:11:36.821Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv7rugop",
-    "contentHash": "d23766fba10eb71b242720d8d5ed40c3acb42897c46dc7d3522c36c0ed6bfc3d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-FPI6",
     "timestamp": "2026-10-14T07:28:07.902Z",
     "repository": "speridlabs/iris-3b",
@@ -7492,6 +7477,21 @@
     "contentHash": "371da13f4013e7e8b0c76949ecb4b915ab688c7c5f3618d3a7ac4b6fdd905d86",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-DAFL",
+    "timestamp": "2026-10-16T15:25:28.977Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "850df199488e93b37af9ea8727b1a28f299c5f0722978a1d99ba9bd9b9b5fcf3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
