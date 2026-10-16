@@ -1815,3 +1815,4 @@ Every entry in this ledger must capture:
 | `learn-github-dapr-dapr` | `https://github.com/dapr/dapr` | `180905c6` | Multi-dimensional audit evidence | 2026-10-16T17:23:07.106Z |
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-16T17:26:13.310Z |
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-16T17:29:03.941Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-16T17:32:13.519Z |

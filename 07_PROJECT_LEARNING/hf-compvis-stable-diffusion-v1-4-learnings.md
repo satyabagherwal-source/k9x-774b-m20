@@ -3,7 +3,7 @@
 > **Source Version**: `hf-compvis-s`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-16T09:22:14.939Z  
+> **Timestamp**: 2026-10-16T17:32:13.431Z  
 > **Learning ID**: `learn-huggingface-compvis-stable-diffusion-v1-4`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-16T09:22:14.249Z  
+> **Harvest Timestamp**: 2026-10-16T17:32:12.708Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

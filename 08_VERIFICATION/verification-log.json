@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-IAG4",
-    "timestamp": "2026-10-14T10:18:06.052Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv7yiacp",
-    "contentHash": "ca25af33349f4c3c0842af8c1f5475ce212c5543756366059a82519574a1f2c9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-MG41",
     "timestamp": "2026-10-14T10:21:20.017Z",
     "repository": "autotrust/GEV-26B-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "amazon/chronos-2",
     "learningId": "learn-huggingface-amazon-chronos-2",
     "contentHash": "af4d9edf0c0d1ec0a1e0033ddd4ba637f97b2bf322d2510445c3b334a5cff0de",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-WA4S",
+    "timestamp": "2026-10-16T17:32:13.516Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "23dbfc5076fda5081712e3b625e76c983eb6411fd991ee911c54ec79a9e6a4eb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

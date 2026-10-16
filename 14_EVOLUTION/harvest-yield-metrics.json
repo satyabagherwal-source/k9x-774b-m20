@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T17:29:03.942Z",
-  "total_cycles_completed": 1790,
-  "total_learnings_persisted": 1790,
+  "last_updated": "2026-10-16T17:32:13.520Z",
+  "total_cycles_completed": 1791,
+  "total_learnings_persisted": 1791,
   "total_rules_promoted": 974,
   "history": [
-    {
-      "timestamp": "2026-10-16T05:34:24.317Z",
-      "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T05:37:17.171Z",
       "repository": "autotrust/JEV-35B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T17:29:03.942Z",
       "repository": "amazon/chronos-2",
       "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T17:32:13.520Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
