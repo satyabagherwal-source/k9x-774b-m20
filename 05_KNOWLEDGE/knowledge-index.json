@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T13:44:45.790Z",
+  "last_updated": "2026-10-16T13:47:45.282Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12527,7 +12527,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
       "source_version": "hf-deepseek-ai-deepseek-r1",
-      "content_hash": "49438be693d62e93ed26b64608f36ad1a7d2d8ae5c8a9d10ab15f57b451572c9",
+      "content_hash": "d5bb05e474aeed642f7f18bdfba60269dacdf4dc6fbbba48be5d6af09cfd1172",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md",
       "promoted_rules": [
@@ -12557,7 +12557,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv43zicx",
         "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv4h8dyv"
       ],
-      "verified_at": "2026-10-16T05:28:14.937Z",
+      "verified_at": "2026-10-16T13:47:45.276Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
