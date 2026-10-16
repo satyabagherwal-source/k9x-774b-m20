@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-34BU",
-    "timestamp": "2026-10-13T22:26:27.882Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv79348s",
-    "contentHash": "116c998716a584fcc9ca5a65890a681e33f4da186a691679bc03da3e390c3ed2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-74GB",
     "timestamp": "2026-10-13T22:29:34.667Z",
     "repository": "google/embeddinggemma-2",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B",
     "learningId": "learn-huggingface-autotrust-jev-35b",
     "contentHash": "636d4a13dc68621734119cd3a5964f9c512205caf05326cbe0760cb91d304419",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-GTHH",
+    "timestamp": "2026-10-16T05:40:21.701Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "3ad4e8f6c6a267aace48a7a8c9b30086b77021dc0a9fa190180cab4cb3e5d500",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

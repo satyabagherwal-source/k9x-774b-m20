@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T05:37:17.171Z",
-  "total_cycles_completed": 1592,
-  "total_learnings_persisted": 1592,
+  "last_updated": "2026-10-16T05:40:21.704Z",
+  "total_cycles_completed": 1593,
+  "total_learnings_persisted": 1593,
   "total_rules_promoted": 854,
   "history": [
-    {
-      "timestamp": "2026-10-14T16:48:49.570Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv8cgrgg",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T16:51:51.914Z",
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T05:37:17.171Z",
       "repository": "autotrust/JEV-35B",
       "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:40:21.704Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
