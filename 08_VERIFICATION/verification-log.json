@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-IJRB",
-    "timestamp": "2026-10-13T16:06:33.095Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv6vijov",
-    "contentHash": "17cb85ef375aceced9e3aa8b69b2eeb5fec07f8b47b9026e1f70e88c39e6d1c4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-MKPT",
     "timestamp": "2026-10-13T16:09:40.961Z",
     "repository": "bigscience/bloom",
@@ -7492,6 +7477,21 @@
     "contentHash": "c25c279693ec3556cb95d154d2d49e1a9cbc3ef418d97ecf993c034f34c9a35c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-GWVC",
+    "timestamp": "2026-10-16T00:04:30.696Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "be1e95edb352a573991a1ba3f8dd9069a4e76211a382f562bd0ce44568e09e5a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

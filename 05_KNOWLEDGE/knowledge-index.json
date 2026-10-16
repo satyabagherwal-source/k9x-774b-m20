@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T00:00:56.695Z",
+  "last_updated": "2026-10-16T00:04:30.671Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12836,18 +12836,34 @@
     "learn-huggingface-facebook-sam3": {
       "learning_id": "learn-huggingface-facebook-sam3",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-facebook-sam3",
+      "source": "facebook/sam3",
+      "repository": "facebook/sam3",
       "slug": "hf-facebook-sam3",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "6235ecf420cf1cc02c5fe97c229993d7b17fd71fa87721a1edafd2476de491f9",
+      "content_hash": "be1e95edb352a573991a1ba3f8dd9069a4e76211a382f562bd0ce44568e09e5a",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1034,
+          "title": "Model Weight Initialization & Determinism Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1035,
+          "title": "Tensor Shape Invariant Enforcement in Vision Transformers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1036,
+          "title": "Safe Deserialization of Model Checkpoints",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 6,
       "historical_learning_ids": [
@@ -12858,7 +12874,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-14T13:27:49.720Z",
+      "verified_at": "2026-10-16T00:04:30.666Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

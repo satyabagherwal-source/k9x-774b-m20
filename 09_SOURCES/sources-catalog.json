@@ -625,9 +625,9 @@
     "sourceUrl": "https://huggingface.co/facebook/sam3",
     "sourceVersion": "hf-facebook-sam3",
     "license": "Open-Source",
-    "contentHash": "6235ecf420cf1cc02c5fe97c229993d7b17fd71fa87721a1edafd2476de491f9",
-    "lastHarvestedAt": "2026-10-14T13:27:49.781Z",
-    "learningId": "learn-huggingface-hf-facebook-sam3-mv85aa3h"
+    "contentHash": "be1e95edb352a573991a1ba3f8dd9069a4e76211a382f562bd0ce44568e09e5a",
+    "lastHarvestedAt": "2026-10-16T00:04:30.699Z",
+    "learningId": "learn-huggingface-facebook-sam3"
   },
   "hf-unsloth-qwen3.8-27b-gguf": {
     "repository": "unsloth/Qwen3.8-27B-GGUF",
