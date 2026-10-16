@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T02:27:18.092Z",
+  "last_updated": "2026-10-16T02:30:32.479Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17321,18 +17321,18 @@
     "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf": {
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-venastine-research-xing4.0-29b-a4b-gguf",
+      "source": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "slug": "hf-venastine-research-xing4.0-29b-a4b-gguf",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "e73adf022b311e797793b0cc4cec9d255c593ea0315b753e858f2e03336f7aef",
+      "content_hash": "74609b7afe3cb6cf0cbaa2c5730ff593e722846b942462cfbe847777639abcee",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -17348,7 +17348,7 @@
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6",
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
       ],
-      "verified_at": "2026-10-14T17:10:20.390Z",
+      "verified_at": "2026-10-16T02:30:32.471Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
