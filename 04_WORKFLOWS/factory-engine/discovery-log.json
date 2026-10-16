@@ -17857,5 +17857,20 @@
     "qualityScore": 2082,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-16T09:27:24.317Z"
+  },
+  {
+    "name": "Proxima",
+    "fullName": "Zen4-bit/Proxima",
+    "url": "https://github.com/Zen4-bit/Proxima",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Multi-AI MCP Server - Connect ChatGPT, Claude, Gemini & Perplexity to your coding tools without any API",
+    "stars": 1197,
+    "forks": 163,
+    "openIssues": 28,
+    "language": "JavaScript",
+    "qualityScore": 953,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-16T17:08:38.313Z"
   }
 ]

@@ -4064,3 +4064,7 @@ https://github.com/volcengine/OpenViking
 # --- Automatically Discovered by AI Scout Engine [2026-10-16T09:28:14.981Z] ---
 # [AI-AGENTS] textbee/textbee (2082 score) - Open-source SMS gateway. Turn your Android phone into an SMS API: send and recei
 https://github.com/textbee/textbee
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-16T17:09:34.154Z] ---
+# [AI-AGENTS] Zen4-bit/Proxima (953 score) - Multi-AI MCP Server - Connect ChatGPT, Claude, Gemini & Perplexity to your codin
+https://github.com/Zen4-bit/Proxima

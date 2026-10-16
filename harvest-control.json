@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-16T17:06:25.464Z",
+  "lastUpdated": "2026-10-16T17:09:32.650Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -216,12 +216,12 @@
       {
         "id": "Agent-Delta",
         "domain": "huggingface-ai-models",
-        "status": "ACTIVE",
-        "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T17:06:29.086Z",
+        "status": "COOLING_DOWN",
+        "cooldownUntil": "2026-10-16T17:24:41.787Z",
+        "lastActiveAt": "2026-10-16T17:09:41.725Z",
         "lastHarvestedAt": "2026-10-16T17:06:29.086Z",
         "totalHarvested": 3905,
-        "lastError": null
+        "lastError": "GitHub/AI Rate Limit on Target"
       },
       {
         "id": "Agent-Epsilon",
@@ -295,10 +295,10 @@
       "service": "GITHUB_API",
       "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 1792173987079,
-      "resetAt": "2026-10-16T18:06:27.079Z",
-      "trippedAt": "2026-10-16T17:06:12.079Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Atailwind%20topic%3Acomponents%20stars%3A%3E2000%20sort%3Astars&per_page=15&page=2)",
+      "resetEpoch": 1792174186066,
+      "resetAt": "2026-10-16T18:09:46.066Z",
+      "trippedAt": "2026-10-16T17:09:31.067Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aui-components%20language%3Atypescript%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=3)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
