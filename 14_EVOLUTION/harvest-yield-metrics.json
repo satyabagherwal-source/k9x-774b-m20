@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:54:06.754Z",
-  "total_cycles_completed": 1749,
-  "total_learnings_persisted": 1749,
-  "total_rules_promoted": 948,
+  "last_updated": "2026-10-16T14:57:03.054Z",
+  "total_cycles_completed": 1750,
+  "total_learnings_persisted": 1750,
+  "total_rules_promoted": 951,
   "history": [
-    {
-      "timestamp": "2026-10-16T03:04:13.976Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T03:07:20.814Z",
       "repository": "openai-community/gpt2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T14:54:06.754Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T14:57:03.054Z",
+      "repository": "Altworld/Hemmingway-1",
+      "learningId": "learn-huggingface-altworld-hemmingway-1",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

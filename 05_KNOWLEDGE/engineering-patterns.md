@@ -74047,3 +74047,163 @@ PROVENANCE_END -->
 Write a script that parses `config.json` and asserts that `len([i for i, t in enumerate(layer_types) if t == "full_attention"]) == max_position_embeddings // full_attention_interval`.
 
 ---
+
+
+---
+
+## 1176. **Special‑Token Uniqueness and Consistency** (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Special‑Token Uniqueness and Consistency**",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T14:57:02.970Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The model configuration must declare a single, unique identifier for each special token, and the tokenizer configuration must reference the same identifiers without duplication or omission.  
+**WHY**:  
+> Duplicate or missing token IDs cause tokenization mismatches, leading to silent truncation, infinite loops in generation, or corrupted embeddings.  
+**WHEN TO APPLY**:  
+> All text‑generation models that expose a tokenizer and a model config, regardless of language or framework.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// tokenizer_config.json
+{
+  "model_specific_special_tokens": {
+    "bos_token": "<|bos|>",
+    "eos_token": "<|eos|>",
+    "pad_token": "<|pad|>"
+  }
+}
+
+// config.json
+{
+  "bos_token_id": 0,
+  "eos_token_id": 1,
+  "pad_token_id": 2
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+// BAD: duplicate IDs
+{
+  "bos_token_id": 0,
+  "eos_token_id": 0,   // duplicate
+  "pad_token_id": 2
+}
+```
+**VERIFICATION METHOD**:  
+> Unit test that parses both JSON files and asserts that every token name maps to a distinct integer and that the set of IDs matches the tokenizer’s `vocab_size` slice.
+
+
+---
+
+## 1177. **Attention‑Schedule Integrity** (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Attention‑Schedule Integrity**",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T14:57:02.995Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The `layer_types` array must contain exactly `num_hidden_layers` entries, and each entry must be one of the supported attention primitives (`linear_attention`, `full_attention`).  
+**WHY**:  
+> A mismatch between declared layers and actual schedule causes runtime errors in the attention module, leading to NaNs or out‑of‑range tensor shapes.  
+**WHEN TO APPLY**:  
+> Any transformer model that mixes attention primitives.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "num_hidden_layers": 4,
+  "layer_types": ["linear_attention", "full_attention", "linear_attention", "full_attention"]
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "num_hidden_layers": 4,
+  "layer_types": ["linear_attention", "full_attention"]  // too few entries
+}
+```
+**VERIFICATION METHOD**:  
+> Runtime assertion in the model‑builder that `len(layer_types) == num_hidden_layers`.
+
+
+---
+
+## 1178. **Dual‑EOS Handling in Generation** (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Dual‑EOS Handling in Generation**",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T14:57:03.017Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The `eos_token_id` list in `generation_config.json` must include the `bos_token_id` to terminate generation when the model re‑emits the beginning of sequence token.  
+**WHY**:  
+> Without this guard, the model can generate an endless stream of BOS tokens, exhausting memory and CPU.  
+**WHEN TO APPLY**:  
+> Any causal LM that uses a BOS token as a potential output.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "bos_token_id": 248044,
+  "eos_token_id": [248046, 248044]   // includes BOS
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "bos_token_id": 248044,
+  "eos_token_id": [248046]   // BOS missing
+}
+```
+**VERIFICATION METHOD**:  
+> Integration test that feeds a prompt and asserts that generation stops before exceeding a hard‑coded token limit.

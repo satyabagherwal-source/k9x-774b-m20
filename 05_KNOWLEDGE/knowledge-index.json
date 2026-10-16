@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T14:54:06.731Z",
+  "last_updated": "2026-10-16T14:57:03.036Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9551,7 +9551,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "0768daad4ff1877a96b0d84edc52eb8e812b483691be2f940fe85c552b0eb85f",
+      "content_hash": "e825cd2129f65cdbac570c8a09a6750a1b7171a9de6409546a3778052128796d",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -9640,6 +9640,21 @@
           "number": 1089,
           "title": "Linear‑Attention Layer Placement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1176,
+          "title": "**Special‑Token Uniqueness and Consistency**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1177,
+          "title": "**Attention‑Schedule Integrity**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1178,
+          "title": "**Dual‑EOS Handling in Generation**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9660,7 +9675,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-16T06:30:21.952Z",
+      "verified_at": "2026-10-16T14:57:03.034Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

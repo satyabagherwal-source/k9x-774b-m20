@@ -3,7 +3,7 @@
 > **Source Version**: `hf-altworld-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-16T06:30:21.786Z  
+> **Timestamp**: 2026-10-16T14:57:02.931Z  
 > **Learning ID**: `learn-huggingface-altworld-hemmingway-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,197 +14,182 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): Altworld/Hemmingway‑1
 
-## 1. Executive Forensic Architecture & System Mechanics
-The repository delivers a **27 B‑parameter causal language model** that is a fine‑tuned variant of **Qwen/Qwen3.8‑27B**.  
-The model is packaged for **text‑generation** pipelines and is intended to be served with **vLLM** or the Hugging‑Face **transformers** library.  
-
-### Architectural Boundaries
-| Subsystem | Responsibility | Key Artifacts |
-|-----------|----------------|---------------|
-| **Model Core** | Transformer stack (64 layers, 24 heads, 5120 hidden size) | `config.json` |
-| **Tokenizer** | Byte‑level BPE with special tokens for multimodal placeholders | `tokenizer_config.json` |
-| **Generation Engine** | Sampling strategy (top‑k, top‑p, temperature) | `generation_config.json` |
-| **Serving Interface** | vLLM command line and Python API | README examples |
-| **Metadata** | Licensing, licensing, usage notes | `README.md` |
-
-The **model core** is a **Qwen3_5ForCausalLM** architecture that alternates **linear_attention** and **full_attention** layers, enabling a linear‑time attention regime for most tokens while preserving full attention at strategic intervals. The **tokenizer** is a **Qwen2Tokenizer** that supports multimodal tokens (`<|audio_pad|>`, `<|image_pad|>`, `<|video_pad|>`) but is configured for text‑only usage (`pad_token_id` set to `<|endoftext|>`).  
-
-The **generation engine** is configured for **chat‑style prompting** (`add_generation_prompt=True`) and uses a **bos/eos token id of 248044**. The **vLLM serve** command includes a `--max-model-len 262144` flag, matching the `max_position_embeddings` in the model config.
+## 1. Executive Forensic Architecture & System Mechanics  
+The repository is a **text‑generation model** that extends the Qwen‑3.8‑27B backbone with a **27 B parameter** variant tuned for “everyday writing.”  
+* **Subsystem boundaries**  
+  * **Tokenizer** – `tokenizer_config.json` defines the Qwen2 tokenizer, special tokens for audio, image, video, and vision modalities, and a custom `pretokenize_regex`.  
+  * **Model configuration** – `config.json` describes a 64‑layer, 24‑head, 5120‑dimensional Qwen‑3.5‑style causal LM with a hybrid linear/full attention schedule.  
+  * **Generation policy** – `generation_config.json` supplies sampling hyper‑parameters (top‑k, top‑p, temperature) and a dual‑eos list.  
+  * **Deployment** – README shows a single‑line `vllm serve` command and a minimal Python harness that loads the model with `device_map="auto"` and `dtype="auto"`.  
+* **Critical abstractions**  
+  * **Attention schedule** – `layer_types` array interleaves `linear_attention` and `full_attention` layers to balance speed and fidelity.  
+  * **Rotary embedding** – `rope_parameters` uses a multi‑rope interleaved scheme with a large `rope_theta` (10 M) to support very long contexts.  
+  * **Special‑token handling** – The tokenizer’s `model_specific_special_tokens` map must be mirrored in the model’s `bos_token_id`/`eos_token_id` to avoid silent token mis‑alignment.  
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent BOS/EOS Token Alignment
+### 1. **Special‑Token Uniqueness and Consistency**  
 **RULE**:  
-The **bos_token_id** and **eos_token_id** in `config.json`, `generation_config.json`, and the tokenizer’s special token mapping **must** be identical across all artifacts.  
-
+> The model configuration must declare a single, unique identifier for each special token, and the tokenizer configuration must reference the same identifiers without duplication or omission.  
 **WHY**:  
-Mismatched token IDs cause the model to mis‑interpret the start and end of sequences, leading to truncated outputs, infinite loops in generation, or silent tokenization errors.  
-
+> Duplicate or missing token IDs cause tokenization mismatches, leading to silent truncation, infinite loops in generation, or corrupted embeddings.  
 **WHEN TO APPLY**:  
-All text‑generation pipelines that load the model and tokenizer from the same repository. Applies to any language that uses the Hugging‑Face `AutoTokenizer`/`AutoModelForCausalLM` APIs.  
-
+> All text‑generation models that expose a tokenizer and a model config, regardless of language or framework.  
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Load tokenizer and model
-tokenizer = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
-model = AutoModelForCausalLM.from_pretrained("Altworld/Hemmingway-1")
+```json
+// tokenizer_config.json
+{
+  "model_specific_special_tokens": {
+    "bos_token": "<|bos|>",
+    "eos_token": "<|eos|>",
+    "pad_token": "<|pad|>"
+  }
+}
 
-# Assert alignment
-assert tokenizer.bos_token_id == 248044
-assert tokenizer.eos_token_id == 248044
-assert model.config.bos_token_id == 248044
-assert model.config.eos_token_id == 248044
+// config.json
+{
+  "bos_token_id": 0,
+  "eos_token_id": 1,
+  "pad_token_id": 2
+}
 ```
-
 **NEGATIVE CONSTRAINT**:
-```python
-# Wrong alignment – will break generation
-tokenizer.bos_token_id = 0
-tokenizer.eos_token_id = 1
+```json
+// BAD: duplicate IDs
+{
+  "bos_token_id": 0,
+  "eos_token_id": 0,   // duplicate
+  "pad_token_id": 2
+}
 ```
-
 **VERIFICATION METHOD**:  
-Unit test that loads the tokenizer and model and asserts equality of the three token IDs. Linting rule that flags any hard‑coded token ID that differs from the repository’s `config.json`.
+> Unit test that parses both JSON files and asserts that every token name maps to a distinct integer and that the set of IDs matches the tokenizer’s `vocab_size` slice.
 
-### 2. Linear‑Attention Layer Placement
+### 2. **Attention‑Schedule Integrity**  
 **RULE**:  
-In a Qwen3_5ForCausalLM model, **full_attention** layers must appear at positions that are multiples of the `full_attention_interval` (default 4).  
-
+> The `layer_types` array must contain exactly `num_hidden_layers` entries, and each entry must be one of the supported attention primitives (`linear_attention`, `full_attention`).  
 **WHY**:  
-The linear‑attention mechanism relies on periodic full‑attention checkpoints to maintain global context. Skipping or mis‑ordering these checkpoints degrades perplexity and can cause catastrophic forgetting of long‑range dependencies.  
-
+> A mismatch between declared layers and actual schedule causes runtime errors in the attention module, leading to NaNs or out‑of‑range tensor shapes.  
 **WHEN TO APPLY**:  
-During model training or fine‑tuning when modifying the `layer_types` list. Applies to any architecture that mixes linear and full attention.  
-
+> Any transformer model that mixes attention primitives.  
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Validate layer sequence
-full_interval = model.config.full_attention_interval
-full_positions = [i for i, t in enumerate(model.config.layer_types) if t == "full_attention"]
-assert all((pos + 1) % full_interval == 0 for pos in full_positions)
+```json
+{
+  "num_hidden_layers": 4,
+  "layer_types": ["linear_attention", "full_attention", "linear_attention", "full_attention"]
+}
 ```
-
 **NEGATIVE CONSTRAINT**:
-```python
-# Mis‑aligned full attention
-model.config.layer_types = ["linear_attention"] * 63 + ["full_attention"]
+```json
+{
+  "num_hidden_layers": 4,
+  "layer_types": ["linear_attention", "full_attention"]  // too few entries
+}
 ```
-
 **VERIFICATION METHOD**:  
-Pre‑deployment script that scans `layer_types` and fails if the pattern is violated. Continuous‑integration job that runs the above assertion.
+> Runtime assertion in the model‑builder that `len(layer_types) == num_hidden_layers`.
 
-### 3. Tokenizer Special Token Consistency
+### 3. **Dual‑EOS Handling in Generation**  
 **RULE**:  
-All multimodal special tokens defined in `tokenizer_config.json` **must** be present in the tokenizer’s vocabulary and **must** map to unique IDs that are not used by any other token.  
-
+> The `eos_token_id` list in `generation_config.json` must include the `bos_token_id` to terminate generation when the model re‑emits the beginning of sequence token.  
 **WHY**:  
-Duplicate or missing IDs cause tokenization collisions, leading to corrupted embeddings and unpredictable generation.  
-
+> Without this guard, the model can generate an endless stream of BOS tokens, exhausting memory and CPU.  
 **WHEN TO APPLY**:  
-During tokenizer training or when adding new special tokens. Applies to any tokenizer that supports multimodal placeholders.  
-
+> Any causal LM that uses a BOS token as a potential output.  
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
-special_tokens = tokenizer_config["model_specific_special_tokens"]
-for name, token in special_tokens.items():
-    assert token in tokenizer.vocab
-    assert tokenizer.vocab[token] == tokenizer.special_tokens_map[name]
+```json
+{
+  "bos_token_id": 248044,
+  "eos_token_id": [248046, 248044]   // includes BOS
+}
 ```
-
 **NEGATIVE CONSTRAINT**:
-```python
-# Duplicate ID
-tokenizer.add_tokens(["<|audio_pad|>"])
-tokenizer.add_tokens(["<|image_pad|>"])  # same ID as audio_pad
+```json
+{
+  "bos_token_id": 248044,
+  "eos_token_id": [248046]   // BOS missing
+}
 ```
-
 **VERIFICATION METHOD**:  
-Unit test that iterates over `model_specific_special_tokens` and checks `tokenizer.vocab` and `tokenizer.special_tokens_map`. Linter rule that flags duplicate IDs.
+> Integration test that feeds a prompt and asserts that generation stops before exceeding a hard‑coded token limit.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No public commits, PRs, or issue logs are available in the repository snapshot. Consequently, no concrete incidents or patches can be documented. The absence of source code and issue history precludes a forensic incident analysis.
+No public commits, PRs, or issue logs were found in the repository.  
+**Conclusion**:  
+> The codebase is a static artifact; no production incidents are recorded.  
+> The absence of change history suggests the model was released as a single snapshot, and any bugs would have been caught during internal QA rather than public post‑mortems.
 
 ## 4. Microscopic Code‑Level Invariants
 
 | Domain | Invariant | Example |
 |--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | **Strict equality for token IDs** | `if (token_id === 248044)` – never use `==` which would coerce `0` to `false`. |
-| | **Avoid implicit falsy conversions** | `if (token_id)` is unsafe; use `!== null && !== undefined`. |
-| | **Deep immutability of config objects** | `Object.freeze(model.config)` after loading to prevent accidental mutation. |
-| **Infinite Loop & Recursion Guards** | **Base case for recursive token generation** | `if (generated.length >= max_new_tokens) return generated;` |
-| | **Event loop yield** | `await Promise.resolve();` after each batch to avoid micro‑task starvation. |
-| **UI & UX Micro‑Mechanics** | **Debounce chat input** | `debounce(handleInput, 200)` to prevent rapid tokenization. |
-| | **Focus restoration** | After sending a message, `inputRef.current.focus();` to avoid focus loss. |
-| **Backend Concurrency & Memory Safety** | **Connection pool limits** | `pool.max = 32;` to avoid exhaustion. |
-| | **Event emitter cleanup** | `emitter.removeAllListeners();` after request completion. |
-| **Defect & Error Prevention** | **Null‑safe chaining** | `tokenizer?.encode(message)` instead of `tokenizer.encode(message)`. |
-| | **Off‑by‑one checks** | `if (idx < tokens.length - 1)` before accessing `tokens[idx + 1]`. |
+| **Micro‑Syntax & Token‑Level Precision** | JSON string values must be double‑escaped for nested quotes. | `\"bos_token_id\\\": 248044` |
+| | Token IDs must be integers, not strings. | `\"bos_token_id\": 248044` (not `"248044"`) |
+| | No trailing commas in JSON arrays. | `["248046", 248044]` (invalid) |
+| **Infinite Loop & Recursion Guards** | `layer_types` length equals `num_hidden_layers`. | `len(layer_types) == num_hidden_layers` |
+| | Generation loop checks `eos_token_id` list for BOS. | `if token_id in eos_token_id: break` |
+| **UI & UX Micro‑Mechanics** | Not applicable – no UI code. |
+| **Backend Concurrency & Memory Safety** | `dtype="auto"` must resolve to a supported dtype (`bfloat16` or `float32`). | `torch_dtype = torch.bfloat16 if dtype == "bfloat16" else torch.float32` |
+| | `max_model_len` must be <= `max_position_embeddings`. | `assert max_model_len <= config.max_position_embeddings` |
+| **Defect & Error Prevention** | `pretokenize_regex` must not contain unescaped backslashes. | `(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?[\\p{L}\\p{M}]+|\\p{N}| ?[^\\s\\p{L}\\p{M}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+` |
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation |
-|-----------|-------------|
-| **Architecture** | 64‑layer Qwen3_5ForCausalLM with alternating linear/full attention; 5120 hidden size; 24 heads; 4‑head key/value split. |
-| **Core Abstractions** | `AutoTokenizer` (`Qwen2Tokenizer`) and `AutoModelForCausalLM`; special tokens for multimodal placeholders; `generation_config` for sampling. |
-| **Error Handling** | No explicit error handling in the repository; relies on Hugging‑Face defaults. |
-| **Testing** | No tests present; CI configuration absent. |
-| **Security** | No credentials; open‑weight model; no user data handling. |
-| **Performance** | Supports 262,144‑token context; uses linear attention for most layers; `attention_dropout=0.0` for deterministic inference. |
-| **Deployment** | vLLM serve command with `--max-model-len`; Python API example; no Dockerfile or CI/CD pipeline. |
-| **Agent Patterns** | Chat template via `apply_chat_template`; prompt chain includes `add_generation_prompt=True`. |
-| **Data Flow** | Tokenization → Embedding → Transformer stack → Logits → Sampling → Decoding. |
+| Dimension | Observation | Implication |
+|-----------|-------------|-------------|
+| **Architecture** | 64‑layer, 24‑head, 5120‑dim Qwen‑3.5 style with hybrid attention. | Deep, wide transformer; high compute but mitigated by linear attention. |
+| **Core Abstractions** | `layer_types` array, `rope_parameters`, `attn_output_gate`. | Explicit attention scheduling; modular design for performance tuning. |
+| **Error Handling** | No explicit error handling in config; relies on framework defaults. | Potential silent failures if config mismatches. |
+| **Testing** | No tests present. | High risk of undetected config drift. |
+| **Security** | No credentials; open‑weight model. | Minimal threat surface, but token leakage risk if special tokens mis‑handled. |
+| **Performance** | `full_attention_interval=4` reduces full attention frequency. | Balances latency vs quality; suitable for long‑context inference. |
+| **Deployment** | Single `vllm serve` command; `device_map="auto"`. | Simplifies scaling; relies on vLLM’s dynamic batching. |
+| **Agent Patterns** | Generation config uses top‑k/top‑p sampling; no prompt‑engineering hooks. | Limited agent flexibility; could be extended with prompt templates. |
+| **Data Flow** | Tokenizer → model → generation; no streaming or incremental decoding shown. | Batch inference only; no real‑time streaming API. |
 
 ## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | Linear‑attention placement rule (see Rule 2). |
-| **Rule** | BOS/EOS token alignment rule (see Rule 1). |
-| **Architecture Principle** | Periodic full‑attention checkpoints preserve global context in linear‑attention models. |
-| **Failure Mode** | Token ID mismatch → truncated or infinite generation. |
-| **Reusable Skill** | Unit‑test that validates special token mapping. |
-| **Decision** | Chose `attention_dropout=0.0` to avoid stochasticity in inference. |
-| **Anti‑Pattern** | Hard‑coding token IDs that differ from config. |
-| **Verification Method** | Assertion script that checks token ID consistency. |
+| **Pattern** | The `layer_types` schedule pattern shown in Rule 2. |
+| **Rule** | Rule 1: Special‑Token Uniqueness. |
+| **Architecture Principle** | “Hybrid attention scheduling: interleave linear and full attention to achieve linear‑time inference for long contexts.” |
+| **Failure Mode** | Duplicate BOS/EOS IDs → infinite generation loop. |
+| **Reusable Skill** | Checklist for validating JSON config consistency before deployment. |
+| **Decision** | Chose `full_attention_interval=4` to trade off quality for speed; alternatives (all full attention) would exceed GPU memory. |
+| **Anti‑Pattern** | Defining `eos_token_id` without including BOS. |
+| **Verification Method** | Unit test asserting `len(layer_types) == num_hidden_layers`. |
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Load Configs**  
-   ```python
-   config = AutoConfig.from_pretrained(repo)
-   tokenizer_config = AutoTokenizer.from_pretrained(repo).tokenizer_config
-   generation_config = AutoModelForCausalLM.from_pretrained(repo).generation_config
-   ```
-2. **Validate Token IDs**  
-   ```python
-   assert config.bos_token_id == tokenizer_config["bos_token_id"]
-   assert config.eos_token_id == tokenizer_config["eos_token_id"]
-   ```
-3. **Check Layer Sequence**  
-   ```python
-   full_positions = [i for i, t in enumerate(config.layer_types) if t == "full_attention"]
-   assert all((pos + 1) % config.full_attention_interval == 0 for pos in full_positions)
-   ```
-4. **Verify Special Tokens**  
-   ```python
-   for name, token in tokenizer_config["model_specific_special_tokens"].items():
-       assert token in tokenizer.vocab
-       assert tokenizer.vocab[token] == tokenizer.special_tokens_map[name]
-   ```
-5. **Freeze Config**  
-   ```python
-   Object.freeze(config)
-   ```
-6. **Unit Tests**  
-   - Token ID consistency  
-   - Layer sequence alignment  
-   - Special token mapping  
-7. **CI Integration**  
-   - Run unit tests on every push.  
-   - Lint JSON files for schema compliance.  
-8. **Deployment**  
-   - Use `vllm serve repo --max-model-len config.max_position_embeddings`.  
-   - Verify that `max_new_tokens` respects `max_position_embeddings`.  
+1. **Parse Configs**  
+   * Load `config.json`, `generation_config.json`, `tokenizer_config.json`.  
+   * Validate JSON syntax (no trailing commas, proper escaping).  
 
-This checklist ensures that any AI‑coding agent building a similar model repository will maintain the critical invariants uncovered in the forensic analysis.
+2. **Validate Token IDs**  
+   * Ensure all special tokens have integer IDs.  
+   * Check that `bos_token_id`, `eos_token_id`, `pad_token_id` are unique.  
+
+3. **Check Attention Schedule**  
+   * Assert `len(layer_types) == num_hidden_layers`.  
+   * Verify each entry is a supported primitive.  
+
+4. **Verify Generation EOS Guard**  
+   * Confirm `bos_token_id` is present in `eos_token_id` list.  
+
+5. **Confirm Dtype Consistency**  
+   * Map `dtype` string to a torch dtype; assert it matches model’s internal dtype.  
+
+6. **Assert Max Length Bounds**  
+   * `max_model_len <= config.max_position_embeddings`.  
+
+7. **Run Integration Test**  
+   * Load model with `AutoModelForCausalLM.from_pretrained`.  
+   * Generate a short prompt; assert output stops before a hard token limit.  
+
+8. **Document**  
+   * Record any deviations from the rules in a changelog.  
+   * Generate a compliance report for CI.  
+
+Follow this checklist whenever a new model variant or config is introduced to guarantee consistency, prevent infinite loops, and maintain deployment stability.
