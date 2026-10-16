@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T02:55:03.422Z",
-  "total_cycles_completed": 1547,
-  "total_learnings_persisted": 1547,
+  "last_updated": "2026-10-16T02:58:05.434Z",
+  "total_cycles_completed": 1548,
+  "total_learnings_persisted": 1548,
   "total_rules_promoted": 832,
   "history": [
-    {
-      "timestamp": "2026-10-14T13:21:43.278Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv852fbe",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T13:24:38.700Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T02:55:03.422Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T02:58:05.434Z",
+      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
