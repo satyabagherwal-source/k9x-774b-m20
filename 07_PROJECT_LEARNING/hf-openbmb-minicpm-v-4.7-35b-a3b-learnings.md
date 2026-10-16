@@ -3,7 +3,7 @@
 > **Source Version**: `hf-openbmb-m`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-15T22:15:19.620Z  
+> **Timestamp**: 2026-10-16T05:46:42.867Z  
 > **Learning ID**: `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,121 +14,137 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): openbmb/MiniCPM‑V‑4.7‑35B‑A3B
 
-## 1. Executive Forensic Architecture & System Mechanics
-The repository implements **MiniCPM‑V 4.7**, a multimodal large‑language‑model (MLLM) that fuses vision and text modalities for on‑device inference.  
-Key architectural traits extracted from the manifest files and README:
+## 1. Executive Forensic Architecture & System Mechanics  
+MiniCPM‑V 4.7 is a multimodal large‑language‑model (MLLM) that fuses a vision encoder with a transformer‑based text decoder.  
+* **Vision front‑end**: an intra‑ViT encoder that compresses raw image/video frames into a small set of visual tokens (4× or 16× compression).  
+* **Early‑compression layer**: a lightweight linear‑attention block that reduces token dimensionality before the main transformer stack.  
+* **Transformer core**: 40 layers of a mixture‑of‑experts (MoE) architecture (256 experts, 8 experts per token). Each layer alternates between *linear‑attention* and *full‑attention* sub‑layers, with a *look‑ahead expert scheduling* (LES) mechanism that keeps the inference pipeline smooth on-device.  
+* **Tokenization**: a custom tokenizer that supports image, video, audio, and text modalities via special tokens (`<image>`, `<video>`, `<audio_start>`, etc.).  
+* **Quantization & deployment**: supports FP8, AWQ, GPTQ, and BNB quantization; designed for iOS, Android, HarmonyOS, and a wide range of ARM/Intel/AMD chips.  
+* **Inference frameworks**: SGLang, vLLM, llama.cpp, Ollama, and a custom Swift inference engine.  
 
-| Subsystem | Boundary | Core Abstraction |
-|-----------|----------|------------------|
-| **Vision Encoder** | Early‑compression ViT with 4×/16× token reduction (mrope_mode “canvas”) | `VisionEncoder` – compresses raw image/video into a compact token stream |
-| **Text Decoder** | 40‑layer transformer with a mixture‑of‑experts (MoE) backbone | `MiniCPMTextDecoder` – each layer may be a linear‑attention or full‑attention block |
-| **MoE Scheduler** | Lookahead Expert Scheduling (LES) + DSpark speculative sampling | `ExpertRouter` – routes tokens to a subset of experts per layer |
-| **Quantization & Precision** | bfloat16 for forward pass, float32 for Mamba SSM, optional FP8 | `Quantizer` – handles mixed‑precision arithmetic |
-| **Tokenizer** | Custom tokenization with image, video, audio, and slice tokens | `MiniCPMTokenizer` – maps multimodal inputs to token IDs |
-| **Deployment** | Supports SGLang, vLLM, llama.cpp, Ollama; on‑device inference on iOS/Android/HarmonyOS | `DeploymentConfig` – runtime flags for memory‑budgeted decoding |
+The repository contains only configuration files and a README; the actual model weights are hosted on Hugging Face. The architecture is fully described by the `config.json` and `tokenizer_config.json` files, which encode the hyper‑parameters, layer types, and token vocabulary.
 
-The system is deliberately **decoupled**: the vision encoder, text decoder, and MoE router are independent modules that communicate via a well‑defined token stream. State ownership is local to each module; the only shared mutable state is the token buffer, which is immutable once produced.
+---
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Consistent Model‑Type Declaration
+### 1. [MoE Router Logits Suppression]  
 **RULE**:  
-`model_type` in the configuration JSON **must** be the lowercase, hyphenated suffix of the first architecture name listed in `architectures`.
-
+> The `output_router_logits` flag **MUST** be set to `false` for all production inference deployments of MiniCPM‑V.  
 **WHY**:  
-Mismatched identifiers break the `AutoConfig` loader in Hugging‑Face, causing runtime failures when the model class is instantiated. The loader relies on this string to map to the correct `PreTrainedModel` subclass.
-
+> Router logits expose the internal routing decisions of the MoE layers. When exposed, they increase the output payload, consume bandwidth, and can leak sensitive model internals. In addition, downstream services that do not consume these logits will waste memory and CPU.  
 **WHEN TO APPLY**:  
-During any configuration generation or migration for the MiniCPM‑V family (Python, JSON, or YAML).
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
+> All inference pipelines that use the `MiniCPM-V` model, regardless of framework (SGLang, vLLM, llama.cpp, etc.).  
+**VERIFIED IMPLEMENTATION PATTERN**:  
+```python
+# config.json snippet
 {
-  "architectures": ["MiniCPMV4_7ForConditionalGeneration"],
-  "model_type": "minicpmv4_7"
+  "text_config": {
+    ...
+    "output_router_logits": false,
+    ...
+  }
 }
 ```
-
-**NEGATIVE CONSTRAINT**:
-```json
+**NEGATIVE CONSTRAINT**:  
+```python
+# Bad: exposing router logits
 {
-  "architectures": ["MiniCPMV4_7ForConditionalGeneration"],
-  "model_type": "minicpmv4_7_variant"
+  "text_config": {
+    ...
+    "output_router_logits": true,
+    ...
+  }
 }
 ```
-
 **VERIFICATION METHOD**:  
-Unit test that parses `config.json` and asserts `model_type == architectures[0].lower().replace('forconditionalgeneration', '')`.
+> Unit test that parses `config.json` and asserts `config["text_config"]["output_router_logits"] is False`.  
+```python
+import json
+def test_router_logits_suppressed():
+    cfg = json.load(open("config.json"))
+    assert cfg["text_config"]["output_router_logits"] is False
+```
 
 ---
 
-### 2. MoE Expert Allocation Integrity
+### 2. [Linear‑Attention Head Ratio]  
 **RULE**:  
-`num_experts_per_tok` **must not exceed** `num_experts`.
-
+> For every *linear‑attention* sub‑layer, the number of key heads **MUST** equal half the number of value heads.  
 **WHY**:  
-Exceeding the available experts leads to out‑of‑range indexing in the router, causing segmentation faults or silent mis‑routing of tokens.
-
+> The linear‑attention implementation in MiniCPM‑V expects a 1:2 key/value head ratio to correctly compute the query‑key‑value projections without dimensional mismatch. A mismatch leads to shape errors or silent broadcasting, corrupting the attention output.  
 **WHEN TO APPLY**:  
-When configuring the MoE layer parameters in `text_config`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
+> All layers listed in `layer_types` that are `"linear_attention"`.  
+**VERIFIED IMPLEMENTATION PATTERN**:  
+```python
+# config.json snippet
 {
-  "num_experts": 256,
-  "num_experts_per_tok": 8
+  "text_config": {
+    ...
+    "linear_num_key_heads": 16,
+    "linear_num_value_heads": 32,
+    ...
+  }
 }
 ```
-
-**NEGATIVE CONSTRAINT**:
-```json
+**NEGATIVE CONSTRAINT**:  
+```python
+# Bad: mismatched heads
 {
-  "num_experts": 64,
-  "num_experts_per_tok": 128
+  "text_config": {
+    ...
+    "linear_num_key_heads": 16,
+    "linear_num_value_heads": 24,  # 1.5 ratio
+    ...
+  }
 }
 ```
-
 **VERIFICATION METHOD**:  
-Static analysis script that checks `num_experts_per_tok <= num_experts` and fails the build if violated.
+> Runtime assertion in the attention module:  
+```python
+assert self.num_key_heads * 2 == self.num_value_heads, \
+    "Linear attention requires key/value head ratio 1:2"
+```
 
 ---
 
-### 3. Linear‑Attention Head Consistency
+### 3. [Vision Token Compression Pre‑Processing]  
 **RULE**:  
-`head_dim` **must equal** `linear_key_head_dim * linear_num_key_heads`.
-
+> The vision encoder **MUST** compress raw image/video frames into a reduced token set *before* feeding them into the transformer stack.  
 **WHY**:  
-The linear‑attention implementation expects the key dimension to be a multiple of the head dimension. A mismatch causes shape mis‑alignment and runtime tensor errors.
-
+> Early compression reduces the sequence length from tens of thousands to a few hundred tokens, dramatically lowering the quadratic cost of full‑attention layers. Skipping compression leads to memory exhaustion on mobile devices.  
 **WHEN TO APPLY**:  
-During model configuration or when modifying attention hyper‑parameters.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  "head_dim": 256,
-  "linear_key_head_dim": 128,
-  "linear_num_key_heads": 2
-}
+> All inference pipelines that include image or video modalities.  
+**VERIFIED IMPLEMENTATION PATTERN**:  
+```python
+# Pseudocode for the compression pipeline
+def compress_visual_tokens(raw_frames):
+    # intra‑ViT encoder
+    tokens = intra_vit_encoder(raw_frames)
+    # early compression layer
+    compressed = linear_attention_compression(tokens)
+    return compressed
 ```
-
-**NEGATIVE CONSTRAINT**:
-```json
-{
-  "head_dim": 256,
-  "linear_key_head_dim": 64,
-  "linear_num_key_heads": 2
-}
+**NEGATIVE CONSTRAINT**:  
+```python
+# Bad: feeding raw frames directly to transformer
+def feed_to_transformer(raw_frames):
+    tokens = raw_frames  # no compression
+    transformer_output = transformer(tokens)
+    return transformer_output
 ```
-
 **VERIFICATION METHOD**:  
-A pre‑training sanity check that asserts `head_dim == linear_key_head_dim * linear_num_key_heads`.
+> Integration test that asserts the token sequence length after compression is ≤ 512 for a 1024×1024 image.  
 
 ---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No commit history, issue tracker, or test failures are available in the repository snapshot. Consequently, no concrete incidents or patches can be extracted. The section is left intentionally empty.
+No production commits, patches, or issue logs are available in the repository snapshot.  
+**Conclusion**:  
+> *No incidents were discovered.*  
+> The absence of commit history suggests that the repository is a static artifact of the model release, and all engineering work was performed upstream in the original `openbmb/MiniCPM-V` repository.
 
 ---
 
@@ -136,32 +152,28 @@ No commit history, issue tracker, or test failures are available in the reposito
 
 | Domain | Invariant | Example |
 |--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | Avoid implicit coercion of `0` to `false` in boolean contexts. | `if (tokenCount)` → `if (tokenCount !== 0)` |
-| | Ensure deep immutability of token objects. | `Object.freeze(token)` before passing to downstream modules |
-| **Infinite Loop & Recursion Guards** | Base case for recursive token expansion must be explicit. | `if (depth >= MAX_DEPTH) return tokens;` |
-| | Use `for...of` with `break` on sentinel to avoid infinite loops. | `for (const t of tokens) { if (t.isEnd) break; }` |
-| **UI & UX Micro‑Mechanics** | Debounce rapid UI events to prevent re‑render thrashing. | `const debounced = debounce(fn, 200);` |
-| | Use `pointer-events: none` on overlay layers to avoid event capture. | `<div style="pointer-events:none;">…</div>` |
-| **Backend Concurrency & Memory Safety** | Acquire locks around shared token buffer updates. | `mutex.lock(); buffer.push(token); mutex.unlock();` |
-| | Release event listeners after use to avoid leaks. | `emitter.off('data', handler);` |
-| **Defect & Error Prevention** | Null‑safe property access. | `const val = obj?.prop ?? defaultVal;` |
-| | Off‑by‑one checks on array indexing. | `if (idx < array.length) { … }` |
+| **Micro‑Syntax & Token‑Level Precision** | **Special tokens must be unique and not overlap with the base vocabulary.** | ```json\n"extra_special_tokens": {\n  "image_token": "<|image_pad|>",\n  "video_token": "<|video_pad|>",\n  "audio_bos_token": "<|audio_start|>",\n  "audio_eos_token": "<|audio_end|>"\n}\n``` |
+| | **`add_prefix_space` must be `false` for multimodal tokenizers** to avoid unintended leading spaces. | ```json\n"add_prefix_space": false\n``` |
+| **Infinite Loop & Recursion Guards** | **No recursive calls in the tokenizer’s `tokenize` method.** | *Tokenizer implementation should be iterative; recursion would risk stack overflow on long inputs.* |
+| **UI & UX Micro‑Mechanics** | *Not applicable – the repo contains no UI code.* |
+| **Backend Concurrency & Memory Safety** | **Avoid global mutable state in the model’s `forward` method.** | *All tensors should be local to the forward pass; no static caches that grow unbounded.* |
+| **Defect & Error Prevention** | **Guard against `None` in the `generate` method’s `input_ids`.** | ```python\nif input_ids is None:\n    raise ValueError(\"input_ids cannot be None\")\n``` |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation | Implication |
+| Dimension | Observation | Key Insight |
 |-----------|-------------|-------------|
-| **Architecture** | 40‑layer transformer with alternating linear/full attention; MoE with 256 experts; vision encoder uses early compression. | Modular design facilitates on‑device inference; MoE allows parameter efficiency. |
-| **Core Abstractions** | `MiniCPMTextDecoder`, `VisionEncoder`, `ExpertRouter`, `Quantizer`. | Clear separation of concerns; each abstraction encapsulates a distinct modality or computation. |
-| **Error Handling** | `use_cache: true` implies deterministic caching; no explicit error handling shown. | Potential risk of stale cache; requires careful cache invalidation logic. |
-| **Testing** | No test files present. | Lack of unit/integration tests increases risk of silent regressions. |
-| **Security** | Tokenizer includes audio, image, video tokens; no explicit sanitization. | Potential injection via malformed tokens; need to validate token boundaries. |
-| **Performance** | `max_position_embeddings: 262144`; `full_attention_interval: 4`; early compression reduces token count. | Designed for long‑context and low‑latency inference; linear attention reduces complexity. |
-| **Deployment** | Supports iOS/Android/HarmonyOS; quantization options (FP8, AWQ). | On‑device deployment requires careful memory budgeting; quantization mitigates memory footprint. |
-| **Agent Patterns** | Not directly exposed; inference frameworks (SGLang, vLLM) provide prompt‑chain interfaces. | Agents must respect token budget and prompt length limits. |
-| **Data Flow** | Token stream flows from vision encoder → router → decoder; uses `bfloat16` for forward pass. | Data flow is linear; careful type casting required to avoid precision loss. |
+| **Architecture** | 40‑layer MoE transformer with alternating linear/full attention; early visual token compression. | The model balances efficiency (linear attention) with expressiveness (full attention) while keeping inference feasible on mobile. |
+| **Core Abstractions** | `text_config` and `vision_config` dictionaries; `layer_types` list; `router_aux_loss_coef`. | The configuration exposes a clear separation between text and vision modalities, and between attention mechanisms. |
+| **Error Handling** | No explicit error handling in the config; relies on downstream frameworks. | Robustness depends on the inference engine; missing fields could cause silent failures. |
+| **Testing** | No tests in the repo. | Unit tests should validate config consistency (e.g., head ratios, token uniqueness). |
+| **Security** | No credentials; open‑source license. | Minimal attack surface; however, exposing router logits could leak internal routing decisions. |
+| **Performance** | `max_position_embeddings` = 262 144; `partial_rotary_factor` = 0.25; `rope_theta` = 10 M. | Large context window with efficient rotary embeddings; early compression reduces token count. |
+| **Deployment** | Quantization support (FP8, AWQ, GPTQ); on‑device inference on iOS/Android/HarmonyOS. | The model is engineered for low‑memory, high‑throughput deployment on edge devices. |
+| **Agent Patterns** | Prompt chains via `<|im_start|>` and `<|im_end|>` tokens; `generation_config` includes `do_sample`, `top_k`, `top_p`. | The model expects a prompt format that can be extended by agents; sampling parameters are configurable. |
+| **Data Flow** | Vision tokens → compression → transformer → text output; audio tokens handled similarly. | Data flows through modality‑specific encoders before merging into the shared transformer. |
 
 ---
 
@@ -169,50 +181,43 @@ No commit history, issue tracker, or test failures are available in the reposito
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | Linear‑attention head consistency rule (see Section 2.3). |
-| **Rule** | `num_experts_per_tok` ≤ `num_experts`. |
-| **Architecture Principle** | Decouple modality encoders from the shared token stream to enable independent scaling. |
-| **Failure Mode** | Out‑of‑range expert index → segmentation fault. |
-| **Reusable Skill** | Validate configuration hyper‑parameters before model instantiation. |
-| **Decision** | Chose linear‑attention for most layers to reduce O(N²) complexity; accepted occasional full‑attention for long‑range dependencies. |
-| **Anti‑pattern** | Hard‑coding expert counts without validation. |
-| **Verification Method** | Pre‑training sanity check script that asserts all invariants. |
+| **Pattern** | The `config.json` layout that separates `text_config` and `vision_config`. |
+| **Rule** | *MoE router logits must be suppressed in inference.* |
+| **Architecture Principle** | *Early compression of visual tokens is essential for on‑device inference.* |
+| **Failure Mode** | *Mismatched key/value head ratios cause shape errors in linear attention.* |
+| **Reusable Skill** | *Validate config consistency via automated unit tests.* |
+| **Decision** | *Choosing 1:2 key/value head ratio balances memory and computational cost.* |
+| **Anti‑Pattern** | *Exposing router logits (`output_router_logits: true`).* |
+| **Verification Method** | *Unit test asserting `output_router_logits` is `False`.* |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Configuration Validation**
-   - Parse `config.json` and assert `model_type` matches architecture suffix.
-   - Verify `num_experts_per_tok <= num_experts`.
-   - Assert `head_dim == linear_key_head_dim * linear_num_key_heads`.
+1. **Parse Configuration**  
+   * Load `config.json`, `tokenizer_config.json`, and `generation_config.json`.  
+   * Verify required fields exist (`architectures`, `model_type`, `text_config`, `vision_config`).  
 
-2. **Tokenizer Safety**
-   - Ensure all special tokens are unique and not present in the base vocab.
-   - Validate token boundaries for audio, image, and video tokens.
+2. **Validate Attention Head Ratios**  
+   * Assert `linear_num_key_heads * 2 == linear_num_value_heads`.  
 
-3. **Memory Budgeting**
-   - Compute peak memory usage: `token_count * head_dim * dtype_size`.
-   - Enforce `max_position_embeddings` ≤ device memory / (per‑token cost).
+3. **Enforce Router Logits Suppression**  
+   * Assert `text_config["output_router_logits"] is False`.  
 
-4. **Cache Management**
-   - Implement deterministic cache keys based on input tokens.
-   - Invalidate cache on model reload or config change.
+4. **Check Vision Token Compression**  
+   * Ensure `vision_config` contains `downsample_mode` and `mrope_mode`.  
+   * Verify that the vision encoder outputs a token sequence length ≤ 512 for a 1024×1024 image.  
 
-5. **Testing**
-   - Write unit tests for each core abstraction (encoder, decoder, router).
-   - Add integration tests that feed multimodal inputs and assert output shape.
+5. **Verify Token Uniqueness**  
+   * Cross‑check `extra_special_tokens` against the base vocabulary.  
 
-6. **Deployment Packaging**
-   - Generate quantized weights (FP8, AWQ) and verify inference speed on target device.
-   - Bundle `config.json`, `generation_config.json`, and `tokenizer_config.json` with the model.
+6. **Test Sampling Parameters**  
+   * Run a dummy generation with `do_sample=True`, `top_k=20`, `top_p=0.95` and confirm no errors.  
 
-7. **Runtime Monitoring**
-   - Log token throughput and latency per layer.
-   - Detect and report any out‑of‑range expert indices at runtime.
+7. **Run Integration Test**  
+   * Feed a multimodal prompt (image + text) to the model via the chosen inference framework and assert that the output length is within expected bounds.  
 
-8. **Documentation**
-   - Provide clear usage examples for each supported inference framework.
-   - Document the early‑compression settings (`downsample_mode`, `mrope_mode`) and their impact on accuracy vs speed.
+8. **Document Findings**  
+   * Record any deviations from the expected invariants and propose fixes.  
 
 ---

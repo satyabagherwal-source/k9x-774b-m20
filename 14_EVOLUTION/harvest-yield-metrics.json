@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T05:43:38.760Z",
-  "total_cycles_completed": 1594,
-  "total_learnings_persisted": 1594,
-  "total_rules_promoted": 857,
+  "last_updated": "2026-10-16T05:46:43.047Z",
+  "total_cycles_completed": 1595,
+  "total_learnings_persisted": 1595,
+  "total_rules_promoted": 860,
   "history": [
-    {
-      "timestamp": "2026-10-14T16:54:58.186Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv8conwt",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T16:58:08.028Z",
       "repository": "Qwen/Qwen3-4B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T05:43:38.760Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:46:43.047Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
