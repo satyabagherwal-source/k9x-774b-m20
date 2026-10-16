@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T05:52:45.272Z",
-  "total_cycles_completed": 1597,
-  "total_learnings_persisted": 1597,
+  "last_updated": "2026-10-16T05:55:54.873Z",
+  "total_cycles_completed": 1598,
+  "total_learnings_persisted": 1598,
   "total_rules_promoted": 860,
   "history": [
-    {
-      "timestamp": "2026-10-14T17:04:13.510Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv8d0ked",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T17:07:14.032Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T05:52:45.272Z",
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:55:54.873Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
