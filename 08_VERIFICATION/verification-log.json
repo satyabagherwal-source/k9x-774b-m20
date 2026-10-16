@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-6DUL",
-    "timestamp": "2026-10-14T15:44:45.981Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv8a6dnw",
-    "contentHash": "9a6e1d8752f7bb74746362e1dab49e0cae0ff94aeffdd9bc74f07146e12da917",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-ADFU",
     "timestamp": "2026-10-14T15:47:52.074Z",
     "repository": "openai/gpt-oss-120b",
@@ -7492,6 +7477,21 @@
     "contentHash": "40dee8cbaeb61cefdae991216fd8fa7c4179cfa4388b8d5a7c2debaea1bf5fcc",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-5XTE",
+    "timestamp": "2026-10-16T22:47:39.890Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+    "contentHash": "9cabde74c0b83df61a49405400220ff3e568b0b38681f1be34a0cb401f7e0008",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
