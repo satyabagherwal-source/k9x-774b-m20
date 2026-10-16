@@ -1729,3 +1729,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-16T12:17:22.171Z |
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-16T12:20:43.505Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-16T12:23:48.668Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-16T12:26:44.559Z |
