@@ -1425,8 +1425,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceVersion": "hf-autotrust-jev-35b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "6653125b4d5a80d2126af34668819531fb7e3c17470a40be31c945b49f05cfd7",
-    "lastHarvestedAt": "2026-10-16T04:51:01.619Z",
+    "contentHash": "8c562aa2381293da6c1b0337a171d61e8d82e54aaa8d5c8f8a444f4c17e51ef4",
+    "lastHarvestedAt": "2026-10-16T13:11:03.784Z",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4"
   },
   "leonxlnx-taste-skill": {
