@@ -74905,3 +74905,230 @@ During generation pipeline setup; any change to `generation_config.json`.
 A test that loads the tokenizer, checks that every ID in `generation_config.eos_token_id` is in `tokenizer.vocab`.
 
 ---
+
+
+---
+
+## 1189. Environment-Aware Non-Production Indexing Quarantine Invariant (Harvested from harlan-zw/nuxt-seo)
+
+> **Provenance**: Harvested from [harlan-zw/nuxt-seo](https://github.com/harlan-zw/nuxt-seo) (`packages/site-config/src/context.ts` & `@nuxtjs/seo`, SHA: `87700ddb4fbb4d1a4835e684b3c6b9f0bf978787`).  
+> **Evidence**: Confirmed in Nuxt Site Config automated environment detection and quarantine cascades.
+
+**RULE**:
+Every web application, modern framework layout, and edge proxy MUST implement an immutable environment-aware indexing quarantine:
+1. Unless `NODE_ENV === 'production'` AND `SITE_INDEXABLE === true` on an explicitly authorized production domain, the application MUST systematically emit:
+   - `<meta name="robots" content="noindex, nofollow">` in the HTML `<head>`.
+   - HTTP Header `X-Robots-Tag: noindex, nofollow, noarchive`.
+   - Dynamic `/robots.txt` with `User-agent: *\nDisallow: /`.
+2. Public sitemap generation endpoints MUST return HTTP 404 or an empty URL set when requested in non-production environments.
+3. Preview deploys (e.g. Vercel `*.vercel.app`, Netlify `*.netlify.app`, Cloudflare Pages `*.pages.dev`, staging Kubernetes clusters) MUST NEVER inherit production crawl permissions.
+
+**WHY**:
+Accidental staging and preview deployment indexation is one of the most destructive and common failure modes in modern continuous deployment. When search crawlers index preview branches, staging servers, or development endpoints:
+- The staging domain creates massive duplicate content competition against the canonical production domain.
+- Googlebot frequently splits ranking equity between staging and production, leading to organic traffic collapse.
+- Sensitive pre-release features, internal staging URLs, and unreleased content leak into public search engine results.
+
+**WHEN TO APPLY**:
+- All continuous deployment setups, CI/CD preview branches, staging environments, QA servers, and multi-tenant platforms.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production Quarantine Invariant Middleware
+interface EnvironmentConfig {
+  isProduction: boolean;
+  siteUrl: string;
+  isIndexable: boolean;
+}
+
+export function resolveIndexingPolicy(env: EnvironmentConfig): {
+  robotsMeta: string;
+  robotsHeader: string;
+  disallowAll: boolean;
+} {
+  // RULE 1189: Quarantine unless strictly production and explicitly indexable
+  const canIndex = env.isProduction && env.isIndexable;
+
+  if (!canIndex) {
+    return {
+      robotsMeta: 'noindex, nofollow, noarchive',
+      robotsHeader: 'noindex, nofollow, noarchive',
+      disallowAll: true
+    };
+  }
+
+  return {
+    robotsMeta: 'index, follow, max-snippet:-1, max-image-preview:large',
+    robotsHeader: 'index, follow',
+    disallowAll: false
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Hardcoding indexable meta tags without environment check
+export const metadata = {
+  robots: 'index, follow' // DEFECT: Staging and preview branches get indexed by Googlebot!
+};
+```
+
+**VERIFICATION METHOD**:
+1. Deploy to preview/staging branch.
+2. Issue curl request: `curl -sI https://staging.example.com`.
+3. Assert presence of `X-Robots-Tag: noindex, nofollow`.
+4. Inspect `curl -s https://staging.example.com/robots.txt` and assert `Disallow: /`.
+
+---
+
+## 1190. Automated 50,000-URL Sitemap Chunking & Partitioning Invariant (Harvested from nuxt-modules/sitemap)
+
+> **Provenance**: Harvested from [nuxt-modules/sitemap](https://github.com/nuxt-modules/sitemap) (SHA: `306f72108f9d4fe9df9cb6cf3222314b277b5fbd`) and Google Search Central Sitemap Protocol.  
+> **Evidence**: Confirmed in Nuxt sitemap streaming chunker and W3C XML Sitemap schema.
+
+**RULE**:
+Any sitemap generation pipeline serving large-scale web applications MUST enforce automated partitioning whenever the total indexed URL count exceeds **50,000 URLs** or uncompressed XML file size exceeds **50 Megabytes (MB)**:
+1. **Sitemap Index Parent**: The primary endpoint (`/sitemap.xml` or `/sitemap_index.xml`) MUST serve a `<sitemapindex>` document containing child `<sitemap>` entries.
+2. **Chunked Sub-Sitemaps**: Child chunks (`/sitemap-posts-1.xml`, `/sitemap-posts-2.xml`, etc.) MUST each contain at most 45,000 URLs (leaving a safety margin below the 50,000 limit) and provide `<lastmod>` timestamps matching the newest item in that chunk.
+3. **Streamed Generation**: Chunks MUST be streamed or generated asynchronously using memory buffers or temporary file streams to prevent Node.js/PHP heap memory exhaustion (`OOM`).
+4. **Strict Domain Matching**: All child sitemaps in the index MUST strictly share the exact same scheme, subdomain, and domain as the parent index file.
+
+**WHY**:
+Googlebot and search crawlers reject sitemap files exceeding 50,000 URLs or 50MB, generating the fatal Search Console error: *"Sitemap file size limit exceeded: Your Sitemap contains too many URLs. Please create multiple Sitemaps and a Sitemap index file"*. Furthermore, attempting to buffer >100,000 URLs in a single in-memory XML string causes serverless function timeouts and worker node crashes.
+
+**WHEN TO APPLY**:
+- All enterprise sites, e-commerce product catalogs (>10,000 items), news publishers, and dynamic user-generated content directories.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Automated Sitemap Chunking & Index Generator
+interface SitemapUrl {
+  loc: string;
+  lastmod: string;
+}
+
+export function chunkSitemapUrls(urls: SitemapUrl[], chunkSize = 45000): SitemapUrl[][] {
+  const chunks: SitemapUrl[][] = [];
+  for (let i = 0; i < urls.length; i += chunkSize) {
+    chunks.push(urls.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
+export function generateSitemapIndexXml(chunkUrls: { loc: string; lastmod: string }[]): string {
+  return [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ...chunkUrls.map(c => `  <sitemap>\n    <loc>${c.loc}</loc>\n    <lastmod>${c.lastmod}</lastmod>\n  </sitemap>`),
+    '</sitemapindex>'
+  ].join('\n');
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```xml
+<!-- ANTI-PATTERN: Emitting single monolithic sitemap with 75,000 URLs -->
+<!-- DEFECT: Causes Google Search Console to drop all URLs beyond 50,000 and report fatal error -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 75,000 <url> tags in one file -->
+</urlset>
+```
+
+**VERIFICATION METHOD**:
+1. Run automated linter on output sitemap: assert each chunk XML has `count(//url) <= 50000`.
+2. Assert file byte size `< 52428800` bytes (50MB).
+
+---
+
+## 1191. Server-Side Pre-Rendered OpenGraph Rasterization & Edge Caching Invariant (Harvested from nuxt-modules/og-image)
+
+> **Provenance**: Harvested from [nuxt-modules/og-image](https://github.com/nuxt-modules/og-image) (SHA: `ea7dad1284721e42c615e2780152adaf51a34a75`).  
+> **Evidence**: Confirmed in Satori + resvg rasterization pipeline and Nitro content-hash caching layer.
+
+**RULE**:
+Dynamic social media card preview images (OpenGraph / Twitter summary large image) generated from HTML/Vue/React templates MUST:
+1. **Lightweight Rasterization**: Be rendered via lightweight JSX/SVG compilation (such as Satori) and rasterized using WebAssembly or native libraries (`resvg`) instead of heavy headless browser instances (Puppeteer/Playwright) in request-handling paths.
+2. **Immutable Content-Hash Caching**: Be cached at the server/edge storage tier using a cryptographic hash of component props, template version, and typography assets.
+3. **Standard Dimensions**: Explicitly specify `og:image:width` as `1200` and `og:image:height` as `630` in HTML head to prevent social platforms (LinkedIn, Twitter, Facebook, Slack) from degrading or cropping preview cards.
+
+**WHY**:
+When a URL is posted to Twitter, Facebook, LinkedIn, Discord, or WhatsApp, their crawler bots immediately hammer the URL's `og:image` endpoint simultaneously. If dynamic images are rendered using headless Chrome (Puppeteer) on every request, server CPU surges to 100%, lambda memory limits (250MB) are breached, and responses timeout (>10s), causing social platforms to drop the preview card entirely. Pure-wasm Satori + resvg rasterizes in <50ms with <30MB RAM.
+
+**WHEN TO APPLY**:
+- Every dynamic content system generating programmatic social media preview images for blog posts, products, docs, and landing pages.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```html
+<head>
+  <!-- Verified OpenGraph Social Preview Head Tags -->
+  <meta property="og:image" content="https://example.com/api/og/post-101.png?v=3a8f9c">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Deep Technical SEO Architecture Visual Guide">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://example.com/api/og/post-101.png?v=3a8f9c">
+</head>
+```
+
+**NEGATIVE CONSTRAINT**:
+```html
+<!-- ANTI-PATTERN: Missing width/height or serving uncompressed 4MB JPEG -->
+<meta property="og:image" content="https://example.com/image.jpg">
+<!-- Twitter and LinkedIn fall back to small thumbnail or fail to render due to size/ratio -->
+```
+
+**VERIFICATION METHOD**:
+1. Run automated crawler simulation: curl `og:image` URL 10 times in parallel.
+2. Assert response time for subsequent hits is `< 25ms` (edge cached).
+3. Verify image dimensions are strictly 1200x630.
+
+---
+
+## 1192. Hydration Mismatch Defense & Zero-JS Static Head Serialization Invariant (Harvested from withastro/astro, nuxt/nuxt, gatsbyjs/gatsby)
+
+> **Provenance**: Harvested from [withastro/astro](https://github.com/withastro/astro) (SHA: `484822fb`), [nuxt/nuxt](https://github.com/nuxt/nuxt) (SHA: `58124741`), and [gatsbyjs/gatsby](https://github.com/gatsbyjs/gatsby) (SHA: `516700a1`).  
+> **Evidence**: Confirmed in Unhead SSR serialization, Astro Islands server rendering, and Gatsby Head API.
+
+**RULE**:
+All critical search engine metadata—including `<title>`, `<meta name="robots">`, `<link rel="canonical">`, `<link rel="alternate" hreflang="...">`, and JSON-LD structured data—MUST be rendered completely and deterministically into the initial server-side HTML response string before byte delivery. Furthermore:
+1. **Zero-JS Static Precedence**: The server HTML stream must be 100% crawlable without executing any client-side JavaScript (as pioneered in Astro Islands architecture).
+2. **Deterministic Hydration Keys**: When client JavaScript mounts (e.g. React/Vue hydration), the hydration algorithm MUST NOT destroy, rebuild, or reorder head elements. Every server-rendered tag must carry a deterministic deduplication key or hydration ID.
+3. **Zero Content Flapping**: Client code must never emit a differing title or canonical tag than what was served in the initial server HTML, eliminating search engine crawler DOM reconciliation conflicts.
+
+**WHY**:
+Search engine crawlers (Googlebot, Bingbot) utilize two-phase crawling. The initial crawl ingests raw server HTML immediately. If the server HTML contains a generic fallback (e.g. `<title>App</title>`) and relies on client-side React/Vue `useEffect()` or `onMounted()` to set the real title, Googlebot's second-stage rendering queue (which may be delayed by hours or days depending on crawl budget) will initially index the blank fallback title. Furthermore, hydration mismatches in HTML head can cause browsers to discard DOM head nodes, triggering duplicate tag injection and premature head closure.
+
+**WHEN TO APPLY**:
+- All SSR, SSG, and hybrid full-stack applications built on Nuxt, Next.js, Astro, Gatsby, SvelteKit, or VuePress.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Full-Stack Server-Side Pre-Rendered Head Serialization
+export function renderFullHtmlPage(route: { title: string; description: string; canonicalUrl: string; locale: string; schemaJson: string; bodyHtml: string }): string {
+  const headElements = [
+    '<title>' + route.title + '</title>',
+    '<meta name="description" content="' + route.description + '">',
+    '<link rel="canonical" href="' + route.canonicalUrl + '">',
+    '<script type="application/ld+json">' + route.schemaJson + '</script>'
+  ].join('\n  ');
+
+  return '<!DOCTYPE html>\n<html lang="' + route.locale + '">\n<head>\n  <meta charset="utf-8">\n  <meta name="viewport" content="width=device-width, initial-scale=1">\n  ' + headElements + '\n</head>\n<body>\n  <div id="app">' + route.bodyHtml + '</div>\n</body>\n</html>';
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Client-only head mutation in useEffect
+function MyPage() {
+  useEffect(() => {
+    // DEFECT: Raw crawler sees empty title on first byte!
+    document.title = "Real SEO Title";
+  }, []);
+  return <div>Content</div>;
+}
+```
+
+**VERIFICATION METHOD**:
+1. Disable JavaScript in curl/browser: `curl -s https://example.com/article | grep -E "<title>|<link rel=\"canonical\"|application/ld\+json"`.
+2. Assert that all SEO tags and JSON-LD markup exist in the raw response without any JavaScript execution.

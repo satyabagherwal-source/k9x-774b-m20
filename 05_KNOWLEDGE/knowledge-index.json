@@ -47133,6 +47133,86 @@
       "learningFile": "07_PROJECT_LEARNING/spatie-schema-org-learnings.md",
       "harvestDate": "2026-10-16T15:03:36.787Z",
       "commitHash": "85af98461b7e899a8f5fd745331fac6ae5c745d9"
+    },
+    "harlan-zw/nuxt-seo": {
+      "name": "harlan-zw/nuxt-seo",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/harlan-zw/nuxt-seo",
+      "learningFile": "07_PROJECT_LEARNING/harlan-zw-nuxt-seo-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "87700ddb4fbb4d1a4835e684b3c6b9f0bf978787"
+    },
+    "nuxt-modules/robots": {
+      "name": "nuxt-modules/robots",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/nuxt-modules/robots",
+      "learningFile": "07_PROJECT_LEARNING/nuxt-modules-robots-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "f9b1ec66da60f2f797cbde52339b1c36d9e042a4"
+    },
+    "nuxt-modules/sitemap": {
+      "name": "nuxt-modules/sitemap",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/nuxt-modules/sitemap",
+      "learningFile": "07_PROJECT_LEARNING/nuxt-modules-sitemap-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "306f72108f9d4fe9df9cb6cf3222314b277b5fbd"
+    },
+    "harlan-zw/nuxt-schema-org": {
+      "name": "harlan-zw/nuxt-schema-org",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/harlan-zw/nuxt-schema-org",
+      "learningFile": "07_PROJECT_LEARNING/harlan-zw-nuxt-schema-org-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "705e816e73a8c37b6b2cc17f767b43e946ae810b"
+    },
+    "nuxt-modules/og-image": {
+      "name": "nuxt-modules/og-image",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/nuxt-modules/og-image",
+      "learningFile": "07_PROJECT_LEARNING/nuxt-modules-og-image-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "ea7dad1284721e42c615e2780152adaf51a34a75"
+    },
+    "jekyll/jekyll-sitemap": {
+      "name": "jekyll/jekyll-sitemap",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/jekyll/jekyll-sitemap",
+      "learningFile": "07_PROJECT_LEARNING/jekyll-jekyll-sitemap-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "99148a2255a2b3a8d2b31ba8216945262981b12c"
+    },
+    "gatsbyjs/gatsby": {
+      "name": "gatsbyjs/gatsby",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/gatsbyjs/gatsby",
+      "learningFile": "07_PROJECT_LEARNING/gatsbyjs-gatsby-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "516700a1dca1e982b6d098ab57230b25e0318a1f"
+    },
+    "withastro/astro": {
+      "name": "withastro/astro",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/withastro/astro",
+      "learningFile": "07_PROJECT_LEARNING/withastro-astro-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "484822fbba652745c4f2da5ef434a350203578e2"
+    },
+    "vuejs/vuepress": {
+      "name": "vuejs/vuepress",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/vuejs/vuepress",
+      "learningFile": "07_PROJECT_LEARNING/vuejs-vuepress-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "9fb4bb00925d9409e6732118e996411c6a82c85d"
+    },
+    "nuxt/nuxt": {
+      "name": "nuxt/nuxt",
+      "category": "full-stack-frameworks-and-ssr-seo",
+      "canonicalUrl": "https://github.com/nuxt/nuxt",
+      "learningFile": "07_PROJECT_LEARNING/nuxt-nuxt-learnings.md",
+      "harvestDate": "2026-10-16T15:28:11.344Z",
+      "commitHash": "58124741a02e73debc7f304c78aef097151d6cda"
     }
   }
 }

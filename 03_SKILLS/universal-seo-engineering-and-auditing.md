@@ -286,3 +286,32 @@ To prevent premature DOM head closure and ensure search crawlers ingest all meta
 - Merge all structured data into a single unified `@graph` array in one JSON-LD block.
 - Anchor all primary entities with deterministic URIs via `@id` (e.g. `https://example.com/#website`, `https://example.com/#organization`, `https://example.com/article/#article`).
 - Cross-link entities using pointer references (e.g. `"publisher": {"@id": "https://example.com/#organization"}`, `"isPartOf": {"@id": "https://example.com/#website"}`) to empower Google Knowledge Graph entity disambiguation and secure rich snippet rankings.
+
+---
+
+## 15. Non-Production Indexing Quarantine & 50K Sitemap Chunking (Rules 1189-1190)
+
+### 15.1 Non-Production Indexing Quarantine Invariant (Rule 1189)
+- Never allow staging, preview, or development URLs to be crawled or indexed by search engines.
+- If `NODE_ENV !== 'production'` or `site.indexable === false`, the rendering engine must systematically inject:
+  - `<meta name="robots" content="noindex, nofollow, noarchive">`
+  - `X-Robots-Tag: noindex, nofollow, noarchive`
+  - `User-agent: *\nDisallow: /` in `/robots.txt`
+- This completely shields production domains from duplicate content cannibalization caused by preview branches (Vercel, Netlify, Cloudflare Pages).
+
+### 15.2 Automated 50,000-URL Sitemap Chunking & Partitioning (Rule 1190)
+- Whenever a sitemap contains over 50,000 URLs or exceeds 50MB, the generator MUST split entries into indexed chunk files (`sitemap-1.xml`, `sitemap-2.xml`) and serve a `<sitemapindex>` pointing to them.
+- Stream or buffer chunks asynchronously to prevent Node.js/PHP heap memory exhaustion (`OOM`) during massive site builds.
+
+---
+
+## 16. Dynamic Edge OG Image Rasterization & Zero-JS Static Precedence (Rules 1191-1192)
+
+### 16.1 Server-Side Pre-Rendered OpenGraph Rasterization & Edge Caching (Rule 1191)
+- Render dynamic social cards using lightweight JSX/SVG compilation (Satori) and rasterize to PNG via WebAssembly (`resvg`) instead of heavy headless Chromium instances.
+- Cache images by content-hash at the edge tier to eliminate server CPU spikes when social media bots (Twitterbot, FacebookExternalHit) crawl preview links.
+- Explicitly declare `og:image:width="1200"` and `og:image:height="630"`.
+
+### 16.2 Hydration Mismatch Defense & Zero-JS Static Precedence (Rule 1192)
+- Render 100% of SEO metadata (`<title>`, canonical, robots, schema JSON-LD) into the initial server HTML stream before client delivery (as demonstrated in Astro Islands architecture).
+- Ensure client-side JavaScript hydration algorithms do not mutate, duplicate, or flap `<head>` elements, guaranteeing deterministic search engine indexing without waiting for secondary render queues.

@@ -2713,6 +2713,90 @@
       "status": "COMPLETED",
       "timestamp": "2026-10-16T15:03:36.787Z",
       "dossier": "07_PROJECT_LEARNING/spatie-schema-org-learnings.md"
+    },
+    "https://github.com/harlan-zw/nuxt-seo": {
+      "repo": "harlan-zw/nuxt-seo",
+      "commit": "87700ddb4fbb4d1a4835e684b3c6b9f0bf978787",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/harlan-zw-nuxt-seo-learnings.md"
+    },
+    "https://github.com/nuxt-modules/seo": {
+      "repo": "harlan-zw/nuxt-seo",
+      "commit": "87700ddb4fbb4d1a4835e684b3c6b9f0bf978787",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/harlan-zw-nuxt-seo-learnings.md"
+    },
+    "https://github.com/nuxt-modules/robots": {
+      "repo": "nuxt-modules/robots",
+      "commit": "f9b1ec66da60f2f797cbde52339b1c36d9e042a4",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/nuxt-modules-robots-learnings.md"
+    },
+    "https://github.com/nuxt-modules/sitemap": {
+      "repo": "nuxt-modules/sitemap",
+      "commit": "306f72108f9d4fe9df9cb6cf3222314b277b5fbd",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/nuxt-modules-sitemap-learnings.md"
+    },
+    "https://github.com/harlan-zw/nuxt-schema-org": {
+      "repo": "harlan-zw/nuxt-schema-org",
+      "commit": "705e816e73a8c37b6b2cc17f767b43e946ae810b",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/harlan-zw-nuxt-schema-org-learnings.md"
+    },
+    "https://github.com/nuxt-modules/schema-org": {
+      "repo": "harlan-zw/nuxt-schema-org",
+      "commit": "705e816e73a8c37b6b2cc17f767b43e946ae810b",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/harlan-zw-nuxt-schema-org-learnings.md"
+    },
+    "https://github.com/nuxt-modules/og-image": {
+      "repo": "nuxt-modules/og-image",
+      "commit": "ea7dad1284721e42c615e2780152adaf51a34a75",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/nuxt-modules-og-image-learnings.md"
+    },
+    "https://github.com/jekyll/jekyll-sitemap": {
+      "repo": "jekyll/jekyll-sitemap",
+      "commit": "99148a2255a2b3a8d2b31ba8216945262981b12c",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/jekyll-jekyll-sitemap-learnings.md"
+    },
+    "https://github.com/gatsbyjs/gatsby": {
+      "repo": "gatsbyjs/gatsby",
+      "commit": "516700a1dca1e982b6d098ab57230b25e0318a1f",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/gatsbyjs-gatsby-learnings.md"
+    },
+    "https://github.com/withastro/astro": {
+      "repo": "withastro/astro",
+      "commit": "484822fbba652745c4f2da5ef434a350203578e2",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/withastro-astro-learnings.md"
+    },
+    "https://github.com/vuejs/vuepress": {
+      "repo": "vuejs/vuepress",
+      "commit": "9fb4bb00925d9409e6732118e996411c6a82c85d",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/vuejs-vuepress-learnings.md"
+    },
+    "https://github.com/nuxt/nuxt": {
+      "repo": "nuxt/nuxt",
+      "commit": "58124741a02e73debc7f304c78aef097151d6cda",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T15:28:11.344Z",
+      "dossier": "07_PROJECT_LEARNING/nuxt-nuxt-learnings.md"
     }
   }
 }
