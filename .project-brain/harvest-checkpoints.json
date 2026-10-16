@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T01:25:17.350Z",
+  "last_updated": "2026-10-16T01:28:24.457Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2225,17 +2225,18 @@
     },
     "fishaudio/drama-3": {
       "repository": "fishaudio/drama-3",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-fishaudio-drama-3-mv89tjwz",
-      "content_hash": "7760dc0c00c97d463ebcc985332bf8948780a5a3807ab8d2dd6bcde233b550b0",
-      "verified_at": "2026-10-14T15:34:47.393Z",
+      "learning_id": "learn-huggingface-fishaudio-drama-3",
+      "content_hash": "5d1690148ca9023c98b88ee7d5281212f6fbbdf5b4d70ba3ea2c1d7e1e1f8fba",
+      "verified_at": "2026-10-16T01:28:24.456Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T15:34:47.393Z"
+      "last_updated": "2026-10-16T01:28:24.456Z"
     },
     "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8": {
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T01:25:17.327Z",
-  "total_verified_learnings": 172,
+  "last_updated": "2026-10-16T01:28:24.418Z",
+  "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -40607,6 +40607,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-16T01:13:16.653Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-fishaudio-drama-3": {
+      "learning_id": "learn-huggingface-fishaudio-drama-3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fishaudio/drama-3",
+      "repository": "fishaudio/drama-3",
+      "slug": "hf-fishaudio-drama-3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/fishaudio/drama-3",
+      "source_version": "hf-fishaudio-drama-3",
+      "content_hash": "5d1690148ca9023c98b88ee7d5281212f6fbbdf5b4d70ba3ea2c1d7e1e1f8fba",
+      "dossier_path": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-16T01:28:24.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

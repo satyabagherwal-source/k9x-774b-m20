@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-16T01:25:16.684Z",
+  "lastUpdated": "2026-10-16T01:28:25.531Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T01:25:19.864Z",
-        "lastHarvestedAt": "2026-10-16T01:25:19.864Z",
-        "totalHarvested": 3642,
+        "lastActiveAt": "2026-10-16T01:28:26.974Z",
+        "lastHarvestedAt": "2026-10-16T01:28:26.974Z",
+        "totalHarvested": 3643,
         "lastError": null
       },
       {
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-15T23:20:20.435Z",
+        "lastActiveAt": "2026-10-16T01:28:25.649Z",
         "lastHarvestedAt": "2026-10-14T16:21:15.447Z",
         "totalHarvested": 1096,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T01:22:26.660Z",
+        "lastActiveAt": "2026-10-16T01:28:28.127Z",
         "lastHarvestedAt": "2026-10-15T19:00:21.044Z",
         "totalHarvested": 1103,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T01:22:29.132Z",
+        "lastActiveAt": "2026-10-16T01:28:30.623Z",
         "lastHarvestedAt": "2026-10-15T19:10:07.292Z",
         "totalHarvested": 1095,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T01:22:31.630Z",
+        "lastActiveAt": "2026-10-16T01:28:33.122Z",
         "lastHarvestedAt": "2026-10-15T19:00:28.576Z",
         "totalHarvested": 1099,
         "lastError": null
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "EXHAUSTED",
+      "status": "HEALTHY",
       "remaining": 0,
-      "resetEpoch": 1792117518591,
-      "resetAt": "2026-10-16T02:25:18.591Z",
-      "trippedAt": "2026-10-16T01:25:03.592Z",
-      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Aui-components%20language%3Atypescript%20stars%3A%3E3000%20sort%3Astars&per_page=15&page=3)",
+      "resetEpoch": 0,
+      "resetAt": null,
+      "trippedAt": "2026-10-16T01:28:09.902Z",
+      "reason": null,
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
