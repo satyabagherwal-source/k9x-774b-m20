@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-YDQ1",
-    "timestamp": "2026-10-14T10:02:37.177Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv7xydmg",
-    "contentHash": "3db89b6f0ed756115612485174a412d1f9bffff832d7c3037eb6b0588847a69d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-27A3",
     "timestamp": "2026-10-14T10:05:35.451Z",
     "repository": "BAAI/bge-large-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/MiniMax-H3",
     "learningId": "learn-huggingface-comfy-org-minimax-h3",
     "contentHash": "cab6202fc291d98d0dd7a4aad8206da2412a928581acb68da414066b8ff365f3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-Z4HW",
+    "timestamp": "2026-10-16T17:06:26.564Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "03ece36e464ce3554dbe25f1d798bc6b0379e5f3e220d99b2d11813218bc3352",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

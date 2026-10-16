@@ -1808,3 +1808,4 @@
 | `CYCLE-20261016-N1IB` | `2026-10-16T16:57:02.819Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`4e07c52f...`) |
 | `CYCLE-20261016-R5LL` | `2026-10-16T17:00:14.745Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`60cd9403...`) |
 | `CYCLE-20261016-V4OZ` | `2026-10-16T17:03:20.195Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`cab6202f...`) |
+| `CYCLE-20261016-Z4HW` | `2026-10-16T17:06:26.564Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`03ece36e...`) |
