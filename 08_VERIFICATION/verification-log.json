@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-B45N",
-    "timestamp": "2026-10-14T06:56:33.995Z",
-    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv7rb42b",
-    "contentHash": "2697a89fa2fa578f7bf5a7ee22e36a90bee89a74352a2c8704c129a29204d1bd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-ESBZ",
     "timestamp": "2026-10-14T06:59:25.295Z",
     "repository": "deepseek-ai/DeepSeek-V3",
@@ -7490,6 +7475,21 @@
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
     "contentHash": "956a3388c920f7267a4bf61d797c63ea5064f07e6d3833225c9a04f26fcb0768",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-0SIJ",
+    "timestamp": "2026-10-16T15:15:45.883Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "b1520e1387a8c4e5e3e53cd661994eb3e76eff65f1d2bf635c95e73e91da73b0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
