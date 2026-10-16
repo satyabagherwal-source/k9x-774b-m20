@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T21:17:02.331Z",
-  "total_cycles_completed": 1855,
-  "total_learnings_persisted": 1855,
+  "last_updated": "2026-10-16T21:20:25.537Z",
+  "total_cycles_completed": 1856,
+  "total_learnings_persisted": 1856,
   "total_rules_promoted": 998,
   "history": [
-    {
-      "timestamp": "2026-10-16T09:50:51.935Z",
-      "repository": "vllm-sr/d3",
-      "learningId": "learn-huggingface-vllm-sr-d3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T09:54:04.578Z",
       "repository": "openai/whisper-large-v3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T21:17:02.331Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T21:20:25.537Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
