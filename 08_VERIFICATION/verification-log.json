@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-X8YZ",
-    "timestamp": "2026-10-14T01:09:51.659Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv7ex8vt",
-    "contentHash": "32088a5c24c3c457e53ebb009d7fbf01927b4dab905955d30ed4fe800f657a50",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-18DX",
     "timestamp": "2026-10-14T01:12:57.525Z",
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "google-t5/t5-small",
     "learningId": "learn-huggingface-google-t5-t5-small",
     "contentHash": "ae295c90bdf800438d95b1cb03966983c94df1114196e71eebbfbf31da959098",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-9QVZ",
+    "timestamp": "2026-10-16T08:50:49.055Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3",
+    "contentHash": "e047fe8a83278edcc36e68d1b7ee4fd75f6edcd3a75b73edd9ce843b9b6742d3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

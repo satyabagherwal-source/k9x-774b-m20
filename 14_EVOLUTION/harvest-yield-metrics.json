@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T08:47:48.466Z",
-  "total_cycles_completed": 1644,
-  "total_learnings_persisted": 1644,
+  "last_updated": "2026-10-16T08:50:49.059Z",
+  "total_cycles_completed": 1645,
+  "total_learnings_persisted": 1645,
   "total_rules_promoted": 905,
   "history": [
-    {
-      "timestamp": "2026-10-15T21:37:47.610Z",
-      "repository": "Qwen/Qwen3.8-27B",
-      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T21:40:58.482Z",
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T08:47:48.466Z",
       "repository": "google-t5/t5-small",
       "learningId": "learn-huggingface-google-t5-t5-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T08:50:49.059Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
