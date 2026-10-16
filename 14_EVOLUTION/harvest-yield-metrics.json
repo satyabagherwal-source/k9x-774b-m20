@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T20:21:58.576Z",
-  "total_cycles_completed": 1841,
-  "total_learnings_persisted": 1841,
+  "last_updated": "2026-10-16T20:26:33.174Z",
+  "total_cycles_completed": 1842,
+  "total_learnings_persisted": 1842,
   "total_rules_promoted": 993,
   "history": [
-    {
-      "timestamp": "2026-10-16T08:41:37.395Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T08:44:42.138Z",
       "repository": "Qwen/Qwen3-0.6B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T20:21:58.576Z",
       "repository": "google/gemma-4-31B-it",
       "learningId": "learn-huggingface-google-gemma-4-31b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T20:26:33.174Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
