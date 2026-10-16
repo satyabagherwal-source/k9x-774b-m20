@@ -1588,5 +1588,15 @@
     "contentHash": "81c6d704e8e91d2df023023f28336e59b47a1edf2c554b9e119702d8a5f68957",
     "lastHarvestedAt": "2026-10-16T04:39:05.084Z",
     "learningId": "learn-github-dayuanjiang-next-ai-draw-io"
+  },
+  "aleo-labs-protocol-snarkos": {
+    "repository": "aleo-labs-protocol/snarkOS",
+    "platform": "github",
+    "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
+    "sourceVersion": "64e602e2",
+    "license": "Apache-2.0",
+    "contentHash": "33740bb9715dd7f6cb433980ec341c2dbdfa1a38f7947f7270afe32af2d8e740",
+    "lastHarvestedAt": "2026-10-16T07:50:49.648Z",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos"
   }
 }

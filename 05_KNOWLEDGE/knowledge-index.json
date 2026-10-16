@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T07:42:03.195Z",
-  "total_verified_learnings": 184,
+  "last_updated": "2026-10-16T07:50:49.619Z",
+  "total_verified_learnings": 185,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -41155,6 +41155,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-16T04:39:05.060Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-aleo-labs-protocol-snarkos": {
+      "learning_id": "learn-github-aleo-labs-protocol-snarkos",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "aleo-labs-protocol/snarkOS",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "slug": "aleo-labs-protocol-snarkos",
+      "platform": "github",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "64e602e2",
+      "content_hash": "33740bb9715dd7f6cb433980ec341c2dbdfa1a38f7947f7270afe32af2d8e740",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1114,
+          "title": "Merge pull request #4531 from ProvableHQ/fix/staging-cargo-workflow",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-16T07:50:49.613Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

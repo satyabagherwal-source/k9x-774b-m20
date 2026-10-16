@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-4XT1",
-    "timestamp": "2026-10-14T00:19:51.205Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv7d4xqj",
-    "contentHash": "c46865d6f9b876c8a65c54fa6dc53c7b66393b3a3cf9c7604435f6cefc49c2ca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-8UI7",
     "timestamp": "2026-10-14T00:22:53.551Z",
     "repository": "speridlabs/iris-3b",
@@ -7492,6 +7477,21 @@
     "contentHash": "f649d5ee400da0e34eb1c1aae03e553381e544714ef5bb303adf6cc70b9f1fc6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-4LKD",
+    "timestamp": "2026-10-16T07:50:49.645Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "33740bb9715dd7f6cb433980ec341c2dbdfa1a38f7947f7270afe32af2d8e740",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1653,3 +1653,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-10-16T07:35:53.758Z |
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-10-16T07:39:06.233Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-16T07:42:03.224Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `64e602e2` | Multi-dimensional audit evidence | 2026-10-16T07:50:49.648Z |
