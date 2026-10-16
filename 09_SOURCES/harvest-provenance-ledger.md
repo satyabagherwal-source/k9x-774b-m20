@@ -1732,3 +1732,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-16T12:26:44.559Z |
 | `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-16T12:29:45.178Z |
 | `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-16T12:32:52.875Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-16T12:36:02.371Z |

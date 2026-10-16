@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T12:32:52.876Z",
-  "total_cycles_completed": 1707,
-  "total_learnings_persisted": 1707,
+  "last_updated": "2026-10-16T12:36:02.373Z",
+  "total_cycles_completed": 1708,
+  "total_learnings_persisted": 1708,
   "total_rules_promoted": 929,
   "history": [
-    {
-      "timestamp": "2026-10-16T00:54:27.639Z",
-      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T00:57:49.126Z",
       "repository": "amazon/chronos-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T12:32:52.876Z",
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T12:36:02.373Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
