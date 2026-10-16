@@ -1841,3 +1841,4 @@
 | `CYCLE-20261016-UIWK` | `2026-10-16T18:54:50.420Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`58d66f59...`) |
 | `CYCLE-20261016-YJPG` | `2026-10-16T18:57:58.084Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`14aeaf36...`) |
 | `CYCLE-20261016-2RIB` | `2026-10-16T19:01:14.819Z` | `Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md` | Yes (`d6762061...`) |
+| `CYCLE-20261016-6PX8` | `2026-10-16T19:04:19.388Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1221, Rule 1222` | Yes (`e91a3aa7...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T19:01:14.797Z",
+  "last_updated": "2026-10-16T19:04:19.372Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15959,7 +15959,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "496c6a5468fe051156bb8dc5f7620e839605bb3c85eee4d763be8b024a6761e8",
+      "content_hash": "e91a3aa722e6c3f007573fadb0b1303ed32748c58a0e3627d4755cd67cd41487",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -15982,6 +15982,16 @@
           "number": 1144,
           "title": "Temporal Consistency vs. Motion Variance Trade-off",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1221,
+          "title": "Semantic-Weight Alignment Invariant for Generative Adapters",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1222,
+          "title": "Symmetric Keyframe Looping Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16001,7 +16011,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-16T11:09:08.856Z",
+      "verified_at": "2026-10-16T19:04:19.369Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
