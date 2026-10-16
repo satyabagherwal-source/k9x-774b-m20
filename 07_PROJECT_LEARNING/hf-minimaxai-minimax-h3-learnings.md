@@ -3,7 +3,7 @@
 > **Source Version**: `hf-minimaxai`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-16T01:22:22.341Z  
+> **Timestamp**: 2026-10-16T10:00:09.869Z  
 > **Learning ID**: `learn-huggingface-minimaxai-minimax-h3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/MiniMaxAI/MiniMax-H3](https://huggingface.co/MiniMaxAI/MiniMax-H3))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-16T01:22:21.635Z  
+> **Harvest Timestamp**: 2026-10-16T10:00:09.360Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 3827783 downloads | 6159 likes
+- **Stars / Engagement**: 4014459 downloads | 6167 likes
 
 ---
 
