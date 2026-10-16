@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T05:18:45.651Z",
+  "last_updated": "2026-10-16T05:21:51.560Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9927,7 +9927,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "3602bf98d476f421a3ff4736dd33bcc5e8711079d63cd9ef343b12eb51cd2b26",
+      "content_hash": "9fe4b8ea7fb432ec793a2c7c0aad6c73dd54b382ed5df7ad6eac843738077782",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [],
@@ -9949,7 +9949,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
       ],
-      "verified_at": "2026-10-15T21:50:15.761Z",
+      "verified_at": "2026-10-16T05:21:51.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
