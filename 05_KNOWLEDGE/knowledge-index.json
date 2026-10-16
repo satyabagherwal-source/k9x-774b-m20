@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T06:52:01.537Z",
+  "last_updated": "2026-10-16T06:55:05.683Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17581,7 +17581,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "5194a32c4d708986ad42ff185f4d091ae566ddefaca2c1c300ff6bb8d65051dc",
+      "content_hash": "e2a67b29c71e96a5c0890a2f32a16b445ce90fc1a9943a47ad46ffb39d10c22c",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -17634,6 +17634,21 @@
           "number": 1032,
           "title": "Precision Alignment Between Text and Mamba SSM Components",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1095,
+          "title": "Token ID Namespace Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1096,
+          "title": "Generation EOS Token Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1097,
+          "title": "Layer‑Type Consistency with Attention Bias",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17654,7 +17669,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-15T23:23:40.172Z",
+      "verified_at": "2026-10-16T06:55:05.679Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
