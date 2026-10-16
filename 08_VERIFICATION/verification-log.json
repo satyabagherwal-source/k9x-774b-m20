@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-I039",
-    "timestamp": "2026-10-13T17:58:06.069Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv6zi008",
-    "contentHash": "06e180b10c83c68b90b576275f0f9651ff474c3dab8caf342599fd74a1169e5d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-LVZ5",
     "timestamp": "2026-10-13T18:01:07.361Z",
     "repository": "zai-org/GLM-5.3",
@@ -7490,6 +7475,21 @@
     "repository": "bigscience/bloom",
     "learningId": "learn-huggingface-bigscience-bloom",
     "contentHash": "25bf5e01ad9532ad01ff9868ef5b592c29445eec38e04ca29b861c956d0148d7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-CEV9",
+    "timestamp": "2026-10-16T01:52:59.205Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "f85d6b96aab162e37059b6086d9a4c3f1c97b2acf468bb3428ed931f369e894d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
