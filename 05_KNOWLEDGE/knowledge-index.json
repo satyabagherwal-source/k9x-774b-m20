@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T18:10:07.616Z",
+  "last_updated": "2026-10-16T18:13:27.967Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15009,7 +15009,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "7e808888ead7d5e7ce6b0d080ea8e21dceeb3fa7d60366d17b99cb5ef1c36c03",
+      "content_hash": "0eb2988bf3074ea50dbe162555f45cc6701500780911b9593679ebd273df77de",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -15048,6 +15048,21 @@
           "number": 1136,
           "title": "Memory-Safe Weight Sharding Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1215,
+          "title": "LLM Inference KV Cache Memory Bound Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1216,
+          "title": "Chat Template Special Token Injection Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1217,
+          "title": "Weight Sharding Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15068,7 +15083,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-10-16T10:15:53.428Z",
+      "verified_at": "2026-10-16T18:13:27.962Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

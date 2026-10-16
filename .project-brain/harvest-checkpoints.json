@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T18:10:07.657Z",
+  "last_updated": "2026-10-16T18:13:27.998Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1172,14 +1172,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "7e808888ead7d5e7ce6b0d080ea8e21dceeb3fa7d60366d17b99cb5ef1c36c03",
-      "verified_at": "2026-10-16T10:15:53.464Z",
+      "content_hash": "0eb2988bf3074ea50dbe162555f45cc6701500780911b9593679ebd273df77de",
+      "verified_at": "2026-10-16T18:13:27.997Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T10:15:53.464Z"
+      "last_updated": "2026-10-16T18:13:27.997Z"
     },
     "openai/gpt-oss-120b": {
       "repository": "openai/gpt-oss-120b",
