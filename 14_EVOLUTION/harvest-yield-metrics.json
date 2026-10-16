@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T10:06:24.444Z",
-  "total_cycles_completed": 1661,
-  "total_learnings_persisted": 1661,
+  "last_updated": "2026-10-16T10:09:30.822Z",
+  "total_cycles_completed": 1662,
+  "total_learnings_persisted": 1662,
   "total_rules_promoted": 914,
   "history": [
-    {
-      "timestamp": "2026-10-15T22:30:38.073Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-lightricks-ltx-2-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T22:33:42.789Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T10:06:24.444Z",
       "repository": "fishaudio/drama-3",
       "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T10:09:30.822Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
