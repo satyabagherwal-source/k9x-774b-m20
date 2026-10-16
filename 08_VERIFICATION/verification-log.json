@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-767Y",
-    "timestamp": "2026-10-14T16:13:22.366Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv8b764j",
-    "contentHash": "5c8944f382d983a886904d9dc8047ecb92b3f22d583dc6fe3b59d5d5ea4eae7d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-H9AV",
     "timestamp": "2026-10-14T16:21:12.919Z",
     "repository": "nguyenphutrong/quotio",
@@ -7492,6 +7477,21 @@
     "contentHash": "b42c055e158f10cf463dea6b032f28805275c4653edf4bae24ad26baf156ac47",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-98VR",
+    "timestamp": "2026-10-16T23:18:13.815Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+    "contentHash": "a179f255f05e93cdd3e8f7625cf5b8b2c4e92a51a2cbaf57bdc9ef990841c2a1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

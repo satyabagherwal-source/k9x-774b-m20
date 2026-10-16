@@ -1912,3 +1912,4 @@
 | `CYCLE-20261016-WS9Q` | `2026-10-16T23:08:32.414Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`b0d829a1...`) |
 | `CYCLE-20261016-12MP` | `2026-10-16T23:11:52.465Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1255` | Yes (`8b2d076e...`) |
 | `CYCLE-20261016-4R04` | `2026-10-16T23:14:44.020Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1256, Rule 1257, Rule 688` | Yes (`b42c055e...`) |
+| `CYCLE-20261016-98VR` | `2026-10-16T23:18:13.815Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1258, Rule 1259` | Yes (`a179f255...`) |
