@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-66QY",
-    "timestamp": "2026-10-14T13:24:38.698Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv8566oy",
-    "contentHash": "42c223748e96e222091acd99a6390ae093f89463dd7b6d8645272fbe5d3bd538",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-AA6Q",
     "timestamp": "2026-10-14T13:27:49.778Z",
     "repository": "facebook/sam3",
@@ -7490,6 +7475,21 @@
     "repository": "mudler/locate-anything.cpp-gguf",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
     "contentHash": "8f6d7b9e68918cbe5cf35e9319c310f7ea7423ad4de836aa9e3c96bd43f410ca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-9EBS",
+    "timestamp": "2026-10-16T20:58:22.792Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-jialinyyzz-humanizer",
+    "contentHash": "8456623ce832f2283d7280f8d136da5ba13928533f1527c9f63300235dfaf162",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
