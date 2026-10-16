@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-16T13:17:27.365Z",
+  "lastUpdated": "2026-10-16T13:22:47.500Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T13:17:28.528Z",
-        "lastHarvestedAt": "2026-10-16T13:17:28.528Z",
-        "totalHarvested": 3840,
+        "lastActiveAt": "2026-10-16T13:22:50.801Z",
+        "lastHarvestedAt": "2026-10-16T13:22:50.801Z",
+        "totalHarvested": 3841,
         "lastError": null
       },
       {
@@ -293,12 +293,12 @@
   "masterCircuitBreakers": {
     "GITHUB_API": {
       "service": "GITHUB_API",
-      "status": "HEALTHY",
+      "status": "EXHAUSTED",
       "remaining": 0,
-      "resetEpoch": 0,
-      "resetAt": null,
-      "trippedAt": "2026-10-16T13:17:11.733Z",
-      "reason": null,
+      "resetEpoch": 1792160570727,
+      "resetAt": "2026-10-16T14:22:50.727Z",
+      "trippedAt": "2026-10-16T13:22:35.727Z",
+      "reason": "Rate limit exceeded (HTTP 200 | Remaining: 0 | URL: https://api.github.com/search/repositories?q=topic%3Avector-database%20stars%3A%3E1500%20sort%3Astars&per_page=15&page=3)",
       "consecutiveBlocks": 1
     },
     "GITHUB_ACTIONS": {
