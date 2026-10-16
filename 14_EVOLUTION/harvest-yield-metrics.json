@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:10:55.878Z",
-  "total_cycles_completed": 1737,
-  "total_learnings_persisted": 1737,
+  "last_updated": "2026-10-16T14:14:00.853Z",
+  "total_cycles_completed": 1738,
+  "total_learnings_persisted": 1738,
   "total_rules_promoted": 944,
   "history": [
-    {
-      "timestamp": "2026-10-16T02:27:18.123Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T02:30:32.518Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T14:10:55.878Z",
       "repository": "XingChen-AGI/TeleOCR",
       "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T14:14:00.853Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

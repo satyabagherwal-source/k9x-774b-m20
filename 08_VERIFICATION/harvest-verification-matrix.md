@@ -1760,3 +1760,4 @@
 | `CYCLE-20261016-FXV6` | `2026-10-16T14:03:33.810Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`3c7b2533...`) |
 | `CYCLE-20261016-K2RH` | `2026-10-16T14:06:46.781Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1165, Rule 1166, Rule 1167` | Yes (`c3b2a3a3...`) |
 | `CYCLE-20261016-PEYQ` | `2026-10-16T14:10:55.874Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`0f08161d...`) |
+| `CYCLE-20261016-TDOY` | `2026-10-16T14:14:00.850Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`04001ecd...`) |
