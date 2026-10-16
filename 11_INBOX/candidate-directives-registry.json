@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:51:09.087Z",
+  "last_updated": "2026-10-16T15:57:22.063Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1388,6 +1388,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
+    },
+    {
+      "id": "CD-IAKV",
+      "directive_title": "Quantization Quality Metric Transparency (KLD Reporting)",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_commit": "hf-ukisai-sw",
+      "date_staged": "2026-10-16",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf"
+    },
+    {
+      "id": "CD-IAKV",
+      "directive_title": "Mixed-Precision Tensor Allocation Documentation",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_commit": "hf-ukisai-sw",
+      "date_staged": "2026-10-16",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf"
     }
   ]
 }

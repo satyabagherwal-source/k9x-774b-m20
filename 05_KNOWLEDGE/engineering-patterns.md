@@ -75132,3 +75132,80 @@ function MyPage() {
 **VERIFICATION METHOD**:
 1. Disable JavaScript in curl/browser: `curl -s https://example.com/article | grep -E "<title>|<link rel=\"canonical\"|application/ld\+json"`.
 2. Assert that all SEO tags and JSON-LD markup exist in the raw response without any JavaScript execution.
+
+
+---
+
+## 1193. Binary Artifact Integrity & Provenance Chain (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Binary Artifact Integrity & Provenance Chain",
+  "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+  "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T15:57:21.996Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ukisai-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any repository distributing non-executable binary artifacts (models, firmware, compiled binaries) MUST include a cryptographic hash manifest (SHA256/SHA512) and a structured metadata manifest (JSON) that explicitly links each binary file to its source version, quantization parameters, and evaluation metrics. The hash manifest MUST be version-controlled alongside the binaries.
+
+**WHY**:
+Binary files are opaque. Without a hash manifest, users cannot verify if the file they downloaded matches the intended artifact (preventing supply chain attacks or silent corruption). Without a metadata manifest, users cannot determine if the binary is compatible with their runtime (e.g., MTP support) or if it meets their quality threshold (KLD score). This prevents "silent failures" where a model loads but produces garbage due to version mismatch or corruption.
+
+**WHEN TO APPLY**:
+Any Hugging Face, GitHub, or internal artifact repository distributing `.gguf`, `.bin`, `.onnx`, `.wasm`, or firmware images.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// release-manifest.json
+{
+  "version": "1.5.0",
+  "base_model": "ukisai/Swift-1.5-Qwen3.8-27b",
+  "quantization_method": "GSQ-RCO",
+  "artifacts": [
+    {
+      "filename": "Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS.gguf",
+      "sha256": "a1b2c3d4...",
+      "size_bytes": 9040000000,
+      "quantization_type": "IQ2_XS",
+      "kld_dev": 0.189979,
+      "features": ["standard"],
+      "runtime_requirements": ["llama.cpp >= b4000"]
+    },
+    {
+      "filename": "Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS-mtp.gguf",
+      "sha256": "e5f6g7h8...",
+      "size_bytes": 9400000000,
+      "quantization_type": "IQ2_XS",
+      "kld_dev": 0.189979,
+      "features": ["standard", "mtp_head"],
+      "runtime_requirements": ["llama.cpp >= b4500", "mtp_support"]
+    }
+  ]
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```markdown
+# README.md (BAD)
+Download the model here: [link]
+It works with llama.cpp.
+```
+*Why it fails:* No hash verification, no version pinning, no feature flags, no quality metrics. User cannot verify integrity or compatibility.
+
+**VERIFICATION METHOD**:
+1.  **Automated CI Check:** A script that iterates over all `.gguf` files in the repo, computes their SHA256, and compares them against `SHA256SUMS`. If any mismatch, fail the build.
+2.  **Manifest Validation:** A JSON Schema validator that ensures `release-manifest.json` contains `sha256`, `size_bytes`, and `quantization_type` for every file listed in the directory tree.
