@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T08:35:11.830Z",
-  "total_cycles_completed": 1640,
-  "total_learnings_persisted": 1640,
+  "last_updated": "2026-10-16T08:38:20.061Z",
+  "total_cycles_completed": 1641,
+  "total_learnings_persisted": 1641,
   "total_rules_promoted": 905,
   "history": [
-    {
-      "timestamp": "2026-10-15T21:25:21.495Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T21:28:34.460Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T08:35:11.830Z",
       "repository": "google-bert/bert-base-uncased",
       "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T08:38:20.061Z",
+      "repository": "google/electra-base-discriminator",
+      "learningId": "learn-huggingface-google-electra-base-discriminator",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

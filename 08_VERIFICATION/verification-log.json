@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-FYUV",
-    "timestamp": "2026-10-14T00:56:25.399Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv7efyt2",
-    "contentHash": "a2badd5cf0a8a922331c0d2595c47cb6ce8d43cdc6d7e3522ef39cad6428d1a2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-KB3S",
     "timestamp": "2026-10-14T00:59:47.896Z",
     "repository": "FacebookAI/xlm-roberta-base",
@@ -7490,6 +7475,21 @@
     "repository": "google-bert/bert-base-uncased",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased",
     "contentHash": "8cd90b6d10e9084433622cfa289d568f206d36b1e8359c73d63ef86a9e3acc3d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-TOYG",
+    "timestamp": "2026-10-16T08:38:20.056Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "559fa099ea20e3dfe8e89aeba11b5f25527ec12fca9ffcbabea53b7178c9677a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
