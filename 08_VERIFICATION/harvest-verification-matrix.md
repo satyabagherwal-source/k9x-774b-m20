@@ -1886,3 +1886,4 @@
 | `CYCLE-20261016-MLOQ` | `2026-10-16T21:36:38.474Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`ef0b12a5...`) |
 | `CYCLE-20261016-QUKF` | `2026-10-16T21:39:56.607Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1232, Rule 1233, Rule 1234` | Yes (`1cf61855...`) |
 | `CYCLE-20261016-UJSN` | `2026-10-16T21:42:49.271Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`6e16d983...`) |
+| `CYCLE-20261016-ZQ5T` | `2026-10-16T21:46:50.801Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1235, Rule 1236, Rule 1237` | Yes (`eaa6b717...`) |

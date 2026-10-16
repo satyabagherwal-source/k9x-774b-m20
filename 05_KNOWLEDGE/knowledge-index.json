@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T21:42:49.243Z",
+  "last_updated": "2026-10-16T21:46:50.774Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10918,7 +10918,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "1161897bd3946e9a26d98ad58edb4347ac5cfa04fab7cd17b262c673fb20519b",
+      "content_hash": "eaa6b717b886041bfc6dc6ce5c7ad0916db566d14acc4c3842876690b895d7f8",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -10957,6 +10957,21 @@
           "number": 1073,
           "title": "Deterministic Scheduler & Seed Propagation Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1235,
+          "title": "Dynamic Flow-Trajectory Time-Shift Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1236,
+          "title": "Dual-Modality Non-Overlapping 2D RoPE Spatial Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1237,
+          "title": "Latent Patch Unpacking Channel-Order Round-Trip Contract",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10977,7 +10992,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-10-16T13:32:03.399Z",
+      "verified_at": "2026-10-16T21:46:50.769Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
