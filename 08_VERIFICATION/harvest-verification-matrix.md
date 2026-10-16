@@ -1915,3 +1915,4 @@
 | `CYCLE-20261016-98VR` | `2026-10-16T23:18:13.815Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1258, Rule 1259` | Yes (`a179f255...`) |
 | `CYCLE-20261016-D67J` | `2026-10-16T23:21:16.975Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`4cd3bc00...`) |
 | `CYCLE-20261016-HNF3` | `2026-10-16T23:24:45.903Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`1b62c7f0...`) |
+| `CYCLE-20261016-LSPC` | `2026-10-16T23:27:59.376Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1260, Rule 1261, Rule 1262` | Yes (`094b1846...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T23:24:45.866Z",
+  "last_updated": "2026-10-16T23:27:59.352Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17632,7 +17632,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "ab2a3674cec530ff94234788b403daeda7c49c7da909b59198c39e375fde2471",
+      "content_hash": "094b184631e08aa7788f2ca718934297818d010939eafa50c2ddbcf2f1d78cd9",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -17722,6 +17722,21 @@
           "number": 1185,
           "title": "BOS/EOS Token Null‑Safety Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1260,
+          "title": "Token‑ID Consistency Across Subsystems",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1261,
+          "title": "Image‑Token Boundary Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1262,
+          "title": "Down‑sampling Ratio Validation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17742,7 +17757,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-16T15:09:31.084Z",
+      "verified_at": "2026-10-16T23:27:59.347Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

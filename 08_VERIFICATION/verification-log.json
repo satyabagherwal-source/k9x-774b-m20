@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-GRKV",
-    "timestamp": "2026-10-14T16:48:49.567Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv8cgrgg",
-    "contentHash": "92a837f4b66b72a11e765ba7fcf81e3b208b31b8d954b9e85985f195533e2f00",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-KO9Y",
     "timestamp": "2026-10-14T16:51:51.910Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "1b62c7f0ac6eb9a48043e9fff1f025e2725c814e36dfba107a9798df9a225c83",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-LSPC",
+    "timestamp": "2026-10-16T23:27:59.376Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "094b184631e08aa7788f2ca718934297818d010939eafa50c2ddbcf2f1d78cd9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
