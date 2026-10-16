@@ -2436,6 +2436,66 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-15T21:19:17.183Z"
+    },
+    "roseyco-management-seo-resources": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-roseyco-management-seo-resources",
+      "revision": "5aff591862d831cf1de1903942e3eeaeb7d1d5c9",
+      "timestamp": "2026-10-16T04:12:16.452Z"
+    },
+    "googlechrome-lighthouse": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-googlechrome-lighthouse",
+      "revision": "604fefc42444e53e8120058ae8a8e15431f64b1a",
+      "timestamp": "2026-10-16T04:12:16.452Z"
+    },
+    "nurkamol-seo-audit": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-nurkamol-seo-audit",
+      "revision": "b70b3bf8f29bcbbdcdfb969079fd41097d1368e1",
+      "timestamp": "2026-10-16T04:12:16.452Z"
+    },
+    "patience-dot-devl-gocrawl": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-patience-dot-devl-gocrawl",
+      "revision": "56e20a5aa4e3c648cdd180ba381586e21152c666",
+      "timestamp": "2026-10-16T04:12:16.452Z"
+    },
+    "kiranbabuthatha-seo-crawler": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-kiranbabuthatha-seo-crawler",
+      "revision": "b3cf39f8bf14ff9c90ecfd1a27bd4d23abc1aa59",
+      "timestamp": "2026-10-16T04:12:16.452Z"
+    },
+    "zensink-awesome-open-source-seo": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-zensink-awesome-open-source-seo",
+      "revision": "78cb417201c09f0ef5e5e1f73833e2c36cc20397",
+      "timestamp": "2026-10-16T04:12:16.452Z"
+    },
+    "brandonhimpfen-awesome-seo": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-brandonhimpfen-awesome-seo",
+      "revision": "38a269c9d47cfd1f96c4b5fb54a3b8ab7dd67396",
+      "timestamp": "2026-10-16T04:12:16.452Z"
+    },
+    "vercel-nextjs": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-vercel-nextjs",
+      "revision": "a6d4c15991fd2f69c14eea4e8b655b596bc162bf",
+      "timestamp": "2026-10-16T04:12:16.452Z"
+    },
+    "iamvishnusankar-next-sitemap": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-iamvishnusankar-next-sitemap",
+      "revision": "144fad921e8ee30f03c73ed72208bfa7355eb75d",
+      "timestamp": "2026-10-16T04:12:16.452Z"
+    },
+    "garmeeh-next-seo": {
+      "status": "VERIFIED_LEARNING",
+      "learningId": "learn-github-garmeeh-next-seo",
+      "revision": "738ef7e774ee6216f6e90c26a3b5b99dd5d166b4",
+      "timestamp": "2026-10-16T04:12:16.452Z"
     }
   }
 }

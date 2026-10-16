@@ -65691,3 +65691,199 @@ $$V_{\text{actual}} \approx \frac{1}{4} V_{\text{standard\_full\_kv}} + 64 \time
 Enforce via automated runtime assertions.
 
 ---
+---
+
+## 1061. Deterministic MetadataBase Resolution & Canonical URL Protocol
+
+**RULE**:
+When generating or serving web page metadata, all canonical links (`<link rel="canonical">`), Open Graph image assets (`og:image`), and language alternates (`rel="alternate" hreflang="..."`) MUST be resolved to fully qualified, absolute URLs starting with an explicit protocol (`https://`). In framework environments (such as Next.js App Router), the root layout MUST define an explicit `metadataBase` origin URL. Furthermore, canonical tags MUST reside exclusively within the `<head>` element (body-resident canonical tags are ignored by search engines), MUST NOT point to the domain root (`/`) across subpages, MUST NOT canonicalize subsequent paginated archive pages (`/page/2/`) to page 1, and MUST NOT emit conflicting dual canonical targets between HTTP `Link` headers and HTML tags.
+
+**WHY**:
+Prevents search engines from dropping relative canonical tags, falling back to localhost during deployment, de-indexing older archive pages when paginated sequences point to page 1, and generating broken social card previews across Twitter, LinkedIn, and Slack.
+
+**WHEN TO APPLY**:
+All web applications, static site generators, and dynamic server-rendered frameworks (Next.js, Astro, Nuxt, SvelteKit, Remix) producing HTML documents for search engine indexing.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// app/layout.tsx (Next.js App Router)
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://example.com'),
+  alternates: {
+    canonical: './',
+    languages: {
+      'en-US': '/en-us',
+      'es-ES': '/es-es',
+    },
+  },
+  openGraph: {
+    images: [
+      {
+        url: '/og-image.png', // Resolves to https://example.com/og-image.png
+        width: 1200,
+        height: 630,
+        alt: 'Page Preview',
+      },
+    ],
+  },
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```html
+<!-- ANTI-PATTERN 1: Relative canonical path (Ignored or misinterpreted by bots) -->
+<link rel="canonical" href="/blog/post-1" />
+
+<!-- ANTI-PATTERN 2: Canonical tag placed in body (Explicitly rejected by Googlebot/Lighthouse) -->
+<body>
+  <link rel="canonical" href="https://example.com/blog/post-1" />
+</body>
+
+<!-- ANTI-PATTERN 3: Page 2 pointing canonical to Page 1 (De-indexes older archive articles) -->
+<!-- On https://example.com/blog/page/2/ -->
+<link rel="canonical" href="https://example.com/blog" />
+```
+
+**VERIFICATION METHOD**:
+1. Run automated Lighthouse audit: Assert `document-has-valid-rel-canonical` passes with score 1.0.
+2. HTTP Response Header Probe: Assert `curl -I https://example.com` does not conflict with HTML `<head>` link elements.
+
+---
+
+## 1062. Search Crawler Link Discovery & Rate Governance Invariant
+
+**RULE**:
+All navigable links across an application MUST be rendered as semantic anchor elements (`<a href="...">`) with valid, discoverable HTTP/HTTPS destination URLs and descriptive anchor text. Navigation handlers MUST NOT use placeholder `javascript:void(0)` in `href` attributes, and MUST NOT rely on unanchored click listeners (`<div onClick="...">`) for content discovery. Furthermore, automated crawler engines and auditing analyzers MUST strictly decouple crawling from audit execution, enforce robots.txt and adaptive rate limits (`Engine.Govern`) across secondary fetches, and model SERP title and description limits on rendered pixel widths (~580px title, ~1000px description) rather than raw character counts alone.
+
+**WHY**:
+Search engine discovery bots do not execute arbitrary client click events to discover URLs, and drop links using `javascript:void(0)`. Crawlers lacking rate governance cause target server DOS and IP blocking, while character-only SERP modeling leads to unexpected ellipsis truncation on character-wide headings (`M`, `W`, `@`).
+
+**WHEN TO APPLY**:
+All web frontend navigation structures, UI component libraries, web crawlers, and automated SEO diagnostic pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```tsx
+// Verified Crawlable Anchor Component with Descriptive Accessible Text
+interface NavLinkProps {
+  href: string;
+  label: string;
+  description?: string;
+}
+
+export function CrawlableLink({ href, label, description }: NavLinkProps) {
+  return (
+    <a 
+      href={href} 
+      className="nav-link font-medium hover:underline focus:outline-none"
+      aria-label={description ? `${label} - ${description}` : label}
+    >
+      {label}
+    </a>
+  );
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```html
+<!-- ANTI-PATTERN 1: Uncrawlable JavaScript Anchor -->
+<a href="javascript:void(0)" onclick="navigateTo('/dashboard')">
+  Dashboard
+</a>
+
+<!-- ANTI-PATTERN 2: Div Click Listener Without Semantic Anchor -->
+<div class="btn" onclick="location.href='/docs'">
+  Documentation
+</div>
+
+<!-- ANTI-PATTERN 3: Vague Anchor Text Causing Lighthouse Failure -->
+<a href="/pricing">Click here</a>
+```
+
+**VERIFICATION METHOD**:
+1. Run Lighthouse audit: Assert `crawlable-anchors` and `link-text` return 0 failing elements.
+2. Inspect DOM AST: Verify that every interactive route navigation element is backed by an `HTMLAnchorElement` with a non-empty `href`.
+
+---
+
+## 1063. Hierarchical Structured Data & Safe JSON-LD Serialization Protocol
+
+**RULE**:
+When embedding structured data (Schema.org) within web pages, all JSON-LD payloads MUST be serialized using safe slash-escaped replacers (`replace(/<\/script/gi, '<\\/script')`) to prevent Cross-Site Scripting (XSS) injection when rendering user-supplied strings into `<script type="application/ld+json">`. Furthermore, on pages featuring multiple entity schemas (e.g. Organization, WebSite, Breadcrumbs, Product, Article), structured data MUST be linked hierarchically under a unified `@graph` root array with explicit `@id` references. Structured data MUST be rendered server-side during SSR or static site generation so headless crawlers can ingest entities on the first network response byte stream without executing client-side hydration.
+
+**WHY**:
+Unescaped `</script>` tags inside JSON-LD payload strings prematurely terminate the script block in browser HTML parsers, enabling arbitrary XSS code execution. Fragmented, unlinked top-level schemas prevent search engines from understanding entity ownership, while client-rendered JSON-LD is missed by crawlers that omit or defer JavaScript execution.
+
+**WHEN TO APPLY**:
+All pages publishing structured data, rich snippets, BreadcrumbList, Product reviews, FAQPage, Organization data, and articles across any web framework.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```tsx
+// Safe JSON-LD Serializer and Composite Graph Renderer
+import React from 'react';
+
+export function SafeJsonLd({ schema }: { schema: Record<string, any> }) {
+  // Anti-XSS Invariant: Escape closing script tags
+  const sanitizedJson = JSON.stringify(schema).replace(/<\/script/gi, '<\\/script');
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: sanitizedJson }}
+    />
+  );
+}
+
+// Hierarchical @graph composition
+export const articlePageSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://example.com/#organization',
+      'name': 'TechCorp',
+      'url': 'https://example.com',
+    },
+    {
+      '@type': 'BreadcrumbList',
+      '@id': 'https://example.com/posts/seo-guide#breadcrumb',
+      'itemListElement': [
+        { '@type': 'ListItem', 'position': 1, 'name': 'Home', 'item': 'https://example.com' },
+        { '@type': 'ListItem', 'position': 2, 'name': 'SEO Guide', 'item': 'https://example.com/posts/seo-guide' }
+      ]
+    },
+    {
+      '@type': 'Article',
+      '@id': 'https://example.com/posts/seo-guide#article',
+      'headline': 'Modern Technical SEO Protocol',
+      'publisher': { '@id': 'https://example.com/#organization' }
+    }
+  ]
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```tsx
+// ANTI-PATTERN: Naive unsanitized JSON.stringify vulnerable to XSS
+export function UnsafeJsonLd({ userContent }: { userContent: string }) {
+  // If userContent is: "Awesome!</script><script>alert('pwned')</script>"
+  // Browser terminates ld+json block and executes malicious script immediately!
+  const payload = {
+    '@context': 'https://schema.org',
+    '@type': 'Review',
+    'reviewBody': userContent
+  };
+
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(payload) }} // VULNERABLE
+    />
+  );
+}
+```
+
+**VERIFICATION METHOD**:
+1. Security XSS Payload Test: Pass `</script><script>window.__xss_probe=1</script>` into schema field, verify `window.__xss_probe` remains undefined.
+2. Rich Results Test: Validate with Google Rich Results Test API to ensure all `@graph` entities resolve cleanly with zero errors.

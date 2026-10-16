@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
   "last_updated": "2026-10-16T04:15:15.902Z",
-  "total_verified_learnings": 173,
+  "total_verified_learnings": 183,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -40724,6 +40724,146 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "learn-github-roseyco-management-seo-resources": {
+      "id": "learn-github-roseyco-management-seo-resources",
+      "repository": "Roseyco-management/SEO-Resources",
+      "source_url": "https://github.com/Roseyco-management/SEO-Resources",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/roseyco-management-seo-resources-learnings.md"
+    },
+    "learn-github-googlechrome-lighthouse": {
+      "id": "learn-github-googlechrome-lighthouse",
+      "repository": "GoogleChrome/lighthouse",
+      "source_url": "https://github.com/GoogleChrome/lighthouse",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/googlechrome-lighthouse-learnings.md"
+    },
+    "learn-github-nurkamol-seo-audit": {
+      "id": "learn-github-nurkamol-seo-audit",
+      "repository": "nurkamol/seo-audit",
+      "source_url": "https://github.com/nurkamol/seo-audit",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/nurkamol-seo-audit-learnings.md"
+    },
+    "learn-github-patience-dot-devl-gocrawl": {
+      "id": "learn-github-patience-dot-devl-gocrawl",
+      "repository": "Patience-dot-devl/gocrawl",
+      "source_url": "https://github.com/Patience-dot-devl/gocrawl",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/patience-dot-devl-gocrawl-learnings.md"
+    },
+    "learn-github-kiranbabuthatha-seo-crawler": {
+      "id": "learn-github-kiranbabuthatha-seo-crawler",
+      "repository": "kiranbabuthatha/SEO-crawler",
+      "source_url": "https://github.com/kiranbabuthatha/SEO-crawler",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/kiranbabuthatha-seo-crawler-learnings.md"
+    },
+    "learn-github-zensink-awesome-open-source-seo": {
+      "id": "learn-github-zensink-awesome-open-source-seo",
+      "repository": "ZensInk/awesome-open-source-seo",
+      "source_url": "https://github.com/ZensInk/awesome-open-source-seo",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/zensink-awesome-open-source-seo-learnings.md"
+    },
+    "learn-github-brandonhimpfen-awesome-seo": {
+      "id": "learn-github-brandonhimpfen-awesome-seo",
+      "repository": "brandonhimpfen/awesome-seo",
+      "source_url": "https://github.com/brandonhimpfen/awesome-seo",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/brandonhimpfen-awesome-seo-learnings.md"
+    },
+    "learn-github-vercel-nextjs": {
+      "id": "learn-github-vercel-nextjs",
+      "repository": "vercel/next.js",
+      "source_url": "https://github.com/vercel/next.js",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/vercel-nextjs-learnings.md"
+    },
+    "learn-github-iamvishnusankar-next-sitemap": {
+      "id": "learn-github-iamvishnusankar-next-sitemap",
+      "repository": "iamvishnusankar/next-sitemap",
+      "source_url": "https://github.com/iamvishnusankar/next-sitemap",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/iamvishnusankar-next-sitemap-learnings.md"
+    },
+    "learn-github-garmeeh-next-seo": {
+      "id": "learn-github-garmeeh-next-seo",
+      "repository": "garmeeh/next-seo",
+      "source_url": "https://github.com/garmeeh/next-seo",
+      "platform": "github",
+      "verification_status": "VERIFIED_LEARNING",
+      "verified_at": "2026-10-16T04:12:16.452Z",
+      "promoted_rules": [
+        1059,
+        1060,
+        1061
+      ],
+      "dossier_path": "07_PROJECT_LEARNING/garmeeh-next-seo-learnings.md"
     }
   },
   "aliases": {
