@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T18:57:58.088Z",
-  "total_cycles_completed": 1817,
-  "total_learnings_persisted": 1817,
+  "last_updated": "2026-10-16T19:01:14.822Z",
+  "total_cycles_completed": 1818,
+  "total_learnings_persisted": 1818,
   "total_rules_promoted": 982,
   "history": [
-    {
-      "timestamp": "2026-10-16T06:58:23.469Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T07:03:32.840Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T18:57:58.088Z",
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-fermionresearch-phonon-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T19:01:14.822Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T18:57:58.089Z",
+  "last_updated": "2026-10-16T19:01:14.823Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1382,14 +1382,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "content_hash": "997ec3dbb6b67b81b8181575beb7cf41e5463bf88bb6823c19c2083cc09a8267",
-      "verified_at": "2026-10-16T11:05:51.432Z",
+      "content_hash": "d676206147ddc5099d0c450187c0393cf07d707f39e42ac9f36e2758ed396c18",
+      "verified_at": "2026-10-16T19:01:14.823Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T11:05:51.432Z"
+      "last_updated": "2026-10-16T19:01:14.823Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
