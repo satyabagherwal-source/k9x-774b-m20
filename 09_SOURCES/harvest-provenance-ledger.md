@@ -1769,3 +1769,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-10-16T14:32:09.982Z |
 | `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-10-16T14:35:26.399Z |
 | `learn-huggingface-qwen-qwen-image-2-1-turbo` | `https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-16T14:38:31.998Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-16T14:41:38.914Z |

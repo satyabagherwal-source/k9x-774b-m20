@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-1TDS",
-    "timestamp": "2026-10-14T06:21:20.512Z",
-    "repository": "fishaudio/drama-3",
-    "learningId": "learn-huggingface-hf-fishaudio-drama-3-mv7q1taj",
-    "contentHash": "a29abd7125a184786d653139a9391895c5287c68c78e8df87df477ad3b837f5e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-5N8Y",
     "timestamp": "2026-10-14T06:24:19.186Z",
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
     "contentHash": "8104156d758bbf201469fa23db782ca936edc23de7267fb8cf320e327db2e49a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-SX28",
+    "timestamp": "2026-10-16T14:41:38.912Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "e27ce221683d9e1cd9689041566fe17135a42fadc0b9ef8f5d64e338a9f6c04b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
