@@ -1530,3 +1530,4 @@
 | `CYCLE-20261016-X430` | `2026-10-16T00:45:06.156Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`3e3fbb34...`) |
 | `CYCLE-20261016-15RQ` | `2026-10-16T00:48:14.966Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`37a8ac84...`) |
 | `CYCLE-20261016-54U9` | `2026-10-16T00:51:20.385Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`812b0f13...`) |
+| `CYCLE-20261016-95BM` | `2026-10-16T00:54:27.634Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`07e38f5e...`) |

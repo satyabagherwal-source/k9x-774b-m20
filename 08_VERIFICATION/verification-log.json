@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-BJLC",
-    "timestamp": "2026-10-13T16:57:05.520Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv6xbjia",
-    "contentHash": "a3b37ba6ebde8b3aaf1dae45ed421302c62e65ed50cce83977c3a025bb9736fc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-FBCI",
     "timestamp": "2026-10-13T17:00:01.458Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7490,6 +7475,21 @@
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
     "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
     "contentHash": "812b0f1363e9d88648dfa5d03cd43c4e19a76ce6afbbd669a53b6aa96a644a66",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-95BM",
+    "timestamp": "2026-10-16T00:54:27.634Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "07e38f5e02e05776336f28937c5c1f552aced2be5e71b3b9209d9e655738ff09",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

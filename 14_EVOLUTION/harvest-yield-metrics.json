@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T00:51:20.389Z",
-  "total_cycles_completed": 1507,
-  "total_learnings_persisted": 1507,
+  "last_updated": "2026-10-16T00:54:27.639Z",
+  "total_cycles_completed": 1508,
+  "total_learnings_persisted": 1508,
   "total_rules_promoted": 821,
   "history": [
-    {
-      "timestamp": "2026-10-14T11:11:01.674Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv80ecoj",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T11:14:06.881Z",
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T00:51:20.389Z",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
       "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T00:54:27.639Z",
+      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
