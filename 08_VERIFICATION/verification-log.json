@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-DT2K",
-    "timestamp": "2026-10-14T06:30:39.980Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv7qdsxv",
-    "contentHash": "dff2275a12e9192fc12fe72a05a619150b3dc38af06011c4f48a6df9c077ab37",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-IYWV",
     "timestamp": "2026-10-14T06:34:40.831Z",
     "repository": "openai/gpt-oss-120b",
@@ -7492,6 +7477,21 @@
     "contentHash": "49c078df766c0efe33e8574b1b0a1b6426353b468c1997b01407ee2ae9ddd87d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-550A",
+    "timestamp": "2026-10-16T14:51:09.082Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+    "contentHash": "fb10d16dc3e9aa6c75d1cc9b86d51643b1acf5b0e3fd5167e5e3176048c0760d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

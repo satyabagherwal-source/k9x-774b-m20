@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:47:51.264Z",
-  "total_cycles_completed": 1747,
-  "total_learnings_persisted": 1747,
-  "total_rules_promoted": 944,
+  "last_updated": "2026-10-16T14:51:09.088Z",
+  "total_cycles_completed": 1748,
+  "total_learnings_persisted": 1748,
+  "total_rules_promoted": 945,
   "history": [
-    {
-      "timestamp": "2026-10-16T02:58:05.434Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T03:01:10.445Z",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -1403,6 +1396,13 @@
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
       "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T14:51:09.088Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

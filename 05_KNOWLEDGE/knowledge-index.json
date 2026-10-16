@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T14:47:51.224Z",
+  "last_updated": "2026-10-16T14:51:09.057Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -41138,16 +41138,22 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "2042086e163c764ad99e3c0411be37074fd0c6a78197db75f06ac34a966fcbcf",
+      "content_hash": "fb10d16dc3e9aa6c75d1cc9b86d51643b1acf5b0e3fd5167e5e3176048c0760d",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1172,
+          "title": "Quantization Precision-Performance Trade-off Documentation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T06:23:41.399Z",
+      "verified_at": "2026-10-16T14:51:09.053Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
