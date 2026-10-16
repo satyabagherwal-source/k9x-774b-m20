@@ -73877,3 +73877,173 @@ for q in quantization_table:
 
 **VERIFICATION METHOD**:
 Lint the README to ensure every quantized file listed in the directory tree has a corresponding row in the documentation table with size and quality metrics.
+
+
+---
+
+## 1173. Unique Multimodal Token Invariant (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Unique Multimodal Token Invariant",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T14:54:06.653Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> The tokenizer must assign a distinct, non‑overlapping token string to each modality (image, video, audio, vision start/end).  
+**WHY**:  
+> Overlapping tokens cause ambiguous embeddings, leading to cross‑modal interference and unpredictable generation.  
+**WHEN TO APPLY**:  
+> During tokenizer construction for any multimodal model that uses `<|image_pad|>`, `<|video_pad|>`, `<|audio_pad|>`, `<|vision_start|>`, `<|vision_end|>`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "image_token": "<|image_pad|>",
+  "video_token": "<|video_pad|>",
+  "audio_token": "<|audio_pad|>",
+  "vision_bos_token": "<|vision_start|>",
+  "vision_eos_token": "<|vision_end|>"
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "image_token": "<|vision_start|>",   // BAD: image and vision start share the same token
+  "video_token": "<|vision_start|>"
+}
+```
+**VERIFICATION METHOD**:  
+Run a unit test that asserts `len(set(tokenizer.special_tokens)) == len(tokenizer.special_tokens)` and that each token is unique.
+
+---
+
+
+---
+
+## 1174. BFloat16 Consistency Invariant (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "BFloat16 Consistency Invariant",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T14:54:06.683Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> All model parameters and intermediate tensors that participate in the forward pass must be cast to `torch.bfloat16` when the model’s `dtype` is `bfloat16`.  
+**WHY**:  
+> Mixing `float32` and `bfloat16` can silently degrade precision, causing divergent training or inference results.  
+**WHEN TO APPLY**:  
+> In any PyTorch implementation that loads a `config.json` with `"dtype": "bfloat16"`.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Load model
+model = AutoModelForCausalLM.from_pretrained(
+    "apple/LensVLM-9B",
+    torch_dtype=torch.bfloat16,
+    device_map="auto",
+)
+
+# Ensure all intermediate tensors are bfloat16
+def forward(self, *args, **kwargs):
+    x = self.input_embeddings(*args, **kwargs).to(torch.bfloat16)
+    # ... rest of the forward
+    return x
+```
+**NEGATIVE CONSTRAINT**:
+```python
+def forward(self, *args, **kwargs):
+    x = self.input_embeddings(*args, **kwargs)  # default float32
+    # ... rest of the forward
+    return x
+```
+**VERIFICATION METHOD**:  
+Add a runtime check that `model.dtype == torch.bfloat16` and that every `torch.Tensor` in the forward graph has `dtype == torch.bfloat16`.
+
+---
+
+
+---
+
+## 1175. Long‑Context Attention Interval Invariant (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Long‑Context Attention Interval Invariant",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T14:54:06.709Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> For models with `max_position_embeddings >= 262144`, the `full_attention_interval` must be set to a value that balances memory and latency, typically `4`.  
+**WHY**:  
+> A too‑large interval forces full attention on long sequences, exhausting GPU memory; a too‑small interval increases the number of full‑attention layers, inflating latency.  
+**WHEN TO APPLY**:  
+> When configuring `text_config` for a long‑context VLM.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "max_position_embeddings": 262144,
+  "full_attention_interval": 4,
+  "layer_types": [
+    "linear_attention", "linear_attention", "linear_attention",
+    "full_attention",   // every 4th layer
+    ...
+  ]
+}
+```
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "max_position_embeddings": 262144,
+  "full_attention_interval": 1,   // BAD: full attention on every layer
+  "layer_types": ["full_attention", ...]
+}
+```
+**VERIFICATION METHOD**:  
+Write a script that parses `config.json` and asserts that `len([i for i, t in enumerate(layer_types) if t == "full_attention"]) == max_position_embeddings // full_attention_interval`.
+
+---

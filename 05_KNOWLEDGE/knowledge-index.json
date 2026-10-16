@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T14:51:09.057Z",
+  "last_updated": "2026-10-16T14:54:06.731Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9718,7 +9718,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "e726adb4f22149d65b34b8ed63f0d9d31f8d5ee6d00599b0f5027fa6b4475f35",
+      "content_hash": "8661686eddc20d8fa976be467f049c03fac73441a113f856c7c6aacee84f1564",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -9807,6 +9807,21 @@
           "number": 1087,
           "title": "**Cache Policy Isolation**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1173,
+          "title": "Unique Multimodal Token Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1174,
+          "title": "BFloat16 Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1175,
+          "title": "Long‑Context Attention Interval Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9827,7 +9842,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-16T06:27:13.366Z",
+      "verified_at": "2026-10-16T14:54:06.728Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

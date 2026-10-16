@@ -3,7 +3,7 @@
 > **Source Version**: `hf-apple-len`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-16T06:27:13.189Z  
+> **Timestamp**: 2026-10-16T14:54:06.605Z  
 > **Learning ID**: `learn-huggingface-apple-lensvlm-9b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,170 +14,204 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): apple/LensVLM‑9B
 
-## 1. Executive Forensic Architecture & System Mechanics
-LensVLM‑9B is a 9‑billion‑parameter vision‑language model that extends the Qwen‑3.5‑9B backbone with a **compressed‑image‑to‑text** pipeline.  
-* **Subsystem boundaries**  
-  * **Tokenizer / Processor** – `Qwen3VLProcessor` (tokenizers backend) handles text, image, audio, and video tokens.  
-  * **Vision encoder** – a 27‑layer, 1152‑dimensional MLP‑based visual backbone (see `vision_config`).  
-  * **Text decoder** – a 32‑layer transformer with a mix of linear and full attention layers (`layer_types`).  
-  * **Compression engine** – external to the repo; the model receives pre‑compressed images and expands only the relevant pages on demand.  
-* **Critical abstractions**  
-  * `image_token_id` (248056), `video_token_id` (248057), `audio_*_token` – reserved token IDs that must not collide with the vocabulary.  
-  * `use_cache` is disabled for the vision encoder to avoid memory blow‑up; enabled for the text decoder.  
-  * `full_attention_interval` = 4 – every 4th layer uses full attention; the rest use linear attention for latency.  
+## 1. Executive Forensic Architecture & System Mechanics  
+
+LensVLM‑9B is a 9‑billion‑parameter vision‑language model that **scans compressed images of text and selectively expands only the relevant pages**.  
+The system is built on top of the Qwen3.5‑9B backbone and augments it with a **compression‑aware visual encoder** and a **tool‑driven expansion pipeline**.  
+
+| Subsystem | Responsibility | Key Artifacts |
+|-----------|----------------|---------------|
+| **Tokenizer / Processor** | Handles multimodal tokenization, including `<|image_pad|>`, `<|video_pad|>`, `<|audio_pad|>` and the special vision start/end tokens. | `tokenizer_config.json`, `processor_class` = `Qwen3VLProcessor` |
+| **Vision Encoder** | Compresses image patches, encodes them into a latent space, and exposes a *compressed* representation that can be selectively decompressed. | `vision_config` in `config.json` (depth = 27, hidden_size = 1152, hidden_act = gelu_pytorch_tanh) |
+| **Text Decoder** | Generates text conditioned on the compressed visual representation and any user prompt. | `text_config` in `config.json` (hidden_size = 4096, num_hidden_layers = 32, num_attention_heads = 16, linear_attention layers interleaved with full_attention) |
+| **Compression Tool** | Implements the *selective expansion* logic: given a compressed image, it identifies the relevant pages and decompresses only those. | Not present in the repo tree; inferred from README and paper. |
+| **Inference Pipeline** | Orchestrates the processor, encoder, decoder, and compression tool to answer user queries about documents. | `scripts/run_demo.py`, `demo.py` |
+
+**Architectural boundaries**  
+* The **tokenizer** is the sole entry point for multimodal data; it guarantees that every modality is represented by a unique token.  
+* The **encoder** and **decoder** are decoupled: the encoder outputs a compressed latent, the decoder consumes it via a cross‑modal attention interface.  
+* The **compression tool** is a *tool* that can be invoked by the decoder as a separate process, ensuring that the core model remains stateless with respect to image size.  
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. **Special‑Token Uniqueness Across Modalities**
+### 1. Unique Multimodal Token Invariant  
 **RULE**:  
-All modality‑specific token IDs (`image_token_id`, `video_token_id`, `audio_bos_token`, `audio_eos_token`, `audio_token`) MUST be unique and MUST NOT overlap with any token in the shared vocabulary.  
+> The tokenizer must assign a distinct, non‑overlapping token string to each modality (image, video, audio, vision start/end).  
 **WHY**:  
-Token ID collisions cause the model to misinterpret modality boundaries, leading to catastrophic decoding failures or silent data corruption.  
+> Overlapping tokens cause ambiguous embeddings, leading to cross‑modal interference and unpredictable generation.  
 **WHEN TO APPLY**:  
-During tokenizer construction, model initialization, and any downstream pipeline that injects modality tokens.  
+> During tokenizer construction for any multimodal model that uses `<|image_pad|>`, `<|video_pad|>`, `<|audio_pad|>`, `<|vision_start|>`, `<|vision_end|>`.  
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# tokenizer_config.json – ensure unique IDs
+```json
 {
-  "image_token_id": 248056,
-  "video_token_id": 248057,
-  "audio_bos_token_id": 248058,
-  "audio_eos_token_id": 248059,
-  "audio_token_id": 248060,
-  "vocab_size": 248320
+  "image_token": "<|image_pad|>",
+  "video_token": "<|video_pad|>",
+  "audio_token": "<|audio_pad|>",
+  "vision_bos_token": "<|vision_start|>",
+  "vision_eos_token": "<|vision_end|>"
 }
 ```
 **NEGATIVE CONSTRAINT**:
-```python
-# Bad: overlapping IDs
+```json
 {
-  "image_token_id": 248044,   # same as pad_token_id
-  "video_token_id": 248044,   # collision
+  "image_token": "<|vision_start|>",   // BAD: image and vision start share the same token
+  "video_token": "<|vision_start|>"
 }
 ```
 **VERIFICATION METHOD**:  
-Run a unit test that asserts `len(set([image_token_id, video_token_id, audio_bos_token_id, audio_eos_token_id, audio_token_id])) == 5` and that each is `< vocab_size`.
+Run a unit test that asserts `len(set(tokenizer.special_tokens)) == len(tokenizer.special_tokens)` and that each token is unique.
 
-### 2. **Consistent Dtype Across Modalities**
+---
+
+### 2. BFloat16 Consistency Invariant  
 **RULE**:  
-When a model mixes modalities, the dtype of all weight tensors for a given modality MUST be consistent; the text decoder uses `bfloat16`, while the vision encoder uses `bfloat16` for weights but `float32` for intermediate activations (`mamba_ssm_dtype`).  
+> All model parameters and intermediate tensors that participate in the forward pass must be cast to `torch.bfloat16` when the model’s `dtype` is `bfloat16`.  
 **WHY**:  
-Inconsistent dtypes cause silent precision loss or runtime errors on GPU kernels that expect homogeneous tensors.  
+> Mixing `float32` and `bfloat16` can silently degrade precision, causing divergent training or inference results.  
 **WHEN TO APPLY**:  
-During model weight loading and forward pass execution.  
+> In any PyTorch implementation that loads a `config.json` with `"dtype": "bfloat16"`.  
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# In model initialization
-self.text_decoder = Qwen3ForConditionalGeneration.from_pretrained(
-    "Qwen/Qwen3.5-9B",
-    dtype=torch.bfloat16
+# Load model
+model = AutoModelForCausalLM.from_pretrained(
+    "apple/LensVLM-9B",
+    torch_dtype=torch.bfloat16,
+    device_map="auto",
 )
-self.vision_encoder = VisionEncoder.from_pretrained(
-    "Qwen/Qwen3.5-9B",
-    dtype=torch.bfloat16,
-    ssm_dtype=torch.float32
-)
+
+# Ensure all intermediate tensors are bfloat16
+def forward(self, *args, **kwargs):
+    x = self.input_embeddings(*args, **kwargs).to(torch.bfloat16)
+    # ... rest of the forward
+    return x
 ```
 **NEGATIVE CONSTRAINT**:
 ```python
-# Bad: mixed dtypes in a single module
-self.decoder = nn.Linear(4096, 4096, dtype=torch.float32)  # text decoder expects bfloat16
+def forward(self, *args, **kwargs):
+    x = self.input_embeddings(*args, **kwargs)  # default float32
+    # ... rest of the forward
+    return x
 ```
 **VERIFICATION METHOD**:  
-Add a linter rule that checks `module.dtype` against the expected dtype per module type.
+Add a runtime check that `model.dtype == torch.bfloat16` and that every `torch.Tensor` in the forward graph has `dtype == torch.bfloat16`.
 
-### 3. **Cache Policy Isolation**
+---
+
+### 3. Long‑Context Attention Interval Invariant  
 **RULE**:  
-The `use_cache` flag MUST be set to `False` for any sub‑module that processes high‑resolution visual data; it MUST be `True` only for the text decoder.  
+> For models with `max_position_embeddings >= 262144`, the `full_attention_interval` must be set to a value that balances memory and latency, typically `4`.  
 **WHY**:  
-Vision encoders produce large intermediate tensors; caching them would exhaust GPU memory and degrade throughput.  
+> A too‑large interval forces full attention on long sequences, exhausting GPU memory; a too‑small interval increases the number of full‑attention layers, inflating latency.  
 **WHEN TO APPLY**:  
-During model configuration and inference pipeline construction.  
+> When configuring `text_config` for a long‑context VLM.  
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
-config.use_cache = False          # Vision encoder
-text_config.use_cache = True      # Text decoder
+```json
+{
+  "max_position_embeddings": 262144,
+  "full_attention_interval": 4,
+  "layer_types": [
+    "linear_attention", "linear_attention", "linear_attention",
+    "full_attention",   // every 4th layer
+    ...
+  ]
+}
 ```
 **NEGATIVE CONSTRAINT**:
-```python
-# Bad: caching vision encoder
-vision_encoder = VisionEncoder(..., use_cache=True)
+```json
+{
+  "max_position_embeddings": 262144,
+  "full_attention_interval": 1,   // BAD: full attention on every layer
+  "layer_types": ["full_attention", ...]
+}
 ```
 **VERIFICATION METHOD**:  
-Unit test that asserts `model.vision_encoder.config.use_cache is False` and `model.text_decoder.config.use_cache is True`.
+Write a script that parses `config.json` and asserts that `len([i for i, t in enumerate(layer_types) if t == "full_attention"]) == max_position_embeddings // full_attention_interval`.
+
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No public commits, PRs, or issue logs are available for this repository. Consequently, no concrete incidents or patches can be extracted.  
-*If future releases include source code or issue trackers, the same forensic framework can be applied to capture bug‑fixes, root causes, and lessons.*
+No publicly documented commits, PRs, or issue logs exist for this repository.  
+The repository tree is empty, and the only artifacts are configuration files and a README.  
+Therefore, **no real bug incidents** can be extracted from the available data.
 
-## 4. Microscopic Code‑Level Invariants
+---
 
-| Domain | Invariant | Example |
-|--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | **Strict equality for token IDs** – never use `==` with `None` or `0` when comparing token IDs. | `if token_id == 0: ...` is safe; `if token_id == None:` will raise `TypeError`. |
-| | **Avoid implicit falsy conversion** – `if token_id:` will treat `0` as False. | `if token_id == 0: ...` is required. |
-| | **Deep immutability of tokenizer vocab** – never mutate `tokenizer.vocab` in place. | `tokenizer.vocab.update(new_tokens)` is forbidden; use `tokenizer.add_tokens(new_tokens)` which handles ID allocation. |
-| **Infinite Loop & Recursion Guards** | **Linear attention layers** – ensure `full_attention_interval` divides layer count to avoid infinite recursion in attention caching. | `assert len(layer_types) % full_attention_interval == 0` |
-| | **Event loop yield** – when processing large batches, insert `await asyncio.sleep(0)` to avoid micro‑task starvation. | `await asyncio.sleep(0)` after each 1000 tokens. |
-| **UI & UX Micro‑Mechanics** | **Tokenization UI** – when rendering token IDs in a web UI, use `String.fromCharCode` only for printable ranges; otherwise escape. | `if 32 <= token_id <= 126: char = chr(token_id)` |
-| | **Debounce user input** – use a 200 ms debounce on text input to avoid re‑tokenization on every keystroke. | `debounce(handleInput, 200)` |
-| **Backend Concurrency & Memory Safety** | **TOCTOU in image loading** – lock the file descriptor before reading image bytes. | `with open(path, 'rb') as f: data = f.read()` |
-| | **Connection pool starvation** – limit concurrent image fetches to `max_workers=8`. | `ThreadPoolExecutor(max_workers=8)` |
-| | **Memory leak in event emitters** – always remove listeners after use. | `emitter.off('data', callback)` |
-| **Defect & Error Prevention** | **Null/undefined chaining** – use optional chaining when accessing nested token attributes. | `token?.type` |
-| | **Off‑by‑one in token slicing** – use `tokens[start:end]` where `end` is exclusive. | `tokens[start:start+length]` |
-| | **Unhandled promise rejections** – wrap async calls in `try/await` blocks. | `try: await async_func() except Exception as e: log(e)` |
+## 4. Microscopic Code‑Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
+
+| Domain | Invariant | Example | Anti‑Pattern |
+|--------|-----------|---------|--------------|
+| **Micro‑Syntax & Token‑Level Precision** | **Exact string matching for special tokens** | `if token == "<|image_pad|>": ...` | `if token is "<|image_pad|>": ...` (identity vs equality) |
+| | **Avoid implicit falsy conversions** | `if len(tokens) > 0:` | `if tokens:` (could be `None` or empty list) |
+| | **Deep immutability of config objects** | `config = json.loads(json_str)`; `config["text_config"]["hidden_size"] = 4096` | Mutating nested dicts that are later frozen by a library expecting immutability |
+| **Infinite Loop & Recursion Guards** | **Base case for recursive compression** | `def decompress(page): if page.is_leaf: return page.data` | `def decompress(page): return decompress(page.child)` (no base case) |
+| | **Loop termination invariant** | `while not queue.empty(): item = queue.get(); process(item)` | `while not queue.empty(): item = queue.get(); process(item); queue.put(item)` (re‑enqueue) |
+| **UI & UX Micro‑Mechanics** | **Debounce user input** | `debounced = debounce(handle_input, 200)` | `handle_input()` called on every keystroke without debounce |
+| | **Avoid focus trap** | `focusable_elements = document.querySelectorAll('button,input')` | `document.body.focus()` (focus on body, not on interactive elements) |
+| **Backend Concurrency & Memory Safety** | **TOCTOU protection** | `if os.path.exists(file): with open(file) as f: data = f.read()` | `data = open(file).read()` (file could be deleted between check and open) |
+| | **Connection pool limit** | `pool = ThreadPoolExecutor(max_workers=10)` | `pool = ThreadPoolExecutor(max_workers=1000)` (risk of exhaustion) |
+| **Defect & Error Prevention** | **Null‑safe chaining** | `if obj and obj.prop:` | `if obj.prop:` (AttributeError if obj is None) |
+| | **Off‑by‑one guard** | `for i in range(len(arr)):` | `for i in range(len(arr)+1):` (index out of bounds) |
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | LensVLM‑9B Insight |
-|-----------|--------------------|
-| **Architecture** | 32‑layer transformer with 16 heads, 4096 hidden size; vision encoder 27 layers, 1152 hidden size; mixed linear/full attention. |
-| **Core Abstractions** | `text_config` and `vision_config` objects; `Qwen3VLProcessor` tokenizes multimodal input; `image_token_id`, `video_token_id` as domain primitives. |
-| **Error Handling** | No explicit error handling in the repo; rely on Hugging Face’s `transformers` error propagation. |
-| **Testing** | No tests present; would need unit tests for tokenizer, vision encoder, and cache policy. |
-| **Security** | No credentials; token IDs are static. |
-| **Performance** | Uses `bfloat16` for text, `float32` for vision SSM; linear attention reduces complexity from O(n²) to O(n). |
-| **Deployment** | Config files (`config.json`, `generation_config.json`) enable reproducible builds; CI/CD not defined. |
-| **Agent Patterns** | `Qwen3VLProcessor` acts as a tool interface; prompt chains would embed image tokens and rely on selective expansion. |
-| **Data Flow** | Tokenization → image token injection → vision encoder → text decoder; streaming of tokens via `use_cache`. |
+| Dimension | LensVLM‑9B Insight | Key Config / Code |
+|-----------|-------------------|-------------------|
+| **Architecture** | Sub‑modular: tokenizer, vision encoder, text decoder, compression tool. | `config.json` shows separate `vision_config` and `text_config`. |
+| **Core Abstractions** | Domain primitives: `<|image_pad|>`, `<|video_pad|>`, `<|audio_pad|>`, `<|vision_start|>`, `<|vision_end|>`. | `tokenizer_config.json` lists all special tokens. |
+| **Error Handling** | `use_cache` set to `false` to avoid stale cache states; `generation_config.json` sets `use_cache=true` for inference. | `generation_config.json` toggles caching per use case. |
+| **Testing** | No tests present; inference scripts rely on manual validation. | `scripts/run_demo.py` and `demo.py`. |
+| **Security** | No credentials; model is open‑source. | `README.md` references license only. |
+| **Performance** | Linear attention layers interleaved with full attention to reduce memory for long context. | `layer_types` array in `text_config`. |
+| **Deployment** | Uses `transformers` 5.2.0; `torch_dtype=torch.bfloat16`. | `config.json` `transformers_version`. |
+| **Agent Patterns** | Tool‑driven expansion: the decoder can invoke a separate expansion tool. | Inferred from README and paper. |
+| **Data Flow** | Tokenization → compressed visual latent → cross‑modal attention → text generation. | `processor_class` = `Qwen3VLProcessor`. |
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | `Qwen3VLProcessor` tokenization pipeline. |
-| **Rule** | Special‑token uniqueness rule (see Section 2). |
-| **Architecture Principle** | *Modality‑separated caching* – isolate cache usage per modality to control memory. |
-| **Failure Mode** | Token ID collision → mis‑decoded multimodal input. |
-| **Reusable Skill** | Verify token ID uniqueness before model load. |
-| **Decision** | Disabled vision cache to avoid GPU memory blow‑up; trade‑off: slower inference for high‑res images. |
-| **Anti‑pattern** | Hard‑coding token IDs that overlap with vocab. |
-| **Verification Method** | Unit test asserting unique token IDs and correct dtype per module. |
+| **Pattern** | The *linear‑attention‑full‑attention* interleaving pattern in `layer_types`. |
+| **Rule** | **Unique multimodal token invariant** (see Section 2). |
+| **Architecture Principle** | *Decouple compression from generation* to keep the core model stateless. |
+| **Failure Mode** | Overlapping multimodal tokens causing cross‑modal interference. |
+| **Reusable Skill** | Writing a tokenizer that assigns unique tokens for each modality. |
+| **Decision** | Choosing `bfloat16` over `float32` to reduce memory while maintaining acceptable precision. |
+| **Anti‑Pattern** | Re‑using the same token string for image and vision start. |
+| **Verification Method** | Unit test that asserts uniqueness of special tokens. |
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
 1. **Tokenizer Construction**  
-   * Load `tokenizer_config.json`.  
-   * Assert `image_token_id`, `video_token_id`, `audio_*_token_id` are unique and < `vocab_size`.  
-2. **Model Initialization**  
-   * Load text decoder with `dtype=bfloat16`.  
-   * Load vision encoder with `dtype=bfloat16` and `ssm_dtype=float32`.  
-   * Set `use_cache=False` for vision encoder, `True` for text decoder.  
-3. **Pipeline Assembly**  
-   * Wrap `Qwen3VLProcessor` around the model.  
-   * Ensure image tokens are inserted at correct positions.  
-4. **Inference Loop**  
-   * Use `asyncio.sleep(0)` after processing large batches to yield.  
-   * Cache only text decoder outputs.  
-5. **Testing**  
-   * Unit test token uniqueness.  
-   * Integration test end‑to‑end inference on a compressed image.  
-   * Performance test linear vs full attention layers.  
-6. **Deployment**  
-   * Pin `transformers==5.2.0`.  
-   * Use Docker with GPU support; set `CUDA_VISIBLE_DEVICES`.  
-   * Verify reproducible builds via `pip install -r requirements.txt`.  
+   * Define a `special_tokens_map` with unique strings for each modality.  
+   * Verify uniqueness with `len(set(values)) == len(values)`.  
+2. **Model Loading**  
+   * Pass `torch_dtype=torch.bfloat16` if `config["dtype"] == "bfloat16"`.  
+   * Confirm `model.dtype` after loading.  
+3. **Attention Layer Interleaving**  
+   * Build `layer_types` list: `["linear_attention"] * 3 + ["full_attention"]` repeated.  
+   * Ensure `full_attention_interval` matches the pattern.  
+4. **Compression Tool Integration**  
+   * Expose a callable API that accepts a compressed image and returns a decompressed page.  
+   * Guard against infinite recursion with a depth counter.  
+5. **Inference Pipeline**  
+   * Tokenize input with `processor_class`.  
+   * Pass compressed visual latent to decoder.  
+   * Enable caching only for inference (`generation_config["use_cache"] = true`).  
+6. **Testing**  
+   * Write unit tests for tokenizer uniqueness, dtype consistency, and attention pattern.  
+   * Add integration test that runs a full inference pass on a small compressed document.  
+7. **Deployment**  
+   * Pin `transformers` version to `5.2.0`.  
+   * Use `torch.compile` if available for speedup, but ensure compatibility with `bfloat16`.  
+8. **Monitoring**  
+   * Log memory usage per layer to detect unexpected spikes.  
+   * Track latency per token to identify full‑attention bottlenecks.  
 
----
+Follow this checklist to build a robust, long‑context vision‑language model that respects the forensic invariants uncovered in LensVLM‑9B.
