@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-R4RO",
-    "timestamp": "2026-10-13T18:33:11.652Z",
-    "repository": "autotrust/GEV-26B-Decide",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-mv70r4om",
-    "contentHash": "186595e4b9f81e2f10b6a054c6ce86f6b93c897dcf5df47f85a0e588de6a78ae",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-VJ91",
     "timestamp": "2026-10-13T18:36:37.045Z",
     "repository": "convaiinnovations/laya",
@@ -7490,6 +7475,21 @@
     "repository": "baidu/Unlimited-OCR",
     "learningId": "learn-huggingface-baidu-unlimited-ocr",
     "contentHash": "66fa5c7efd8c8bcfd779d05074270468fe5868f9abfd612cc345ee4453a2f9cc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-ZWTM",
+    "timestamp": "2026-10-16T02:11:15.562Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "fa45b4599eba2cfbc8b59dd4d7ffcdce966dbc6cedcc3086c86913e9eba3d6d6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
