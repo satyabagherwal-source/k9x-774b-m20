@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-UW91",
-    "timestamp": "2026-10-13T23:44:03.013Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv7buw5m",
-    "contentHash": "8a8dd43d6de663865c7c0e6054f0525ae3e735c41f032fab82cb68c350b2039d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-YS5E",
     "timestamp": "2026-10-13T23:47:04.322Z",
     "repository": "openai/gpt-oss-120b",
@@ -7492,6 +7477,21 @@
     "contentHash": "e2a67b29c71e96a5c0890a2f32a16b445ce90fc1a9943a47ad46ffb39d10c22c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-95YH",
+    "timestamp": "2026-10-16T06:58:23.465Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "997f425f3b79c30905038acfd53456bbe3ee8cec9327932197288e465ac8aaed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
