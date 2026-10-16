@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-TF9T",
-    "timestamp": "2026-10-14T04:50:50.129Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-hf-psrben-visionhope-mv7mtf6l",
-    "contentHash": "c32a5fb0b4bfa2dd88ceefb769edd7aeebfd8c9a169454fd6cb36a42cd46f6b1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-X2IR",
     "timestamp": "2026-10-14T04:53:40.227Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
     "contentHash": "dd4a96eb84bf1f8ffba978d386ba42e1d48e51ca94c2942e37829e984a258a1b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-813X",
+    "timestamp": "2026-10-16T13:01:25.533Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "a6cd729f37919454df0630bb8bd3a91c20599b330f62b78b412468ef3d7ea2c1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
