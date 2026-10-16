@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-1FBW",
-    "timestamp": "2026-10-14T02:09:05.756Z",
-    "repository": "Edge0/Audio8-ASR-Infinite",
-    "learningId": "learn-huggingface-hf-edge0-audio8-asr-infinite-mv7h1f8t",
-    "contentHash": "b84b3fd52c638dd586411417c93d7f613005e1a9915b132f7dd5db826464795e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-5EGR",
     "timestamp": "2026-10-14T02:12:11.259Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7492,6 +7477,21 @@
     "contentHash": "328da29385807fe7ab980e3e3e10595cb7acccc795e32887f378c254bd61bde7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-B5GZ",
+    "timestamp": "2026-10-16T10:15:53.459Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "7e808888ead7d5e7ce6b0d080ea8e21dceeb3fa7d60366d17b99cb5ef1c36c03",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

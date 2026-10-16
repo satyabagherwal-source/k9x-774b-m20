@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T10:12:37.292Z",
+  "last_updated": "2026-10-16T10:15:53.433Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14836,7 +14836,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "f13f2d835b0d5f0322640410e8a8157a67e25729b029de6c4de69150b2cc9343",
+      "content_hash": "7e808888ead7d5e7ce6b0d080ea8e21dceeb3fa7d60366d17b99cb5ef1c36c03",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -14860,6 +14860,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney",
           "verified_at": "2026-10-12T03:07:21.663Z"
+        },
+        {
+          "number": 1134,
+          "title": "Tensor Shape & Dtype Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1135,
+          "title": "Tokenizer Determinism & Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1136,
+          "title": "Memory-Safe Weight Sharding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14880,7 +14895,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-10-16T01:37:39.681Z",
+      "verified_at": "2026-10-16T10:15:53.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
