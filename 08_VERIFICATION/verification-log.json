@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-8FMT",
-    "timestamp": "2026-10-14T17:10:20.453Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv8d8fjf",
-    "contentHash": "e73adf022b311e797793b0cc4cec9d255c593ea0315b753e858f2e03336f7aef",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-CK2H",
     "timestamp": "2026-10-14T17:13:32.825Z",
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "fe528259f29440e1cec919fa8c36b8782b994b20b054aef492fb114b50d65a82",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-F9RX",
+    "timestamp": "2026-10-16T23:50:54.525Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "f01b72feaaca0b8d22a920d2749b3412efaba7d94e38ce9eedc3a477168daa9f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

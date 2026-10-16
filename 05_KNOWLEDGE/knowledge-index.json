@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T23:47:47.925Z",
+  "last_updated": "2026-10-16T23:50:54.510Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9342,7 +9342,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "a337ac153da264c05806d935cf18a23585c51a53d272c21d7128e7026281c8e8",
+      "content_hash": "f01b72feaaca0b8d22a920d2749b3412efaba7d94e38ce9eedc3a477168daa9f",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -9354,6 +9354,21 @@
         {
           "number": 1102,
           "title": "Temporal Grid Dimension Alignment Contract for Video Diffusion",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1266,
+          "title": "Adapter-Base Model Version Locking Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1267,
+          "title": "Multi-Component Inference Dependency Graph",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1268,
+          "title": "Identity-Motion Decoupling in V2V Pipelines",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -9375,7 +9390,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-10-16T15:39:24.041Z",
+      "verified_at": "2026-10-16T23:50:54.507Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
