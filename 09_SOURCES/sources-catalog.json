@@ -985,8 +985,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
     "license": "Open-Source",
-    "contentHash": "592167f3ad1c585364f79e495092711b74b23f933e452d3f36a2a0932a0ded7f",
-    "lastHarvestedAt": "2026-10-16T02:02:18.961Z",
+    "contentHash": "355d7ba6a5fc9ed3be0d8a9c8e48371532a9f4c7d51d6ed08380b5ddc39376eb",
+    "lastHarvestedAt": "2026-10-16T10:41:07.850Z",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1"
   },
   "hf-deepseek-ai-deepseek-v3": {
