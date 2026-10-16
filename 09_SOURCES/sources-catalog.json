@@ -805,8 +805,8 @@
     "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
     "license": "Open-Source",
-    "contentHash": "36ae5946d751b5b38f65243b6f4c968f07590f19735f7c1c0ea837e454fe726b",
-    "lastHarvestedAt": "2026-10-16T01:00:55.362Z",
+    "contentHash": "8b8f8aceb01e4e18fc29394f8382bcd1c771101997aff1cf6f00a7ab29b90352",
+    "lastHarvestedAt": "2026-10-16T09:22:15.017Z",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4"
   },
   "hf-meta-llama-meta-llama-3-8b": {
