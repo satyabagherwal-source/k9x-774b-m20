@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T12:26:44.535Z",
+  "last_updated": "2026-10-16T12:29:45.146Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14184,7 +14184,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "b90397da3abdf3854e2739131b22329eda98e69b13c8714e42fdae9683656a5e",
+      "content_hash": "e678e942b755acf8d4f0e1bf69b2d5c1d3faeb1fa1904251fa6bcda8f9eea62d",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -14247,7 +14247,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-16T03:48:00.497Z",
+      "verified_at": "2026-10-16T12:29:45.141Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

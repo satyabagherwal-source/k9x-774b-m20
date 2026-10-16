@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T12:26:44.560Z",
+  "last_updated": "2026-10-16T12:29:45.180Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1697,14 +1697,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "content_hash": "b90397da3abdf3854e2739131b22329eda98e69b13c8714e42fdae9683656a5e",
-      "verified_at": "2026-10-16T03:48:00.525Z",
+      "content_hash": "e678e942b755acf8d4f0e1bf69b2d5c1d3faeb1fa1904251fa6bcda8f9eea62d",
+      "verified_at": "2026-10-16T12:29:45.180Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T03:48:00.525Z"
+      "last_updated": "2026-10-16T12:29:45.180Z"
     },
     "BAAI/bge-large-en-v1.5": {
       "repository": "BAAI/bge-large-en-v1.5",

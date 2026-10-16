@@ -1728,3 +1728,4 @@
 | `CYCLE-20261016-ROTQ` | `2026-10-16T12:20:43.502Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1147, Rule 1148` | Yes (`44e84bba...`) |
 | `CYCLE-20261016-VNP6` | `2026-10-16T12:23:48.666Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`ed6aa754...`) |
 | `CYCLE-20261016-ZFF1` | `2026-10-16T12:26:44.557Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`b119707b...`) |
+| `CYCLE-20261016-3AS7` | `2026-10-16T12:29:45.175Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`e678e942...`) |
