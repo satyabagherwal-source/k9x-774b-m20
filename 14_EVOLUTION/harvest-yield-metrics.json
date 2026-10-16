@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T18:03:54.882Z",
-  "total_cycles_completed": 1800,
-  "total_learnings_persisted": 1800,
+  "last_updated": "2026-10-16T18:06:52.319Z",
+  "total_cycles_completed": 1801,
+  "total_learnings_persisted": 1801,
   "total_rules_promoted": 976,
   "history": [
-    {
-      "timestamp": "2026-10-16T06:05:21.944Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T06:08:24.581Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T18:03:54.882Z",
       "repository": "fishaudio/drama-3",
       "learningId": "learn-huggingface-fishaudio-drama-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T18:06:52.319Z",
+      "repository": "deepseek-ai/DeepSeek-V4-Pro",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
