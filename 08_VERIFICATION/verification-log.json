@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-FGLM",
-    "timestamp": "2026-10-13T19:48:05.962Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv73fgj9",
-    "contentHash": "9b9bade393b42dec81e3fd61329d2bcea9e067cb7a772150f5afca8e3cacd5d5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-J9DU",
     "timestamp": "2026-10-13T19:51:03.234Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-26B-A4B-it",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
     "contentHash": "c2ff6707a54973cac591052b5d33e5b65719a8fd1f0bd44eccf8323dc472a85f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-K3OQ",
+    "timestamp": "2026-10-16T03:22:56.810Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "5f72df1a72eb1e75e26131a821eab9464d2b609364ca5f029737bad28848e9a6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
