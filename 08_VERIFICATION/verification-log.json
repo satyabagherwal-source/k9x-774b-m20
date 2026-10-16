@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-N5FP",
-    "timestamp": "2026-10-14T02:53:58.981Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv7in5cl",
-    "contentHash": "1637aa46ce0492442e67b7aee31edefaab06db28a093f4de35bb625ae42b5e73",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-R7UE",
     "timestamp": "2026-10-14T02:57:08.726Z",
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-4B",
     "learningId": "learn-huggingface-qwen-qwen3-4b",
     "contentHash": "21474c79837269240c90abda3359a21698ff659b8b23a251f24b71a0daf6078e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-ZGU9",
+    "timestamp": "2026-10-16T11:02:47.554Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "9a6457fa32c8206793e3c138b140f6dc11f6df045e96e727ef1c85ae2a3536f9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

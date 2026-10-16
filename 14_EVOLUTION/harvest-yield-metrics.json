@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T10:58:41.336Z",
-  "total_cycles_completed": 1677,
-  "total_learnings_persisted": 1677,
+  "last_updated": "2026-10-16T11:02:47.558Z",
+  "total_cycles_completed": 1678,
+  "total_learnings_persisted": 1678,
   "total_rules_promoted": 923,
   "history": [
-    {
-      "timestamp": "2026-10-15T23:20:18.709Z",
-      "repository": "akhilaaa3/Jev-Omni",
-      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T23:23:40.213Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T10:58:41.336Z",
       "repository": "Qwen/Qwen3-4B",
       "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T11:02:47.558Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
