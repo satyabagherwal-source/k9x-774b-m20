@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-14AK",
-    "timestamp": "2026-10-14T00:16:52.988Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-hf-baidu-unlimited-ocr-mv7d148q",
-    "contentHash": "ba8ed34a2061d87403f1df9e9aa02b34cf3191a643cde476967de4f08f0891f4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-4XT1",
     "timestamp": "2026-10-14T00:19:51.205Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "d449abe169d62081b248d88195cc654568044ba8240c3c6fa32d820d0fcbc696",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-TBDI",
+    "timestamp": "2026-10-16T07:42:03.222Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+    "contentHash": "f649d5ee400da0e34eb1c1aae03e553381e544714ef5bb303adf6cc70b9f1fc6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
