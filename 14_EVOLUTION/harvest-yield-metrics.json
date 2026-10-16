@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T02:23:58.273Z",
-  "total_cycles_completed": 1537,
-  "total_learnings_persisted": 1537,
-  "total_rules_promoted": 829,
+  "last_updated": "2026-10-16T02:27:18.123Z",
+  "total_cycles_completed": 1538,
+  "total_learnings_persisted": 1538,
+  "total_rules_promoted": 831,
   "history": [
-    {
-      "timestamp": "2026-10-14T12:49:17.999Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv83wqb7",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T12:52:11.316Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -1403,6 +1396,13 @@
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T02:27:18.123Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

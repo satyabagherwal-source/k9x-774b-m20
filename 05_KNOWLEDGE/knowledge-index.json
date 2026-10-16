@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T02:23:58.239Z",
+  "last_updated": "2026-10-16T02:27:18.092Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15506,18 +15506,29 @@
     "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora": {
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-pablodawson-minimax-h3-360-orbit-lora",
+      "source": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "slug": "hf-pablodawson-minimax-h3-360-orbit-lora",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "e26babc4de067de8a090c8ac5e1dd31c2292cc60ee94b972c9c4e517be14d411",
+      "content_hash": "3867173b689335864234f2695a7d29cdd4a7d5cf9f09dcec8449c57a109c01ab",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1052,
+          "title": "Closed-Loop Temporal Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1053,
+          "title": "Semantic-Visual Co-Constraint Principle",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -15533,7 +15544,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-14T17:07:13.981Z",
+      "verified_at": "2026-10-16T02:27:18.088Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

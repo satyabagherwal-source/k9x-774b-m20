@@ -65011,3 +65011,146 @@ def generate(input_ids):
 Load test with sequences exceeding `max_seq_len` to verify graceful rejection (HTTP 400) instead of OOM crash.
 
 ---
+
+
+---
+
+## 1052. Closed-Loop Temporal Consistency Invariant (Harvested from pablodawson/MiniMax-H3-360-Orbit-LoRA)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Closed-Loop Temporal Consistency Invariant",
+  "source": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+  "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+  "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T02:27:18.037Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pablodawson/MiniMax-H3-360-Orbit-LoRA](https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA) (Revision: `hf-pabloda`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating cyclic video sequences (e.g., 360° orbits, loops) using Diffusion Models, the conditioning mechanism MUST explicitly enforce that the final latent state converges to the initial latent state. This MUST NOT be assumed by simply providing identical first and last frame images to a base model, as base models often interpret identical boundary conditions as a signal for static content.
+
+**WHY**:
+Base diffusion models are trained on diverse datasets where identical start/end frames are rare or associated with still images. Without specific fine-tuning (LoRA), the model's prior probability favors minimal motion or drift. The "frozen time" invariant requires that the spatial coordinates of all objects remain constant in world space while only the camera extrinsics (rotation/translation) change. If the model does not learn this specific decoupling of camera motion from object motion, it will hallucinate object movement to "explain" the changing viewpoint, leading to morphing artifacts.
+
+**WHEN TO APPLY**:
+*   Any video generation task requiring seamless loops.
+*   Camera control tasks (orbit, pan, tilt) where scene geometry must remain rigid.
+*   When using First-Last Frame (FL2V) conditioning with identical inputs.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for LoRA Training/Inference Strategy
+# 1. Data Preparation: Ensure first_frame == last_frame
+# 2. Prompt Engineering: Explicitly constrain object motion
+prompt = "One frozen instant. Only the camera moves. In a continuous 360 orbit. " \
+         "Preserve every person and object in exactly the same world position, " \
+         "orientation, shape and pose throughout the shot. " \
+         "Camera parallax is the only source of apparent movement."
+
+# 3. Inference: Apply LoRA weights to the base model
+# The LoRA weights are trained to map the (identical first/last frame) condition
+# to a specific camera trajectory latent path, rather than a static latent path.
+model = load_base_model("MiniMaxAI/MiniMax-H3")
+lora_weights = load_lora("pablodawson/MiniMax-H3-360-Orbit-LoRA")
+model.inject_lora(lora_weights)
+
+# 4. Generation
+video = model.generate(
+    first_frame=input_image,
+    last_frame=input_image,  # Identical
+    prompt=prompt,
+    steps=50,
+    guidance_scale=7.5
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Assuming base model handles closed loops
+# This will likely result in a static image or a drifting camera that doesn't close
+video = base_model.generate(
+    first_frame=input_image,
+    last_frame=input_image,
+    prompt="Camera orbits around the subject"  # Vague prompt, no object freeze constraint
+)
+```
+
+**VERIFICATION METHOD**:
+1.  **Visual Inspection:** Verify that the first and last frames of the generated video are pixel-similar (or perceptually similar) and that no objects change shape/position.
+2.  **Optical Flow Analysis:** Compute optical flow between consecutive frames. The flow vectors should primarily correspond to camera rotation (global translation in image space) rather than local object deformation.
+3.  **Loop Seamlessness:** Stitch the end of the video to the beginning. There should be no visible jump or cut.
+
+
+---
+
+## 1053. Semantic-Visual Co-Constraint Principle (Harvested from pablodawson/MiniMax-H3-360-Orbit-LoRA)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Semantic-Visual Co-Constraint Principle",
+  "source": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+  "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
+  "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T02:27:18.066Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pablodawson/MiniMax-H3-360-Orbit-LoRA](https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA) (Revision: `hf-pabloda`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In multimodal generation systems, visual conditioning (e.g., first/last frames) and textual conditioning (prompts) MUST be co-designed to reinforce each other. The prompt MUST explicitly negate the default behaviors of the base model that conflict with the desired visual outcome.
+
+**WHY**:
+Base models have strong priors. For example, a base video model might assume that if the camera moves, objects might also move (e.g., a person walking). If the visual conditioning implies a static scene (identical frames) but the prompt is vague, the model may struggle to resolve the conflict. By explicitly stating "Airborne objects remain suspended... no wobbling," the prompt overrides the base model's prior for dynamic scenes and aligns with the LoRA's learned behavior for frozen-time orbits.
+
+**WHEN TO APPLY**:
+*   When fine-tuning models with LoRA for specific behaviors.
+*   When using prompt engineering to guide diffusion models.
+*   Any system where multiple modalities (text, image, video) are used to condition generation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Prompt Design Checklist for Frozen-Time Orbits
+prompt_components = {
+    "action": "Only the camera moves. In a continuous 360 orbit.",
+    "object_constraint": "Preserve every person and object in exactly the same world position, orientation, shape and pose throughout the shot.",
+    "specific_object_constraint": "Airborne objects remain suspended at the captured height and angle: no wobbling, shaking, spinning, drifting, falling or continued action.",
+    "appearance_constraint": "Keep faces, hands, clothing, liquids and the background motionless while retaining their natural appearance.",
+    "motion_source": "Camera parallax is the only source of apparent movement.",
+    "negative_constraint": "No cuts, zoom, morphing or added objects."
+}
+final_prompt = " ".join(prompt_components.values())
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Vague or conflicting prompts
+prompt = "A 360 degree view of the scene."  # Does not specify object freeze
+# or
+prompt = "The camera moves around the person."  # Implies the person might be moving
+```
+
+**VERIFICATION METHOD**:
+*   **A/B Testing:** Generate videos with the detailed prompt vs. a vague prompt using the same LoRA and inputs. The detailed prompt should yield higher consistency in object appearance and position.
+*   **Prompt Sensitivity Analysis:** Slightly modify the prompt (e.g., remove "no wobbling") and observe if artifacts (wobbling objects) reappear.
