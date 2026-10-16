@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T13:29:00.083Z",
+  "last_updated": "2026-10-16T13:32:03.405Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10888,7 +10888,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "7e6ff5edade757cfd6596cef74eb5945d997a26dc1cc8a9f94633f49c0b27074",
+      "content_hash": "1161897bd3946e9a26d98ad58edb4347ac5cfa04fab7cd17b262c673fb20519b",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -10947,7 +10947,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-10-16T05:13:03.793Z",
+      "verified_at": "2026-10-16T13:32:03.399Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
