@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T08:22:42.042Z",
+  "last_updated": "2026-10-16T08:26:09.601Z",
   "total_verified_learnings": 185,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11216,7 +11216,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "a79211cc6c9698f24855a44f0580eee5905e7778291fd02d5a204f56d8420590",
+      "content_hash": "8463454a0b55e2c511fbeee201448a384bc591e9eb95d6476508697c8a7b1b39",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -11276,6 +11276,21 @@
           "number": 1039,
           "title": "Per‑Question Softmax Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1117,
+          "title": "**Token‑Boundary Integrity Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1118,
+          "title": "**Joint‑Head Attention Mask Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1119,
+          "title": "**Inference‑Mode Contextualization Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11296,7 +11311,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-16T00:23:26.326Z",
+      "verified_at": "2026-10-16T08:26:09.596Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
