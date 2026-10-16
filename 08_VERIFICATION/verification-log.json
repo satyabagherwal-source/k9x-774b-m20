@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-AF05",
-    "timestamp": "2026-10-14T03:40:04.085Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv7kaevq",
-    "contentHash": "20a0c8131631101ab0fb99d39c757f629f38e14116cb92847837dc83a526f754",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-DXC5",
     "timestamp": "2026-10-14T03:42:47.813Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7490,6 +7475,21 @@
     "repository": "FacebookAI/xlm-roberta-base",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
     "contentHash": "869466abf5e186161921ee06de4798a521b46d7be565d62449cf5566ac3089fc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-NFSN",
+    "timestamp": "2026-10-16T11:49:25.559Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "303bbed661b47b55b0c0baee600d9d665123bd33198b057321036427149669a6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
