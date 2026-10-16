@@ -1720,3 +1720,4 @@
 | `CYCLE-20261016-VF53` | `2026-10-16T11:55:37.959Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`b31dba4a...`) |
 | `CYCLE-20261016-ZFWL` | `2026-10-16T11:58:45.573Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`56d59b7a...`) |
 | `CYCLE-20261016-3GU6` | `2026-10-16T12:01:53.406Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`ad3096a1...`) |
+| `CYCLE-20261016-778K` | `2026-10-16T12:04:47.588Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`56364072...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T12:01:53.410Z",
-  "total_cycles_completed": 1697,
-  "total_learnings_persisted": 1697,
+  "last_updated": "2026-10-16T12:04:47.591Z",
+  "total_cycles_completed": 1698,
+  "total_learnings_persisted": 1698,
   "total_rules_promoted": 927,
   "history": [
-    {
-      "timestamp": "2026-10-16T00:23:26.369Z",
-      "repository": "Cloudflare/clef",
-      "learningId": "learn-huggingface-cloudflare-clef",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T00:26:41.402Z",
       "repository": "Cloudflare/clef-flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T12:01:53.410Z",
       "repository": "google/gemma-4-26B-A4B-it",
       "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T12:04:47.591Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
