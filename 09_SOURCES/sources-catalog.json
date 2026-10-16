@@ -205,8 +205,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-27B",
     "sourceVersion": "hf-qwen-qwen3.8-27b",
     "license": "Open-Source",
-    "contentHash": "50be5ac0a7afd2301a3d85cba8b1b2940f6793e375db78b2a9b6564524e35fef",
-    "lastHarvestedAt": "2026-10-16T05:09:51.408Z",
+    "contentHash": "9e9d7d1a731b5877a5b5575c590fc8fd90f250411ec492b66c330827a05afa61",
+    "lastHarvestedAt": "2026-10-16T13:29:00.108Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-27b"
   },
   "hf-black-forest-labs-flux.1-dev": {

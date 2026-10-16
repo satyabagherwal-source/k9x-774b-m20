@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-P5W4",
-    "timestamp": "2026-10-14T05:15:30.964Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv7np5t3",
-    "contentHash": "3a8963c2b36698b6d81e08458c1294faf899c7aa20f7e05ea0f910b0dc1f989b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-TA92",
     "timestamp": "2026-10-14T05:18:43.238Z",
     "repository": "Cloudflare/clef",
@@ -7492,6 +7477,21 @@
     "contentHash": "5998e10d8acfbf9c9e46731cc4c4bb47bebd15daa9cb56309e0b59502ae97d01",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-7HSA",
+    "timestamp": "2026-10-16T13:29:00.106Z",
+    "repository": "Qwen/Qwen3.8-27B",
+    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+    "contentHash": "9e9d7d1a731b5877a5b5575c590fc8fd90f250411ec492b66c330827a05afa61",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
