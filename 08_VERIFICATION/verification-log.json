@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-GFYR",
-    "timestamp": "2026-10-14T12:36:37.971Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv83gfv7",
-    "contentHash": "843db21d99705f0f11bf2ddcb7290fcb7f71d9849c493d011fb633e60103cc60",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-KI58",
     "timestamp": "2026-10-14T12:39:47.420Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
     "contentHash": "84c499e7a4ad6f1492a1680b8260ea1fca5e0bd9d558e7ebb73c5687c1c8923e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-6PC0",
+    "timestamp": "2026-10-16T20:00:17.856Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "215a575b55cb6feb16191ced565a875edd7cf8902b8b0ad34c70d8a13875a30e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
