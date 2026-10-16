@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-NBEG",
-    "timestamp": "2026-10-13T18:30:13.624Z",
-    "repository": "autotrust/JEV-27B-VL",
-    "learningId": "learn-huggingface-hf-autotrust-jev-27b-vl-mv70nbai",
-    "contentHash": "8adad22dbd2ffb77b5ca37c5e3cbe5504c315e66a3d42e2c0f99deab2d93f994",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-R4RO",
     "timestamp": "2026-10-13T18:33:11.652Z",
     "repository": "autotrust/GEV-26B-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V3",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
     "contentHash": "034fb04cf8cf6a1b9def2e28c784cbf4d653fd61b53ce9356f5439408cf0504f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-W3QH",
+    "timestamp": "2026-10-16T02:08:17.897Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "66fa5c7efd8c8bcfd779d05074270468fe5868f9abfd612cc345ee4453a2f9cc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
