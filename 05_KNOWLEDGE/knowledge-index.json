@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T05:58:59.719Z",
+  "last_updated": "2026-10-16T06:02:20.118Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13980,7 +13980,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "150b25f9c21a24917ba1a6d429463788097e949b2403268840dab6ddf9507034",
+      "content_hash": "b2fbcb41981fd33c3e428af74593ca75874ddb7e08d76ab39beaf9f4e120f00f",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -13997,6 +13997,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-lightricks-ltx-2-5-mv3pqmef",
           "verified_at": "2026-10-11T11:01:33.594Z"
+        },
+        {
+          "number": 1082,
+          "title": "Model Weight Serialization Integrity & Memory Safety",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1083,
+          "title": "Inference Loop Termination & Denoising Step Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1084,
+          "title": "Hugging Face Hub Repository Metadata Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14017,7 +14032,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-15T22:30:38.041Z",
+      "verified_at": "2026-10-16T06:02:20.112Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-VE4I",
-    "timestamp": "2026-10-13T22:48:26.946Z",
-    "repository": "google/electra-base-discriminator",
-    "learningId": "learn-huggingface-hf-google-electra-base-discriminator-mv79vdzs",
-    "contentHash": "951c8f1657c82803ba2a4f55943773bde653966e9ec79e0a5837565e17b001f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-YYMJ",
     "timestamp": "2026-10-13T22:51:13.483Z",
     "repository": "BAAI/bge-m3",
@@ -7492,6 +7477,21 @@
     "contentHash": "9e5a91fe6be71728c8ce5758567c019bc650914a6b44e4ac8cf5ecb658c91f4b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-92SX",
+    "timestamp": "2026-10-16T06:02:20.145Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "b2fbcb41981fd33c3e428af74593ca75874ddb7e08d76ab39beaf9f4e120f00f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
