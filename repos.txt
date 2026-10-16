@@ -3606,7 +3606,71 @@ https://github.com/tt-a1i/archify
 
 # --- Automatically Discovered by AI Scout Engine [2026-10-04T13:09:38.583Z] ---
 # [AI-AGENTS] ant-research/AntOmniEvo (667 score) - An auto-evolution framework that optimizes anything — your 7×24 team of algorith
-https://github.com/ant-research/AntOmniEvo
+# HUMAN AUTHORIZATION — PHASE 4 MODEL B IMPLEMENTATION
+
+Repository: `C:\AI-Builder-Brain`
+
+I authorize a controlled, reversible implementation of Model B knowledge-index reconciliation.
+
+## Mandatory safety conditions
+
+1. Before writing anything, capture and verify a backup of `05_KNOWLEDGE/knowledge-index.json`.
+2. Record the current Git HEAD and working-tree status.
+3. Preserve all existing user modifications. Never use reset, checkout, clean, or other destructive Git operations.
+4. Do not modify child-project repositories.
+5. Do not commit or push changes.
+6. Implement only the four previously identified files:
+   - `05_KNOWLEDGE/knowledge-index.json`
+   - `04_WORKFLOWS/factory-engine/brain-learning-gateway.mjs`
+   - `04_WORKFLOWS/factory-engine/retrieval-engine.mjs`
+   - `.project-brain/cache/retrieval-index.json`
+
+## Implementation invariants
+
+- 1,325 dossier records and 414 canonical rules.
+- 4,306 aliases derived from existing index keys.
+- Preserve all promoted-rule citations and historical provenance.
+- Keep the verified dossier baseline at 133 until `colinhacks-zod` passes its actual hash and read-back verification barrier.
+- Never silently upgrade missing, unknown, or conflicting verification status.
+- Make duplicate submissions idempotent.
+- Update existing canonical records in place when appropriate.
+- Resolve historical aliases without duplicate retrieval documents.
+- Use atomic index replacement and a tested rollback path.
+
+## Required execution sequence
+
+A. Create and validate the backup.
+
+B. Implement the migration in a controlled manner.
+
+C. Run all relevant existing tests.
+
+D. Run production integration tests for:
+- Canonical and historical ID retrieval.
+- Gateway write and read-back verification.
+- Duplicate submission idempotency.
+- In-place content update.
+- Rule citation and provenance preservation.
+- `colinhacks-zod` hash re-certification.
+- Failure-triggered rollback.
+
+E. Verify the final index counts, alias integrity, retrieval behavior, and Git working-tree status.
+
+## Stop conditions
+
+If any invariant fails, stop further migration, execute the verified rollback procedure, and report the exact failure. Do not claim success based on isolated harness tests alone.
+
+## Final report
+
+Report:
+- Files changed and why.
+- Tests actually executed and their results.
+- Final canonical-item, alias, and verified-learning counts.
+- Whether historical IDs and promoted-rule citations resolve correctly.
+- Backup and rollback verification.
+- Remaining blockers.
+
+Do not commit or push. Stop after reporting the results.https://github.com/ant-research/AntOmniEvo
 
 # --- Automatically Discovered by AI Scout Engine [2026-10-04T21:14:03.580Z] ---
 # [MOBILE-CROSS-PLATFORM] sweetpad-dev/sweetpad (1132 score) - xcodebuild for humans and agents: build, run, debug, and test iOS, macOS, tvOS, 
