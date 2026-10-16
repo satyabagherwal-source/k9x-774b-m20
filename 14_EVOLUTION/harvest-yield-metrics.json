@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T05:31:19.393Z",
-  "total_cycles_completed": 1590,
-  "total_learnings_persisted": 1590,
-  "total_rules_promoted": 851,
+  "last_updated": "2026-10-16T05:34:24.317Z",
+  "total_cycles_completed": 1591,
+  "total_learnings_persisted": 1591,
+  "total_rules_promoted": 854,
   "history": [
-    {
-      "timestamp": "2026-10-14T16:21:12.923Z",
-      "repository": "nguyenphutrong/quotio",
-      "learningId": "learn-github-nguyenphutrong-quotio-mv8bh96o",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T16:36:22.942Z",
       "repository": "pathwaycom/serviette",
@@ -1403,6 +1396,13 @@
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:34:24.317Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

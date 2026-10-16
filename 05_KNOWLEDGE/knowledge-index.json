@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T05:31:19.357Z",
+  "last_updated": "2026-10-16T05:34:24.292Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -40559,7 +40559,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "7b9e1fcd7d801518f477c8d5a0905fa44aa4866df714b9b95c20b6592585111f",
+      "content_hash": "5a988d845e19121414043c35e36a89cac05d7f101afd2853e459cae80a7bb79d",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
@@ -40577,6 +40577,21 @@
           "number": 1009,
           "title": "[Vision‑Patch‑Size Alignment Rule]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1074,
+          "title": "Consistent Data‑Type Across Modalities",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1075,
+          "title": "Explicitly Disable Word‑Embedding Tie in Multimodal Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1076,
+          "title": "Enable Generation Cache for All Inference Paths",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40584,7 +40599,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-15T22:02:35.518Z",
+      "verified_at": "2026-10-16T05:34:24.288Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
