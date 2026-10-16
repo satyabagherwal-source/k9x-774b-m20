@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T03:13:45.302Z",
+  "last_updated": "2026-10-16T03:17:01.752Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1802,14 +1802,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-      "content_hash": "32bbb0a2340d314460e76d54bbd285c555fdc785528fac03531a9e354804bbce",
-      "verified_at": "2026-10-15T20:06:20.519Z",
+      "content_hash": "4f1d6d32054fb5bd15ef923fd629531c5b8baf79ab622065e45541a81370bcd4",
+      "verified_at": "2026-10-16T03:17:01.752Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-15T20:06:20.519Z"
+      "last_updated": "2026-10-16T03:17:01.752Z"
     },
     "Qwen/Qwen-Image-2.1-Turbo": {
       "repository": "Qwen/Qwen-Image-2.1-Turbo",

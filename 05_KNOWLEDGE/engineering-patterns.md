@@ -65238,3 +65238,117 @@ def analyze_repository(repo_data: dict):
 *   Unit test: `assert validate_repository_data({}) == False`
 *   Unit test: `assert validate_repository_data({"source_code_snippets": [], "manifests": "N/A"}) == False`
 *   Unit test: `assert validate_repository_data({"source_code_snippets": ["code"], "manifests": "config.json", "directory_tree": ["file.py"]}) == True`
+
+
+---
+
+## 1055. Modular Vision Add-on Decoupling (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Modular Vision Add-on Decoupling",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T03:17:01.651Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In multimodal LLM deployments, the vision encoder/projector MUST be distributed as a separate artifact (e.g., `mmproj-*.gguf`) from the core language model weights. The runtime MUST support dynamic loading of this add-on without requiring a full model re-download or re-initialization of the core LLM.
+
+**WHY**:
+Coupling vision weights to the core LLM forces users who only need text generation to download and load unnecessary VRAM/RAM for vision components. Decoupling allows for "just-in-time" capability expansion, reducing initial deployment friction and memory footprint for text-only use cases.
+
+**WHEN TO APPLY**:
+Any multimodal LLM system where vision is an optional feature rather than a core requirement.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Core model only (Text)
+llama-server -m core-27b.gguf -ngl 99
+
+# Add vision dynamically
+llama-server -m core-27b.gguf --mmproj vision-projector.gguf -ngl 99
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# ANTI-PATTERN: Monolithic multimodal model
+# Forces 10GB+ download for text-only users
+llama-server -m monolithic-vision-text-27b.gguf
+```
+
+**VERIFICATION METHOD**:
+Verify that the core model file size is significantly smaller than the combined size. Test that the server starts successfully with only the core model and that adding `--mmproj` enables image input without crashing.
+
+
+---
+
+## 1056. Thinking Mode as a Runtime Toggle (Harvested from ConwayResearch/Underdog-Saluki-27B-1.0)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Thinking Mode as a Runtime Toggle",
+  "source": "ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
+  "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T03:17:01.687Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ConwayResearch/Underdog-Saluki-27B-1.0](https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0) (Revision: `hf-conwayr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For models with internal "thinking" or "reasoning" chains, the ability to enable/disable this mode MUST be exposed as a runtime parameter (e.g., via chat template kwargs) rather than being hardcoded in the model weights or requiring a separate model variant.
+
+**WHY**:
+Hardcoding thinking mode forces users to choose between "slow but accurate" and "fast but potentially less accurate" at deployment time. A runtime toggle allows dynamic adaptation: use thinking for complex multi-step agent tasks, and disable it for simple, high-throughput tool calls to reduce latency and token cost.
+
+**WHEN TO APPLY**:
+Any LLM with a distinct reasoning phase (e.g., Qwen3, DeepSeek-R1, o1-style models).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+// Request with thinking enabled (default)
+{
+  "messages": [{"role": "user", "content": "Solve this..."}]
+}
+
+// Request with thinking disabled for speed
+{
+  "messages": [{"role": "user", "content": "Call the weather tool"}],
+  "chat_template_kwargs": {"enable_thinking": false}
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Separate models for thinking vs. non-thinking
+# Doubles storage and deployment complexity
+model_thinking = load("model_thinking.gguf")
+model_fast = load("model_fast.gguf")
+```
+
+**VERIFICATION METHOD**:
+Send identical prompts with and without `enable_thinking: false`. Assert that the response with thinking disabled is shorter in token count and lower in latency, while maintaining functional correctness for simple tasks.

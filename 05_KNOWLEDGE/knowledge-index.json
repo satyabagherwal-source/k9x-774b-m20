@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T03:13:45.270Z",
+  "last_updated": "2026-10-16T03:17:01.720Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11862,14 +11862,14 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "32bbb0a2340d314460e76d54bbd285c555fdc785528fac03531a9e354804bbce",
+      "content_hash": "4f1d6d32054fb5bd15ef923fd629531c5b8baf79ab622065e45541a81370bcd4",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "promoted_rules": [
         {
           "number": 959,
-          "title": "Quantization-Aware Capability Preservation (The \"Tool-Call Integrity\" Rule)",
-          "status": "PROMOTED_AND_VERIFIED"
+          "title": "Quantization-Aware Capability Preservation",
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 960,
@@ -11879,6 +11879,16 @@
         {
           "number": 961,
           "title": "Thinking Mode as a Runtime State (The \"Per-Request Toggle\" Rule)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1055,
+          "title": "Modular Vision Add-on Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1056,
+          "title": "Thinking Mode as a Runtime Toggle",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11898,7 +11908,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-10-15T20:06:20.475Z",
+      "verified_at": "2026-10-16T03:17:01.714Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-6RMS",
-    "timestamp": "2026-10-13T19:41:20.356Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv736rge",
-    "contentHash": "77316d135f2db652b37b856f4310c64d9fb123ba2cf5b745a8e4c2a036c5d03c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-AK3F",
     "timestamp": "2026-10-13T19:44:17.211Z",
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -7492,6 +7477,21 @@
     "contentHash": "db196de361670b3af2f7b905af11cdd785417cedaff3cf948f56b1108d6fab98",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-CHPU",
+    "timestamp": "2026-10-16T03:17:01.746Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "4f1d6d32054fb5bd15ef923fd629531c5b8baf79ab622065e45541a81370bcd4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
