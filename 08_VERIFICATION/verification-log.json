@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-WE6I",
-    "timestamp": "2026-10-14T00:41:12.138Z",
-    "repository": "NaiveAI/Naive-N0.5-Flash",
-    "learningId": "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv7dwe3b",
-    "contentHash": "c848be7c4b86138e8a76234c1862e1f6105fd3897e25ba205ed99195e77c2790",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-0GNT",
     "timestamp": "2026-10-14T00:44:21.977Z",
     "repository": "openai/clip-vit-base-patch32",
@@ -7490,6 +7475,21 @@
     "repository": "google/embeddinggemma-2",
     "learningId": "learn-huggingface-google-embeddinggemma-2",
     "contentHash": "faa4d88711cf611e6ecd883426d8e8a93e03ba8c34f8e391092e3fd580acff53",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-9L7H",
+    "timestamp": "2026-10-16T08:22:42.077Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "d69221bd2fa02647a28e21744903911e63f3512e0403ccf32beb63ad63575079",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
