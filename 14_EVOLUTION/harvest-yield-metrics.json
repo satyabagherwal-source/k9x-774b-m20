@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T05:55:54.873Z",
-  "total_cycles_completed": 1598,
-  "total_learnings_persisted": 1598,
+  "last_updated": "2026-10-16T05:58:59.757Z",
+  "total_cycles_completed": 1599,
+  "total_learnings_persisted": 1599,
   "total_rules_promoted": 860,
   "history": [
-    {
-      "timestamp": "2026-10-14T17:07:14.032Z",
-      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv8d4fpr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T17:10:20.458Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T05:55:54.873Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
       "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:58:59.757Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
