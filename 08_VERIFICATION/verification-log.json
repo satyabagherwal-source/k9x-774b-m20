@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-YWTC",
-    "timestamp": "2026-10-14T12:23:00.000Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv82ywpw",
-    "contentHash": "3b755b08fccc0f33c6f7bcb2aca931f294bb7bf9fe35a5d7277bb1b3869d5428",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-33WV",
     "timestamp": "2026-10-14T12:26:15.823Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "contentHash": "357189f388462a3db2c3cf01fae529198a4470dd3e33ee9ccc144649fd8690b9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-M68S",
+    "timestamp": "2026-10-16T19:44:19.996Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "0ffc9970936b76ec383dc1be5da461853f7dfdd88291ed8adabaf196a03d1b29",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

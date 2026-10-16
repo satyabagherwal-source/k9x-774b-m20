@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T19:41:11.412Z",
+  "last_updated": "2026-10-16T19:44:19.966Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -41010,7 +41010,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "b6397efffccc67cb3822d6cdcccdbf50142ecfc126d4aaa1510fa154df7209c9",
+      "content_hash": "0ffc9970936b76ec383dc1be5da461853f7dfdd88291ed8adabaf196a03d1b29",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -41040,7 +41040,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T11:42:42.278Z",
+      "verified_at": "2026-10-16T19:44:19.959Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

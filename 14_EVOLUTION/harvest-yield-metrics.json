@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T19:41:11.450Z",
-  "total_cycles_completed": 1829,
-  "total_learnings_persisted": 1829,
+  "last_updated": "2026-10-16T19:44:19.999Z",
+  "total_cycles_completed": 1830,
+  "total_learnings_persisted": 1830,
   "total_rules_promoted": 987,
   "history": [
-    {
-      "timestamp": "2026-10-16T08:03:29.083Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T08:06:30.269Z",
       "repository": "facebook/sam3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T19:41:11.450Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T19:44:19.999Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
