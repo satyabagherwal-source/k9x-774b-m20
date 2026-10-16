@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T05:09:51.371Z",
+  "last_updated": "2026-10-16T05:13:03.797Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10821,7 +10821,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "969f0329b9a9d8003c986eca4270d76212465c41f34dbaa3f26002d0a0753dee",
+      "content_hash": "7e6ff5edade757cfd6596cef74eb5945d997a26dc1cc8a9f94633f49c0b27074",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -10845,6 +10845,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m",
           "verified_at": "2026-10-11T23:35:54.901Z"
+        },
+        {
+          "number": 1071,
+          "title": "Model Weight Integrity & Deterministic Loading Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1072,
+          "title": "Memory-Bounded Inference Pipeline Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1073,
+          "title": "Deterministic Scheduler & Seed Propagation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -10865,7 +10880,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-10-15T21:40:58.436Z",
+      "verified_at": "2026-10-16T05:13:03.793Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
