@@ -1295,8 +1295,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
     "license": "Open-Source",
-    "contentHash": "fb10d16dc3e9aa6c75d1cc9b86d51643b1acf5b0e3fd5167e5e3176048c0760d",
-    "lastHarvestedAt": "2026-10-16T14:51:09.085Z",
+    "contentHash": "b0d829a11a2234664f99b481663d83720203c67f66a652ffccbf03827e8f91af",
+    "lastHarvestedAt": "2026-10-16T23:08:32.417Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized"
   },
   "iliyami-macsai": {
