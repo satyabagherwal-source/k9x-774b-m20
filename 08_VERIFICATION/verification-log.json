@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-3MXO",
-    "timestamp": "2026-10-13T16:50:56.604Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv6x3mum",
-    "contentHash": "00a47ea2f1fbfdc69dbc751bc21c3b684107858fb1a93ca95cbedb10c865a1b8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-7KPT",
     "timestamp": "2026-10-13T16:54:00.353Z",
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -7490,6 +7475,21 @@
     "repository": "google-t5/t5-small",
     "learningId": "learn-huggingface-google-t5-t5-small",
     "contentHash": "3e3fbb3412d5f014d5e35ad884db3e850a3d2bf0fe8371965e7d00a5da7fccdd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-15RQ",
+    "timestamp": "2026-10-16T00:48:14.966Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3",
+    "contentHash": "37a8ac846172259e40b4032fbbd4625128aec78b2d88eb70dc7a72c6e73986e2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
