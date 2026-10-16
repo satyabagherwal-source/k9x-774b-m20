@@ -1633,3 +1633,4 @@
 | `CYCLE-20261016-5303` | `2026-10-16T06:27:13.395Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1085, Rule 1086, Rule 1087` | Yes (`e726adb4...`) |
 | `CYCLE-20261016-94IS` | `2026-10-16T06:30:21.988Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1088, Rule 1089, Rule 633` | Yes (`0768daad...`) |
 | `CYCLE-20261016-CZK3` | `2026-10-16T06:33:22.179Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`7002a938...`) |
+| `CYCLE-20261016-H89M` | `2026-10-16T06:36:40.090Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1090, Rule 1091` | Yes (`5f8ced8c...`) |

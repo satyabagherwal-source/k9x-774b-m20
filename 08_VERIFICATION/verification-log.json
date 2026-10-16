@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-2M16",
-    "timestamp": "2026-10-13T23:22:03.402Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hf-hexgrad-kokoro-82m-mv7b2lz2",
-    "contentHash": "f0c1642cd87448147b695a12ccf56b5f8a48d13eaca90b24b500c8e5a9e46134",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-6J2A",
     "timestamp": "2026-10-13T23:25:06.178Z",
     "repository": "openai/whisper-large-v3",
@@ -7492,6 +7477,21 @@
     "contentHash": "7002a9385691d55416f04118f7eab9888c2e2aacb52b475ceec1da6d30e69153",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-H89M",
+    "timestamp": "2026-10-16T06:36:40.090Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "5f8ced8c43a6ceabad573bd41387967e8d4960a725b391106c3fbdf933b3621f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

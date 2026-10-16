@@ -435,8 +435,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "a8235362dfe63df1d7b447525db0272879efc02ff64dd41306278d5b8540aaf8",
-    "lastHarvestedAt": "2026-10-15T23:04:59.183Z",
+    "contentHash": "5f8ced8c43a6ceabad573bd41387967e8d4960a725b391106c3fbdf933b3621f",
+    "lastHarvestedAt": "2026-10-16T06:36:40.092Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf"
   },
   "hf-orcarouter-orcasaq-2-27b": {
