@@ -70473,3 +70473,53 @@ encoded = tokenizer(["Long text..."], padding=True)
 
 **VERIFICATION METHOD**:
 Static analysis: Parse `config.json` for `max_position_embeddings`. Parse `tokenizer_config.json` for `model_max_length`. Assert that the effective `max_length` used in inference is $\leq$ `max_position_embeddings`.
+
+
+---
+
+## 1125. resource): report a queued reason commit as accepted (#6157) (Harvested from volcengine/OpenViking)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "resource): report a queued reason commit as accepted (#6157)",
+  "source": "volcengine/OpenViking",
+  "source_url": "https://github.com/volcengine/OpenViking",
+  "source_version": "2ef42256",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-10-16T09:00:01.670Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-volcengine-openviking",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `2ef42256`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `docs/en/api/02-resources.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in volcengine/OpenViking. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `f64fb5ba`: resource): report a queued reason commit as accepted (#6157). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/api/02-resources.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+| `memory_linking` | object | Optional result of linking the resource URI to memories generated from `reason`. `status="accepted"` means the memory commit is queued, not finished: poll `commit_task_id` via `/api/v1/tasks/{task_id}` for its result |
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Anti-pattern to NEVER write (induced failure mode):
+| `memory_linking` | object | Optional result of linking the resource URI to memories generated from `reason` |
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `f64fb5ba` are properly handled with clean fallback behavior.

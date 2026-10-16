@@ -17812,5 +17812,35 @@
     "qualityScore": 3524,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-16T07:46:26.213Z"
+  },
+  {
+    "name": "sill",
+    "fullName": "Saffsanity/sill",
+    "url": "https://github.com/Saffsanity/sill",
+    "type": "github",
+    "domain": "mobile-cross-platform",
+    "description": "Any window from your Mac, live on your iPhone or iPad. Touch, Apple Pencil, trackpad and keys. Free, open source, no servers.",
+    "stars": 2098,
+    "forks": 98,
+    "openIssues": 59,
+    "language": "Swift",
+    "qualityScore": 1346,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-16T08:57:51.303Z"
+  },
+  {
+    "name": "OpenViking",
+    "fullName": "volcengine/OpenViking",
+    "url": "https://github.com/volcengine/OpenViking",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG and Skills.",
+    "stars": 40064,
+    "forks": 3187,
+    "openIssues": 931,
+    "language": "Python",
+    "qualityScore": 21438,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-16T08:58:57.163Z"
   }
 ]

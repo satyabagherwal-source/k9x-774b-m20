@@ -1598,5 +1598,15 @@
     "contentHash": "33740bb9715dd7f6cb433980ec341c2dbdfa1a38f7947f7270afe32af2d8e740",
     "lastHarvestedAt": "2026-10-16T07:50:49.648Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
+  },
+  "volcengine-openviking": {
+    "repository": "volcengine/OpenViking",
+    "platform": "github",
+    "sourceUrl": "https://github.com/volcengine/OpenViking",
+    "sourceVersion": "2ef42256",
+    "license": "AGPL-3.0",
+    "contentHash": "236bf6fadf0eb7b638a4e67fcf39c2dbe1c143a5d03b6410d3f61dac9b7b74bc",
+    "lastHarvestedAt": "2026-10-16T09:00:01.729Z",
+    "learningId": "learn-github-volcengine-openviking"
   }
 }

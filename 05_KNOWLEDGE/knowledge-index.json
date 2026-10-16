@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T08:53:56.947Z",
-  "total_verified_learnings": 185,
+  "last_updated": "2026-10-16T09:00:01.701Z",
+  "total_verified_learnings": 186,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -41239,6 +41239,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-16T07:50:49.613Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-volcengine-openviking": {
+      "learning_id": "learn-github-volcengine-openviking",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "volcengine/OpenViking",
+      "repository": "volcengine/OpenViking",
+      "slug": "volcengine-openviking",
+      "platform": "github",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "2ef42256",
+      "content_hash": "236bf6fadf0eb7b638a4e67fcf39c2dbe1c143a5d03b6410d3f61dac9b7b74bc",
+      "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1125,
+          "title": "resource): report a queued reason commit as accepted (#6157)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-16T09:00:01.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

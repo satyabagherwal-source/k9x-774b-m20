@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-5BR2",
-    "timestamp": "2026-10-14T01:16:08.510Z",
-    "repository": "google/gemma-4-26B-A4B-it",
-    "learningId": "learn-huggingface-hf-google-gemma-4-26b-a4b-it-mv7f5boy",
-    "contentHash": "beedd2b01bb13f91c44f531ea7de599c1d97a379e29a1072332027107cfa0017",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-95DR",
     "timestamp": "2026-10-14T01:19:06.879Z",
     "repository": "intfloat/multilingual-e5-small",
@@ -7492,6 +7477,21 @@
     "contentHash": "e777a4d848b0a1330a1beb954961ac64d5b5c4cc6e4275aecebf238018113d78",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-LLBZ",
+    "timestamp": "2026-10-16T09:00:01.727Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "236bf6fadf0eb7b638a4e67fcf39c2dbe1c143a5d03b6410d3f61dac9b7b74bc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

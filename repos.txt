@@ -4054,3 +4054,9 @@ https://github.com/DayuanJiang/next-ai-draw-io
 # --- Automatically Discovered by AI Scout Engine [2026-10-16T07:47:01.698Z] ---
 # [CYBERSECURITY-DEFENSES] aleo-labs-protocol/snarkOS (3524 score) - A Decentralized Operating System for ZK Applications
 https://github.com/aleo-labs-protocol/snarkOS
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-16T08:59:14.005Z] ---
+# [MOBILE-CROSS-PLATFORM] Saffsanity/sill (1346 score) - Any window from your Mac, live on your iPhone or iPad. Touch, Apple Pencil, trac
+https://github.com/Saffsanity/sill
+# [DATABASE-STORAGE-ENGINES] volcengine/OpenViking (21438 score) - Self-evolving Context Database for AI Agents. Unify Agent Memory, Knowledge RAG 
+https://github.com/volcengine/OpenViking
