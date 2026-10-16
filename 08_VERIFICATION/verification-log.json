@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-L7ET",
-    "timestamp": "2026-10-14T00:04:30.533Z",
-    "repository": "meta-llama/Llama-2-7b-chat-hf",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv7cl7bi",
-    "contentHash": "cf335252deabad99431a04894dcd4d203508ca7bb4ef68fcd3337e5a58c84406",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-PERM",
     "timestamp": "2026-10-14T00:07:46.690Z",
     "repository": "meta-llama/Llama-2-7b",
@@ -7492,6 +7477,21 @@
     "contentHash": "177ea0df3bb04a899d4cf163b3e7b790e4958aa004e70b839d6518c885648b14",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-9WNV",
+    "timestamp": "2026-10-16T07:26:57.691Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "c0c026f2336935196f480a0c4ede2e75a532655d6b2fdbd71556a73db758108e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
