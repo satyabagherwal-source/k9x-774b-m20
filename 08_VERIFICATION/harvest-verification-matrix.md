@@ -1672,3 +1672,4 @@
 | `CYCLE-20261016-LLBZ` | `2026-10-16T09:00:01.727Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1125` | Yes (`236bf6fa...`) |
 | `CYCLE-20261016-TNX5` | `2026-10-16T09:06:18.329Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1126` | Yes (`c5c273ac...`) |
 | `CYCLE-20261016-5V99` | `2026-10-16T09:15:47.709Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1127, Rule 1128, Rule 1129` | Yes (`0b7b2c47...`) |
+| `CYCLE-20261016-9R2D` | `2026-10-16T09:18:48.901Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`eac0ddb8...`) |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T09:15:47.713Z",
-  "total_cycles_completed": 1649,
-  "total_learnings_persisted": 1649,
+  "last_updated": "2026-10-16T09:18:48.905Z",
+  "total_cycles_completed": 1650,
+  "total_learnings_persisted": 1650,
   "total_rules_promoted": 910,
   "history": [
-    {
-      "timestamp": "2026-10-15T21:53:08.704Z",
-      "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-      "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T21:56:05.645Z",
       "repository": "deepseek-ai/DeepSeek-R1",
@@ -1403,6 +1396,13 @@
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T09:18:48.905Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1674,3 +1674,4 @@ Every entry in this ledger must capture:
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `2ef42256` | Multi-dimensional audit evidence | 2026-10-16T09:00:01.729Z |
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `5c323e69` | Multi-dimensional audit evidence | 2026-10-16T09:06:18.331Z |
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-16T09:15:47.712Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-16T09:18:48.904Z |
