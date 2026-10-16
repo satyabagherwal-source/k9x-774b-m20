@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-JJFJ",
-    "timestamp": "2026-10-13T22:39:13.951Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv79jjdb",
-    "contentHash": "373793cf1a7f9a2dc04d3c65a3ed489cff1eec2e588cf900ec5b8477c24e2b14",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-NAU8",
     "timestamp": "2026-10-13T22:42:09.440Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/TeleOCR",
     "learningId": "learn-huggingface-xingchen-agi-teleocr",
     "contentHash": "1b08539e61ad88011608fa5e8cb04eb206764b3c11ad98f6062eec018bdb4285",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-WR84",
+    "timestamp": "2026-10-16T05:52:45.268Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "d12052bb671511dab235b6df4ed5f9360516fdbb9e8588acd19a6969ed4b6e16",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
