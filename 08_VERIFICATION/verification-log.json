@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-2YR6",
-    "timestamp": "2026-10-13T22:54:20.274Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-0-6b-mv7a2yo1",
-    "contentHash": "28cbb57e9039449903703cb8e436f59ff135a528d6db965559ec9d03d9f75a72",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-6YNY",
     "timestamp": "2026-10-13T22:57:26.782Z",
     "repository": "google-t5/t5-small",
@@ -7490,6 +7475,21 @@
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
     "contentHash": "359e7a131e82550c800b980206c9fd6ab6a7ec5af7d8f8c3cfece2ae5516e399",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-GW01",
+    "timestamp": "2026-10-16T06:08:24.577Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+    "contentHash": "0dbff304c2f9f78a0753a894bfb3f51cfec1c62ee4857d1d688982b3ab9681fc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
