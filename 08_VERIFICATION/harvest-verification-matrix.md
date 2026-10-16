@@ -1869,3 +1869,4 @@
 | `CYCLE-20261016-JPXE` | `2026-10-16T20:38:24.770Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`645b6f43...`) |
 | `CYCLE-20261016-NUC4` | `2026-10-16T20:41:37.108Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`176854d2...`) |
 | `CYCLE-20261016-XTV5` | `2026-10-16T20:49:23.057Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`b1e9578b...`) |
+| `CYCLE-20261016-1KEM` | `2026-10-16T20:52:17.422Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`620f0cab...`) |

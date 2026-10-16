@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-YLBU",
-    "timestamp": "2026-10-14T13:18:44.346Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-hf-psrben-visionhope-mv84yl6y",
-    "contentHash": "2ac7599c630186ca2a0075071dba0bf15b98b9d2959842d869356bb7182620dd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-2FE3",
     "timestamp": "2026-10-14T13:21:43.275Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-large-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
     "contentHash": "b1e9578b7a38363e91274812b1aba5398b29f3545b20cbf6c9b77e12a0e33c5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-1KEM",
+    "timestamp": "2026-10-16T20:52:17.422Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "620f0cab81c4eccbc79de658282fd9a324256580f4ff4f186f22c3ccebc77521",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
