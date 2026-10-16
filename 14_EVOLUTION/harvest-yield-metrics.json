@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T18:26:25.157Z",
-  "total_cycles_completed": 1807,
-  "total_learnings_persisted": 1807,
+  "last_updated": "2026-10-16T18:29:22.645Z",
+  "total_cycles_completed": 1808,
+  "total_learnings_persisted": 1808,
   "total_rules_promoted": 979,
   "history": [
-    {
-      "timestamp": "2026-10-16T06:27:13.400Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-apple-lensvlm-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T06:30:21.992Z",
       "repository": "Altworld/Hemmingway-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T18:26:25.157Z",
       "repository": "bigscience/bloom",
       "learningId": "learn-huggingface-bigscience-bloom",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T18:29:22.645Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
