@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-FC8S",
-    "timestamp": "2026-10-13T22:35:58.012Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-mv79fc4g",
-    "contentHash": "38b650fb975139fce5c303c3a5acefd03fb3fcb1a4f4435fe8f89560cfad4748",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-JJFJ",
     "timestamp": "2026-10-13T22:39:13.951Z",
     "repository": "Cloudflare/clef-flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "08f9d96bd15cca3bd8feed3eed57c56dfaafa7333b76af1284a69a508ad6cab9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-ST95",
+    "timestamp": "2026-10-16T05:49:41.273Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr",
+    "contentHash": "1b08539e61ad88011608fa5e8cb04eb206764b3c11ad98f6062eec018bdb4285",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
