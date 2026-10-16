@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-Q9CN",
-    "timestamp": "2026-10-14T11:20:17.111Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv80q99d",
-    "contentHash": "562de50a9954701856593bf1d0738b102462736ce4e873c9468bb52ff05d3824",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-U6ZM",
     "timestamp": "2026-10-14T11:23:20.674Z",
     "repository": "autotrust/JEV-35B",
@@ -7492,6 +7477,21 @@
     "contentHash": "ab1bc7f83ec6c8774f8bb31397274b3650f29b72f53413eb95e88416c4dc6c45",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-A2KQ",
+    "timestamp": "2026-10-16T18:38:56.138Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "ff0839dd92f192e61c2923bffe966742822d4fae96259a8972a0cc48879d5b80",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
