@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-KXQ2",
-    "timestamp": "2026-10-14T08:28:11.066Z",
-    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-    "learningId": "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv7ukxlf",
-    "contentHash": "a29e0c7b540d8c6e200c6b5b63e957471b2023cd5ddd1a426b25b1e85a5db805",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-5MHQ",
     "timestamp": "2026-10-14T08:44:16.286Z",
     "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
     "contentHash": "6f9cc213e889a1664b6884bc880dd618bce5a301ec0244c4f02143ac69d3e625",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-4JIO",
+    "timestamp": "2026-10-16T15:46:40.464Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "921492968075a4ec243ec49eb1cadb23506b5de3a941d6e6bce0487295911b84",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
