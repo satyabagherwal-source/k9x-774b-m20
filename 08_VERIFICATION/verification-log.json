@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-EYKQ",
-    "timestamp": "2026-10-13T23:03:39.914Z",
-    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv7aeyhm",
-    "contentHash": "ec0ab5e0e49dcba4954b5d110282ec1f6176852d2a2fa27881196e8b7c870b8c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-IQDH",
     "timestamp": "2026-10-13T23:06:35.909Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
     "contentHash": "e9b2d702e963b849a36d5bda9df806a76ec85cb288d7c926c84c5dbb82a6a56d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-STU3",
+    "timestamp": "2026-10-16T06:17:41.643Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "acb35d27e86ea185244c364a27391aaf73ff6fc3e366b58ae3b0ec88456baac9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
