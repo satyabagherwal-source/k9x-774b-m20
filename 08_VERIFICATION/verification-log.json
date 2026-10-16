@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-QDY0",
-    "timestamp": "2026-10-14T10:52:23.448Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv7zqdul",
-    "contentHash": "1d68b4cf1193be9913885d18059d6fee278b61616efc8d5c501c5a153c98dbde",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-UFJL",
     "timestamp": "2026-10-14T10:55:32.145Z",
     "repository": "Qwen/Qwen3.8-27B",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
     "contentHash": "5144f14e8b002be1a61a1c79c1a3ff9ff2804e7651500b28b17fef94ed9887ce",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-90V8",
+    "timestamp": "2026-10-16T18:10:07.652Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "48cb85afdabd1f0ed81fee395777de68166628e91cfbfa4469669a430cccc55f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
