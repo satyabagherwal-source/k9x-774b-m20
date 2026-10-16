@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "57c8eb01c5ce028b91713bc2f9587cd70a1dc2eaba9d4ea3900ccfd340cc02ac",
-    "lastHarvestedAt": "2026-10-16T03:57:29.964Z",
+    "contentHash": "b491027f349d83e707f463b5df7d475443959e19dab04aea758cd90bb5231611",
+    "lastHarvestedAt": "2026-10-16T12:39:08.891Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {

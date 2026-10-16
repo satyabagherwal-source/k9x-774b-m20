@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T12:36:02.333Z",
+  "last_updated": "2026-10-16T12:39:08.854Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15174,7 +15174,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
       "source_version": "hf-mudler-locate-anything.cpp-gguf",
-      "content_hash": "57c8eb01c5ce028b91713bc2f9587cd70a1dc2eaba9d4ea3900ccfd340cc02ac",
+      "content_hash": "b491027f349d83e707f463b5df7d475443959e19dab04aea758cd90bb5231611",
       "dossier_path": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md",
       "promoted_rules": [
@@ -15206,7 +15206,7 @@
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4177m8",
         "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv4f5wy1"
       ],
-      "verified_at": "2026-10-16T03:57:29.919Z",
+      "verified_at": "2026-10-16T12:39:08.847Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
