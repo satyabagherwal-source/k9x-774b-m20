@@ -3,7 +3,7 @@
 > **Source Version**: `hf-nomic-ai-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-16T03:13:45.226Z  
+> **Timestamp**: 2026-10-16T11:55:37.869Z  
 > **Learning ID**: `learn-huggingface-nomic-ai-nomic-embed-text-v1-5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nomic-ai/nomic-embed-text-v1.5](https://huggingface.co/nomic-ai/nomic-embed-text-v1.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-16T03:13:44.549Z  
+> **Harvest Timestamp**: 2026-10-16T11:55:37.094Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: sentence-similarity
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 13239230 downloads | 977 likes
+- **Stars / Engagement**: 13306309 downloads | 977 likes
 
 ---
 

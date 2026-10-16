@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-IA7M",
-    "timestamp": "2026-10-14T03:46:11.122Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv7kia43",
-    "contentHash": "d67bd056747f28b75a575a1f0c0723f02aac4da0c153205946368bd038c0c786",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-M8V0",
     "timestamp": "2026-10-14T03:49:15.996Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
     "contentHash": "fd85fbee2abddb49508aa1641f2ce1d434605cfc4e5577272e8102c7db2cfe8a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-VF53",
+    "timestamp": "2026-10-16T11:55:37.959Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "b31dba4a94be8a8a77ac0c22173368da48073cd8c3aa503d0448134f7e67b52d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
