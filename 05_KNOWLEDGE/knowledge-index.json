@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T09:32:00.276Z",
+  "last_updated": "2026-10-16T09:44:29.675Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14960,7 +14960,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/FrogNano-4B-2609",
       "source_version": "hf-microsoft-frognano-4b-2609",
-      "content_hash": "72c1e80d2dadbf888fa158a9a242a5468d0cde6477fff32b262e5a722fdc12f3",
+      "content_hash": "6013af8fe95a07bfdfada83609d146aed402616f1e91a93cb52cb6c8a65f1763",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "promoted_rules": [],
@@ -14980,7 +14980,7 @@
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv49zxkw",
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv4nczd5"
       ],
-      "verified_at": "2026-10-16T01:06:58.103Z",
+      "verified_at": "2026-10-16T09:44:29.665Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T09:32:00.302Z",
-  "total_cycles_completed": 1653,
-  "total_learnings_persisted": 1653,
+  "last_updated": "2026-10-16T09:44:29.715Z",
+  "total_cycles_completed": 1654,
+  "total_learnings_persisted": 1654,
   "total_rules_promoted": 911,
   "history": [
-    {
-      "timestamp": "2026-10-15T22:05:43.107Z",
-      "repository": "autotrust/JEV-35B",
-      "learningId": "learn-huggingface-autotrust-jev-35b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T22:08:59.019Z",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -1403,6 +1396,13 @@
       "repository": "textbee/textbee",
       "learningId": "learn-github-textbee-textbee",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T09:44:29.715Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
