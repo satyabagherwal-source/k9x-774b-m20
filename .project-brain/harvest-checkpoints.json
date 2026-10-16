@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T03:17:01.752Z",
+  "last_updated": "2026-10-16T03:19:57.473Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1562,14 +1562,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "content_hash": "ba7feaa94a8bfa61679aee92ac5129d14c7d25e74699cb9c441386b424340e7d",
-      "verified_at": "2026-10-15T20:10:22.219Z",
+      "content_hash": "c2ff6707a54973cac591052b5d33e5b65719a8fd1f0bd44eccf8323dc472a85f",
+      "verified_at": "2026-10-16T03:19:57.473Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-15T20:10:22.219Z"
+      "last_updated": "2026-10-16T03:19:57.473Z"
     },
     "intfloat/multilingual-e5-small": {
       "repository": "intfloat/multilingual-e5-small",
