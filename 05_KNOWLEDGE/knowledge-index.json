@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T20:00:17.824Z",
+  "last_updated": "2026-10-16T20:03:40.388Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12120,7 +12120,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0",
       "source_version": "hf-conwayresearch-underdog-saluki-27b-1.0",
-      "content_hash": "56d59b7ae5ab2481dfea9a3e0e563d7dc0f7224acb03f331c5f36296fd59ece6",
+      "content_hash": "462c4eb8331d94fa925867056d805272760a304a0d1651eb50a2d1b0d23ff34b",
       "dossier_path": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md",
       "promoted_rules": [
@@ -12148,6 +12148,16 @@
           "number": 1056,
           "title": "Thinking Mode as a Runtime Toggle",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1229,
+          "title": "Decoupled Modality Architecture for Edge Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1230,
+          "title": "Jinja2 Template State Management for Thinking Modes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12166,7 +12176,7 @@
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv3z5aum",
         "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv4dr5p5"
       ],
-      "verified_at": "2026-10-16T11:58:45.533Z",
+      "verified_at": "2026-10-16T20:03:40.379Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

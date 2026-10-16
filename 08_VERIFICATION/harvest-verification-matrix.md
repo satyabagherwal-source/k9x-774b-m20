@@ -1857,3 +1857,4 @@
 | `CYCLE-20261016-YJT0` | `2026-10-16T19:53:57.444Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1226, Rule 1227, Rule 1228` | Yes (`2d65363c...`) |
 | `CYCLE-20261016-2MBS` | `2026-10-16T19:57:07.336Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`84c499e7...`) |
 | `CYCLE-20261016-6PC0` | `2026-10-16T20:00:17.856Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`215a575b...`) |
+| `CYCLE-20261016-B1MJ` | `2026-10-16T20:03:40.411Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 959, Rule 1229, Rule 1230` | Yes (`462c4eb8...`) |
