@@ -70827,3 +70827,208 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `2e5303dd` are properly handled with clean fallback behavior.
+
+
+---
+
+## 1131. Hybrid Attention Layer Interleaving for Long-Context Efficiency (Harvested from vllm-sr/d3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hybrid Attention Layer Interleaving for Long-Context Efficiency",
+  "source": "vllm-sr/d3",
+  "source_url": "https://huggingface.co/vllm-sr/d3",
+  "source_version": "hf-vllm-sr-d3",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T09:50:51.821Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-vllm-sr-d3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vllm-sr/d3](https://huggingface.co/vllm-sr/d3) (Revision: `hf-vllm-sr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When designing transformer models for contexts > 32K tokens, you MUST interleave linear attention (or SSM) layers with full attention layers at a fixed interval (e.g., 1:3 ratio) to balance $O(N)$ computational efficiency with $O(N^2)$ global context coherence. You MUST NOT use pure linear attention for all layers, as it degrades long-range dependency tracking.
+
+**WHY**:
+Pure linear attention (like Mamba) suffers from "information bottleneck" effects where distant tokens lose influence due to the recurrent state update mechanism. Pure full attention is computationally prohibitive ($O(N^2)$) for 262K contexts. Interleaving every 4th layer with full attention acts as a "context anchor," allowing the model to reset and re-aggregate global information periodically, preventing drift while maintaining linear complexity for the majority of layers.
+
+**WHEN TO APPLY**:
+Any LLM or multimodal model targeting context windows > 32K tokens, especially when deployed on hardware with limited memory bandwidth (like AMD MI325X) where $O(N^2)$ attention is a bottleneck.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Config-driven layer type assignment
+layer_types = []
+for i in range(num_hidden_layers):
+    if (i + 1) % full_attention_interval == 0:
+        layer_types.append("full_attention")
+    else:
+        layer_types.append("linear_attention")
+
+# In the model forward pass:
+for i, layer in enumerate(self.layers):
+    if layer_types[i] == "full_attention":
+        # Standard O(N^2) attention
+        hidden_states = layer.full_attention(hidden_states, kv_cache)
+    else:
+        # Linear O(N) attention (Mamba/SSM)
+        hidden_states = layer.linear_attention(hidden_states, ssm_state)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using full attention for all layers in a 262K context model
+# This will cause OOM or extreme latency spikes
+for layer in self.layers:
+    hidden_states = layer.full_attention(hidden_states, kv_cache) # O(N^2) for all 64 layers
+```
+
+**VERIFICATION METHOD**:
+1.  **Config Check:** Assert that `layer_types` contains exactly `num_hidden_layers / full_attention_interval` instances of `"full_attention"`.
+2.  **Performance Benchmark:** Measure latency for a 100K token input. If latency scales quadratically with input length, the hybrid pattern is not correctly implemented.
+3.  **Accuracy Regression:** Compare perplexity on long-context benchmarks (e.g., RULER) against a pure linear attention baseline. The hybrid model must show significantly better long-range retrieval accuracy.
+
+
+---
+
+## 1132. Precision Isolation for State Space Models (SSM) (Harvested from vllm-sr/d3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Precision Isolation for State Space Models (SSM)",
+  "source": "vllm-sr/d3",
+  "source_url": "https://huggingface.co/vllm-sr/d3",
+  "source_version": "hf-vllm-sr-d3",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T09:50:51.852Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-vllm-sr-d3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vllm-sr/d3](https://huggingface.co/vllm-sr/d3) (Revision: `hf-vllm-sr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using State Space Models (Mamba) or linear attention mechanisms, you MUST maintain the internal state (SSM state) in `float32` precision, even if the model weights and activations are in `bfloat16`. You MUST NOT cast the SSM state to `bfloat16` or `float16` during the recurrent update step.
+
+**WHY**:
+SSM updates involve cumulative sums over time steps. In `bfloat16`, the limited mantissa precision (8 bits) causes significant numerical drift and error accumulation over long sequences (e.g., 262K tokens). This leads to "state explosion" or "state decay," where the model's memory of past tokens becomes corrupted, resulting in hallucinations or loss of context. `float32` provides the necessary precision for stable cumulative operations.
+
+**WHEN TO APPLY**:
+Any model using Mamba, S4, or other recurrent/linear attention mechanisms for long-context processing.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# In the linear attention layer
+def forward(self, hidden_states, ssm_state):
+    # hidden_states is bfloat16
+    # ssm_state MUST be float32
+    if ssm_state.dtype != torch.float32:
+        ssm_state = ssm_state.to(torch.float32)
+    
+    # Perform SSM update in float32
+    new_state = self.ssm_update(hidden_states, ssm_state)
+    
+    # Cast output back to bfloat16 for the next layer
+    output = new_state.to(hidden_states.dtype)
+    return output, new_state # Return float32 state for next step
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Casting SSM state to bfloat16
+ssm_state = ssm_state.to(torch.bfloat16) # Causes numerical drift
+new_state = self.ssm_update(hidden_states, ssm_state)
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Run a forward pass with a long sequence (e.g., 10K tokens) and compare the final SSM state against a reference implementation in `float64`. The relative error in `bfloat16` state should be > 1e-2, while `float32` state should be < 1e-5.
+2.  **Config Check:** Assert that `mamba_ssm_dtype` is `"float32"` in the model config.
+3.  **Long-Context Accuracy:** Evaluate the model on a needle-in-a-haystack test at 100K context. If accuracy drops significantly compared to a 10K context test, check SSM precision.
+
+
+---
+
+## 1133. Non-Generative Decision Head for Semantic Routing (Harvested from vllm-sr/d3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Generative Decision Head for Semantic Routing",
+  "source": "vllm-sr/d3",
+  "source_url": "https://huggingface.co/vllm-sr/d3",
+  "source_version": "hf-vllm-sr-d3",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T09:50:51.882Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-vllm-sr-d3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [vllm-sr/d3](https://huggingface.co/vllm-sr/d3) (Revision: `hf-vllm-sr`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For semantic routing and classification tasks, you MUST use a non-generative decision head that outputs a probability distribution over predefined options, rather than generating text tokens. You MUST NOT use standard autoregressive decoding for classification tasks where the output space is fixed and small.
+
+**WHY**:
+Autoregressive decoding is slow (requires multiple forward passes) and non-deterministic (sampling introduces variance). For routing decisions, you need a single, fast, deterministic probability vector. A non-generative head allows for "soft" decisions (e.g., 0.8 confidence for "returns", 0.2 for "support") and enables batch processing of multiple questions in a single forward pass.
+
+**WHEN TO APPLY**:
+Any LLM-based system performing classification, routing, or scoring tasks where the output space is known at inference time.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+class DecisionHead(nn.Module):
+    def __init__(self, hidden_size, num_options):
+        super().__init__()
+        self.proj = nn.Linear(hidden_size, num_options)
+    
+    def forward(self, hidden_states, option_ids):
+        # hidden_states: [batch, seq_len, hidden_size]
+        # option_ids: [batch, num_options] (IDs of the option tokens)
+        
+        # Extract hidden states at the positions of the option tokens
+        # Or use a special "decision" token position
+        decision_hidden = hidden_states[:, -1, :] # Example: last token
+        
+        # Project to option probabilities
+        logits = self.proj(decision_hidden)
+        probabilities = torch.softmax(logits, dim=-1)
+        
+        return probabilities
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using autoregressive decoding for classification
+def classify(self, input_ids):
+    # Generate text until EOS
+    generated = self.model.generate(input_ids, max_new_tokens=10)
+    # Parse the generated text to extract the class
+    # This is slow and error-prone
+    return parse_text(generated)
+```
+
+**VERIFICATION METHOD**:
+1.  **Latency Benchmark:** Measure inference time for a classification task. The non-generative head should be 5-10x faster than autoregressive decoding.
+2.  **Determinism Check:** Run the same input 100 times. The output probabilities should be identical (within floating-point precision).
+3.  **Accuracy:** Compare accuracy against a baseline autoregressive model. The non-generative head should achieve equal or better accuracy for fixed-output tasks.

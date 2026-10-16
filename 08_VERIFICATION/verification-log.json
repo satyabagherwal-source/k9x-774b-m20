@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-5BR0",
-    "timestamp": "2026-10-14T01:44:08.124Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv7g5bnv",
-    "contentHash": "1a8542d1a4d144c9b6ffabfa4c36dc53afb4d95a3edebec8176e31eed4244017",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-9LOU",
     "timestamp": "2026-10-14T01:47:27.630Z",
     "repository": "BAAI/bge-large-en-v1.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "aa9689e74ca30c5784048838df2a64544d4e7e883c0d0fd355b6c8a711e89b25",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-EYVV",
+    "timestamp": "2026-10-16T09:50:51.931Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "3d9dbbc6581413761f892dada6c470f026b41536470b50f110c60a14593b9a6e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
