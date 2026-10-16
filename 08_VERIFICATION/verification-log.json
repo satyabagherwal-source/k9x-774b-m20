@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-XFLG",
-    "timestamp": "2026-10-14T00:14:01.012Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv7cxfit",
-    "contentHash": "0d3bf733794c73cc19a41944daa84fe14bb02f3ca88cb654b145b60b02dd1dae",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-14AK",
     "timestamp": "2026-10-14T00:16:52.988Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7492,6 +7477,21 @@
     "contentHash": "bd86b49efa0a35f3bdbbad01b451e37f26b199835cc376576336131664580d79",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-PIT3",
+    "timestamp": "2026-10-16T07:39:06.231Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "d449abe169d62081b248d88195cc654568044ba8240c3c6fa32d820d0fcbc696",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
