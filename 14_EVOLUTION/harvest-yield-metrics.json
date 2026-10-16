@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T05:25:12.954Z",
-  "total_cycles_completed": 1588,
-  "total_learnings_persisted": 1588,
+  "last_updated": "2026-10-16T05:28:14.981Z",
+  "total_cycles_completed": 1589,
+  "total_learnings_persisted": 1589,
   "total_rules_promoted": 851,
   "history": [
-    {
-      "timestamp": "2026-10-14T16:10:14.640Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv8b358s",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T16:13:22.370Z",
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T05:25:12.954Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:28:14.981Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
