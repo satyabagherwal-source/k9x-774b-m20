@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T02:45:45.469Z",
+  "last_updated": "2026-10-16T02:48:39.071Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2398,14 +2398,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "content_hash": "15875d580f816bee8e3a13accdc1f5bcbc3596dc5b3425917d2b929883a95d4d",
-      "verified_at": "2026-10-15T19:28:52.724Z",
+      "content_hash": "abbba7c4c571ff3a4949360c5d16cf6163805b719528ac16f73c4ede6ac0b31c",
+      "verified_at": "2026-10-16T02:48:39.071Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-15T19:28:52.724Z"
+      "last_updated": "2026-10-16T02:48:39.071Z"
     },
     "meta-models/Muse-Spark-Open-816B-A42B": {
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",

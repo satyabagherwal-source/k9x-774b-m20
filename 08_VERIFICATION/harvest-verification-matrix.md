@@ -1567,3 +1567,4 @@
 | `CYCLE-20261016-0BL6` | `2026-10-16T02:39:34.314Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`f3f641a7...`) |
 | `CYCLE-20261016-4AQK` | `2026-10-16T02:42:39.837Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | Yes (`74702b37...`) |
 | `CYCLE-20261016-89YX` | `2026-10-16T02:45:45.465Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1054` | Yes (`51ff4ab1...`) |
+| `CYCLE-20261016-BZX6` | `2026-10-16T02:48:39.066Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`abbba7c4...`) |

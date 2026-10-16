@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T02:45:45.444Z",
+  "last_updated": "2026-10-16T02:48:39.035Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -40278,7 +40278,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pyannote/speaker-diarization-community-1",
       "source_version": "hf-pyannote-speaker-diarization-community-1",
-      "content_hash": "15875d580f816bee8e3a13accdc1f5bcbc3596dc5b3425917d2b929883a95d4d",
+      "content_hash": "abbba7c4c571ff3a4949360c5d16cf6163805b719528ac16f73c4ede6ac0b31c",
       "dossier_path": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md",
       "promoted_rules": [
@@ -40298,7 +40298,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-15T19:28:52.687Z",
+      "verified_at": "2026-10-16T02:48:39.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

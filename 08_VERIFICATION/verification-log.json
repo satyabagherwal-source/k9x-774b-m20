@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-4BOP",
-    "timestamp": "2026-10-13T19:11:26.761Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv724blg",
-    "contentHash": "13601d3f8a15eb3d0fc133109552a12527e6be97036e846d6604168636d3f102",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-8BH8",
     "timestamp": "2026-10-13T19:14:33.116Z",
     "repository": "FrancisRing/Prism",
@@ -7492,6 +7477,21 @@
     "contentHash": "51ff4ab1d3cfef3cec3a755a876f31f01e60781fb2af724d096d697a3f001dae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-BZX6",
+    "timestamp": "2026-10-16T02:48:39.066Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "abbba7c4c571ff3a4949360c5d16cf6163805b719528ac16f73c4ede6ac0b31c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
