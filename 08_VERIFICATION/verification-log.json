@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-LBAT",
-    "timestamp": "2026-10-14T01:56:34.037Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-hf-jialinyyzz-humanizer-mv7glb7l",
-    "contentHash": "97566bc7da43f6469566eec568291b6e3d6cee3dad2923f2af1bfa20dfa505c0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-P91P",
     "timestamp": "2026-10-14T01:59:37.741Z",
     "repository": "autotrust/JEV-27B-VL",
@@ -7490,6 +7475,21 @@
     "repository": "MiniMaxAI/MiniMax-H3",
     "learningId": "learn-huggingface-minimaxai-minimax-h3",
     "contentHash": "0cb47369914cf0ec4ba519d64c068f2f6282af66c0d659326afde80360e2fc24",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-UXT0",
+    "timestamp": "2026-10-16T10:03:17.028Z",
+    "repository": "Qwen/Qwen3.8-Flash-Next",
+    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+    "contentHash": "6cf063c752da2ad5ef36b64d3cf9795b73721e287c46fa263f22fddf3c2b7f8e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
