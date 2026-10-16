@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T22:28:02.146Z",
+  "last_updated": "2026-10-16T22:31:26.682Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16275,7 +16275,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "04001ecd80ce15f9f37bb71acf2771ddcde145834c524b4f3338b38d048232c0",
+      "content_hash": "464bb8338f2b7398481c2759abacca0768b0f2353805a990e1eb837116bedc44",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -16305,7 +16305,7 @@
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv44iwjo",
         "learn-huggingface-hf-qwen-qwen-image-2-1-mv4hrs7t"
       ],
-      "verified_at": "2026-10-16T14:14:00.816Z",
+      "verified_at": "2026-10-16T22:31:26.675Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

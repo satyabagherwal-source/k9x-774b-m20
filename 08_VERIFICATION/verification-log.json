@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-PS8Q",
-    "timestamp": "2026-10-14T15:31:51.482Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv89ps58",
-    "contentHash": "86e4e570d6e8916fa3f70734e900b6e8112c206b6ee5f01ffc17f5ae7b81e6b2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-TJZ1",
     "timestamp": "2026-10-14T15:34:47.389Z",
     "repository": "fishaudio/drama-3",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/TeleOCR",
     "learningId": "learn-huggingface-xingchen-agi-teleocr",
     "contentHash": "e6da15e1420ac8cd043494e2c42f5e0eb525053d5966ae13b716bd5eda3f506f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-L2WS",
+    "timestamp": "2026-10-16T22:31:26.716Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "464bb8338f2b7398481c2759abacca0768b0f2353805a990e1eb837116bedc44",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
