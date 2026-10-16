@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-Z1R2",
-    "timestamp": "2026-10-14T16:07:03.326Z",
-    "repository": "meta-llama/Llama-2-7b",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-2-7b-mv8az1o3",
-    "contentHash": "f0a08ba0c2a27ac9cc9a79d1c030997ffafa9eb758f8b735007a580a608b1c26",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-35D7",
     "timestamp": "2026-10-14T16:10:14.635Z",
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -7492,6 +7477,21 @@
     "contentHash": "b0d829a11a2234664f99b481663d83720203c67f66a652ffccbf03827e8f91af",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-12MP",
+    "timestamp": "2026-10-16T23:11:52.465Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "8b2d076eff5f3a98edf507ca5084d470a1f143abe252704fbf83345afc02cf7b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

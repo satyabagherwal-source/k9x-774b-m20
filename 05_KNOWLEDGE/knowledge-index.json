@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T23:08:32.387Z",
+  "last_updated": "2026-10-16T23:11:52.437Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9733,7 +9733,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "8661686eddc20d8fa976be467f049c03fac73441a113f856c7c6aacee84f1564",
+      "content_hash": "8b2d076eff5f3a98edf507ca5084d470a1f143abe252704fbf83345afc02cf7b",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -9837,6 +9837,11 @@
           "number": 1175,
           "title": "Long‑Context Attention Interval Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1255,
+          "title": "**Special‑Token Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9857,7 +9862,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-16T14:54:06.728Z",
+      "verified_at": "2026-10-16T23:11:52.432Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

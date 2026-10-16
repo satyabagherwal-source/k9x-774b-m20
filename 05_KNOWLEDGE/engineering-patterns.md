@@ -79983,3 +79983,75 @@ def quantize_all_tensors(model, target_quant="PTQ1_0"):
 Run automated visual question-answering sanity suites (e.g., DocVQA single-sample OCR test). Verify that OCR extraction accuracy does not drop by more than $1.5\%$ compared to the FP16 vision baseline.
 
 ---
+
+
+---
+
+## 1255. **Special‑Token Consistency Rule** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Special‑Token Consistency Rule**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T23:11:52.401Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+All special tokens (image, video, audio, vision start/end) must be defined in *both* the tokenizer configuration and the model configuration, and the token IDs must match exactly.
+
+**WHY**:  
+Mismatched token IDs cause the processor to inject wrong tokens, leading to mis‑aligned attention and catastrophic generation failures (e.g., the model treats an image token as a text token).
+
+**WHEN TO APPLY**:  
+During model initialization, tokenizer loading, and any custom tokenizer extension.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# tokenizer_config.json
+{
+  "image_token": "<|image_pad|>",
+  "video_token": "<|video_pad|>",
+  "audio_bos_token": "<|audio_start|>",
+  "audio_eos_token": "<|audio_end|>"
+}
+
+# config.json
+{
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "audio_bos_token_id": 248058,
+  "audio_eos_token_id": 248059
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: mismatched IDs
+{
+  "image_token_id": 248056,   # correct
+  "video_token_id": 999999    # wrong
+}
+```
+
+**VERIFICATION METHOD**:  
+Unit test that loads the tokenizer and model, then asserts:
+```python
+assert tokenizer.convert_tokens_to_ids("<|image_pad|>") == model.config.image_token_id
+assert tokenizer.convert_tokens_to_ids("<|video_pad|>") == model.config.video_token_id
+```
+
+---

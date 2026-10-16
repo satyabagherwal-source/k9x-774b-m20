@@ -1910,3 +1910,4 @@
 | `CYCLE-20261016-NAM4` | `2026-10-16T23:01:09.628Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`f01a684e...`) |
 | `CYCLE-20261016-SR4L` | `2026-10-16T23:05:24.309Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`9559972d...`) |
 | `CYCLE-20261016-WS9Q` | `2026-10-16T23:08:32.414Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`b0d829a1...`) |
+| `CYCLE-20261016-12MP` | `2026-10-16T23:11:52.465Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1255` | Yes (`8b2d076e...`) |

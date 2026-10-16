@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T22:12:47.358Z",
+  "last_updated": "2026-10-16T23:11:52.470Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1443,6 +1443,17 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **WHY** technical rationale",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
+    },
+    {
+      "id": "CD-12MU",
+      "directive_title": "**Modality‑Independent Dtype Rule**",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "apple/LensVLM-9B",
+      "source_commit": "hf-apple-len",
+      "date_staged": "2026-10-16",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-apple-lensvlm-9b"
     }
   ]
 }
