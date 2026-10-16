@@ -20,7 +20,7 @@
     "policy": "ALL_HARVESTED_REPOSITORIES_ENQUEUED_FOR_NEXT_LEARNING",
     "description": "All 1,423 harvested repositories placed in continuous FIFO line for upstream upgrades and differential learning."
   },
-  "lastUpdated": "2026-10-16T10:50:47.757Z",
+  "lastUpdated": "2026-10-16T10:55:44.099Z",
   "updatedBy": "agent:auto-healer",
   "compliance": {
     "rateLimitStrategy": "RESPECTFUL_EXPONENTIAL_BACKOFF",
@@ -218,9 +218,9 @@
         "domain": "huggingface-ai-models",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T10:52:45.492Z",
-        "lastHarvestedAt": "2026-10-16T10:52:45.492Z",
-        "totalHarvested": 3794,
+        "lastActiveAt": "2026-10-16T10:55:44.963Z",
+        "lastHarvestedAt": "2026-10-16T10:55:44.963Z",
+        "totalHarvested": 3795,
         "lastError": null
       },
       {
@@ -238,7 +238,7 @@
         "domain": "devops-cloud-infrastructure",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T09:06:20.852Z",
+        "lastActiveAt": "2026-10-16T10:55:44.197Z",
         "lastHarvestedAt": "2026-10-16T09:06:20.852Z",
         "totalHarvested": 1098,
         "lastError": null
@@ -248,7 +248,7 @@
         "domain": "cybersecurity-defenses",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T10:47:24.383Z",
+        "lastActiveAt": "2026-10-16T10:55:46.678Z",
         "lastHarvestedAt": "2026-10-16T09:32:02.819Z",
         "totalHarvested": 1106,
         "lastError": null
@@ -258,7 +258,7 @@
         "domain": "database-storage-engines",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T10:50:29.427Z",
+        "lastActiveAt": "2026-10-16T10:55:49.179Z",
         "lastHarvestedAt": "2026-10-15T19:10:07.292Z",
         "totalHarvested": 1095,
         "lastError": null
@@ -268,7 +268,7 @@
         "domain": "cognitive-neuroscience-systems",
         "status": "ACTIVE",
         "cooldownUntil": null,
-        "lastActiveAt": "2026-10-16T10:47:29.358Z",
+        "lastActiveAt": "2026-10-16T10:55:51.674Z",
         "lastHarvestedAt": "2026-10-15T19:00:28.576Z",
         "totalHarvested": 1099,
         "lastError": null
@@ -294,10 +294,10 @@
     "GITHUB_API": {
       "service": "GITHUB_API",
       "status": "HEALTHY",
-      "remaining": 20,
+      "remaining": 0,
       "resetEpoch": 0,
       "resetAt": null,
-      "trippedAt": "2026-10-16T10:50:08.788Z",
+      "trippedAt": "2026-10-16T10:55:28.467Z",
       "reason": null,
       "consecutiveBlocks": 1
     },

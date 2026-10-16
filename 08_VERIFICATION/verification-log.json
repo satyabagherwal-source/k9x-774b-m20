@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-DQ4O",
-    "timestamp": "2026-10-14T02:46:39.240Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv7idq1m",
-    "contentHash": "716c80f189c45c32ea21009e89ccde84b618dc49d056e7eee60ef409421a3c3d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-JDQQ",
     "timestamp": "2026-10-14T02:51:03.122Z",
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -7492,6 +7477,21 @@
     "contentHash": "9322dbdd1f55ff39b811889600a1ff712ce55c7eb0008ee4c3b97c428071694d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-QCTN",
+    "timestamp": "2026-10-16T10:55:42.443Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-speridlabs-iris-3b",
+    "contentHash": "9c542223d62b67baf06e3500ca97806821e6733ba918ea0f1393955b8746b651",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
