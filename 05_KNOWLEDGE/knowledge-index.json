@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T19:44:19.966Z",
+  "last_updated": "2026-10-16T19:47:32.023Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13231,7 +13231,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "869466abf5e186161921ee06de4798a521b46d7be565d62449cf5566ac3089fc",
+      "content_hash": "3ea508e335af30bc4b4188aca630119ecf0fd6028bdfca9cab4384d4cdc0444b",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "promoted_rules": [
@@ -13282,7 +13282,7 @@
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv3ypies",
         "learn-huggingface-hf-facebookai-xlm-roberta-base-mv4dbi0d"
       ],
-      "verified_at": "2026-10-16T11:45:54.862Z",
+      "verified_at": "2026-10-16T19:47:32.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
