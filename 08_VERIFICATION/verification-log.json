@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-J9DU",
-    "timestamp": "2026-10-13T19:51:03.234Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-hf-xingchen-agi-teleocr-mv73j9aj",
-    "contentHash": "2868be3f2fc74f2dd9789455055d02bdeae62520a34b420c0d0270c1b7f1e27c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-N8YM",
     "timestamp": "2026-10-13T19:54:09.310Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "intfloat/multilingual-e5-small",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
     "contentHash": "5f72df1a72eb1e75e26131a821eab9464d2b609364ca5f029737bad28848e9a6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-OE68",
+    "timestamp": "2026-10-16T03:26:17.024Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "21c61a9099f67d3019f3ba7a92c0022f824b2e41dab5d76e9107bb822e5f5c4c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

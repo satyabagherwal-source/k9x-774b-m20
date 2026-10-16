@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T03:22:56.814Z",
+  "last_updated": "2026-10-16T03:26:17.029Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1592,14 +1592,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "content_hash": "6a95584707b93b6a7acaac594419cc6546ca33e92e093c93f4d114931ecf2301",
-      "verified_at": "2026-10-15T20:17:41.377Z",
+      "content_hash": "21c61a9099f67d3019f3ba7a92c0022f824b2e41dab5d76e9107bb822e5f5c4c",
+      "verified_at": "2026-10-16T03:26:17.029Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-15T20:17:41.377Z"
+      "last_updated": "2026-10-16T03:26:17.029Z"
     },
     "Qwen/Qwen3-8B": {
       "repository": "Qwen/Qwen3-8B",
