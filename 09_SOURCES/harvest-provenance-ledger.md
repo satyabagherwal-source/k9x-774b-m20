@@ -1604,3 +1604,4 @@ Every entry in this ledger must capture:
 | `learn-github-dayuanjiang-next-ai-draw-io` | `https://github.com/DayuanJiang/next-ai-draw-io` | `c4ea6957` | Multi-dimensional audit evidence | 2026-10-16T04:39:05.084Z |
 | `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-16T04:51:01.619Z |
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-16T04:54:24.686Z |
+| `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-16T04:57:09.760Z |
