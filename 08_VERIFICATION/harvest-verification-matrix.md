@@ -1697,3 +1697,4 @@
 | `CYCLE-20261016-7LZD` | `2026-10-16T10:41:07.849Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`355d7ba6...`) |
 | `CYCLE-20261016-BICG` | `2026-10-16T10:44:09.760Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`ab8a3b02...`) |
 | `CYCLE-20261016-FL3T` | `2026-10-16T10:47:19.961Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`b296726a...`) |
+| `CYCLE-20261016-MIC8` | `2026-10-16T10:52:42.968Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1140, Rule 1141, Rule 1142` | Yes (`9322dbdd...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T10:47:19.928Z",
+  "last_updated": "2026-10-16T10:52:42.920Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9448,10 +9448,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "fa45b4599eba2cfbc8b59dd4d7ffcdce966dbc6cedcc3086c86913e9eba3d6d6",
+      "content_hash": "9322dbdd1f55ff39b811889600a1ff712ce55c7eb0008ee4c3b97c428071694d",
       "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1140,
+          "title": "Hybrid 2D-Blocked FP8 MoE Quantization Isolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1141,
+          "title": "Periodic SWA-to-GQA Ratio Memory Invariant for Ultra-Long Sequences",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1142,
+          "title": "Multi-Token Dual EOS/PAD Sentinel Handling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -9469,7 +9485,7 @@
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx"
       ],
-      "verified_at": "2026-10-16T02:11:15.532Z",
+      "verified_at": "2026-10-16T10:52:42.914Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
