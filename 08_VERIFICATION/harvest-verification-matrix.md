@@ -1628,3 +1628,4 @@
 | `CYCLE-20261016-KXYG` | `2026-10-16T06:11:33.736Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`67cecdd6...`) |
 | `CYCLE-20261016-OTNE` | `2026-10-16T06:14:34.778Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`e9b2d702...`) |
 | `CYCLE-20261016-STU3` | `2026-10-16T06:17:41.643Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`acb35d27...`) |
+| `CYCLE-20261016-WLEY` | `2026-10-16T06:20:37.354Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`c9c89157...`) |

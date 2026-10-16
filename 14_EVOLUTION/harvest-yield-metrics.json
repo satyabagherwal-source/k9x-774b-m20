@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T06:17:41.648Z",
-  "total_cycles_completed": 1605,
-  "total_learnings_persisted": 1605,
+  "last_updated": "2026-10-16T06:20:37.356Z",
+  "total_cycles_completed": 1606,
+  "total_learnings_persisted": 1606,
   "total_rules_promoted": 863,
   "history": [
-    {
-      "timestamp": "2026-10-15T19:10:04.772Z",
-      "repository": "amplifthq/openmeld",
-      "learningId": "learn-github-amplifthq-openmeld",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T19:22:22.239Z",
       "repository": "black-forest-labs/flux-3-image-klein",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T06:17:41.648Z",
       "repository": "SupersonicLabs/Julia-1",
       "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T06:20:37.356Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
