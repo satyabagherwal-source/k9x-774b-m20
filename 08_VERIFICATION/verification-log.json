@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-V0RR",
-    "timestamp": "2026-10-14T12:19:58.503Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-hf-altworld-hemmingway-1-mv82v0ma",
-    "contentHash": "a257adc69e6b946bf5985f7d5e26c45f99dc2febcf28b37211b9a9b10ac4aecf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-YWTC",
     "timestamp": "2026-10-14T12:23:00.000Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/LFM2.5-24B-A2B",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
     "contentHash": "d787d8c8e351d7851394ab0481cdeef4aa593f938d9889e49a75c60b6610d9d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-I4RA",
+    "timestamp": "2026-10-16T19:41:11.446Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "357189f388462a3db2c3cf01fae529198a4470dd3e33ee9ccc144649fd8690b9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
