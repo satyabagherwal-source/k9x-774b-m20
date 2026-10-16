@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-M8V0",
-    "timestamp": "2026-10-14T03:49:15.996Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-quantized-mv7km8sc",
-    "contentHash": "f5baf3d4ceb9db908f190d092b5bff916244a0af34ddfebed7be8041c6850e48",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-QE4D",
     "timestamp": "2026-10-14T03:52:29.437Z",
     "repository": "apple/LensVLM-9B",
@@ -7490,6 +7475,21 @@
     "repository": "nomic-ai/nomic-embed-text-v1.5",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
     "contentHash": "b31dba4a94be8a8a77ac0c22173368da48073cd8c3aa503d0448134f7e67b52d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-ZFWL",
+    "timestamp": "2026-10-16T11:58:45.573Z",
+    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+    "contentHash": "56d59b7ae5ab2481dfea9a3e0e563d7dc0f7224acb03f331c5f36296fd59ece6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
