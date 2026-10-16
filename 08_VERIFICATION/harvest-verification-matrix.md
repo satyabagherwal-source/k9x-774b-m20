@@ -1585,3 +1585,4 @@
 | `CYCLE-20261016-095D` | `2026-10-16T03:35:30.385Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`2ddf5850...`) |
 | `CYCLE-20261016-4K1Y` | `2026-10-16T03:38:51.142Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`8bcb1031...`) |
 | `CYCLE-20261016-8M4J` | `2026-10-16T03:42:00.451Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`572639e8...`) |
+| `CYCLE-20261016-CEMQ` | `2026-10-16T03:44:57.362Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`7b81ce6c...`) |

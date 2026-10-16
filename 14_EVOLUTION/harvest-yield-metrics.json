@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T03:42:00.453Z",
-  "total_cycles_completed": 1562,
-  "total_learnings_persisted": 1562,
+  "last_updated": "2026-10-16T03:44:57.366Z",
+  "total_cycles_completed": 1563,
+  "total_learnings_persisted": 1563,
   "total_rules_promoted": 835,
   "history": [
-    {
-      "timestamp": "2026-10-14T14:27:43.369Z",
-      "repository": "amplifthq/opentag",
-      "learningId": "learn-github-amplifthq-opentag-mv87fawi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T14:41:31.542Z",
       "repository": "google-t5/t5-small",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T03:42:00.453Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T03:44:57.366Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-bingsu-adetailer",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

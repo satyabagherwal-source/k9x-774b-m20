@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-7L6D",
-    "timestamp": "2026-10-13T20:09:58.261Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv747l36",
-    "contentHash": "5eea67a68b9823eb8e2feda140198b34a95048d15298b8bcf8fb4cf4866feeb2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-BIP3",
     "timestamp": "2026-10-13T20:13:01.671Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "contentHash": "572639e8c989a0461c1d247171ea01e1c87e736d042674e68715839ae62fc791",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-CEMQ",
+    "timestamp": "2026-10-16T03:44:57.362Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-bingsu-adetailer",
+    "contentHash": "7b81ce6cef07d3da3ffd24ea63c41337971f380ec0fa7d08411a789d37ecf434",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T03:42:00.430Z",
+  "last_updated": "2026-10-16T03:44:57.334Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10732,7 +10732,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "3f1c4a63454d5c99433f21b303711a0963ced221058a411baf4a5798d11f87d5",
+      "content_hash": "7b81ce6cef07d3da3ffd24ea63c41337971f380ec0fa7d08411a789d37ecf434",
       "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "promoted_rules": [
@@ -10778,7 +10778,7 @@
         "learn-huggingface-hf-bingsu-adetailer-mv40r96p",
         "learn-huggingface-hf-bingsu-adetailer-mv4eqnev"
       ],
-      "verified_at": "2026-10-15T20:37:34.909Z",
+      "verified_at": "2026-10-16T03:44:57.328Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
