@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-77SD",
-    "timestamp": "2026-10-13T22:01:39.373Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv7877pl",
-    "contentHash": "ae0612f51b450e1d8ee9bbec0a4d71dfd27dccb969f77f492ec03ecf6c6b00ec",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-B0XJ",
     "timestamp": "2026-10-13T22:04:37.112Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7492,6 +7477,21 @@
     "contentHash": "7e6ff5edade757cfd6596cef74eb5945d997a26dc1cc8a9f94633f49c0b27074",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-LD13",
+    "timestamp": "2026-10-16T05:15:54.039Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "3cd15ebb2c27d917acea8e32b5abc454cae077be763d66ef48b43ec5e45a8829",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1607,3 +1607,4 @@
 | `CYCLE-20261016-9SLG` | `2026-10-16T05:06:54.340Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1068, Rule 1069, Rule 1070` | Yes (`9a70619b...`) |
 | `CYCLE-20261016-DL7X` | `2026-10-16T05:09:51.405Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`50be5ac0...`) |
 | `CYCLE-20261016-HPOQ` | `2026-10-16T05:13:03.818Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1071, Rule 1072, Rule 1073` | Yes (`7e6ff5ed...`) |
+| `CYCLE-20261016-LD13` | `2026-10-16T05:15:54.039Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`3cd15ebb...`) |
