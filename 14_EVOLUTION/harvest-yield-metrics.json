@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T12:48:50.959Z",
-  "total_cycles_completed": 1712,
-  "total_learnings_persisted": 1712,
-  "total_rules_promoted": 929,
+  "last_updated": "2026-10-16T12:52:08.911Z",
+  "total_cycles_completed": 1713,
+  "total_learnings_persisted": 1713,
+  "total_rules_promoted": 932,
   "history": [
-    {
-      "timestamp": "2026-10-16T01:09:59.167Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T01:13:16.682Z",
       "repository": "vllm-sr/d3",
@@ -1403,6 +1396,13 @@
       "repository": "autotrust/GEV-26B-Decide",
       "learningId": "learn-huggingface-autotrust-gev-26b-decide",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T12:52:08.911Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T12:48:50.929Z",
+  "last_updated": "2026-10-16T12:52:08.881Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11614,7 +11614,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "d2a3c5785933d4f9115a9d1092a6a8a66a9d30190b21ed265f4260ef83321f81",
+      "content_hash": "32ddbbc591fd98af7fdfbf253927a50e0b2c72904bfec0039cabfb9eafb7f291",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -11657,6 +11657,21 @@
         {
           "number": 992,
           "title": "Language-Aware Routing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1149,
+          "title": "Non-Autoregressive Decision Latency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1150,
+          "title": "Strictly Proper Scoring Rule Calibration Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1151,
+          "title": "Typed Question Schema Immutability Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -12002,7 +12017,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-16T04:11:56.284Z",
+      "verified_at": "2026-10-16T12:52:08.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
