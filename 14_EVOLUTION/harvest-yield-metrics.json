@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T00:13:43.568Z",
-  "total_cycles_completed": 1495,
-  "total_learnings_persisted": 1495,
+  "last_updated": "2026-10-16T00:16:50.847Z",
+  "total_cycles_completed": 1496,
+  "total_learnings_persisted": 1496,
   "total_rules_promoted": 812,
   "history": [
-    {
-      "timestamp": "2026-10-14T10:34:09.566Z",
-      "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv7z2xsz",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T10:37:17.710Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T00:13:43.568Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T00:16:50.847Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
