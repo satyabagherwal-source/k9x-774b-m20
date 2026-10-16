@@ -76290,3 +76290,139 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `d77dbcdc` are properly handled with clean fallback behavior.
+
+
+---
+
+## 1211. Input Normalization Contract Enforcement (Harvested from timm/mobilenetv3_small_100.lamb_in1k)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Input Normalization Contract Enforcement",
+  "source": "timm/mobilenetv3_small_100.lamb_in1k",
+  "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+  "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T17:26:13.223Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [timm/mobilenetv3_small_100.lamb_in1k](https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k) (Revision: `hf-timm-mo`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any neural network model that expects normalized inputs MUST NOT accept raw pixel values (0-255) directly. The inference pipeline MUST enforce a strict preprocessing step that applies the exact mean and standard deviation defined in the model's `pretrained_cfg` before tensor conversion.
+**WHY**:
+Neural networks are trained on normalized distributions. Feeding raw pixels (range 0-255) instead of normalized values (range ~-2 to +2) causes the input to fall far outside the training distribution. This leads to **silent failure**: the model runs without error but produces garbage probabilities (e.g., all zeros or uniform distribution). This is a "silent data corruption" bug that is extremely difficult to debug because no exception is thrown.
+**WHEN TO APPLY**:
+All PyTorch/TensorFlow inference pipelines, especially when integrating third-party models from Hugging Face or timm.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+from PIL import Image
+import timm
+
+def safe_inference(model, image_path):
+    # 1. Resolve config from model, do NOT hardcode
+    data_config = timm.data.resolve_model_data_config(model)
+    
+    # 2. Create transform using resolved config
+    # is_training=False ensures no random augmentation
+    transforms = timm.data.create_transform(**data_config, is_training=False)
+    
+    # 3. Load and transform
+    img = Image.open(image_path)
+    tensor = transforms(img).unsqueeze(0) # Add batch dimension
+    
+    # 4. Inference
+    model.eval()
+    with torch.no_grad():
+        output = model(tensor)
+        
+    return output
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoding normalization or skipping it
+def unsafe_inference(model, image_path):
+    img = Image.open(image_path)
+    tensor = torch.from_numpy(np.array(img)).float() / 255.0 # WRONG: Does not apply mean/std
+    tensor = tensor.unsqueeze(0).permute(0, 3, 1, 2)
+    # This will produce incorrect results for models expecting ImageNet normalization
+    return model(tensor)
+```
+**VERIFICATION METHOD**:
+Unit test that asserts the mean and std of the input tensor match the `pretrained_cfg` values within a tolerance of $10^{-6}$.
+
+
+---
+
+## 1212. Feature Map Shape Invariance for Backbone Usage (Harvested from timm/mobilenetv3_small_100.lamb_in1k)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Feature Map Shape Invariance for Backbone Usage",
+  "source": "timm/mobilenetv3_small_100.lamb_in1k",
+  "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
+  "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T17:26:13.258Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [timm/mobilenetv3_small_100.lamb_in1k](https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k) (Revision: `hf-timm-mo`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using a classification model as a feature backbone (`features_only=True`), the consumer MUST NOT assume a fixed output shape. The shape depends on the input resolution and the model's stride. The code MUST dynamically inspect the output tensor's shape before processing.
+**WHY**:
+MobileNetV3 has a total stride of 32. For a 224x224 input, the final feature map is 7x7. However, if the input is resized to 256x256, the feature map becomes 8x8. Hardcoding dimensions (e.g., `tensor[0, :, 7, 7]`) will cause an `IndexError` or silent data corruption if the input size changes.
+**WHEN TO APPLY**:
+Any system using CNNs for feature extraction, object detection, or segmentation where input resolution may vary.
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+model = timm.create_model('mobilenetv3_small_100.lamb_in1k', pretrained=True, features_only=True)
+model.eval()
+
+def extract_features(model, tensor):
+    with torch.no_grad():
+        features = model(tensor)
+    
+    # Dynamic shape handling
+    if isinstance(features, (list, tuple)):
+        # MobileNetV3 returns a list of feature maps from different stages
+        final_feature = features[-1]
+    else:
+        final_feature = features
+        
+    # Use dynamic shape
+    batch_size, channels, height, width = final_feature.shape
+    print(f"Feature Map Shape: {batch_size}x{channels}x{height}x{width}")
+    
+    return final_feature
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Hardcoding spatial dimensions
+def unsafe_extract(model, tensor):
+    features = model(tensor)
+    # Assumes 7x7 spatial dimensions for 224x224 input
+    # Will crash if input is 256x256 (8x8) or 192x192 (6x6)
+    return features[0, :, 7, 7] 
+```
+**VERIFICATION METHOD**:
+Integration test that runs inference with input sizes 224x224, 256x256, and 192x192, asserting that no `IndexError` occurs and the output shapes are consistent with the stride calculation.

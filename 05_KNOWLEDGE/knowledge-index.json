@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T17:23:07.079Z",
+  "last_updated": "2026-10-16T17:26:13.286Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17554,7 +17554,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "0b7b2c47901a099bbff90e4c5a4f6f2dbbda0aa0f04a7c1643e36718fbb0a267",
+      "content_hash": "ae36ddf51fe2feb808678d8b9e3135ad2cc3427de106311c8d271f3c4526c9b0",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [
@@ -17571,6 +17571,16 @@
         {
           "number": 1129,
           "title": "The EMA Weight Averaging Inference Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1211,
+          "title": "Input Normalization Contract Enforcement",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1212,
+          "title": "Feature Map Shape Invariance for Backbone Usage",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -17592,7 +17602,7 @@
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk",
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2"
       ],
-      "verified_at": "2026-10-16T09:15:47.679Z",
+      "verified_at": "2026-10-16T17:26:13.282Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
