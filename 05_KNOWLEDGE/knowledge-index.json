@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T11:09:08.863Z",
+  "last_updated": "2026-10-16T11:12:05.807Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17691,7 +17691,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
-      "content_hash": "74609b7afe3cb6cf0cbaa2c5730ff593e722846b942462cfbe847777639abcee",
+      "content_hash": "c6bf55e36eed7f3c521e7cfe4a2ea49fa8c5ee4f6657fb9c1bb40bbd107ea22c",
       "dossier_path": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md",
       "promoted_rules": [],
@@ -17712,7 +17712,7 @@
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv3xybf6",
         "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv4co4ot"
       ],
-      "verified_at": "2026-10-16T02:30:32.471Z",
+      "verified_at": "2026-10-16T11:12:05.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
