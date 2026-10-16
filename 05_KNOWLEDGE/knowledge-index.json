@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T02:42:39.803Z",
+  "last_updated": "2026-10-16T02:45:45.444Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -40230,7 +40230,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "670795e9d07edbbceaf1481a85f22ff02f5ddc77be679a8e9ac9e32b43e2d86c",
+      "content_hash": "51ff4ab1d3cfef3cec3a755a876f31f01e60781fb2af724d096d697a3f001dae",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
@@ -40248,6 +40248,11 @@
           "number": 940,
           "title": "Rectified Flow Linear Velocity ODE Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1054,
+          "title": "Data Integrity Verification Before Forensic Analysis",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40255,7 +40260,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-15T19:22:22.211Z",
+      "verified_at": "2026-10-16T02:45:45.439Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T02:42:39.841Z",
-  "total_cycles_completed": 1543,
-  "total_learnings_persisted": 1543,
-  "total_rules_promoted": 831,
+  "last_updated": "2026-10-16T02:45:45.468Z",
+  "total_cycles_completed": 1544,
+  "total_learnings_persisted": 1544,
+  "total_rules_promoted": 832,
   "history": [
-    {
-      "timestamp": "2026-10-14T13:08:22.356Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv84l9ar",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T13:11:57.570Z",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T02:45:45.468Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
