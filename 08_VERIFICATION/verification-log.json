@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-Y6Y8",
-    "timestamp": "2026-10-14T10:58:27.632Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv7zy6w3",
-    "contentHash": "e2473595434352dffb9136591c974b8ed403e88806776f9d3ea8339d1271cf91",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-29N4",
     "timestamp": "2026-10-14T11:01:37.744Z",
     "repository": "FrancisRing/Prism",
@@ -7492,6 +7477,21 @@
     "contentHash": "0eb2988bf3074ea50dbe162555f45cc6701500780911b9593679ebd273df77de",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-H84P",
+    "timestamp": "2026-10-16T18:16:30.313Z",
+    "repository": "openai/gpt-oss-120b",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "5d4b435e91a352b8319017bf39bc0af70d8b5f8de742ed39a624b7bf8207f2d9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

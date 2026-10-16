@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T18:13:27.996Z",
-  "total_cycles_completed": 1803,
-  "total_learnings_persisted": 1803,
+  "last_updated": "2026-10-16T18:16:30.318Z",
+  "total_cycles_completed": 1804,
+  "total_learnings_persisted": 1804,
   "total_rules_promoted": 979,
   "history": [
-    {
-      "timestamp": "2026-10-16T06:14:34.782Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T06:17:41.648Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T18:16:30.318Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
