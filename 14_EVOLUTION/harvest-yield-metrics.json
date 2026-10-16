@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T02:02:18.962Z",
-  "total_cycles_completed": 1530,
-  "total_learnings_persisted": 1530,
+  "last_updated": "2026-10-16T02:05:12.052Z",
+  "total_cycles_completed": 1531,
+  "total_learnings_persisted": 1531,
   "total_rules_promoted": 829,
   "history": [
-    {
-      "timestamp": "2026-10-14T12:26:15.826Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv8333s5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T12:29:31.439Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T02:02:18.962Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
       "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T02:05:12.052Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
