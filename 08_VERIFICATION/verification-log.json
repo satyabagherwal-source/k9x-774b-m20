@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-PV4J",
-    "timestamp": "2026-10-13T18:04:12.883Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-hf-mudler-locate-anything-cpp-gguf-mv6zpv1e",
-    "contentHash": "ce7f914b8e679371407dcc4ce16d37aab8e7b5ec3451ea49a498d621ec412442",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-7J5N",
     "timestamp": "2026-10-13T18:17:57.179Z",
     "repository": "tickernelz/opencode-mem",
@@ -7492,6 +7477,21 @@
     "contentHash": "3f447c516b5d7868bf10fd22dcc192680209329f15dd623b2b04eed38076abf7",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-KLI9",
+    "timestamp": "2026-10-16T01:59:21.057Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "936aa77a60bfd5cb1d2de07e857dc80860ec6e83b1812bcdb4e2e069f12392a9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
