@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T11:02:47.558Z",
-  "total_cycles_completed": 1678,
-  "total_learnings_persisted": 1678,
+  "last_updated": "2026-10-16T11:05:51.431Z",
+  "total_cycles_completed": 1679,
+  "total_learnings_persisted": 1679,
   "total_rules_promoted": 923,
   "history": [
-    {
-      "timestamp": "2026-10-15T23:23:40.213Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T23:26:39.491Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T11:02:47.558Z",
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-fermionresearch-phonon-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T11:05:51.431Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

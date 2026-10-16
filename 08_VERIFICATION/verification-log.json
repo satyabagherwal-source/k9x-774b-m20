@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-R7UE",
-    "timestamp": "2026-10-14T02:57:08.726Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv7ir7r2",
-    "contentHash": "3e47484920269e840df353cbd086f7483062eed575ba68f58ad51eed596a2da0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-V1K0",
     "timestamp": "2026-10-14T03:00:07.200Z",
     "repository": "moonshotai/Kimi-K3",
@@ -7490,6 +7475,21 @@
     "repository": "FermionResearch/Phonon-2",
     "learningId": "learn-huggingface-fermionresearch-phonon-2",
     "contentHash": "9a6457fa32c8206793e3c138b140f6dc11f6df045e96e727ef1c85ae2a3536f9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-3EPW",
+    "timestamp": "2026-10-16T11:05:51.428Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "997ec3dbb6b67b81b8181575beb7cf41e5463bf88bb6823c19c2083cc09a8267",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
