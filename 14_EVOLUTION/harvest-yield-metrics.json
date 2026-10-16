@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:35:26.400Z",
-  "total_cycles_completed": 1743,
-  "total_learnings_persisted": 1743,
+  "last_updated": "2026-10-16T14:38:32.000Z",
+  "total_cycles_completed": 1744,
+  "total_learnings_persisted": 1744,
   "total_rules_promoted": 944,
   "history": [
-    {
-      "timestamp": "2026-10-16T02:45:45.468Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T02:48:39.070Z",
       "repository": "pyannote/speaker-diarization-community-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T14:35:26.400Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T14:38:32.000Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
