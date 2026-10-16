@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T16:33:21.914Z",
+  "last_updated": "2026-10-16T16:36:23.759Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11302,7 +11302,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "8463454a0b55e2c511fbeee201448a384bc591e9eb95d6476508697c8a7b1b39",
+      "content_hash": "a482972fd50d3225e28f67569bcfb91b35b11cb7c4ad1438dd98828103e3ebf4",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -11377,6 +11377,21 @@
           "number": 1119,
           "title": "**Inference‑Mode Contextualization Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1201,
+          "title": "**Token ID Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1202,
+          "title": "**Joint Head Dimension Alignment Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1203,
+          "title": "**Data‑Type Fidelity Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11397,7 +11412,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-16T08:26:09.596Z",
+      "verified_at": "2026-10-16T16:36:23.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
