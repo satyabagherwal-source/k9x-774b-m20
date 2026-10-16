@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-VD3G",
-    "timestamp": "2026-10-13T21:52:26.380Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv77vd06",
-    "contentHash": "fc646e589a16c48a30de58ab83890f575c16aaef86c50331d50a067fc19ff4c3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ZH6L",
     "timestamp": "2026-10-13T21:55:38.301Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "cab94827024c6069b6a98b9dae916f9845d009ace62d1590eb558d2091f13feb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-9SLG",
+    "timestamp": "2026-10-16T05:06:54.340Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "9a70619b96810300c1ff2e140ba76d1573e1816d361de3f071154c62f37e75e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
