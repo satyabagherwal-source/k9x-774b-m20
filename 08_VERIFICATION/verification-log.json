@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-8X11",
-    "timestamp": "2026-10-13T18:47:01.429Z",
-    "repository": "sentence-transformers/all-MiniLM-L6-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv718wxy",
-    "contentHash": "6bf26a3868a8fc75e456f33dbb9816c36d068275e647e82d4dccae3aeddcbd03",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-COLW",
     "timestamp": "2026-10-13T18:49:57.140Z",
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -7490,6 +7475,21 @@
     "repository": "FermionResearch/Phonon-2",
     "learningId": "learn-huggingface-fermionresearch-phonon-2",
     "contentHash": "032c9f5ccd96ba33b08f01e4417f7c4e7b26feacf3094619c018983a7b0e38fb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-G9BY",
+    "timestamp": "2026-10-16T02:23:58.270Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "fde42ae2ab854cb1f0adbc2bbc73d4bd126b5edb53c810c9e71ae535eff5564a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

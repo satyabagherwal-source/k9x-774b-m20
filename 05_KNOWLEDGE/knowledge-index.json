@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T02:20:54.328Z",
+  "last_updated": "2026-10-16T02:23:58.239Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13585,18 +13585,18 @@
     "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw": {
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
+      "source": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "slug": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "source_version": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw",
-      "content_hash": "62337e032ff15d0134c7d602716a7167e3f50852661051c7cff183a7ae90b25d",
+      "content_hash": "fde42ae2ab854cb1f0adbc2bbc73d4bd126b5edb53c810c9e71ae535eff5564a",
       "dossier_path": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -13612,7 +13612,7 @@
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv3xqg2c",
         "learn-huggingface-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-mv4cgfx7"
       ],
-      "verified_at": "2026-10-14T17:04:13.443Z",
+      "verified_at": "2026-10-16T02:23:58.230Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
