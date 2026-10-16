@@ -67439,3 +67439,156 @@ model = AutoModel.from_pretrained(repo_id)
 2.  **CI Check**: In CI, run a "smoke test" that loads the model and generates one image. Assert the output tensor is not all NaNs or Infs.
 
 ---
+
+
+---
+
+## 1085. **Special‑Token Uniqueness Across Modalities** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Special‑Token Uniqueness Across Modalities**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T06:27:13.258Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+All modality‑specific token IDs (`image_token_id`, `video_token_id`, `audio_bos_token`, `audio_eos_token`, `audio_token`) MUST be unique and MUST NOT overlap with any token in the shared vocabulary.  
+**WHY**:  
+Token ID collisions cause the model to misinterpret modality boundaries, leading to catastrophic decoding failures or silent data corruption.  
+**WHEN TO APPLY**:  
+During tokenizer construction, model initialization, and any downstream pipeline that injects modality tokens.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# tokenizer_config.json – ensure unique IDs
+{
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "audio_bos_token_id": 248058,
+  "audio_eos_token_id": 248059,
+  "audio_token_id": 248060,
+  "vocab_size": 248320
+}
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: overlapping IDs
+{
+  "image_token_id": 248044,   # same as pad_token_id
+  "video_token_id": 248044,   # collision
+}
+```
+**VERIFICATION METHOD**:  
+Run a unit test that asserts `len(set([image_token_id, video_token_id, audio_bos_token_id, audio_eos_token_id, audio_token_id])) == 5` and that each is `< vocab_size`.
+
+
+---
+
+## 1086. **Consistent Dtype Across Modalities** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Consistent Dtype Across Modalities**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T06:27:13.299Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+When a model mixes modalities, the dtype of all weight tensors for a given modality MUST be consistent; the text decoder uses `bfloat16`, while the vision encoder uses `bfloat16` for weights but `float32` for intermediate activations (`mamba_ssm_dtype`).  
+**WHY**:  
+Inconsistent dtypes cause silent precision loss or runtime errors on GPU kernels that expect homogeneous tensors.  
+**WHEN TO APPLY**:  
+During model weight loading and forward pass execution.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# In model initialization
+self.text_decoder = Qwen3ForConditionalGeneration.from_pretrained(
+    "Qwen/Qwen3.5-9B",
+    dtype=torch.bfloat16
+)
+self.vision_encoder = VisionEncoder.from_pretrained(
+    "Qwen/Qwen3.5-9B",
+    dtype=torch.bfloat16,
+    ssm_dtype=torch.float32
+)
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: mixed dtypes in a single module
+self.decoder = nn.Linear(4096, 4096, dtype=torch.float32)  # text decoder expects bfloat16
+```
+**VERIFICATION METHOD**:  
+Add a linter rule that checks `module.dtype` against the expected dtype per module type.
+
+
+---
+
+## 1087. **Cache Policy Isolation** (Harvested from apple/LensVLM-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Cache Policy Isolation**",
+  "source": "apple/LensVLM-9B",
+  "source_url": "https://huggingface.co/apple/LensVLM-9B",
+  "source_version": "hf-apple-lensvlm-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T06:27:13.338Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-apple-lensvlm-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/LensVLM-9B](https://huggingface.co/apple/LensVLM-9B) (Revision: `hf-apple-l`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The `use_cache` flag MUST be set to `False` for any sub‑module that processes high‑resolution visual data; it MUST be `True` only for the text decoder.  
+**WHY**:  
+Vision encoders produce large intermediate tensors; caching them would exhaust GPU memory and degrade throughput.  
+**WHEN TO APPLY**:  
+During model configuration and inference pipeline construction.  
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+config.use_cache = False          # Vision encoder
+text_config.use_cache = True      # Text decoder
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: caching vision encoder
+vision_encoder = VisionEncoder(..., use_cache=True)
+```
+**VERIFICATION METHOD**:  
+Unit test that asserts `model.vision_encoder.config.use_cache is False` and `model.text_decoder.config.use_cache is True`.

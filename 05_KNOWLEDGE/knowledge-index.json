@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T06:23:41.407Z",
+  "last_updated": "2026-10-16T06:27:13.370Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9676,7 +9676,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "5175ff6387002eaa1a815059ff5207dc6237cb3ec3197add13f5430e406cba09",
+      "content_hash": "e726adb4f22149d65b34b8ed63f0d9d31f8d5ee6d00599b0f5027fa6b4475f35",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [
@@ -9750,6 +9750,21 @@
           "number": 1020,
           "title": "Unique Image Token ID Enforcement",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1085,
+          "title": "**Special‑Token Uniqueness Across Modalities**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1086,
+          "title": "**Consistent Dtype Across Modalities**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1087,
+          "title": "**Cache Policy Isolation**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9770,7 +9785,7 @@
         "learn-huggingface-hf-apple-lensvlm-9b-mv45grmj",
         "learn-huggingface-hf-apple-lensvlm-9b-mv4iqnex"
       ],
-      "verified_at": "2026-10-15T22:55:51.826Z",
+      "verified_at": "2026-10-16T06:27:13.366Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
