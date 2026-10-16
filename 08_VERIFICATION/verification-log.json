@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-10MA",
-    "timestamp": "2026-10-14T04:56:44.386Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv7n10j3",
-    "contentHash": "346629ec42b42478cdf88c980678fb7df527f0481981295f9a2723656707a55a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-4XQF",
     "timestamp": "2026-10-14T04:59:47.271Z",
     "repository": "facebook/sam3",
@@ -7490,6 +7475,21 @@
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
     "contentHash": "7d3de796739e6fd2d2441f00b0180e19f6f0ddb13dad5477135ae13b2dc86271",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-GF1Z",
+    "timestamp": "2026-10-16T13:07:56.855Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "f30f15cb8d3bece9e0c67ff697a9f4ad347c9ce52d102067d21ed8ac08f31d5f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
