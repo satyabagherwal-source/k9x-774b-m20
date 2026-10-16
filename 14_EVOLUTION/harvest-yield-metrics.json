@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T20:58:22.796Z",
-  "total_cycles_completed": 1849,
-  "total_learnings_persisted": 1849,
+  "last_updated": "2026-10-16T21:01:31.506Z",
+  "total_cycles_completed": 1850,
+  "total_learnings_persisted": 1850,
   "total_rules_promoted": 995,
   "history": [
-    {
-      "timestamp": "2026-10-16T09:18:48.905Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T09:22:15.018Z",
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T20:58:22.796Z",
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-jialinyyzz-humanizer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T21:01:31.506Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

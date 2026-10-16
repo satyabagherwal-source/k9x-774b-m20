@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T20:58:22.758Z",
+  "last_updated": "2026-10-16T21:01:31.466Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10094,7 +10094,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "229d959a4d50204f2c3f9cf91c8e346e9f47f917f5c78682a04a538c2e1b5b8d",
+      "content_hash": "3577a3ec99fe114514e4cb2c894199fd6b29883f91ec1eeec37a946ce00ba99f",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "promoted_rules": [
@@ -10150,7 +10150,7 @@
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv41j8wr",
         "learn-huggingface-hf-autotrust-jev-27b-vl-mv4fdvg8"
       ],
-      "verified_at": "2026-10-16T12:45:43.914Z",
+      "verified_at": "2026-10-16T21:01:31.459Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
