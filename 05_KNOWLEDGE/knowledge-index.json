@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T11:12:05.807Z",
+  "last_updated": "2026-10-16T11:15:12.132Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15214,7 +15214,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
       "source_version": "hf-naiveai-naive-n0.5-flash",
-      "content_hash": "a1cafae9f17217e8482dbeb2088279f5be0f84391a8288b69eee345c4b6b8a93",
+      "content_hash": "89e7fd490f207b71ee1e8bd1dbade72477621e620aa7b23ffaab437df70ddf1a",
       "dossier_path": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "promoted_rules": [],
@@ -15235,7 +15235,7 @@
         "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv3y20ev",
         "learn-huggingface-hf-naiveai-naive-n0-5-flash-mv4crs6s"
       ],
-      "verified_at": "2026-10-16T02:33:35.252Z",
+      "verified_at": "2026-10-16T11:15:12.125Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
