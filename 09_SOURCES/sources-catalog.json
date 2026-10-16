@@ -1578,5 +1578,15 @@
     "contentHash": "6fb8bd1298263f6a1a37287e9dfb1ad5e77a3fb1bd1370ab0666c7924f67313a",
     "lastHarvestedAt": "2026-10-16T04:32:21.322Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy"
+  },
+  "dayuanjiang-next-ai-draw-io": {
+    "repository": "DayuanJiang/next-ai-draw-io",
+    "platform": "github",
+    "sourceUrl": "https://github.com/DayuanJiang/next-ai-draw-io",
+    "sourceVersion": "c4ea6957",
+    "license": "Apache-2.0",
+    "contentHash": "81c6d704e8e91d2df023023f28336e59b47a1edf2c554b9e119702d8a5f68957",
+    "lastHarvestedAt": "2026-10-16T04:39:05.084Z",
+    "learningId": "learn-github-dayuanjiang-next-ai-draw-io"
   }
 }

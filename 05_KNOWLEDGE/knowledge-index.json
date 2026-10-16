@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T04:32:21.288Z",
-  "total_verified_learnings": 183,
+  "last_updated": "2026-10-16T04:39:05.064Z",
+  "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -40864,6 +40864,39 @@
         1061
       ],
       "dossier_path": "07_PROJECT_LEARNING/garmeeh-next-seo-learnings.md"
+    },
+    "learn-github-dayuanjiang-next-ai-draw-io": {
+      "learning_id": "learn-github-dayuanjiang-next-ai-draw-io",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "DayuanJiang/next-ai-draw-io",
+      "repository": "DayuanJiang/next-ai-draw-io",
+      "slug": "dayuanjiang-next-ai-draw-io",
+      "platform": "github",
+      "source_url": "https://github.com/DayuanJiang/next-ai-draw-io",
+      "source_version": "c4ea6957",
+      "content_hash": "81c6d704e8e91d2df023023f28336e59b47a1edf2c554b9e119702d8a5f68957",
+      "dossier_path": "07_PROJECT_LEARNING/dayuanjiang-next-ai-draw-io-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dayuanjiang-next-ai-draw-io-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1064,
+          "title": "mcp-server): fixes from the user simulation, release 0.4.2 (#997)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-16T04:39:05.060Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "aliases": {

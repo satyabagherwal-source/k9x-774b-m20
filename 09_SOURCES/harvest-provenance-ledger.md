@@ -1601,3 +1601,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-16T04:25:53.831Z |
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-10-16T04:28:57.659Z |
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-16T04:32:21.322Z |
+| `learn-github-dayuanjiang-next-ai-draw-io` | `https://github.com/DayuanJiang/next-ai-draw-io` | `c4ea6957` | Multi-dimensional audit evidence | 2026-10-16T04:39:05.084Z |
