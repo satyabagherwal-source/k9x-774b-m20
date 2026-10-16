@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-9I4S",
-    "timestamp": "2026-10-14T06:27:19.180Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv7q9i23",
-    "contentHash": "1726807c43708b253cb084860cdb1fb2dd29130084ee728d0048ac4c090fe6e1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-DT2K",
     "timestamp": "2026-10-14T06:30:39.980Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "SupersonicLabs/Julia-1",
     "learningId": "learn-huggingface-supersoniclabs-julia-1",
     "contentHash": "b41dca65a922a8cdec5fe304b5043c94c8a0b829c402c1d62fd81d215a20a737",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-0WD8",
+    "timestamp": "2026-10-16T14:47:51.260Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+    "contentHash": "49c078df766c0efe33e8574b1b0a1b6426353b468c1997b01407ee2ae9ddd87d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
