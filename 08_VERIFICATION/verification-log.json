@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-8TOZ",
-    "timestamp": "2026-10-14T13:54:41.363Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv868tj7",
-    "contentHash": "b9ae788b5c2621df8741951cf7f85f03d25b9aa7772b89f861c335fe47d23a1b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-CXB2",
     "timestamp": "2026-10-14T13:57:52.670Z",
     "repository": "Cloudflare/clef",
@@ -7490,6 +7475,21 @@
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
     "contentHash": "fbcab975846ab89069c80ac223aa54f94f2e57b96500c0ce2177210bec89fa98",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-XE5Z",
+    "timestamp": "2026-10-16T21:17:02.327Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "157b122d948058bf8a316c6b5c7ffc808a6364797e574ef0208691fb9363244c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
