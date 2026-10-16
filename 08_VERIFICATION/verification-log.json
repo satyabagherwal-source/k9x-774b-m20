@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-XMZ4",
-    "timestamp": "2026-10-14T05:22:06.352Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-hf-cloudflare-clef-flash-mv7nxmu2",
-    "contentHash": "07e7c68d78f6764a1ffcc6076a07029678189605c2a295a2f7875365a22d371b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-1GJI",
     "timestamp": "2026-10-14T05:25:04.638Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7490,6 +7475,21 @@
     "repository": "black-forest-labs/FLUX.1-dev",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
     "contentHash": "1161897bd3946e9a26d98ad58edb4347ac5cfa04fab7cd17b262c673fb20519b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-FG3O",
+    "timestamp": "2026-10-16T13:35:11.172Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "1176e805cb99f1c2338ec51bbd8b86c550ddcb8f8b6549c415d3a006899c5311",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
