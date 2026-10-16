@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T07:50:49.619Z",
+  "last_updated": "2026-10-16T08:03:29.059Z",
   "total_verified_learnings": 185,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13902,10 +13902,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "c25c279693ec3556cb95d154d2d49e1a9cbc3ef418d97ecf993c034f34c9a35c",
+      "content_hash": "a292ee0367ee3411703412d9455fa57474f6b16362a0de85eeca20fd38288940",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1115,
+          "title": "Heterogeneous Precision Allocation Under Hard Size Constraints",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1116,
+          "title": "GGUF Format Immutability & Compatibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -13924,7 +13935,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv47q2a0",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-mv4l09tk"
       ],
-      "verified_at": "2026-10-16T00:00:56.690Z",
+      "verified_at": "2026-10-16T08:03:29.054Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

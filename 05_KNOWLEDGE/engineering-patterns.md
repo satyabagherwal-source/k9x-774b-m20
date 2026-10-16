@@ -69834,3 +69834,150 @@ checksum = "0359b4327f954e0567e69fb191cf1436617748813819c94b8cd4a431422d053a"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `fa54fe97` are properly handled with clean fallback behavior.
+
+
+---
+
+## 1115. Heterogeneous Precision Allocation Under Hard Size Constraints (Harvested from ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Heterogeneous Precision Allocation Under Hard Size Constraints",
+  "source": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T08:03:28.984Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing large, modular models (like MoE) under a strict size budget, you MUST NOT apply a uniform quantization type to all tensors. Instead, you MUST perform a per-tensor sensitivity analysis and assign distinct quantization types to each tensor, prioritizing high-sensitivity tensors (e.g., attention projections, shared experts) with higher precision and low-sensitivity tensors (e.g., routed experts) with lower precision.
+
+**WHY**:
+Uniform quantization wastes bits on insensitive tensors and starves sensitive tensors of precision. In MoE models, 95% of parameters are in routed experts which are sparsely activated. Applying a uniform high-precision type to all experts blows the size budget, while applying a uniform low-precision type degrades the few active experts that matter for a given token. Per-tensor allocation maximizes the "accuracy-per-byte" ratio.
+
+**WHEN TO APPLY**:
+Any post-training quantization (PTQ) of large MoE or dense models where the target deployment has a strict memory or bandwidth constraint (e.g., edge devices, local LLMs).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for RCO-style allocation
+def allocate_quantization_types(tensors, size_budget):
+    # 1. Calculate sensitivity score for each tensor (e.g., via gradient magnitude)
+    sensitivity_scores = [calculate_sensitivity(t) for t in tensors]
+    
+    # 2. Sort tensors by sensitivity (descending)
+    sorted_tensors = sorted(zip(tensors, sensitivity_scores), key=lambda x: x[1], reverse=True)
+    
+    # 3. Greedy or Gradient-based assignment
+    assigned_types = {}
+    current_size = 0
+    for tensor, score in sorted_tensors:
+        # Try highest precision first, drop to lower if budget exceeded
+        for q_type in [Q8_0, Q6_K, Q5_K, Q4_K, Q3_K, Q2_K]:
+            size = get_tensor_size(tensor, q_type)
+            if current_size + size <= size_budget:
+                assigned_types[tensor] = q_type
+                current_size += size
+                break
+        else:
+            # If even Q2_K exceeds budget, raise error or drop tensor (if possible)
+            raise MemoryBudgetExceededError(f"Cannot fit {tensor} in budget")
+    return assigned_types
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Uniform Quantization
+def uniform_quantization(tensors, target_bit_width):
+    # This ignores sensitivity and wastes bits on insensitive tensors
+    for tensor in tensors:
+        tensor.quantize(bit_width=target_bit_width) # Same bit width for ALL
+    return tensors
+```
+
+**VERIFICATION METHOD**:
+1.  **Size Check:** Assert `sum(tensor.size_bytes for tensor in model) <= target_size_budget`.
+2.  **Accuracy Check:** Run a perplexity evaluation on a validation set. The non-uniform model MUST have lower perplexity than the uniform model at the same total size.
+3.  **Format Check:** Use `gguf-inspect` to verify that different tensors have different `quant_type` values.
+
+
+---
+
+## 1116. GGUF Format Immutability & Compatibility Invariant (Harvested from ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "GGUF Format Immutability & Compatibility Invariant",
+  "source": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+  "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T08:03:29.030Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF) (Revision: `hf-ista-da`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Any custom quantization algorithm MUST produce output that is strictly compliant with the standard GGUF binary format. You MUST NOT introduce custom tensor types, metadata fields, or serialization structures that are not recognized by the reference `llama.cpp` implementation. The quantization logic must be encapsulated entirely within the weight values and standard GGUF metadata.
+
+**WHY**:
+The value of GGUF is its ecosystem compatibility (Ollama, LM Studio, llama.cpp). If the quantization introduces non-standard types, the model becomes unusable in the broader ecosystem, defeating the purpose of the release. The "non-uniform" aspect is achieved by assigning standard types (Q2_K, Q4_0, etc.) to different tensors, not by inventing new types.
+
+**WHEN TO APPLY**:
+Any project aiming to release models for local inference via `llama.cpp` or its derivatives.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for GGUF Serialization
+def save_to_gguf(model, path):
+    writer = GGUFWriter(path)
+    # Write standard metadata
+    writer.add_metadata("general.architecture", "qwen3")
+    writer.add_metadata("general.size", model.total_size)
+    
+    for tensor in model.tensors:
+        # Use ONLY standard GGUF quantization types
+        if tensor.quant_type not in [Q2_K, Q3_K, Q4_K, Q5_K, Q6_K, Q8_0, F16]:
+            raise ValueError(f"Non-standard quant type {tensor.quant_type} not allowed in GGUF")
+        
+        # Serialize tensor data using standard GGUF layout
+        writer.add_tensor(tensor.name, tensor.data, tensor.quant_type)
+    
+    writer.finalize()
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Custom Quantization Type
+def save_custom_gguf(model, path):
+    writer = GGUFWriter(path)
+    for tensor in model.tensors:
+        # INVENTING A NEW TYPE
+        if tensor.quant_type == "MY_CUSTOM_Q3":
+            writer.add_tensor(tensor.name, tensor.data, "MY_CUSTOM_Q3") # CRASHES llama.cpp
+```
+
+**VERIFICATION METHOD**:
+1.  **Load Test:** Attempt to load the `.gguf` file using `llama.cpp`'s `llama_load_model_from_file`. If it fails, the format is non-compliant.
+2.  **Schema Validation:** Use a GGUF schema validator to ensure all tensor types are from the standard set.

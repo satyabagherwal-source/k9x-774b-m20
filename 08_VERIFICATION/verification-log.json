@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-8UI7",
-    "timestamp": "2026-10-14T00:22:53.551Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv7d8uew",
-    "contentHash": "f871c7d7c54a7b2b1a4baa3a8e15dc25c51d24dcd970d39264c5cf8cd3fed23a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-CTX1",
     "timestamp": "2026-10-14T00:25:59.414Z",
     "repository": "Qwen/Qwen3-4B",
@@ -7492,6 +7477,21 @@
     "contentHash": "33740bb9715dd7f6cb433980ec341c2dbdfa1a38f7947f7270afe32af2d8e740",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-KVJP",
+    "timestamp": "2026-10-16T08:03:29.077Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "a292ee0367ee3411703412d9455fa57474f6b16362a0de85eeca20fd38288940",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
