@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "ed6aa754012f5293510aa36de5933dfe2e1a8a0faeb35fbc569659cc2bf67685",
-    "lastHarvestedAt": "2026-10-16T12:23:48.668Z",
+    "contentHash": "e52116191c0e64babefb0b26e25d04e681a7f68314070e0b712f5b22c2e8ca21",
+    "lastHarvestedAt": "2026-10-16T20:33:30.583Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {

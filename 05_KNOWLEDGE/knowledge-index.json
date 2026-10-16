@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T20:26:33.135Z",
+  "last_updated": "2026-10-16T20:33:30.553Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17178,7 +17178,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "ed6aa754012f5293510aa36de5933dfe2e1a8a0faeb35fbc569659cc2bf67685",
+      "content_hash": "e52116191c0e64babefb0b26e25d04e681a7f68314070e0b712f5b22c2e8ca21",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -17190,7 +17190,12 @@
         {
           "number": 974,
           "title": "Tokenizer Truncation & Padding Consistency",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 996,
+          "title": "Masked Mean Pooling Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17209,7 +17214,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-16T12:23:48.625Z",
+      "verified_at": "2026-10-16T20:33:30.547Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
