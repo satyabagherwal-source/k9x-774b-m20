@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T01:03:53.240Z",
+  "last_updated": "2026-10-16T01:06:58.110Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14719,18 +14719,18 @@
     "learn-huggingface-microsoft-frognano-4b-2609": {
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-microsoft-frognano-4b-2609",
+      "source": "microsoft/FrogNano-4B-2609",
+      "repository": "microsoft/FrogNano-4B-2609",
       "slug": "hf-microsoft-frognano-4b-2609",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/microsoft/FrogNano-4B-2609",
       "source_version": "hf-microsoft-frognano-4b-2609",
-      "content_hash": "1d9d1dc110c6c8f8e9067b8421116aa130ba8497bb520b0abda40bade475ca91",
+      "content_hash": "72c1e80d2dadbf888fa158a9a242a5468d0cde6477fff32b262e5a722fdc12f3",
       "dossier_path": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 10,
       "historical_learning_ids": [
@@ -14745,7 +14745,7 @@
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv49zxkw",
         "learn-huggingface-hf-microsoft-frognano-4b-2609-mv4nczd5"
       ],
-      "verified_at": "2026-10-14T15:09:59.412Z",
+      "verified_at": "2026-10-16T01:06:58.103Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
