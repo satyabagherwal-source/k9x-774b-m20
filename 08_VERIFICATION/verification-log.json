@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-8BHS",
-    "timestamp": "2026-10-14T00:50:28.528Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv7e8bfy",
-    "contentHash": "c181a32287b51b7e2e086a024fc8261576d43d62cbf819648034ed93f1adb933",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-C9CZ",
     "timestamp": "2026-10-14T00:53:32.387Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -7492,6 +7477,21 @@
     "contentHash": "df78f2171bcbe3a43bac9d0bf0dc59d97d4791466363e74558598b31707fcc4d",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-M2HK",
+    "timestamp": "2026-10-16T08:32:24.344Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+    "contentHash": "d625a7f7d8d44d6e7aa3fedf12fb7bca943181d693211a5d7c18100cfdd8b0dc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

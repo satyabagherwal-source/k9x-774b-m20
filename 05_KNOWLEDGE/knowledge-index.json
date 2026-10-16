@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T08:29:17.095Z",
+  "last_updated": "2026-10-16T08:32:24.323Z",
   "total_verified_learnings": 185,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16836,7 +16836,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "295a99ad2e183294962592da7baf405c1df8498e9679a96687e80c8392f8e9bd",
+      "content_hash": "d625a7f7d8d44d6e7aa3fedf12fb7bca943181d693211a5d7c18100cfdd8b0dc",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
@@ -16867,6 +16867,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
           "verified_at": "2026-10-11T19:52:45.175Z"
+        },
+        {
+          "number": 1123,
+          "title": "Mask-Aware Aggregation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1124,
+          "title": "Deterministic Truncation & Tokenization Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16887,7 +16897,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-10-16T00:29:42.339Z",
+      "verified_at": "2026-10-16T08:32:24.316Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

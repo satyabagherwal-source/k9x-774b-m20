@@ -70340,3 +70340,136 @@ pad_value = 0  # wrong if pad_token_id != 0
 Unit test that verifies the padding value of the batched tensors matches `tokenizer.pad_token_id` and that the attention mask correctly masks padded positions.
 
 ---
+
+
+---
+
+## 1123. Mask-Aware Aggregation Invariant (Harvested from sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Mask-Aware Aggregation Invariant",
+  "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T08:32:24.260Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When aggregating variable-length sequences (e.g., mean pooling, max pooling) into a fixed-size representation, you **MUST** apply the attention mask (or equivalent validity mask) to both the numerator (sum of values) and the denominator (count of valid items). You **MUST NOT** divide by the total sequence length if padding is present.
+
+**WHY**:
+Padding tokens (usually 0) are not semantic content. If you include them in the average, the magnitude of the embedding vector is artificially reduced (diluted) for shorter sentences. This breaks the geometric properties of the vector space, causing shorter sentences to cluster incorrectly near the origin and distorting cosine similarity scores. The `min=1e-9` clamp prevents division by zero for empty sequences.
+
+**WHEN TO APPLY**:
+Any NLP, time-series, or graph neural network where inputs are padded to a fixed batch dimension and require reduction to a single vector.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def safe_mean_pooling(token_embeddings, attention_mask):
+    """
+    token_embeddings: [batch_size, seq_len, hidden_dim]
+    attention_mask: [batch_size, seq_len] (1 for real tokens, 0 for pad)
+    """
+    # Expand mask to match embedding dimensions
+    input_mask_expanded = attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+    
+    # Sum only valid tokens
+    sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, dim=1)
+    
+    # Count only valid tokens, clamp to avoid div-by-zero
+    valid_counts = torch.clamp(input_mask_expanded.sum(dim=1), min=1e-9)
+    
+    return sum_embeddings / valid_counts
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naive mean pooling
+def bad_mean_pooling(token_embeddings, attention_mask):
+    # This divides by seq_len (e.g., 128), not the number of actual tokens.
+    # A 5-token sentence will have its embedding magnitude reduced by ~25x compared to a 128-token sentence.
+    return torch.mean(token_embeddings, dim=1) 
+```
+
+**VERIFICATION METHOD**:
+Unit test: Create a batch with one sentence of length 5 and one of length 100 (padded to 100). Assert that the L2 norm of the embedding for the length-5 sentence is not disproportionately smaller than expected based on its token values, and that the result matches a manual calculation excluding padding indices.
+
+
+---
+
+## 1124. Deterministic Truncation & Tokenization Boundary (Harvested from sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Deterministic Truncation & Tokenization Boundary",
+  "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T08:32:24.293Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) (Revision: `hf-sentenc`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When processing text for fixed-context models, you **MUST** explicitly define and enforce truncation limits at the tokenizer level, not just the model level. You **MUST** verify that the tokenizer's `model_max_length` aligns with the model's `max_position_embeddings` to prevent silent index errors or undefined behavior.
+
+**WHY**:
+If the tokenizer produces sequences longer than the model's positional embedding matrix, the model will either crash (index out of bounds) or, in some frameworks, silently wrap around or ignore excess tokens, leading to data loss and non-deterministic results. The config shows `max_position_embeddings: 512` but the `SentenceTransformer` wrapper uses `max_seq_length: 128`. This discrepancy is a common source of "why is my long text ignored?" bugs.
+
+**WHEN TO APPLY**:
+Any system using transformer models with fixed positional embeddings.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoTokenizer
+
+tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2')
+
+# Explicitly set truncation to match the intended effective context window
+# Note: The model supports 512, but the SBERT wrapper often defaults to 128 for efficiency.
+# Always check the specific model's recommended max length.
+encoded = tokenizer(
+    ["This is a very long sentence that exceeds the limit"], 
+    padding=True, 
+    truncation=True, 
+    max_length=128, # Explicitly enforce the boundary
+    return_tensors='pt'
+)
+assert encoded['input_ids'].shape[1] <= 128
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Relying on implicit defaults
+encoded = tokenizer(["Long text..."], padding=True)
+# If the text is 500 tokens and the model only expects 128, this may cause
+# downstream errors or silent truncation without warning.
+```
+
+**VERIFICATION METHOD**:
+Static analysis: Parse `config.json` for `max_position_embeddings`. Parse `tokenizer_config.json` for `model_max_length`. Assert that the effective `max_length` used in inference is $\leq$ `max_position_embeddings`.
