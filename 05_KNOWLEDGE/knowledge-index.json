@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T21:51:02.942Z",
+  "last_updated": "2026-10-16T21:56:04.054Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15940,7 +15940,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "05ad443667d0ff86ca567f50596514e66a9a6a2ef56abe32551ddf14c8537832",
+      "content_hash": "c3341ff41595efc04f85f2183695ff2babc071b09b55aec80f48379d1ba25f82",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -15986,6 +15986,21 @@
           "number": 1006,
           "title": "Inference Engine Decoupling & Format Abstraction",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1238,
+          "title": "GGUF Binary Magic and Tensor Alignment Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1239,
+          "title": "Upstream Artifact Presence and Pointer Resolution Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1240,
+          "title": "Context Window and Chat Template Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16006,7 +16021,7 @@
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
       ],
-      "verified_at": "2026-10-16T13:38:19.164Z",
+      "verified_at": "2026-10-16T21:56:04.050Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

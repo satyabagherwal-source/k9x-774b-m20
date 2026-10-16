@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-5S6N",
-    "timestamp": "2026-10-14T14:48:18.671Z",
-    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-mv885s4e",
-    "contentHash": "7b90a207f16c3ff421a8ef58fd336861118d8865923b043a509a74a3d05e7c60",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-9TTJ",
     "timestamp": "2026-10-14T14:51:27.415Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7492,6 +7477,21 @@
     "contentHash": "3febf4c0382c0bc18b1a4e9ed0e2330a3a0494e300260ae82a5f2c9e1e6ccd0a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-BL2N",
+    "timestamp": "2026-10-16T21:56:04.079Z",
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+    "contentHash": "c3341ff41595efc04f85f2183695ff2babc071b09b55aec80f48379d1ba25f82",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
