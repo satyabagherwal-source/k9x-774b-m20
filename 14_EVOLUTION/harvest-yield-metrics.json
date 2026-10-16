@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T05:34:24.317Z",
-  "total_cycles_completed": 1591,
-  "total_learnings_persisted": 1591,
+  "last_updated": "2026-10-16T05:37:17.171Z",
+  "total_cycles_completed": 1592,
+  "total_learnings_persisted": 1592,
   "total_rules_promoted": 854,
   "history": [
-    {
-      "timestamp": "2026-10-14T16:36:22.942Z",
-      "repository": "pathwaycom/serviette",
-      "learningId": "learn-github-pathwaycom-serviette-mv8c0rd1",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T16:48:49.570Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1403,6 +1396,13 @@
       "repository": "openbmb/MiniCPM-V-4.7-1B",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T05:37:17.171Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
