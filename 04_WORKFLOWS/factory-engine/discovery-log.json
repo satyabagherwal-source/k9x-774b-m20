@@ -17872,5 +17872,20 @@
     "qualityScore": 953,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-16T17:08:38.313Z"
+  },
+  {
+    "name": "dapr",
+    "fullName": "dapr/dapr",
+    "url": "https://github.com/dapr/dapr",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Dapr is a portable runtime for building distributed applications across cloud and edge, combining event-driven architecture with workflow orchestration.",
+    "stars": 26149,
+    "forks": 2164,
+    "openIssues": 458,
+    "language": "Go",
+    "qualityScore": 14074,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-16T17:18:11.500Z"
   }
 ]

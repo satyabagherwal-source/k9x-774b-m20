@@ -4068,3 +4068,7 @@ https://github.com/textbee/textbee
 # --- Automatically Discovered by AI Scout Engine [2026-10-16T17:09:34.154Z] ---
 # [AI-AGENTS] Zen4-bit/Proxima (953 score) - Multi-AI MCP Server - Connect ChatGPT, Claude, Gemini & Perplexity to your codin
 https://github.com/Zen4-bit/Proxima
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-16T17:19:10.398Z] ---
+# [AI-AGENTS] dapr/dapr (14074 score) - Dapr is a portable runtime for building distributed applications across cloud an
+https://github.com/dapr/dapr
