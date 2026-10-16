@@ -1784,3 +1784,4 @@
 | `CYCLE-20261016-DAFL` | `2026-10-16T15:25:28.977Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`850df199...`) |
 | `CYCLE-20261016-OA9Z` | `2026-10-16T15:34:01.991Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`0814aaf2...`) |
 | `CYCLE-20261016-V6SS` | `2026-10-16T15:39:24.076Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`a337ac15...`) |
+| `CYCLE-20261016-Z5H9` | `2026-10-16T15:42:28.989Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`6f9cc213...`) |

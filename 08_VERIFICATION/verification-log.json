@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-Y5EE",
-    "timestamp": "2026-10-14T08:10:27.926Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-hf-fermionresearch-phonon-2-mv7ty58m",
-    "contentHash": "e2d09e56547a08e4ed863eff1362cc16e80b0e31519e4de38e9fb551996eb1e4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-KXQ2",
     "timestamp": "2026-10-14T08:28:11.066Z",
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7490,6 +7475,21 @@
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
     "contentHash": "a337ac153da264c05806d935cf18a23585c51a53d272c21d7128e7026281c8e8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-Z5H9",
+    "timestamp": "2026-10-16T15:42:28.989Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "6f9cc213e889a1664b6884bc880dd618bce5a301ec0244c4f02143ac69d3e625",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
