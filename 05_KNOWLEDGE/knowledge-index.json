@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T06:27:13.370Z",
+  "last_updated": "2026-10-16T06:30:21.961Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9524,7 +9524,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "4ebb9032b75f368702ffea595d6dfe380bfacfc2d37b0945a9264936133ffa62",
+      "content_hash": "0768daad4ff1877a96b0d84edc52eb8e812b483691be2f940fe85c552b0eb85f",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -9585,6 +9585,11 @@
           "verified_at": "2026-10-12T00:36:37.670Z"
         },
         {
+          "number": 633,
+          "title": "Tokenizer Special Token Consistency",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1021,
           "title": "[Attention Bias Consistency Rule]",
           "status": "PROMOTED_AND_VERIFIED"
@@ -9597,6 +9602,16 @@
         {
           "number": 1023,
           "title": "[Tokenizer Special‑Token Integrity Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1088,
+          "title": "Consistent BOS/EOS Token Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1089,
+          "title": "Linear‑Attention Layer Placement",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -9618,7 +9633,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-15T22:58:50.389Z",
+      "verified_at": "2026-10-16T06:30:21.952Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

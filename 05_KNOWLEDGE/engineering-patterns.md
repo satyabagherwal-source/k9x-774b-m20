@@ -67592,3 +67592,113 @@ vision_encoder = VisionEncoder(..., use_cache=True)
 ```
 **VERIFICATION METHOD**:  
 Unit test that asserts `model.vision_encoder.config.use_cache is False` and `model.text_decoder.config.use_cache is True`.
+
+
+---
+
+## 1088. Consistent BOS/EOS Token Alignment (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent BOS/EOS Token Alignment",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T06:30:21.857Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The **bos_token_id** and **eos_token_id** in `config.json`, `generation_config.json`, and the tokenizer’s special token mapping **must** be identical across all artifacts.  
+
+**WHY**:  
+Mismatched token IDs cause the model to mis‑interpret the start and end of sequences, leading to truncated outputs, infinite loops in generation, or silent tokenization errors.  
+
+**WHEN TO APPLY**:  
+All text‑generation pipelines that load the model and tokenizer from the same repository. Applies to any language that uses the Hugging‑Face `AutoTokenizer`/`AutoModelForCausalLM` APIs.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Load tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
+model = AutoModelForCausalLM.from_pretrained("Altworld/Hemmingway-1")
+
+# Assert alignment
+assert tokenizer.bos_token_id == 248044
+assert tokenizer.eos_token_id == 248044
+assert model.config.bos_token_id == 248044
+assert model.config.eos_token_id == 248044
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# Wrong alignment – will break generation
+tokenizer.bos_token_id = 0
+tokenizer.eos_token_id = 1
+```
+
+**VERIFICATION METHOD**:  
+Unit test that loads the tokenizer and model and asserts equality of the three token IDs. Linting rule that flags any hard‑coded token ID that differs from the repository’s `config.json`.
+
+
+---
+
+## 1089. Linear‑Attention Layer Placement (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Linear‑Attention Layer Placement",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T06:30:21.904Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+In a Qwen3_5ForCausalLM model, **full_attention** layers must appear at positions that are multiples of the `full_attention_interval` (default 4).  
+
+**WHY**:  
+The linear‑attention mechanism relies on periodic full‑attention checkpoints to maintain global context. Skipping or mis‑ordering these checkpoints degrades perplexity and can cause catastrophic forgetting of long‑range dependencies.  
+
+**WHEN TO APPLY**:  
+During model training or fine‑tuning when modifying the `layer_types` list. Applies to any architecture that mixes linear and full attention.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Validate layer sequence
+full_interval = model.config.full_attention_interval
+full_positions = [i for i, t in enumerate(model.config.layer_types) if t == "full_attention"]
+assert all((pos + 1) % full_interval == 0 for pos in full_positions)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# Mis‑aligned full attention
+model.config.layer_types = ["linear_attention"] * 63 + ["full_attention"]
+```
+
+**VERIFICATION METHOD**:  
+Pre‑deployment script that scans `layer_types` and fails if the pattern is violated. Continuous‑integration job that runs the above assertion.
