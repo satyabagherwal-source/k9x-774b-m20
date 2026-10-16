@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T11:33:39.800Z",
-  "total_cycles_completed": 1688,
-  "total_learnings_persisted": 1688,
+  "last_updated": "2026-10-16T11:36:35.764Z",
+  "total_cycles_completed": 1689,
+  "total_learnings_persisted": 1689,
   "total_rules_promoted": 925,
   "history": [
-    {
-      "timestamp": "2026-10-15T23:54:50.751Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T23:57:59.446Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T11:33:39.800Z",
       "repository": "BAAI/bge-reranker-v2-m3",
       "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T11:36:35.764Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
