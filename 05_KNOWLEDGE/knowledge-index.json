@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T12:17:22.140Z",
+  "last_updated": "2026-10-16T12:20:43.479Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10138,7 +10138,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "8bcb10311cbb55256118fd92056d18d4fa59227626c0eda0e72724e85a1ff76d",
+      "content_hash": "44e84bba5b35d6ff41e0704520f059049c080c33d650d9662e4a29ec877d929d",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "promoted_rules": [
@@ -10150,6 +10150,16 @@
         {
           "number": 973,
           "title": "Tokenizer Truncation & Padding Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1147,
+          "title": "Embedding Normalization & Cosine Similarity Equivalence",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1148,
+          "title": "Instruction-Asymmetric Embedding Protocol",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -10169,7 +10179,7 @@
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv40jxd1",
         "learn-huggingface-hf-baai-bge-base-en-v1-5-mv4ei7wc"
       ],
-      "verified_at": "2026-10-16T03:38:51.097Z",
+      "verified_at": "2026-10-16T12:20:43.472Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

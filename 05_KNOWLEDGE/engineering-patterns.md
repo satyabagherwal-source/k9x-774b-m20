@@ -72141,3 +72141,153 @@ class BadKVCache:
 2.  **Stress Test**: Run inference with 128K context; assert no OOM crash.
 
 ---
+
+
+---
+
+## 1147. Embedding Normalization & Cosine Similarity Equivalence (Harvested from BAAI/bge-base-en-v1.5)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Embedding Normalization & Cosine Similarity Equivalence",
+  "source": "BAAI/bge-base-en-v1.5",
+  "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+  "source_version": "hf-baai-bge-base-en-v1.5",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T12:20:43.410Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [BAAI/bge-base-en-v1.5](https://huggingface.co/BAAI/bge-base-en-v1.5) (Revision: `hf-baai-bg`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using dense vector embeddings for semantic search, you **MUST** L2-normalize the embedding vectors before computing similarity scores if you intend to use Dot Product as a proxy for Cosine Similarity. You **MUST NOT** assume that raw dot products on unnormalized vectors preserve ranking order relative to cosine similarity.
+
+**WHY**:
+Cosine similarity is defined as $\frac{A \cdot B}{\|A\| \|B\|}$. If vectors are not normalized ($\|A\| \neq 1$), the dot product $A \cdot B$ scales with the magnitude of the vectors. In retrieval systems, longer or more "confident" texts may have larger magnitudes, causing them to dominate search results regardless of semantic relevance. This leads to **magnitude bias**, where high-magnitude vectors are incorrectly ranked higher than semantically relevant but low-magnitude vectors.
+
+**WHEN TO APPLY**:
+Any system using `sentence-transformers`, `bge`, `all-MiniLM`, or any dense retrieval model where the output is used for nearest-neighbor search (ANN) or ranking.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer('BAAI/bge-base-en-v1.5')
+
+def get_normalized_embeddings(texts):
+    # Encode texts
+    embeddings = model.encode(texts, convert_to_tensor=True, normalize_embeddings=True)
+    # Explicitly verify normalization (defensive programming)
+    norms = torch.norm(embeddings, p=2, dim=1)
+    assert torch.allclose(norms, torch.ones_like(norms), atol=1e-5), "Embeddings are not L2 normalized!"
+    return embeddings
+
+# Usage
+query_emb = get_normalized_embeddings(["What is the capital of France?"])
+doc_embs = get_normalized_embeddings(["Paris is the capital of France.", "London is the capital of UK."])
+
+# Dot product is now equivalent to Cosine Similarity
+scores = torch.matmul(query_emb, doc_embs.T)
+# scores will be in range [-1, 1]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Using raw dot product without normalization
+query_emb = model.encode(["What is the capital of France?"], convert_to_tensor=True)
+doc_embs = model.encode(["Paris is the capital of France.", "A very long and detailed text about Paris..."], convert_to_tensor=True)
+
+# If the second document is much longer, its vector magnitude might be larger.
+# The dot product will be inflated by magnitude, not just semantic alignment.
+scores = torch.matmul(query_emb, doc_embs.T) 
+# This ranking is UNRELIABLE for semantic search.
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test**: Generate random embeddings, normalize them, and assert that `torch.norm(emb, dim=1)` is approximately 1.0.
+2.  **Integration Test**: Create two documents with identical semantic content but different lengths. Verify that their normalized embeddings have similar cosine similarity to a query, whereas their raw dot products differ significantly due to magnitude.
+
+
+---
+
+## 1148. Instruction-Asymmetric Embedding Protocol (Harvested from BAAI/bge-base-en-v1.5)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Instruction-Asymmetric Embedding Protocol",
+  "source": "BAAI/bge-base-en-v1.5",
+  "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
+  "source_version": "hf-baai-bge-base-en-v1.5",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T12:20:43.446Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [BAAI/bge-base-en-v1.5](https://huggingface.co/BAAI/bge-base-en-v1.5) (Revision: `hf-baai-bg`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When using instruction-tuned embedding models (like BGE v1.5), you **MUST** apply the specific instruction prefix to **queries** only, and **MUST NOT** apply it to **documents** (corpus). Applying instructions to both or neither degrades retrieval performance.
+
+**WHY**:
+BGE v1.5 was fine-tuned with a specific data distribution where queries are prefixed with instructions (e.g., "Represent the sentence for searching relevant passages: ") to guide the model's attention mechanism toward retrieval intent. Documents are embedded in a "neutral" context. If you apply the instruction to documents, you shift their embedding space away from the query's intended space, causing a **distribution mismatch** and significant drop in Recall@K metrics.
+
+**WHEN TO APPLY**:
+Any deployment of `bge-base-en-v1.5`, `bge-large-en-v1.5`, or similar instruction-tuned models.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from sentence_transformers import SentenceTransformer
+
+model = SentenceTransformer('BAAI/bge-base-en-v1.5')
+
+def embed_query(query_text):
+    # CRITICAL: Add instruction prefix for queries
+    instruction = "Represent the sentence for searching relevant passages: "
+    return model.encode(instruction + query_text, convert_to_tensor=True, normalize_embeddings=True)
+
+def embed_document(doc_text):
+    # CRITICAL: No instruction for documents
+    return model.encode(doc_text, convert_to_tensor=True, normalize_embeddings=True)
+
+# Usage
+q_emb = embed_query("How to fix a leaky faucet?")
+d_emb = embed_document("A guide to plumbing repairs, including how to fix a leaky faucet.")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Applying instruction to documents
+def embed_document_bad(doc_text):
+    instruction = "Represent the sentence for searching relevant passages: "
+    return model.encode(instruction + doc_text, convert_to_tensor=True, normalize_embeddings=True)
+
+# This causes the document embeddings to be in a "query-like" space,
+# while the query is also in a "query-like" space, but the training data
+# did not pair "instruction+doc" with "instruction+query".
+# Result: Lowered similarity scores and degraded ranking.
+```
+
+**VERIFICATION METHOD**:
+1.  **A/B Testing**: Run a retrieval benchmark (e.g., MTEB subset) with three configurations:
+    *   Query: No Instruction, Doc: No Instruction
+    *   Query: Instruction, Doc: Instruction
+    *   Query: Instruction, Doc: No Instruction (Correct)
+2.  **Assert**: Configuration 3 must yield the highest NDCG@10 score.

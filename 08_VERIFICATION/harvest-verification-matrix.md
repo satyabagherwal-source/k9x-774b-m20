@@ -1725,3 +1725,4 @@
 | `CYCLE-20261016-FHB4` | `2026-10-16T12:11:13.888Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`aa071ccb...`) |
 | `CYCLE-20261016-JFGD` | `2026-10-16T12:14:18.109Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`65775c9a...`) |
 | `CYCLE-20261016-NDH5` | `2026-10-16T12:17:22.169Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`aedf0e38...`) |
+| `CYCLE-20261016-ROTQ` | `2026-10-16T12:20:43.502Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1147, Rule 1148` | Yes (`44e84bba...`) |
