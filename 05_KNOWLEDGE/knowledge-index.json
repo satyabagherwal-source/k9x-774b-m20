@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T16:12:16.318Z",
+  "last_updated": "2026-10-16T16:15:28.058Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13125,7 +13125,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/facebook/sam3",
       "source_version": "hf-facebook-sam3",
-      "content_hash": "d8e8aac0a7b0701de799bd3d33be56db131191e42a058c86b66563a47eb73faa",
+      "content_hash": "14243c749698c8bb3e9476671a88132af11f6ab5a6d67578376591595cb63036",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md",
       "promoted_rules": [
@@ -13157,7 +13157,7 @@
         "learn-huggingface-hf-facebook-sam3-mv47u4yi",
         "learn-huggingface-hf-facebook-sam3-mv4l4ga1"
       ],
-      "verified_at": "2026-10-16T08:06:30.222Z",
+      "verified_at": "2026-10-16T16:15:28.051Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
