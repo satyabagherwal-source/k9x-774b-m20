@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T08:10:14.779Z",
+  "last_updated": "2026-10-16T08:13:20.322Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -798,14 +798,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "5d797d047c0e9d16f12794c925d65efdb26473776667a05b0e53ee2c2731a5b3",
-      "verified_at": "2026-10-16T00:10:33.973Z",
+      "content_hash": "1137dbe8c381734db595f46b967ab6f54fe03adefefc91faf977d1fec3b1f13a",
+      "verified_at": "2026-10-16T08:13:20.322Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T00:10:33.973Z"
+      "last_updated": "2026-10-16T08:13:20.322Z"
     },
     "canberkkkkkk/ema-lightning": {
       "repository": "canberkkkkkk/ema-lightning",

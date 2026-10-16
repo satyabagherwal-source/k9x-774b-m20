@@ -1655,3 +1655,4 @@
 | `CYCLE-20261016-KVJP` | `2026-10-16T08:03:29.077Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1115, Rule 1116` | Yes (`a292ee03...`) |
 | `CYCLE-20261016-ORCQ` | `2026-10-16T08:06:30.266Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`d8e8aac0...`) |
 | `CYCLE-20261016-TKL1` | `2026-10-16T08:10:14.773Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`cf08e3cc...`) |
+| `CYCLE-20261016-XJR1` | `2026-10-16T08:13:20.317Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`1137dbe8...`) |
