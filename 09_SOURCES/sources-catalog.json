@@ -125,8 +125,8 @@
     "sourceUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
     "sourceVersion": "hf-edge0-audio8-asr-infinite",
     "license": "Open-Source",
-    "contentHash": "db929bfcf8414b03333c3bda4ebb79608fb747081ea5108adccba333f91aa081",
-    "lastHarvestedAt": "2026-10-16T12:55:11.136Z",
+    "contentHash": "173f38e5e49931c6eb5e81d2b02d0b05d392820112d57aeba232d49cfb3fb53a",
+    "lastHarvestedAt": "2026-10-16T21:10:38.608Z",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite"
   },
   "hf-abenzerps-qwen-image-2.1-uncensored-gguf": {

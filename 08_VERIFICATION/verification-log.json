@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-TVL2",
-    "timestamp": "2026-10-14T13:43:03.974Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv85tvic",
-    "contentHash": "3c6ad03656bc9e0f5b329166d6faece4d98700bf45eacead9a323a47f65cca7f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-4FLN",
     "timestamp": "2026-10-14T13:51:16.475Z",
     "repository": "google/embeddinggemma-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "7efbd1b9e111ddfa5c5e7948909a6abf470ddf1e492d37b811d5e9450c11be70",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-P632",
+    "timestamp": "2026-10-16T21:10:38.606Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "173f38e5e49931c6eb5e81d2b02d0b05d392820112d57aeba232d49cfb3fb53a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
