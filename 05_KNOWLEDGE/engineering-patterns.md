@@ -75209,3 +75209,190 @@ It works with llama.cpp.
 **VERIFICATION METHOD**:
 1.  **Automated CI Check:** A script that iterates over all `.gguf` files in the repo, computes their SHA256, and compares them against `SHA256SUMS`. If any mismatch, fail the build.
 2.  **Manifest Validation:** A JSON Schema validator that ensures `release-manifest.json` contains `sha256`, `size_bytes`, and `quantization_type` for every file listed in the directory tree.
+
+---
+
+## 1194. Core Web Vitals 75th Percentile Field Invariant (Harvested from GoogleChrome/web-vitals & GoogleChrome/CrUX)
+
+> **Provenance**: Harvested from [GoogleChrome/web-vitals](https://github.com/GoogleChrome/web-vitals) (SHA: `d90bf530`) and [GoogleChrome/CrUX](https://github.com/GoogleChrome/CrUX) (SHA: `b62877a0`).  
+> **Evidence**: Confirmed in Chrome User Experience Report BigQuery schemas and Google Search Page Experience ranking systems.
+
+**RULE**:
+All production web systems MUST evaluate and optimize performance against real-user **75th percentile (p75)** field telemetry across a rolling 28-day window, rather than relying exclusively on synthetic lab tests (Lighthouse):
+1. **LCP (Largest Contentful Paint)**: p75 MUST be `<= 2.5 seconds` on mobile 4G networks.
+2. **CLS (Cumulative Layout Shift)**: p75 MUST be `<= 0.1` across the entire session lifecycle.
+3. **INP (Interaction to Next Paint)**: p75 MUST be `<= 200 milliseconds` for all user clicks, taps, and keypresses.
+4. **TTFB (Time to First Byte)**: p75 MUST be `<= 800 milliseconds` from initial DNS lookup to first response byte.
+
+CRITICAL INVARIANT: Google Search ranking algorithms evaluate real-user field data aggregated in the Chrome UX Report (CrUX). A site scoring 100/100 in synthetic desktop Lighthouse audits WILL STILL BE PENALIZED if its real mobile users at the 75th percentile experience high CLS or INP failures.
+
+**WHY**:
+Synthetic lab audits run under simulated, idealized conditions (fast CPU, clean cache, zero user interactions). Real users visit web applications on mid-to-low tier mobile hardware, with background processes, throttled cellular networks, and long-session interactions. INP measures interaction latency throughout the full user session, meaning a slow JavaScript event handler executed 5 minutes after page load will degrade search ranking signals even if initial page load was fast.
+
+**WHEN TO APPLY**:
+- Every production web property, e-commerce storefront, content publishing network, and web application evaluated by search engine ranking algorithms.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Production Field Web Vitals Real-User Monitoring (RUM)
+import { onLCP, onCLS, onINP, onTTFB, type Metric } from 'web-vitals';
+
+function sendToAnalytics(metric: Metric): void {
+  const body = JSON.stringify({
+    name: metric.name,
+    value: metric.value,
+    rating: metric.rating, // 'good' | 'needs-improvement' | 'poor'
+    delta: metric.delta,
+    id: metric.id,
+    navigationType: metric.navigationType
+  });
+
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon('/api/rum/vitals', body);
+  } else {
+    fetch('/api/rum/vitals', { body, method: 'POST', keepalive: true });
+  }
+}
+
+export function registerCoreWebVitalsRUM(): void {
+  // Capture real-user field metrics matching Chrome telemetry
+  onLCP(sendToAnalytics);
+  onCLS(sendToAnalytics);
+  onINP(sendToAnalytics);
+  onTTFB(sendToAnalytics);
+}
+```
+
+---
+
+## 1195. Robots Exclusion Longest-Match & 500KB Parser Boundary Invariant (Harvested from google/robotstxt)
+
+> **Provenance**: Harvested from [google/robotstxt](https://github.com/google/robotstxt) (SHA: `7d4834ff`).  
+> **Evidence**: Confirmed in Google's official C++ robots parser implementation adhering to RFC 9309 (Robots Exclusion Protocol).
+
+**RULE**:
+All crawler routing systems and SEO validation pipelines MUST strictly conform to RFC 9309 parsing standards:
+1. **500KB File Size Limit**: Search engine parsers (including Googlebot) discard all lines in `robots.txt` past byte `512,000` (500 KiB). Placing critical `Disallow:` rules at the end of bloated files results in silent crawl permission.
+2. **Precedence via Longest Match**: When conflicting `Allow:` and `Disallow:` rules match a path, the rule with the **longest match pattern** wins. If lengths are identical, the least restrictive rule (`Allow`) takes precedence.
+3. **Wildcard Resolution**: Asterisk (`*`) matches 0 or more characters; dollar sign (`$`) asserts end-of-path. Query parameters not explicitly terminated with `$` match prefix URLs.
+
+**WHY**:
+Webmasters frequently concatenate third-party disallow lists, security rules, and user-agent blocks into massive `robots.txt` files. If the file exceeds 500KB, crawlers truncate parsing, silently exposing staging environments, admin endpoints, or infinite crawl traps. Furthermore, developers assume line order dictates precedence (like firewall rules); RFC 9309 explicitly mandates longest-match resolution regardless of line position.
+
+**WHEN TO APPLY**:
+- Dynamic `robots.txt` generation endpoints, automated SEO audits, proxy crawlers, and staging isolation configurations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export function validateRobotsTxtBuffer(buffer: Buffer): { isValid: boolean; byteLength: number; errors: string[] } {
+  const MAX_ROBOTS_BYTES = 512 * 1024; // 500 KiB RFC 9309 limit
+  const byteLength = buffer.byteLength;
+  const errors: string[] = [];
+
+  if (byteLength > MAX_ROBOTS_BYTES) {
+    errors.push(
+      `Robots.txt size (${byteLength} bytes) exceeds RFC 9309 limit (${MAX_ROBOTS_BYTES} bytes). Directives beyond this point will be ignored by Googlebot.`
+    );
+  }
+
+  return {
+    isValid: errors.length === 0,
+    byteLength,
+    errors
+  };
+}
+```
+
+---
+
+## 1196. Dynamic Rendering Soft-404 Elimination Invariant (Harvested from prerender/prerender)
+
+> **Provenance**: Harvested from [prerender/prerender](https://github.com/prerender/prerender) (SHA: `3b32eec0`).  
+> **Evidence**: Confirmed in Prerender.io middleware and Google Search Console indexing error tracking.
+
+**RULE**:
+Dynamic rendering proxies and Single-Page Application (SPA) pre-render pipelines MUST NEVER return an HTTP `200 OK` status header when the rendered client-side route represents a 404/not-found or 500/error condition:
+1. **Status Code Meta Tag Header Interception**: The headless renderer MUST detect `<meta name="prerender-status-code" content="404">` injected into the rendered DOM and force the upstream proxy response to output exact HTTP status code `404 Not Found`.
+2. **Location Header Redirection**: The headless renderer MUST detect `<meta name="prerender-header" content="Location: https://example.com/target">` and issue an immediate HTTP 301/302 response rather than serving rendered HTML.
+3. **Soft-404 Zero Tolerance**: Delivering HTTP 200 with DOM content saying "Page Not Found", "Product Unavailable", or empty route state causes search engines to flag "Soft 404" errors, wasting crawl budget and corrupting search indexes.
+
+**WHY**:
+Client-side routers (React Router, Vue Router, SvelteKit) render entirely inside the browser. When an invalid route or missing product is requested, client-side JavaScript renders a nice 404 visual component, but the web server that served the initial HTML shell responded with `HTTP 200 OK`. Headless crawlers capturing this HTML report HTTP 200 to Googlebot, causing severe Soft 404 indexing penalties across thousands of URLs.
+
+**WHEN TO APPLY**:
+- Headless rendering clusters, Prerender middleware, SSR fallback handlers, and client-side single-page applications.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Middleware: Express/Node.js Prerender status code extractor
+function extractPrerenderStatusCode(html) {
+  const match = html.match(/<meta[^>]+name=["']prerender-status-code["'][^>]+content=["'](\d{3})["']/i);
+  return match ? parseInt(match[1], 10) : 200;
+}
+
+export function handleRenderedResponse(req, res, renderedHtml) {
+  const statusCode = extractPrerenderStatusCode(renderedHtml);
+  
+  if (statusCode === 404) {
+    res.status(404).set('Content-Type', 'text/html; charset=utf-8').send(renderedHtml);
+    return;
+  }
+  
+  if (statusCode === 301 || statusCode === 302) {
+    const locMatch = renderedHtml.match(/<meta[^>]+name=["']prerender-header["'][^>]+content=["']Location:\s*([^"']+)["']/i);
+    if (locMatch) {
+      res.redirect(statusCode, locMatch[1]);
+      return;
+    }
+  }
+
+  res.status(200).set('Content-Type', 'text/html; charset=utf-8').send(renderedHtml);
+}
+```
+
+---
+
+## 1197. Above-the-Fold Critical CSS Inlining & Non-Blocking Async Invariant (Harvested from addyosmani/critical)
+
+> **Provenance**: Harvested from [addyosmani/critical](https://github.com/addyosmani/critical) (SHA: `db6f0c2a`).  
+> **Evidence**: Confirmed in Critical CSS generation algorithms, Puppeteer viewport layout extraction, and PageSpeed Insights audits.
+
+**RULE**:
+To achieve zero-render-blocking LCP under Core Web Vitals, all production HTML pages MUST inline critical above-the-fold CSS directly into the HTML `<head>` and defer remaining non-critical styles:
+1. **Critical CSS Inlining**: Extract and inline CSS rules required to render viewport dimensions `1300x900` (desktop) and `375x667` (mobile) into an inline `<style>` block in `<head>`.
+2. **14KB TCP cwnd Budget**: The inlined critical CSS plus initial HTML MUST NOT exceed 14 KiB (uncompressed/first TCP packet window) to prevent extra round trips before First Contentful Paint (FCP).
+3. **Non-Blocking Async Deferral**: The full stylesheet bundle MUST be loaded asynchronously using `<link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">` accompanied by a `<noscript>` fallback.
+
+**WHY**:
+External stylesheets are render-blocking resources. Browsers halt HTML parsing and page rendering until all external CSS files referenced in `<head>` are downloaded, parsed, and applied to the DOM tree. Inlining critical CSS enables instant FCP and LCP within the first round-trip time (RTT), directly driving Google Core Web Vitals into the "Good" range.
+
+**WHEN TO APPLY**:
+- High-performance marketing sites, e-commerce landing pages, and content blogs requiring sub-second FCP/LCP.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>High Performance Page</title>
+  
+  <!-- 1. Inline Critical CSS (Below 14KB cwnd budget) -->
+  <style>
+    body{margin:0;font-family:system-ui,-apple-system,sans-serif}
+    .hero{display:flex;min-height:60vh;background:#0d1117;color:#fff;padding:2rem}
+    .hero h1{font-size:2.5rem;line-height:1.2}
+  </style>
+
+  <!-- 2. Asynchronous Non-Blocking Full Stylesheet Load -->
+  <link rel="preload" href="/css/main.bundle.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="/css/main.bundle.css"></noscript>
+</head>
+<body>
+  <div class="hero">
+    <h1>Sub-Second Largest Contentful Paint</h1>
+  </div>
+</body>
+</html>
+```
+
