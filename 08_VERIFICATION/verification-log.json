@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-WJTH",
-    "timestamp": "2026-10-13T19:05:24.053Z",
-    "repository": "Cactus-Compute/whistle",
-    "learningId": "learn-huggingface-hf-cactus-compute-whistle-mv71wjqf",
-    "contentHash": "41fede634649f4475663858fde890e116529726a23cb352a45584124952db908",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-0D19",
     "timestamp": "2026-10-13T19:08:21.885Z",
     "repository": "Qwen/Qwen3.8-27B",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/all-mpnet-base-v2",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
     "contentHash": "f3f641a7762289d79c4500da184a1fe7baaff64d951aa1ea87d0966b4d43fa18",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-4AQK",
+    "timestamp": "2026-10-16T02:42:39.837Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+    "contentHash": "74702b37d60284c2233f1f44e53ef2d4f447d960eb9c084dd696902febca1cf0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
