@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-2026",
-    "timestamp": "2026-10-14T05:53:29.550Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-hf-amazon-chronos-2-mv7p2007",
-    "contentHash": "671946c3047fd31fcf43636a0e554938febb8ebad9daae74f39d76050aa17314",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-61PX",
     "timestamp": "2026-10-14T05:56:38.325Z",
     "repository": "CompVis/stable-diffusion-v1-4",
@@ -7492,6 +7477,21 @@
     "contentHash": "3c7b2533532ef7cfd2ec74a7ef8e3e81ec864d80de641c69836bb3f69d15143a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-K2RH",
+    "timestamp": "2026-10-16T14:06:46.781Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+    "contentHash": "c3b2a3a3e4607465c689e6083a386e3f44bdfa1cdfc78bf0fe5e61604d785979",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

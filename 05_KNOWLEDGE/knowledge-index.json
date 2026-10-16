@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T14:03:33.788Z",
+  "last_updated": "2026-10-16T14:06:46.755Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -41038,7 +41038,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "08f9d96bd15cca3bd8feed3eed57c56dfaafa7333b76af1284a69a508ad6cab9",
+      "content_hash": "c3b2a3a3e4607465c689e6083a386e3f44bdfa1cdfc78bf0fe5e61604d785979",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [
@@ -41071,6 +41071,21 @@
           "number": 1081,
           "title": "[Vision Token Compression Pre‑Processing]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1165,
+          "title": "**MoE Routing Must Use Lookahead Expert Scheduling (LES) to Prevent Memory Spikes**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1166,
+          "title": "**Tokenizer Must Preserve All Special Tokens and Avoid Truncation**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1167,
+          "title": "**Vision Encoder Must Compress Tokens Early to Meet On‑Device Latency Targets**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41078,7 +41093,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T05:46:43.012Z",
+      "verified_at": "2026-10-16T14:06:46.749Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

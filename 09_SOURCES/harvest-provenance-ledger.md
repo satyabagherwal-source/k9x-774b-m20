@@ -1760,3 +1760,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-16T13:57:26.255Z |
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-16T14:00:45.762Z |
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-16T14:03:33.811Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-16T14:06:46.784Z |
