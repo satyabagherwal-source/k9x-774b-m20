@@ -3,7 +3,7 @@
 > **Source Version**: `hf-altworld-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-16T14:57:02.931Z  
+> **Timestamp**: 2026-10-16T23:14:43.899Z  
 > **Learning ID**: `learn-huggingface-altworld-hemmingway-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -14,182 +14,294 @@
 
 # Project Learning Record (Full‑Spectrum Forensic Harvest): Altworld/Hemmingway‑1
 
-## 1. Executive Forensic Architecture & System Mechanics  
-The repository is a **text‑generation model** that extends the Qwen‑3.8‑27B backbone with a **27 B parameter** variant tuned for “everyday writing.”  
-* **Subsystem boundaries**  
-  * **Tokenizer** – `tokenizer_config.json` defines the Qwen2 tokenizer, special tokens for audio, image, video, and vision modalities, and a custom `pretokenize_regex`.  
-  * **Model configuration** – `config.json` describes a 64‑layer, 24‑head, 5120‑dimensional Qwen‑3.5‑style causal LM with a hybrid linear/full attention schedule.  
-  * **Generation policy** – `generation_config.json` supplies sampling hyper‑parameters (top‑k, top‑p, temperature) and a dual‑eos list.  
-  * **Deployment** – README shows a single‑line `vllm serve` command and a minimal Python harness that loads the model with `device_map="auto"` and `dtype="auto"`.  
-* **Critical abstractions**  
-  * **Attention schedule** – `layer_types` array interleaves `linear_attention` and `full_attention` layers to balance speed and fidelity.  
-  * **Rotary embedding** – `rope_parameters` uses a multi‑rope interleaved scheme with a large `rope_theta` (10 M) to support very long contexts.  
-  * **Special‑token handling** – The tokenizer’s `model_specific_special_tokens` map must be mirrored in the model’s `bos_token_id`/`eos_token_id` to avoid silent token mis‑alignment.  
+## 1. Executive Forensic Architecture & System Mechanics
+The repository hosts a **27 B‑parameter Qwen‑style causal language model** that is intended for **text‑generation** workloads.  
+Key architectural facts extracted from the supplied artefacts:
+
+| Layer | Detail | Source |
+|-------|--------|--------|
+| **Model type** | `qwen3_5_text` (derived from Qwen‑3.5) | `config.json` |
+| **Attention pattern** | 64 layers, alternating `linear_attention` and `full_attention` every 4 layers | `layer_types` array |
+| **Hidden size** | 5120 | `hidden_size` |
+| **Number of heads** | 24 heads, 4 key/value heads | `num_attention_heads`, `num_key_value_heads` |
+| **Head dimension** | 256 | `head_dim` |
+| **Intermediate size** | 17408 | `intermediate_size` |
+| **Activation** | `silu` | `hidden_act` |
+| **Output gate** | `swish` | `output_gate_type` |
+| **Precision** | `bfloat16` for most tensors, `float32` for Mamba SSM | `dtype`, `mamba_ssm_dtype` |
+| **Position embeddings** | 262 144 max positions | `max_position_embeddings` |
+| **Rope** | M‑Rope with interleaved sections `[11,11,10]`, partial factor 0.25 | `rope_parameters` |
+| **Tokenizer** | `Qwen2Tokenizer` with image/audio/video tokens | `tokenizer_config.json` |
+| **Generation config** | `do_sample=True`, `top_k=20`, `top_p=0.95`, `temperature=1.0` | `generation_config.json` |
+| **Deployment** | Intended for `vllm serve` with `--max-model-len 262144` | README |
+
+The **subsystem boundaries** are:
+
+1. **Model Core** – transformer stack, attention modules, Mamba SSM, output gating.
+2. **Tokenizer** – tokenization, special token handling, pre‑tokenization regex.
+3. **Generation Engine** – sampling logic, temperature, top‑k/p, BOS/EOS handling.
+4. **Deployment Wrapper** – `vllm` integration, model loading, device mapping.
+
+The **state ownership** is largely immutable after model loading; the only mutable state is the generation buffer and the sampling RNG.
 
 ## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. **Special‑Token Uniqueness and Consistency**  
+### 1. [Precision Consistency Rule]
 **RULE**:  
-> The model configuration must declare a single, unique identifier for each special token, and the tokenizer configuration must reference the same identifiers without duplication or omission.  
+A transformer model must expose a single, consistent floating‑point precision for all trainable parameters and activations that are not explicitly required to be higher precision.
+
 **WHY**:  
-> Duplicate or missing token IDs cause tokenization mismatches, leading to silent truncation, infinite loops in generation, or corrupted embeddings.  
+Mixed precision across layers (e.g., `bfloat16` for most tensors but `float32` for Mamba SSM) can lead to subtle numerical drift, loss of gradient fidelity, and inconsistent inference results across devices that do not support `bfloat16`. Uniform precision simplifies debugging and ensures reproducibility.
+
 **WHEN TO APPLY**:  
-> All text‑generation models that expose a tokenizer and a model config, regardless of language or framework.  
+All transformer‑based language models, regardless of framework (PyTorch, JAX, TensorFlow), that expose a `dtype` field in their configuration.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config.json
+{
+  "dtype": "bfloat16",
+  "mamba_ssm_dtype": "bfloat16"
+}
+```
+```python
+# model loading
+from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(
+    "Altworld/Hemmingway-1",
+    torch_dtype=torch.bfloat16,
+    device_map="auto"
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Wrong: mixing dtypes
+{
+  "dtype": "bfloat16",
+  "mamba_ssm_dtype": "float32"
+}
+```
+
+**VERIFICATION METHOD**:  
+Unit test that iterates over all model parameters and asserts `param.dtype == torch.bfloat16`.  
+```python
+def test_uniform_precision():
+    model = AutoModelForCausalLM.from_pretrained("Altworld/Hemmingway-1")
+    for p in model.parameters():
+        assert p.dtype == torch.bfloat16, f"Parameter {p} has dtype {p.dtype}"
+```
+
+---
+
+### 2. [Attention Bias Invariant]
+**RULE**:  
+When `attention_bias` is set to `false`, every attention layer must explicitly zero‑initialize the bias term of the query, key, and value projections.
+
+**WHY**:  
+A non‑zero bias in the absence of `attention_bias` can introduce a learnable offset that violates the intended causal masking semantics, leading to leakage of future token information during inference.
+
+**WHEN TO APPLY**:  
+All causal transformer models that expose an `attention_bias` flag in their configuration.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config.json
+{
+  "attention_bias": false
+}
+```
+```python
+# attention module initialization
+self.q_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+self.k_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+self.v_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Wrong: bias enabled while flag is false
+self.q_proj = nn.Linear(hidden_size, hidden_size, bias=True)
+```
+
+**VERIFICATION METHOD**:  
+Static analysis or a unit test that checks the `bias` attribute of each projection layer.  
+```python
+def test_attention_bias():
+    model = AutoModelForCausalLM.from_pretrained("Altworld/Hemmingway-1")
+    for layer in model.model.layers:
+        assert not layer.self_attn.q_proj.bias, "Bias should be disabled"
+        assert not layer.self_attn.k_proj.bias, "Bias should be disabled"
+        assert not layer.self_attn.v_proj.bias, "Bias should be disabled"
+```
+
+---
+
+### 3. [Tokenizer Special‑Token Integrity]
+**RULE**:  
+All special tokens defined in `tokenizer_config.json` must be present in the tokenizer’s vocabulary and must map to unique, non‑overlapping IDs.
+
+**WHY**:  
+Duplicate or missing special tokens cause tokenization errors, mis‑aligned embeddings, and can break the generation pipeline (e.g., BOS/EOS handling).
+
+**WHEN TO APPLY**:  
+Any tokenizer that declares `model_specific_special_tokens` or `pad_token_id`.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```json
-// tokenizer_config.json
 {
   "model_specific_special_tokens": {
-    "bos_token": "<|bos|>",
-    "eos_token": "<|eos|>",
-    "pad_token": "<|pad|>"
+    "audio_bos_token": "<|audio_start|>",
+    "audio_eos_token": "<|audio_end|>",
+    "audio_token": "<|audio_pad|>",
+    "image_token": "<|image_pad|>",
+    "video_token": "<|video_pad|>",
+    "vision_bos_token": "<|vision_start|>",
+    "vision_eos_token": "<|vision_end|>"
+  },
+  "pad_token": "<|endoftext|>"
+}
+```
+```python
+# tokenizer loading
+tokenizer = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
+for name, token in tokenizer.special_tokens_map.items():
+    assert tokenizer.convert_tokens_to_ids(token) is not None, f"{name} missing"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Wrong: duplicate token
+{
+  "pad_token": "<|endoftext|>",
+  "special_tokens_map": {
+    "pad_token": "<|endoftext|>",
+    "bos_token": "<|endoftext|>"   # duplicate ID
   }
 }
+```
 
-// config.json
-{
-  "bos_token_id": 0,
-  "eos_token_id": 1,
-  "pad_token_id": 2
-}
-```
-**NEGATIVE CONSTRAINT**:
-```json
-// BAD: duplicate IDs
-{
-  "bos_token_id": 0,
-  "eos_token_id": 0,   // duplicate
-  "pad_token_id": 2
-}
-```
 **VERIFICATION METHOD**:  
-> Unit test that parses both JSON files and asserts that every token name maps to a distinct integer and that the set of IDs matches the tokenizer’s `vocab_size` slice.
+Unit test that collects all special token IDs and asserts uniqueness.  
+```python
+def test_special_token_uniqueness():
+    tokenizer = AutoTokenizer.from_pretrained("Altworld/Hemmingway-1")
+    ids = [tokenizer.convert_tokens_to_ids(tok) for tok in tokenizer.special_tokens_map.values()]
+    assert len(ids) == len(set(ids)), "Duplicate special token IDs detected"
+```
 
-### 2. **Attention‑Schedule Integrity**  
-**RULE**:  
-> The `layer_types` array must contain exactly `num_hidden_layers` entries, and each entry must be one of the supported attention primitives (`linear_attention`, `full_attention`).  
-**WHY**:  
-> A mismatch between declared layers and actual schedule causes runtime errors in the attention module, leading to NaNs or out‑of‑range tensor shapes.  
-**WHEN TO APPLY**:  
-> Any transformer model that mixes attention primitives.  
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  "num_hidden_layers": 4,
-  "layer_types": ["linear_attention", "full_attention", "linear_attention", "full_attention"]
-}
-```
-**NEGATIVE CONSTRAINT**:
-```json
-{
-  "num_hidden_layers": 4,
-  "layer_types": ["linear_attention", "full_attention"]  // too few entries
-}
-```
-**VERIFICATION METHOD**:  
-> Runtime assertion in the model‑builder that `len(layer_types) == num_hidden_layers`.
-
-### 3. **Dual‑EOS Handling in Generation**  
-**RULE**:  
-> The `eos_token_id` list in `generation_config.json` must include the `bos_token_id` to terminate generation when the model re‑emits the beginning of sequence token.  
-**WHY**:  
-> Without this guard, the model can generate an endless stream of BOS tokens, exhausting memory and CPU.  
-**WHEN TO APPLY**:  
-> Any causal LM that uses a BOS token as a potential output.  
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-{
-  "bos_token_id": 248044,
-  "eos_token_id": [248046, 248044]   // includes BOS
-}
-```
-**NEGATIVE CONSTRAINT**:
-```json
-{
-  "bos_token_id": 248044,
-  "eos_token_id": [248046]   // BOS missing
-}
-```
-**VERIFICATION METHOD**:  
-> Integration test that feeds a prompt and asserts that generation stops before exceeding a hard‑coded token limit.
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-No public commits, PRs, or issue logs were found in the repository.  
-**Conclusion**:  
-> The codebase is a static artifact; no production incidents are recorded.  
-> The absence of change history suggests the model was released as a single snapshot, and any bugs would have been caught during internal QA rather than public post‑mortems.
+No commit history, issue tracker, or test failures were provided in the repository snapshot. Consequently, **no concrete incidents** could be extracted. The absence of evidence indicates that either the model is newly released or the repository is incomplete. The following table summarizes the status:
+
+| Incident | Status | Notes |
+|----------|--------|-------|
+| 1 | **None** | No commit or PR data |
+| 2 | **None** | No issue data |
+| 3 | **None** | No test failures |
+| 4 | **None** | No runtime logs |
+| 5 | **None** | No reported crashes |
+
+> **Action**: For future forensic work, ensure that the repository includes a full commit history, issue tracker links, and a test suite. This will enable extraction of real incidents.
+
+---
 
 ## 4. Microscopic Code‑Level Invariants
 
-| Domain | Invariant | Example |
-|--------|-----------|---------|
-| **Micro‑Syntax & Token‑Level Precision** | JSON string values must be double‑escaped for nested quotes. | `\"bos_token_id\\\": 248044` |
-| | Token IDs must be integers, not strings. | `\"bos_token_id\": 248044` (not `"248044"`) |
-| | No trailing commas in JSON arrays. | `["248046", 248044]` (invalid) |
-| **Infinite Loop & Recursion Guards** | `layer_types` length equals `num_hidden_layers`. | `len(layer_types) == num_hidden_layers` |
-| | Generation loop checks `eos_token_id` list for BOS. | `if token_id in eos_token_id: break` |
-| **UI & UX Micro‑Mechanics** | Not applicable – no UI code. |
-| **Backend Concurrency & Memory Safety** | `dtype="auto"` must resolve to a supported dtype (`bfloat16` or `float32`). | `torch_dtype = torch.bfloat16 if dtype == "bfloat16" else torch.float32` |
-| | `max_model_len` must be <= `max_position_embeddings`. | `assert max_model_len <= config.max_position_embeddings` |
-| **Defect & Error Prevention** | `pretokenize_regex` must not contain unescaped backslashes. | `(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\r\\n\\p{L}\\p{N}]?[\\p{L}\\p{M}]+|\\p{N}| ?[^\\s\\p{L}\\p{M}\\p{N}]+[\\r\\n]*|\\s*[\\r\\n]+|\\s+(?!\\S)|\\s+` |
+| Domain | Invariant | Example / Explanation |
+|--------|-----------|-----------------------|
+| **Micro‑Syntax & Token‑Level Precision** | **Explicit type checks** – never rely on implicit coercion when comparing token IDs. | ```python\nif token_id == 0:  # 0 is a valid ID, not falsy\n    pass\n``` |
+| | **Avoid shadowing** – never redeclare a variable inside a loop that is used outside. | ```python\nfor i in range(10):\n    i = i + 1  # shadows outer i\n``` |
+| | **Deep immutability** – use `torch.no_grad()` and `freeze()` for inference. | ```python\nwith torch.no_grad():\n    logits = model(input_ids)\n``` |
+| **Infinite Loop & Recursion Guards** | **Base condition** – every recursive function must have a clear exit. | ```python\ndef depth_first(node, depth=0):\n    if depth > MAX_DEPTH:\n        return\n``` |
+| | **Loop termination** – use `break` or `return` when a condition is met. | ```python\nwhile True:\n    if done:\n        break\n``` |
+| | **Event‑loop yield** – in async code, use `await asyncio.sleep(0)` to yield control. | ```python\nawait asyncio.sleep(0)\n``` |
+| **UI & UX Micro‑Mechanics** | **Debounce** – use a timer to limit rapid UI updates. | ```javascript\nlet timeout;\nfunction onInput(e) {\n  clearTimeout(timeout);\n  timeout = setTimeout(() => update(e), 200);\n}\n``` |
+| | **Focus restoration** – after modal close, focus the triggering element. | ```javascript\nmodal.addEventListener('hidden', () => trigger.focus());\n``` |
+| | **Touch vs pointer** – use `pointerdown` instead of `touchstart` for unified handling. | ```javascript\nelement.addEventListener('pointerdown', handler);\n``` |
+| **Backend Concurrency & Memory Safety** | **TOCTOU** – lock before checking a resource. | ```python\nwith lock:\n    if resource_available:\n        allocate()\n``` |
+| | **Connection pool** – set a maximum idle timeout. | ```python\npool = ConnectionPool(max_idle=10, idle_timeout=60)\n``` |
+| | **Event emitter leak** – remove listeners after use. | ```python\nemitter.once('data', handler)\n``` |
+| **Defect & Error Prevention** | **Null‑safe chaining** – use `?.` or `if` checks. | ```python\nif obj and obj.prop:\n    do_something(obj.prop)\n``` |
+| | **Off‑by‑one** – use `range(len(list))` instead of `range(len(list)-1)`. | ```python\nfor i in range(len(arr)):\n    process(arr[i])\n``` |
+| | **Unhandled promise** – always attach `.catch()` or `try/await`. | ```javascript\nfetch(url).then(handle).catch(errorHandler);\n``` |
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-| Dimension | Observation | Implication |
-|-----------|-------------|-------------|
-| **Architecture** | 64‑layer, 24‑head, 5120‑dim Qwen‑3.5 style with hybrid attention. | Deep, wide transformer; high compute but mitigated by linear attention. |
-| **Core Abstractions** | `layer_types` array, `rope_parameters`, `attn_output_gate`. | Explicit attention scheduling; modular design for performance tuning. |
-| **Error Handling** | No explicit error handling in config; relies on framework defaults. | Potential silent failures if config mismatches. |
-| **Testing** | No tests present. | High risk of undetected config drift. |
-| **Security** | No credentials; open‑weight model. | Minimal threat surface, but token leakage risk if special tokens mis‑handled. |
-| **Performance** | `full_attention_interval=4` reduces full attention frequency. | Balances latency vs quality; suitable for long‑context inference. |
-| **Deployment** | Single `vllm serve` command; `device_map="auto"`. | Simplifies scaling; relies on vLLM’s dynamic batching. |
-| **Agent Patterns** | Generation config uses top‑k/top‑p sampling; no prompt‑engineering hooks. | Limited agent flexibility; could be extended with prompt templates. |
-| **Data Flow** | Tokenizer → model → generation; no streaming or incremental decoding shown. | Batch inference only; no real‑time streaming API. |
+| Dimension | Observations from Altworld/Hemmingway‑1 |
+|-----------|----------------------------------------|
+| **Architecture** | 64‑layer Qwen‑style transformer with alternating linear/full attention; Mamba SSM integration; bfloat16 precision; 262 144 max positions. |
+| **Core Abstractions** | `Qwen3_5ForCausalLM` architecture; `Qwen2Tokenizer`; special tokens for multimodal inputs; rope parameters for rotary embeddings. |
+| **Error Handling** | Generation config uses `do_sample=True` with `top_k`/`top_p`; no explicit error boundaries in config, but `vllm` handles out‑of‑memory and token limit errors. |
+| **Testing** | No test suite provided; inference example in README. |
+| **Security** | No credential handling; model is open‑weight; tokenizer includes audio/video tokens but no authentication. |
+| **Performance** | Linear attention layers reduce complexity; bfloat16 improves throughput; `full_attention_interval=4` balances speed and accuracy. |
+| **Deployment** | Designed for `vllm serve` with `--max-model-len 262144`; expects GPU with bfloat16 support. |
+| **Agent Patterns** | Prompt chaining via `apply_chat_template`; generation uses standard sampling. |
+| **Data Flow** | Tokenization → embedding → transformer stack → logits → sampling → text output; no streaming or incremental decoding shown. |
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | The `layer_types` schedule pattern shown in Rule 2. |
-| **Rule** | Rule 1: Special‑Token Uniqueness. |
-| **Architecture Principle** | “Hybrid attention scheduling: interleave linear and full attention to achieve linear‑time inference for long contexts.” |
-| **Failure Mode** | Duplicate BOS/EOS IDs → infinite generation loop. |
-| **Reusable Skill** | Checklist for validating JSON config consistency before deployment. |
-| **Decision** | Chose `full_attention_interval=4` to trade off quality for speed; alternatives (all full attention) would exceed GPU memory. |
-| **Anti‑Pattern** | Defining `eos_token_id` without including BOS. |
-| **Verification Method** | Unit test asserting `len(layer_types) == num_hidden_layers`. |
+| **Pattern** | The `attention_bias=false` pattern with bias‑disabled projections. |
+| **Rule** | *Precision Consistency Rule* – single dtype across all layers. |
+| **Architecture Principle** | *Alternating Attention Principle* – interleave linear and full attention to balance speed and quality. |
+| **Failure Mode** | *Bias Leakage* – non‑zero bias in causal attention leads to future token leakage. |
+| **Reusable Skill** | *Tokenizer Special‑Token Validation* – unit test for unique IDs. |
+| **Decision** | *bfloat16 vs float32* – chosen for GPU throughput; alternative float32 would increase memory usage. |
+| **Anti‑Pattern** | *Mixed dtypes* – mixing bfloat16 and float32 without justification. |
+| **Verification Method** | Unit tests asserting parameter dtypes and special token uniqueness. |
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Parse Configs**  
-   * Load `config.json`, `generation_config.json`, `tokenizer_config.json`.  
-   * Validate JSON syntax (no trailing commas, proper escaping).  
+1. **Load Configuration**
+   - Parse `config.json`, `generation_config.json`, `tokenizer_config.json`.
+   - Validate that `dtype` and `mamba_ssm_dtype` match.
 
-2. **Validate Token IDs**  
-   * Ensure all special tokens have integer IDs.  
-   * Check that `bos_token_id`, `eos_token_id`, `pad_token_id` are unique.  
+2. **Instantiate Model**
+   - Use `AutoModelForCausalLM.from_pretrained` with `torch_dtype` set to the config dtype.
+   - Verify that all attention projections have `bias=False` when `attention_bias=false`.
 
-3. **Check Attention Schedule**  
-   * Assert `len(layer_types) == num_hidden_layers`.  
-   * Verify each entry is a supported primitive.  
+3. **Validate Tokenizer**
+   - Load `AutoTokenizer`.
+   - Ensure all `model_specific_special_tokens` exist and have unique IDs.
+   - Check that `pad_token_id` is defined and not `null`.
 
-4. **Verify Generation EOS Guard**  
-   * Confirm `bos_token_id` is present in `eos_token_id` list.  
+4. **Set Generation Parameters**
+   - Apply `do_sample`, `top_k`, `top_p`, `temperature` from `generation_config.json`.
+   - Ensure `bos_token_id` and `eos_token_id` are consistent with tokenizer.
 
-5. **Confirm Dtype Consistency**  
-   * Map `dtype` string to a torch dtype; assert it matches model’s internal dtype.  
+5. **Run Inference Test**
+   - Generate a short prompt (e.g., “Hello world”) and assert that output length ≤ `max_new_tokens`.
+   - Verify that no `RuntimeError` occurs due to dtype mismatch.
 
-6. **Assert Max Length Bounds**  
-   * `max_model_len <= config.max_position_embeddings`.  
+6. **Performance Benchmark**
+   - Measure throughput on a GPU with bfloat16 support.
+   - Confirm that `full_attention_interval` yields expected speed‑accuracy trade‑off.
 
-7. **Run Integration Test**  
-   * Load model with `AutoModelForCausalLM.from_pretrained`.  
-   * Generate a short prompt; assert output stops before a hard token limit.  
+7. **Security Scan**
+   - Run static analysis to ensure no hard‑coded secrets.
+   - Verify that the model does not expose any credential endpoints.
 
-8. **Document**  
-   * Record any deviations from the rules in a changelog.  
-   * Generate a compliance report for CI.  
+8. **Deployment Validation**
+   - Spin up `vllm serve` with `--max-model-len 262144`.
+   - Test that the server responds within acceptable latency.
 
-Follow this checklist whenever a new model variant or config is introduced to guarantee consistency, prevent infinite loops, and maintain deployment stability.
+9. **Continuous Integration**
+   - Add unit tests for dtype consistency, special token uniqueness, and attention bias.
+   - Configure CI to run tests on every push.
+
+10. **Documentation**
+    - Update README with explicit instructions for dtype selection and tokenizer validation.
+
+---

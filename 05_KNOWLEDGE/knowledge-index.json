@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T23:11:52.437Z",
+  "last_updated": "2026-10-16T23:14:44.004Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9551,7 +9551,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "e825cd2129f65cdbac570c8a09a6750a1b7171a9de6409546a3778052128796d",
+      "content_hash": "b42c055e158f10cf463dea6b032f28805275c4653edf4bae24ad26baf156ac47",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -9617,6 +9617,11 @@
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
+          "number": 688,
+          "title": "[Tokenizer Special‑Token Integrity]",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1021,
           "title": "[Attention Bias Consistency Rule]",
           "status": "PROMOTED_AND_VERIFIED"
@@ -9655,6 +9660,16 @@
           "number": 1178,
           "title": "**Dual‑EOS Handling in Generation**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1256,
+          "title": "[Precision Consistency Rule]",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1257,
+          "title": "[Attention Bias Invariant]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9675,7 +9690,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-16T14:57:03.034Z",
+      "verified_at": "2026-10-16T23:14:43.999Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

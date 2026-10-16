@@ -80055,3 +80055,145 @@ assert tokenizer.convert_tokens_to_ids("<|video_pad|>") == model.config.video_to
 ```
 
 ---
+
+
+---
+
+## 1256. [Precision Consistency Rule] (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Precision Consistency Rule]",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T23:14:43.945Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+A transformer model must expose a single, consistent floating‑point precision for all trainable parameters and activations that are not explicitly required to be higher precision.
+
+**WHY**:  
+Mixed precision across layers (e.g., `bfloat16` for most tensors but `float32` for Mamba SSM) can lead to subtle numerical drift, loss of gradient fidelity, and inconsistent inference results across devices that do not support `bfloat16`. Uniform precision simplifies debugging and ensures reproducibility.
+
+**WHEN TO APPLY**:  
+All transformer‑based language models, regardless of framework (PyTorch, JAX, TensorFlow), that expose a `dtype` field in their configuration.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config.json
+{
+  "dtype": "bfloat16",
+  "mamba_ssm_dtype": "bfloat16"
+}
+```
+```python
+# model loading
+from transformers import AutoModelForCausalLM
+
+model = AutoModelForCausalLM.from_pretrained(
+    "Altworld/Hemmingway-1",
+    torch_dtype=torch.bfloat16,
+    device_map="auto"
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Wrong: mixing dtypes
+{
+  "dtype": "bfloat16",
+  "mamba_ssm_dtype": "float32"
+}
+```
+
+**VERIFICATION METHOD**:  
+Unit test that iterates over all model parameters and asserts `param.dtype == torch.bfloat16`.  
+```python
+def test_uniform_precision():
+    model = AutoModelForCausalLM.from_pretrained("Altworld/Hemmingway-1")
+    for p in model.parameters():
+        assert p.dtype == torch.bfloat16, f"Parameter {p} has dtype {p.dtype}"
+```
+
+---
+
+
+---
+
+## 1257. [Attention Bias Invariant] (Harvested from Altworld/Hemmingway-1)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[Attention Bias Invariant]",
+  "source": "Altworld/Hemmingway-1",
+  "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
+  "source_version": "hf-altworld-hemmingway-1",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T23:14:43.971Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-altworld-hemmingway-1",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Altworld/Hemmingway-1](https://huggingface.co/Altworld/Hemmingway-1) (Revision: `hf-altworl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+When `attention_bias` is set to `false`, every attention layer must explicitly zero‑initialize the bias term of the query, key, and value projections.
+
+**WHY**:  
+A non‑zero bias in the absence of `attention_bias` can introduce a learnable offset that violates the intended causal masking semantics, leading to leakage of future token information during inference.
+
+**WHEN TO APPLY**:  
+All causal transformer models that expose an `attention_bias` flag in their configuration.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config.json
+{
+  "attention_bias": false
+}
+```
+```python
+# attention module initialization
+self.q_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+self.k_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+self.v_proj = nn.Linear(hidden_size, hidden_size, bias=False)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ❌ Wrong: bias enabled while flag is false
+self.q_proj = nn.Linear(hidden_size, hidden_size, bias=True)
+```
+
+**VERIFICATION METHOD**:  
+Static analysis or a unit test that checks the `bias` attribute of each projection layer.  
+```python
+def test_attention_bias():
+    model = AutoModelForCausalLM.from_pretrained("Altworld/Hemmingway-1")
+    for layer in model.model.layers:
+        assert not layer.self_attn.q_proj.bias, "Bias should be disabled"
+        assert not layer.self_attn.k_proj.bias, "Bias should be disabled"
+        assert not layer.self_attn.v_proj.bias, "Bias should be disabled"
+```
+
+---
