@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-FHR5",
-    "timestamp": "2026-10-13T20:16:07.073Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv74fhom",
-    "contentHash": "c57609ce4097254e617b604dcd8486a8e3b61ac5a44c629ae724174155ffd632",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-J7SJ",
     "timestamp": "2026-10-13T20:19:00.787Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "b90397da3abdf3854e2739131b22329eda98e69b13c8714e42fdae9683656a5e",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-K4GP",
+    "timestamp": "2026-10-16T03:50:57.433Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "abaa248481c6be8541d78d76892ff6b886363b1144d92065e382539e6ee11721",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
