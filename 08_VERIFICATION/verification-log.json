@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-6BS0",
-    "timestamp": "2026-10-14T03:36:53.280Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-hf-viggle-qwen-image-2-1-viggle-turbo-mv7k6bq0",
-    "contentHash": "8362dce9dbb78bb51022e252291303457138b1f1f3254b16e18433b6676a2d11",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-AF05",
     "timestamp": "2026-10-14T03:40:04.085Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7492,6 +7477,21 @@
     "contentHash": "b6397efffccc67cb3822d6cdcccdbf50142ecfc126d4aaa1510fa154df7209c9",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-IX92",
+    "timestamp": "2026-10-16T11:45:54.902Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "869466abf5e186161921ee06de4798a521b46d7be565d62449cf5566ac3089fc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
