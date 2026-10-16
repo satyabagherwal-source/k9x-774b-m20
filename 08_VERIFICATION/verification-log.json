@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-AVHQ",
-    "timestamp": "2026-10-14T03:12:25.838Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv7javdk",
-    "contentHash": "f497c9c38ce2f6944af22261f33fb96d8d7937be706b0fbf89832d93f7cac70b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-ETHY",
     "timestamp": "2026-10-14T03:15:29.878Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7490,6 +7475,21 @@
     "repository": "openai/clip-vit-base-patch32",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
     "contentHash": "c84d99460c1fc7680beae28423d4e7fddd6e66b4795a28ed0314cdbb006473ed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-NFRQ",
+    "timestamp": "2026-10-16T11:21:25.910Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "83ff629c4d8de33e912309b9bb14f9a6ae0902c2480605eecd1611694c8fa6fe",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

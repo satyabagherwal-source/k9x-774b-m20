@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T11:18:26.633Z",
+  "last_updated": "2026-10-16T11:21:25.880Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16843,7 +16843,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "f3f641a7762289d79c4500da184a1fe7baaff64d951aa1ea87d0966b4d43fa18",
+      "content_hash": "83ff629c4d8de33e912309b9bb14f9a6ae0902c2480605eecd1611694c8fa6fe",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -16875,7 +16875,7 @@
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv3y996e",
         "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv4czt14"
       ],
-      "verified_at": "2026-10-16T02:39:34.272Z",
+      "verified_at": "2026-10-16T11:21:25.874Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
