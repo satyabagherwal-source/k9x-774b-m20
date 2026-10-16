@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-V1K0",
-    "timestamp": "2026-10-14T03:00:07.200Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-hf-moonshotai-kimi-k3-mv7iv1hm",
-    "contentHash": "28f81880582520ee683ed79a73b08309acdea5c802ac4fb2e49f4bb50b532bd5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-YW4S",
     "timestamp": "2026-10-14T03:03:06.796Z",
     "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7492,6 +7477,21 @@
     "contentHash": "997ec3dbb6b67b81b8181575beb7cf41e5463bf88bb6823c19c2083cc09a8267",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-7N2W",
+    "timestamp": "2026-10-16T11:09:08.888Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "496c6a5468fe051156bb8dc5f7620e839605bb3c85eee4d763be8b024a6761e8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

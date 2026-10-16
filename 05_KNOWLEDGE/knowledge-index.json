@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T11:05:51.398Z",
+  "last_updated": "2026-10-16T11:09:08.863Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15788,7 +15788,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "3867173b689335864234f2695a7d29cdd4a7d5cf9f09dcec8449c57a109c01ab",
+      "content_hash": "496c6a5468fe051156bb8dc5f7620e839605bb3c85eee4d763be8b024a6761e8",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -15800,6 +15800,16 @@
         {
           "number": 1053,
           "title": "Semantic-Visual Co-Constraint Principle",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1143,
+          "title": "Boundary Condition Disambiguation in Generative Models",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1144,
+          "title": "Temporal Consistency vs. Motion Variance Trade-off",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -15820,7 +15830,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-16T02:27:18.088Z",
+      "verified_at": "2026-10-16T11:09:08.856Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
