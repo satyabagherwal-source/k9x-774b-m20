@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T17:42:52.860Z",
+  "last_updated": "2026-10-16T17:46:01.249Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -41307,7 +41307,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/vllm-sr/d3",
       "source_version": "hf-vllm-sr-d3",
-      "content_hash": "3d9dbbc6581413761f892dada6c470f026b41536470b50f110c60a14593b9a6e",
+      "content_hash": "594af4dd7e2a7a3e85efa46bc86f648a841c952f0e47a1667920851c3d3b0919",
       "dossier_path": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "promoted_rules": [
@@ -41332,7 +41332,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T09:50:51.907Z",
+      "verified_at": "2026-10-16T17:46:01.242Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-YIV1",
-    "timestamp": "2026-10-14T10:30:43.453Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv7yyis5",
-    "contentHash": "0839312794e8f15f79a75b24e201852f0ca35e3930dfe4a99e315e1b95ad3bfb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-2XWA",
     "timestamp": "2026-10-14T10:34:09.562Z",
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -7490,6 +7475,21 @@
     "repository": "hexgrad/Kokoro-82M",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m",
     "contentHash": "56440fd91e8790458020242bf0417878bb668c9bcbf89c555a99dc9d7ee253bd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-E0UA",
+    "timestamp": "2026-10-16T17:46:01.282Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "594af4dd7e2a7a3e85efa46bc86f648a841c952f0e47a1667920851c3d3b0919",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
