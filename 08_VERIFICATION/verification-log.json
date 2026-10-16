@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-69LL",
-    "timestamp": "2026-10-13T17:48:58.521Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv6z69ii",
-    "contentHash": "dc8dc18885ef2fce984e2f45474a58a9e6ddb92ba5bcdddecb874e08188353c0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ADHZ",
     "timestamp": "2026-10-13T17:52:10.199Z",
     "repository": "Bingsu/adetailer",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-openai-gpt-oss-120b",
     "contentHash": "9a78bf81440fd80efa253a709b2542cbb1ea21a9c593af3c67a563effe8eb388",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-0QET",
+    "timestamp": "2026-10-16T01:43:54.293Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "18b2780868988efb43af7836a1da4216aee5df8cac6f6213af42e283eaf5e53f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
