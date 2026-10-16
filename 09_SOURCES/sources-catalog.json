@@ -1565,8 +1565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b",
     "license": "Open-Source",
-    "contentHash": "16ee29da663cc1c38e3d33061b94b3669470e959d5ad11a5f537308773d1f14b",
-    "lastHarvestedAt": "2026-10-15T19:49:51.033Z",
+    "contentHash": "c2b8d7f808a7d421ebec673966eae3b3949bafbd718f89185841de944fb8f41b",
+    "lastHarvestedAt": "2026-10-16T03:01:10.444Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b"
   },
   "hf-black-forest-labs-flux-3-image-klein-comfy": {
