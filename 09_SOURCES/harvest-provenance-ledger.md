@@ -1822,3 +1822,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-vllm-sr-d3` | `https://huggingface.co/vllm-sr/d3` | `hf-vllm-sr` | Multi-dimensional audit evidence | 2026-10-16T17:46:01.284Z |
 | `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-16T17:49:14.438Z |
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-10-16T17:52:32.843Z |
+| `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-10-16T17:55:40.766Z |

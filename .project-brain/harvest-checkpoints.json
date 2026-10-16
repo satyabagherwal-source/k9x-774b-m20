@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T17:52:32.846Z",
+  "last_updated": "2026-10-16T17:55:40.769Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1112,14 +1112,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3",
-      "content_hash": "0cb47369914cf0ec4ba519d64c068f2f6282af66c0d659326afde80360e2fc24",
-      "verified_at": "2026-10-16T10:00:09.932Z",
+      "content_hash": "d94786ae303b37f7649f9fc1e01fb57dd2669e834e3f61155f0e443290d6ed1c",
+      "verified_at": "2026-10-16T17:55:40.769Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T10:00:09.932Z"
+      "last_updated": "2026-10-16T17:55:40.769Z"
     },
     "Qwen/Qwen3.8-Flash-Next": {
       "repository": "Qwen/Qwen3.8-Flash-Next",
