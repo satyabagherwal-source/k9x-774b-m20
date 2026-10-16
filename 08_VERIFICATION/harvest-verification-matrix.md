@@ -1713,3 +1713,4 @@
 | `CYCLE-20261016-361G` | `2026-10-16T11:33:39.796Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`cf083063...`) |
 | `CYCLE-20261016-6XTD` | `2026-10-16T11:36:35.761Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`33f8ee4b...`) |
 | `CYCLE-20261016-AX1V` | `2026-10-16T11:39:41.395Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`d478cd9f...`) |
+| `CYCLE-20261016-ESMW` | `2026-10-16T11:42:42.296Z` | `meta-models/Muse-Spark-Open-816B-A42B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1145, Rule 1146` | Yes (`b6397eff...`) |

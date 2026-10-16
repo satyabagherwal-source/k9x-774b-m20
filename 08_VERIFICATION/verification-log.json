@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-2L3E",
-    "timestamp": "2026-10-14T03:33:58.730Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-hf-prism-ml-ternary-bonsai-2-27b-gguf-mv7k2l0p",
-    "contentHash": "dbc60f74ae2f4dbd4841e258ae052b279160d5cd3b7d5a7f8530bd5c25be4cf1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-6BS0",
     "timestamp": "2026-10-14T03:36:53.280Z",
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -7492,6 +7477,21 @@
     "contentHash": "d478cd9fea1b8019be932ead031a8805431517a53a6250312aa35a4dbc28846b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-ESMW",
+    "timestamp": "2026-10-16T11:42:42.296Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "b6397efffccc67cb3822d6cdcccdbf50142ecfc126d4aaa1510fa154df7209c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

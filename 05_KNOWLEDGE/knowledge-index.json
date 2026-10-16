@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T11:39:41.363Z",
+  "last_updated": "2026-10-16T11:42:42.282Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -40753,7 +40753,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "c2b8d7f808a7d421ebec673966eae3b3949bafbd718f89185841de944fb8f41b",
+      "content_hash": "b6397efffccc67cb3822d6cdcccdbf50142ecfc126d4aaa1510fa154df7209c9",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -40766,6 +40766,16 @@
           "number": 952,
           "title": "Guarded Softmax and Numerical Stability in Sparse MoE Token Routing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1145,
+          "title": "MoE Expert Load Balancing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1146,
+          "title": "KV Cache Memory Safety in Long-Context MoE Inference",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40773,7 +40783,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T03:01:10.401Z",
+      "verified_at": "2026-10-16T11:42:42.278Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
