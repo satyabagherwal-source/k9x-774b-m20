@@ -1916,3 +1916,4 @@
 | `CYCLE-20261016-D67J` | `2026-10-16T23:21:16.975Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`4cd3bc00...`) |
 | `CYCLE-20261016-HNF3` | `2026-10-16T23:24:45.903Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`1b62c7f0...`) |
 | `CYCLE-20261016-LSPC` | `2026-10-16T23:27:59.376Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1260, Rule 1261, Rule 1262` | Yes (`094b1846...`) |
+| `CYCLE-20261016-PX5H` | `2026-10-16T23:31:11.765Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`8fdd675e...`) |
