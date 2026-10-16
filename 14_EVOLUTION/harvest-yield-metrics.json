@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T12:42:34.494Z",
-  "total_cycles_completed": 1710,
-  "total_learnings_persisted": 1710,
+  "last_updated": "2026-10-16T12:45:43.960Z",
+  "total_cycles_completed": 1711,
+  "total_learnings_persisted": 1711,
   "total_rules_promoted": 929,
   "history": [
-    {
-      "timestamp": "2026-10-16T01:03:53.277Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T01:06:58.146Z",
       "repository": "microsoft/FrogNano-4B-2609",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T12:42:34.494Z",
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-jialinyyzz-humanizer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T12:45:43.960Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1733,3 +1733,4 @@
 | `CYCLE-20261016-BDTT` | `2026-10-16T12:36:02.369Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`31e47c40...`) |
 | `CYCLE-20261016-FDQW` | `2026-10-16T12:39:08.888Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`b491027f...`) |
 | `CYCLE-20261016-JSE2` | `2026-10-16T12:42:34.490Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`0b53a5e4...`) |
+| `CYCLE-20261016-NUL0` | `2026-10-16T12:45:43.956Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`229d959a...`) |
