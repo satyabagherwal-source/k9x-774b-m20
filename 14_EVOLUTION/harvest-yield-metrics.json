@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T00:29:42.382Z",
-  "total_cycles_completed": 1500,
-  "total_learnings_persisted": 1500,
-  "total_rules_promoted": 818,
+  "last_updated": "2026-10-16T00:32:46.414Z",
+  "total_cycles_completed": 1501,
+  "total_learnings_persisted": 1501,
+  "total_rules_promoted": 821,
   "history": [
-    {
-      "timestamp": "2026-10-14T10:49:23.388Z",
-      "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv7zmiwd",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-14T10:52:23.452Z",
       "repository": "Cactus-Compute/whistle",
@@ -1403,6 +1396,13 @@
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T00:32:46.414Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

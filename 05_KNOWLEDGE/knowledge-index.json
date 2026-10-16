@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T00:29:42.346Z",
+  "last_updated": "2026-10-16T00:32:46.395Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13115,18 +13115,34 @@
     "learn-huggingface-google-bert-bert-base-uncased": {
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-google-bert-bert-base-uncased",
+      "source": "google-bert/bert-base-uncased",
+      "repository": "google-bert/bert-base-uncased",
       "slug": "hf-google-bert-bert-base-uncased",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "54f566094660a9a7f2518bcc6bf6fb4f6fa407c0e3988884082fd09f450bcadb",
+      "content_hash": "788a6f426d6d012880a3be28c52ea7b08f1b0a20b9c5b4bb6d1224d03307b3e4",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 954,
+          "title": "Positional Embedding Boundary Enforcement",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1043,
+          "title": "Deterministic Tokenization-Model Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1044,
+          "title": "Deterministic Inference for Reproducible Forensics",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -13143,7 +13159,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-14T14:10:08.089Z",
+      "verified_at": "2026-10-16T00:32:46.392Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
