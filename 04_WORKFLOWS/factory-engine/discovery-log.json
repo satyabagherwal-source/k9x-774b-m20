@@ -17782,5 +17782,20 @@
     "downloads": 39,
     "qualityScore": 1629,
     "discoveredAt": "2026-10-15T21:18:55.615Z"
+  },
+  {
+    "name": "next-ai-draw-io",
+    "fullName": "DayuanJiang/next-ai-draw-io",
+    "url": "https://github.com/DayuanJiang/next-ai-draw-io",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Draw and edit draw.io diagrams by chatting with an AI. Web app, desktop app, and an MCP server for Claude Code, Cursor, Codex and VS Code.",
+    "stars": 36267,
+    "forks": 3852,
+    "openIssues": 42,
+    "language": "TypeScript",
+    "qualityScore": 19623,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-16T04:34:19.022Z"
   }
 ]

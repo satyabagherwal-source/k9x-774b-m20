@@ -4046,3 +4046,7 @@ https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B
 # --- Automatically Discovered by AI Scout Engine [2026-10-15T21:18:55.617Z] ---
 # [HUGGINGFACE-AI-MODELS] black-forest-labs/flux-3-image-klein-comfy (1629 score) - Verified Hugging Face Model: black-forest-labs/flux-3-image-klein-comfy (159 lik
 https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-16T04:35:08.749Z] ---
+# [AI-AGENTS] DayuanJiang/next-ai-draw-io (19623 score) - Draw and edit draw.io diagrams by chatting with an AI. Web app, desktop app, and
+https://github.com/DayuanJiang/next-ai-draw-io
