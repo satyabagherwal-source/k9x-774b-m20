@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-9LOU",
-    "timestamp": "2026-10-14T01:47:27.630Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv7g9lln",
-    "contentHash": "eb05640f964dc6a6a2dc886cb10e4da66db769b3562fe511897ef4f8f441fa52",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-DJXV",
     "timestamp": "2026-10-14T01:50:31.987Z",
     "repository": "zai-org/GLM-5.3",
@@ -7492,6 +7477,21 @@
     "contentHash": "3d9dbbc6581413761f892dada6c470f026b41536470b50f110c60a14593b9a6e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-J3J2",
+    "timestamp": "2026-10-16T09:54:04.574Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "e5e7277d6e3be4b6588d0133f588f8316865ab50a16e2ec0687ad19e6f4fdbcc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

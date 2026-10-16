@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T09:50:51.935Z",
-  "total_cycles_completed": 1656,
-  "total_learnings_persisted": 1656,
+  "last_updated": "2026-10-16T09:54:04.578Z",
+  "total_cycles_completed": 1657,
+  "total_learnings_persisted": 1657,
   "total_rules_promoted": 914,
   "history": [
-    {
-      "timestamp": "2026-10-15T22:15:19.807Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T22:18:19.189Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1403,6 +1396,13 @@
       "repository": "vllm-sr/d3",
       "learningId": "learn-huggingface-vllm-sr-d3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T09:54:04.578Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-openai-whisper-large-v3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
