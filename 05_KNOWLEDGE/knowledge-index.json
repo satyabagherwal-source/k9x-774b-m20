@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T01:09:59.136Z",
-  "total_verified_learnings": 171,
+  "last_updated": "2026-10-16T01:13:16.658Z",
+  "total_verified_learnings": 172,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -40580,6 +40580,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-15T22:52:57.069Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-vllm-sr-d3": {
+      "learning_id": "learn-huggingface-vllm-sr-d3",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vllm-sr/d3",
+      "repository": "vllm-sr/d3",
+      "slug": "hf-vllm-sr-d3",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/vllm-sr/d3",
+      "source_version": "hf-vllm-sr-d3",
+      "content_hash": "f6e76435cc9bf8b24147d6ed80ed956aed745c351b29d70275ce0165fb02ad17",
+      "dossier_path": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-16T01:13:16.653Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-ZCSU",
-    "timestamp": "2026-10-13T17:15:36.462Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv6xzcpo",
-    "contentHash": "fe5985902847f4fa023ebd8cee923e07a38d6c9c51a0ba7816aceeba0f87f2e9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-32IL",
     "timestamp": "2026-10-13T17:18:29.757Z",
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "hexgrad/Kokoro-82M",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m",
     "contentHash": "a707dc8102d6eedd0395ba61e86e974437b7cf7def65b0ef186f0447a8dc1121",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-XCHZ",
+    "timestamp": "2026-10-16T01:13:16.679Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "f6e76435cc9bf8b24147d6ed80ed956aed745c351b29d70275ce0165fb02ad17",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
