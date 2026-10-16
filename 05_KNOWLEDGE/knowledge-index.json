@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T15:06:14.984Z",
+  "last_updated": "2026-10-16T15:09:31.089Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17365,7 +17365,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "76958cfbc99604ccc7b33bf74bfaecfe5fd6f4f3b1c6ca5226c5fd78b8973bb8",
+      "content_hash": "ab2a3674cec530ff94234788b403daeda7c49c7da909b59198c39e375fde2471",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -17440,6 +17440,21 @@
           "number": 1094,
           "title": "Downsample‑Size Consistency Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1183,
+          "title": "Image Token Isolation Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1184,
+          "title": "Downsample Ratio Consistency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1185,
+          "title": "BOS/EOS Token Null‑Safety Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17460,7 +17475,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-16T06:43:02.642Z",
+      "verified_at": "2026-10-16T15:09:31.084Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

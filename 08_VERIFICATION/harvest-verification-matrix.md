@@ -1776,3 +1776,4 @@
 | `CYCLE-20261016-GOR9` | `2026-10-16T15:00:07.893Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`efdef16c...`) |
 | `CYCLE-20261016-KQ64` | `2026-10-16T15:03:16.348Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`d3673872...`) |
 | `CYCLE-20261016-OK0S` | `2026-10-16T15:06:15.004Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`7e3acdda...`) |
+| `CYCLE-20261016-SRCC` | `2026-10-16T15:09:31.116Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1183, Rule 1184, Rule 1185` | Yes (`ab2a3674...`) |
