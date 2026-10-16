@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-SIEP",
-    "timestamp": "2026-10-14T00:38:10.993Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-hf-venastine-research-xing4-0-29b-a4b-gguf-mv7dsicu",
-    "contentHash": "d2674ecd353696d1c8725c34a9a282dbdd1c3e5e6282bc5ddffa5e66891dac4e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-WE6I",
     "timestamp": "2026-10-14T00:41:12.138Z",
     "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -7490,6 +7475,21 @@
     "repository": "canberkkkkkk/ema-lightning",
     "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
     "contentHash": "879549bd4b81d91923ef7185880e1cd525aa7eb0472534206e5977cf688cc934",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-5HQU",
+    "timestamp": "2026-10-16T08:19:30.966Z",
+    "repository": "google/embeddinggemma-2",
+    "learningId": "learn-huggingface-google-embeddinggemma-2",
+    "contentHash": "faa4d88711cf611e6ecd883426d8e8a93e03ba8c34f8e391092e3fd580acff53",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
