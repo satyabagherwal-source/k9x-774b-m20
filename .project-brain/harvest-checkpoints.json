@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T16:15:28.098Z",
+  "last_updated": "2026-10-16T16:18:37.408Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -783,14 +783,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "cf08e3cccbf94c6b077fb8fffe6edea872d06d72208fba5423724f6497d38ec7",
-      "verified_at": "2026-10-16T08:10:14.779Z",
+      "content_hash": "18683a15f2b7102e4d5841a05eeb757792c568b7e012985877fb69dfc82a8ee9",
+      "verified_at": "2026-10-16T16:18:37.408Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T08:10:14.779Z"
+      "last_updated": "2026-10-16T16:18:37.408Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",

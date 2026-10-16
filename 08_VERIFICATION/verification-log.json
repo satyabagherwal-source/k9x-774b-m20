@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-C1BH",
-    "timestamp": "2026-10-14T09:17:15.053Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-hf-facebookai-xlm-roberta-base-mv7wc19i",
-    "contentHash": "eec8ed5cc4170a0c5aa6f85e0c83e548e92acdeced6ac7ba2893daf39de560b3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-HWNX",
     "timestamp": "2026-10-14T09:21:48.957Z",
     "repository": "openai-community/gpt2",
@@ -7490,6 +7475,21 @@
     "repository": "facebook/sam3",
     "learningId": "learn-huggingface-facebook-sam3",
     "contentHash": "14243c749698c8bb3e9476671a88132af11f6ab5a6d67578376591595cb63036",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-9MMY",
+    "timestamp": "2026-10-16T16:18:37.402Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "18683a15f2b7102e4d5841a05eeb757792c568b7e012985877fb69dfc82a8ee9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
