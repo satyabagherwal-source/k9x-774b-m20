@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T23:44:39.314Z",
-  "total_cycles_completed": 1898,
-  "total_learnings_persisted": 1898,
+  "last_updated": "2026-10-16T23:47:47.961Z",
+  "total_cycles_completed": 1899,
+  "total_learnings_persisted": 1899,
   "total_rules_promoted": 1033,
   "history": [
-    {
-      "timestamp": "2026-10-16T12:08:00.191Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T12:11:13.893Z",
       "repository": "Qwen/Qwen3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T23:44:39.314Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T23:47:47.961Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

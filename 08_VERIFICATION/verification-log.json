@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-4FSC",
-    "timestamp": "2026-10-14T17:07:14.028Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv8d4fpr",
-    "contentHash": "e26babc4de067de8a090c8ac5e1dd31c2292cc60ee94b972c9c4e517be14d411",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-8FMT",
     "timestamp": "2026-10-14T17:10:20.453Z",
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "inclusionAI/Ming-Image-0.1-Design",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
     "contentHash": "6a2823a93eb3df9272da02ad7ee5606e4058898f18b14f165b1446f812d50723",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-B9TH",
+    "timestamp": "2026-10-16T23:47:47.957Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+    "contentHash": "fe528259f29440e1cec919fa8c36b8782b994b20b054aef492fb114b50d65a82",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
