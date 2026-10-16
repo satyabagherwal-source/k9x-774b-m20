@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-SOT3",
-    "timestamp": "2026-10-14T14:10:08.151Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-hf-google-bert-bert-base-uncased-mv86sopo",
-    "contentHash": "54f566094660a9a7f2518bcc6bf6fb4f6fa407c0e3988884082fd09f450bcadb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-WU1D",
     "timestamp": "2026-10-14T14:13:21.553Z",
     "repository": "google/electra-base-discriminator",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B-NVFP4",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
     "contentHash": "e33f7149a5df6071e601e6ca443acd20753d7f5a63eb4a859795a060d7ac872a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-E0C3",
+    "timestamp": "2026-10-16T21:29:57.555Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "c342aefee8d04d08204be3c2ccb27351cba1def18b0c057a070f6d71fe4ebdc9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

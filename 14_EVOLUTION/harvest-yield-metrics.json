@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T21:26:47.865Z",
-  "total_cycles_completed": 1858,
-  "total_learnings_persisted": 1858,
+  "last_updated": "2026-10-16T21:29:57.559Z",
+  "total_cycles_completed": 1859,
+  "total_learnings_persisted": 1859,
   "total_rules_promoted": 998,
   "history": [
-    {
-      "timestamp": "2026-10-16T10:00:09.931Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T10:03:17.033Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T21:26:47.865Z",
       "repository": "autotrust/JEV-35B-NVFP4",
       "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T21:29:57.559Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
