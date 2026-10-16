@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-A6GT",
-    "timestamp": "2026-10-14T04:07:52.637Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv7la6ch",
-    "contentHash": "247decb88abfe01a3e8f46195f4814a1b271db70aedccf138493864b5ed3fe23",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-E3SZ",
     "timestamp": "2026-10-14T04:10:55.811Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7490,6 +7475,21 @@
     "repository": "google/vit-base-patch16-224",
     "learningId": "learn-huggingface-google-vit-base-patch16-224",
     "contentHash": "65775c9a11d40794867f51ce52694af28c76579f0f560952883cf770e09fb510",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-NDH5",
+    "timestamp": "2026-10-16T12:17:22.169Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "aedf0e38db230124fa59dcb878bbcb8e99a2fb76b576581c559121acd8545f3c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
