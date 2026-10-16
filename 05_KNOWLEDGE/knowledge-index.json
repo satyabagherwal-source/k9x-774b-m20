@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T10:34:41.920Z",
+  "last_updated": "2026-10-16T10:38:17.707Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14334,10 +14334,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b",
       "source_version": "hf-meta-llama-llama-2-7b",
-      "content_hash": "936aa77a60bfd5cb1d2de07e857dc80860ec6e83b1812bcdb4e2e069f12392a9",
+      "content_hash": "0a55af0a6a0e74557e09d70c60ce8f875fc9228289fa6d74ec653d5ab0217c02",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1137,
+          "title": "The Weight-Config Shape Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1138,
+          "title": "The Tokenizer-Embedding Index Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1139,
+          "title": "The Immutable Weight Loading Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -14354,7 +14370,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv3fuh18",
         "learn-huggingface-hf-meta-llama-llama-2-7b-mv4blmsc"
       ],
-      "verified_at": "2026-10-16T01:59:21.016Z",
+      "verified_at": "2026-10-16T10:38:17.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

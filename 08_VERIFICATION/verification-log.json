@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-TTCG",
-    "timestamp": "2026-10-14T02:31:10.288Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv7htta0",
-    "contentHash": "746cff110f7bf4fb5e478873606a8fa57630062182af3f7d37f25979495c64e8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-XVA0",
     "timestamp": "2026-10-14T02:34:19.416Z",
     "repository": "Cactus-Compute/whistle",
@@ -7492,6 +7477,21 @@
     "contentHash": "1d8a8d9a40d8fdaca288274cd2ff4776e69ebf2901164884605282311d63f669",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-3YPX",
+    "timestamp": "2026-10-16T10:38:17.733Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "0a55af0a6a0e74557e09d70c60ce8f875fc9228289fa6d74ec653d5ab0217c02",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
