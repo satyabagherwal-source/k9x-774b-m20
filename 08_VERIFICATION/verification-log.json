@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-J7SJ",
-    "timestamp": "2026-10-13T20:19:00.787Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-hf-supersoniclabs-julia-1-mv74j7qn",
-    "contentHash": "fd57261d7a481deee28736e64d7bf393b264688d0270b5d6c138684f45ac71e3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-Q4KH",
     "timestamp": "2026-10-13T20:24:23.201Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-large-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
     "contentHash": "abaa248481c6be8541d78d76892ff6b886363b1144d92065e382539e6ee11721",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-O7JD",
+    "timestamp": "2026-10-16T03:54:08.041Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "5bc08ccf9cbe60c2b1adc007e231516a8bb74c36e7682bd95d20ea0ea3457432",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T03:50:57.438Z",
+  "last_updated": "2026-10-16T03:54:08.047Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1727,14 +1727,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
-      "content_hash": "9695cb5a7b9dbdbe6ae6716a732525dc4a12753020ed64fee32a1b3028e808ff",
-      "verified_at": "2026-10-15T20:46:55.475Z",
+      "content_hash": "5bc08ccf9cbe60c2b1adc007e231516a8bb74c36e7682bd95d20ea0ea3457432",
+      "verified_at": "2026-10-16T03:54:08.047Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-15T20:46:55.475Z"
+      "last_updated": "2026-10-16T03:54:08.047Z"
     },
     "mudler/locate-anything.cpp-gguf": {
       "repository": "mudler/locate-anything.cpp-gguf",
