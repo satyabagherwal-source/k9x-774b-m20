@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-EC2F",
-    "timestamp": "2026-10-13T23:31:10.359Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-hf-minimaxai-minimax-h3-mv7bebzc",
-    "contentHash": "50e78221a2a2e91733ec8cef518bc7560c0fa9dc66964185dbf89a5768287b2a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-I8TH",
     "timestamp": "2026-10-13T23:34:12.774Z",
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -7492,6 +7477,21 @@
     "contentHash": "76958cfbc99604ccc7b33bf74bfaecfe5fd6f4f3b1c6ca5226c5fd78b8973bb8",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-TDMA",
+    "timestamp": "2026-10-16T06:46:06.898Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "dd2d5893c0648ef33fe6682780636abd94914b822fafe549b2674bb4d2905ed9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

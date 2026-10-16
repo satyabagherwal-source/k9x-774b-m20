@@ -465,8 +465,8 @@
     "sourceUrl": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
     "sourceVersion": "hf-phocinae-phocinae-largha-150m-v1",
     "license": "Open-Source",
-    "contentHash": "3f6280c8ff0f24bb8af3e4b75f3e760f44f31209c956a7abbe6212e333544c0a",
-    "lastHarvestedAt": "2026-10-15T23:14:06.907Z",
+    "contentHash": "dd2d5893c0648ef33fe6682780636abd94914b822fafe549b2674bb4d2905ed9",
+    "lastHarvestedAt": "2026-10-16T06:46:06.901Z",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1"
   },
   "hf-comfy-org-qwen-image-2.1": {
