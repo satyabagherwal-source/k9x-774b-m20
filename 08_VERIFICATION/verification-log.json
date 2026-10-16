@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-27A3",
-    "timestamp": "2026-10-14T10:05:35.451Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-large-en-v1-5-mv7y2777",
-    "contentHash": "57abef0ddb6d78980931a9dd6be19578e6b4f607f30e1028f9ec410e06e0cbca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-6A8B",
     "timestamp": "2026-10-14T10:08:45.899Z",
     "repository": "zai-org/GLM-5.3",
@@ -7492,6 +7477,21 @@
     "contentHash": "03ece36e464ce3554dbe25f1d798bc6b0379e5f3e220d99b2d11813218bc3352",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-81BS",
+    "timestamp": "2026-10-16T17:13:22.360Z",
+    "repository": "Zen4-bit/Proxima",
+    "learningId": "learn-github-zen4-bit-proxima",
+    "contentHash": "52c93b40fbb44527735193a142807bd6498742e9891a05ace8e5da096f79f853",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

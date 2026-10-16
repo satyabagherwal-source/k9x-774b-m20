@@ -1628,5 +1628,15 @@
     "contentHash": "621be217a0983ef41d807384fb850a267289562d1b08d473138cd3f2d74e0cfd",
     "lastHarvestedAt": "2026-10-16T09:32:00.300Z",
     "learningId": "learn-github-textbee-textbee"
+  },
+  "zen4-bit-proxima": {
+    "repository": "Zen4-bit/Proxima",
+    "platform": "github",
+    "sourceUrl": "https://github.com/Zen4-bit/Proxima",
+    "sourceVersion": "0e922418",
+    "license": "NOASSERTION",
+    "contentHash": "52c93b40fbb44527735193a142807bd6498742e9891a05ace8e5da096f79f853",
+    "lastHarvestedAt": "2026-10-16T17:13:22.366Z",
+    "learningId": "learn-github-zen4-bit-proxima"
   }
 }
