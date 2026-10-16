@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-QE4D",
-    "timestamp": "2026-10-14T03:52:29.437Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv7kqdu6",
-    "contentHash": "d7a9c0bd700827569bb8a58ac34a0cf103048d5410846a6a011087502a190a7b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-U92P",
     "timestamp": "2026-10-14T03:55:29.521Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7490,6 +7475,21 @@
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
     "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
     "contentHash": "56d59b7ae5ab2481dfea9a3e0e563d7dc0f7224acb03f331c5f36296fd59ece6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-3GU6",
+    "timestamp": "2026-10-16T12:01:53.406Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "ad3096a14af5e73446574e81a75857ad191aa34616005f33bab2c01b239874f2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
