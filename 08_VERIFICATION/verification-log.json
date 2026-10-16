@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-FILQ",
-    "timestamp": "2026-10-13T16:32:11.246Z",
-    "repository": "Aleph-Alpha/Kolibri-1",
-    "learningId": "learn-huggingface-hf-aleph-alpha-kolibri-1-mv6wfiiq",
-    "contentHash": "da86ab58371e66698c7c4c0ab37f50caf73e47d6f00adaf0afe278ab9a557f8b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-JVHP",
     "timestamp": "2026-10-13T16:35:34.573Z",
     "repository": "speridlabs/iris-3b",
@@ -7492,6 +7477,21 @@
     "contentHash": "21eb2de9edd40ffe134f0cb6ec39cca738e30a894fcfbb7d4dcbf545565b1dc1",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-DBAJ",
+    "timestamp": "2026-10-16T00:29:42.379Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+    "contentHash": "295a99ad2e183294962592da7baf405c1df8498e9679a96687e80c8392f8e9bd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
