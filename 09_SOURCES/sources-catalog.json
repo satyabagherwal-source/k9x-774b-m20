@@ -285,8 +285,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "81fb12d0d24ad112a84f77a63426ca64aeaeb466a049b25c9ba98032ef91159e",
-    "lastHarvestedAt": "2026-10-16T14:00:45.762Z",
+    "contentHash": "f68275fa96910d4add2f3f9e85e9acc08002dcdfb0ef42a98cc9d0e65daf835f",
+    "lastHarvestedAt": "2026-10-16T22:18:56.681Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {

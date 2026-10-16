@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T22:15:33.668Z",
-  "total_cycles_completed": 1872,
-  "total_learnings_persisted": 1872,
-  "total_rules_promoted": 1010,
+  "last_updated": "2026-10-16T22:18:56.682Z",
+  "total_cycles_completed": 1873,
+  "total_learnings_persisted": 1873,
+  "total_rules_promoted": 1013,
   "history": [
-    {
-      "timestamp": "2026-10-16T10:44:09.763Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T10:47:19.965Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1403,6 +1396,13 @@
       "repository": "autotrust/JEV-35B",
       "learningId": "learn-huggingface-autotrust-jev-35b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T22:18:56.682Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T22:15:33.644Z",
+  "last_updated": "2026-10-16T22:18:56.652Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17436,7 +17436,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
       "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
-      "content_hash": "81fb12d0d24ad112a84f77a63426ca64aeaeb466a049b25c9ba98032ef91159e",
+      "content_hash": "f68275fa96910d4add2f3f9e85e9acc08002dcdfb0ef42a98cc9d0e65daf835f",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "promoted_rules": [
@@ -17453,6 +17453,21 @@
         {
           "number": 1164,
           "title": "Two-Stage Pipeline Latent Handoff Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1244,
+          "title": "Dual-Encoder Embedding Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1245,
+          "title": "Latent Space Handoff Precision Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1246,
+          "title": "Safetensors Zero-Copy Loading Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -17474,7 +17489,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
       ],
-      "verified_at": "2026-10-16T14:00:45.735Z",
+      "verified_at": "2026-10-16T22:18:56.647Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
