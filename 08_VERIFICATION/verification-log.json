@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-DI59",
-    "timestamp": "2026-10-14T06:02:26.205Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv7pdi24",
-    "contentHash": "7b5a004b779aeb3ec21c866c8f0f4f4e09c6533eaf39812b73ac26dcf547052d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-HSEG",
     "timestamp": "2026-10-14T06:05:46.120Z",
     "repository": "hexgrad/Kokoro-82M",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen-Image-2.1",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1",
     "contentHash": "04001ecd80ce15f9f37bb71acf2771ddcde145834c524b4f3338b38d048232c0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-XETQ",
+    "timestamp": "2026-10-16T14:17:08.942Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "f20e5d9029c845ae59c5116c1f70185af311623ee44ba10f0bf80727fb5ec413",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

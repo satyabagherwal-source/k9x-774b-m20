@@ -3,7 +3,7 @@
 > **Source Version**: `hf-contrasti`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-16T05:55:54.819Z  
+> **Timestamp**: 2026-10-16T14:17:08.854Z  
 > **Learning ID**: `learn-huggingface-contrastive-lm-clm-v0-1-8b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Contrastive-LM/CLM-v0.1-8B](https://huggingface.co/Contrastive-LM/CLM-v0.1-8B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-16T05:55:53.748Z  
+> **Harvest Timestamp**: 2026-10-16T14:17:08.174Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-ranking
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4809 downloads | 777 likes
+- **Stars / Engagement**: 4860 downloads | 778 likes
 
 ---
 

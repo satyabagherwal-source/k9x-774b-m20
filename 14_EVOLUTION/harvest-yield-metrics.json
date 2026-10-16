@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T14:14:00.853Z",
-  "total_cycles_completed": 1738,
-  "total_learnings_persisted": 1738,
+  "last_updated": "2026-10-16T14:17:08.946Z",
+  "total_cycles_completed": 1739,
+  "total_learnings_persisted": 1739,
   "total_rules_promoted": 944,
   "history": [
-    {
-      "timestamp": "2026-10-16T02:30:32.518Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T02:33:35.297Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T14:14:00.853Z",
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T14:17:08.946Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

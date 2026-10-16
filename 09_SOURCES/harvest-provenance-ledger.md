@@ -1763,3 +1763,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-10-16T14:06:46.784Z |
 | `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-10-16T14:10:55.876Z |
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-16T14:14:00.852Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-10-16T14:17:08.945Z |
