@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-YKUU",
-    "timestamp": "2026-10-13T19:34:58.326Z",
-    "repository": "openbmb/MiniCPM-V-4.7-1B",
-    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-1b-mv72ykq0",
-    "contentHash": "271f683674f7488c365ab9361f3a7c02dcc739cc4bd5db51b0772ddae02967ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-2DTP",
     "timestamp": "2026-10-13T19:37:55.837Z",
     "repository": "autotrust/JEV-35B",
@@ -7490,6 +7475,21 @@
     "repository": "openai-community/gpt2",
     "learningId": "learn-huggingface-openai-community-gpt2",
     "contentHash": "7259312c5ccb546adb3ade7656410bbebf5997fb7e6dd7eef090caa4abea3a25",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-4A77",
+    "timestamp": "2026-10-16T03:10:38.755Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "82b139d2157a71ee422f1dfc8f2710441eecde4dbd10b22abd8d4e6e886e8f32",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

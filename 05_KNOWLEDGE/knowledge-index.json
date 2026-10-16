@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T03:07:20.778Z",
+  "last_updated": "2026-10-16T03:10:38.727Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15973,7 +15973,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "f9f93b9b47f5279a3e193ff4c929d9f934cccdcfc7239c18d025067118555d39",
+      "content_hash": "82b139d2157a71ee422f1dfc8f2710441eecde4dbd10b22abd8d4e6e886e8f32",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -16010,7 +16010,7 @@
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv3yxxno",
         "learn-huggingface-hf-qwen-qwen3-vl-8b-instruct-mv4dj7y1"
       ],
-      "verified_at": "2026-10-15T19:59:54.153Z",
+      "verified_at": "2026-10-16T03:10:38.720Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
