@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T20:52:17.425Z",
-  "total_cycles_completed": 1847,
-  "total_learnings_persisted": 1847,
+  "last_updated": "2026-10-16T20:55:13.149Z",
+  "total_cycles_completed": 1848,
+  "total_learnings_persisted": 1848,
   "total_rules_promoted": 995,
   "history": [
-    {
-      "timestamp": "2026-10-16T09:06:18.333Z",
-      "repository": "Saffsanity/sill",
-      "learningId": "learn-github-saffsanity-sill",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T09:15:47.713Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T20:52:17.425Z",
       "repository": "zai-org/GLM-5.3",
       "learningId": "learn-huggingface-zai-org-glm-5-3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T20:55:13.149Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

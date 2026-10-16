@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-2FE3",
-    "timestamp": "2026-10-14T13:21:43.275Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv852fbe",
-    "contentHash": "cff42c4acb0b4277d7478630563555201a3688ac25d28b13cbc92a3cc68ccb02",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-66QY",
     "timestamp": "2026-10-14T13:24:38.698Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.3",
     "learningId": "learn-huggingface-zai-org-glm-5-3",
     "contentHash": "620f0cab81c4eccbc79de658282fd9a324256580f4ff4f186f22c3ccebc77521",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-5BZU",
+    "timestamp": "2026-10-16T20:55:13.146Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+    "contentHash": "8f6d7b9e68918cbe5cf35e9319c310f7ea7423ad4de836aa9e3c96bd43f410ca",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
