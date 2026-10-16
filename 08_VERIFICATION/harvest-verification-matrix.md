@@ -1828,3 +1828,4 @@
 | `CYCLE-20261016-DBG8` | `2026-10-16T18:13:27.992Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1215, Rule 1216, Rule 1217` | Yes (`0eb2988b...`) |
 | `CYCLE-20261016-H84P` | `2026-10-16T18:16:30.313Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`5d4b435e...`) |
 | `CYCLE-20261016-LUTY` | `2026-10-16T18:20:06.358Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`19ab8f15...`) |
+| `CYCLE-20261016-PWG1` | `2026-10-16T18:23:15.073Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`842bcf94...`) |

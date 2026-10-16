@@ -1830,3 +1830,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-16T18:13:27.994Z |
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-16T18:16:30.315Z |
 | `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-10-16T18:20:06.361Z |
+| `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-16T18:23:15.076Z |

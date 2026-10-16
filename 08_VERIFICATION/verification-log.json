@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-6DJS",
-    "timestamp": "2026-10-14T11:04:49.432Z",
-    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-    "learningId": "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv806dfb",
-    "contentHash": "26cc5e0704940739363a8782ad0810aeee87c22b62f53dd39c1c17a36d02c94f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-ABT8",
     "timestamp": "2026-10-14T11:07:53.804Z",
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.2",
     "learningId": "learn-huggingface-zai-org-glm-5-2",
     "contentHash": "19ab8f152c1c43f39886e9141e362db5713c987b7440de61ff4f44b4de58f51e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-PWG1",
+    "timestamp": "2026-10-16T18:23:15.073Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "842bcf94a69d924efc2c0207516d7762ba358ebd24b0eb532896c8dc2469d8ba",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
