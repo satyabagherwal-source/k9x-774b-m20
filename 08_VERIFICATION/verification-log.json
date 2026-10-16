@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-R0DK",
-    "timestamp": "2026-10-14T12:16:51.368Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv82r080",
-    "contentHash": "e51a9638266e674a640eee9754c8d85d58b5c912d8c592cb5f1c09e8cbb2da02",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-V0RR",
     "timestamp": "2026-10-14T12:19:58.503Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-reranker-v2-m3",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
     "contentHash": "31592e1f1fb5485f74bdaed739e26b1fe0f342f8fe17f87402e362261a933374",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-AKE3",
+    "timestamp": "2026-10-16T19:35:18.459Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "d787d8c8e351d7851394ab0481cdeef4aa593f938d9889e49a75c60b6610d9d1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
