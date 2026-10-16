@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T21:23:35.528Z",
-  "total_cycles_completed": 1857,
-  "total_learnings_persisted": 1857,
+  "last_updated": "2026-10-16T21:26:47.865Z",
+  "total_cycles_completed": 1858,
+  "total_learnings_persisted": 1858,
   "total_rules_promoted": 998,
   "history": [
-    {
-      "timestamp": "2026-10-16T09:57:12.995Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T10:00:09.931Z",
       "repository": "MiniMaxAI/MiniMax-H3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T21:23:35.528Z",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
       "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T21:26:47.865Z",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

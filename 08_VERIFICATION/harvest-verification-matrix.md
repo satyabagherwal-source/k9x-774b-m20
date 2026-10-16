@@ -1880,3 +1880,4 @@
 | `CYCLE-20261016-XE5Z` | `2026-10-16T21:17:02.327Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`157b122d...`) |
 | `CYCLE-20261016-1QYL` | `2026-10-16T21:20:25.533Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`d557d379...`) |
 | `CYCLE-20261016-5TK3` | `2026-10-16T21:23:35.523Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`0efb0352...`) |
+| `CYCLE-20261016-9XYS` | `2026-10-16T21:26:47.860Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`e33f7149...`) |
