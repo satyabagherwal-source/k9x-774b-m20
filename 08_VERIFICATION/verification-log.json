@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-BIP3",
-    "timestamp": "2026-10-13T20:13:01.671Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-turbo-mv74bilw",
-    "contentHash": "1750ec32e18162d4405ab1b8f18e54d854a7865404557108eaa52f27d9e8ab78",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-FHR5",
     "timestamp": "2026-10-13T20:16:07.073Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7492,6 +7477,21 @@
     "contentHash": "7b81ce6cef07d3da3ffd24ea63c41337971f380ec0fa7d08411a789d37ecf434",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-GBYF",
+    "timestamp": "2026-10-16T03:48:00.519Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "b90397da3abdf3854e2739131b22329eda98e69b13c8714e42fdae9683656a5e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

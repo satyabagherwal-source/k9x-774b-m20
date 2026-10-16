@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T03:44:57.334Z",
+  "last_updated": "2026-10-16T03:48:00.501Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13974,7 +13974,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "cf460482cbde12c5f37fe3f423d6568fe4829efc726a2d2d05dc86aec101d3de",
+      "content_hash": "b90397da3abdf3854e2739131b22329eda98e69b13c8714e42fdae9683656a5e",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -14008,6 +14008,16 @@
           "number": 978,
           "title": "Hybrid 3D-2D Pipeline Latency Management",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1057,
+          "title": "Geometric Ground-Truth Injection via Coarse Rendering",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1058,
+          "title": "LoRA Strength and CFG Calibration for Structural Adherence",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14027,7 +14037,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-15T20:40:43.609Z",
+      "verified_at": "2026-10-16T03:48:00.497Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
