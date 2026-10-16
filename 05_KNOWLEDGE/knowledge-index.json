@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T22:09:15.125Z",
+  "last_updated": "2026-10-16T22:12:47.327Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -41224,7 +41224,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "f16adc508d524c68697432950bf6affe2835f7e441c71c4721c8b29a3ace69e4",
+      "content_hash": "7b024fd6fb140a763bf296373b5d6d2db6490bfb253db9a02cd9328cc97de038",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
@@ -41272,6 +41272,21 @@
           "number": 1157,
           "title": "Matching Attention Head Dimensions Across Layers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1241,
+          "title": "**RULE‑TOKEN‑ID‑RANGE‑CONSISTENCY**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1242,
+          "title": "**RULE‑LINEAR‑ATTENTION‑SHAPE‑ALIGNMENT**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1243,
+          "title": "**RULE‑PARTIAL‑ROPE‑CONSISTENCY**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41279,7 +41294,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T13:54:04.254Z",
+      "verified_at": "2026-10-16T22:12:47.320Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

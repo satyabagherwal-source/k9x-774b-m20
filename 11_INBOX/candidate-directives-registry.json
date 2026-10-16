@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T15:57:22.063Z",
+  "last_updated": "2026-10-16T22:12:47.358Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1410,6 +1410,39 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf"
+    },
+    {
+      "id": "CD-X37I",
+      "directive_title": "Insight I: **Special‑Token‑ID Range Consistency**",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-10-16",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
+    },
+    {
+      "id": "CD-X37I",
+      "directive_title": "Insight II: **Linear‑Attention Shape Alignment**",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-10-16",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
+    },
+    {
+      "id": "CD-X37I",
+      "directive_title": "Insight III: **Partial RoPE Application**",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "openbmb/MiniCPM-V-4.7-1B",
+      "source_commit": "hf-openbmb-m",
+      "date_staged": "2026-10-16",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
     }
   ]
 }

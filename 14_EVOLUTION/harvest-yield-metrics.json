@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T22:09:15.163Z",
-  "total_cycles_completed": 1870,
-  "total_learnings_persisted": 1870,
-  "total_rules_promoted": 1007,
+  "last_updated": "2026-10-16T22:12:47.359Z",
+  "total_cycles_completed": 1871,
+  "total_learnings_persisted": 1871,
+  "total_rules_promoted": 1010,
   "history": [
-    {
-      "timestamp": "2026-10-16T10:38:17.737Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T10:41:07.851Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1403,6 +1396,13 @@
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T22:12:47.359Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
