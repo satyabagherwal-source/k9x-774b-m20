@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-VGPH",
-    "timestamp": "2026-10-13T20:28:32.213Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-hf-apple-lensvlm-9b-mv74vgkb",
-    "contentHash": "19600433032c4dbf52e10cbb436d5f69aa2e80628f4d8df5c8e7a452628bedac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-Z7G1",
     "timestamp": "2026-10-13T20:31:26.833Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7490,6 +7475,21 @@
     "repository": "mudler/locate-anything.cpp-gguf",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
     "contentHash": "57c8eb01c5ce028b91713bc2f9587cd70a1dc2eaba9d4ea3900ccfd340cc02ac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-W991",
+    "timestamp": "2026-10-16T04:00:23.509Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-jialinyyzz-humanizer",
+    "contentHash": "4344ac124fa2a4a1e8fee9a44bb4396bf393fddd28cdc0d321d2ce3726bde57e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
