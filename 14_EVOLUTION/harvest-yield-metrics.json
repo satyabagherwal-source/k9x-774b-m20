@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T06:11:33.739Z",
-  "total_cycles_completed": 1603,
-  "total_learnings_persisted": 1603,
+  "last_updated": "2026-10-16T06:14:34.782Z",
+  "total_cycles_completed": 1604,
+  "total_learnings_persisted": 1604,
   "total_rules_promoted": 863,
   "history": [
-    {
-      "timestamp": "2026-10-15T19:00:18.521Z",
-      "repository": "EverMind-AI/Raven",
-      "learningId": "learn-github-evermind-ai-raven",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T19:00:26.052Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T06:11:33.739Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T06:14:34.782Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
