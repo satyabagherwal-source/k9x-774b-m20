@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T23:18:13.822Z",
-  "total_cycles_completed": 1890,
-  "total_learnings_persisted": 1890,
+  "last_updated": "2026-10-16T23:21:16.979Z",
+  "total_cycles_completed": 1891,
+  "total_learnings_persisted": 1891,
   "total_rules_promoted": 1027,
   "history": [
-    {
-      "timestamp": "2026-10-16T11:42:42.301Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T11:45:54.906Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1403,6 +1396,13 @@
       "repository": "fastino/GLiNER2.5-Decide",
       "learningId": "learn-huggingface-fastino-gliner2-5-decide",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T23:21:16.979Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
