@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T18:48:28.502Z",
-  "total_cycles_completed": 1814,
-  "total_learnings_persisted": 1814,
+  "last_updated": "2026-10-16T18:51:35.180Z",
+  "total_cycles_completed": 1815,
+  "total_learnings_persisted": 1815,
   "total_rules_promoted": 982,
   "history": [
-    {
-      "timestamp": "2026-10-16T06:49:02.164Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T06:52:01.567Z",
       "repository": "akhilaaa3/Jev-Omni",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T18:48:28.502Z",
       "repository": "Aleph-Alpha/Kolibri-1",
       "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T18:51:35.180Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

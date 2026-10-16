@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-6GTS",
-    "timestamp": "2026-10-14T11:32:53.296Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-hf-openbmb-minicpm-v-4-7-35b-a3b-mv816goc",
-    "contentHash": "a793dcdb5d8733758137ae1069195f3db6af0876acf48fe6d79fea1cfc054f83",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-AH9T",
     "timestamp": "2026-10-14T11:36:00.497Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7490,6 +7475,21 @@
     "repository": "Aleph-Alpha/Kolibri-1",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
     "contentHash": "4cdcdfaf9b4964544f2e5f97d0c30f03f85332468728950adbfd795292e6d99c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-QC95",
+    "timestamp": "2026-10-16T18:51:35.177Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-speridlabs-iris-3b",
+    "contentHash": "4eed39aa1679972478c0f88202b3d3e9b9bb06b67d8f7b877dd15043bdfcc7e5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
