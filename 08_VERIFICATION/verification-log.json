@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-NMUH",
-    "timestamp": "2026-10-13T17:06:29.609Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv6xnmrd",
-    "contentHash": "81bdf7ba7375584fe52b735733cf2c2e1a05f64fbc08d77d7119aeee5a226a3c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-REKK",
     "timestamp": "2026-10-13T17:09:25.508Z",
     "repository": "FacebookAI/xlm-roberta-base",
@@ -7492,6 +7477,21 @@
     "contentHash": "36ae5946d751b5b38f65243b6f4c968f07590f19735f7c1c0ea837e454fe726b",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-L9RT",
+    "timestamp": "2026-10-16T01:03:53.273Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "b01f6a4af8f3c5296b3cdcec3c123918f1a64db2fed41837a616aad5a7ad5d37",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
