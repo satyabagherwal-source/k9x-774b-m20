@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T22:50:26.778Z",
+  "last_updated": "2026-10-16T22:53:41.803Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1817,14 +1817,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "content_hash": "8104156d758bbf201469fa23db782ca936edc23de7267fb8cf320e327db2e49a",
-      "verified_at": "2026-10-16T14:38:32.001Z",
+      "content_hash": "bd2f3f864c86c258605944fa118ae60660940e962c28037ca57f0449bfd33ade",
+      "verified_at": "2026-10-16T22:53:41.803Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T14:38:32.001Z"
+      "last_updated": "2026-10-16T22:53:41.803Z"
     },
     "Phocinae/Phocinae-Largha-150M-v1": {
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
