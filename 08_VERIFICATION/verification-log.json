@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-2ZE5",
-    "timestamp": "2026-10-13T16:22:26.477Z",
-    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-    "learningId": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv6w2zb2",
-    "contentHash": "7e1c899c5b268e68a168e37e2812f616b09cb07c090ca2c0b2ff54ce7f5a9123",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-770M",
     "timestamp": "2026-10-13T16:25:42.982Z",
     "repository": "deepseek-ai/DeepSeek-V3",
@@ -7490,6 +7475,21 @@
     "repository": "google/embeddinggemma-2",
     "learningId": "learn-huggingface-google-embeddinggemma-2",
     "contentHash": "d98d16a03a0f729263acfc0d7ddddcb614544042990c8ad88167e8b386cd8c31",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-0YK1",
+    "timestamp": "2026-10-16T00:20:06.001Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "37f4499c440a010bf13e371c59b09f74d545a868348180405d1f3596b224725a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
