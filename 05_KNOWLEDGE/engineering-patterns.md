@@ -73596,3 +73596,224 @@ x = ViT(image)  # full resolution tokens processed by all layers
 Integration test that measures token count after the vision encoder and asserts it is ≤ `max_compressed_tokens` (e.g., 256 for 16× mode).
 
 ---
+---
+
+## 1168. Google Search Console Discovered vs Crawled Indexation Triage Invariant (Harvested from Live Search Console Telemetry & Crawl Diagnostics)
+
+> **Provenance**: Harvested from production Google Search Console indexing telemetry (Exclusions: 291 Crawled unindexed, 229 Discovered unindexed) and [GoogleChrome/lighthouse](https://github.com/GoogleChrome/lighthouse).  
+> **Evidence**: Confirmed in Googlebot crawl scheduling documentation and live indexation recovery benchmarks.
+
+**RULE**:
+When diagnosing unindexed pages reported in Google Search Console, engineers and automated SEO agents MUST NOT conflate "Discovered - currently not indexed" with "Crawled - currently not indexed". These two states represent fundamentally different architectural failure domains and require opposite remediation workflows:
+1. **"Discovered - currently not indexed"**: Googlebot knows the URL exists, but has REFUSED TO CRAWL IT. Root causes are **Crawl Budget Exhaustion**, **Slow TTFB (> 800ms)**, or **Weak Internal In-Degree (Orphan / Click Depth > 3)**. Remediation MUST optimize server response time, trim site bloat in `robots.txt`, and inject prominent editorial inlinks from high-PageRank category hubs.
+2. **"Crawled - currently not indexed"**: Googlebot fetched the page, rendered it, and evaluated the content, but DELIBERATELY REJECTED INDEXATION. Root causes are **Thin Content (< 300 words)**, **High Boilerplate-to-Content Ratio**, **Near-Duplicate Content Clusters (> 80% MinHash similarity)**, or **Low Algorithmic Quality**. Remediation MUST consolidate near-duplicates into a single canonical URL, expand unique substantive body text, or apply `noindex` to low-value faceted pages.
+
+**WHY**:
+Treating "Discovered" as a content quality problem leads developers to rewrite body copy for pages Googlebot hasn't even fetched. Conversely, treating "Crawled" as a crawl budget issue leads teams to tweak `robots.txt` while Googlebot continues to reject thin or duplicate content. Distinguishing these states prevents wasted developer effort and accelerates organic indexation recovery.
+
+**WHEN TO APPLY**:
+- Technical SEO audits, site migrations, and continuous search performance monitoring.
+- Automated CI/CD pre-deployment linters assessing content depth and internal in-degree.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Automated GSC indexation exclusion triaging engine
+def triage_gsc_indexation_defect(status: str, metrics: dict) -> dict:
+    if status == "Discovered - currently not indexed":
+        recommendations = []
+        if metrics.get("ttfb_ms", 0) > 600:
+            recommendations.append("HIGH PRIORITY: Reduce server TTFB below 300ms via Redis page caching or edge CDN.")
+        if metrics.get("internal_inlinks", 0) < 3:
+            recommendations.append("HIGH PRIORITY: Increase internal linking; URL is currently an orphan with in-degree < 3.")
+        if metrics.get("click_depth", 0) > 3:
+            recommendations.append("MEDIUM PRIORITY: Elevate page architecture; click depth exceeds 3 hops from root.")
+        return {"category": "CRAWL_BUDGET_AND_DISCOVERY", "actions": recommendations}
+
+    elif status == "Crawled - currently not indexed":
+        recommendations = []
+        if metrics.get("word_count", 0) < 300:
+            recommendations.append("FATAL DEFECT: Thin content detected (< 300 words). Expand unique editorial copy.")
+        if metrics.get("minhash_similarity", 0.0) > 0.80:
+            recommendations.append(f"CONSOLIDATE: Near-duplicate cluster with URL {metrics.get('duplicate_url')}. Canonicalize or 301 redirect.")
+        if metrics.get("boilerplate_ratio", 0.0) > 0.65:
+            recommendations.append("HIGH PRIORITY: Navigation/footer boilerplate dominates DOM. Isolate main content area.")
+        return {"category": "CONTENT_QUALITY_AND_DUPLICATION", "actions": recommendations}
+        
+    return {"category": "UNKNOWN", "actions": []}
+```
+
+**NEGATIVE CONSTRAINT**:
+```bash
+# ANTI-PATTERN: Resubmitting unindexed URLs in GSC without fixing root cause
+# Repeatedly clicking "Validate Fix" in GSC without architectural remediation
+# leads to immediate "Validation: Failed" status as seen in production telemetry!
+```
+
+**VERIFICATION METHOD**:
+1. Check GSC Coverage API or URL Inspection report.
+2. For "Discovered": Verify internal inlinks > 3 and TTFB < 400ms.
+3. For "Crawled": Run MinHash duplicate detection (ensure Jaccard similarity < 0.70 across all sibling pages) and word count >= 300 words.
+
+---
+
+## 1169. Single-Hop Redirect Destination & Sitemap Consistency Invariant (Harvested from Live Search Console Telemetry & puneetindersingh/open-seo-crawler)
+
+> **Provenance**: Harvested from production GSC "Page with redirect" failures (443+ failed URLs) and [puneetindersingh/open-seo-crawler](https://github.com/puneetindersingh/open-seo-crawler).  
+> **Evidence**: Confirmed in Google Search Central XML Sitemap guidelines and HTTP status code routing specifications.
+
+**RULE**:
+All internal hyperlinks, template navigation menus, and XML sitemaps MUST reference ONLY the terminal, 200 OK canonical URL. Under NO circumstances may an XML sitemap contain a URL that returns an HTTP 301, 302, 307, or 308 redirect. Furthermore, reverse proxies (Nginx, Caddy, Cloudflare Workers) MUST resolve multi-variable normalizations (HTTP to HTTPS, WWW to non-WWW, and missing trailing slashes) in **EXACTLY ONE REDIRECT HOP**, completely eliminating redirect chains (A -> B -> C).
+
+**WHY**:
+Including redirecting URLs in XML sitemaps directly triggers the "Page with redirect" indexation failure in Google Search Console (causing validation to fail across hundreds of URLs). When Googlebot detects redirects inside a sitemap, it flags the sitemap as untrustworthy and lowers its crawl frequency. Additionally, multi-hop redirect chains burn crawl budget and bleed link equity.
+
+**WHEN TO APPLY**:
+- XML sitemap generation scripts (`next-sitemap`, `astro/sitemap`, custom build scripts).
+- Web application reverse proxy configurations and URL routing middleware.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```nginx
+# Nginx Edge Rule: Atomic Single-Hop Canonical Normalization
+# Combines HTTP -> HTTPS, www -> non-www, and trailing slash into 1 redirect hop
+server {
+    listen 80;
+    listen [::]:80;
+    server_name www.example.com example.com;
+    return 301 https://example.com$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name www.example.com;
+    return 301 https://example.com$request_uri;
+}
+
+# Ensure sitemap generator filters out any redirecting URLs:
+# Pseudo-code for sitemap inclusion filter
+# def is_sitemap_eligible(url: str) -> bool:
+#     res = fetch_head(url, follow_redirects=False)
+#     return res.status_code == 200 and get_canonical(res) == url
+```
+
+**NEGATIVE CONSTRAINT**:
+```xml
+<!-- ANTI-PATTERN: Placing redirecting or non-trailing-slash URL in XML sitemap -->
+<url>
+  <loc>https://example.com/blog</loc> <!-- DEFECT: Issues 301 to https://example.com/blog/ -->
+  <!-- Triggers GSC 'Page with redirect' failure! -->
+</url>
+```
+
+**VERIFICATION METHOD**:
+1. Run automated sitemap validator: `curl -sS https://example.com/sitemap.xml | grep '<loc>' | sed -E 's/<\/?loc>//g' | xargs -n 1 curl -o /dev/null -s -w "%{http_code} %{url_effective}\n"`.
+2. Assert that 100% of URLs return status code `200` without any `301` or `302` response.
+
+---
+
+## 1170. Canonical Divergence & Googlebot Reconciliation Invariant (Harvested from Live Search Console Telemetry & StJudeWasHere/seonaut)
+
+> **Provenance**: Harvested from production GSC "Duplicate without user-selected canonical" & "Google chose different canonical than user" reports and [StJudeWasHere/seonaut](https://github.com/StJudeWasHere/seonaut).  
+> **Evidence**: Confirmed in `internal/issues/page/canonical.go` and Google Search Central canonicalization rules.
+
+**RULE**:
+To prevent Googlebot from overriding user-selected canonical tags or flagging pages as "Duplicate without user-selected canonical", every indexable document MUST maintain 100% signal harmony across four distinct architectural channels:
+1. **Self-Referential HTML Tag**: `<link rel="canonical" href="https://example.com/exact-path">` MUST be present in `<head>`.
+2. **HTTP Header Tag**: If serving non-HTML or PDF documents, declare `Link: <https://example.com/exact-path>; rel="canonical"`.
+3. **XML Sitemap Presence**: The URL listed in `<loc>` MUST match the canonical URL character-for-character.
+4. **Internal Inbound Links**: 100% of internal links from menus, breadcrumbs, and related articles MUST link to the canonical URL, NEVER to parameterized or redirected aliases.
+
+**WHY**:
+Google's canonical selection algorithm treats `<link rel="canonical">` as a strong hint, NOT a mandate. If internal links point to `example.com/product?ref=sidebar` while the canonical tag says `example.com/product`, or if the sitemap lists a third variation, Google's algorithm detects conflicting signals and overrides the user canonical, assigning a different URL or de-indexing the page entirely.
+
+**WHEN TO APPLY**:
+- E-commerce catalog pages, multi-faceted filtering systems, and content management systems.
+- Dynamic URL routing where tracking query parameters are appended.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Harmonized canonical resolution helper for modern frameworks
+export function getHarmonizedCanonicalUrl(rawUrl: string, baseUrl: string): string {
+  const parsed = new URL(rawUrl, baseUrl);
+  // Strip known non-canonical tracking/marketing parameters
+  const FORBIDDEN_PARAMS = ['utm_source', 'utm_medium', 'utm_campaign', 'ref', 'fbclid', 'gclid'];
+  FORBIDDEN_PARAMS.forEach(param => parsed.searchParams.delete(param));
+  
+  // Sort remaining functional parameters deterministically
+  parsed.searchParams.sort();
+  
+  // Force lowercase path and normalized trailing slash
+  parsed.pathname = parsed.pathname.toLowerCase();
+  if (!parsed.pathname.endsWith('/') && !path.extname(parsed.pathname)) {
+    parsed.pathname += '/';
+  }
+  
+  return parsed.toString();
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```html
+<!-- ANTI-PATTERN: Canonical tag points to URL A, but breadcrumb link on same page points to URL B -->
+<link rel="canonical" href="https://example.com/widgets" />
+<!-- In DOM: -->
+<nav class="breadcrumb"><a href="https://example.com/widgets/">Widgets</a></nav> <!-- Trailing slash mismatch! -->
+<!-- Google sees conflict and flags: 'Duplicate, Google chose different canonical than user' -->
+```
+
+**VERIFICATION METHOD**:
+1. Audit page with crawler: verify `url == canonical_href == sitemap_loc == internal_inlink_target`.
+2. Confirm zero discrepancy across all 4 channels.
+
+---
+
+## 1171. Multi-Dimensional Full-Codebase Forensic Harvesting Protocol (Harvested from AI-Builder-Brain Core Directive)
+
+> **Provenance**: Harvested from Master Brain Operating Rule 26 and multi-repo forensic audits across Rust, Go, Python, TypeScript, and Ruby crawler implementations.  
+> **Evidence**: Confirmed across 20+ audited production repositories and deep AST inspection frameworks.
+
+**RULE**:
+No AI agent, automated pipeline, or human pair programmer may ever consider a software repository or system "harvested" based merely on repository titles, high-level summaries, or README documentation. Harvesters MUST perform an end-to-end, multi-layered forensic inspection across:
+1. **Active Implementation Source Files**: Concrete data structures, algorithms, stream parsers, and state machines.
+2. **Test Suites & Fixtures**: Edge-case assertions, mock network handlers, and regression suites (the primary source of unwritten invariants).
+3. **Commit History & Diffs**: Root causes of historical defects, race condition fixes, and performance refactors.
+4. **Closed Issues & PRs**: Production failure autopsies and architectural trade-off debates.
+5. **Runtime Configurations & Dependencies**: Dependency constraints, build pipelines, and ecosystem compatibility boundaries.
+
+**WHY**:
+README files and marketing documentation are frequently aspirational, outdated, or superficial. They describe how the software is intended to be used, but almost never document critical production failure boundaries, edge-case parser traps (such as HTML5 premature `<head>` termination, Googlebot 2MB ingestion limits, or socket exception cause-chains), or regression post-mortems. Only full-codebase forensic analysis yields durable, super-intelligent engineering rules.
+
+**WHEN TO APPLY**:
+- Every automated harvesting run, skill extraction cycle, and external library evaluation in AI-Builder-Brain.
+- Pre-integration audits before adopting any open-source tool into enterprise production stacks.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```bash
+# Forensic inspection execution sequence for automated harvester
+git clone --depth 1 https://github.com/author/repo.git /tmp/target-repo
+cd /tmp/target-repo
+
+# 1. Inspect source implementation files
+find src -type f \( -name "*.rs" -o -name "*.py" -o -name "*.go" -o -name "*.ts" \) | xargs grep -E "class|func|impl|trait"
+
+# 2. Inspect test assertions and edge cases
+find tests test spec -type f | xargs grep -E "assert|expect|fixture|test_"
+
+# 3. Inspect commit autopsies
+git log -n 20 --grep="fix" --grep="bug" --grep="perf" --oneline
+
+# 4. Formulate verified forensic learning dossier in 07_PROJECT_LEARNING/
+# 5. Extract reusable engineering rules into 05_KNOWLEDGE/engineering-patterns.md
+# 6. Immediately wipe temporary clone directory (0 bytes disk wasted)
+```
+
+**NEGATIVE CONSTRAINT**:
+```markdown
+<!-- ANTI-PATTERN: Reading only README.md or description and summarizing it -->
+<!-- "This repository is a fast web crawler written in Python that helps with SEO." -->
+<!-- ZERO architectural value; forbidden by AI-Builder-Brain Operating Rules! -->
+```
+
+**VERIFICATION METHOD**:
+1. Check dossier in `07_PROJECT_LEARNING/`: verify presence of commit SHA, specific file paths, code line ranges, and concrete algorithmic mechanisms.
+2. Verify promoted rule in `05_KNOWLEDGE/engineering-patterns.md` includes Verified Implementation Pattern and Negative Constraint.

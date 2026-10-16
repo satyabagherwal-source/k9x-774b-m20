@@ -362,3 +362,45 @@ To ensure the Brain never degrades into an undisciplined data dump or shallow sc
    - *"पहले सीखना, फिर सत्यापित करना, फिर स्थायी रूप से सहेजना — कमाई उसके बाद।"*
    - First Learn, Then Verify, Then Permanently Persist — Earnings Follow.
 
+## Rule 26 — Multi-Dimensional Full-Codebase Forensic Harvesting & Technical SEO Indexation Invariant ("Anti-Superficiality Invariant: Complete Code, Tests, Issues & 100+ Dimension Forensic Depth")
+
+AI-Builder-Brain strictly prohibits superficial, surface-level harvesting. No AI agent, automated pipeline, or human pair programmer may ever consider a repository or system "learned" based merely on its name, metadata summary, marketing claims, or README documentation.
+
+### 1. The Anti-Superficiality Codebase Forensics Protocol
+In Antigravity IDE and all automated harvesting loops, every target repository MUST be audited across all layers of its actual implementation before any learning is promoted:
+1. **Concrete Implementation Files**: Read the active source code, core algorithms, stream handlers, DOM parsers, and AST transformers.
+2. **Test Suites & Fixtures**: Inspect unit tests, integration tests, mock HTTP servers, and regression fixtures. Tests reveal the true edge-case boundaries, failure modes, and developer assumptions that READMEs omit.
+3. **Commit History & Diffs**: Trace commit logs and diffs to identify why code was rewritten, which race conditions were fixed, and what performance bottlenecks were solved.
+4. **Issue & PR Autopsies**: Study closed bug reports, user complaints, and pull request reviews to extract real-world failure post-mortems.
+5. **Runtime Configurations & Dependencies**: Audit dependency trees, build configs (`Cargo.toml`, `pyproject.toml`, `package.json`, `go.mod`), and environment settings.
+6. **Licensing & Safety Invariants**: Verify license boundaries (MIT, Apache, AGPL, BSD) and enterprise deployment constraints.
+
+### 2. Multi-Dimensional SEO & Indexation Architecture Requirement
+When extracting SEO, crawling, or web architecture intelligence, agents MUST NOT restrict their scope to basic metadata (titles and descriptions). Agents MUST systematically extract evidence-based learnings across the full 14-dimension technical matrix:
+1. **Google Search Console Indexation Telemetry**:
+   - Master triage and resolution of live GSC exclusion states: *Page with redirect* (flattening multi-hop chains to terminal 200 OK canonicals), *Crawled - currently not indexed* (remediating thin content, boilerplate repetition, and near-duplicate clusters), *Discovered - currently not indexed* (resolving crawl budget exhaustion, slow TTFB, and orphan link depth), *Excluded by noindex*, *Soft 404*, and *Server error (5xx)*.
+2. **Canonicalization & URL Hygiene**:
+   - Eliminating canonical loops, canonicals targeting redirects or 404s, resolving Google vs User canonical conflicts, enforcing trailing slash uniformity, lowercase URL rewrites, and non-WWW vs WWW canonical hosts.
+3. **Multilingual & International SEO (Hreflang Graph)**:
+   - Enforcing strict 1-to-1 bidirectional reciprocity, ensuring hreflangs target exclusively self-canonical 200 OK URLs, and verifying correct BCP 47 locale codes.
+4. **JavaScript Rendering & Hydration Integrity**:
+   - Detecting discrepancies between raw server response HTML and client-hydrated DOM, mitigating JS execution timeouts, and guaranteeing semantic `<a href>` crawlability.
+5. **XML Sitemap Consistency**:
+   - Enforcing that XML sitemaps contain exclusively 200 OK indexable canonical URLs with zero redirects, errors, or noindex directives.
+6. **Mobile Responsiveness & Core Web Vitals (CWV)**:
+   - Validating viewport configuration, responsive container bounds, touch target spacing (>= 48px), and optimizing LCP, CLS, and INP metrics.
+7. **Structured Data (JSON-LD)**:
+   - Ensuring Schema.org validation, strict JSON serialization, and forbidding invisible/deceptive schema markup.
+8. **Media & Image SEO**:
+   - Eliminating unoptimized screenshot filenames, enforcing descriptive keyword filenames, detecting whitespace-only alt text, compressing assets, and responsive srcset descriptors.
+9. **Access Control & Bot Infrastructure**:
+   - Guarding against accidental `Disallow: /` robots errors, WAF/firewall Googlebot blocking, and CAPTCHA/Cloudflare barriers on indexable routes.
+10. **Backend CMS & Server Stability**:
+    - Preventing `.htaccess` / Nginx front-controller crashes, database connection pool exhaustion, PHP/Node memory exhaustion, and WordPress permalink corruption.
+
+### 3. Canonical Brain Institutionalization
+Every dimension analyzed MUST produce actionable, verified engineering artifacts:
+- Granular forensic dossiers in `07_PROJECT_LEARNING/`.
+- Universal engineering rules with verified code patterns and negative constraints in `05_KNOWLEDGE/engineering-patterns.md`.
+- Comprehensive architectural taxonomies in `05_KNOWLEDGE/`.
+- Immediate Git synchronization to GitHub remote (`origin/main`).

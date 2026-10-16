@@ -220,3 +220,32 @@ Googlebot stops parsing and truncates HTML response streams at exactly 2MB (2,00
    - ❌ `Screen Shot 2026-10-16 at 12.00.00.png`, `IMG_0042.jpg`, `asset_12.webp`
    - ✅ `enterprise-technical-seo-crawler-architecture.webp`
 2. **Whitespace-Only Alt False Compliance**: Ensure automated linters check `alt.trim().length > 0`. Tags like `alt="   "` pass naive boolean presence checks but fail accessibility audits and provide zero search signals.
+---
+
+## 12. Master GSC Indexation Triage & 14-Dimension Technical Taxonomy (Rules 1162–1165)
+
+For complex site-wide recovery and complete multi-dimensional failure resolution, reference the canonical knowledge asset:
+[`05_KNOWLEDGE/multi-dimensional-seo-and-indexing-taxonomy.md`](file:///C:/AI-Builder-Brain/05_KNOWLEDGE/multi-dimensional-seo-and-indexing-taxonomy.md).
+
+### 12.1 The GSC Indexation Triage Matrix
+1. **"Page with redirect" (Rule 1163)**: Never place redirecting URLs into XML sitemaps. Ensure all internal navigation links resolve to the terminal 200 OK canonical URL in exactly one hop.
+2. **"Discovered - currently not indexed" (Rule 1162)**: Remediate crawl budget bottlenecks, optimize TTFB (< 300ms), and elevate click depth / in-degree from category hubs.
+3. **"Crawled - currently not indexed" (Rule 1162)**: Remediate thin content (< 300 words), consolidate near-duplicates (> 80% MinHash similarity), and isolate main content from repetitive boilerplate.
+4. **"Alternate page with proper canonical tag" (Rule 1164)**: Harmonize internal links, sitemaps, and HTTP headers with the user-selected canonical to prevent Googlebot canonical divergence.
+
+### 12.2 Anti-Superficiality Full-Codebase Harvesting Protocol (Rule 1165 & Operating Rule 26)
+When auditing and harvesting open-source web systems, NEVER rely on README files or repository summaries. Audit actual source code, test suites, commit diffs, and issue autopsies across all 14 dimensions:
+1. Server, Protocol & Transport Infrastructure (5xx, DNS, TLS, HSTS)
+2. Canonicalization & URL Hygiene (Loops, trailing slash, non-WWW)
+3. Redirect Architecture & Crawl Budget (Single-hop normalization)
+4. Link Graph & Dynamic URLs (Orphans, anchor fragments, session IDs)
+5. JavaScript Rendering & Hydration Diffs (Raw vs DOM mismatches)
+6. Multilingual & International SEO (Hreflang reciprocity, BCP 47)
+7. XML Sitemaps (Exclusively 200 OK canonical URLs)
+8. Content Quality & Algorithmic Filters (Thin content, doorway pages)
+9. Mobile & Core Web Vitals (Viewport, touch targets, LCP, CLS, INP)
+10. Structured Data & Schema Markup (Valid JSON-LD @graph)
+11. Media & Asset Optimization (WebP/AVIF, descriptive filenames, alt trim)
+12. Access Control, Firewalls & Bot Directives (Robots.txt, Googlebot ASN)
+13. CMS & Server Backend Health (Nginx try_files, DB pools, permalinks)
+14. Security, Spam & Legal Removals (Manual actions, malware, DMCA)
