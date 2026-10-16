@@ -1544,3 +1544,4 @@
 | `CYCLE-20261016-GSXV` | `2026-10-16T01:28:24.451Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`5d169014...`) |
 | `CYCLE-20261016-KSSH` | `2026-10-16T01:31:30.881Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`1dbf6f4f...`) |
 | `CYCLE-20261016-OZ6W` | `2026-10-16T01:34:45.800Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1047, Rule 1048, Rule 1049` | Yes (`bc8f58a8...`) |
+| `CYCLE-20261016-SPDY` | `2026-10-16T01:37:39.718Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`f13f2d83...`) |

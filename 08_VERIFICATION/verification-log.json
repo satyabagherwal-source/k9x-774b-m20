@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-YB3M",
-    "timestamp": "2026-10-13T17:42:47.218Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-hf-google-gemma-4-31b-it-mv6yyb0h",
-    "contentHash": "c22599bca0df9039a88702a73cced19801e594419dbc3f64e893525822d02dff",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-28HF",
     "timestamp": "2026-10-13T17:45:50.451Z",
     "repository": "BAAI/bge-base-en-v1.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "bc8f58a837bb93b7912383b6da47d0e554606d689381061e98ce8745c054c896",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-SPDY",
+    "timestamp": "2026-10-16T01:37:39.718Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "f13f2d835b0d5f0322640410e8a8157a67e25729b029de6c4de69150b2cc9343",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
