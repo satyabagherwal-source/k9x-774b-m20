@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-IBOC",
-    "timestamp": "2026-10-14T11:14:06.876Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-r1-mv80ibl2",
-    "contentHash": "9b8dd5d286ed733d516bdb1f98dae7dce631575c3b559ef007dfbaef25ebecb3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-MBIG",
     "timestamp": "2026-10-14T11:17:13.288Z",
     "repository": "moonshotai/Kimi-K3",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-20b",
     "learningId": "learn-huggingface-openai-gpt-oss-20b",
     "contentHash": "e0013dc2bf3d218aa2004a18c65a4a9454869afeb04f6d54808359572ed08f69",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-1Y1S",
+    "timestamp": "2026-10-16T18:32:37.024Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "97c4c0b8f8271cfd6503783b780323bfdd802cd78e93b25c66182b896256d92f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
