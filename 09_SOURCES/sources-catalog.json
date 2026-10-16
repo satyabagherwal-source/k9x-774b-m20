@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "d389281d64dfb82187bafcaf56a97f4cd460dd87da30ac2402587d5cda7674f2",
-    "lastHarvestedAt": "2026-10-16T02:17:42.544Z",
+    "contentHash": "21474c79837269240c90abda3359a21698ff659b8b23a251f24b71a0daf6078e",
+    "lastHarvestedAt": "2026-10-16T10:58:41.335Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {

@@ -1699,3 +1699,4 @@
 | `CYCLE-20261016-FL3T` | `2026-10-16T10:47:19.961Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`b296726a...`) |
 | `CYCLE-20261016-MIC8` | `2026-10-16T10:52:42.968Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1140, Rule 1141, Rule 1142` | Yes (`9322dbdd...`) |
 | `CYCLE-20261016-QCTN` | `2026-10-16T10:55:42.443Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`9c542223...`) |
+| `CYCLE-20261016-U6UT` | `2026-10-16T10:58:41.333Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`21474c79...`) |

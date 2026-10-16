@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-JDQQ",
-    "timestamp": "2026-10-14T02:51:03.122Z",
-    "repository": "autotrust/GEV-26B-Decide-NVFP4",
-    "learningId": "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv7ijdlx",
-    "contentHash": "4ee2d93effa542cfd5343a7a09fe4041fe6f95a9bb4f1490e710a6a29bd416d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-N5FP",
     "timestamp": "2026-10-14T02:53:58.981Z",
     "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "speridlabs/iris-3b",
     "learningId": "learn-huggingface-speridlabs-iris-3b",
     "contentHash": "9c542223d62b67baf06e3500ca97806821e6733ba918ea0f1393955b8746b651",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-U6UT",
+    "timestamp": "2026-10-16T10:58:41.333Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "21474c79837269240c90abda3359a21698ff659b8b23a251f24b71a0daf6078e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
