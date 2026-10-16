@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-9TTJ",
-    "timestamp": "2026-10-14T14:51:27.415Z",
-    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-    "learningId": "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv889tq5",
-    "contentHash": "6397c5f9cfe28f3988eaa7283e320864a795ddd020b16f793d03ed51eca95350",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-DZH3",
     "timestamp": "2026-10-14T14:54:41.367Z",
     "repository": "amazon/chronos-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "c3341ff41595efc04f85f2183695ff2babc071b09b55aec80f48379d1ba25f82",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-F9KM",
+    "timestamp": "2026-10-16T21:58:55.798Z",
+    "repository": "autotrust/GEV-26B-Decide-NVFP4",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+    "contentHash": "a94959b4b1f8617a04b4b47a2b7460143e25439df5ea1205e9169527d7554912",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
