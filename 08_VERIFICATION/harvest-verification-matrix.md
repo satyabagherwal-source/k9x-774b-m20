@@ -1774,3 +1774,4 @@
 | `CYCLE-20261016-8Y3I` | `2026-10-16T14:54:06.750Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1173, Rule 1174, Rule 1175` | Yes (`8661686e...`) |
 | `CYCLE-20261016-CQ4R` | `2026-10-16T14:57:03.051Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1176, Rule 1177, Rule 1178` | Yes (`e825cd21...`) |
 | `CYCLE-20261016-GOR9` | `2026-10-16T15:00:07.893Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`efdef16c...`) |
+| `CYCLE-20261016-KQ64` | `2026-10-16T15:03:16.348Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`d3673872...`) |

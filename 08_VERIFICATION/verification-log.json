@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-UVZ6",
-    "timestamp": "2026-10-14T06:43:56.898Z",
-    "repository": "bigscience/bloom",
-    "learningId": "learn-huggingface-hf-bigscience-bloom-mv7quvvw",
-    "contentHash": "503d10f106a05424afa5309e42d69c6f16b138965f7fb35eeff4bf4eaa2aa7ae",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-YQIA",
     "timestamp": "2026-10-14T06:46:56.434Z",
     "repository": "openai/gpt-oss-20b",
@@ -7490,6 +7475,21 @@
     "repository": "fastino/GLiNER2.5-Decide",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide",
     "contentHash": "efdef16c51c77ff76a3a40531e333764bbc45ceb33f073bb832a5e748df12b6d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-KQ64",
+    "timestamp": "2026-10-16T15:03:16.348Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "d367387250f162c963da97edf094b09a8b44884dab5944ffb45acfa62c5618ac",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
