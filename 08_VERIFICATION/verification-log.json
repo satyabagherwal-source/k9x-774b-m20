@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-8UAR",
-    "timestamp": "2026-10-14T05:02:49.443Z",
-    "repository": "unsloth/Qwen3.8-27B-GGUF",
-    "learningId": "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv7n8u7e",
-    "contentHash": "f85c1a6d299242687ea3829f3169266e2bfd8686df40ff323fefe0fbd1cd62ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-D79R",
     "timestamp": "2026-10-14T05:06:12.879Z",
     "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B-NVFP4",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
     "contentHash": "8c562aa2381293da6c1b0337a171d61e8d82e54aaa8d5c8f8a444f4c17e51ef4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-OGPW",
+    "timestamp": "2026-10-16T13:14:12.260Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "0a3806221f760427d4b8514ab8a74d30bb4f6361f469a291e98903eb42dbb883",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
