@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-QPM4",
-    "timestamp": "2026-10-13T16:12:53.932Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-hf-openai-gpt-oss-20b-mv6vqpiu",
-    "contentHash": "bbbd95b4e43fb7cad197ccf0efc56611ec332d761260a57d2cd2274515cdc648",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-V5MG",
     "timestamp": "2026-10-13T16:16:21.304Z",
     "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/Qwen3.8-27B-GGUF",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
     "contentHash": "dd61a4807f9fb19079394a65b3a193d39e94ada0ce99f69e6f6e61db75173cec",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-OP68",
+    "timestamp": "2026-10-16T00:10:33.968Z",
+    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+    "contentHash": "5d797d047c0e9d16f12794c925d65efdb26473776667a05b0e53ee2c2731a5b3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
