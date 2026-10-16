@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-DXC5",
-    "timestamp": "2026-10-14T03:42:47.813Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv7kdxa2",
-    "contentHash": "08a161aa4bc0d98faf3fe848a048bc9e97f3faba384ca34c9bf6c00f97410d71",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-IA7M",
     "timestamp": "2026-10-14T03:46:11.122Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7490,6 +7475,21 @@
     "repository": "openai-community/gpt2",
     "learningId": "learn-huggingface-openai-community-gpt2",
     "contentHash": "303bbed661b47b55b0c0baee600d9d665123bd33198b057321036427149669a6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-RFET",
+    "timestamp": "2026-10-16T11:52:31.685Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "fd85fbee2abddb49508aa1641f2ce1d434605cfc4e5577272e8102c7db2cfe8a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
