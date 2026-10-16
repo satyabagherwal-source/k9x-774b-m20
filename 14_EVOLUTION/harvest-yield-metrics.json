@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T13:47:45.314Z",
-  "total_cycles_completed": 1730,
-  "total_learnings_persisted": 1730,
+  "last_updated": "2026-10-16T13:50:53.276Z",
+  "total_cycles_completed": 1731,
+  "total_learnings_persisted": 1731,
   "total_rules_promoted": 935,
   "history": [
-    {
-      "timestamp": "2026-10-16T02:05:12.052Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T02:08:17.901Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T13:47:45.314Z",
       "repository": "deepseek-ai/DeepSeek-R1",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T13:50:53.276Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
