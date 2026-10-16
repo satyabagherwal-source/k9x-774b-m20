@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-Q0IG",
-    "timestamp": "2026-10-14T05:44:10.264Z",
-    "repository": "Comfy-Org/MiniMax-H3",
-    "learningId": "learn-huggingface-hf-comfy-org-minimax-h3-mv7oq0gl",
-    "contentHash": "4a8216e4bbc9491ceb668c69fdafcfd73c740552f92a033d65594d42cb8b39e7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-U18D",
     "timestamp": "2026-10-14T05:47:17.821Z",
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "f16adc508d524c68697432950bf6affe2835f7e441c71c4721c8b29a3ace69e4",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-8297",
+    "timestamp": "2026-10-16T13:57:26.251Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "3d86ea1bc69fe581b404fe7c3fdcf4d2fa6d34c0d61c7b4da4d720983289ba75",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

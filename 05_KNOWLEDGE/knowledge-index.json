@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T13:54:04.259Z",
+  "last_updated": "2026-10-16T13:57:26.217Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -40995,7 +40995,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B",
       "source_version": "hf-autotrust-jev-35b",
-      "content_hash": "636d4a13dc68621734119cd3a5964f9c512205caf05326cbe0760cb91d304419",
+      "content_hash": "3d86ea1bc69fe581b404fe7c3fdcf4d2fa6d34c0d61c7b4da4d720983289ba75",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md",
       "promoted_rules": [],
@@ -41004,7 +41004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T05:37:17.142Z",
+      "verified_at": "2026-10-16T13:57:26.209Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

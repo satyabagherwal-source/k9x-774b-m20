@@ -1355,8 +1355,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B",
     "sourceVersion": "hf-autotrust-jev-35b",
     "license": "Open-Source",
-    "contentHash": "636d4a13dc68621734119cd3a5964f9c512205caf05326cbe0760cb91d304419",
-    "lastHarvestedAt": "2026-10-16T05:37:17.170Z",
+    "contentHash": "3d86ea1bc69fe581b404fe7c3fdcf4d2fa6d34c0d61c7b4da4d720983289ba75",
+    "lastHarvestedAt": "2026-10-16T13:57:26.255Z",
     "learningId": "learn-huggingface-autotrust-jev-35b"
   },
   "hf-openbmb-minicpm-v-4.7-35b-a3b": {
