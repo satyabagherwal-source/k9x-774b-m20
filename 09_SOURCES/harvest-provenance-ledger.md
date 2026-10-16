@@ -1673,3 +1673,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf` | `https://huggingface.co/AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | `hf-atomicc` | Multi-dimensional audit evidence | 2026-10-16T08:53:56.990Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `2ef42256` | Multi-dimensional audit evidence | 2026-10-16T09:00:01.729Z |
 | `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `5c323e69` | Multi-dimensional audit evidence | 2026-10-16T09:06:18.331Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-10-16T09:15:47.712Z |

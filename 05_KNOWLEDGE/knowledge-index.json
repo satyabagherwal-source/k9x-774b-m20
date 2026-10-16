@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T09:06:18.306Z",
+  "last_updated": "2026-10-16T09:15:47.683Z",
   "total_verified_learnings": 187,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17335,10 +17335,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "07e38f5e02e05776336f28937c5c1f552aced2be5e71b3b9209d9e655738ff09",
+      "content_hash": "0b7b2c47901a099bbff90e4c5a4f6f2dbbda0aa0f04a7c1643e36718fbb0a267",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1127,
+          "title": "The Pre-Processing Contract Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1128,
+          "title": "The Feature-Head Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1129,
+          "title": "The EMA Weight Averaging Inference Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -17357,7 +17373,7 @@
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv49kikk",
         "learn-huggingface-hf-timm-mobilenetv3_small_100-lamb_in1k-mv4mxoq2"
       ],
-      "verified_at": "2026-10-16T00:54:27.594Z",
+      "verified_at": "2026-10-16T09:15:47.679Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

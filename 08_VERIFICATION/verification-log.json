@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-D3P8",
-    "timestamp": "2026-10-14T01:22:11.324Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv7fd3ly",
-    "contentHash": "117f9b23ae8b21ccbb9075b0e51ede23e71bb6244c97f9a5bfff365a67b30519",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-GZBT",
     "timestamp": "2026-10-14T01:25:12.281Z",
     "repository": "Qwen/Qwen3-8B",
@@ -7492,6 +7477,21 @@
     "contentHash": "c5c273ac967cdad3a0b3c018db45ecc10524af8347254657196c47c09c3ad3f1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-5V99",
+    "timestamp": "2026-10-16T09:15:47.709Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "0b7b2c47901a099bbff90e4c5a4f6f2dbbda0aa0f04a7c1643e36718fbb0a267",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
