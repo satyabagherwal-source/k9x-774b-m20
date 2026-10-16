@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-YW35",
-    "timestamp": "2026-10-13T20:59:11.729Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv75yvwy",
-    "contentHash": "bd0d9d6d7deb17a1949a53220e4d648f613fdeea0309e8f3ed985cb307285cde",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-47OP",
     "timestamp": "2026-10-13T21:03:20.041Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7492,6 +7477,21 @@
     "contentHash": "d2a3c5785933d4f9115a9d1092a6a8a66a9d30190b21ed265f4260ef83321f81",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-FDUM",
+    "timestamp": "2026-10-16T04:15:15.934Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "e4629ff0b235a2da368defa0f63b64e6aae02fb24f8964dfebf52a661f4bd2b1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
