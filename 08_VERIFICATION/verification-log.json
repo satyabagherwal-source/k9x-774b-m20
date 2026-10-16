@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-R2FN",
-    "timestamp": "2026-10-13T19:57:07.475Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv73r2dl",
-    "contentHash": "7b7d92242da002b50cf88e3710b74541c5323d89dae9fef5cb66fc2105c91984",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-V39F",
     "timestamp": "2026-10-13T20:00:15.171Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-8B",
     "learningId": "learn-huggingface-qwen-qwen3-8b",
     "contentHash": "e5b36788054cd8b8b72a71815125886d389f1f87e6fb92a6c7c92b4dbc0b1e63",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-WB3O",
+    "timestamp": "2026-10-16T03:32:26.292Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "01bf1efa8c50a86ee43a35a222d94cb7e292f9e66ca43bf75473928e9ce35a6a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
