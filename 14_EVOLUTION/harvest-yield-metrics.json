@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T06:08:24.581Z",
-  "total_cycles_completed": 1602,
-  "total_learnings_persisted": 1602,
+  "last_updated": "2026-10-16T06:11:33.739Z",
+  "total_cycles_completed": 1603,
+  "total_learnings_persisted": 1603,
   "total_rules_promoted": 863,
   "history": [
-    {
-      "timestamp": "2026-10-15T18:31:06.074Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T19:00:18.521Z",
       "repository": "EverMind-AI/Raven",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T06:08:24.581Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T06:11:33.739Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

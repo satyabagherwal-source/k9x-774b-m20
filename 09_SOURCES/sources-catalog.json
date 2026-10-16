@@ -375,8 +375,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1-Turbo",
     "sourceVersion": "hf-qwen-qwen-image-2.1-turbo",
     "license": "Open-Source",
-    "contentHash": "74bb7bfb2e420a702f5640f477637a4bd93cc21d9ac6d194b2627880002372b5",
-    "lastHarvestedAt": "2026-10-15T22:40:17.706Z",
+    "contentHash": "67cecdd6ecd851c3688ef9adee103d80aa04f7e13d4e0dfc22781580418e7540",
+    "lastHarvestedAt": "2026-10-16T06:11:33.738Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo"
   },
   "hf-xingchen-agi-xing4.0-29b-a4b": {
