@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-6EC2",
-    "timestamp": "2026-10-13T23:52:59.666Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv7c6ea2",
-    "contentHash": "68ee87dbbe5a22e972abf878220dd0981e77b5a71909213c742f90b5d1f5dc87",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-DBHC",
     "timestamp": "2026-10-13T23:58:22.560Z",
     "repository": "bigscience/bloom",
@@ -7492,6 +7477,21 @@
     "contentHash": "4fbf004c9e0774f0ff0f461f7cfb638132e5e8fd2d817e409784a4f2d66f9293",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-PSO3",
+    "timestamp": "2026-10-16T07:11:19.395Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "85bf05e80fe73b23c80ea38c9fb8f461573b6653d4af388e0ba7366ecc81b9fd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

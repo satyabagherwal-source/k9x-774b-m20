@@ -1643,3 +1643,4 @@
 | `CYCLE-20261016-95YH` | `2026-10-16T06:58:23.465Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`997f425f...`) |
 | `CYCLE-20261016-FSO5` | `2026-10-16T07:03:32.837Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1098, Rule 1099, Rule 1100` | Yes (`ee992351...`) |
 | `CYCLE-20261016-LKT5` | `2026-10-16T07:08:02.585Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1101, Rule 1102` | Yes (`4fbf004c...`) |
+| `CYCLE-20261016-PSO3` | `2026-10-16T07:11:19.395Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1103, Rule 1104, Rule 1105` | Yes (`85bf05e8...`) |

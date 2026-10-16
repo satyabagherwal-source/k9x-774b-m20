@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T07:08:02.589Z",
-  "total_cycles_completed": 1620,
-  "total_learnings_persisted": 1620,
-  "total_rules_promoted": 882,
+  "last_updated": "2026-10-16T07:11:19.399Z",
+  "total_cycles_completed": 1621,
+  "total_learnings_persisted": 1621,
+  "total_rules_promoted": 885,
   "history": [
-    {
-      "timestamp": "2026-10-15T20:20:48.934Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T20:24:44.105Z",
       "repository": "google/vit-base-patch16-224",
@@ -1403,6 +1396,13 @@
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T07:11:19.399Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
