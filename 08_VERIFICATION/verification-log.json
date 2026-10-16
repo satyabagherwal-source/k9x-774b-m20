@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-YP2V",
-    "timestamp": "2026-10-14T03:30:57.271Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-hf-lightricks-ltx-2-5-mv7jyp05",
-    "contentHash": "d6efaad6a60254f9d98c0c732f694db26e6d36e7ee77be6dd00c72b5324eb40c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-2L3E",
     "timestamp": "2026-10-14T03:33:58.730Z",
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/LFM2.5-24B-A2B",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
     "contentHash": "33f8ee4b60305f10f684c3d50990efe6e9c38d2656b0b92c978a86f147efc943",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-AX1V",
+    "timestamp": "2026-10-16T11:39:41.395Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "d478cd9fea1b8019be932ead031a8805431517a53a6250312aa35a4dbc28846b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
