@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-1WZ6",
-    "timestamp": "2026-10-14T15:41:17.490Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-hf-tongyi-mai-z-image-turbo-mv8a1wwb",
-    "contentHash": "af18e3795c7823ea5d76723f0acf3709c1867088e929ed85e6d1ffc0f215fe3b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-6DUL",
     "timestamp": "2026-10-14T15:44:45.981Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7492,6 +7477,21 @@
     "contentHash": "0fc3dadc32bef8237b3d0ea75b4f853d8fc090b8ffd5618905399c29946753fd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-0X55",
+    "timestamp": "2026-10-16T22:43:45.737Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "40dee8cbaeb61cefdae991216fd8fa7c4179cfa4388b8d5a7c2debaea1bf5fcc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

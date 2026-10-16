@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T22:40:28.627Z",
+  "last_updated": "2026-10-16T22:43:45.715Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14295,7 +14295,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "f099dbbbf923f4fbe6c16e7a7c50a9f8f4352758c7cd7e941f2e7ac4b4d601ff",
+      "content_hash": "40dee8cbaeb61cefdae991216fd8fa7c4179cfa4388b8d5a7c2debaea1bf5fcc",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -14327,6 +14327,16 @@
           "number": 1084,
           "title": "Hugging Face Hub Repository Metadata Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1250,
+          "title": "Temporal Attention Memory Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1251,
+          "title": "Latent Space Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14347,7 +14357,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-16T14:26:53.125Z",
+      "verified_at": "2026-10-16T22:43:45.711Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
