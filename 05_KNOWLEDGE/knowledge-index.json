@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T06:58:23.430Z",
+  "last_updated": "2026-10-16T07:03:32.821Z",
   "total_verified_learnings": 184,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12557,7 +12557,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "6b0fa6286407c581b31ca13a2f8741968e2ba6d5404c7463c0450145e814dc44",
+      "content_hash": "ee992351780ab9219493081bbf37b9fd2726db41bf73e7b1c8e1aa13781de2b6",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
@@ -12567,6 +12567,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv3s0nyl",
           "verified_at": "2026-10-11T12:05:21.400Z"
+        },
+        {
+          "number": 1098,
+          "title": "Optimal Transport Sinkhorn Regularization Invariant in Sparse Attention Indexing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1099,
+          "title": "Block-Wise Sub-Byte Power-of-Two (`ue8m0`) Dequantization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1100,
+          "title": "Bounded-Replay Ring Buffer Sliding Window Cache Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -12587,7 +12602,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-10-15T23:29:44.871Z",
+      "verified_at": "2026-10-16T07:03:32.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
