@@ -1891,3 +1891,4 @@
 | `CYCLE-20261016-BL2N` | `2026-10-16T21:56:04.079Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1238, Rule 1239, Rule 1240` | Yes (`c3341ff4...`) |
 | `CYCLE-20261016-F9KM` | `2026-10-16T21:58:55.798Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`a94959b4...`) |
 | `CYCLE-20261016-JBAW` | `2026-10-16T22:02:04.664Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`7a5772bf...`) |
+| `CYCLE-20261016-OI4G` | `2026-10-16T22:06:06.784Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`88ef4014...`) |
