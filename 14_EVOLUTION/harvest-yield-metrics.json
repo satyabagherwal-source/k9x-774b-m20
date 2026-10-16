@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T13:01:25.537Z",
-  "total_cycles_completed": 1716,
-  "total_learnings_persisted": 1716,
+  "last_updated": "2026-10-16T13:04:32.696Z",
+  "total_cycles_completed": 1717,
+  "total_learnings_persisted": 1717,
   "total_rules_promoted": 932,
   "history": [
-    {
-      "timestamp": "2026-10-16T01:22:22.444Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T01:25:17.350Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T13:01:25.537Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T13:04:32.696Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
