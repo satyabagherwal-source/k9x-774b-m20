@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-4FLN",
-    "timestamp": "2026-10-14T13:51:16.475Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-hf-google-embeddinggemma-2-mv864fi8",
-    "contentHash": "874b730f703b49c3d7d6962b56aecbad65d08add30f5cdc0b6b3e2b7efe48e99",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-8TOZ",
     "timestamp": "2026-10-14T13:54:41.363Z",
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Edge0/Audio8-ASR-Infinite",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
     "contentHash": "173f38e5e49931c6eb5e81d2b02d0b05d392820112d57aeba232d49cfb3fb53a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-TATN",
+    "timestamp": "2026-10-16T21:13:51.371Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "fbcab975846ab89069c80ac223aa54f94f2e57b96500c0ce2177210bec89fa98",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
