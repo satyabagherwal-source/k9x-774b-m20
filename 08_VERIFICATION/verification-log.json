@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-8BH8",
-    "timestamp": "2026-10-13T19:14:33.116Z",
-    "repository": "FrancisRing/Prism",
-    "learningId": "learn-huggingface-hf-francisring-prism-mv728be1",
-    "contentHash": "5f51e071375eb476ea1e79588e1476ade974e15128b9be8e4c8a23d102b7a04a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-ERZK",
     "timestamp": "2026-10-13T19:19:34.448Z",
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "pyannote/speaker-diarization-community-1",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
     "contentHash": "abbba7c4c571ff3a4949360c5d16cf6163805b719528ac16f73c4ede6ac0b31c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-FYK1",
+    "timestamp": "2026-10-16T02:51:43.921Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "245a6b8dd9365abc5997aabab814a8799be66bfe43c820dee424df53e9a2272c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
