@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-18DX",
-    "timestamp": "2026-10-14T01:12:57.525Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv7f18ar",
-    "contentHash": "49693ffe69ec2a4ccf8d009f9885e1c0075188baa8e5a2ed27c39592104f1ff2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-5BR2",
     "timestamp": "2026-10-14T01:16:08.510Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/MiniMax-H3",
     "learningId": "learn-huggingface-comfy-org-minimax-h3",
     "contentHash": "e047fe8a83278edcc36e68d1b7ee4fd75f6edcd3a75b73edd9ce843b9b6742d3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-DRWB",
+    "timestamp": "2026-10-16T08:53:56.987Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "e777a4d848b0a1330a1beb954961ac64d5b5c4cc6e4275aecebf238018113d78",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
