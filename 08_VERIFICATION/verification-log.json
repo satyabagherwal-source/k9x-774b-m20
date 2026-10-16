@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-Y6HT",
-    "timestamp": "2026-10-14T03:58:32.801Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-hf-fastino-gliner2-5-decide-mv7ky6ej",
-    "contentHash": "6300d0e9c1eebde8324d24102717763f95cc40c58b2ea6fe5177bdf82fbfad26",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-1ZGZ",
     "timestamp": "2026-10-14T04:01:30.323Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "intfloat/multilingual-e5-small",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
     "contentHash": "5636407275f37ae8dd0ed9dca5416c9901665e942bc54e219d55e541ae6888ca",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-BBUK",
+    "timestamp": "2026-10-16T12:08:00.188Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "b28ae5c999bd0d5910c42bb6e3776ad27b1ed6dbdf6dffa24e9677b44eabf6c0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
