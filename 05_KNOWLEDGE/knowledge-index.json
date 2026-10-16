@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T20:18:43.955Z",
+  "last_updated": "2026-10-16T20:21:58.550Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13661,7 +13661,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "aedf0e38db230124fa59dcb878bbcb8e99a2fb76b576581c559121acd8545f3c",
+      "content_hash": "5f3eb34e64d40a938aeb2bc38bcaf49b6fcedc8a5b30db4849e297616d18ede9",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [
@@ -13698,7 +13698,7 @@
         "learn-huggingface-hf-google-gemma-4-31b-it-mv40fw8a",
         "learn-huggingface-hf-google-gemma-4-31b-it-mv4ee2dq"
       ],
-      "verified_at": "2026-10-16T12:17:22.131Z",
+      "verified_at": "2026-10-16T20:21:58.544Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
