@@ -895,8 +895,8 @@
     "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceVersion": "hf-tongyi-mai-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "bc8f58a837bb93b7912383b6da47d0e554606d689381061e98ce8745c054c896",
-    "lastHarvestedAt": "2026-10-16T01:34:45.802Z",
+    "contentHash": "328da29385807fe7ab980e3e3e10595cb7acccc795e32887f378c254bd61bde7",
+    "lastHarvestedAt": "2026-10-16T10:12:37.321Z",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
