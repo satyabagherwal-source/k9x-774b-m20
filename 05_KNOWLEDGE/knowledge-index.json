@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T01:16:07.141Z",
+  "last_updated": "2026-10-16T01:19:11.956Z",
   "total_verified_learnings": 172,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10852,12 +10852,13 @@
     "learn-huggingface-black-forest-labs-flux-1-schnell": {
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-black-forest-labs-flux.1-schnell",
+      "source": "black-forest-labs/FLUX.1-schnell",
+      "repository": "black-forest-labs/FLUX.1-schnell",
       "slug": "hf-black-forest-labs-flux.1-schnell",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "3710bdc27e76d260fd7b80e34ab2184b7aa6dc88d1d415e53a40e72c9f2c9714",
+      "content_hash": "c9871c154bf667b79d861c96ec3f658f9cc79023259b9cc87a8ba5eda8de2ba3",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -10906,7 +10907,6 @@
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -10923,7 +10923,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-14T15:23:37.930Z",
+      "verified_at": "2026-10-16T01:19:11.947Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

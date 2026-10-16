@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-8ZH8",
-    "timestamp": "2026-10-13T17:23:05.756Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-hf-conwayresearch-underdog-saluki-27b-1-0-mv6y8zcb",
-    "contentHash": "99ddc4a5884bc7045eeff480b807d77a06161a7a9f6851030f20c88812581bce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-E2FT",
     "timestamp": "2026-10-13T17:27:02.873Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7490,6 +7475,21 @@
     "repository": "openai/whisper-large-v3",
     "learningId": "learn-huggingface-openai-whisper-large-v3",
     "contentHash": "8c9036ba8e1e2aeda6658d4b99ceb8542ad98c989be3fb2393b7f601cd5ef905",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-4YNN",
+    "timestamp": "2026-10-16T01:19:11.987Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "c9871c154bf667b79d861c96ec3f658f9cc79023259b9cc87a8ba5eda8de2ba3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
