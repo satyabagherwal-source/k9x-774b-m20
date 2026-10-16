@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-SKFN",
-    "timestamp": "2026-10-13T19:02:18.227Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-hf-liquidai-d1-3b-mv71skci",
-    "contentHash": "d6c65d3839af24f24b5a1d140e908b6af7f35f3a0430122cac96c7d4462bae22",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-WJTH",
     "timestamp": "2026-10-13T19:05:24.053Z",
     "repository": "Cactus-Compute/whistle",
@@ -7490,6 +7475,21 @@
     "repository": "openai/clip-vit-base-patch32",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
     "contentHash": "25f20a07854c906669164e6e3855c21a25b6166288db00c989d181f65af9bc93",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-0BL6",
+    "timestamp": "2026-10-16T02:39:34.314Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "f3f641a7762289d79c4500da184a1fe7baaff64d951aa1ea87d0966b4d43fa18",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
