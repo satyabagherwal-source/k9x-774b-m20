@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T08:03:29.083Z",
-  "total_cycles_completed": 1630,
-  "total_learnings_persisted": 1630,
+  "last_updated": "2026-10-16T08:06:30.269Z",
+  "total_cycles_completed": 1631,
+  "total_learnings_persisted": 1631,
   "total_rules_promoted": 897,
   "history": [
-    {
-      "timestamp": "2026-10-15T20:53:31.441Z",
-      "repository": "jialinyyzz/humanizer",
-      "learningId": "learn-huggingface-jialinyyzz-humanizer",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T20:56:42.781Z",
       "repository": "autotrust/JEV-27B-VL",
@@ -1403,6 +1396,13 @@
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T08:06:30.269Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-facebook-sam3",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

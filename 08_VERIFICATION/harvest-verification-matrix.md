@@ -1653,3 +1653,4 @@
 | `CYCLE-20261016-TBDI` | `2026-10-16T07:42:03.222Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`f649d5ee...`) |
 | `CYCLE-20261016-4LKD` | `2026-10-16T07:50:49.645Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1114` | Yes (`33740bb9...`) |
 | `CYCLE-20261016-KVJP` | `2026-10-16T08:03:29.077Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1115, Rule 1116` | Yes (`a292ee03...`) |
+| `CYCLE-20261016-ORCQ` | `2026-10-16T08:06:30.266Z` | `facebook/sam3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebook-sam3-learnings.md` | Yes (`d8e8aac0...`) |
