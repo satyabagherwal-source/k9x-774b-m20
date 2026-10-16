@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-EEMD",
-    "timestamp": "2026-10-14T09:47:05.221Z",
-    "repository": "google/vit-base-patch16-224",
-    "learningId": "learn-huggingface-hf-google-vit-base-patch16-224-mv7xeejm",
-    "contentHash": "83aaa67669ef661fced30179bb99b632bcb6da0e6b26e44a1b06abd6c15adb0d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-IAT2",
     "timestamp": "2026-10-14T09:50:06.902Z",
     "repository": "google/gemma-4-31B-it",
@@ -7492,6 +7477,21 @@
     "contentHash": "55a2c0a23cff0a1d46d6c8cdccd67f2eca355565963f191e6173cbabedbacfae",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-F9JX",
+    "timestamp": "2026-10-16T16:50:59.997Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "0d0c8ed9214663d806c750789d9796742fb00f791d0e35067f2585d3c740723f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
