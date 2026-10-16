@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-YW6R",
-    "timestamp": "2026-10-13T23:19:09.939Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-hf-microsoft-frognano-4b-2609-mv7ayw3i",
-    "contentHash": "d64303118b395212d05053e0b93258ea7fc109a55abfeab5147c86cc991eae49",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-2M16",
     "timestamp": "2026-10-13T23:22:03.402Z",
     "repository": "hexgrad/Kokoro-82M",
@@ -7492,6 +7477,21 @@
     "contentHash": "0768daad4ff1877a96b0d84edc52eb8e812b483691be2f940fe85c552b0eb85f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-CZK3",
+    "timestamp": "2026-10-16T06:33:22.179Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+    "contentHash": "7002a9385691d55416f04118f7eab9888c2e2aacb52b475ceec1da6d30e69153",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
