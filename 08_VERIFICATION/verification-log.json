@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-0G4X",
-    "timestamp": "2026-10-14T12:52:11.313Z",
-    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv840g2v",
-    "contentHash": "f64d1f98541ab9d708c365eaab808002e14b4d2c12cbcd03d212f6b83c4b2978",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-4ONM",
     "timestamp": "2026-10-14T12:55:28.978Z",
     "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -7490,6 +7475,21 @@
     "repository": "argmaxinc/whisperkit-coreml",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
     "contentHash": "2b1fcc5812f0f8ad71cbfa3d45cac99f11cdf2506692fd0265182420adfa7036",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-QFWY",
+    "timestamp": "2026-10-16T20:15:38.770Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "a717a9b44ffb46eea02fb62632a2854914ae6357acb9cf8fca7123358a1f0a60",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
