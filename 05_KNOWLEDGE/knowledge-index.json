@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T21:04:44.554Z",
+  "last_updated": "2026-10-16T21:07:49.415Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11699,7 +11699,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "32ddbbc591fd98af7fdfbf253927a50e0b2c72904bfec0039cabfb9eafb7f291",
+      "content_hash": "7efbd1b9e111ddfa5c5e7948909a6abf470ddf1e492d37b811d5e9450c11be70",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -11757,6 +11757,16 @@
         {
           "number": 1151,
           "title": "Typed Question Schema Immutability Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Proper Scoring Rule Training Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1231,
+          "title": "Dynamic Model Routing Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -12102,7 +12112,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-16T12:52:08.876Z",
+      "verified_at": "2026-10-16T21:07:49.412Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

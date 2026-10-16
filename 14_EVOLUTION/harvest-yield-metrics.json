@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T21:04:44.579Z",
-  "total_cycles_completed": 1851,
-  "total_learnings_persisted": 1851,
-  "total_rules_promoted": 995,
+  "last_updated": "2026-10-16T21:07:49.435Z",
+  "total_cycles_completed": 1852,
+  "total_learnings_persisted": 1852,
+  "total_rules_promoted": 998,
   "history": [
-    {
-      "timestamp": "2026-10-16T09:25:25.490Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T09:32:00.302Z",
       "repository": "textbee/textbee",
@@ -1403,6 +1396,13 @@
       "repository": "autotrust/GEV-26B-Decide",
       "learningId": "learn-huggingface-autotrust-gev-26b-decide",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T21:07:49.435Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
