@@ -1637,3 +1637,4 @@
 | `CYCLE-20261016-L3CI` | `2026-10-16T06:39:40.338Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`c102ff0c...`) |
 | `CYCLE-20261016-PFGS` | `2026-10-16T06:43:02.668Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1092, Rule 1093, Rule 1094` | Yes (`76958cfb...`) |
 | `CYCLE-20261016-TDMA` | `2026-10-16T06:46:06.898Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`dd2d5893...`) |
+| `CYCLE-20261016-X4UP` | `2026-10-16T06:49:02.161Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`4f80430a...`) |

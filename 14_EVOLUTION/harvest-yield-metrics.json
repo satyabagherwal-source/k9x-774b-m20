@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T06:46:06.914Z",
-  "total_cycles_completed": 1614,
-  "total_learnings_persisted": 1614,
+  "last_updated": "2026-10-16T06:49:02.164Z",
+  "total_cycles_completed": 1615,
+  "total_learnings_persisted": 1615,
   "total_rules_promoted": 874,
   "history": [
-    {
-      "timestamp": "2026-10-15T19:59:54.188Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T20:02:57.640Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T06:46:06.914Z",
       "repository": "Phocinae/Phocinae-Largha-150M-v1",
       "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T06:49:02.164Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
