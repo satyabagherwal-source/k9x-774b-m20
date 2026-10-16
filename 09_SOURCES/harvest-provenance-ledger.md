@@ -1677,3 +1677,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-10-16T09:18:48.904Z |
 | `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-10-16T09:22:15.017Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-16T09:25:25.489Z |
+| `learn-github-textbee-textbee` | `https://github.com/textbee/textbee` | `454e59e4` | Multi-dimensional audit evidence | 2026-10-16T09:32:00.300Z |

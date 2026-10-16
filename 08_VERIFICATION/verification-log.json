@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-TKWX",
-    "timestamp": "2026-10-14T01:35:00.129Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-hf-baai-bge-base-en-v1-5-mv7ftkr8",
-    "contentHash": "a1c912a12cd88fc10c933354b1fdc1892c029814ea0b40883a495af176cbcdd5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-XB1C",
     "timestamp": "2026-10-14T01:37:53.952Z",
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "1eff586f008756e7f2a8e19d3f00503929363e014824d279927c815b1402afd3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-QPPM",
+    "timestamp": "2026-10-16T09:32:00.298Z",
+    "repository": "textbee/textbee",
+    "learningId": "learn-github-textbee-textbee",
+    "contentHash": "621be217a0983ef41d807384fb850a267289562d1b08d473138cd3f2d74e0cfd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

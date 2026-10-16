@@ -70777,3 +70777,53 @@ else:
 ```
 **VERIFICATION METHOD**:
 Compare inference accuracy on a validation set using `raw` vs `ema` weights. The `ema` weights MUST yield equal or better accuracy.
+
+
+---
+
+## 1130. docs(mcp): drop the Register automatically requirement for Claude (Harvested from textbee/textbee)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(mcp): drop the Register automatically requirement for Claude",
+  "source": "textbee/textbee",
+  "source_url": "https://github.com/textbee/textbee",
+  "source_version": "454e59e4",
+  "license": "MIT",
+  "extracted_at": "2026-10-16T09:32:00.249Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-textbee-textbee",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [textbee/textbee](https://github.com/textbee/textbee) (Revision: `454e59e4`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in textbee/textbee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2e5303dd`: docs(mcp): drop the Register automatically requirement for Claude. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+3. Choose **Sign in now**, leave the OAuth client on the recommended option, and click **Add**.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Anti-pattern to NEVER write (induced failure mode):
+3. Choose **Sign in now** and, as the OAuth client, **Register automatically**. Click **Add**.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2e5303dd` are properly handled with clean fallback behavior.

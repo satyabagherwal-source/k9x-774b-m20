@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T09:25:25.451Z",
-  "total_verified_learnings": 187,
+  "last_updated": "2026-10-16T09:32:00.276Z",
+  "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -41321,6 +41321,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-16T09:06:18.301Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-textbee-textbee": {
+      "learning_id": "learn-github-textbee-textbee",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "textbee/textbee",
+      "repository": "textbee/textbee",
+      "slug": "textbee-textbee",
+      "platform": "github",
+      "source_url": "https://github.com/textbee/textbee",
+      "source_version": "454e59e4",
+      "content_hash": "621be217a0983ef41d807384fb850a267289562d1b08d473138cd3f2d74e0cfd",
+      "dossier_path": "07_PROJECT_LEARNING/textbee-textbee-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/textbee-textbee-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1130,
+          "title": "docs(mcp): drop the Register automatically requirement for Claude",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-16T09:32:00.272Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

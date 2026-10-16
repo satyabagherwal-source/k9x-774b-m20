@@ -1618,5 +1618,15 @@
     "contentHash": "c5c273ac967cdad3a0b3c018db45ecc10524af8347254657196c47c09c3ad3f1",
     "lastHarvestedAt": "2026-10-16T09:06:18.331Z",
     "learningId": "learn-github-saffsanity-sill"
+  },
+  "textbee-textbee": {
+    "repository": "textbee/textbee",
+    "platform": "github",
+    "sourceUrl": "https://github.com/textbee/textbee",
+    "sourceVersion": "454e59e4",
+    "license": "MIT",
+    "contentHash": "621be217a0983ef41d807384fb850a267289562d1b08d473138cd3f2d74e0cfd",
+    "lastHarvestedAt": "2026-10-16T09:32:00.300Z",
+    "learningId": "learn-github-textbee-textbee"
   }
 }
