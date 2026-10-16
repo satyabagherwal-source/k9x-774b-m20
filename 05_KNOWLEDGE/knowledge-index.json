@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T00:20:05.977Z",
+  "last_updated": "2026-10-16T00:23:26.334Z",
   "total_verified_learnings": 171,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11098,12 +11098,13 @@
     "learn-huggingface-cloudflare-clef": {
       "learning_id": "learn-huggingface-cloudflare-clef",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-cloudflare-clef",
+      "source": "Cloudflare/clef",
+      "repository": "Cloudflare/clef",
       "slug": "hf-cloudflare-clef",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "65edfe54ef7e6b07a8df10209d803891ec1b39b5493adc7a02a092188f113feb",
+      "content_hash": "a79211cc6c9698f24855a44f0580eee5905e7778291fd02d5a204f56d8420590",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -11148,11 +11149,25 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-cloudflare-clef-mv4lvjtz",
           "verified_at": "2026-10-12T02:01:11.285Z"
+        },
+        {
+          "number": 1037,
+          "title": "Pad Token Consistency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1038,
+          "title": "Linear Attention Bias Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1039,
+          "title": "Per‑Question Softmax Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 12,
       "historical_learning_ids": [
@@ -11169,7 +11184,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-14T13:57:52.603Z",
+      "verified_at": "2026-10-16T00:23:26.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

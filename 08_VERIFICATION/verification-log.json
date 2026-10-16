@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-770M",
-    "timestamp": "2026-10-13T16:25:42.982Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-hf-deepseek-ai-deepseek-v3-mv6w76yr",
-    "contentHash": "ed1a2d4e4051e298fd27e7b8018210e24447b038aa7473896220e2a76df5dab1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-BEPS",
     "timestamp": "2026-10-13T16:28:59.584Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7492,6 +7477,21 @@
     "contentHash": "37f4499c440a010bf13e371c59b09f74d545a868348180405d1f3596b224725a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-595P",
+    "timestamp": "2026-10-16T00:23:26.365Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-cloudflare-clef",
+    "contentHash": "a79211cc6c9698f24855a44f0580eee5905e7778291fd02d5a204f56d8420590",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

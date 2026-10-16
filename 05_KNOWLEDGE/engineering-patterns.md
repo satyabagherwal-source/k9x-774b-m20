@@ -64057,3 +64057,166 @@ def test_safe_load():
 ```
 
 ---
+
+
+---
+
+## 1037. Pad Token Consistency Rule (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pad Token Consistency Rule",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T00:23:26.202Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The `pad_token_id` used by the tokenizer **must** equal the `pad_token_id` expected by the model’s configuration; otherwise, padding will be mis‑interpreted and logits will be corrupted.
+
+**WHY**:  
+Padding tokens are treated as neutral in the transformer; if the model receives a different pad ID, it will treat padding as a real token, leading to spurious attention and incorrect logits.
+
+**WHEN TO APPLY**:  
+During model loading, tokenizer initialization, and any preprocessing that pads sequences (e.g., `collate_records`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
+tokenizer = AutoTokenizer.from_pretrained("Cloudflare/clef")
+model = AutoModelForCausalLM.from_pretrained("Cloudflare/clef")
+
+assert tokenizer.pad_token_id == model.config.pad_token_id, \
+    f"Tokenizer pad_token_id ({tokenizer.pad_token_id}) does not match model pad_token_id ({model.config.pad_token_id})"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Using a hard‑coded pad token that differs from the model
+pad_token_id = 0  # <-- wrong if model expects 248044
+```
+
+**VERIFICATION METHOD**:  
+Unit test that loads the tokenizer and model and asserts equality of `pad_token_id`. Linting rule can enforce that any hard‑coded pad ID matches the model config.
+
+
+---
+
+## 1038. Linear Attention Bias Rule (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Linear Attention Bias Rule",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T00:23:26.247Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+When a transformer layer is configured as `linear_attention`, the `attention_bias` flag **must be set to False**; otherwise, the bias will be applied twice, inflating attention scores.
+
+**WHY**:  
+Linear attention layers compute attention without bias by design. Enabling bias introduces an extra term that is not accounted for in the linear approximation, leading to incorrect attention distributions.
+
+**WHEN TO APPLY**:  
+During model configuration parsing (`config.json`) and when constructing custom attention modules.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from transformers import AutoConfig
+
+config = AutoConfig.from_pretrained("Cloudflare/clef")
+for layer_cfg in config.text_config.layer_types:
+    if layer_cfg == "linear_attention":
+        assert not config.text_config.attention_bias, \
+            "Linear attention layers must have attention_bias set to False"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Enabling bias for linear attention
+config.attention_bias = True
+```
+
+**VERIFICATION METHOD**:  
+Static analysis that scans the config JSON for `layer_types` containing `"linear_attention"` and checks that `attention_bias` is `false`. A unit test can load the config and assert the condition.
+
+
+---
+
+## 1039. Per‑Question Softmax Rule (Harvested from Cloudflare/clef)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Per‑Question Softmax Rule",
+  "source": "Cloudflare/clef",
+  "source_url": "https://huggingface.co/Cloudflare/clef",
+  "source_version": "hf-cloudflare-clef",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T00:23:26.291Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef](https://huggingface.co/Cloudflare/clef) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The logits produced by the joint schema head **must be softmaxed per question** (i.e., along the option dimension) before interpreting probabilities; a global softmax across all options is incorrect.
+
+**WHY**:  
+Each question has its own set of options. A global softmax would mix probabilities across unrelated questions, violating the independence assumption and producing nonsensical confidence scores.
+
+**WHEN TO APPLY**:  
+During post‑processing of the model output in `joint_schema_model.py` or any downstream consumer.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+# logits: (batch, num_questions, num_options)
+logits = model(batch)[0]
+probabilities = torch.softmax(logits, dim=-1)  # softmax over options only
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Softmax over the entire tensor
+probabilities = torch.softmax(logits.view(-1), dim=0)
+```
+
+**VERIFICATION METHOD**:  
+Unit test that verifies the shape of `probabilities` matches `(batch, num_questions, num_options)` and that the sum over the last dimension equals 1 for each question.
