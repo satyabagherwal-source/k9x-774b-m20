@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T21:20:25.537Z",
-  "total_cycles_completed": 1856,
-  "total_learnings_persisted": 1856,
+  "last_updated": "2026-10-16T21:23:35.528Z",
+  "total_cycles_completed": 1857,
+  "total_learnings_persisted": 1857,
   "total_rules_promoted": 998,
   "history": [
-    {
-      "timestamp": "2026-10-16T09:54:04.578Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-openai-whisper-large-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T09:57:12.995Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T21:20:25.537Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T21:23:35.528Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
