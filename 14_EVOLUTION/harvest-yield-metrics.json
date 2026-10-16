@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T22:53:41.802Z",
-  "total_cycles_completed": 1883,
-  "total_learnings_persisted": 1883,
+  "last_updated": "2026-10-16T22:58:07.485Z",
+  "total_cycles_completed": 1884,
+  "total_learnings_persisted": 1884,
   "total_rules_promoted": 1021,
   "history": [
-    {
-      "timestamp": "2026-10-16T11:21:25.914Z",
-      "repository": "sentence-transformers/all-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T11:24:30.085Z",
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T22:53:41.802Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T22:58:07.485Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
