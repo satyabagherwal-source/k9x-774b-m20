@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-5TQL",
-    "timestamp": "2026-10-14T04:04:29.517Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv7l5tna",
-    "contentHash": "e315a069d496ca8c18c3a235831ee162ad962db03ed1b41bd5c8b3fd3dd485db",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-A6GT",
     "timestamp": "2026-10-14T04:07:52.637Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-8B",
     "learningId": "learn-huggingface-qwen-qwen3-8b",
     "contentHash": "aa071ccb2d0d5679a31b9c760c5252ed34f35c461ccabcadd47e80efd3bf59d9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-JFGD",
+    "timestamp": "2026-10-16T12:14:18.109Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "65775c9a11d40794867f51ce52694af28c76579f0f560952883cf770e09fb510",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
