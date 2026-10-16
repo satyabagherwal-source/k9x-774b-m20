@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-N8YM",
-    "timestamp": "2026-10-13T19:54:09.310Z",
-    "repository": "Qwen/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-hf-qwen-qwen-image-2-1-mv73n8vj",
-    "contentHash": "a04e2bbef65ec71a21ebe7fac32a02a66bde80e2127b00132d643c21a3870790",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-R2FN",
     "timestamp": "2026-10-13T19:57:07.475Z",
     "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -7490,6 +7475,21 @@
     "repository": "argmaxinc/whisperkit-coreml",
     "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
     "contentHash": "21c61a9099f67d3019f3ba7a92c0022f824b2e41dab5d76e9107bb822e5f5c4c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-SD94",
+    "timestamp": "2026-10-16T03:29:22.456Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "e5b36788054cd8b8b72a71815125886d389f1f87e6fb92a6c7c92b4dbc0b1e63",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
