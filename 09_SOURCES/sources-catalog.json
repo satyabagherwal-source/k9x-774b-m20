@@ -1145,8 +1145,8 @@
     "sourceUrl": "https://huggingface.co/openai-community/gpt2",
     "sourceVersion": "hf-openai-community-gpt2",
     "license": "Open-Source",
-    "contentHash": "303bbed661b47b55b0c0baee600d9d665123bd33198b057321036427149669a6",
-    "lastHarvestedAt": "2026-10-16T11:49:25.561Z",
+    "contentHash": "2d65363c1079277f8a35ee80646279bd97a35c4bb9318c95e305235ee36599b5",
+    "lastHarvestedAt": "2026-10-16T19:53:57.447Z",
     "learningId": "learn-huggingface-openai-community-gpt2"
   },
   "hf-qwen-qwen3-vl-8b-instruct": {

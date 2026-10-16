@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T19:47:32.023Z",
+  "last_updated": "2026-10-16T19:53:57.415Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15578,7 +15578,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai-community/gpt2",
       "source_version": "hf-openai-community-gpt2",
-      "content_hash": "303bbed661b47b55b0c0baee600d9d665123bd33198b057321036427149669a6",
+      "content_hash": "2d65363c1079277f8a35ee80646279bd97a35c4bb9318c95e305235ee36599b5",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "promoted_rules": [
@@ -15595,6 +15595,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
           "verified_at": "2026-10-11T15:16:31.466Z"
+        },
+        {
+          "number": 1226,
+          "title": "Decoupled Dynamic Generation Configuration from Static Model Geometry",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1227,
+          "title": "Explicit Causal Masking Invariant Over Unpadded Attention Sequences",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1228,
+          "title": "Absolute Context Boundary Enforcement in Learned Positional Embeddings",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15614,7 +15629,7 @@
         "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
         "learn-huggingface-hf-openai-community-gpt2-mv4dfghb"
       ],
-      "verified_at": "2026-10-16T11:49:25.511Z",
+      "verified_at": "2026-10-16T19:53:57.409Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
