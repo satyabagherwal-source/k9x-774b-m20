@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-FPI6",
-    "timestamp": "2026-10-14T07:28:07.902Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-hf-speridlabs-iris-3b-mv7sfpcu",
-    "contentHash": "48a7e1d268d8ca4828a827ed5c9cce42e00c6a97d070f33b7a22df5b7bfcdbee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-62N3",
     "timestamp": "2026-10-14T07:48:37.983Z",
     "repository": "Qwen/Qwen3-4B",
@@ -7490,6 +7475,21 @@
     "repository": "inclusionAI/Ming-Image-0.1-Design",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
     "contentHash": "850df199488e93b37af9ea8727b1a28f299c5f0722978a1d99ba9bd9b9b5fcf3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-OA9Z",
+    "timestamp": "2026-10-16T15:34:01.991Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+    "contentHash": "0814aaf22e151a40ab5980a4f946c170ff2e004d4902fe3b05c40231bd608045",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
