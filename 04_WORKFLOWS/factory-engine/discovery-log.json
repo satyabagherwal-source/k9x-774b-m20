@@ -17797,5 +17797,20 @@
     "qualityScore": 19623,
     "verifiedOrg": false,
     "discoveredAt": "2026-10-16T04:34:19.022Z"
+  },
+  {
+    "name": "snarkOS",
+    "fullName": "aleo-labs-protocol/snarkOS",
+    "url": "https://github.com/aleo-labs-protocol/snarkOS",
+    "type": "github",
+    "domain": "cybersecurity-defenses",
+    "description": "A Decentralized Operating System for ZK Applications",
+    "stars": 4529,
+    "forks": 2697,
+    "openIssues": 134,
+    "language": "Rust",
+    "qualityScore": 3524,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-10-16T07:46:26.213Z"
   }
 ]

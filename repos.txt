@@ -4050,3 +4050,7 @@ https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy
 # --- Automatically Discovered by AI Scout Engine [2026-10-16T04:35:08.749Z] ---
 # [AI-AGENTS] DayuanJiang/next-ai-draw-io (19623 score) - Draw and edit draw.io diagrams by chatting with an AI. Web app, desktop app, and
 https://github.com/DayuanJiang/next-ai-draw-io
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-16T07:47:01.698Z] ---
+# [CYBERSECURITY-DEFENSES] aleo-labs-protocol/snarkOS (3524 score) - A Decentralized Operating System for ZK Applications
+https://github.com/aleo-labs-protocol/snarkOS
