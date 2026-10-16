@@ -295,8 +295,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceVersion": "hf-meta-llama-llama-3.1-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "3c7b2533532ef7cfd2ec74a7ef8e3e81ec864d80de641c69836bb3f69d15143a",
-    "lastHarvestedAt": "2026-10-16T14:03:33.811Z",
+    "contentHash": "da5121b930f8ac312e8e5a8d718f33a6c2a5770cddfe6f6c1536062b5722a349",
+    "lastHarvestedAt": "2026-10-16T22:21:57.862Z",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct"
   },
   "hf-xingchen-agi-teleocr": {

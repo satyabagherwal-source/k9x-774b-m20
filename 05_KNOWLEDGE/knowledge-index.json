@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T22:18:56.652Z",
+  "last_updated": "2026-10-16T22:21:57.826Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14610,7 +14610,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "3c7b2533532ef7cfd2ec74a7ef8e3e81ec864d80de641c69836bb3f69d15143a",
+      "content_hash": "da5121b930f8ac312e8e5a8d718f33a6c2a5770cddfe6f6c1536062b5722a349",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -14705,7 +14705,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-10-16T14:03:33.784Z",
+      "verified_at": "2026-10-16T22:21:57.819Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
