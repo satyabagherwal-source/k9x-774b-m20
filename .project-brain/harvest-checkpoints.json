@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-16T01:59:21.063Z",
+  "last_updated": "2026-10-16T02:02:18.963Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1288,17 +1288,18 @@
     },
     "mistralai/Mixtral-8x7B-Instruct-v0.1": {
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv8b358s",
-      "content_hash": "58a4379cf47db02903a62ddde9648bc933924279e5c3f5313396c0b7b86e0d6a",
-      "verified_at": "2026-10-14T16:10:14.641Z",
+      "learning_id": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "content_hash": "592167f3ad1c585364f79e495092711b74b23f933e452d3f36a2a0932a0ded7f",
+      "verified_at": "2026-10-16T02:02:18.963Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-14T16:10:14.641Z"
+      "last_updated": "2026-10-16T02:02:18.963Z"
     },
     "deepseek-ai/DeepSeek-V3": {
       "repository": "deepseek-ai/DeepSeek-V3",

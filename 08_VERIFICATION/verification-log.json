@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-7J5N",
-    "timestamp": "2026-10-13T18:17:57.179Z",
-    "repository": "tickernelz/opencode-mem",
-    "learningId": "learn-github-tickernelz-opencode-mem-mv707j1j",
-    "contentHash": "cf2267e3fe0e904a62ad3c95aa3ad370f130a8bd45d03bc64cab1b29aae8cc42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-JDAM",
     "timestamp": "2026-10-13T18:27:09.454Z",
     "repository": "jialinyyzz/humanizer",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Llama-2-7b",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b",
     "contentHash": "936aa77a60bfd5cb1d2de07e857dc80860ec6e83b1812bcdb4e2e069f12392a9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-OERZ",
+    "timestamp": "2026-10-16T02:02:18.959Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "592167f3ad1c585364f79e495092711b74b23f933e452d3f36a2a0932a0ded7f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
