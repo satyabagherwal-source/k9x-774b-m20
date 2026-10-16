@@ -1555,8 +1555,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceVersion": "hf-pyannote-speaker-diarization-community-1",
     "license": "Open-Source",
-    "contentHash": "abbba7c4c571ff3a4949360c5d16cf6163805b719528ac16f73c4ede6ac0b31c",
-    "lastHarvestedAt": "2026-10-16T02:48:39.069Z",
+    "contentHash": "c5d1fae16619c0119af8941f27b0eda576be79b7a366fa1947ce2429a5e0fcf6",
+    "lastHarvestedAt": "2026-10-16T11:30:33.951Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {

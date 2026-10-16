@@ -3,7 +3,7 @@
 > **Source Version**: `hf-pyannote-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-16T02:48:38.989Z  
+> **Timestamp**: 2026-10-16T11:30:33.897Z  
 > **Learning ID**: `learn-huggingface-pyannote-speaker-diarization-community-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/pyannote/speaker-diarization-community-1](https://huggingface.co/pyannote/speaker-diarization-community-1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-16T02:48:38.228Z  
+> **Harvest Timestamp**: 2026-10-16T11:30:33.296Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 5463487 downloads | 2968 likes
+- **Stars / Engagement**: 5385743 downloads | 2983 likes
 
 ---
 

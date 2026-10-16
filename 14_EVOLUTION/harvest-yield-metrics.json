@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T11:27:37.092Z",
-  "total_cycles_completed": 1686,
-  "total_learnings_persisted": 1686,
+  "last_updated": "2026-10-16T11:30:33.953Z",
+  "total_cycles_completed": 1687,
+  "total_learnings_persisted": 1687,
   "total_rules_promoted": 925,
   "history": [
-    {
-      "timestamp": "2026-10-15T23:48:35.611Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T23:51:41.014Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T11:27:37.092Z",
       "repository": "black-forest-labs/flux-3-image-klein",
       "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T11:30:33.953Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
