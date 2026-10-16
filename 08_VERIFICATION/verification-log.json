@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-WG6Z",
-    "timestamp": "2026-10-14T09:05:07.835Z",
-    "repository": "sentence-transformers/all-mpnet-base-v2",
-    "learningId": "learn-huggingface-hf-sentence-transformers-all-mpnet-base-v2-mv7vwg4a",
-    "contentHash": "1be65988318ac94796ed961298e3615e8cda28374e86749dfe30c5a3cb421034",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-0E0L",
     "timestamp": "2026-10-14T09:08:11.637Z",
     "repository": "BAAI/bge-reranker-v2-m3",
@@ -7490,6 +7475,21 @@
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "contentHash": "55f1a1fb280cfa2b9cd07130f51bfa878929e3b8d633785a75e9f4b0853e24c4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-Q82D",
+    "timestamp": "2026-10-16T16:03:32.053Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "501164bf784eac8aa0e5b0e7d73818ff46f92952c227f41496238bb6c50e218e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

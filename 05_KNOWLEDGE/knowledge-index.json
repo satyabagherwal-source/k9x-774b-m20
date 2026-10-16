@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T16:00:24.250Z",
+  "last_updated": "2026-10-16T16:03:32.019Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16019,7 +16019,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "d449abe169d62081b248d88195cc654568044ba8240c3c6fa32d820d0fcbc696",
+      "content_hash": "501164bf784eac8aa0e5b0e7d73818ff46f92952c227f41496238bb6c50e218e",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
@@ -16066,7 +16066,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-10-16T07:39:06.200Z",
+      "verified_at": "2026-10-16T16:03:32.012Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
