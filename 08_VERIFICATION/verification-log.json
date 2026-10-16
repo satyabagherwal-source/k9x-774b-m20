@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-N7ES",
-    "timestamp": "2026-10-14T08:57:56.548Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-hf-openai-clip-vit-base-patch32-mv7vn79p",
-    "contentHash": "15d29824561366b54e87e7bd374a593a50211cb4d47daff150f2d284fa7c101f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-WG6Z",
     "timestamp": "2026-10-14T09:05:07.835Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "32eba65551a50a49ee87693ff94082e11bb280ceb972958a11c44bcb89068a79",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-M76K",
+    "timestamp": "2026-10-16T16:00:24.284Z",
+    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+    "contentHash": "55f1a1fb280cfa2b9cd07130f51bfa878929e3b8d633785a75e9f4b0853e24c4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
