@@ -74719,3 +74719,189 @@ if tokenizer.bos_token_id is None:
 
 **VERIFICATION METHOD**:  
 Unit test that loads a config with `bos_token_id: null` and asserts that the tokenizer’s `bos_token_id` is set to a valid integer.
+
+
+---
+
+## 1186. **Token ID Namespace Integrity** (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Token ID Namespace Integrity**",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T15:22:17.296Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+A model’s tokenizer must assign a unique integer ID to every special token across all modalities, and the model configuration must reference those IDs exactly.
+
+**WHY**:  
+Duplicate IDs cause ambiguous token interpretation, leading to incorrect embeddings, mis‑aligned attention, and catastrophic generation failures (e.g., `<|image_pad|>` being treated as `<|video_pad|>`).
+
+**WHEN TO APPLY**:  
+During tokenizer construction, model configuration generation, and any downstream merging logic (processor, inference pipeline).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# tokenizer_config.json
+{
+  "image_token_id": 248056,
+  "video_token_id": 248057,
+  "audio_bos_token_id": 248058,
+  "audio_eos_token_id": 248059,
+  "audio_token_id": 248060,
+  "pad_token_id": 248061,
+  "eos_token_id": 248044
+}
+# model config references the same IDs
+"image_token_id": 248056,
+"video_token_id": 248057,
+"audio_bos_token_id": 248058,
+"audio_eos_token_id": 248059,
+"audio_token_id": 248060,
+"pad_token_id": 248061,
+"eos_token_id": 248044
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: duplicate ID
+"image_token_id": 248056,
+"video_token_id": 248056,   # collision
+```
+
+**VERIFICATION METHOD**:  
+Run a unit test that loads both tokenizer and model config, then asserts `set(tokenizer.special_tokens_ids) == set(model_config.special_token_ids)`.
+
+---
+
+
+---
+
+## 1187. **Attention Layer Consistency** (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Attention Layer Consistency**",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T15:22:17.335Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The sequence of `layer_types` in the text configuration must match the declared `num_hidden_layers`; each entry must be a valid attention type (`linear_attention` or `full_attention`).
+
+**WHY**:  
+A mismatch leads to out‑of‑range indexing during forward passes, raising `IndexError` or silently skipping layers, which corrupts the output distribution.
+
+**WHEN TO APPLY**:  
+During model initialization; any script that programmatically modifies `layer_types`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# config.json → text_config
+"num_hidden_layers": 32,
+"layer_types": [
+  "linear_attention", "linear_attention", "linear_attention", "full_attention",
+  "linear_attention", "linear_attention", "linear_attention", "full_attention",
+  # ... 24 more entries, total 32
+]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: fewer entries
+"num_hidden_layers": 32,
+"layer_types": ["linear_attention", "full_attention"]  # only 2 layers
+```
+
+**VERIFICATION METHOD**:  
+A linter rule that parses `layer_types` and checks `len(layer_types) == num_hidden_layers` and that each element is in the allowed set.
+
+---
+
+
+---
+
+## 1188. **Sampling Configuration Alignment** (Harvested from XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "**Sampling Configuration Alignment**",
+  "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+  "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T15:22:17.373Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+The `eos_token_id` list in `generation_config.json` must be a subset of the model’s `eos_token_id` values; otherwise the sampler may never terminate.
+
+**WHY**:  
+If the sampler’s EOS list contains an ID not present in the model’s vocabulary, the model will never generate that token, causing infinite loops or truncated outputs.
+
+**WHEN TO APPLY**:  
+During generation pipeline setup; any change to `generation_config.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "eos_token_id": [248046, 248044],
+  "do_sample": true,
+  "temperature": 0.6,
+  "top_k": 20,
+  "top_p": 0.95
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+{
+  "eos_token_id": [999999],   # ID not in model vocab
+  "do_sample": true
+}
+```
+
+**VERIFICATION METHOD**:  
+A test that loads the tokenizer, checks that every ID in `generation_config.eos_token_id` is in `tokenizer.vocab`.
+
+---

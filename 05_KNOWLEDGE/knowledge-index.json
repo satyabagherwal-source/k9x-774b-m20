@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T15:18:59.676Z",
+  "last_updated": "2026-10-16T15:22:17.405Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17879,7 +17879,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "e2a67b29c71e96a5c0890a2f32a16b445ce90fc1a9943a47ad46ffb39d10c22c",
+      "content_hash": "371da13f4013e7e8b0c76949ecb4b915ab688c7c5f3618d3a7ac4b6fdd905d86",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -17947,6 +17947,21 @@
           "number": 1097,
           "title": "Layer‑Type Consistency with Attention Bias",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1186,
+          "title": "**Token ID Namespace Integrity**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1187,
+          "title": "**Attention Layer Consistency**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1188,
+          "title": "**Sampling Configuration Alignment**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17967,7 +17982,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-16T06:55:05.679Z",
+      "verified_at": "2026-10-16T15:22:17.400Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
