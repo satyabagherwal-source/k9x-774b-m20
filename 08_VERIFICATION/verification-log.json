@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-ADHZ",
-    "timestamp": "2026-10-13T17:52:10.199Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-hf-bingsu-adetailer-mv6zaddu",
-    "contentHash": "e40d0ba2b1d76c17fdd5c2456cdd35221dc301e7a04e001c50f873ed7b4ccd2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-E2I5",
     "timestamp": "2026-10-13T17:55:02.573Z",
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.2",
     "learningId": "learn-huggingface-zai-org-glm-5-2",
     "contentHash": "18b2780868988efb43af7836a1da4216aee5df8cac6f6213af42e283eaf5e53f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-4MM5",
+    "timestamp": "2026-10-16T01:46:55.997Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "19401ecd7c1509998e83ee018c91782c1e1b1b3c562fdf93e2ba19e9793d15ac",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
