@@ -157,3 +157,66 @@ For modern AI search engines (ChatGPT Search, Perplexity, Google AI Overviews):
 1. **Factual Executive Summary**: Place a direct, factual 2-3 sentence definition/answer at the top of informational pages.
 2. **Structured Tables & Definitions**: AI models favor tabular comparisons and crisp definitions over conversational fluff.
 3. **`/llms.txt` Standard**: Serve a clean Markdown summary of the site's primary routes and concepts at `/llms.txt` to guide LLM search agents.
+---
+
+## 7. HTML5 `<head>` Integrity & Premature Closure Defense (Rule 1158)
+
+### 7.1 The HTML5 Parser Head Whitelist Trap
+The W3C HTML5 specification dictates that only the following tags are valid within `<head>`:
+`title`, `meta`, `link`, `script`, `style`, `base`, `noscript`, `template`.
+
+If any non-whitelisted tag (e.g. `<div>`, `<img>`, `<iframe>`, `<p>`, or naked tracking pixel) is encountered before `<link rel="canonical">`, `<meta name="robots">`, or `<link rel="alternate" hreflang="...">`:
+1. The parser implicitly terminates the `<head>` section and initiates `<body>`.
+2. All subsequent `<link>` and `<meta>` elements are forced into `<body>`.
+3. Search engines (Googlebot, Bingbot) distrust canonical and indexing directives in `<body>` and discard them entirely!
+
+### 7.2 Defensive Ordering Checklist
+- Ensure `<meta charset="utf-8">`, `<meta name="viewport">`, and `<title>` are the first three elements.
+- Place `<link rel="canonical">` and `<meta name="robots">` immediately after `<title>`.
+- NEVER inject raw `<noscript><iframe src="..."></iframe></noscript>` tracking code (Google Tag Manager) before your canonical tag.
+
+---
+
+## 8. Googlebot 2MB Ingestion Boundary & Payload Truncation (Rule 1159)
+
+### 8.1 The Hard 2,000,000 Byte Limit
+Googlebot stops parsing and truncates HTML response streams at exactly 2MB (2,000,000 raw bytes).
+- Any structured data (`application/ld+json`), indexable body content, or internal navigation links occurring after byte 2,000,000 are **completely ignored by search indexing**.
+- Pages exceeding 2MB also waste crawl budget and fail Core Web Vitals (TTFB, INP).
+
+### 8.2 Common Truncation Culprits
+- Inlining massive SVG icon sprites directly into SSR HTML instead of external SVG symbols.
+- Embedding base64 encoded data URI images (`data:image/png;base64,...`) into server-rendered markup.
+- Massive JSON state hydration blobs (e.g., Next.js `__NEXT_DATA__`, Redux preloaded state) containing megabytes of unpruned API responses.
+
+---
+
+## 9. Relational Hreflang Reciprocal & Canonical Invariants (Rule 1160)
+
+### 9.1 The Two Invariants of International SEO
+1. **Strict Bidirectional Reciprocity**: If URL `A` declares URL `B` as its Spanish translation (`hreflang="es"`), URL `B` MUST declare URL `A` as its English translation (`hreflang="en"`). Missing return links cause Google to invalidate the entire language cluster.
+2. **Canonical Alignment**: Hreflang annotations must ALWAYS point to the self-canonical URL. Pointing hreflang to a 3xx redirect, a 4xx error, or a parameterized non-canonical URL invalidates the annotation.
+
+---
+
+## 10. High-Performance Link Integrity & Crawler Engineering (Rule 1161)
+
+### 10.1 Host-Keyed Token Bucket Rate Limiting
+- Never use global process delays (`time.sleep`) across a crawler.
+- Maintain a thread-safe map of rate limiters keyed by `hostname` / `netloc`. Concurrent workers can immediately fetch external CDNs and independent domains without waiting for the local domain's throttle delay.
+
+### 10.2 Exception Cause-Chain Unwrapping
+- Always traverse Python (`__cause__` / `__context__`) or Go/Rust error wrapping to isolate true transport errors:
+  - `socket.gaierror` / NXDOMAIN -> `dns_not_found`
+  - `ssl.SSLError` -> `tls_certificate_error`
+  - `socket.timeout` -> `network_timeout`
+- Never classify low-level transport outages as HTTP 404 or 500 status codes.
+
+---
+
+## 11. Image SEO: Filenames & Whitespace-Only Alt Traps
+
+1. **Descriptive Filenames**: Search engines heavily weigh filenames for Image Search. Reject camera/system defaults:
+   - ❌ `Screen Shot 2026-10-16 at 12.00.00.png`, `IMG_0042.jpg`, `asset_12.webp`
+   - ✅ `enterprise-technical-seo-crawler-architecture.webp`
+2. **Whitespace-Only Alt False Compliance**: Ensure automated linters check `alt.trim().length > 0`. Tags like `alt="   "` pass naive boolean presence checks but fail accessibility audits and provide zero search signals.

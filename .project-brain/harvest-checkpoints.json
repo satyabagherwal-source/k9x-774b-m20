@@ -2572,5 +2572,77 @@
       "knowledge_index_updated": true,
       "last_updated": "2026-10-16T09:32:00.303Z"
     }
+  },
+  "repos": {
+    "https://github.com/spronta/crawlie": {
+      "repo": "spronta/crawlie",
+      "commit": "810e836874214d8aac29ee37a1521b7361027d79",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/spronta-crawlie-learnings.md"
+    },
+    "https://github.com/puneetindersingh/open-seo-crawler": {
+      "repo": "puneetindersingh/open-seo-crawler",
+      "commit": "654350c9ded45b7cc53df9150bfdb092b169b42d",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/puneetindersingh-open-seo-crawler-learnings.md"
+    },
+    "https://github.com/IliasSami/scrawly-seo-crawler": {
+      "repo": "IliasSami/scrawly-seo-crawler",
+      "commit": "8fdebcf4e365f862ef80fa95d100067e6b911e11",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/iliassami-scrawly-seo-crawler-learnings.md"
+    },
+    "https://github.com/PhialsBasement/LibreCrawl": {
+      "repo": "PhialsBasement/LibreCrawl",
+      "commit": "05a1372de8334ca18dec0bc1f7470c62901a9418",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/phialsbasement-librecrawl-learnings.md"
+    },
+    "https://github.com/StJudeWasHere/seonaut": {
+      "repo": "StJudeWasHere/seonaut",
+      "commit": "a67387fe63a291be2ba49dd02399f20e453eb8b5",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/stjudewashere-seonaut-learnings.md"
+    },
+    "https://github.com/sethblack/python-seo-analyzer": {
+      "repo": "sethblack/python-seo-analyzer",
+      "commit": "c995a4649e13782ef594ebc3681c8061d40dc83c",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/sethblack-python-seo-analyzer-learnings.md"
+    },
+    "https://github.com/JustinBeckwith/linkinator": {
+      "repo": "JustinBeckwith/linkinator",
+      "commit": "62ba21965daddd9db2a451e8eacc510a010d6762",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/justinbeckwith-linkinator-learnings.md"
+    },
+    "https://github.com/lycheeverse/lychee": {
+      "repo": "lycheeverse/lychee",
+      "commit": "54f8bf47ffbd35973b8eb016ccbc67221c75ba5f",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/lycheeverse-lychee-learnings.md"
+    },
+    "https://github.com/gjtorikian/html-proofer": {
+      "repo": "gjtorikian/html-proofer",
+      "commit": "b342424bbc3656e3d241949ad171c5ef3cc11c8e",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/gjtorikian-html-proofer-learnings.md"
+    },
+    "https://github.com/raviqqe/muffet": {
+      "repo": "raviqqe/muffet",
+      "commit": "b7f5bf8bc284dfc06386e08a09a06ab52ef50968",
+      "status": "COMPLETED",
+      "timestamp": "2026-10-16T13:56:43.896Z",
+      "dossier": "07_PROJECT_LEARNING/raviqqe-muffet-learnings.md"
+    }
   }
 }

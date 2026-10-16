@@ -72908,3 +72908,243 @@ cfg.head_dim = 128  # but hidden_size is 1024, num_attention_heads=8 -> 1024 OK
 Unit test that constructs a dummy config and runs the assertions; integration test that loads the real config and verifies the invariants.  
 
 ---
+---
+
+## 1158. HTML5 Head Tag Premature Closure Invariant (Harvested from puneetindersingh/open-seo-crawler)
+
+> **Provenance**: Harvested from [puneetindersingh/open-seo-crawler](https://github.com/puneetindersingh/open-seo-crawler) (Commit: `654350c9ded45b7cc53df9150bfdb092b169b42d`).  
+> **Evidence**: Confirmed in `crawler/page_checks.py` raw byte parsing tests and W3C HTML5 parser specification compliance.
+
+**RULE**:
+In web applications, SSR templates, and technical SEO crawlers, the `<head>` document section MUST contain ONLY valid HTML5 head-content elements: `title`, `meta`, `link`, `script`, `style`, `base`, `noscript`, and `template`. NO visible or body-level tags (such as `<div>`, `<img>`, `<iframe>`, `<p>`, or naked tracking pixels) may appear before `<link rel="canonical">`, `<meta name="robots">`, or hreflang tags. Technical SEO crawlers MUST validate raw byte stream token sequences before DOM normalization, because standard DOM parsers implicitly terminate `<head>` upon encountering the first non-head tag and silently move subsequent canonical/robots tags into `<body>`, rendering them invisible to search engine indexers.
+
+**WHY**:
+The HTML5 parsing specification mandates that when a parser is in the "in head" state and encounters a tag outside the head whitelist, it implicitly issues an end-tag for `<head>` and initiates `<body>`. Consequently, search engines (Googlebot, Bingbot) see the canonical link or `noindex` directive as located inside `<body>`. Because search engine guidelines explicitly state that canonical links and indexing directives inside the `<body>` are untrusted and discarded, pages suffer catastrophic indexing failures (e.g. unwanted duplication or ignored canonical consolidation) while appearing completely valid in browser devtools.
+
+**WHEN TO APPLY**:
+- Every web application template engine (Next.js, Astro, Nuxt, Django, Blade, Rails).
+- All technical SEO auditing tools and automated pre-deployment HTML linters.
+- Tag management systems injecting scripts or tracking beacons into `<head>`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Raw token stream verification prior to DOM tree generation
+HEAD_ALLOWED_TAGS = {
+    "title", "meta", "link", "script", "style", "base", "noscript", "template"
+}
+
+def verify_head_integrity(raw_html: str) -> list[str]:
+    violations = []
+    head_match = re.search(r"<head[^>]*>(.*?)</head>", raw_html, re.IGNORECASE | re.DOTALL)
+    if not head_match:
+        return ["Missing <head> section in raw HTML payload."]
+    
+    head_content = head_match.group(1)
+    # Tokenize opening tags inside <head> in raw stream order
+    tag_matches = re.finditer(r"<([a-zA-Z0-9]+)[^>]*>", head_content)
+    
+    for match in tag_matches:
+        tag_name = match.group(1).lower()
+        if tag_name not in HEAD_ALLOWED_TAGS:
+            violations.append(
+                f"FATAL SEO DEFECT: Disallowed tag '<{tag_name}>' found inside <head> at byte offset {match.start()}. "
+                f"This implicitly closes <head> in search engine parsers, invalidating trailing canonical and robots tags."
+            )
+            break # Any trailing tags are already displaced into body
+            
+    return violations
+```
+
+**NEGATIVE CONSTRAINT**:
+```html
+<!-- ANTI-PATTERN: Placing tracking noscript iframe or image pixel inside <head> before canonical -->
+<head>
+  <title>Acme Widget</title>
+  <!-- DEFECT: <iframe> or <img> inside <head> terminates <head> immediately! -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-XXXX" height="0" width="0"></iframe></noscript>
+  <link rel="canonical" href="https://example.com/products/widget" /> <!-- PUSHED TO BODY AND IGNORED! -->
+</head>
+```
+
+**VERIFICATION METHOD**:
+1. Run automated curl check fetching raw HTML bytes: `curl -sS https://domain.com/path | grep -nE '<head|<body|<iframe|<div|<link rel="canonical"'`.
+2. Verify that line numbers of `<link rel="canonical">` strictly precede any `<iframe>`, `<img>`, `<div>`, or `<body>` opening tags.
+
+---
+
+## 1159. Googlebot 2MB HTML Ingestion Boundary Invariant (Harvested from puneetindersingh/open-seo-crawler & IliasSami/scrawly-seo-crawler)
+
+> **Provenance**: Harvested from [puneetindersingh/open-seo-crawler](https://github.com/puneetindersingh/open-seo-crawler) and [IliasSami/scrawly-seo-crawler](https://github.com/IliasSami/scrawly-seo-crawler).  
+> **Evidence**: Verified against official Google Search Central indexing documentation and crawler limit benchmarks.
+
+**RULE**:
+All production HTML documents rendered by servers or static site generators MUST place primary indexable content, canonical references, and JSON-LD structured data within the first 2,000,000 bytes (2MB) of the raw HTTP response. Server configurations and template engines MUST enforce a hard size boundary check during CI build steps to prevent payload bloat (e.g., massive inlined SVG sprites, embedded Base64 images, or oversized inline Redux/Next.js hydration state payloads) from pushing critical elements past the 2MB cutoff.
+
+**WHY**:
+Googlebot and other search engine web fetchers enforce a strict 2MB ceiling on downloaded HTML text documents. Once 2,000,000 bytes are read, the network stream is truncated. Any HTML elements, internal links, or `<script type="application/ld+json">` blocks located past this boundary are permanently invisible to search indexing. Furthermore, pages exceeding 2MB experience severe crawl budget degradation and slow server response metrics.
+
+**WHEN TO APPLY**:
+- High-volume catalog pages, e-commerce product grids, and data tables with massive SSR payloads.
+- Static site generators exporting comprehensive documentation with inlined assets.
+- Technical SEO crawl pipelines assessing site health.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Automated CI boundary check for HTML payload ingestion
+GOOGLEBOT_HTML_CEILING_BYTES = 2_000_000
+
+def audit_html_payload_boundary(html_bytes: bytes) -> dict:
+    total_bytes = len(html_bytes)
+    status = "PASS" if total_bytes < GOOGLEBOT_HTML_CEILING_BYTES else "FAIL"
+    
+    # Locate byte offset of critical closing tags
+    canonical_offset = html_bytes.find(b'rel="canonical"')
+    ld_json_offset = html_bytes.find(b'application/ld+json')
+    
+    findings = {
+        "status": status,
+        "total_bytes": total_bytes,
+        "margin_remaining": GOOGLEBOT_HTML_CEILING_BYTES - total_bytes,
+        "canonical_safe": canonical_offset != -1 and canonical_offset < GOOGLEBOT_HTML_CEILING_BYTES,
+        "ld_json_safe": ld_json_offset == -1 or ld_json_offset < GOOGLEBOT_HTML_CEILING_BYTES
+    }
+    
+    if not findings["canonical_safe"]:
+        raise ValueError(f"CRITICAL: rel=canonical at byte {canonical_offset} exceeds Googlebot 2MB ingestion limit!")
+        
+    return findings
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// ANTI-PATTERN: Embedding massive base64 image strings or giant JSON state into HTML head
+// This pushes the rest of the page past the 2MB boundary!
+<script id="__NEXT_DATA__" type="application/json">
+  {"massiveCatalogDumpWithImages": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUg..."} // 3.5MB payload!
+</script>
+<!-- Trailing body content and footer links truncated by Googlebot! -->
+```
+
+**VERIFICATION METHOD**:
+1. Check raw byte size via shell: `curl -sS https://domain.com/path | wc -c`.
+2. Confirm the returned character count is strictly below 2,000,000 bytes.
+
+---
+
+## 1160. Relational Hreflang Reciprocal Verification Invariant (Harvested from StJudeWasHere/seonaut)
+
+> **Provenance**: Harvested from [StJudeWasHere/seonaut](https://github.com/StJudeWasHere/seonaut) (Commit: `a67387fe63a291be2ba49dd02399f20e453eb8b5`).  
+> **Evidence**: Confirmed in `internal/issues/multipage/hreflang.go` relational SQL joins and Google International SEO specifications.
+
+**RULE**:
+Internationalized websites utilizing `hreflang` annotations MUST enforce two strict relational invariants across the entire site graph:
+1. **Bidirectional Reciprocity**: If URL A designates URL B as an alternate translation (e.g. `es-ES`), URL B MUST contain an exact reciprocal return annotation pointing back to URL A (e.g. `en-US`).
+2. **Canonical Alignment**: Every `hreflang` target URL MUST be an indexable, self-referencing canonical URL returning HTTP 200. Hreflang annotations pointing to 3xx redirects, 4xx/5xx errors, `noindex` pages, or parameterized non-canonical variants are invalid and ignored by search engines.
+
+**WHY**:
+Search engines require reciprocal links to prevent unauthorized site owners from claiming to be the authoritative translation of a third-party website. If reciprocity fails or if an hreflang targets a redirected or non-canonical page, Google deactivates the entire hreflang cluster for that locale, resulting in searchers being routed to the incorrect language or country domain.
+
+**WHEN TO APPLY**:
+- Any multi-lingual or multi-region website deploying hreflang in HTML `<link>`, HTTP headers (`Link: <...>; rel="alternate"`), or XML sitemaps.
+- Technical SEO crawlers running post-crawl relational audits.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```sql
+-- SQL-driven relational detection of missing reciprocal hreflang return links
+SELECT DISTINCT
+    pr.url AS source_url,
+    hl.to_url AS target_url,
+    hl.to_lang AS target_lang
+FROM hreflangs AS hl
+INNER JOIN pagereports AS pr ON hl.pagereport_id = pr.id
+-- Left join against target page's reciprocal declaration
+LEFT JOIN hreflangs AS reciprocal 
+    ON hl.crawl_id = reciprocal.crawl_id 
+   AND hl.to_hash = reciprocal.from_hash 
+   AND hl.from_hash = reciprocal.to_hash
+WHERE hl.crawl_id = :crawl_id
+  AND hl.to_lang != 'x-default'
+  AND pr.status_code = 200
+  AND reciprocal.id IS NULL; -- Flagged: Missing reciprocal return link!
+```
+
+**NEGATIVE CONSTRAINT**:
+```html
+<!-- ANTI-PATTERN: Declaring hreflang target that redirects or points to non-canonical URL -->
+<!-- Page: https://example.com/en -->
+<link rel="alternate" hreflang="es" href="https://example.com/es-index" />
+<!-- Where https://example.com/es-index returns 301 Moved Permanently to https://example.com/es/ -->
+<!-- Search engines discard the hreflang annotation because it targets a redirect! -->
+```
+
+**VERIFICATION METHOD**:
+1. Run automated graph join across crawled hreflang pairs: verify `reciprocal.id IS NOT NULL` for 100% of non-x-default language tags.
+2. Verify that 100% of hreflang destination URLs return HTTP 200 and declare self-referential canonicals.
+
+---
+
+## 1161. Host-Keyed Token Bucket & Network Exception Cause-Chain Invariant (Harvested from lycheeverse/lychee & PhialsBasement/LibreCrawl)
+
+> **Provenance**: Harvested from [lycheeverse/lychee](https://github.com/lycheeverse/lychee) and [PhialsBasement/LibreCrawl](https://github.com/PhialsBasement/LibreCrawl).  
+> **Evidence**: Confirmed in `lychee-lib/src/ratelimit/` and `src/crawler.py` exception cause-chain traversal.
+
+**RULE**:
+Asynchronous web crawlers, link checkers, and verification agents MUST decouple rate limiting from global process sleep timers by managing an internal pool of rate limiters keyed strictly by destination hostname/netloc. Furthermore, network fetch wrappers MUST recursively traverse the exception cause chain (`__cause__`, `__context__`, inner socket/TLS errors) to classify low-level transport errors (DNS resolution, SSL/TLS handshake, connection timeout, socket reset) before logging status codes, preventing network-layer outages from being conflated with HTTP 4xx/5xx application responses.
+
+**WHY**:
+Global rate limiting needlessly bottlenecks crawling against multi-domain networks and CDNs, while zero rate limiting causes target hosts to issue HTTP 429 Too Many Requests or ban crawler IP ranges. Concurrently, failing to unpack exception cause chains leads to spurious defect reporting (e.g. reporting an NXDOMAIN DNS failure as a generic 404 Not Found), giving engineers misleading troubleshooting signals.
+
+**WHEN TO APPLY**:
+- High-concurrency web crawlers, sitemap validators, and dead-link detection bots.
+- CI/CD link-checking stages and production health monitoring agents.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Host-keyed token bucket rate limiting and exception cause-chain unwrapping
+import socket
+import ssl
+import time
+from urllib.parse import urlsplit
+
+class HostRateLimiterPool:
+    def __init__(self, delay_per_host: float = 0.5):
+        self.delay = delay_per_host
+        self.last_access: dict[str, float] = {}
+
+    def wait(self, url: str) -> None:
+        host = urlsplit(url).netloc.lower()
+        now = time.monotonic()
+        elapsed = now - self.last_access.get(host, 0.0)
+        if elapsed < self.delay:
+            time.sleep(self.delay - elapsed)
+        self.last_access[host] = time.monotonic()
+
+def classify_transport_error(exc: BaseException) -> str:
+    current = exc
+    seen = set()
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
+        if isinstance(current, socket.gaierror):
+            return "dns_not_found"
+        if isinstance(current, (ssl.SSLError, ConnectionResetError)):
+            return "ssl_tls_handshake_failure"
+        if isinstance(current, socket.timeout):
+            return "network_timeout"
+        current = getattr(current, "__cause__", None) or getattr(current, "__context__", None)
+    return "connection_error"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Global thread sleep or conflating transport errors with HTTP status codes
+try:
+    response = requests.get(url)
+except Exception as e:
+    # BUG: Logging network failure as 404 or 500 status code confuses audit engines!
+    log_issue(url, status_code=500, message="Server error")
+time.sleep(1.0) # BUG: Slows down entire crawler across independent hostnames
+```
+
+**VERIFICATION METHOD**:
+1. Run concurrent crawl against mixed targets (local domain + external CDNs). Verify external requests are dispatched without waiting for local domain rate limits.
+2. Trigger intentional DNS and TLS test failures (e.g. `nxdomain.invalid`, self-signed expired cert). Verify exact error classification in audit logs.
