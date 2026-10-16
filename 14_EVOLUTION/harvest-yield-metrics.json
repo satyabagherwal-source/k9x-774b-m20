@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T23:01:09.631Z",
-  "total_cycles_completed": 1885,
-  "total_learnings_persisted": 1885,
+  "last_updated": "2026-10-16T23:05:24.313Z",
+  "total_cycles_completed": 1886,
+  "total_learnings_persisted": 1886,
   "total_rules_promoted": 1021,
   "history": [
-    {
-      "timestamp": "2026-10-16T11:27:37.092Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T11:30:33.953Z",
       "repository": "pyannote/speaker-diarization-community-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T23:01:09.631Z",
       "repository": "SupersonicLabs/Julia-1",
       "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T23:05:24.313Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
