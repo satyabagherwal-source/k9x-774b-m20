@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T16:36:23.759Z",
+  "last_updated": "2026-10-16T16:39:30.467Z",
   "total_verified_learnings": 188,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11189,7 +11189,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "df78f2171bcbe3a43bac9d0bf0dc59d97d4791466363e74558598b31707fcc4d",
+      "content_hash": "0eb59973e0bd7c07e8de081021d609899c210359160ca9989aa4ecc04076f3f9",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -11264,6 +11264,21 @@
           "number": 1122,
           "title": "**Consistent Padding Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Token ID Consistency Rule",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1204,
+          "title": "Joint Head Output Shape Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1205,
+          "title": "Record Encoding Determinism Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11284,7 +11299,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-16T08:29:17.090Z",
+      "verified_at": "2026-10-16T16:39:30.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

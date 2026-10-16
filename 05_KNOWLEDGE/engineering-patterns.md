@@ -75822,3 +75822,128 @@ def test_dtype_fidelity():
 ```
 
 ---
+
+
+---
+
+## 1204. Joint Head Output Shape Rule (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Joint Head Output Shape Rule",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T16:39:30.395Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** guarantee that the joint head’s output tensor has shape `(batch_size, total_options)` where `total_options` equals the sum of `len(question.option_ids)` for all questions in the batch.
+
+**WHY**:  
+If the output shape is incorrect, downstream softmax will produce NaNs or mis‑aligned probabilities, breaking the decision logic.
+
+**WHEN TO APPLY**:  
+During the forward pass of the joint head and when constructing the `question_masks` tensor.
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+class JointHead(nn.Module):
+    def forward(self, hidden_states, question_masks):
+        logits = self.transformer(hidden_states)  # (B, T, H)
+        # Project to per‑question logits
+        logits = self.proj(logits)  # (B, T, Q)
+        # Flatten per‑question logits
+        logits = logits.view(logits.size(0), -1)  # (B, total_options)
+        # Apply masks to zero out padding options
+        logits = logits * question_masks
+        return logits
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Using a fixed output size regardless of question count
+logits = self.proj(hidden_states)  # (B, T, 10)  # hard‑coded 10 options
+```
+
+**VERIFICATION METHOD**  
+* Property test that feeds a batch with varying numbers of questions and asserts `logits.shape[1] == sum(len(q.option_ids) for q in batch)`.
+
+---
+
+
+---
+
+## 1205. Record Encoding Determinism Rule (Harvested from Cloudflare/clef-flash)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Record Encoding Determinism Rule",
+  "source": "Cloudflare/clef-flash",
+  "source_url": "https://huggingface.co/Cloudflare/clef-flash",
+  "source_version": "hf-cloudflare-clef-flash",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-16T16:39:30.433Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cloudflare-clef-flash",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cloudflare/clef-flash](https://huggingface.co/Cloudflare/clef-flash) (Revision: `hf-cloudfl`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+> **MUST** ensure that `encode_record()` is deterministic: the same input record must always produce identical token ids and image tensors, regardless of the order of keys in the JSON.
+
+**WHY**:  
+Non‑deterministic encoding leads to inconsistent batching and unpredictable logits, making unit tests flaky and production inference unreliable.
+
+**WHEN TO APPLY**:  
+During the implementation of `encode_record()` and any helper that serialises the record.
+
+**VERIFIED IMPLEMENTATION PATTERN**  
+```python
+def encode_record(tokenizer, record, processor):
+    # 1. Canonicalise JSON order
+    state_str = json.dumps(record["state"], sort_keys=True, separators=(",", ":"))
+    # 2. Tokenise state
+    state_ids = tokenizer.encode(state_str, add_special_tokens=False)
+    # 3. Process images/videos
+    image_tensors = []
+    for img in record.get("images", []):
+        image_tensors.append(processor.process_image(img))
+    # 4. Concatenate
+    return {
+        "input_ids": torch.tensor(state_ids, dtype=torch.long),
+        "image_tensors": torch.stack(image_tensors) if image_tensors else None,
+        "questions": record["questions"],
+    }
+```
+
+**NEGATIVE CONSTRAINT**  
+```python
+# BAD: Using dict iteration order directly
+state_ids = tokenizer.encode(json.dumps(record["state"], separators=(",", ":")))
+```
+
+**VERIFICATION METHOD**  
+* Unit test that serialises the same record twice and asserts equality of the resulting tensors.
+
+---

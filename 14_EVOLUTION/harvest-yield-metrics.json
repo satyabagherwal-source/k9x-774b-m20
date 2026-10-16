@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T16:36:23.778Z",
-  "total_cycles_completed": 1777,
-  "total_learnings_persisted": 1777,
-  "total_rules_promoted": 964,
+  "last_updated": "2026-10-16T16:39:30.497Z",
+  "total_cycles_completed": 1778,
+  "total_learnings_persisted": 1778,
+  "total_rules_promoted": 967,
   "history": [
-    {
-      "timestamp": "2026-10-16T04:51:01.621Z",
-      "repository": "autotrust/JEV-35B-NVFP4",
-      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T04:54:24.687Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T16:36:23.778Z",
       "repository": "Cloudflare/clef",
       "learningId": "learn-huggingface-cloudflare-clef",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T16:39:30.497Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
