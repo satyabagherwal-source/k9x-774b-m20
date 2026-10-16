@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T01:46:55.963Z",
+  "last_updated": "2026-10-16T01:49:55.137Z",
   "total_verified_learnings": 173,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10687,18 +10687,18 @@
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
-      "repository": "hf-bigscience-bloom",
+      "source": "bigscience/bloom",
+      "repository": "bigscience/bloom",
       "slug": "hf-bigscience-bloom",
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "f2a7f37016f7ddfbdd5e8b17f51e9db86d0b84588e9303768e1f7d12b7aa15bc",
+      "content_hash": "25bf5e01ad9532ad01ff9868ef5b592c29445eec38e04ca29b861c956d0148d7",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "promoted_rules": [],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
-      "verified": true,
       "brain_readback": true,
       "historical_duplicate_count": 11,
       "historical_learning_ids": [
@@ -10714,7 +10714,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-10-14T15:57:36.019Z",
+      "verified_at": "2026-10-16T01:49:55.131Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

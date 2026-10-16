@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-E2I5",
-    "timestamp": "2026-10-13T17:55:02.573Z",
-    "repository": "lilylilith/QI_2.1_AnyAngle",
-    "learningId": "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv6ze2g6",
-    "contentHash": "54f13d9e0747c398333f730db6207de66dfcadf320ca7993d4acfbdb59763cba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-I039",
     "timestamp": "2026-10-13T17:58:06.069Z",
     "repository": "BAAI/bge-large-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "stabilityai/stable-diffusion-3-medium",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
     "contentHash": "19401ecd7c1509998e83ee018c91782c1e1b1b3c562fdf93e2ba19e9793d15ac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-8GV2",
+    "timestamp": "2026-10-16T01:49:55.166Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-bigscience-bloom",
+    "contentHash": "25bf5e01ad9532ad01ff9868ef5b592c29445eec38e04ca29b861c956d0148d7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
