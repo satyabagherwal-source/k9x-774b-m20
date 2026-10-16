@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T17:58:55.443Z",
+  "last_updated": "2026-10-16T18:03:54.857Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -41360,7 +41360,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fishaudio/drama-3",
       "source_version": "hf-fishaudio-drama-3",
-      "content_hash": "7219f2a91f42f866b1dba2d2edde7c169f2789f4a695bb5f7cfc094dce3b365c",
+      "content_hash": "4f6bd96bdd9babb15701162427bbd8770e66d83e392ba5961a25b9ea6af90cac",
       "dossier_path": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md",
       "promoted_rules": [],
@@ -41369,7 +41369,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T10:06:24.397Z",
+      "verified_at": "2026-10-16T18:03:54.853Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

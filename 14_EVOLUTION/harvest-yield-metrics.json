@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T17:58:55.485Z",
-  "total_cycles_completed": 1799,
-  "total_learnings_persisted": 1799,
+  "last_updated": "2026-10-16T18:03:54.882Z",
+  "total_cycles_completed": 1800,
+  "total_learnings_persisted": 1800,
   "total_rules_promoted": 976,
   "history": [
-    {
-      "timestamp": "2026-10-16T06:02:20.150Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-lightricks-ltx-2-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T06:05:21.944Z",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T17:58:55.485Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
       "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T18:03:54.882Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

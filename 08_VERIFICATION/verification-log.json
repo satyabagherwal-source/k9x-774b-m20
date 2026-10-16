@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261014-IKX5",
-    "timestamp": "2026-10-14T10:46:19.241Z",
-    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-    "learningId": "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv7zikv4",
-    "contentHash": "c843a8d4118d82a4db1ac5c1627c498b186e296ade35656e2ca6959186cf0dbd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261014-MJ08",
     "timestamp": "2026-10-14T10:49:23.384Z",
     "repository": "LiquidAI/d1-3B",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3.8-Flash-Next",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
     "contentHash": "5a27b2d0b292591662337c167f29b28127925864bd0ba4b441da6a200ccede37",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-118F",
+    "timestamp": "2026-10-16T18:03:54.879Z",
+    "repository": "fishaudio/drama-3",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "4f6bd96bdd9babb15701162427bbd8770e66d83e392ba5961a25b9ea6af90cac",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
