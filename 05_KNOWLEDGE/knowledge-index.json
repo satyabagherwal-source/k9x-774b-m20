@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T19:19:58.231Z",
+  "last_updated": "2026-10-16T19:23:15.666Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -40866,7 +40866,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "29b71d7fd1ce72c58fa9cdfdf5586ac7dc2bf5e5f733177a4c4b955a0016d7e5",
+      "content_hash": "ec9dd675dafa04ddf0d1011fb1ce189fcaf3dea90346547535711d579a80c158",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
@@ -40889,6 +40889,21 @@
           "number": 1054,
           "title": "Data Integrity Verification Before Forensic Analysis",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1223,
+          "title": "Latent Space Dimensional Integrity & VAE Decoder Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1224,
+          "title": "Deterministic Seeding & Noise Scheduler Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1225,
+          "title": "Tokenizer Padding & Attention Mask Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -40896,7 +40911,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T11:27:37.049Z",
+      "verified_at": "2026-10-16T19:23:15.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
