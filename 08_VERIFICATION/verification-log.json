@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261013-RK4W",
-    "timestamp": "2026-10-13T22:17:28.496Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-hf-facebook-sam3-mv78rk00",
-    "contentHash": "7597a3331f64a1716cc1b238f56b486f6980344cb1b8d0d6b1a8db1d4b4498cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261013-V5Z2",
     "timestamp": "2026-10-13T22:20:16.766Z",
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-R1",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
     "contentHash": "49438be693d62e93ed26b64608f36ad1a7d2d8ae5c8a9d10ab15f57b451572c9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261016-5719",
+    "timestamp": "2026-10-16T05:31:19.389Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3",
+    "contentHash": "9c6ffea002279150c7edd81dd19dfc2e3a1aee6a215e1d951debacc2649f6e3b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
