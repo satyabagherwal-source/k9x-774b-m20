@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T18:16:30.318Z",
-  "total_cycles_completed": 1804,
-  "total_learnings_persisted": 1804,
+  "last_updated": "2026-10-16T18:20:06.363Z",
+  "total_cycles_completed": 1805,
+  "total_learnings_persisted": 1805,
   "total_rules_promoted": 979,
   "history": [
-    {
-      "timestamp": "2026-10-16T06:17:41.648Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T06:20:37.356Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T18:16:30.318Z",
       "repository": "openai/gpt-oss-120b",
       "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T18:20:06.363Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
