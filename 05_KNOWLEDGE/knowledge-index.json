@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T08:06:30.229Z",
+  "last_updated": "2026-10-16T08:10:14.734Z",
   "total_verified_learnings": 185,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17538,7 +17538,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "dd61a4807f9fb19079394a65b3a193d39e94ada0ce99f69e6f6e61db75173cec",
+      "content_hash": "cf08e3cccbf94c6b077fb8fffe6edea872d06d72208fba5423724f6497d38ec7",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "promoted_rules": [],
@@ -17560,7 +17560,7 @@
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv"
       ],
-      "verified_at": "2026-10-16T00:07:29.683Z",
+      "verified_at": "2026-10-16T08:10:14.723Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

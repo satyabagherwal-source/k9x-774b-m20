@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T08:06:30.269Z",
-  "total_cycles_completed": 1631,
-  "total_learnings_persisted": 1631,
+  "last_updated": "2026-10-16T08:10:14.778Z",
+  "total_cycles_completed": 1632,
+  "total_learnings_persisted": 1632,
   "total_rules_promoted": 897,
   "history": [
-    {
-      "timestamp": "2026-10-15T20:56:42.781Z",
-      "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-15T21:00:53.256Z",
       "repository": "autotrust/GEV-26B-Decide",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T08:06:30.269Z",
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-facebook-sam3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T08:10:14.778Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

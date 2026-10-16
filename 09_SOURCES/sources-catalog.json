@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "dd61a4807f9fb19079394a65b3a193d39e94ada0ce99f69e6f6e61db75173cec",
-    "lastHarvestedAt": "2026-10-16T00:07:29.725Z",
+    "contentHash": "cf08e3cccbf94c6b077fb8fffe6edea872d06d72208fba5423724f6497d38ec7",
+    "lastHarvestedAt": "2026-10-16T08:10:14.776Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
