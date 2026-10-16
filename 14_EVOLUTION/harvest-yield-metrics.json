@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-16T16:51:00.002Z",
-  "total_cycles_completed": 1781,
-  "total_learnings_persisted": 1781,
+  "last_updated": "2026-10-16T16:53:59.894Z",
+  "total_cycles_completed": 1782,
+  "total_learnings_persisted": 1782,
   "total_rules_promoted": 970,
   "history": [
-    {
-      "timestamp": "2026-10-16T05:06:54.345Z",
-      "repository": "Cactus-Compute/whistle",
-      "learningId": "learn-huggingface-cactus-compute-whistle",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T05:09:51.409Z",
       "repository": "Qwen/Qwen3.8-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-16T16:51:00.002Z",
       "repository": "google/electra-base-discriminator",
       "learningId": "learn-huggingface-google-electra-base-discriminator",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-16T16:53:59.894Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

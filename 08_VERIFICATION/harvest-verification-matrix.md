@@ -1804,3 +1804,4 @@
 | `CYCLE-20261016-4FJJ` | `2026-10-16T16:42:34.543Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`e9c31236...`) |
 | `CYCLE-20261016-BBAG` | `2026-10-16T16:47:55.624Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1206, Rule 1207, Rule 1208` | Yes (`55a2c0a2...`) |
 | `CYCLE-20261016-F9JX` | `2026-10-16T16:50:59.997Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`0d0c8ed9...`) |
+| `CYCLE-20261016-J4CY` | `2026-10-16T16:53:59.890Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`bc61b220...`) |
