@@ -1984,3 +1984,4 @@
 | `CYCLE-20261017-8JBZ` | `2026-10-17T03:01:37.631Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`bc4a10b1...`) |
 | `CYCLE-20261017-CJIB` | `2026-10-17T03:04:44.483Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`b4275c19...`) |
 | `CYCLE-20261017-GLUJ` | `2026-10-17T03:07:54.139Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`8fdde28a...`) |
+| `CYCLE-20261017-KUK3` | `2026-10-17T03:11:12.051Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`cc7e9607...`) |
