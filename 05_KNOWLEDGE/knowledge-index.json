@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:40:31.505Z",
+  "last_updated": "2026-10-17T07:44:41.705Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16185,7 +16185,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "24fe8bfa080788f73c2b4ebcc56a8bbcca54c519832f3cef4a26e4b854d445c4",
+      "content_hash": "3891e5d6019167d9f76dd38c6e21dfab1d12210d4eb5d7520c18ee0b8a227c42",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -16246,6 +16246,21 @@
           "number": 1271,
           "title": "Abliteration Direction Residual Boundary Sanitization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1363,
+          "title": "Zero-Copy Tensor Offset Alignment Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1364,
+          "title": "Logit Soft-Capping Transformer Inference Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1365,
+          "title": "Sliding Window Attention (SWA) KV Cache Boundary Pinning Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16266,7 +16281,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-17T00:01:31.141Z",
+      "verified_at": "2026-10-17T07:44:41.702Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

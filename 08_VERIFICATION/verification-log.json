@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-89YX",
-    "timestamp": "2026-10-16T02:45:45.465Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "51ff4ab1d3cfef3cec3a755a876f31f01e60781fb2af724d096d697a3f001dae",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-BZX6",
     "timestamp": "2026-10-16T02:48:39.066Z",
     "repository": "pyannote/speaker-diarization-community-1",
@@ -7490,6 +7475,21 @@
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
     "contentHash": "6668a7fabfd3c17c8cc27cbc6452f83b24e41b33c54eb0d43f011431da834fb0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-CKC9",
+    "timestamp": "2026-10-17T07:44:41.721Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+    "contentHash": "3891e5d6019167d9f76dd38c6e21dfab1d12210d4eb5d7520c18ee0b8a227c42",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
