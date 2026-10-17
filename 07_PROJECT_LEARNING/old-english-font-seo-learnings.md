@@ -72,3 +72,39 @@ Google Search Console reported 279 diagnostic issue events:
 - **Rule 78 (Substantive Editorial Defense for Category Hubs)**
 
 All rules codified in `05_KNOWLEDGE/universal-seo-and-sitemap-governance.md`.
+
+---
+
+## 6. End-to-End Strict HTTPS Protocol Invariant (Audit & Deployment)
+
+1. **Protocol Hygiene Across All Vectors**:
+   - Every single generated URL across all 632 HTML files, `robots.txt`, `sitemap-index.xml`, and `sitemap-0.xml` must strictly enforce `https://` with zero mixed-content, protocol-relative, or insecure `http://` fallbacks.
+   - Tested and verified:
+     - 564 Canonical URLs: 100% `https://`
+     - 1,264 Open Graph URLs/Images: 100% `https://`
+     - 1,264 Twitter Card URLs/Images: 100% `https://`
+     - 8,400 Alternate Hreflang links: 100% `https://`
+     - 5,688 Schema.org JSON-LD structured data URLs: 100% `https://`
+     - 8,405 Sitemap `<loc>` and alternate links: 100% `https://`
+     - Insecure `http://` internal URLs: 0 occurrences found.
+
+2. **Legacy Sitemap Probing Fallback Rule**:
+   - Automated crawlers (Googlebot, Bingbot, SEMrush, Ahrefs) frequently request `/sitemap.xml` directly instead of modern `/sitemap-index.xml`.
+   - In `public/_redirects`, declared:
+     ```
+     /sitemap.xml /sitemap-index.xml 301
+     ```
+   - This eliminates 404 crawl errors for automated crawler discovery while preserving canonical robots.txt compliance.
+
+---
+
+## 7. Google Search Console Telemetry Status Triage
+
+| GSC Diagnostic Status | Pages | Assessment | Action / Resolution |
+| :--- | :---: | :---: | :--- |
+| **Excluded by 'noindex' tag** | 36 | Healthy (Intentional) | Localized legal pages intentionally kept `noindex` to safeguard crawl budget (Rule 1490). Excluded from sitemap. |
+| **Page with redirect** | 1 | Resolved | Clean 301 redirect verified without `#` fragment. User validated in GSC. |
+| **Alternate page with proper canonical** | 1 | Healthy (Expected) | Standard parameter consolidation to primary canonical target (Rule 1164). |
+| **Discovered - currently not indexed** | 229 | Queue Latency | Mitigated via clean prioritized sitemap and tiered manual inspection batches (Rule 1491 Dual-Pronged Discovery). |
+| **Crawled - currently not indexed** | 12 | Quality Threshold | Category hubs enriched to 400+ words of historical paleography content (Rule 1162). Resubmit in GSC. |
+
