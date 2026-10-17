@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T22:57:23.880Z",
+  "last_updated": "2026-10-17T23:00:39.681Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2266,14 +2266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "content_hash": "fc7e5df74e373ee032d702891cfb0867800c82955fadf196d264e69dd6ecb2e3",
-      "verified_at": "2026-10-17T15:07:35.427Z",
+      "content_hash": "464cd5568549b4c60eb85177bfafdcbb6e73a16b8759f0668964828e531a98ec",
+      "verified_at": "2026-10-17T23:00:39.680Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T15:07:35.427Z"
+      "last_updated": "2026-10-17T23:00:39.680Z"
     },
     "amplifthq/opentag": {
       "repository": "amplifthq/opentag",

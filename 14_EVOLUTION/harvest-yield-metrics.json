@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T22:57:23.878Z",
-  "total_cycles_completed": 2312,
-  "total_learnings_persisted": 2312,
+  "last_updated": "2026-10-17T23:00:39.679Z",
+  "total_cycles_completed": 2313,
+  "total_learnings_persisted": 2313,
   "total_rules_promoted": 1334,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:47:05.973Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T11:50:17.373Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T22:57:23.878Z",
       "repository": "SupersonicLabs/Julia-1",
       "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:00:39.679Z",
+      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

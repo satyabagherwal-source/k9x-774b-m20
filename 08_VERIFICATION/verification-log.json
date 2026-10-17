@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-I9H5",
-    "timestamp": "2026-10-16T18:45:18.329Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "3d375464d2e2986014be997aef25a61e420f8bcfea88175d6172dc9f50b39819",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-MC7L",
     "timestamp": "2026-10-16T18:48:28.497Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7490,6 +7475,21 @@
     "repository": "SupersonicLabs/Julia-1",
     "learningId": "learn-huggingface-supersoniclabs-julia-1",
     "contentHash": "c7604653252230e58756a345f12d6e635073ea180b623f9e79b6819bae3076c0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-2I62",
+    "timestamp": "2026-10-17T23:00:39.674Z",
+    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
+    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
+    "contentHash": "464cd5568549b4c60eb85177bfafdcbb6e73a16b8759f0668964828e531a98ec",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
