@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T00:58:48.968Z",
-  "total_cycles_completed": 1921,
-  "total_learnings_persisted": 1921,
+  "last_updated": "2026-10-17T01:02:14.831Z",
+  "total_cycles_completed": 1922,
+  "total_learnings_persisted": 1922,
   "total_rules_promoted": 1052,
   "history": [
-    {
-      "timestamp": "2026-10-16T13:22:48.282Z",
-      "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-liquidai-d1-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T13:26:10.504Z",
       "repository": "Cactus-Compute/whistle",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T00:58:48.968Z",
       "repository": "BAAI/bge-m3",
       "learningId": "learn-huggingface-baai-bge-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T01:02:14.831Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

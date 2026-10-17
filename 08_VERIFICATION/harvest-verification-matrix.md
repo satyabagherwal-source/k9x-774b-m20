@@ -1944,3 +1944,4 @@
 | `CYCLE-20261017-MP5U` | `2026-10-17T00:52:40.290Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`6ec1dda8...`) |
 | `CYCLE-20261017-QM1X` | `2026-10-17T00:55:42.885Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`45422350...`) |
 | `CYCLE-20261017-ULMR` | `2026-10-17T00:58:48.963Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`f79f5c03...`) |
+| `CYCLE-20261017-Z0H6` | `2026-10-17T01:02:14.826Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`dc664b1d...`) |
