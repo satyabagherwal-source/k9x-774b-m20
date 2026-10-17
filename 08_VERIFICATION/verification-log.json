@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-IO9I",
-    "timestamp": "2026-10-16T19:13:37.110Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "2db70ba050ac14357a0311b181877da4220a0f3ee91f8c5af315061603472aee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-MG0N",
     "timestamp": "2026-10-16T19:16:33.047Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7490,6 +7475,21 @@
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
     "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
     "contentHash": "bf57c37fe6cbcc79c1038ad115efe735dc6c20658422eda8a3e621c51d131536",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-44YR",
+    "timestamp": "2026-10-17T23:29:55.491Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "09ff62d3600250aa7b4a90f23b6055d581fd4a02225cf2681876e680b08bab05",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
