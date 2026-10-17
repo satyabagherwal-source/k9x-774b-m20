@@ -2170,3 +2170,4 @@
 | `CYCLE-20261017-9JA7` | `2026-10-17T13:46:15.391Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1457, Rule 1458, Rule 1459` | Yes (`da74bd45...`) |
 | `CYCLE-20261017-DFOG` | `2026-10-17T13:49:17.344Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`0b678a89...`) |
 | `CYCLE-20261017-HF5X` | `2026-10-17T13:52:23.301Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`c6411e08...`) |
+| `CYCLE-20261017-L57L` | `2026-10-17T13:55:17.025Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`f57b04e3...`) |

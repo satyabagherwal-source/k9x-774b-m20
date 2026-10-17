@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-TNX5",
-    "timestamp": "2026-10-16T09:06:18.329Z",
-    "repository": "Saffsanity/sill",
-    "learningId": "learn-github-saffsanity-sill",
-    "contentHash": "c5c273ac967cdad3a0b3c018db45ecc10524af8347254657196c47c09c3ad3f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-5V99",
     "timestamp": "2026-10-16T09:15:47.709Z",
     "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -7490,6 +7475,21 @@
     "repository": "black-forest-labs/FLUX.1-dev",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
     "contentHash": "c6411e081aab80cfe55cd369542faf6b6cd739f196803762d9729d1e7d47a41b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-L57L",
+    "timestamp": "2026-10-17T13:55:17.025Z",
+    "repository": "FrancisRing/Prism",
+    "learningId": "learn-huggingface-francisring-prism",
+    "contentHash": "f57b04e36e30b5408d9a8765dc7f431aaddc5b25419d3ca51887ba1ec68817a5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T13:52:23.307Z",
+  "last_updated": "2026-10-17T13:55:17.030Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1862,14 +1862,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-francisring-prism",
-      "content_hash": "7870657116c0c933519f34a608248eb0d674f8f62a73df17ac9142fc315ad022",
-      "verified_at": "2026-10-17T05:29:29.159Z",
+      "content_hash": "f57b04e36e30b5408d9a8765dc7f431aaddc5b25419d3ca51887ba1ec68817a5",
+      "verified_at": "2026-10-17T13:55:17.029Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T05:29:29.159Z"
+      "last_updated": "2026-10-17T13:55:17.029Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
