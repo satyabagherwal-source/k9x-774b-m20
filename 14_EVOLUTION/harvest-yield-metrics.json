@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T01:53:47.116Z",
-  "total_cycles_completed": 1938,
-  "total_learnings_persisted": 1938,
+  "last_updated": "2026-10-17T01:56:53.346Z",
+  "total_cycles_completed": 1939,
+  "total_learnings_persisted": 1939,
   "total_rules_promoted": 1060,
   "history": [
-    {
-      "timestamp": "2026-10-16T14:17:08.946Z",
-      "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T14:20:19.397Z",
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T01:53:47.116Z",
       "repository": "Qwen/Qwen3.8-Flash-Next",
       "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T01:56:53.346Z",
+      "repository": "fishaudio/drama-3",
+      "learningId": "learn-huggingface-fishaudio-drama-3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

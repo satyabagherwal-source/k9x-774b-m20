@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-KFJT",
-    "timestamp": "2026-10-15T21:19:17.177Z",
-    "repository": "black-forest-labs/flux-3-image-klein-comfy",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "21db9e42039102713401b64c19f0fadde5ae4983e4c02107da1dc3d2b0170b4e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-OIFU",
     "timestamp": "2026-10-15T21:22:27.546Z",
     "repository": "autotrust/JEV-35B-NVFP4",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3.8-Flash-Next",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
     "contentHash": "9b70b7a8444ac44f0a240cbfa4437a3aad10e01195fb20d54fc8f2c0ea14e34b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-XA72",
+    "timestamp": "2026-10-17T01:56:53.342Z",
+    "repository": "fishaudio/drama-3",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "7ab313505ef5748363a0cdcccfa49e2a648f6ef24d36208a31e0a68f6d9f893a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
