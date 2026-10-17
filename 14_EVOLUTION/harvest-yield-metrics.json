@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T22:50:45.295Z",
-  "total_cycles_completed": 2310,
-  "total_learnings_persisted": 2310,
+  "last_updated": "2026-10-17T22:53:57.173Z",
+  "total_cycles_completed": 2311,
+  "total_learnings_persisted": 2311,
   "total_rules_promoted": 1334,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:40:42.023Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T11:43:55.287Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T22:50:45.295Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T22:53:57.173Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

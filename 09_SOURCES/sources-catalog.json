@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "ff044855db1ae5371d29a4068b8a09b72391e1caf8c6ddffa1981e8787915de4",
-    "lastHarvestedAt": "2026-10-17T15:01:01.184Z",
+    "contentHash": "91b49b937bdaf719c18b7af083b0be80dcb4b527df5496a4549ca0719ea3ee4b",
+    "lastHarvestedAt": "2026-10-17T22:53:57.171Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
