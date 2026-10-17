@@ -2065,3 +2065,4 @@
 | `CYCLE-20261017-QXCB` | `2026-10-17T07:27:52.139Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1353, Rule 1354, Rule 1355` | Yes (`15150a43...`) |
 | `CYCLE-20261017-WBYV` | `2026-10-17T07:32:04.375Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1356, Rule 1357` | Yes (`18ee56fb...`) |
 | `CYCLE-20261017-1W6C` | `2026-10-17T07:36:23.844Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1358, Rule 1359` | Yes (`0423c3e6...`) |
+| `CYCLE-20261017-77AE` | `2026-10-17T07:40:31.526Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1360, Rule 1361, Rule 1362` | Yes (`6668a7fa...`) |

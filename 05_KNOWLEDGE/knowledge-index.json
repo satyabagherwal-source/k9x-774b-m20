@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:36:23.820Z",
+  "last_updated": "2026-10-17T07:40:31.505Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18756,7 +18756,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "922e15558352b4e3afa5f54442419a1b3dd5906de9f5442131cac70e472b6272",
+      "content_hash": "6668a7fabfd3c17c8cc27cbc6452f83b24e41b33c54eb0d43f011431da834fb0",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [
@@ -18788,6 +18788,21 @@
           "number": 1108,
           "title": "Speech Zero-Embedding Audio Modality Masking Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1360,
+          "title": "Hybrid Sliding-Window Attention Sink Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1361,
+          "title": "Groupwise Advantage Redistribution (GAR) Length Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1362,
+          "title": "Mixture-of-Experts Router Precision & Group Dispatch Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18808,7 +18823,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv46ytbg",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-pro-rl-mv4k8xf7"
       ],
-      "verified_at": "2026-10-16T23:57:25.981Z",
+      "verified_at": "2026-10-17T07:40:31.501Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
