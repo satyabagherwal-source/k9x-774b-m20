@@ -1977,3 +1977,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-10-17T02:33:02.572Z |
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-10-17T02:36:13.105Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-10-17T02:39:38.862Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-10-17T02:42:31.918Z |

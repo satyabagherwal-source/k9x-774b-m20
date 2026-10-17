@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T02:39:38.825Z",
+  "last_updated": "2026-10-17T02:42:31.895Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9463,7 +9463,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "4cdcdfaf9b4964544f2e5f97d0c30f03f85332468728950adbfd795292e6d99c",
+      "content_hash": "6c9e20eaaea7c22ce7c5bd8e0298b50256ad1f7a56ce890ca455bbfdc4a90f1c",
       "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "promoted_rules": [
@@ -9500,7 +9500,7 @@
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx"
       ],
-      "verified_at": "2026-10-16T18:48:28.455Z",
+      "verified_at": "2026-10-17T02:42:31.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

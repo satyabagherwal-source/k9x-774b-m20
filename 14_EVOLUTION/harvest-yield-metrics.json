@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T02:39:38.864Z",
-  "total_cycles_completed": 1952,
-  "total_learnings_persisted": 1952,
+  "last_updated": "2026-10-17T02:42:31.919Z",
+  "total_cycles_completed": 1953,
+  "total_learnings_persisted": 1953,
   "total_rules_promoted": 1067,
   "history": [
-    {
-      "timestamp": "2026-10-16T15:06:15.007Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T15:09:31.120Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T02:39:38.864Z",
       "repository": "baidu/Unlimited-OCR",
       "learningId": "learn-huggingface-baidu-unlimited-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:42:31.919Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
