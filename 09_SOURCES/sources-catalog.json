@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "18ee56fb366ea495cb594dcd95aa86270743dfcdb4cfb70608edf2d58ffa0bc0",
-    "lastHarvestedAt": "2026-10-17T07:32:04.380Z",
+    "contentHash": "88195abd5e20a7841fce7bdaa361edc4ae83c7939419578be216d0f130c857d0",
+    "lastHarvestedAt": "2026-10-17T15:51:44.100Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
