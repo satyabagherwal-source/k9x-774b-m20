@@ -2326,3 +2326,4 @@
 | `CYCLE-20261017-LCX9` | `2026-10-17T22:19:20.109Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`299a7247...`) |
 | `CYCLE-20261017-Q82V` | `2026-10-17T22:23:07.111Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1548, Rule 1549, Rule 1550` | Yes (`1f4d89e0...`) |
 | `CYCLE-20261017-UCAA` | `2026-10-17T22:26:19.186Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`265fec8f...`) |
+| `CYCLE-20261017-Y8JO` | `2026-10-17T22:29:20.964Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`28cc4142...`) |

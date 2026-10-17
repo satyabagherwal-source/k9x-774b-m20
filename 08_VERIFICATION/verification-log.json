@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-H84P",
-    "timestamp": "2026-10-16T18:16:30.313Z",
-    "repository": "openai/gpt-oss-120b",
-    "learningId": "learn-huggingface-openai-gpt-oss-120b",
-    "contentHash": "5d4b435e91a352b8319017bf39bc0af70d8b5f8de742ed39a624b7bf8207f2d9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-LUTY",
     "timestamp": "2026-10-16T18:20:06.358Z",
     "repository": "zai-org/GLM-5.2",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/TeleOCR",
     "learningId": "learn-huggingface-xingchen-agi-teleocr",
     "contentHash": "265fec8fe61c162de6b7b69fae8e168fb505ee9cacdf514ec3b16d0848da5278",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-Y8JO",
+    "timestamp": "2026-10-17T22:29:20.964Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "28cc4142b3c37b87a49617616b40d72433dd442d18a65f6335f6fffe6c7e78bd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T22:26:19.192Z",
+  "last_updated": "2026-10-17T22:29:20.969Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -363,14 +363,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "6c3860426ff898b0b37f561cf57b8596098730da19fe4dbdbc35d0369a4a7460",
-      "verified_at": "2026-10-17T14:38:46.075Z",
+      "content_hash": "28cc4142b3c37b87a49617616b40d72433dd442d18a65f6335f6fffe6c7e78bd",
+      "verified_at": "2026-10-17T22:29:20.969Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T14:38:46.075Z"
+      "last_updated": "2026-10-17T22:29:20.969Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
