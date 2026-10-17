@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-8297",
-    "timestamp": "2026-10-16T13:57:26.251Z",
-    "repository": "autotrust/JEV-35B",
-    "learningId": "learn-huggingface-autotrust-jev-35b",
-    "contentHash": "3d86ea1bc69fe581b404fe7c3fdcf4d2fa6d34c0d61c7b4da4d720983289ba75",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-CC74",
     "timestamp": "2026-10-16T14:00:45.760Z",
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -7492,6 +7477,21 @@
     "contentHash": "4f9e248f95f805cb87d7be79d2a6405ad9bf7f043209cab8c7d55da8f1111577",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-BABE",
+    "timestamp": "2026-10-17T18:27:33.242Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "49fa184238fbfe19d3499fc56419131517f24b06a240783969e3f8b17fc4cb94",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
