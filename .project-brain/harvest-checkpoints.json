@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T12:30:26.215Z",
+  "last_updated": "2026-10-17T12:33:36.908Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1712,14 +1712,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
-      "content_hash": "ab244ca60c5c34ba5f0235bcf6a3ddc303e459ff1ba32f6e5432042d73e8833e",
-      "verified_at": "2026-10-17T04:24:45.543Z",
+      "content_hash": "bd4520a6c02e160846c00824d820eceaec8c98f29b0bc4cf519237281bda556f",
+      "verified_at": "2026-10-17T12:33:36.908Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T04:24:45.543Z"
+      "last_updated": "2026-10-17T12:33:36.908Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-PIT3",
-    "timestamp": "2026-10-16T07:39:06.231Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "d449abe169d62081b248d88195cc654568044ba8240c3c6fa32d820d0fcbc696",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-TBDI",
     "timestamp": "2026-10-16T07:42:03.222Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "7f1b6684820110dab44ac86f73a30501a34fbb453ad46433f491c2c29ba2b7d0",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-O492",
+    "timestamp": "2026-10-17T12:33:36.902Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "bd4520a6c02e160846c00824d820eceaec8c98f29b0bc4cf519237281bda556f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
