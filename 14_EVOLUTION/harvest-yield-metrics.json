@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T19:47:33.630Z",
-  "total_cycles_completed": 2258,
-  "total_learnings_persisted": 2258,
+  "last_updated": "2026-10-17T19:50:35.448Z",
+  "total_cycles_completed": 2259,
+  "total_learnings_persisted": 2259,
   "total_rules_promoted": 1297,
   "history": [
-    {
-      "timestamp": "2026-10-17T08:46:30.255Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T08:49:30.949Z",
       "repository": "google-bert/bert-base-uncased",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T19:47:33.630Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T19:50:35.448Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

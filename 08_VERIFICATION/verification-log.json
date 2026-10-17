@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-DAFL",
-    "timestamp": "2026-10-16T15:25:28.977Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "850df199488e93b37af9ea8727b1a28f299c5f0722978a1d99ba9bd9b9b5fcf3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-OA9Z",
     "timestamp": "2026-10-16T15:34:01.991Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-VL-8B-Instruct",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
     "contentHash": "3e048692552f41ca0b62e9f019049cecee163f07e6a1ea11624daf11c714410e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-A2LV",
+    "timestamp": "2026-10-17T19:50:35.443Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "3c0f77bf4b07bfe3669e6a3ed51b29140c56701f2fecc40f37c1b3a5a8db1cb0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

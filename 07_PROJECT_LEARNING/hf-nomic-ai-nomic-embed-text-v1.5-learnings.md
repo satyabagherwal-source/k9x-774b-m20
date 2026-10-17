@@ -3,7 +3,7 @@
 > **Source Version**: `hf-nomic-ai-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T11:53:19.880Z  
+> **Timestamp**: 2026-10-17T19:50:35.362Z  
 > **Learning ID**: `learn-huggingface-nomic-ai-nomic-embed-text-v1-5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nomic-ai/nomic-embed-text-v1.5](https://huggingface.co/nomic-ai/nomic-embed-text-v1.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T11:53:19.085Z  
+> **Harvest Timestamp**: 2026-10-17T19:50:34.455Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
