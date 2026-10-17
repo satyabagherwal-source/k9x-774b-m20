@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T04:02:18.195Z",
+  "last_updated": "2026-10-17T04:05:33.921Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13929,7 +13929,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/vit-base-patch16-224",
       "source_version": "hf-google-vit-base-patch16-224",
-      "content_hash": "6956f709adaa0ff49737e2ea863508e0a5069e3253fb6a08b5494c10550d34bb",
+      "content_hash": "b187162eb9d1c57f57d1e13f3c664892ae47fbba047067bfea6a2301e1a838de",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md",
       "promoted_rules": [
@@ -13961,7 +13961,7 @@
         "learn-huggingface-hf-google-vit-base-patch16-224-mv40bvhc",
         "learn-huggingface-hf-google-vit-base-patch16-224-mv4eaiut"
       ],
-      "verified_at": "2026-10-16T20:18:43.950Z",
+      "verified_at": "2026-10-17T04:05:33.910Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

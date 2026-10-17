@@ -2001,3 +2001,4 @@
 | `CYCLE-20261017-6ED8` | `2026-10-17T03:55:57.116Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`f0eb460c...`) |
 | `CYCLE-20261017-AWDG` | `2026-10-17T03:59:27.076Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1308, Rule 1309` | Yes (`4a4764b0...`) |
 | `CYCLE-20261017-EKFD` | `2026-10-17T04:02:18.217Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`30e93d14...`) |
+| `CYCLE-20261017-IRGU` | `2026-10-17T04:05:33.966Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`b187162e...`) |
