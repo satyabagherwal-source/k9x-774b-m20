@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-K4GP",
-    "timestamp": "2026-10-16T03:50:57.433Z",
-    "repository": "BAAI/bge-large-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-    "contentHash": "abaa248481c6be8541d78d76892ff6b886363b1144d92065e382539e6ee11721",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-O7JD",
     "timestamp": "2026-10-16T03:54:08.041Z",
     "repository": "zai-org/GLM-5.3",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-0.6B",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b",
     "contentHash": "ab6b48652f187d8e81983e253e05aedab45554702bed69d0fdb62fabfc54d229",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-C4KZ",
+    "timestamp": "2026-10-17T09:08:20.148Z",
+    "repository": "google-t5/t5-small",
+    "learningId": "learn-huggingface-google-t5-t5-small",
+    "contentHash": "ba803771ab0af406ad635ae209013ba2f243ca074bd08fc8492c0b07d62a0a66",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

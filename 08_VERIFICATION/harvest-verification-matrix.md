@@ -2087,3 +2087,4 @@
 | `CYCLE-20261017-X718` | `2026-10-17T08:56:43.484Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1402, Rule 1403, Rule 1404` | Yes (`d656323f...`) |
 | `CYCLE-20261017-118M` | `2026-10-17T08:59:42.598Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`1c204be9...`) |
 | `CYCLE-20261017-6PRV` | `2026-10-17T09:04:07.675Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1405, Rule 1406` | Yes (`ab6b4865...`) |
+| `CYCLE-20261017-C4KZ` | `2026-10-17T09:08:20.148Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1407, Rule 1408` | Yes (`ba803771...`) |
