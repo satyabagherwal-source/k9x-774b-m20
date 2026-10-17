@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T18:56:33.719Z",
-  "total_cycles_completed": 2242,
-  "total_learnings_persisted": 2242,
+  "last_updated": "2026-10-17T18:59:37.783Z",
+  "total_cycles_completed": 2243,
+  "total_learnings_persisted": 2243,
   "total_rules_promoted": 1291,
   "history": [
-    {
-      "timestamp": "2026-10-17T07:40:31.530Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T07:44:41.727Z",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T18:56:33.719Z",
       "repository": "FermionResearch/Phonon-2",
       "learningId": "learn-huggingface-fermionresearch-phonon-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T18:59:37.783Z",
+      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

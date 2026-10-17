@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-KXMK",
-    "timestamp": "2026-10-16T14:35:26.396Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-    "contentHash": "08185b52f876bf3211d25d9416dc0ee14aeef0ed85a9b3d8e7153183aebbfa21",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-OWU4",
     "timestamp": "2026-10-16T14:38:31.996Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7490,6 +7475,21 @@
     "repository": "FermionResearch/Phonon-2",
     "learningId": "learn-huggingface-fermionresearch-phonon-2",
     "contentHash": "8375e8b3f5d69839b1df7433ecdf1b299779bcb0ee6afaa57588cd1f43e0a827",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-GJAR",
+    "timestamp": "2026-10-17T18:59:37.779Z",
+    "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "b586f021d816c6fb183674c57798dc2cae4d285fd3e8d4b9028fa06c24c07ee5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
