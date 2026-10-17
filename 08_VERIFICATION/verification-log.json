@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-92SX",
-    "timestamp": "2026-10-16T06:02:20.145Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "b2fbcb41981fd33c3e428af74593ca75874ddb7e08d76ab39beaf9f4e120f00f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-CZ2S",
     "timestamp": "2026-10-16T06:05:21.940Z",
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -7492,6 +7477,21 @@
     "contentHash": "16b7509414bc2371e5fbc15eef9daf5b89fd7abe3961621b414d58df82cc5f90",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-I26O",
+    "timestamp": "2026-10-17T11:04:55.440Z",
+    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+    "contentHash": "e3a3f7581a40e974aaa58da9f83a2e8250418a962e2bdae7768012486051f10b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

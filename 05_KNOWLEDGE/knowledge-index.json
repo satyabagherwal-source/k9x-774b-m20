@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T11:01:58.977Z",
+  "last_updated": "2026-10-17T11:04:55.425Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16688,7 +16688,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "c51bb68770c31dabf3cc0a75117420266d9819d48d5faaba0a16128ab762de37",
+      "content_hash": "e3a3f7581a40e974aaa58da9f83a2e8250418a962e2bdae7768012486051f10b",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -16721,6 +16721,16 @@
           "number": 1222,
           "title": "Symmetric Keyframe Looping Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1437,
+          "title": "The Temporal Closure Invariant for Looping Video Generation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1438,
+          "title": "Semantic Prompt-Weight Coupling in LoRA Fine-Tuning",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16740,7 +16750,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-17T02:58:30.921Z",
+      "verified_at": "2026-10-17T11:04:55.421Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
