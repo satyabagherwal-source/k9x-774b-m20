@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T06:17:01.996Z",
+  "last_updated": "2026-10-17T06:20:15.904Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14463,7 +14463,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "40dee8cbaeb61cefdae991216fd8fa7c4179cfa4388b8d5a7c2debaea1bf5fcc",
+      "content_hash": "74084f94ad600c932584fb0b6bf25d592e51f20fa07d554ff5079908b16aef2c",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -14525,7 +14525,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-16T22:43:45.711Z",
+      "verified_at": "2026-10-17T06:20:15.894Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

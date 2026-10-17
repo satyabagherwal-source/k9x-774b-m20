@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-OZ6W",
-    "timestamp": "2026-10-16T01:34:45.800Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "bc8f58a837bb93b7912383b6da47d0e554606d689381061e98ce8745c054c896",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-SPDY",
     "timestamp": "2026-10-16T01:37:39.718Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "nvidia/Nemotron-3-Diarization",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
     "contentHash": "e640a9fca8c0417784ff5de80b7ce949e9b4cbe3b182d00285639b9804f9181b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-BZK6",
+    "timestamp": "2026-10-17T06:20:15.942Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "74084f94ad600c932584fb0b6bf25d592e51f20fa07d554ff5079908b16aef2c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
