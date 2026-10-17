@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T03:14:22.203Z",
-  "total_cycles_completed": 1963,
-  "total_learnings_persisted": 1963,
+  "last_updated": "2026-10-17T03:17:09.718Z",
+  "total_cycles_completed": 1964,
+  "total_learnings_persisted": 1964,
   "total_rules_promoted": 1071,
   "history": [
-    {
-      "timestamp": "2026-10-16T15:49:51.418Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T15:53:02.732Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -1403,6 +1396,13 @@
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T03:17:09.718Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-CFCD",
-    "timestamp": "2026-10-15T22:37:02.509Z",
-    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-    "contentHash": "2f167d7f5d0143c7abfde34a9b8f3afb357482a7a1301612b4521597d14b4878",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-GLYG",
     "timestamp": "2026-10-15T22:40:17.704Z",
     "repository": "Qwen/Qwen-Image-2.1-Turbo",
@@ -7492,6 +7477,21 @@
     "contentHash": "8f0d22a7239fcfbb9edc6796bd0c070cf7a258003a7c945a9820aefde5f22e7e",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-SIJ7",
+    "timestamp": "2026-10-17T03:17:09.715Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "38d851c14b2582cf4b9dc4eb1ae9cb73d1e41435fbb67a7d78fa0f303b3c95db",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
