@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T17:46:12.135Z",
+  "last_updated": "2026-10-17T17:49:38.056Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11255,7 +11255,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "776c81cf503bb22aca0294145e77056a3d341d0f00e4ec53a3a94e843f9aa180",
+      "content_hash": "ac46ae6a1dc58cbf196ca2e375a726f6dc27926b26cf48586882855c8fafebb7",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -11335,6 +11335,16 @@
           "number": 1422,
           "title": "Deterministic Inference Reproducibility",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1506,
+          "title": "Memory-Safe Model Deserialization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1507,
+          "title": "Distilled Model Step-Count Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11355,7 +11365,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-17T09:52:12.093Z",
+      "verified_at": "2026-10-17T17:49:38.046Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

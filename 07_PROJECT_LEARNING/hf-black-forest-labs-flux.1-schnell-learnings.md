@@ -3,7 +3,7 @@
 > **Source Version**: `hf-black-for`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-17T09:52:11.904Z  
+> **Timestamp**: 2026-10-17T17:49:37.803Z  
 > **Learning ID**: `learn-huggingface-black-forest-labs-flux-1-schnell`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,213 +17,213 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-The `black-forest-labs/FLUX.1-schnell` repository is not a traditional software codebase but a **Model Artifact Repository** for a high-performance, distilled text-to-image diffusion transformer. It solves the problem of generating high-fidelity, photorealistic images from text prompts with significantly reduced inference latency (4-step sampling) compared to standard diffusion models. The core technical challenge addressed is the **distillation of a large teacher model (FLUX.1-dev) into a smaller, faster student model (FLUX.1-schnell)** while preserving semantic alignment and visual quality.
+The `black-forest-labs/FLUX.1-schnell` repository represents the **inference artifact** for a high-performance, distilled text-to-image diffusion model. Unlike standard research repositories containing training scripts, this repository is a **binary payload container** optimized for low-latency generation (4-step sampling). It solves the problem of deploying a state-of-the-art latent diffusion model (LDM) with minimal computational overhead by providing pre-quantized, optimized weights and specific configuration metadata required by the `diffusers` library ecosystem.
 
-**Architectural Boundaries & Subsystems:**
-1.  **Model Weights Subsystem**: Contains the serialized parameters of the DiT (Diffusion Transformer) architecture. This is the "brain" of the system, defining the mapping from latent noise to image pixels.
-2.  **Tokenizer Subsystem**: Interfaces with the T5 text encoder and CLIP vision encoder to convert raw text prompts into embedding vectors.
-3.  **Scheduler Subsystem**: Defines the noise schedule (Euler Discrete) and the specific 4-step sampling strategy that enables the "schnell" (fast) inference mode.
-4.  **Inference Pipeline**: The orchestration layer (typically implemented in `diffusers` library) that chains Tokenizer -> Text Encoder -> UNet/DiT -> VAE Decoder.
+**Architectural Boundaries:**
+1.  **Inference-Only Boundary:** The repository contains **no training code**, no data pipelines, and no loss functions. It is strictly a "frozen" model state.
+2.  **Ecosystem Dependency:** It is not self-contained. It relies entirely on the external `transformers` and `diffusers` Python libraries to interpret the weight tensors and execute the forward pass. The "code" is effectively the serialization format of the weights (`.safetensors`) and the JSON configuration files that define the architecture topology.
+3.  **State Ownership:** The model owns the latent space parameters (UNet/DiT weights, VAE decoder/encoder, Text Encoder weights). The runtime environment (GPU/CPU) owns the execution context.
 
-**Critical Abstractions:**
-*   **Latent Space**: The compressed representation of images where the diffusion process occurs.
-*   **Guidance Scale**: A hyperparameter controlling the trade-off between prompt adherence and creative diversity.
-*   **Distillation Loss**: The implicit constraint that the student model's output distribution must match the teacher model's output distribution, enabling fewer sampling steps.
+**Critical Subsystem Abstractions:**
+*   **DiT (Diffusion Transformer) Backbone:** Replaces the traditional U-Net with a Transformer-based architecture for better scaling and attention mechanisms.
+*   **Distilled Scheduler:** The "schnell" variant implies a distilled model that requires only 4 steps of denoising, drastically reducing the computational graph depth compared to standard 50-step diffusion.
+*   **Safetensors Serialization:** Uses the `.safetensors` format instead of `.bin` (PyTorch native) to ensure memory-safe loading without executing arbitrary Python code during deserialization.
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Model Artifact Versioning & Checksum Integrity
+### 1. Memory-Safe Model Deserialization Invariant
 **RULE**:
-Any machine learning model artifact repository MUST include cryptographic checksums (SHA256) for all weight files and MUST enforce strict versioning of the model architecture configuration (`config.json`) to prevent silent incompatibility between weights and code.
-**WHY**:
-Without checksums, corrupted downloads or partial file transfers lead to silent inference failures or garbage outputs. Without strict config versioning, a user might load weights trained for a 12-layer transformer into a 24-layer codebase, causing shape mismatch errors that are difficult to debug.
-**WHEN TO APPLY**:
-Any repository hosting binary model weights (`.safetensors`, `.bin`, `.pt`) or large binary assets.
-**VERIFIED IMPLEMENTATION PATTERN**:
-```json
-// config.json
-{
-  "_class_name": "FluxTransformer2DModel",
-  "_diffusers_version": "0.27.0",
-  "num_layers": 19,
-  "attention_head_dim": 128,
-  "hidden_size": 3072
-}
-```
-```python
-# Verification script
-import hashlib
-import json
+When loading large neural network weights in production inference systems, you **MUST** use memory-safe serialization formats (e.g., `.safetensors`) that do not execute arbitrary code during deserialization. You **MUST NOT** use formats that rely on `pickle` or `torch.load` with `weights_only=False` for untrusted or third-party model artifacts.
 
-def verify_model_integrity(repo_path):
-    with open(f"{repo_path}/config.json") as f:
-        config = json.load(f)
-    
-    # Checksum verification for weights
-    weight_file = f"{repo_path}/model.safetensors"
-    sha256_hash = hashlib.sha256()
-    with open(weight_file, "rb") as f:
-        for byte_block in iter(lambda: f.read(4096), b""):
-            sha256_hash.update(byte_block)
-    
-    expected_hash = "a1b2c3d4..." # Stored in manifest
-    if sha256_hash.hexdigest() != expected_hash:
-        raise IntegrityError("Model weights corrupted or tampered with")
-    
-    # Architecture compatibility check
-    if config.get("_diffusers_version") not in ["0.27.0", "0.28.0"]:
-        raise CompatibilityError("Model architecture version mismatch")
-```
-**NEGATIVE CONSTRAINT**:
-```python
-# NEVER load weights without verifying the architecture config matches the code
-model = FluxTransformer2DModel.from_pretrained("path/to/model")
-# If config.json is missing or outdated, this will crash with obscure shape errors
-```
-**VERIFICATION METHOD**:
-Automated CI job that downloads the model, computes SHA256 of all weight files, and compares against a `MANIFEST.sha256` file. Additionally, a unit test that instantiates the model from config and asserts tensor shapes match expected values.
-
-### 2. Deterministic Inference Reproducibility
-**RULE**:
-Any stochastic model inference pipeline MUST expose a `seed` parameter and MUST ensure that setting the same seed produces bit-identical outputs across different runs and hardware platforms (where possible).
 **WHY**:
-Without deterministic seeding, debugging visual artifacts or comparing model versions becomes impossible. Users cannot reproduce bugs, and A/B testing of prompts is unreliable.
+Standard PyTorch `.bin` files use Python's `pickle` protocol. If a malicious actor crafts a `.bin` file, they can inject arbitrary Python code that executes upon `torch.load()`, leading to Remote Code Execution (RCE). `.safetensors` is a binary format that stores only tensor data and metadata, with no code execution capability, eliminating this entire class of supply chain attacks.
+
 **WHEN TO APPLY**:
-Any system involving random number generation (RNG) in the inference path, such as diffusion models, GANs, or LLM sampling.
+Any system that loads model weights from external sources (Hugging Face, S3, user uploads) in a production environment, especially when using PyTorch or JAX.
+
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 import torch
-import random
-import numpy as np
+from safetensors.torch import load_file
 
-def generate_image(prompt: str, seed: int = 42):
-    # Set all RNG seeds
-    torch.manual_seed(seed)
-    random.seed(seed)
-    np.random.seed(seed)
-    
-    # Ensure CUDA generator is also seeded
-    if torch.cuda.is_available():
-        torch.cuda.manual_seed_all(seed)
-    
-    # Perform inference
-    image = pipeline(prompt, num_inference_steps=4, guidance_scale=3.5)
-    return image
+# SAFE: Explicitly load from safetensors
+# This does not execute any Python code from the file
+state_dict = load_file("model.safetensors", device="cpu")
+model.load_state_dict(state_dict)
+
+# ALTERNATIVE: If using transformers/diffusers, ensure the library 
+# is configured to prefer safetensors
+from diffusers import DiffusionPipeline
+pipe = DiffusionPipeline.from_pretrained(
+    "black-forest-labs/FLUX.1-schnell",
+    torch_dtype=torch.float16,
+    use_safetensors=True  # Explicitly enforce safe loading
+)
 ```
+
 **NEGATIVE CONSTRAINT**:
 ```python
-# NEVER rely on system time or uninitialized memory for RNG
-# This leads to non-reproducible results
-image = pipeline(prompt)  # No seed set
+import torch
+
+# DANGEROUS: Never do this with untrusted files
+# This executes arbitrary code if the file is malicious
+state_dict = torch.load("model.bin", map_location="cpu") 
+# Even with weights_only=True, it's less robust than safetensors 
+# for cross-framework compatibility and strict memory safety.
 ```
+
 **VERIFICATION METHOD**:
-Unit test that calls `generate_image` twice with the same seed and asserts that the resulting image tensors are exactly equal (`torch.allclose(img1, img2, atol=0)`).
+1.  **Static Analysis**: Lint the codebase to ensure `torch.load` is never called without `weights_only=True` or is replaced by `safetensors` loaders.
+2.  **File Extension Check**: Assert that all model weight files in the repository end with `.safetensors`.
+3.  **Sandbox Test**: Attempt to load a known malicious pickle file in a sandboxed environment to verify the loader rejects it or fails safely without executing code.
+
+### 2. Distilled Model Step-Count Invariant
+**RULE**:
+When deploying distilled diffusion models (e.g., FLUX.1-schnell), you **MUST** configure the inference scheduler to match the model's distilled step count (e.g., 4 steps). You **MUST NOT** use the default scheduler step count (e.g., 50 steps) as it will produce degraded quality or incorrect latent trajectories due to the model's specific training distribution.
+
+**WHY**:
+Distilled models are trained to map noise to image in fewer steps. The noise schedule (sigma values) is optimized for this specific trajectory. Using a standard 50-step schedule with a 4-step distilled model causes the model to operate outside its trained distribution, leading to artifacts, blurriness, or complete failure to converge.
+
+**WHEN TO APPLY**:
+Any inference pipeline using a distilled diffusion model (e.g., LCM, SDXL-Turbo, FLUX.1-schnell).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from diffusers import DiffusionPipeline
+
+pipe = DiffusionPipeline.from_pretrained(
+    "black-forest-labs/FLUX.1-schnell",
+    torch_dtype=torch.float16
+)
+
+# CRITICAL: Set num_inference_steps to the distilled count
+# For FLUX.1-schnell, this is typically 4
+image = pipe(
+    prompt="A cat in a hat",
+    num_inference_steps=4,  # MUST match model's distilled capability
+    guidance_scale=0.0      # FLUX.1-schnell is guidance-free (distilled)
+).images[0]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# WRONG: Using default steps for a distilled model
+image = pipe(
+    prompt="A cat in a hat",
+    num_inference_steps=50,  # Will produce poor results or artifacts
+    guidance_scale=7.5       # Guidance scale is often 0 for distilled models
+).images[0]
+```
+
+**VERIFICATION METHOD**:
+1.  **Configuration Audit**: Check the `model_index.json` or `scheduler` config in the repository to confirm the recommended `num_inference_steps`.
+2.  **Visual Regression Test**: Generate images with the correct step count and compare against a baseline. If steps are increased, monitor for quality degradation metrics (e.g., FID score drop).
+3.  **Code Lint**: Ensure that `num_inference_steps` is explicitly set in all inference calls for distilled models, not left to default.
+
+---
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no specific commit patches or bug issues were provided in the input, this section will document **hypothetical but highly probable** incidents based on common failure modes in diffusion model repositories, framed as forensic lessons.*
+*Note: The provided repository data contains no commit history, bug issues, or source code diffs. Therefore, no specific "Real Incidents" from this repository's history can be extracted. The following section is left empty as per the data provided.*
 
-### Incident 1: Shape Mismatch Due to Config Drift (BUG-SHAPE-01)
-- **Context**: `model.safetensors` and `config.json`
-- **What Was Expected**: Model loads successfully and generates images.
-- **What Actually Happened**: `RuntimeError: size mismatch for transformer_blocks.0.attn.to_q.weight`
-- **Evidence in Repo**: N/A (Hypothetical)
-- **Root Cause**: The `config.json` was updated to reflect a new architecture (e.g., increased hidden size), but the weights were not retrained or the user downloaded an older version of the weights.
-- **Remediation Code Diff**:
-```python
-# - Buggy: No validation between config and weights
-model = FluxTransformer2DModel.from_pretrained("path")
+### Incident 1: N/A
+- **Context**: No data provided.
+- **What Was Expected**: N/A
+- **What Actually Happened**: N/A
+- **Evidence in Repo**: N/A
+- **Root Cause**: N/A
+- **Remediation Code Diff**: N/A
+- **Lesson**: N/A
 
-# + Fixed: Explicit shape validation
-config = FluxTransformer2DModel.load_config("path")
-state_dict = torch.load("path/model.safetensors")
-for name, param in state_dict.items():
-    if name in model.state_dict():
-        if model.state_dict()[name].shape != param.shape:
-            raise ValueError(f"Shape mismatch for {name}: {model.state_dict()[name].shape} vs {param.shape}")
-```
-- **Lesson**: Always validate tensor shapes against the architecture config before loading.
-
-### Incident 2: Non-Deterministic Outputs Due to Unseeded CUDA RNG (BUG-RNG-02)
-- **Context**: Inference pipeline
-- **What Was Expected**: Same prompt and seed produce identical images.
-- **What Actually Happened**: Images varied slightly between runs.
-- **Evidence in Repo**: N/A (Hypothetical)
-- **Root Cause**: `torch.manual_seed` was set, but `torch.cuda.manual_seed_all` was not, leading to different noise on GPU.
-- **Remediation Code Diff**:
-```python
-# - Buggy: Only CPU seed set
-torch.manual_seed(42)
-
-# + Fixed: All RNG seeds set
-torch.manual_seed(42)
-torch.cuda.manual_seed_all(42)
-```
-- **Lesson**: Seed all RNG sources (CPU, GPU, Python, NumPy) for full reproducibility.
+---
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Float Precision**: When saving model weights, always use `float32` or `bfloat16` explicitly. Avoid implicit conversion to `float64` which doubles memory usage.
-    *   **Example**: `tensor.to(torch.bfloat16)` instead of `tensor.to(torch.float)`.
+Since the repository is a model artifact (weights + config) and not a software application with UI or complex backend logic, the following invariants are derived from the **inference runtime** that consumes this model.
 
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Sampling Steps**: The number of inference steps (`num_inference_steps`) MUST be a positive integer. A value of 0 or negative will cause an infinite loop or immediate crash.
-    *   **Guard**: `assert num_inference_steps > 0, "num_inference_steps must be positive"`
+### 1. Micro-Syntax & Token-Level Precision
+*   **Float Precision Traps**: When loading FLUX.1-schnell, you **MUST** use `torch.float16` (FP16) or `bfloat16` (BF16) on GPU. Using `torch.float32` (FP32) will double memory usage and may cause OOM (Out of Memory) errors on consumer GPUs.
+    *   *Invariant*: `torch_dtype=torch.float16` is mandatory for GPU inference of this model size.
+*   **Guidance Scale Zero**: FLUX.1-schnell is a distilled model that does not use classifier-free guidance. Setting `guidance_scale > 0` is a no-op or may cause unexpected behavior depending on the scheduler implementation.
+    *   *Invariant*: `guidance_scale=0.0` is the correct invariant for this specific model variant.
 
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository, not a UI application.
+### 2. Infinite Loop & Recursion Guards
+*   **Scheduler Step Termination**: The diffusion scheduler must have a hard cap on `num_inference_steps`. If `num_inference_steps` is set to `None` or a negative value, the loop may not terminate or may produce undefined behavior.
+    *   *Invariant*: Always validate `num_inference_steps > 0` before starting the inference loop.
 
-4.  **Backend Concurrency & Memory Safety**:
-    *   **GPU Memory Leak**: If the model is not moved to CPU after inference, GPU memory will not be freed.
-    *   **Guard**: `model.cpu()` after inference if not reusing the model.
+### 3. UI & UX Micro-Mechanics
+*   **N/A**: This repository does not contain UI code. However, if building a web UI for this model:
+    *   **Debouncing**: Prompt input should be debounced to prevent multiple concurrent inference requests.
+    *   **Progress Reporting**: Since inference is synchronous and blocking, use WebSockets or Server-Sent Events (SSE) to stream progress updates to the client, preventing UI freeze.
 
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Null Prompt**: If the prompt is `None` or empty, the tokenizer will crash.
-    *   **Guard**: `if not prompt or not prompt.strip(): raise ValueError("Prompt cannot be empty")`
+### 4. Backend Concurrency & Memory Safety
+*   **GPU Memory Locking**: Inference is not thread-safe by default in PyTorch. You **MUST** serialize access to the model instance using a lock or a single-threaded worker queue.
+    *   *Invariant*: Use a `threading.Lock` or a `multiprocessing.Queue` to ensure only one inference request is processed at a time per GPU.
+*   **Memory Leak Prevention**: After each inference, ensure that intermediate tensors are garbage collected. Use `torch.cuda.empty_cache()` sparingly, as it can cause performance degradation.
+    *   *Invariant*: Do not retain references to output images or intermediate latents after sending them to the client.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+*   **OOM Handling**: Wrap inference calls in a try-except block to catch `torch.cuda.OutOfMemoryError`.
+    *   *Invariant*: On OOM, clear the cache and return a 503 Service Unavailable error, not a 500 Internal Server Error.
+*   **Invalid Prompt Length**: Ensure prompts do not exceed the tokenizer's max length (e.g., 512 tokens). Truncate or reject overly long prompts to avoid index out-of-bounds errors in the text encoder.
+    *   *Invariant*: `if len(prompt_tokens) > max_length: prompt_tokens = prompt_tokens[:max_length]`
+
+---
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The model uses a DiT (Diffusion Transformer) architecture, which is a transformer-based approach to diffusion models. This allows for better scaling and parallelization compared to U-Net architectures.
-2.  **Core Abstractions**: The key abstractions are the latent space, the noise schedule, and the guidance scale. These define the behavior of the diffusion process.
-3.  **Error Handling**: Errors are typically raised as `RuntimeError` or `ValueError` from PyTorch. The pipeline should catch these and provide user-friendly error messages.
-4.  **Testing**: Testing involves generating images with known prompts and seeds, and comparing the outputs to reference images. This ensures that the model behaves as expected.
-5.  **Security**: The main security concern is the integrity of the model weights. Checksums should be used to verify that the weights have not been tampered with.
-6.  **Performance**: The model is optimized for fast inference (4 steps). This is achieved through distillation and efficient attention mechanisms.
-7.  **Deployment**: The model can be deployed using the `diffusers` library. It requires a GPU with at least 16GB of VRAM for optimal performance.
-8.  **Agent Patterns**: The model can be used as a tool in an AI agent pipeline. The agent can generate images based on user prompts and refine them based on feedback.
-9.  **Data Flow**: The data flow is: Text Prompt -> Tokenizer -> Text Encoder -> DiT -> VAE Decoder -> Image. Each step transforms the data into a new representation.
+1.  **Architecture**: The model is a **DiT (Diffusion Transformer)** architecture, which is more scalable than U-Net. It is a **distilled** model, meaning it has been trained to produce high-quality outputs in fewer steps (4 steps). The architecture is decoupled from the inference engine, which is handled by the `diffusers` library.
+2.  **Core Abstractions**: The core abstractions are the **Latent Space** (where diffusion occurs), the **Text Encoder** (CLIP/T5), and the **VAE** (Variational Autoencoder) for encoding/decoding images. The model weights are the primary artifact.
+3.  **Error Handling**: Error handling is minimal in the repository itself. The inference engine must handle OOM, invalid inputs, and scheduler errors. The model does not provide built-in error recovery.
+4.  **Testing**: No tests are included in the repository. Testing must be done externally by generating images and evaluating quality metrics (e.g., FID, CLIP score).
+5.  **Security**: The primary security concern is **model poisoning** (malicious weights) and **deserialization attacks** (if using unsafe formats). Using `.safetensors` mitigates deserialization risks.
+6.  **Performance**: The model is optimized for **low latency** (4 steps). It requires a GPU with at least 12GB VRAM for FP16 inference. Performance is bottlenecked by the DiT forward pass and VAE decoding.
+7.  **Deployment**: The model is deployed as a **Hugging Face Hub** artifact. It can be loaded directly from the Hub using `diffusers`. Deployment requires a GPU server and a web framework (e.g., FastAPI) to serve the inference API.
+8.  **Agent Patterns**: The model can be used as a **tool** in an AI agent system. The agent can generate images based on user prompts. The agent must handle asynchronous inference and progress reporting.
+9.  **Data Flow**: The data flow is: **Prompt** -> **Text Encoder** -> **Latent Noise** -> **DiT Denoising (4 steps)** -> **VAE Decode** -> **Image**. The data is transformed from text to latent space, denoised, and then decoded to pixel space.
+
+---
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: Use `torch.manual_seed` and `torch.cuda.manual_seed_all` for deterministic inference.
-2.  **Rule**: Always validate model weight shapes against the architecture config.
-3.  **Architecture Principle**: Use a DiT architecture for better scaling and parallelization.
-4.  **Failure Mode**: Shape mismatch due to config drift.
-5.  **Reusable Skill**: Verify model integrity using SHA256 checksums.
-6.  **Decision**: Use 4-step sampling for fast inference.
-7.  **Anti-pattern**: Relying on system time for RNG.
-8.  **Verification Method**: Unit test that compares outputs of two runs with the same seed.
+1.  **Pattern**: **Safe Model Loading Pattern**: Use `safetensors` for loading model weights to prevent code execution during deserialization.
+2.  **Rule**: **Distilled Step Count Rule**: Always set `num_inference_steps` to the model's distilled step count (e.g., 4 for FLUX.1-schnell) to ensure correct quality and performance.
+3.  **Architecture Principle**: **Separation of Model and Inference Engine**: The model weights are separate from the inference logic. This allows for easy swapping of models and inference engines.
+4.  **Failure Mode**: **OOM Failure**: If the GPU does not have enough memory, the inference will fail with an OOM error. This can be mitigated by using FP16 and clearing the cache.
+5.  **Reusable Skill**: **Model Deployment Checklist**: 1. Load model with `safetensors`. 2. Set `torch_dtype=torch.float16`. 3. Set `num_inference_steps=4`. 4. Wrap inference in a lock. 5. Handle OOM errors.
+6.  **Decision**: **Use of Distilled Model**: The decision to use a distilled model (FLUX.1-schnell) over a standard model (FLUX.1-dev) is driven by the need for low latency. The trade-off is slightly lower quality compared to the standard model.
+7.  **Anti-pattern**: **Unsafe Deserialization**: Never use `torch.load` with `weights_only=False` for untrusted model files. This can lead to RCE.
+8.  **Verification Method**: **Visual Regression Test**: Generate images with the correct step count and compare against a baseline. If steps are increased, monitor for quality degradation.
+
+---
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Verify Model Integrity**:
-    *   [ ] Download the model weights.
-    *   [ ] Compute SHA256 checksums.
-    *   [ ] Compare against `MANIFEST.sha256`.
-2.  **Validate Architecture Config**:
-    *   [ ] Load `config.json`.
-    *   [ ] Check `_diffusers_version` compatibility.
-    *   [ ] Validate tensor shapes.
-3.  **Set RNG Seeds**:
-    *   [ ] Set `torch.manual_seed`.
-    *   [ ] Set `torch.cuda.manual_seed_all`.
-    *   [ ] Set `random.seed` and `np.random.seed`.
-4.  **Test Inference**:
-    *   [ ] Generate an image with a known prompt and seed.
-    *   [ ] Compare against a reference image.
-    *   [ ] Ensure outputs are deterministic.
-5.  **Monitor Performance**:
-    *   [ ] Measure inference time.
-    *   [ ] Monitor GPU memory usage.
-    *   [ ] Ensure no memory leaks.
+**Checklist for AI Coding Agent Building Similar Systems:**
+
+1.  **Model Loading**:
+    *   [ ] Use `safetensors` for loading model weights.
+    *   [ ] Set `torch_dtype=torch.float16` for GPU inference.
+    *   [ ] Verify that the model is loaded correctly by checking the number of parameters.
+
+2.  **Inference Configuration**:
+    *   [ ] Set `num_inference_steps` to the model's distilled step count (e.g., 4).
+    *   [ ] Set `guidance_scale=0.0` for distilled models.
+    *   [ ] Validate that `num_inference_steps > 0`.
+
+3.  **Concurrency & Memory**:
+    *   [ ] Use a `threading.Lock` or `multiprocessing.Queue` to serialize access to the model.
+    *   [ ] Wrap inference calls in a try-except block to catch OOM errors.
+    *   [ ] Clear the GPU cache after each inference if necessary.
+
+4.  **Error Handling**:
+    *   [ ] Handle invalid prompt lengths by truncating or rejecting.
+    *   [ ] Return a 503 Service Unavailable error on OOM.
+    *   [ ] Log all errors with detailed context for debugging.
+
+5.  **Testing**:
+    *   [ ] Generate images with the correct step count and compare against a baseline.
+    *   [ ] Test with different prompt lengths to ensure robustness.
+    *   [ ] Test OOM handling by simulating low memory conditions.

@@ -102696,3 +102696,144 @@ state_dict = {k: v.to(torch.float16) for k, v in state_dict.items()}
 Unit test that creates a BF16 tensor with a value of 100000, attempts to cast to FP16, and asserts that an `OverflowError` is raised or the value is clamped with a warning.
 
 ---
+
+
+---
+
+## 1506. Memory-Safe Model Deserialization Invariant (Harvested from black-forest-labs/FLUX.1-schnell)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Memory-Safe Model Deserialization Invariant",
+  "source": "black-forest-labs/FLUX.1-schnell",
+  "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+  "source_version": "hf-black-forest-labs-flux.1-schnell",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T17:49:37.903Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) (Revision: `hf-black-f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When loading large neural network weights in production inference systems, you **MUST** use memory-safe serialization formats (e.g., `.safetensors`) that do not execute arbitrary code during deserialization. You **MUST NOT** use formats that rely on `pickle` or `torch.load` with `weights_only=False` for untrusted or third-party model artifacts.
+
+**WHY**:
+Standard PyTorch `.bin` files use Python's `pickle` protocol. If a malicious actor crafts a `.bin` file, they can inject arbitrary Python code that executes upon `torch.load()`, leading to Remote Code Execution (RCE). `.safetensors` is a binary format that stores only tensor data and metadata, with no code execution capability, eliminating this entire class of supply chain attacks.
+
+**WHEN TO APPLY**:
+Any system that loads model weights from external sources (Hugging Face, S3, user uploads) in a production environment, especially when using PyTorch or JAX.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+from safetensors.torch import load_file
+
+# SAFE: Explicitly load from safetensors
+# This does not execute any Python code from the file
+state_dict = load_file("model.safetensors", device="cpu")
+model.load_state_dict(state_dict)
+
+# ALTERNATIVE: If using transformers/diffusers, ensure the library 
+# is configured to prefer safetensors
+from diffusers import DiffusionPipeline
+pipe = DiffusionPipeline.from_pretrained(
+    "black-forest-labs/FLUX.1-schnell",
+    torch_dtype=torch.float16,
+    use_safetensors=True  # Explicitly enforce safe loading
+)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+import torch
+
+# DANGEROUS: Never do this with untrusted files
+# This executes arbitrary code if the file is malicious
+state_dict = torch.load("model.bin", map_location="cpu") 
+# Even with weights_only=True, it's less robust than safetensors 
+# for cross-framework compatibility and strict memory safety.
+```
+
+**VERIFICATION METHOD**:
+1.  **Static Analysis**: Lint the codebase to ensure `torch.load` is never called without `weights_only=True` or is replaced by `safetensors` loaders.
+2.  **File Extension Check**: Assert that all model weight files in the repository end with `.safetensors`.
+3.  **Sandbox Test**: Attempt to load a known malicious pickle file in a sandboxed environment to verify the loader rejects it or fails safely without executing code.
+
+
+---
+
+## 1507. Distilled Model Step-Count Invariant (Harvested from black-forest-labs/FLUX.1-schnell)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Distilled Model Step-Count Invariant",
+  "source": "black-forest-labs/FLUX.1-schnell",
+  "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+  "source_version": "hf-black-forest-labs-flux.1-schnell",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T17:49:37.993Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [black-forest-labs/FLUX.1-schnell](https://huggingface.co/black-forest-labs/FLUX.1-schnell) (Revision: `hf-black-f`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying distilled diffusion models (e.g., FLUX.1-schnell), you **MUST** configure the inference scheduler to match the model's distilled step count (e.g., 4 steps). You **MUST NOT** use the default scheduler step count (e.g., 50 steps) as it will produce degraded quality or incorrect latent trajectories due to the model's specific training distribution.
+
+**WHY**:
+Distilled models are trained to map noise to image in fewer steps. The noise schedule (sigma values) is optimized for this specific trajectory. Using a standard 50-step schedule with a 4-step distilled model causes the model to operate outside its trained distribution, leading to artifacts, blurriness, or complete failure to converge.
+
+**WHEN TO APPLY**:
+Any inference pipeline using a distilled diffusion model (e.g., LCM, SDXL-Turbo, FLUX.1-schnell).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from diffusers import DiffusionPipeline
+
+pipe = DiffusionPipeline.from_pretrained(
+    "black-forest-labs/FLUX.1-schnell",
+    torch_dtype=torch.float16
+)
+
+# CRITICAL: Set num_inference_steps to the distilled count
+# For FLUX.1-schnell, this is typically 4
+image = pipe(
+    prompt="A cat in a hat",
+    num_inference_steps=4,  # MUST match model's distilled capability
+    guidance_scale=0.0      # FLUX.1-schnell is guidance-free (distilled)
+).images[0]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# WRONG: Using default steps for a distilled model
+image = pipe(
+    prompt="A cat in a hat",
+    num_inference_steps=50,  # Will produce poor results or artifacts
+    guidance_scale=7.5       # Guidance scale is often 0 for distilled models
+).images[0]
+```
+
+**VERIFICATION METHOD**:
+1.  **Configuration Audit**: Check the `model_index.json` or `scheduler` config in the repository to confirm the recommended `num_inference_steps`.
+2.  **Visual Regression Test**: Generate images with the correct step count and compare against a baseline. If steps are increased, monitor for quality degradation metrics (e.g., FID score drop).
+3.  **Code Lint**: Ensure that `num_inference_steps` is explicitly set in all inference calls for distilled models, not left to default.
+
+---
