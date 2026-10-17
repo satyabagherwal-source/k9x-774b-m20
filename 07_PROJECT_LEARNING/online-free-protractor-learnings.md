@@ -59,6 +59,16 @@
   - 153 `CRAWLED_NOT_INDEXED_TOOL`
   - 58 `EXPECTED_REDIRECT` (308 slash-less + 301 legacy redirects)
   - 0 broken redirects, 0 loops, 0 404s, 0 5xx, 0 canonical conflicts.
-- Automated regression suite added to `package.json`: `npm run test:seo` (26 automated assertions testing templates, RTL, multi-scripts, sitemap integrity, and redirect rules).
+- Automated regression suite added to `package.json`: `npm run test:seo` (30 automated assertions testing templates, RTL, multi-scripts, sitemap integrity, and redirect rules).
+
+## Incident 4: Cloudflare Pages `pages.dev` Noindex Isolation Protocol
+
+### 1. Invariant & Architecture
+- Edge headers file (`public/_headers`) specifies `https://:project.pages.dev/*` and `https://:version.:project.pages.dev/*` with `X-Robots-Tag: noindex, nofollow`.
+- Verified strictly scoped: Custom domain (`onlinefreeprotractor.com`) receives NO `X-Robots-Tag` header and preserves `index, follow` on all 328 indexable sitemap pages.
+- Canonical tag defense: `computedCanonical` in `Layout.astro` hardcodes `https://onlinefreeprotractor.com`, preventing duplicate indexation even if a crawler traverses `pages.dev`.
+- Automated regression test added to `npm run test:seo` to guarantee preview isolation without accidental production leakage.
+
+
 
 
