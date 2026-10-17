@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T13:22:29.661Z",
-  "total_cycles_completed": 2138,
-  "total_learnings_persisted": 2138,
+  "last_updated": "2026-10-17T13:25:22.979Z",
+  "total_cycles_completed": 2139,
+  "total_learnings_persisted": 2139,
   "total_rules_promoted": 1232,
   "history": [
-    {
-      "timestamp": "2026-10-17T01:56:53.346Z",
-      "repository": "fishaudio/drama-3",
-      "learningId": "learn-huggingface-fishaudio-drama-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T02:00:03.205Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T13:22:29.661Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T13:25:22.979Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

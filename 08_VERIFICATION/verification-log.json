@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-M2HK",
-    "timestamp": "2026-10-16T08:32:24.344Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "d625a7f7d8d44d6e7aa3fedf12fb7bca943181d693211a5d7c18100cfdd8b0dc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-PNPV",
     "timestamp": "2026-10-16T08:35:11.827Z",
     "repository": "google-bert/bert-base-uncased",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
     "contentHash": "a4ec98f688a4fc732b1df01a486b8dbe8a540ce6cba9221de63b1e46c1176b6d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-IOWW",
+    "timestamp": "2026-10-17T13:25:22.976Z",
+    "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+    "contentHash": "723a6a843447a1df4e38797ba9390de27b3498e57628ca40a6ee75e2f982675a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
