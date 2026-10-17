@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-81BS",
-    "timestamp": "2026-10-16T17:13:22.360Z",
-    "repository": "Zen4-bit/Proxima",
-    "learningId": "learn-github-zen4-bit-proxima",
-    "contentHash": "52c93b40fbb44527735193a142807bd6498742e9891a05ace8e5da096f79f853",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-KKIN",
     "timestamp": "2026-10-16T17:23:07.103Z",
     "repository": "dapr/dapr",
@@ -7492,6 +7477,21 @@
     "contentHash": "614232b6520193e8d8000dd9315f9bfbb06d89a4a8aef67ad444f515c06c8c51",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-PUTB",
+    "timestamp": "2026-10-17T21:26:50.687Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "33f425a2826e9b4b542328a4733a03a0772758eca6c28d441504588837ca6e5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
