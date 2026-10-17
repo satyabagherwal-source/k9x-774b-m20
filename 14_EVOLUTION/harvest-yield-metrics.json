@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T22:36:10.203Z",
-  "total_cycles_completed": 2306,
-  "total_learnings_persisted": 2306,
-  "total_rules_promoted": 1332,
+  "last_updated": "2026-10-17T22:39:48.886Z",
+  "total_cycles_completed": 2307,
+  "total_learnings_persisted": 2307,
+  "total_rules_promoted": 1334,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:27:51.810Z",
-      "repository": "pyannote/speaker-diarization-community-1",
-      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T11:31:00.585Z",
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -1403,6 +1396,13 @@
       "repository": "nvidia/Nemotron-3-Diarization",
       "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T22:39:48.886Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

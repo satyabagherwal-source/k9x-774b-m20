@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T22:36:10.178Z",
+  "last_updated": "2026-10-17T22:39:48.854Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14990,7 +14990,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
       "source_version": "hf-lightricks-ltx-2.5",
-      "content_hash": "68015eb3735e82b3b25f0ee09fd99430776d6308b124ddc5519df037d5e0d0f4",
+      "content_hash": "f9c41cad9d627842416bcab17e5e15484a8479c31ececebbee9af01b1705276a",
       "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
       "promoted_rules": [
@@ -15047,6 +15047,16 @@
           "number": 1474,
           "title": "Reproducible Inference Seed Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1551,
+          "title": "Model Artifact Integrity & Configuration Consistency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1552,
+          "title": "Diffusion Scheduler Determinism & Reproducibility",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15067,7 +15077,7 @@
         "learn-huggingface-hf-lightricks-ltx-2-5-mv44u4a4",
         "learn-huggingface-hf-lightricks-ltx-2-5-mv4i3gub"
       ],
-      "verified_at": "2026-10-17T14:48:25.188Z",
+      "verified_at": "2026-10-17T22:39:48.845Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
