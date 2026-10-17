@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T09:48:56.038Z",
+  "last_updated": "2026-10-17T09:52:12.132Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1097,14 +1097,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "content_hash": "c5d0e94084cec8543ffae74d2b32fbe4d7d54316f883f5bbfbf8d852493d6111",
-      "verified_at": "2026-10-17T01:47:24.960Z",
+      "content_hash": "776c81cf503bb22aca0294145e77056a3d341d0f00e4ec53a3a94e843f9aa180",
+      "verified_at": "2026-10-17T09:52:12.131Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T01:47:24.960Z"
+      "last_updated": "2026-10-17T09:52:12.131Z"
     },
     "MiniMaxAI/MiniMax-H3": {
       "repository": "MiniMaxAI/MiniMax-H3",
