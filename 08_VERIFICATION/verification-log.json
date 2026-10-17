@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0QET",
-    "timestamp": "2026-10-16T01:43:54.293Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "18b2780868988efb43af7836a1da4216aee5df8cac6f6213af42e283eaf5e53f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4MM5",
     "timestamp": "2026-10-16T01:46:55.997Z",
     "repository": "stabilityai/stable-diffusion-3-medium",
@@ -7490,6 +7475,21 @@
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
     "contentHash": "342a8452f93c847cadfe48d0617fcdd0d53caecd27c7c8290f87723df55932cb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-OINQ",
+    "timestamp": "2026-10-17T06:30:00.566Z",
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+    "contentHash": "1776fd09cfab49d85795e623083597f1aa89ecde36698428a0ba5f052439bb2f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

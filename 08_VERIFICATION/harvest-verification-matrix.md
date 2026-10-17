@@ -2046,3 +2046,4 @@
 | `CYCLE-20261017-BZK6` | `2026-10-17T06:20:15.942Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`74084f94...`) |
 | `CYCLE-20261017-GFBN` | `2026-10-17T06:23:42.995Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`4b732ab7...`) |
 | `CYCLE-20261017-KE8R` | `2026-10-17T06:26:48.219Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`342a8452...`) |
+| `CYCLE-20261017-OINQ` | `2026-10-17T06:30:00.566Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`1776fd09...`) |
