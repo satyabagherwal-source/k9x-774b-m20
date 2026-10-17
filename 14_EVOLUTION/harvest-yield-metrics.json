@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T02:03:10.729Z",
-  "total_cycles_completed": 1941,
-  "total_learnings_persisted": 1941,
+  "last_updated": "2026-10-17T02:06:43.306Z",
+  "total_cycles_completed": 1942,
+  "total_learnings_persisted": 1942,
   "total_rules_promoted": 1060,
   "history": [
-    {
-      "timestamp": "2026-10-16T14:32:09.984Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T14:35:26.400Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T02:03:10.729Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:06:43.306Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
