@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T19:02:46.711Z",
+  "last_updated": "2026-10-17T19:05:54.917Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1412,14 +1412,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "content_hash": "f8b5d349d03833736bbbcd785ae0eebb105c812e98d16e3eda688d2ed057fd7d",
-      "verified_at": "2026-10-17T11:07:56.996Z",
+      "content_hash": "023dec031a1e70236447e2bd4c0be582eb7594385b7489e4f3eaf9d994c85edf",
+      "verified_at": "2026-10-17T19:05:54.917Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T11:07:56.996Z"
+      "last_updated": "2026-10-17T19:05:54.917Z"
     },
     "NaiveAI/Naive-N0.5-Flash": {
       "repository": "NaiveAI/Naive-N0.5-Flash",
