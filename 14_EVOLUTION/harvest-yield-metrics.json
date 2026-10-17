@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T19:57:04.473Z",
-  "total_cycles_completed": 2261,
-  "total_learnings_persisted": 2261,
+  "last_updated": "2026-10-17T19:59:59.608Z",
+  "total_cycles_completed": 2262,
+  "total_learnings_persisted": 2262,
   "total_rules_promoted": 1297,
   "history": [
-    {
-      "timestamp": "2026-10-17T08:56:43.491Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T08:59:42.602Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T19:57:04.473Z",
       "repository": "google/gemma-4-26B-A4B-it",
       "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T19:59:59.608Z",
+      "repository": "intfloat/multilingual-e5-small",
+      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

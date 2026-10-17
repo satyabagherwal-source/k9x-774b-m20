@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-Z5H9",
-    "timestamp": "2026-10-16T15:42:28.989Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "6f9cc213e889a1664b6884bc880dd618bce5a301ec0244c4f02143ac69d3e625",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4JIO",
     "timestamp": "2026-10-16T15:46:40.464Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-26B-A4B-it",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
     "contentHash": "4f5e816f491252e48d6116fa33fe082b8f929abc7fce65253bb576ddc2a2fc8b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-M5X1",
+    "timestamp": "2026-10-17T19:59:59.605Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "f888ffb3a943be7a78bae025aeaf5e31bf0d98497e220f2992d411d86d9ed4f5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
