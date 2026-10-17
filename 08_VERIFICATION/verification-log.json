@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-QAFT",
-    "timestamp": "2026-10-16T19:47:32.057Z",
-    "repository": "FacebookAI/xlm-roberta-base",
-    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-    "contentHash": "3ea508e335af30bc4b4188aca630119ecf0fd6028bdfca9cab4384d4cdc0444b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-YJT0",
     "timestamp": "2026-10-16T19:53:57.444Z",
     "repository": "openai-community/gpt2",
@@ -7490,6 +7475,21 @@
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "contentHash": "edc84877f41576dfc9cc24a6f326b9f8c79481bdc7046da1d21d8f04c3e4604d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-5UM3",
+    "timestamp": "2026-10-17T23:59:15.003Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "020b326aa33607761d3d4f8a953e4adec8d8ba1f061dcd808ed75b2b67a178ed",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
