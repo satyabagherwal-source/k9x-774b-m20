@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-4JIO",
-    "timestamp": "2026-10-16T15:46:40.464Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "921492968075a4ec243ec49eb1cadb23506b5de3a941d6e6bce0487295911b84",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-8MUU",
     "timestamp": "2026-10-16T15:49:51.414Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "intfloat/multilingual-e5-small",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
     "contentHash": "f888ffb3a943be7a78bae025aeaf5e31bf0d98497e220f2992d411d86d9ed4f5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-UG2Q",
+    "timestamp": "2026-10-17T20:06:26.018Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "8ad17e44a6e614ccf322425368bfba751588f6a35f8010c8583a97693e3f2291",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

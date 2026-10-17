@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T19:59:59.582Z",
+  "last_updated": "2026-10-17T20:06:25.982Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10031,7 +10031,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "9cbb1a510ea5c8097df4642dbfb7809554f73d6b2227843905dc97ec9cfc5d76",
+      "content_hash": "8ad17e44a6e614ccf322425368bfba751588f6a35f8010c8583a97693e3f2291",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
@@ -10073,7 +10073,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-17T12:06:12.616Z",
+      "verified_at": "2026-10-17T20:06:25.975Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
