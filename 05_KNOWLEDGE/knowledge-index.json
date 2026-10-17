@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T00:04:25.819Z",
+  "last_updated": "2026-10-17T00:08:34.015Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17927,7 +17927,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "32eba65551a50a49ee87693ff94082e11bb280ceb972958a11c44bcb89068a79",
+      "content_hash": "bb150f8ba007290205ebe7ef750f29f93dfb040e0ec58df0e5c0b1ed5c2724db",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -17944,6 +17944,16 @@
         {
           "number": 1193,
           "title": "Binary Artifact Integrity & Provenance Chain",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1272,
+          "title": "Mixed-Precision Tensor Alignment Invariant for Speculative Heads",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1273,
+          "title": "Runtime KV-Scratch Memory Pre-Flight Budget Assertion",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -17965,7 +17975,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-10-16T15:57:22.028Z",
+      "verified_at": "2026-10-17T00:08:34.009Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
