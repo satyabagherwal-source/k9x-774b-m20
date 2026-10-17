@@ -1465,8 +1465,8 @@
     "sourceUrl": "https://huggingface.co/dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
     "sourceVersion": "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8",
     "license": "Open-Source",
-    "contentHash": "9559972db2775ae4fd2bf0619378bad210d5a6b75c6e556eff7e809065c601f7",
-    "lastHarvestedAt": "2026-10-16T23:05:24.311Z",
+    "contentHash": "f824f0cf9ff41dd84ee4e85b92226c8c8a07af6d3f5501015adfbbb403b90b5f",
+    "lastHarvestedAt": "2026-10-17T06:39:23.820Z",
     "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8"
   },
   "amplifthq-opentag": {
