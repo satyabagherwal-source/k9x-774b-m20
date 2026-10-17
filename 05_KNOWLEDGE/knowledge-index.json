@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T09:08:20.123Z",
+  "last_updated": "2026-10-17T09:11:22.716Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11743,7 +11743,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
       "source_version": "hf-comfy-org-minimax-h3",
-      "content_hash": "4e6383c92469cf74868eeafa7141d926acb5f476db51476d211fc2dec10dc383",
+      "content_hash": "1e6fba5bb1a72e17f94821e964c3cfb0e8451c5f3311d9b3a3e9cd5d2e1e3ce5",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -11760,6 +11760,16 @@
         {
           "number": 1287,
           "title": "Asymmetric Toolchain Quantization Selection Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1409,
+          "title": "Embedding Injection Protocol Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1410,
+          "title": "Pruned vs. Full Model Naming Convention Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -11781,7 +11791,7 @@
         "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
         "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o"
       ],
-      "verified_at": "2026-10-17T01:09:28.890Z",
+      "verified_at": "2026-10-17T09:11:22.711Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

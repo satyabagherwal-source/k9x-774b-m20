@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T09:08:20.154Z",
-  "total_cycles_completed": 2065,
-  "total_learnings_persisted": 2065,
-  "total_rules_promoted": 1185,
+  "last_updated": "2026-10-17T09:11:22.739Z",
+  "total_cycles_completed": 2066,
+  "total_learnings_persisted": 2066,
+  "total_rules_promoted": 1187,
   "history": [
-    {
-      "timestamp": "2026-10-16T21:56:04.085Z",
-      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T21:58:55.802Z",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T09:08:20.154Z",
       "repository": "google-t5/t5-small",
       "learningId": "learn-huggingface-google-t5-t5-small",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T09:11:22.739Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }

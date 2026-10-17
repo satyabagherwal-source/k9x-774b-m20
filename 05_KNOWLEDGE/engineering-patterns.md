@@ -94464,3 +94464,114 @@ def test_relative_bucket_boundary_invariants():
 ```
 
 ---
+
+
+---
+
+## 1409. Embedding Injection Protocol Invariant (Harvested from Comfy-Org/MiniMax-H3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Embedding Injection Protocol Invariant",
+  "source": "Comfy-Org/MiniMax-H3",
+  "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+  "source_version": "hf-comfy-org-minimax-h3",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T09:11:22.644Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-comfy-org-minimax-h3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/MiniMax-H3](https://huggingface.co/Comfy-Org/MiniMax-H3) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When providing pre-computed prompt embeddings for a diffusion model, you MUST define a strict, parseable prefix protocol (e.g., `embedding:<filename>`) and document it in the model's metadata or README. The consuming application MUST validate the existence of the file before attempting to load it.
+
+**WHY**:
+Standard text encoders process raw text. Pre-computed embeddings bypass this. If the user types `embedding:nonexistent_file`, the system must fail gracefully with a clear error, not crash or silently ignore the prompt. The prefix acts as a **type discriminator** for the input parser.
+
+**WHEN TO APPLY**:
+Any system that allows user-provided binary assets (embeddings, LoRAs) to be injected into a text-based prompt pipeline.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for ComfyUI-like parser
+def parse_prompt(prompt_string, embeddings_dir):
+    if prompt_string.startswith("embedding:"):
+        filename = prompt_string.split(":", 1)[1]
+        filepath = os.path.join(embeddings_dir, filename)
+        if not os.path.exists(filepath):
+            raise FileNotFoundError(f"Embedding file '{filename}' not found in {embeddings_dir}")
+        return load_safetensors(filepath)
+    else:
+        return encode_text(prompt_string)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# Anti-pattern: Implicit loading without validation
+if "embedding" in prompt:
+    # Guess the filename, load it, hope it works
+    data = load_safetensors(prompt) # Crashes if file doesn't exist
+```
+
+**VERIFICATION METHOD**:
+Unit test that calls `parse_prompt("embedding:missing_file", "/tmp")` and asserts that a `FileNotFoundError` is raised with a descriptive message.
+
+
+---
+
+## 1410. Pruned vs. Full Model Naming Convention Invariant (Harvested from Comfy-Org/MiniMax-H3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pruned vs. Full Model Naming Convention Invariant",
+  "source": "Comfy-Org/MiniMax-H3",
+  "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+  "source_version": "hf-comfy-org-minimax-h3",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T09:11:22.686Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-comfy-org-minimax-h3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/MiniMax-H3](https://huggingface.co/Comfy-Org/MiniMax-H3) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing "pruned" or "distilled" versions of a model, you MUST explicitly include the word `pruned` or `distilled` in the filename and document the **architectural difference** (e.g., reduced channel count, fewer layers). You MUST NOT use ambiguous names like `model_small` or `model_fast`.
+
+**WHY**:
+"Pruned" implies a structural change (fewer parameters), while "quantized" implies a precision change (same structure, lower bits). Users need to know if the model's output distribution has shifted significantly. Ambiguous names lead to users expecting full-quality output from a pruned model, resulting in perceived "bugs" that are actually expected behavior.
+
+**WHEN TO APPLY**:
+Any ML model distribution that includes architectural modifications (pruning, distillation, layer skipping).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```text
+minimax_h3_fl2va_pruned_bf16.safetensors
+minimax_h3_fl2va_bf16.safetensors
+```
+
+**NEGATIVE CONSTRAINT**:
+```text
+minimax_h3_fast.safetensors
+minimax_h3_light.safetensors
+```
+*(These names do not convey the technical nature of the modification.)*
+
+**VERIFICATION METHOD**:
+Linting script that checks all `.safetensors` filenames against a regex pattern that requires explicit modifiers (`pruned`, `quantized`, `distilled`) if the file size is significantly smaller than the baseline `bf16` version.
