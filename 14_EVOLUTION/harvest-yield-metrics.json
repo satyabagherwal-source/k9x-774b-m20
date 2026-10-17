@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T11:50:17.373Z",
-  "total_cycles_completed": 2114,
-  "total_learnings_persisted": 2114,
+  "last_updated": "2026-10-17T11:53:19.955Z",
+  "total_cycles_completed": 2115,
+  "total_learnings_persisted": 2115,
   "total_rules_promoted": 1220,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:40:23.960Z",
-      "repository": "unsloth/embeddinggemma-2-GGUF",
-      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:43:36.065Z",
       "repository": "Cloudflare/clef",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T11:50:17.373Z",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T11:53:19.955Z",
+      "repository": "nomic-ai/nomic-embed-text-v1.5",
+      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
