@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T04:34:25.743Z",
-  "total_cycles_completed": 1988,
-  "total_learnings_persisted": 1988,
+  "last_updated": "2026-10-17T04:37:35.180Z",
+  "total_cycles_completed": 1989,
+  "total_learnings_persisted": 1989,
   "total_rules_promoted": 1083,
   "history": [
-    {
-      "timestamp": "2026-10-16T17:26:13.311Z",
-      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T17:29:03.942Z",
       "repository": "amazon/chronos-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T04:34:25.743Z",
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
       "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T04:37:35.180Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-jialinyyzz-humanizer",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-4HDN",
-    "timestamp": "2026-10-15T23:54:50.747Z",
-    "repository": "PSRben/VisionHOPE",
-    "learningId": "learn-huggingface-psrben-visionhope",
-    "contentHash": "8b356c8bb0d2a4d621de64dc8c67e33714978a2867a275601830de43aa6fee89",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-8IZ6",
     "timestamp": "2026-10-15T23:57:59.442Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "OpenMOSS-Team/MOSS-Image-Base",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base",
     "contentHash": "0df2b3511814ae79d0fa9b512860fabac151f3b6db04b58de9b927251289c69c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-NXVS",
+    "timestamp": "2026-10-17T04:37:35.176Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-jialinyyzz-humanizer",
+    "contentHash": "40714af897cba0d670262bce5b9395bda8e12462cd3c963730e92b30d75b4ede",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

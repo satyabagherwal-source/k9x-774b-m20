@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T04:34:25.704Z",
+  "last_updated": "2026-10-17T04:37:35.141Z",
   "total_verified_learnings": 193,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14333,7 +14333,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jialinyyzz/humanizer",
       "source_version": "hf-jialinyyzz-humanizer",
-      "content_hash": "8456623ce832f2283d7280f8d136da5ba13928533f1527c9f63300235dfaf162",
+      "content_hash": "40714af897cba0d670262bce5b9395bda8e12462cd3c963730e92b30d75b4ede",
       "dossier_path": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md",
       "promoted_rules": [
@@ -14370,7 +14370,7 @@
         "learn-huggingface-hf-jialinyyzz-humanizer-mv41atmq",
         "learn-huggingface-hf-jialinyyzz-humanizer-mv4fa4lf"
       ],
-      "verified_at": "2026-10-16T20:58:22.750Z",
+      "verified_at": "2026-10-17T04:37:35.133Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

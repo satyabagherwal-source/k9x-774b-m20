@@ -2011,3 +2011,4 @@
 | `CYCLE-20261017-BIG1` | `2026-10-17T04:27:55.297Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`490076cf...`) |
 | `CYCLE-20261017-FYTJ` | `2026-10-17T04:31:23.143Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 982, Rule 1312, Rule 678` | Yes (`d1ab310f...`) |
 | `CYCLE-20261017-JVPN` | `2026-10-17T04:34:25.739Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`0df2b351...`) |
+| `CYCLE-20261017-NXVS` | `2026-10-17T04:37:35.176Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`40714af8...`) |
