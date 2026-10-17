@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T18:59:37.751Z",
+  "last_updated": "2026-10-17T19:02:46.685Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16926,7 +16926,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "e3a3f7581a40e974aaa58da9f83a2e8250418a962e2bdae7768012486051f10b",
+      "content_hash": "4d27dbb7c959f229360dd3335af1afe2dd82286a2b7e6633e01ae92cf4fe0afd",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [
@@ -16969,6 +16969,16 @@
           "number": 1438,
           "title": "Semantic Prompt-Weight Coupling in LoRA Fine-Tuning",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1512,
+          "title": "Temporal Loop Closure Invariant in Generative Video",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1513,
+          "title": "Frozen-Scene Camera Motion Separation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16988,7 +16998,7 @@
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv3xukgu",
         "learn-huggingface-hf-pablodawson-minimax-h3-360-orbit-lora-mv4ckgca"
       ],
-      "verified_at": "2026-10-17T11:04:55.421Z",
+      "verified_at": "2026-10-17T19:02:46.681Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

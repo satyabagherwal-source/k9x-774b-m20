@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T18:59:37.783Z",
-  "total_cycles_completed": 2243,
-  "total_learnings_persisted": 2243,
-  "total_rules_promoted": 1291,
+  "last_updated": "2026-10-17T19:02:46.709Z",
+  "total_cycles_completed": 2244,
+  "total_learnings_persisted": 2244,
+  "total_rules_promoted": 1293,
   "history": [
-    {
-      "timestamp": "2026-10-17T07:44:41.727Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T07:49:07.631Z",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -1403,6 +1396,13 @@
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
       "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T19:02:46.709Z",
+      "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
+      "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
