@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T19:50:35.448Z",
-  "total_cycles_completed": 2259,
-  "total_learnings_persisted": 2259,
+  "last_updated": "2026-10-17T19:53:55.692Z",
+  "total_cycles_completed": 2260,
+  "total_learnings_persisted": 2260,
   "total_rules_promoted": 1297,
   "history": [
-    {
-      "timestamp": "2026-10-17T08:49:30.949Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T08:52:24.146Z",
       "repository": "google/electra-base-discriminator",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T19:50:35.448Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
       "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T19:53:55.692Z",
+      "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
+      "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
