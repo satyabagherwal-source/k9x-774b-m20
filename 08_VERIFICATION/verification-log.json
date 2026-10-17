@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-EEQL",
-    "timestamp": "2026-10-16T18:42:18.525Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-    "contentHash": "0162e68e5dd42a964e22747b649de46d96631c8a1f23d8ce324c7dc6cc25555b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-I9H5",
     "timestamp": "2026-10-16T18:45:18.329Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
     "contentHash": "91b49b937bdaf719c18b7af083b0be80dcb4b527df5496a4549ca0719ea3ee4b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-YB37",
+    "timestamp": "2026-10-17T22:57:23.875Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "c7604653252230e58756a345f12d6e635073ea180b623f9e79b6819bae3076c0",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

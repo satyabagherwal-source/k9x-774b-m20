@@ -2334,3 +2334,4 @@
 | `CYCLE-20261017-LIDN` | `2026-10-17T22:47:26.796Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`cebd2063...`) |
 | `CYCLE-20261017-PRJF` | `2026-10-17T22:50:45.291Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`28e860ef...`) |
 | `CYCLE-20261017-TVLD` | `2026-10-17T22:53:57.169Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`91b49b93...`) |
+| `CYCLE-20261017-YB37` | `2026-10-17T22:57:23.875Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`c7604653...`) |
