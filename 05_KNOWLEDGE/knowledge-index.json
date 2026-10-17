@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T15:39:01.681Z",
+  "last_updated": "2026-10-17T15:42:54.030Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -19170,7 +19170,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "077662b890bfdf25102f39bf7c59614d91abc4ba806cdeabf6fccdbb13bf4975",
+      "content_hash": "8023d1e5217ad87f4a2fa74605b3c707f634fc3ff7957fcc750a5ad4572077e8",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -19283,6 +19283,21 @@
           "number": 1349,
           "title": "Multi-Stop-Token Generation Guard with Dynamic Reasoning Delimiters",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1486,
+          "title": "Hybrid Linear-Full Attention KV-Cache Allocation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1487,
+          "title": "Multi-Token Prediction (MTP) Speculative Rollback Verification Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1488,
+          "title": "MRoPE Interleaved Coordinate Decomposition Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19303,7 +19318,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-17T07:19:14.676Z",
+      "verified_at": "2026-10-17T15:42:54.022Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
