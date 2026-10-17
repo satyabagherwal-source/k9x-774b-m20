@@ -2118,3 +2118,4 @@
 | `CYCLE-20261017-MN4D` | `2026-10-17T10:40:29.581Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`662c02e4...`) |
 | `CYCLE-20261017-R15A` | `2026-10-17T10:43:54.382Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`29e8cba2...`) |
 | `CYCLE-20261017-WDK5` | `2026-10-17T10:48:03.749Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1431, Rule 1432, Rule 1433` | Yes (`6b71039d...`) |
+| `CYCLE-20261017-09EM` | `2026-10-17T10:51:04.990Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`9052fd58...`) |
