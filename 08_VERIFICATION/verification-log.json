@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-TOYG",
-    "timestamp": "2026-10-16T08:38:20.056Z",
-    "repository": "google/electra-base-discriminator",
-    "learningId": "learn-huggingface-google-electra-base-discriminator",
-    "contentHash": "559fa099ea20e3dfe8e89aeba11b5f25527ec12fca9ffcbabea53b7178c9677a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-XX80",
     "timestamp": "2026-10-16T08:41:37.392Z",
     "repository": "BAAI/bge-m3",
@@ -7490,6 +7475,21 @@
     "repository": "black-forest-labs/flux-3-image-klein-comfy",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
     "contentHash": "005484aa13061eb13f08021bb2c0e20a83f8ce391f63ee6b6c5ab2116bf111d0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-RE12",
+    "timestamp": "2026-10-17T13:32:08.774Z",
+    "repository": "autotrust/JEV-35B-NVFP4",
+    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+    "contentHash": "533164c398eb033e9a2313f140c5ce5ac98cf400f0797b5e05c0007af76606d3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

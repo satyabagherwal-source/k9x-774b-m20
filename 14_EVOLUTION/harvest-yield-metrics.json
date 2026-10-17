@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T13:28:47.750Z",
-  "total_cycles_completed": 2140,
-  "total_learnings_persisted": 2140,
+  "last_updated": "2026-10-17T13:32:08.779Z",
+  "total_cycles_completed": 2141,
+  "total_learnings_persisted": 2141,
   "total_rules_promoted": 1232,
   "history": [
-    {
-      "timestamp": "2026-10-17T02:03:10.729Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T02:06:43.306Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T13:28:47.750Z",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
       "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T13:32:08.779Z",
+      "repository": "autotrust/JEV-35B-NVFP4",
+      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
