@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T09:55:31.867Z",
+  "last_updated": "2026-10-17T09:58:27.583Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17258,7 +17258,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "9b70b7a8444ac44f0a240cbfa4437a3aad10e01195fb20d54fc8f2c0ea14e34b",
+      "content_hash": "b8f09d8744952790253639de1be58eac40326cf5ebe18582569b4ebfc17d816a",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "promoted_rules": [],
@@ -17280,7 +17280,7 @@
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4ajtgj",
         "learn-huggingface-hf-qwen-qwen3-8-flash-next-mv4nwg64"
       ],
-      "verified_at": "2026-10-17T01:53:47.071Z",
+      "verified_at": "2026-10-17T09:58:27.577Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
