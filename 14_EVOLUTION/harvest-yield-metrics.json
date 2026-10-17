@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:28:44.591Z",
-  "total_cycles_completed": 2270,
-  "total_learnings_persisted": 2270,
+  "last_updated": "2026-10-17T20:31:59.653Z",
+  "total_cycles_completed": 2271,
+  "total_learnings_persisted": 2271,
   "total_rules_promoted": 1300,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:27:54.494Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T09:31:14.267Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T20:28:44.591Z",
       "repository": "lilylilith/QI_2.1_AnyAngle",
       "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T20:31:59.653Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

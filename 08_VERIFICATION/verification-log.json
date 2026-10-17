@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-5KKD",
-    "timestamp": "2026-10-16T16:15:28.093Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-facebook-sam3",
-    "contentHash": "14243c749698c8bb3e9476671a88132af11f6ab5a6d67578376591595cb63036",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-9MMY",
     "timestamp": "2026-10-16T16:18:37.402Z",
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "lilylilith/QI_2.1_AnyAngle",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
     "contentHash": "b78b38e534fa262827e429e71c511e2936ef783294f93f780c22df4dcea8cd95",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-RBFK",
+    "timestamp": "2026-10-17T20:31:59.648Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "a5614cf23de6c3061d0fbab4caf31a304cd823e1be20218d6bc5de0639d154fb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
