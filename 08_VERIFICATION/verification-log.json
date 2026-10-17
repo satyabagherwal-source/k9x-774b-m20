@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-WC51",
-    "timestamp": "2026-10-16T02:36:28.405Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "25f20a07854c906669164e6e3855c21a25b6166288db00c989d181f65af9bc93",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-0BL6",
     "timestamp": "2026-10-16T02:39:34.314Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "15150a43be171f8b8fe075ef3e16742c674cba19e4f5b70737cda32c07452d44",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-WBYV",
+    "timestamp": "2026-10-17T07:32:04.375Z",
+    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+    "contentHash": "18ee56fb366ea495cb594dcd95aa86270743dfcdb4cfb70608edf2d58ffa0bc0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

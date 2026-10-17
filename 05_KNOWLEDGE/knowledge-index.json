@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:27:52.112Z",
+  "last_updated": "2026-10-17T07:32:04.355Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9342,7 +9342,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "f01b72feaaca0b8d22a920d2749b3412efaba7d94e38ce9eedc3a477168daa9f",
+      "content_hash": "18ee56fb366ea495cb594dcd95aa86270743dfcdb4cfb70608edf2d58ffa0bc0",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [
@@ -9370,6 +9370,16 @@
           "number": 1268,
           "title": "Identity-Motion Decoupling in V2V Pipelines",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1356,
+          "title": "Additive Multi-Adapter Quantization-Aware Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1357,
+          "title": "Dual Conditioning Temporal Sequence Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9390,7 +9400,7 @@
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv46r4cy",
         "learn-huggingface-hf-akatz-ai-minimax-h3-character-swap-lora-mv4k1h95"
       ],
-      "verified_at": "2026-10-16T23:50:54.507Z",
+      "verified_at": "2026-10-17T07:32:04.349Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
