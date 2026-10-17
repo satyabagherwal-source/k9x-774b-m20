@@ -1655,8 +1655,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
     "license": "Open-Source",
-    "contentHash": "e2cddc26fe511c82a86f9b470691734667937de534b249b421b7b0136be3adc9",
-    "lastHarvestedAt": "2026-10-17T09:14:08.813Z",
+    "contentHash": "c272470c5e7bca118e254a63ce21b7f5384839a67d7c79a812fa581eaabb4fef",
+    "lastHarvestedAt": "2026-10-17T17:14:16.984Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {

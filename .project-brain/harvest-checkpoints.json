@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T17:11:08.142Z",
+  "last_updated": "2026-10-17T17:14:16.987Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2608,14 +2608,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "content_hash": "e2cddc26fe511c82a86f9b470691734667937de534b249b421b7b0136be3adc9",
-      "verified_at": "2026-10-17T09:14:08.815Z",
+      "content_hash": "c272470c5e7bca118e254a63ce21b7f5384839a67d7c79a812fa581eaabb4fef",
+      "verified_at": "2026-10-17T17:14:16.987Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T09:14:08.815Z"
+      "last_updated": "2026-10-17T17:14:16.987Z"
     },
     "nvidia/Qwen3.8-Flash-Next-FP4-Local": {
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",

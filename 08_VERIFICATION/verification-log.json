@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-JSE2",
-    "timestamp": "2026-10-16T12:42:34.490Z",
-    "repository": "jialinyyzz/humanizer",
-    "learningId": "learn-huggingface-jialinyyzz-humanizer",
-    "contentHash": "0b53a5e46b95cbe4b9135af761f84b3f5b7e42e90195ebd02d21bce8b6a53a59",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-NUL0",
     "timestamp": "2026-10-16T12:45:43.956Z",
     "repository": "autotrust/JEV-27B-VL",
@@ -7492,6 +7477,21 @@
     "contentHash": "265856368253bc2e8ea554d7b0bb7a875c639c394fa3c386a89a85c456008fc5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-P252",
+    "timestamp": "2026-10-17T17:14:16.982Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "c272470c5e7bca118e254a63ce21b7f5384839a67d7c79a812fa581eaabb4fef",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

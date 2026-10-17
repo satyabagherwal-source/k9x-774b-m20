@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T17:11:08.141Z",
-  "total_cycles_completed": 2209,
-  "total_learnings_persisted": 2209,
+  "last_updated": "2026-10-17T17:14:16.985Z",
+  "total_cycles_completed": 2210,
+  "total_learnings_persisted": 2210,
   "total_rules_promoted": 1281,
   "history": [
-    {
-      "timestamp": "2026-10-17T05:44:59.927Z",
-      "repository": "moonshotai/Kimi-K3",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T05:47:59.636Z",
       "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -1403,6 +1396,13 @@
       "repository": "Comfy-Org/MiniMax-H3",
       "learningId": "learn-huggingface-comfy-org-minimax-h3",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T17:14:16.985Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
