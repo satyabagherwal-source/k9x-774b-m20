@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T18:02:22.489Z",
-  "total_cycles_completed": 2225,
-  "total_learnings_persisted": 2225,
+  "last_updated": "2026-10-17T18:05:24.444Z",
+  "total_cycles_completed": 2226,
+  "total_learnings_persisted": 2226,
   "total_rules_promoted": 1286,
   "history": [
-    {
-      "timestamp": "2026-10-17T06:36:15.074Z",
-      "repository": "SupersonicLabs/Julia-1",
-      "learningId": "learn-huggingface-supersoniclabs-julia-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T06:39:23.821Z",
       "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T18:02:22.489Z",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T18:05:24.444Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
