@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-UXT0",
-    "timestamp": "2026-10-16T10:03:17.028Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "6cf063c752da2ad5ef36b64d3cf9795b73721e287c46fa263f22fddf3c2b7f8e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-YYEW",
     "timestamp": "2026-10-16T10:06:24.440Z",
     "repository": "fishaudio/drama-3",
@@ -7490,6 +7475,21 @@
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
     "contentHash": "23951c8fcf843f21e3d1fc13ae825588f6e7a57d2596e0ae8ff6fa8c1dd2d71a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-15E7",
+    "timestamp": "2026-10-17T14:35:43.375Z",
+    "repository": "XingChen-AGI/TeleOCR",
+    "learningId": "learn-huggingface-xingchen-agi-teleocr",
+    "contentHash": "f3479cb4e289d43e275fba19da99d255f25ef4851745bf219490ea2ca0aaf24e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

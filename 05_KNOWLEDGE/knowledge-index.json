@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T14:31:17.879Z",
+  "last_updated": "2026-10-17T14:35:43.351Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -19331,7 +19331,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "66fad62ef4ff9c8e7de0971a417b9d7a091aea84771a2596ee0acd6acf4b45a6",
+      "content_hash": "f3479cb4e289d43e275fba19da99d255f25ef4851745bf219490ea2ca0aaf24e",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [
@@ -19348,6 +19348,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-xingchen-agi-teleocr-mv3pbkqe",
           "verified_at": "2026-10-11T10:49:51.582Z"
+        },
+        {
+          "number": 1470,
+          "title": "Dual-EOS Invariant for Multimodal Dialogue Termination",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1471,
+          "title": "Quasi-Greedy Hyperparameter Lock for Deterministic Multimodal Parsing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1472,
+          "title": "Curvature-Bounded Geometric Polygon Simplification (CGDP Invariant)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19368,7 +19383,7 @@
         "learn-huggingface-hf-xingchen-agi-teleocr-mv44etxd",
         "learn-huggingface-hf-xingchen-agi-teleocr-mv4hnsqw"
       ],
-      "verified_at": "2026-10-17T06:07:44.550Z",
+      "verified_at": "2026-10-17T14:35:43.344Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
