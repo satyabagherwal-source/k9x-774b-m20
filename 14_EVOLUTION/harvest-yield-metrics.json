@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T14:41:56.290Z",
-  "total_cycles_completed": 2162,
-  "total_learnings_persisted": 2162,
+  "last_updated": "2026-10-17T14:45:07.008Z",
+  "total_cycles_completed": 2163,
+  "total_learnings_persisted": 2163,
   "total_rules_promoted": 1251,
   "history": [
-    {
-      "timestamp": "2026-10-17T03:14:22.203Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T03:17:09.718Z",
       "repository": "black-forest-labs/flux-3-image-klein",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T14:41:56.290Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
       "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T14:45:07.008Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

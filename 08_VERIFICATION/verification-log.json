@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-6Y4M",
-    "timestamp": "2026-10-16T10:12:37.318Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "328da29385807fe7ab980e3e3e10595cb7acccc795e32887f378c254bd61bde7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-B5GZ",
     "timestamp": "2026-10-16T10:15:53.459Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "Contrastive-LM/CLM-v0.1-8B",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
     "contentHash": "e3401467eda58f68fb1ba7f5e89d0ffe6b10e4e6462aad97d1b174b21ce448a5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-D8AK",
+    "timestamp": "2026-10-17T14:45:07.004Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "d7724aea2f66451738aa0a9a17442015423be0e6e20872339631652e4ae24964",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
