@@ -2019,3 +2019,4 @@
 | `CYCLE-20261017-9HLC` | `2026-10-17T04:54:20.496Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`10351f1a...`) |
 | `CYCLE-20261017-DOQZ` | `2026-10-17T04:57:36.395Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule EXISTING` | Yes (`f23f6d1e...`) |
 | `CYCLE-20261017-HJ7U` | `2026-10-17T05:00:35.850Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`78e43ecd...`) |
+| `CYCLE-20261017-LWLC` | `2026-10-17T05:03:59.808Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`097e4bd4...`) |

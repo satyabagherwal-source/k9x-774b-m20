@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0YK1",
-    "timestamp": "2026-10-16T00:20:06.001Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "37f4499c440a010bf13e371c59b09f74d545a868348180405d1f3596b224725a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-595P",
     "timestamp": "2026-10-16T00:23:26.365Z",
     "repository": "Cloudflare/clef",
@@ -7490,6 +7475,21 @@
     "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
     "contentHash": "78e43ecd66244d9224a221b627af1776c4b275e6f24f0f31aaba8d5c7ecedfd3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-LWLC",
+    "timestamp": "2026-10-17T05:03:59.808Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "097e4bd4d37edf28ab8ffb8a33c0b6c37ba79b05b426aae868b60b76a3d3eccf",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
