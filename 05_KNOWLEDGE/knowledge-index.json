@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T06:45:43.722Z",
+  "last_updated": "2026-10-17T06:48:49.031Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9566,7 +9566,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "b42c055e158f10cf463dea6b032f28805275c4653edf4bae24ad26baf156ac47",
+      "content_hash": "4c6178a22ac971dec690905ef1f23eada238382a2aa1dfa046461d5d606d4314",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -9685,6 +9685,21 @@
           "number": 1257,
           "title": "[Attention Bias Invariant]",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1333,
+          "title": "Consistent Data‑Type Across Model, Tokenizer, and Generation Config",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Token‑ID Consistency Across Configurations",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 1334,
+          "title": "Attention‑Bias Invariant for Qwen3_5ForCausalLM",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9705,7 +9720,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-16T23:14:43.999Z",
+      "verified_at": "2026-10-17T06:48:49.026Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
