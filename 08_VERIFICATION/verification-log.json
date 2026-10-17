@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-2ST7",
-    "timestamp": "2026-10-15T20:37:34.939Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-bingsu-adetailer",
-    "contentHash": "3f1c4a63454d5c99433f21b303711a0963ced221058a411baf4a5798d11f87d5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-6UF0",
     "timestamp": "2026-10-15T20:40:43.644Z",
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -7492,6 +7477,21 @@
     "contentHash": "9892a928e18f00a536481e2f28082a2c3121d22615c39d30792471513b6b5966",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-G3VC",
+    "timestamp": "2026-10-17T01:15:32.376Z",
+    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
+    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
+    "contentHash": "709168b749f88f69cb446f229c4adb804e9713495f811693744e781df1a9d3a5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

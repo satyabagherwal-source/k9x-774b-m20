@@ -1948,3 +1948,4 @@
 | `CYCLE-20261017-302V` | `2026-10-17T01:05:20.935Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`34324f6f...`) |
 | `CYCLE-20261017-8BFF` | `2026-10-17T01:09:28.924Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1285, Rule 1286, Rule 1287` | Yes (`4e6383c9...`) |
 | `CYCLE-20261017-CF3I` | `2026-10-17T01:12:40.302Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1288, Rule 1289` | Yes (`9892a928...`) |
+| `CYCLE-20261017-G3VC` | `2026-10-17T01:15:32.376Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`709168b7...`) |
