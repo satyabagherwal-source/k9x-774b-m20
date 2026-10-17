@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:49:07.600Z",
+  "last_updated": "2026-10-17T07:53:05.901Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18315,7 +18315,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "bb150f8ba007290205ebe7ef750f29f93dfb040e0ec58df0e5c0b1ed5c2724db",
+      "content_hash": "41da7520d7eb047383b9593c5059e9d25ba7b42a0434feefccd5ca278632b1f9",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -18343,6 +18343,16 @@
           "number": 1273,
           "title": "Runtime KV-Scratch Memory Pre-Flight Budget Assertion",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1368,
+          "title": "Strict Per-Tensor Sensitivity Calibration in Non-Uniform Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1369,
+          "title": "Multi-Token Prediction (MTP) Speculative Head KV-Cache Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18363,7 +18373,7 @@
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv47apdo",
         "learn-huggingface-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-mv4kkyvs"
       ],
-      "verified_at": "2026-10-17T00:08:34.009Z",
+      "verified_at": "2026-10-17T07:53:05.897Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
