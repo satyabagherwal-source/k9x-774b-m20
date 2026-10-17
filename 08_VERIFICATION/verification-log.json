@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-361G",
-    "timestamp": "2026-10-16T11:33:39.796Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "cf0830639130840ea47be50e23374102b20b323b0fe761aedfc05ca1f6ad358c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-6XTD",
     "timestamp": "2026-10-16T11:36:35.761Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -7490,6 +7475,21 @@
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "contentHash": "97a44fb08d99f6c53ca20626f7e82eefacb30beffc7addbb2f6d27b1a93da255",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-7KJR",
+    "timestamp": "2026-10-17T16:04:41.799Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "b0e31afc35bf667e2792d8820e8000df1462afe21f66dc301375531b67d79508",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
