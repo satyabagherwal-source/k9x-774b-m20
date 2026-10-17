@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T02:16:11.195Z",
+  "last_updated": "2026-10-17T02:20:03.408Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10850,10 +10850,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/bigscience/bloom",
       "source_version": "hf-bigscience-bloom",
-      "content_hash": "d104497f3023764b7ae299f86e1d954b52fb9df983f60a0ae0ec307195f1cda1",
+      "content_hash": "98e6c0a1f54856aa693590f70c879a270d19039373a32ad3c044f73e4c58761d",
       "dossier_path": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1295,
+          "title": "Invariant FP32 Softmax Accumulation in Distributed Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1296,
+          "title": "Autoregressive Left-Padding Invariant for Causal Key-Value Caching",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1297,
+          "title": "Post-Embedding Normalization Invariant for Extreme Multilingual Vocabularies",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -10871,7 +10887,7 @@
         "learn-huggingface-hf-bigscience-bloom-mv3wl1kr",
         "learn-huggingface-hf-bigscience-bloom-mv4ba34m"
       ],
-      "verified_at": "2026-10-16T18:26:25.111Z",
+      "verified_at": "2026-10-17T02:20:03.403Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1968,3 +1968,4 @@
 | `CYCLE-20261017-DWFE` | `2026-10-17T02:09:48.650Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`6aba8d74...`) |
 | `CYCLE-20261017-HXST` | `2026-10-17T02:12:57.053Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`29b14331...`) |
 | `CYCLE-20261017-M3MO` | `2026-10-17T02:16:11.232Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1293, Rule 1294` | Yes (`f9b86b88...`) |
+| `CYCLE-20261017-R2SP` | `2026-10-17T02:20:03.433Z` | `bigscience/bloom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1295, Rule 1296, Rule 1297` | Yes (`98e6c0a1...`) |
