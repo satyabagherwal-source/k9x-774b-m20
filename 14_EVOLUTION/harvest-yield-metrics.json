@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:41:27.932Z",
-  "total_cycles_completed": 2274,
-  "total_learnings_persisted": 2274,
+  "last_updated": "2026-10-17T20:44:39.570Z",
+  "total_cycles_completed": 2275,
+  "total_learnings_persisted": 2275,
   "total_rules_promoted": 1302,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:41:45.663Z",
-      "repository": "hexgrad/Kokoro-82M",
-      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T09:45:53.332Z",
       "repository": "vllm-sr/d3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T20:41:27.932Z",
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
       "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T20:44:39.570Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-jialinyyzz-humanizer",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-OIT6",
-    "timestamp": "2026-10-16T16:30:12.282Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "0891d257be9cc6399989d93c464edb5bbaf1fc3b0eb5f0f77c9dbf1b0ded1e63",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-SL5N",
     "timestamp": "2026-10-16T16:33:21.947Z",
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "OpenMOSS-Team/MOSS-Image-Base",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base",
     "contentHash": "5d181fa2e435923997934691fe624535adf93a7ca70c08ed2cc167b4f3082b24",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-7LSD",
+    "timestamp": "2026-10-17T20:44:39.565Z",
+    "repository": "jialinyyzz/humanizer",
+    "learningId": "learn-huggingface-jialinyyzz-humanizer",
+    "contentHash": "cf5882f57c0768aeee803d0aeb11727fa05c23f2e4b63eaaf8ac0e99da78cb9a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
