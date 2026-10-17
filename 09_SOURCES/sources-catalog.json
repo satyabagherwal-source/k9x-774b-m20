@@ -1085,8 +1085,8 @@
     "sourceUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
     "sourceVersion": "hf-naiveai-naive-n0.5-flash",
     "license": "Open-Source",
-    "contentHash": "b4275c19f32b8833541f3690b29c814a2eb997faf24fc63befac7eebbf6929ad",
-    "lastHarvestedAt": "2026-10-17T03:04:44.485Z",
+    "contentHash": "30d5d579334d7caec7d6245f7356a80a11ff49461bcfd3fd94bb0927695bf356",
+    "lastHarvestedAt": "2026-10-17T11:11:13.155Z",
     "learningId": "learn-huggingface-naiveai-naive-n0-5-flash"
   },
   "hf-openai-clip-vit-base-patch32": {
