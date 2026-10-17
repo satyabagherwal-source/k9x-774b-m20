@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T15:23:40.380Z",
-  "total_cycles_completed": 2175,
-  "total_learnings_persisted": 2175,
+  "last_updated": "2026-10-17T15:26:35.815Z",
+  "total_cycles_completed": 2176,
+  "total_learnings_persisted": 2176,
   "total_rules_promoted": 1260,
   "history": [
-    {
-      "timestamp": "2026-10-17T03:55:57.121Z",
-      "repository": "intfloat/multilingual-e5-small",
-      "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T03:59:27.082Z",
       "repository": "argmaxinc/whisperkit-coreml",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T15:23:40.380Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T15:26:35.815Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

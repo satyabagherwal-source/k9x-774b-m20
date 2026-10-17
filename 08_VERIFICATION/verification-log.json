@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-QCTN",
-    "timestamp": "2026-10-16T10:55:42.443Z",
-    "repository": "speridlabs/iris-3b",
-    "learningId": "learn-huggingface-speridlabs-iris-3b",
-    "contentHash": "9c542223d62b67baf06e3500ca97806821e6733ba918ea0f1393955b8746b651",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-U6UT",
     "timestamp": "2026-10-16T10:58:41.333Z",
     "repository": "Qwen/Qwen3-4B",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
     "contentHash": "42b633d76fff43ea07635fef1a1d0e5dbdc180fbddb86dcdd3119abc978301d9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-UKO4",
+    "timestamp": "2026-10-17T15:26:35.812Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "5221643349ce709511c18b029ddf09f665d784e06e5dd4838bcc3f0b9ac99138",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
