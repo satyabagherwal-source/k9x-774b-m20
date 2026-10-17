@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T02:30:09.407Z",
+  "last_updated": "2026-10-17T02:33:02.546Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15449,7 +15449,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
       "source_version": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
-      "content_hash": "ff0839dd92f192e61c2923bffe966742822d4fae96259a8972a0cc48879d5b80",
+      "content_hash": "ccd08260cf2316a07ee6edf1054869b18818e7748d5a712949f4863442d313f8",
       "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md",
       "promoted_rules": [],
@@ -15470,7 +15470,7 @@
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv3wzmkj",
         "learn-huggingface-hf-mistralai-mixtral-8x7b-instruct-v0-1-mv4bppvo"
       ],
-      "verified_at": "2026-10-16T18:38:56.095Z",
+      "verified_at": "2026-10-17T02:33:02.541Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

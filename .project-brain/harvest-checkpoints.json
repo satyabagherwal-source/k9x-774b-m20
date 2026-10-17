@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T02:30:09.448Z",
+  "last_updated": "2026-10-17T02:33:02.574Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1292,14 +1292,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "content_hash": "ff0839dd92f192e61c2923bffe966742822d4fae96259a8972a0cc48879d5b80",
-      "verified_at": "2026-10-16T18:38:56.144Z",
+      "content_hash": "ccd08260cf2316a07ee6edf1054869b18818e7748d5a712949f4863442d313f8",
+      "verified_at": "2026-10-17T02:33:02.574Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T18:38:56.144Z"
+      "last_updated": "2026-10-17T02:33:02.574Z"
     },
     "deepseek-ai/DeepSeek-V3": {
       "repository": "deepseek-ai/DeepSeek-V3",

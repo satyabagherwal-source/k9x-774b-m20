@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T02:30:09.447Z",
-  "total_cycles_completed": 1949,
-  "total_learnings_persisted": 1949,
+  "last_updated": "2026-10-17T02:33:02.573Z",
+  "total_cycles_completed": 1950,
+  "total_learnings_persisted": 1950,
   "total_rules_promoted": 1067,
   "history": [
-    {
-      "timestamp": "2026-10-16T14:57:03.054Z",
-      "repository": "Altworld/Hemmingway-1",
-      "learningId": "learn-huggingface-altworld-hemmingway-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T15:00:07.897Z",
       "repository": "fastino/GLiNER2.5-Decide",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T02:30:09.447Z",
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:33:02.573Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

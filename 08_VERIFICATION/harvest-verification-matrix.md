@@ -1972,3 +1972,4 @@
 | `CYCLE-20261017-UWZ8` | `2026-10-17T02:23:02.516Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`737a8a54...`) |
 | `CYCLE-20261017-05LF` | `2026-10-17T02:27:06.963Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1298, Rule 1299` | Yes (`f536faa4...`) |
 | `CYCLE-20261017-42EA` | `2026-10-17T02:30:09.442Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`4f0502bc...`) |
+| `CYCLE-20261017-7RZE` | `2026-10-17T02:33:02.570Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`ccd08260...`) |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-RZ31",
-    "timestamp": "2026-10-15T21:53:08.701Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "0c2ae29a0dc142c343589b66e520b5d0d46773af0225a1247ca64a741b9264fe",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-VRM2",
     "timestamp": "2026-10-15T21:56:05.642Z",
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Llama-2-7b",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b",
     "contentHash": "4f0502bca7cdc3190339906e889af0835469cf9ef114053769711f745f0caf5e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-7RZE",
+    "timestamp": "2026-10-17T02:33:02.570Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "ccd08260cf2316a07ee6edf1054869b18818e7748d5a712949f4863442d313f8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
