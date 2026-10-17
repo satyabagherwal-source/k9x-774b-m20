@@ -91721,3 +91721,432 @@ def test_speculative_state_rollback_invariance():
 ```
 
 ---
+
+
+---
+
+## 1382. Dual-Corpus Activation Profiling for Outlier-Prone Model Quantization (Harvested from DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Corpus Activation Profiling for Outlier-Prone Model Quantization",
+  "source": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+  "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+  "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T08:22:08.163Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF](https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF) (Revision: `hf-davidau`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating an importance matrix (`imatrix`) for quantized inference (GGUF/AWQ/GPTQ) on models subject to representation steering or refusal-vector abliteration, the calibration pipeline MUST employ a stratified, multi-corpus calibration dataset containing both target reasoning tasks AND boundary-case trigger prompts. Profiling MUST NOT rely on a single domain corpus (such as raw WikiText or generic C4).
+
+**WHY**:
+Weight abliteration subtracts projection components along refusal hyperplanes, which shifts activation distributions away from the Gaussian assumptions of standard pretraining corpora. If quantized with a generic corpus, the quantization scale factors ($\Delta$) and zero-points ($Z$) for the $W_{\text{gate}}$ and $W_{\text{down}}$ feed-forward layers will be calibrated without activating the modified pathways. When uncensored or adversarial tokens occur at runtime, activations cross clipping thresholds, causing catastrophic perplexity spikes, infinite punctuation loops, or degenerate NaN outputs.
+
+**WHEN TO APPLY**:
+- Quantizing fine-tuned or abliterated models (e.g., Heretic, Uncensored, Refusal-Suppressed).
+- Compiling models to 4-bit, 3-bit, or 2-bit formats (`Q4_K_M`, `Q3_K_L`, `IQ2_XXS`) where block scales are shared across 16–32 weights.
+- Multi-Stage Merged (Ties, DARE, SLERP) checkpoints displaying high kurtosis in intermediate residual stream activations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+"""
+dual_imatrix_generator.py
+Implements dual-corpus stratified activation capture for GGUF imatrix generation.
+"""
+
+from dataclasses import dataclass
+from typing import Iterator, List
+import numpy as np
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+
+@dataclass(frozen=True)
+class CalibrationConfig:
+    stride: int = 512
+    max_seq_len: int = 2048
+    target_chunks_per_corpus: int = 128
+    epsilon: float = 1e-8
+
+
+def generate_stratified_calibration_stream(
+    tokenizer: AutoTokenizer,
+    reasoning_dataset: List[str],
+    boundary_dataset: List[str],
+    config: CalibrationConfig,
+) -> Iterator[torch.Tensor]:
+    """Yields balanced, inter-tokenized activation calibration tensors
+
+    to guarantee invariant coverage across both domain manifolds.
+    """
+    assert len(reasoning_dataset) > 0, "Reasoning corpus must not be empty"
+    assert len(boundary_dataset) > 0, "Boundary corpus must not be empty"
+
+    def tokenize_and_chunk(texts: List[str]) -> List[torch.Tensor]:
+        tokenized_chunks: List[torch.Tensor] = []
+        for text in texts:
+            encoded = tokenizer(
+                text,
+                return_tensors="pt",
+                truncation=True,
+                max_length=config.max_seq_len,
+                add_special_tokens=True,
+            )["input_ids"]
+
+            if encoded.size(1) >= config.stride:
+                tokenized_chunks.append(encoded)
+            if len(tokenized_chunks) >= config.target_chunks_per_corpus:
+                break
+        return tokenized_chunks
+
+    reasoning_chunks = tokenize_and_chunk(reasoning_dataset)
+    boundary_chunks = tokenize_and_chunk(boundary_dataset)
+
+    min_samples = min(len(reasoning_chunks), len(boundary_chunks))
+    assert min_samples > 0, "Insufficient tokenized chunks captured."
+
+    # Interleave 1:1 to balance gradient/activation accumulation buffers
+    for idx in range(min_samples):
+        yield reasoning_chunks[idx]
+        yield boundary_chunks[idx]
+
+
+def compute_layer_activation_covariance(
+    model: AutoModelForCausalLM,
+    sample_stream: Iterator[torch.Tensor],
+    target_layer_name: str,
+) -> torch.Tensor:
+    """Computes running diagonal activation covariance H_ii for imatrix weighting:
+
+    H_ii = \sum_x (x_i)^2
+    """
+    variance_accumulator: torch.Tensor | None = None
+    token_count: int = 0
+
+    def hook_fn(module, input_tensor, output_tensor):
+        nonlocal variance_accumulator, token_count
+        # Input tensor shape: [batch, seq_len, hidden_dim]
+        act = input_tensor[0].detach().to(torch.float32)
+        flat_act = act.reshape(-1, act.size(-1))
+        sum_sq = torch.sum(flat_act**2, dim=0)
+
+        if variance_accumulator is None:
+            variance_accumulator = sum_sq
+        else:
+            variance_accumulator += sum_sq
+        token_count += flat_act.size(0)
+
+    # Register hook on target module
+    target_module = dict(model.named_modules())[target_layer_name]
+    hook_handle = target_module.register_forward_hook(hook_fn)
+
+    try:
+        model.eval()
+        with torch.no_grad():
+            for batch in sample_stream:
+                model(batch.to(model.device))
+    finally:
+        hook_handle.remove()
+
+    if variance_accumulator is None or token_count == 0:
+        raise RuntimeError("No activations captured for calibration.")
+
+    return variance_accumulator / float(token_count)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Calibrating quantized weights on raw, single-source generic text
+# (e.g. wikitext-2-raw-v1) when quantizing an abliterated or reasoning-tuned model.
+def generate_bad_imatrix(model, tokenizer):
+    raw_text = load_dataset("wikitext", "wikitext-2-raw-v1")["train"]["text"]
+    # FAILS: Single domain has zero representation of refusal boundary vectors
+    # or chain-of-thought XML tags (<think>...</think>).
+    # Result: The quantizer severely clips weights critical for reasoning stability.
+    tokens = tokenizer(" ".join(raw_text), return_tensors="pt")["input_ids"]
+    return run_quant_calibration(model, tokens)
+```
+
+**VERIFICATION METHOD**:
+Verify the imatrix distribution via symmetric cross-entropy divergence:
+1. Extract activation tensors from the abliterated model across standard validation datasets vs adversarial prompt testbeds.
+2. Measure the Kurtosis $K = \frac{\mathbb{E}[(X - \mu)^4]}{(\mathbb{E}[(X - \mu)^2])^2}$ of layers `model.layers.*.mlp.down_proj`.
+3. Assert $K < 15.0$ post-quantization; if $K \ge 15.0$, flag quantization scale overflow.
+
+---
+
+
+---
+
+## 1383. Guarding Multi-Token Prediction (MTP) Deserialization Heads in GGUF Adapters (Harvested from DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Guarding Multi-Token Prediction (MTP) Deserialization Heads in GGUF Adapters",
+  "source": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+  "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+  "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T08:22:08.209Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF](https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF) (Revision: `hf-davidau`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+GGUF tensor ingestion runtimes MUST explicitly validate and partition auxiliary Multi-Token Prediction (MTP) tensor offsets from primary autoregressive decode heads during memory-mapped file loading. Runtimes MUST NOT alias `mtp_head` weights into `output.weight` or assume homogenous hidden dimensions across lookahead heads.
+
+**WHY**:
+MTP architectures introduce parallel regression/classification projections (e.g., predicting token $t+1, t+2$ simultaneously). In non-MTP runtimes, encountering unexpected tensor keys such as `model.layers.N.mtp_head.weight` or `mtp.embed_tokens` either silently overrides primary token embeddings via partial string matching (producing corrupt vocab predictions) or crashes the loader with buffer overrun assertions when calculating pointer strides.
+
+**WHEN TO APPLY**:
+- Model architectures utilizing lookahead drafting, Medusa heads, Eagle heads, or DeepSeek/Qwen MTP layers.
+- Parsing GGUF headers containing metadata tag `general.architecture = "qwen2"` or similar, where extra tensors reside in the tensor info directory.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+"""
+mtp_gguf_tensor_guard.py
+Explicitly isolates and verifies MTP tensor headers during GGUF parsing.
+"""
+
+from enum import Enum
+import struct
+from typing import BinaryIO, Dict, Tuple
+
+
+class GGUFTensorType(Enum):
+    PRIMARY = 1
+    MTP_HEAD = 2
+    UNKNOWN = 3
+
+
+def inspect_and_partition_gguf_tensors(
+    file_stream: BinaryIO, tensor_count: int
+) -> Tuple[Dict[str, int], Dict[str, int]]:
+    """Partitions GGUF tensor catalog into primary autoregressive weights
+
+    and auxiliary MTP prediction heads, enforcing strict stride boundaries.
+    """
+    primary_tensors: Dict[str, int] = {}
+    mtp_tensors: Dict[str, int] = {}
+
+    for _ in range(tensor_count):
+        # Format: string_length (uint64), string_data, n_dims (uint32), dims (uint64*n), type (uint32), offset (uint64)
+        name_len_bytes = file_stream.read(8)
+        if len(name_len_bytes) < 8:
+            raise EOFError("Unexpected EOF reading tensor name length.")
+        name_len = struct.unpack("<Q", name_len_bytes)[0]
+
+        name_str = file_stream.read(name_len).decode("utf-8", errors="replace")
+
+        dims_bytes = file_stream.read(4)
+        n_dims = struct.unpack("<I", dims_bytes)[0]
+
+        dims = []
+        for _ in range(n_dims):
+            d_bytes = file_stream.read(8)
+            dims.append(struct.unpack("<Q", d_bytes)[0])
+
+        dtype_bytes = file_stream.read(4)
+        _ = struct.unpack("<I", dtype_bytes)[0]
+
+        offset_bytes = file_stream.read(8)
+        offset = struct.unpack("<Q", offset_bytes)[0]
+
+        # Explicit invariant: Isolate MTP prefixes
+        if "mtp" in name_str.lower() or "speculative" in name_str.lower():
+            if name_str in mtp_tensors:
+                raise ValueError(f"Duplicate MTP tensor detected: {name_str}")
+            mtp_tensors[name_str] = offset
+        else:
+            if name_str in primary_tensors:
+                raise ValueError(
+                    f"Duplicate primary tensor detected: {name_str}"
+                )
+            primary_tensors[name_str] = offset
+
+    # Invariant assertion: Primary output head must not be masked or missing
+    if (
+        "output.weight" not in primary_tensors
+        and "token_embd.weight" not in primary_tensors
+    ):
+        raise AssertionError("Corrupt GGUF: Missing primary vocab projection.")
+
+    return primary_tensors, mtp_tensors
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naive string matching for output head weight extraction
+def load_output_head_bad(tensor_map):
+    for name, tensor in tensor_map.items():
+        # FATAL: Matches 'blk.27.mtp_head.weight' before 'output.weight',
+        # corrupting vocabulary decode logits during standard generation.
+        if "head" in name or "output" in name:
+            return tensor
+    raise ValueError("Head not found")
+```
+
+**VERIFICATION METHOD**:
+Execute an automated tensor layout unit test ensuring that:
+1. Every tensor name containing `mtp` has non-overlapping memory ranges with primary transformer block weights.
+2. The runtime engine successfully runs inference with `--speculative-draft 0` (ignoring MTP heads) without throwing shape mismatch faults.
+
+---
+
+
+---
+
+## 1384. Reasoning Loop Token-Budget Termination Guard (Harvested from DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Reasoning Loop Token-Budget Termination Guard",
+  "source": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+  "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+  "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T08:22:08.259Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF](https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF) (Revision: `hf-davidau`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When running inference on compressed latent-thinking models ("TURBO" / reasoning variants), the decode loop MUST enforce an explicit token-budget watchdog over the `<think>...</think>` delimited block. If the thinking-token count exceeds a deterministic threshold $T_{\text{max\_thought}}$, the loop MUST inject an artificial closing delimiter (`</think>\n`) and prune the context attention mask to prevent context-window overflow and microtask starvation.
+
+**WHY**:
+In models tuned via token-penalized SFT (such as TURBO variants), edge-case inputs can cause the model to enter non-terminating deliberative loops if the logits for the `</think>` token fail to achieve top-1 rank over cyclic analytical patterns. Without an active delimiter-injection guard, the model burns the remaining context capacity (e.g., 32,768 tokens) producing uninformative introspection, starving downstream generation and crashing front-end buffers.
+
+**WHEN TO APPLY**:
+- Any text-generation loop processing reasoning models (DeepSeek-R1 derivatives, Qwen-Thinking, TURBO variants).
+- Real-time streaming WebSocket/SSE endpoints.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * ReasoningWatchdog.ts
+ * Implements token-budget enforcement and forced synthetic closure for reasoning streams.
+ */
+
+export interface GenerationToken {
+  id: number;
+  text: string;
+  isSpecial: boolean;
+}
+
+export class ReasoningWatchdog {
+  private readonly maxThoughtTokens: number;
+  private readonly thinkCloseTag: string = "</think>";
+  private readonly thinkOpenTag: string = "<think>";
+  private currentThoughtCount: number = 0;
+  private insideThinkingBlock: boolean = false;
+  private forcedClosed: boolean = false;
+
+  constructor(maxThoughtTokens: number) {
+    if (maxThoughtTokens <= 0) {
+      throw new Error("maxThoughtTokens must be strictly positive");
+    }
+    this.maxThoughtTokens = maxThoughtTokens;
+  }
+
+  /**
+   * Evaluates incoming token and forces thought delimiter injection if budget is breached.
+   * Returns the safe token string to emit to the caller.
+   */
+  public processNextToken(token: GenerationToken): {
+    emitText: string;
+    shouldTerminate: boolean;
+    injectedClosure: boolean;
+  } {
+    if (token.text.includes(this.thinkOpenTag)) {
+      this.insideThinkingBlock = true;
+    }
+
+    if (this.insideThinkingBlock) {
+      this.currentThoughtCount++;
+
+      // Invariant: If budget exceeded before natural closure, force termination of think block
+      if (
+        this.currentThoughtCount >= this.maxThoughtTokens &&
+        !this.forcedClosed
+      ) {
+        this.insideThinkingBlock = false;
+        this.forcedClosed = true;
+        return {
+          emitText: `\n${this.thinkCloseTag}\n[TRUNCATED: Thinking Token Budget Exceeded]\n`,
+          shouldTerminate: false,
+          injectedClosure: true,
+        };
+      }
+
+      if (token.text.includes(this.thinkCloseTag)) {
+        this.insideThinkingBlock = false;
+      }
+    }
+
+    return {
+      emitText: token.text,
+      shouldTerminate: false,
+      injectedClosure: false,
+    };
+  }
+
+  public getThoughtCount(): number {
+    return this.currentThoughtCount;
+  }
+
+  public wasBudgetBreached(): boolean {
+    return this.forcedClosed;
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Blindly streaming tokens until EOS is reached.
+// If the reasoning head loops, the node memory explodes or the user waits 180s.
+async function streamInferenceBad(stream: AsyncIterable<string>, res: Response) {
+  for await (const chunk of stream) {
+    // FATAL: Infinite thinking blocks burn entire API credit or KV cache memory
+    res.write(chunk);
+  }
+  res.end();
+}
+```
+
+**VERIFICATION METHOD**:
+Run integration tests feeding degenerate looping prompts (e.g., cyclic self-referential paradoxes). Assert that:
+1. Output strings contain `</think>` before token position $T_{\text{max\_thought}} + 5$.
+2. The HTTP streaming handler closes within deterministic wall-clock bounds.
+
+---

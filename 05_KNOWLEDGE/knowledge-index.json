@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T08:17:31.569Z",
+  "last_updated": "2026-10-17T08:22:08.293Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12834,7 +12834,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "source_version": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "15d95cd5dd80fe4b2f6fcc60c12332a9de1da62ffd921505686dd8b854d6daa0",
+      "content_hash": "662c76477aa59d48e31c0296347d86452814d52b03a24173f04e0eb0581b9c14",
       "dossier_path": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md",
       "promoted_rules": [
@@ -12851,6 +12851,21 @@
         {
           "number": 1200,
           "title": "Multi-Stage Fine-Tuning for Specialized Capabilities",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1382,
+          "title": "Dual-Corpus Activation Profiling for Outlier-Prone Model Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1383,
+          "title": "Guarding Multi-Token Prediction (MTP) Deserialization Heads in GGUF Adapters",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1384,
+          "title": "Reasoning Loop Token-Budget Termination Guard",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -12872,7 +12887,7 @@
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4825ix",
         "learn-huggingface-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-mv4lbpn7"
       ],
-      "verified_at": "2026-10-17T00:31:00.133Z",
+      "verified_at": "2026-10-17T08:22:08.289Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
