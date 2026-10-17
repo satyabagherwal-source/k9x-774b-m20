@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T09:34:11.508Z",
-  "total_cycles_completed": 2073,
-  "total_learnings_persisted": 2073,
+  "last_updated": "2026-10-17T09:37:36.829Z",
+  "total_cycles_completed": 2074,
+  "total_learnings_persisted": 2074,
   "total_rules_promoted": 1192,
   "history": [
-    {
-      "timestamp": "2026-10-16T22:21:57.864Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T22:25:00.748Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T09:34:11.508Z",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T09:37:36.829Z",
+      "repository": "microsoft/FrogNano-4B-2609",
+      "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
