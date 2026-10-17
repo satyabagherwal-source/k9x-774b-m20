@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T08:41:49.079Z",
+  "last_updated": "2026-10-17T08:46:30.222Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17692,7 +17692,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "a174f68d9243104ae1556e5efc04b55b83288106f74ebfac90e07e7b475f78fa",
+      "content_hash": "ec457c1ee6a477af90c48b61545bc2c9e1b90836ac86a0234cfffbf5cbdbc890",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md",
       "promoted_rules": [
@@ -17733,6 +17733,16 @@
           "number": 1124,
           "title": "Deterministic Truncation & Tokenization Boundary",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1400,
+          "title": "Vector Normalization Clamping Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1401,
+          "title": "Dual-Cap Sequence Truncation Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17753,7 +17763,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv48pqnn",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-mv4m2r5u"
       ],
-      "verified_at": "2026-10-17T00:49:34.195Z",
+      "verified_at": "2026-10-17T08:46:30.216Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

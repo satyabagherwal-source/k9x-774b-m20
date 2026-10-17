@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T08:41:49.114Z",
-  "total_cycles_completed": 2058,
-  "total_learnings_persisted": 2058,
-  "total_rules_promoted": 1176,
+  "last_updated": "2026-10-17T08:46:30.255Z",
+  "total_cycles_completed": 2059,
+  "total_learnings_persisted": 2059,
+  "total_rules_promoted": 1178,
   "history": [
-    {
-      "timestamp": "2026-10-16T21:29:57.559Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T21:33:07.137Z",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
@@ -1403,6 +1396,13 @@
       "repository": "Cloudflare/clef-flash",
       "learningId": "learn-huggingface-cloudflare-clef-flash",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T08:46:30.255Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

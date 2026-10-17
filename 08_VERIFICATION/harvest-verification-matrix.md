@@ -2081,3 +2081,4 @@
 | `CYCLE-20261017-4IKR` | `2026-10-17T08:34:25.419Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1391, Rule 1392, Rule 1393` | Yes (`172eaf05...`) |
 | `CYCLE-20261017-895W` | `2026-10-17T08:37:19.844Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1394, Rule 1395, Rule 1396` | Yes (`aa3d5c58...`) |
 | `CYCLE-20261017-E0XG` | `2026-10-17T08:41:49.108Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1397, Rule 1398, Rule 1399` | Yes (`2672d112...`) |
+| `CYCLE-20261017-K1UV` | `2026-10-17T08:46:30.247Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1400, Rule 1401` | Yes (`ec457c1e...`) |
