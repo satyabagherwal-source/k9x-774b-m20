@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-9ZGX",
-    "timestamp": "2026-10-16T17:42:52.881Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "56440fd91e8790458020242bf0417878bb668c9bcbf89c555a99dc9d7ee253bd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-E0UA",
     "timestamp": "2026-10-16T17:46:01.282Z",
     "repository": "vllm-sr/d3",
@@ -7492,6 +7477,21 @@
     "contentHash": "dcefdaabf164f539daf3d299ce96bf4b8f3247ff5c02db28d1b3e9b0c0c8a519",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-P58A",
+    "timestamp": "2026-10-17T21:54:17.146Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+    "contentHash": "37a34d079f5312fbdd78081119f01f6f5877c0022a5beae3bc77a410ad39fabd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
