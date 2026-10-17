@@ -101559,12 +101559,11 @@ export default defineConfig({
 
 ---
 
-## 1493. Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern (Harvested from satyabagherwal-source/onlinefreeprotractor)
+## 1487. Cryptographic Integrity for Large Binary Artifacts (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
 
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
-<<<<<<< HEAD
   "topic": "Cryptographic Integrity for Large Binary Artifacts",
   "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
   "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -101574,24 +101573,12 @@ export default defineConfig({
   "ai_provider": "google-gemini-cloud-agent",
   "generation_mode": "source_derived_ai_synthesized",
   "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-=======
-  "topic": "Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern",
-  "source": "satyabagherwal-source/onlinefreeprotractor",
-  "source_url": "https://onlinefreeprotractor.com",
-  "source_version": "production-verified-phase3",
-  "license": "Proprietary",
-  "extracted_at": "2026-10-17T15:58:00.000Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "empirical_incident_extraction",
-  "learning_id": "learn-onlinefreeprotractor-rule1491",
->>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
   "distillation_prohibited": true
 }
 PROVENANCE_END -->
-<<<<<<< HEAD
 > **Provenance**: Harvested from [ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ukisai-`).  
 > **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
 
@@ -101633,43 +101620,18 @@ d41d8cd98f00b204e9800998ecf8427e  model.gguf # MD5 is cryptographically broken
 ```
 
 **VERIFICATION METHOD**:
-1.  Download the artifact.
-2.  Compute the SHA256 hash of the downloaded file.
-3.  Compare it against the hash in `SHA256SUMS` and `release-manifest.json`.
-4.  Fail the build/deployment if there is a mismatch.
-=======
-> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
-> **Evidence**: Validated against Google Search Console UI daily inspection quotas (~10-50 URLs/day) and Google Indexing API scope restrictions.
-
-**RULE**:
-When recovering or launching multi-hundred URL web properties under search engine indexing constraints, the engineering team and automated recovery agents MUST govern submissions through a Dual-Pronged Discovery Architecture:
-1. **Prong 1 (Passive Ingestion via Clean Sitemaps)**: Submit the 100% canonical, zero-redirect, zero-noindex `sitemap-index.xml` as the master discovery conduit. This bypasses per-URL inspection quotas and queues the entire page corpus for asynchronous search engine crawling.
-2. **Prong 2 (Tiered Active URL Inspection)**: Because manual GSC URL inspection enforces a hard limit of ~10 to 50 URLs per 24-hour rolling window, and Google's Indexing API strictly restricts generic URL submissions to `JobPosting` and `BroadcastEvent` structured data, all manual inspection queues MUST be partitioned into tiered daily batches:
-   - *Tier 1 (High-Priority Core)*: Homepage, core tools, and historical impression/traffic leaders.
-   - *Tier 2–N (Localized Long-Tail Batches)*: Batches of 40–50 URLs scheduled across consecutive 24-hour cycles.
-
-**WHY**:
-Attempting brute-force manual submission of 300+ URLs in a single day exhausts search console property quotas within minutes, causing subsequent submissions to fail with unrecoverable rate-limit errors and leaving high-value revenue pages unsubmitted while low-value pages consume quota.
-
-**WHEN TO APPLY**:
-Any large-scale site launch, technical SEO re-platforming, or crawl recovery campaign (>50 URLs) on Google Search Console or Bing Webmaster Tools.
-
----
->>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)
-
+1. Download the artifact.
+2. Compute the SHA256 hash of the downloaded file.
+3. Compare it against the hash in `SHA256SUMS` and `release-manifest.json`.
+4. Fail the build/deployment if there is a mismatch.
 
 ---
 
-<<<<<<< HEAD
-## 1491. Separation of Base Model and Speculative Decoding Heads (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
-=======
-## 1489. Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
->>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)
+## 1488. Separation of Base Model and Speculative Decoding Heads (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
 
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
-<<<<<<< HEAD
   "topic": "Separation of Base Model and Speculative Decoding Heads",
   "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
   "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -101679,24 +101641,12 @@ Any large-scale site launch, technical SEO re-platforming, or crawl recovery cam
   "ai_provider": "google-gemini-cloud-agent",
   "generation_mode": "source_derived_ai_synthesized",
   "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-=======
-  "topic": "Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant",
-  "source": "satyabagherwal-source/onlinefreeprotractor",
-  "source_url": "https://onlinefreeprotractor.com",
-  "source_version": "production-verified-phase3",
-  "license": "Proprietary",
-  "extracted_at": "2026-10-17T15:58:00.000Z",
-  "ai_provider": "google-gemini-cloud-agent",
-  "generation_mode": "empirical_incident_extraction",
-  "learning_id": "learn-onlinefreeprotractor-rule1489",
->>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
   "distillation_prohibited": true
 }
 PROVENANCE_END -->
-<<<<<<< HEAD
 > **Provenance**: Harvested from [ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ukisai-`).  
 > **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
 
@@ -101730,11 +101680,33 @@ Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS.gguf # Contains MTP head, breaks older runt
 ```
 
 **VERIFICATION METHOD**:
-1.  Load the "Standard GGUF" file in a runtime that does not support MTP.
-2.  Assert that the model loads successfully and generates text.
-3.  Load the "With MTP head" file in a runtime that supports MTP.
-4.  Assert that the MTP head is detected and used for speculative decoding.
-=======
+1. Load the "Standard GGUF" file in a runtime that does not support MTP.
+2. Assert that the model loads successfully and generates text.
+3. Load the "With MTP head" file in a runtime that supports MTP.
+4. Assert that the MTP head is detected and used for speculative decoding.
+
+---
+
+## 1489. Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant",
+  "source": "satyabagherwal-source/onlinefreeprotractor",
+  "source_url": "https://onlinefreeprotractor.com",
+  "source_version": "production-verified-phase3",
+  "license": "Proprietary",
+  "extracted_at": "2026-10-17T15:58:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "empirical_incident_extraction",
+  "learning_id": "learn-onlinefreeprotractor-rule1489",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
 > **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
 > **Evidence**: Reconciled against 1,031 URLs, GSC Coverage reports, and live HTTP probes across 54 locales.
 
@@ -101875,7 +101847,6 @@ Attempting brute-force manual submission of 300+ URLs in a single day exhausts s
 Any large-scale site launch, technical SEO re-platforming, or crawl recovery campaign (>50 URLs) on Google Search Console or Bing Webmaster Tools.
 
 ---
->>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)
 
 
 ---
