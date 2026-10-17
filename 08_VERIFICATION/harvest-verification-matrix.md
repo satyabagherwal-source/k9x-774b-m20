@@ -2289,3 +2289,4 @@
 | `CYCLE-20261017-YVL2` | `2026-10-17T20:09:52.742Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1518, Rule 1519, Rule 1520` | Yes (`97d71798...`) |
 | `CYCLE-20261017-2T21` | `2026-10-17T20:12:56.089Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`3fccfcb9...`) |
 | `CYCLE-20261017-6W3H` | `2026-10-17T20:16:06.653Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`1ff87305...`) |
+| `CYCLE-20261017-AS09` | `2026-10-17T20:19:07.977Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`610ef271...`) |
