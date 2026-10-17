@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T14:58:06.217Z",
-  "total_cycles_completed": 2167,
-  "total_learnings_persisted": 2167,
+  "last_updated": "2026-10-17T15:01:01.185Z",
+  "total_cycles_completed": 2168,
+  "total_learnings_persisted": 2168,
   "total_rules_promoted": 1254,
   "history": [
-    {
-      "timestamp": "2026-10-17T03:29:56.510Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T03:33:15.370Z",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T14:58:06.217Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T15:01:01.185Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
