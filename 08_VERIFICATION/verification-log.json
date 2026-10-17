@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-E63Q",
-    "timestamp": "2026-10-16T09:22:15.014Z",
-    "repository": "CompVis/stable-diffusion-v1-4",
-    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-    "contentHash": "8b8f8aceb01e4e18fc29394f8382bcd1c771101997aff1cf6f00a7ab29b90352",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-I92M",
     "timestamp": "2026-10-16T09:25:25.486Z",
     "repository": "meta-llama/Meta-Llama-3-8B",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GEV-26B-Decide-NVFP4",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
     "contentHash": "85ef62d0ff76727aca455ec4e36d797e6ba774f755292b1e9eaca4bf3a9c5cf8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-YJ6C",
+    "timestamp": "2026-10-17T14:05:41.652Z",
+    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
+    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+    "contentHash": "171b00f739ea1c1b26884a9e39bc5a9741448c8f3559f8a299c0d684d9016afc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
