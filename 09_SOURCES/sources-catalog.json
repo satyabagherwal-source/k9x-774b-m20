@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "a482972fd50d3225e28f67569bcfb91b35b11cb7c4ad1438dd98828103e3ebf4",
-    "lastHarvestedAt": "2026-10-16T16:36:23.776Z",
+    "contentHash": "a7021e96a7cd1cb3871b3d50fea10949af9152594d242edc5dc5c9a31900ac33",
+    "lastHarvestedAt": "2026-10-17T00:43:36.063Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {

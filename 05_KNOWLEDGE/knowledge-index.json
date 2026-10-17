@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T00:40:23.937Z",
+  "last_updated": "2026-10-17T00:43:36.034Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11392,7 +11392,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "a482972fd50d3225e28f67569bcfb91b35b11cb7c4ad1438dd98828103e3ebf4",
+      "content_hash": "a7021e96a7cd1cb3871b3d50fea10949af9152594d242edc5dc5c9a31900ac33",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -11482,6 +11482,21 @@
           "number": 1203,
           "title": "**Data‑Type Fidelity Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1279,
+          "title": "**Tokenization Integrity Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1280,
+          "title": "**Inference Mode Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1281,
+          "title": "**Padding Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11502,7 +11517,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-16T16:36:23.756Z",
+      "verified_at": "2026-10-17T00:43:36.029Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
