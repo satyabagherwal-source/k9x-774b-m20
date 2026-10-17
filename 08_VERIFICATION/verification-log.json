@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-YYEW",
-    "timestamp": "2026-10-16T10:06:24.440Z",
-    "repository": "fishaudio/drama-3",
-    "learningId": "learn-huggingface-fishaudio-drama-3",
-    "contentHash": "7219f2a91f42f866b1dba2d2edde7c169f2789f4a695bb5f7cfc094dce3b365c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-2Y82",
     "timestamp": "2026-10-16T10:09:30.818Z",
     "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -7492,6 +7477,21 @@
     "contentHash": "f3479cb4e289d43e275fba19da99d255f25ef4851745bf219490ea2ca0aaf24e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-52D1",
+    "timestamp": "2026-10-17T14:38:46.069Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "6c3860426ff898b0b37f561cf57b8596098730da19fe4dbdbc35d0369a4a7460",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

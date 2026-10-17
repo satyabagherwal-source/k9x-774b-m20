@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "131db1f0103dda0e946c842c239d25c1fe303ecfa231b462dca60543febf4152",
-    "lastHarvestedAt": "2026-10-17T06:10:48.860Z",
+    "contentHash": "6c3860426ff898b0b37f561cf57b8596098730da19fe4dbdbc35d0369a4a7460",
+    "lastHarvestedAt": "2026-10-17T14:38:46.072Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {

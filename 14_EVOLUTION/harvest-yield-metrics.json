@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T14:35:43.381Z",
-  "total_cycles_completed": 2160,
-  "total_learnings_persisted": 2160,
+  "last_updated": "2026-10-17T14:38:46.074Z",
+  "total_cycles_completed": 2161,
+  "total_learnings_persisted": 2161,
   "total_rules_promoted": 1251,
   "history": [
-    {
-      "timestamp": "2026-10-17T03:07:54.143Z",
-      "repository": "openai/clip-vit-base-patch32",
-      "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T03:11:12.055Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1403,6 +1396,13 @@
       "repository": "XingChen-AGI/TeleOCR",
       "learningId": "learn-huggingface-xingchen-agi-teleocr",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T14:38:46.074Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
