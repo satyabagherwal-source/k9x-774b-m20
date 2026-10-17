@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-OK70",
-    "timestamp": "2026-10-16T17:26:13.308Z",
-    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-    "contentHash": "ae36ddf51fe2feb808678d8b9e3135ad2cc3427de106311c8d271f3c4526c9b0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-S7UR",
     "timestamp": "2026-10-16T17:29:03.939Z",
     "repository": "amazon/chronos-2",
@@ -7490,6 +7475,21 @@
     "repository": "Cactus-Compute/whistle",
     "learningId": "learn-huggingface-cactus-compute-whistle",
     "contentHash": "9cc0ad7d2d7c3efc90f48346c01a86e7f9602b22d05a5f609ff32ab851e2bbee",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-Y2MD",
+    "timestamp": "2026-10-17T21:33:14.053Z",
+    "repository": "Qwen/Qwen3.8-27B",
+    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+    "contentHash": "d46869d9dab2aa175b74f5776ef11e7351447e2349d60107d3690443a7e3670c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
