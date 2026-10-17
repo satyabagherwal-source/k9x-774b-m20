@@ -1950,3 +1950,4 @@
 | `CYCLE-20261017-CF3I` | `2026-10-17T01:12:40.302Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1288, Rule 1289` | Yes (`9892a928...`) |
 | `CYCLE-20261017-G3VC` | `2026-10-17T01:15:32.376Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf-learnings.md` | Yes (`709168b7...`) |
 | `CYCLE-20261017-KIW4` | `2026-10-17T01:18:58.468Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`d555cfa2...`) |
+| `CYCLE-20261017-OMV3` | `2026-10-17T01:22:10.239Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`e2cefa87...`) |
