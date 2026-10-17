@@ -2138,3 +2138,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-10-17T11:40:42.021Z |
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-17T11:43:55.286Z |
 | `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-10-17T11:47:05.971Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-17T11:50:17.372Z |

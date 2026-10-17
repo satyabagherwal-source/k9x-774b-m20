@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "f6cf8cb77bdc05938fcc24fbdf78133ba0634198ac2ab1f576a5a8e125b3c590",
-    "lastHarvestedAt": "2026-10-17T03:42:34.218Z",
+    "contentHash": "0ed30555f78f55ffab8c3ddbef5eea4d11ad90e2ba9efe44f0411029ba40f228",
+    "lastHarvestedAt": "2026-10-17T11:50:17.372Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-TDMA",
-    "timestamp": "2026-10-16T06:46:06.898Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-    "contentHash": "dd2d5893c0648ef33fe6682780636abd94914b822fafe549b2674bb4d2905ed9",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-X4UP",
     "timestamp": "2026-10-16T06:49:02.161Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "openai-community/gpt2",
     "learningId": "learn-huggingface-openai-community-gpt2",
     "contentHash": "6433f93bfe4c8ce3b3d6ac89e59a3230fa74bdac7f84faa2b0c8ef4a37df087d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-4EFU",
+    "timestamp": "2026-10-17T11:50:17.371Z",
+    "repository": "Qwen/Qwen3-VL-8B-Instruct",
+    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+    "contentHash": "0ed30555f78f55ffab8c3ddbef5eea4d11ad90e2ba9efe44f0411029ba40f228",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
