@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T09:41:45.627Z",
+  "last_updated": "2026-10-17T09:45:53.302Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42382,7 +42382,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/vllm-sr/d3",
       "source_version": "hf-vllm-sr-d3",
-      "content_hash": "be32a8a5bfd277361fbc71d13223ddd9b2ce30abf6753a0fb1c716e63839e370",
+      "content_hash": "8d3b9a008d24f7f692932cf42f2930790f541b644dce58f801d6a47baba7b4ac",
       "dossier_path": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md",
       "promoted_rules": [
@@ -42400,6 +42400,21 @@
           "number": 1133,
           "title": "Non-Generative Decision Head for Semantic Routing",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1418,
+          "title": "Hybrid Linear-Quadratic Attention KV-Cache Allocator Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1419,
+          "title": "Mixed-Precision Recurrent State FP32 Barrier Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1420,
+          "title": "Non-Generative Direct Logit-Extracted Decision Multiplexing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42407,7 +42422,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T01:40:59.351Z",
+      "verified_at": "2026-10-17T09:45:53.295Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
