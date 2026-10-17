@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-LUTY",
-    "timestamp": "2026-10-16T18:20:06.358Z",
-    "repository": "zai-org/GLM-5.2",
-    "learningId": "learn-huggingface-zai-org-glm-5-2",
-    "contentHash": "19ab8f152c1c43f39886e9141e362db5713c987b7440de61ff4f44b4de58f51e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-PWG1",
     "timestamp": "2026-10-16T18:23:15.073Z",
     "repository": "stabilityai/stable-diffusion-3-medium",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen-Image-2.1",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1",
     "contentHash": "28cc4142b3c37b87a49617616b40d72433dd442d18a65f6335f6fffe6c7e78bd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-3486",
+    "timestamp": "2026-10-17T22:33:08.646Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "b4bf71e9522566d22f79e228f1bf0498b702f986cbabc23832fb93b62cf02909",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
