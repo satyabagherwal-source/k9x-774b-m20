@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T16:07:48.158Z",
-  "total_cycles_completed": 2189,
-  "total_learnings_persisted": 2189,
+  "last_updated": "2026-10-17T16:10:54.217Z",
+  "total_cycles_completed": 2190,
+  "total_learnings_persisted": 2190,
   "total_rules_promoted": 1272,
   "history": [
-    {
-      "timestamp": "2026-10-17T04:40:37.435Z",
-      "repository": "autotrust/JEV-27B-VL",
-      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T04:43:46.679Z",
       "repository": "autotrust/GEV-26B-Decide",
@@ -1403,6 +1396,13 @@
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T16:10:54.217Z",
+      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
