@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T06:48:49.062Z",
+  "last_updated": "2026-10-17T06:51:57.080Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -513,14 +513,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastino-gliner2-5-decide",
-      "content_hash": "a179f255f05e93cdd3e8f7625cf5b8b2c4e92a51a2cbaf57bdc9ef990841c2a1",
-      "verified_at": "2026-10-16T23:18:13.823Z",
+      "content_hash": "d549536255e69a2dc815dd97abeca01ff8568697c03561fe7fce2421927c21a7",
+      "verified_at": "2026-10-17T06:51:57.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T23:18:13.823Z"
+      "last_updated": "2026-10-17T06:51:57.080Z"
     },
     "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
