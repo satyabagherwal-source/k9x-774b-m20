@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T00:11:29.065Z",
-  "total_cycles_completed": 1906,
-  "total_learnings_persisted": 1906,
-  "total_rules_promoted": 1041,
+  "last_updated": "2026-10-17T00:15:25.455Z",
+  "total_cycles_completed": 1907,
+  "total_learnings_persisted": 1907,
+  "total_rules_promoted": 1043,
   "history": [
-    {
-      "timestamp": "2026-10-16T12:32:52.876Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T12:36:02.373Z",
       "repository": "zai-org/GLM-5.3",
@@ -1403,6 +1396,13 @@
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
       "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T00:15:25.455Z",
+      "repository": "PSRben/VisionHOPE",
+      "learningId": "learn-huggingface-psrben-visionhope",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

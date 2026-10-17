@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-E2SB",
-    "timestamp": "2026-10-15T19:22:22.235Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "670795e9d07edbbceaf1481a85f22ff02f5ddc77be679a8e9ac9e32b43e2d86c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-MG33",
     "timestamp": "2026-10-15T19:28:52.719Z",
     "repository": "pyannote/speaker-diarization-community-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "805466ce416fef7bccc683820768b42f9528a2815325fec875a9073dfb2070dc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-ASQX",
+    "timestamp": "2026-10-17T00:15:25.449Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "df8667c65abc6d7c401480e8dcccc3298698cb58f1e192448746439b0bb95f9f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

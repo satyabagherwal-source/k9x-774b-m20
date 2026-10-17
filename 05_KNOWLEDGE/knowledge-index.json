@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T00:11:29.034Z",
+  "last_updated": "2026-10-17T00:15:25.428Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16296,7 +16296,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "501164bf784eac8aa0e5b0e7d73818ff46f92952c227f41496238bb6c50e218e",
+      "content_hash": "df8667c65abc6d7c401480e8dcccc3298698cb58f1e192448746439b0bb95f9f",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
@@ -16323,6 +16323,16 @@
           "number": 1113,
           "title": "Hierarchical Stage Depth Monotonicity & Scaling Law",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1274,
+          "title": "Hierarchical Depth Asymmetry Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1275,
+          "title": "Mixer-Embedding Dimension Decoupling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16343,7 +16353,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-10-16T16:03:32.012Z",
+      "verified_at": "2026-10-17T00:15:25.423Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
