@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T01:50:39.180Z",
-  "total_cycles_completed": 1937,
-  "total_learnings_persisted": 1937,
+  "last_updated": "2026-10-17T01:53:47.116Z",
+  "total_cycles_completed": 1938,
+  "total_learnings_persisted": 1938,
   "total_rules_promoted": 1060,
   "history": [
-    {
-      "timestamp": "2026-10-16T14:14:00.853Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T14:17:08.946Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T01:50:39.180Z",
       "repository": "MiniMaxAI/MiniMax-H3",
       "learningId": "learn-huggingface-minimaxai-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T01:53:47.116Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1960,3 +1960,4 @@
 | `CYCLE-20261017-GSO9` | `2026-10-17T01:44:04.137Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`a8b25320...`) |
 | `CYCLE-20261017-L3MJ` | `2026-10-17T01:47:24.955Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1290, Rule 1291, Rule 1292` | Yes (`c5d0e940...`) |
 | `CYCLE-20261017-P9HH` | `2026-10-17T01:50:39.173Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`7f2aea8f...`) |
+| `CYCLE-20261017-TAI0` | `2026-10-17T01:53:47.112Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`9b70b7a8...`) |
