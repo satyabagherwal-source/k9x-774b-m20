@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T06:01:19.863Z",
-  "total_cycles_completed": 2015,
-  "total_learnings_persisted": 2015,
-  "total_rules_promoted": 1099,
+  "last_updated": "2026-10-17T06:04:28.693Z",
+  "total_cycles_completed": 2016,
+  "total_learnings_persisted": 2016,
+  "total_rules_promoted": 1102,
   "history": [
-    {
-      "timestamp": "2026-10-16T18:54:50.424Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-qwen-qwen3-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T18:57:58.088Z",
       "repository": "FermionResearch/Phonon-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T06:01:19.863Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T06:04:28.693Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
