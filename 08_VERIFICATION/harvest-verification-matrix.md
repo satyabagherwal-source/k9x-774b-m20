@@ -1985,3 +1985,4 @@
 | `CYCLE-20261017-CJIB` | `2026-10-17T03:04:44.483Z` | `NaiveAI/Naive-N0.5-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | Yes (`b4275c19...`) |
 | `CYCLE-20261017-GLUJ` | `2026-10-17T03:07:54.139Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`8fdde28a...`) |
 | `CYCLE-20261017-KUK3` | `2026-10-17T03:11:12.051Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`cc7e9607...`) |
+| `CYCLE-20261017-OX9X` | `2026-10-17T03:14:22.197Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1302, Rule 1303` | Yes (`8f0d22a7...`) |

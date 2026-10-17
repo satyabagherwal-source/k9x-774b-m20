@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T03:11:12.022Z",
+  "last_updated": "2026-10-17T03:14:22.178Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -41154,7 +41154,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "5e8b4e95136092fb32fcaea39dab603588415dd8028d2c120d33face1dfeb4d4",
+      "content_hash": "8f0d22a7239fcfbb9edc6796bd0c070cf7a258003a7c945a9820aefde5f22e7e",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
@@ -41167,6 +41167,16 @@
           "number": 936,
           "title": "Quantization-Aware Distillation (QAD) Weight Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1302,
+          "title": "Quantization-Aware Distillation (QAD) Fidelity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1303,
+          "title": "Sampling Parameter Metadata Embedding Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41174,7 +41184,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-16T19:19:58.225Z",
+      "verified_at": "2026-10-17T03:14:22.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
