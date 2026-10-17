@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-KG2S",
-    "timestamp": "2026-10-15T22:43:16.708Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "cd1fb557b4abd9f4acc4c3f3166f36cf4fc6c6db8209bd0b640572948b83af9a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-OU11",
     "timestamp": "2026-10-15T22:46:41.413Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7490,6 +7475,21 @@
     "repository": "pyannote/speaker-diarization-community-1",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
     "contentHash": "537fcdf8da980ddf088b231dd9f66f98b21fa3afcb820fa7956a4c495ddb4589",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-0IOY",
+    "timestamp": "2026-10-17T03:23:23.170Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "ec68263f530d4180ee46305700c02f58f33161b124ad86c58a94f83736c1b5d2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

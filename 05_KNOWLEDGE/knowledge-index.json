@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T03:20:17.384Z",
+  "last_updated": "2026-10-17T03:23:23.134Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10352,7 +10352,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
       "source_version": "hf-baai-bge-reranker-v2-m3",
-      "content_hash": "31592e1f1fb5485f74bdaed739e26b1fe0f342f8fe17f87402e362261a933374",
+      "content_hash": "ec68263f530d4180ee46305700c02f58f33161b124ad86c58a94f83736c1b5d2",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md",
       "promoted_rules": [
@@ -10389,7 +10389,7 @@
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv3yddzy",
         "learn-huggingface-hf-baai-bge-reranker-v2-m3-mv4d3zyp"
       ],
-      "verified_at": "2026-10-16T19:32:14.174Z",
+      "verified_at": "2026-10-17T03:23:23.127Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
