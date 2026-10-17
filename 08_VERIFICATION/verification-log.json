@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0TIU",
-    "timestamp": "2026-10-16T05:55:54.870Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "78ed3262ecd47e0bf50264233cbf79a11d24f56c76d4d6201941346efbfa5742",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4S6G",
     "timestamp": "2026-10-16T05:58:59.752Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-4B",
     "learningId": "learn-huggingface-qwen-qwen3-4b",
     "contentHash": "e1b553764fd9f29192a556c9ab43861bb76b2638bdd3ba167b665e1d72952f0f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-8CC3",
+    "timestamp": "2026-10-17T10:57:22.035Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "3589fb4acb5bad70e8b4d4bbbd426034fe11192fb95c9ab4547e4cb228cb9897",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

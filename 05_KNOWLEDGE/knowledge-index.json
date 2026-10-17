@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T10:54:16.066Z",
+  "last_updated": "2026-10-17T10:57:22.005Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13802,7 +13802,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
       "source_version": "hf-fermionresearch-phonon-2",
-      "content_hash": "fb24b74f18eac0595c367577da8cb3599abb47127b6a833ff607ecd6a71fea9e",
+      "content_hash": "3589fb4acb5bad70e8b4d4bbbd426034fe11192fb95c9ab4547e4cb228cb9897",
       "dossier_path": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md",
       "promoted_rules": [],
@@ -13823,7 +13823,7 @@
         "learn-huggingface-hf-fermionresearch-phonon-2-mv3xmdbo",
         "learn-huggingface-hf-fermionresearch-phonon-2-mv4ccp0f"
       ],
-      "verified_at": "2026-10-17T02:51:55.614Z",
+      "verified_at": "2026-10-17T10:57:21.998Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

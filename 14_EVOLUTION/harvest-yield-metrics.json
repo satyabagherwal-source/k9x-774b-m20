@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T10:54:16.104Z",
-  "total_cycles_completed": 2097,
-  "total_learnings_persisted": 2097,
+  "last_updated": "2026-10-17T10:57:22.039Z",
+  "total_cycles_completed": 2098,
+  "total_learnings_persisted": 2098,
   "total_rules_promoted": 1211,
   "history": [
-    {
-      "timestamp": "2026-10-16T23:44:39.314Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T23:47:47.961Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T10:54:16.104Z",
       "repository": "Qwen/Qwen3-4B",
       "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T10:57:22.039Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

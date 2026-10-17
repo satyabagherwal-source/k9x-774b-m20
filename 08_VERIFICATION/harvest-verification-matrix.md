@@ -2120,3 +2120,4 @@
 | `CYCLE-20261017-WDK5` | `2026-10-17T10:48:03.749Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1431, Rule 1432, Rule 1433` | Yes (`6b71039d...`) |
 | `CYCLE-20261017-09EM` | `2026-10-17T10:51:04.990Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`9052fd58...`) |
 | `CYCLE-20261017-4CV8` | `2026-10-17T10:54:16.100Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`e1b55376...`) |
+| `CYCLE-20261017-8CC3` | `2026-10-17T10:57:22.035Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`3589fb4a...`) |
