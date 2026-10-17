@@ -17923,5 +17923,17 @@
     "downloads": 73,
     "qualityScore": 1593,
     "discoveredAt": "2026-10-17T04:34:15.029Z"
+  },
+  {
+    "name": "OpenMOSS-Team/MOSS-Image-SFT",
+    "fullName": "OpenMOSS-Team/MOSS-Image-SFT",
+    "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: OpenMOSS-Team/MOSS-Image-SFT (158 likes, 54 downloads)",
+    "likes": 158,
+    "downloads": 54,
+    "qualityScore": 1634,
+    "discoveredAt": "2026-10-17T05:50:52.235Z"
   }
 ]

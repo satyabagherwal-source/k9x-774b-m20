@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T05:47:59.636Z",
+  "last_updated": "2026-10-17T05:51:03.102Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2646,6 +2646,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-17T04:34:25.745Z"
+    },
+    "OpenMOSS-Team/MOSS-Image-SFT": {
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-openmoss-team-moss-image-sft",
+      "content_hash": "7ff4b13adae7849cc4f42a52eea7dd6b4eeaec57f8c4fdf0decb05f292a6d235",
+      "verified_at": "2026-10-17T05:51:03.102Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-17T05:51:03.102Z"
     }
   },
   "repos": {

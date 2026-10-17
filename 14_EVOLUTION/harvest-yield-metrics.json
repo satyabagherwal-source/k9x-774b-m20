@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T05:47:59.636Z",
-  "total_cycles_completed": 2011,
-  "total_learnings_persisted": 2011,
+  "last_updated": "2026-10-17T05:51:03.101Z",
+  "total_cycles_completed": 2012,
+  "total_learnings_persisted": 2012,
   "total_rules_promoted": 1093,
   "history": [
-    {
-      "timestamp": "2026-10-16T18:42:18.528Z",
-      "repository": "deepseek-ai/DeepSeek-V3",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T18:45:18.333Z",
       "repository": "baidu/Unlimited-OCR",
@@ -1403,6 +1396,13 @@
       "repository": "openbmb/MiniCPM-V-4.7-1B",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T05:51:03.101Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

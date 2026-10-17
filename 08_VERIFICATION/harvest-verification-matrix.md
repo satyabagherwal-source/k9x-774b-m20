@@ -2034,3 +2034,4 @@
 | `CYCLE-20261017-YWGE` | `2026-10-17T05:42:05.774Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`076951e9...`) |
 | `CYCLE-20261017-2MTW` | `2026-10-17T05:44:59.924Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`a96f314e...`) |
 | `CYCLE-20261017-6HHT` | `2026-10-17T05:47:59.633Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1316, Rule 1317, Rule 1318` | Yes (`f8e7c9cc...`) |
+| `CYCLE-20261017-AF23` | `2026-10-17T05:51:03.099Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md` | Yes (`7ff4b13a...`) |

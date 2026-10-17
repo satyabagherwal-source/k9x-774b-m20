@@ -1678,5 +1678,15 @@
     "contentHash": "0df2b3511814ae79d0fa9b512860fabac151f3b6db04b58de9b927251289c69c",
     "lastHarvestedAt": "2026-10-17T04:34:25.742Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
+  },
+  "hf-openmoss-team-moss-image-sft": {
+    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
+    "sourceVersion": "hf-openmoss-team-moss-image-sft",
+    "license": "Open-Source",
+    "contentHash": "7ff4b13adae7849cc4f42a52eea7dd6b4eeaec57f8c4fdf0decb05f292a6d235",
+    "lastHarvestedAt": "2026-10-17T05:51:03.100Z",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-sft"
   }
 }
