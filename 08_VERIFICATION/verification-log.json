@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-W3QH",
-    "timestamp": "2026-10-16T02:08:17.897Z",
-    "repository": "baidu/Unlimited-OCR",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr",
-    "contentHash": "66fa5c7efd8c8bcfd779d05074270468fe5868f9abfd612cc345ee4453a2f9cc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ZWTM",
     "timestamp": "2026-10-16T02:11:15.562Z",
     "repository": "Aleph-Alpha/Kolibri-1",
@@ -7490,6 +7475,21 @@
     "repository": "fastino/GLiNER2.5-Decide",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide",
     "contentHash": "d549536255e69a2dc815dd97abeca01ff8568697c03561fe7fce2421927c21a7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-L061",
+    "timestamp": "2026-10-17T06:55:16.249Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "90a5cfaf3d19cb9359e82b5a9b0ce4e5ba3222119e558079d0731abc0e48488b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

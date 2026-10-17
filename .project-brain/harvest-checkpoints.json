@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T06:51:57.080Z",
+  "last_updated": "2026-10-17T06:55:16.256Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -528,14 +528,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "4cd3bc0000b0a327c5dc8c57f7e1ba66316a33208292728c519493d9b6baf786",
-      "verified_at": "2026-10-16T23:21:16.980Z",
+      "content_hash": "90a5cfaf3d19cb9359e82b5a9b0ce4e5ba3222119e558079d0731abc0e48488b",
+      "verified_at": "2026-10-17T06:55:16.256Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T23:21:16.980Z"
+      "last_updated": "2026-10-17T06:55:16.256Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
