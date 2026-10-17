@@ -2146,3 +2146,4 @@
 | `CYCLE-20261017-YMRF` | `2026-10-17T12:13:47.835Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1446, Rule 1447` | Yes (`f81d1f3f...`) |
 | `CYCLE-20261017-2IMY` | `2026-10-17T12:16:49.114Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`540ee0f4...`) |
 | `CYCLE-20261017-6I9I` | `2026-10-17T12:19:55.254Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`880bb0cd...`) |
+| `CYCLE-20261017-AKN2` | `2026-10-17T12:23:04.958Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`3666f201...`) |
