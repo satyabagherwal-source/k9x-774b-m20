@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:46:23.017Z",
-  "total_cycles_completed": 2327,
-  "total_learnings_persisted": 2327,
+  "last_updated": "2026-10-17T23:49:17.333Z",
+  "total_cycles_completed": 2328,
+  "total_learnings_persisted": 2328,
   "total_rules_promoted": 1351,
   "history": [
-    {
-      "timestamp": "2026-10-17T12:36:47.937Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T12:40:29.012Z",
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -1403,6 +1396,13 @@
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:49:17.333Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

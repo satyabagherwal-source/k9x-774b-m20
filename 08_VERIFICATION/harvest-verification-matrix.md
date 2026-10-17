@@ -2350,3 +2350,4 @@
 | `CYCLE-20261017-GH01` | `2026-10-17T23:39:30.961Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`b7b0c5c0...`) |
 | `CYCLE-20261017-KQ0I` | `2026-10-17T23:42:49.266Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`cc1d48a6...`) |
 | `CYCLE-20261017-PAXY` | `2026-10-17T23:46:23.014Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1266, Rule 1566` | Yes (`f5aa9969...`) |
+| `CYCLE-20261017-T1G2` | `2026-10-17T23:49:17.330Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`2263d69a...`) |
