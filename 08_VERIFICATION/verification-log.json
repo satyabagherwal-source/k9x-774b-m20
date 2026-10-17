@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-L6BB",
-    "timestamp": "2026-10-16T00:35:49.175Z",
-    "repository": "google/electra-base-discriminator",
-    "learningId": "learn-huggingface-google-electra-base-discriminator",
-    "contentHash": "f8e569c8e481e0b1ccd98e2f1bdc79dc809ba85715c82a29e83a24bb89297fda",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-P67R",
     "timestamp": "2026-10-16T00:38:55.671Z",
     "repository": "BAAI/bge-m3",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/d1-3B",
     "learningId": "learn-huggingface-liquidai-d1-3b",
     "contentHash": "77a0866e8d0661c6ea54bc8bed90f06091e110c6fbbd52aab63f74af7119a894",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-6FCZ",
+    "timestamp": "2026-10-17T05:19:57.251Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "4e5526ed041bd3a919dd32c5861329ef715b503376a5687b0bba3b3835ad077e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

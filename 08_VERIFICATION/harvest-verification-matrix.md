@@ -2024,3 +2024,4 @@
 | `CYCLE-20261017-TU4M` | `2026-10-17T05:10:09.862Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`4b286e53...`) |
 | `CYCLE-20261017-YCOM` | `2026-10-17T05:13:40.534Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`07d759f1...`) |
 | `CYCLE-20261017-2E4P` | `2026-10-17T05:16:49.033Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`77a0866e...`) |
+| `CYCLE-20261017-6FCZ` | `2026-10-17T05:19:57.251Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`4e5526ed...`) |
