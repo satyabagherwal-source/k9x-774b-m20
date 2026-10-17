@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-QCEG",
-    "timestamp": "2026-10-15T19:59:54.184Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "f9f93b9b47f5279a3e193ff4c929d9f934cccdcfc7239c18d025067118555d39",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-U9YC",
     "timestamp": "2026-10-15T20:02:57.636Z",
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "564dc2e62853c158e7c455a299a7468e4358d8ac4230ac908f71564b9eeed6f2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-6X02",
+    "timestamp": "2026-10-17T00:40:23.954Z",
+    "repository": "unsloth/embeddinggemma-2-GGUF",
+    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+    "contentHash": "911040ad619c244a2049ff9ff1f15f2c748daac765c9a7c49607cb330b214233",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

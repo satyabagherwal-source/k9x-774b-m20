@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T00:37:15.817Z",
-  "total_cycles_completed": 1914,
-  "total_learnings_persisted": 1914,
-  "total_rules_promoted": 1043,
+  "last_updated": "2026-10-17T00:40:23.960Z",
+  "total_cycles_completed": 1915,
+  "total_learnings_persisted": 1915,
+  "total_rules_promoted": 1046,
   "history": [
-    {
-      "timestamp": "2026-10-16T12:58:17.394Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T13:01:25.537Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1403,6 +1396,13 @@
       "repository": "google/embeddinggemma-2",
       "learningId": "learn-huggingface-google-embeddinggemma-2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T00:40:23.960Z",
+      "repository": "unsloth/embeddinggemma-2-GGUF",
+      "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

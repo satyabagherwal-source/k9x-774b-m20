@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T00:37:15.776Z",
+  "last_updated": "2026-10-17T00:40:23.937Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18003,10 +18003,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "85a75a14731c9f5556c13318c6240ea2936a020e1e385e38d0137642b362c0dc",
+      "content_hash": "911040ad619c244a2049ff9ff1f15f2c748daac765c9a7c49607cb330b214233",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1276,
+          "title": "Matryoshka Truncation Invariance",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1277,
+          "title": "Multimodal Encoder Selective Loading Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1278,
+          "title": "GGUF Quantization Precision Map Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -18025,7 +18041,7 @@
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
       ],
-      "verified_at": "2026-10-16T16:33:21.906Z",
+      "verified_at": "2026-10-17T00:40:23.932Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
