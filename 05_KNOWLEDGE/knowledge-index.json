@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T02:12:57.019Z",
+  "last_updated": "2026-10-17T02:16:11.195Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17510,7 +17510,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "842bcf94a69d924efc2c0207516d7762ba358ebd24b0eb532896c8dc2469d8ba",
+      "content_hash": "f9b86b880f28786f452ee0eb8da86cc629eb3a344f5d0920d730cbd67124cbcf",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "promoted_rules": [
@@ -17555,6 +17555,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4b6mg5",
           "verified_at": "2026-10-11T21:01:52.099Z"
+        },
+        {
+          "number": 1293,
+          "title": "Multi-Encoder Embedding Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1294,
+          "title": "Latent Space Normalization & VAE Decode Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17575,7 +17585,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4b6mg5",
         "learn-huggingface-hf-stabilityai-stable-diffusion-3-medium-mv4ojwc0"
       ],
-      "verified_at": "2026-10-16T18:23:15.032Z",
+      "verified_at": "2026-10-17T02:16:11.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

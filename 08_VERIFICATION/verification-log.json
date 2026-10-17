@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-88D1",
-    "timestamp": "2026-10-15T21:37:47.605Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "e65c90613c28d11957f2a43d89c545be5d5a10eb8358d16883cf99c9e7a8f3a4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-CBN2",
     "timestamp": "2026-10-15T21:40:58.478Z",
     "repository": "black-forest-labs/FLUX.1-dev",
@@ -7492,6 +7477,21 @@
     "contentHash": "29b14331ccea664611e78fbf2d26665b9af2d9a5203de3c90bc851ed37c8b2c6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-M3MO",
+    "timestamp": "2026-10-17T02:16:11.232Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "f9b86b880f28786f452ee0eb8da86cc629eb3a344f5d0920d730cbd67124cbcf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

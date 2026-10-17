@@ -1967,3 +1967,4 @@
 | `CYCLE-20261017-9XEU` | `2026-10-17T02:06:43.302Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`c36a1e31...`) |
 | `CYCLE-20261017-DWFE` | `2026-10-17T02:09:48.650Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`6aba8d74...`) |
 | `CYCLE-20261017-HXST` | `2026-10-17T02:12:57.053Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`29b14331...`) |
+| `CYCLE-20261017-M3MO` | `2026-10-17T02:16:11.232Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1293, Rule 1294` | Yes (`f9b86b88...`) |
