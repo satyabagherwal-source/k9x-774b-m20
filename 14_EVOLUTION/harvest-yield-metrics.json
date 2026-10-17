@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T06:30:00.570Z",
-  "total_cycles_completed": 2024,
-  "total_learnings_persisted": 2024,
+  "last_updated": "2026-10-17T06:32:54.838Z",
+  "total_cycles_completed": 2025,
+  "total_learnings_persisted": 2025,
   "total_rules_promoted": 1102,
   "history": [
-    {
-      "timestamp": "2026-10-16T19:23:15.696Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T19:28:15.097Z",
       "repository": "pyannote/speaker-diarization-community-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T06:30:00.570Z",
       "repository": "Qwen/Qwen-Image-2.1-Turbo",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T06:32:54.838Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

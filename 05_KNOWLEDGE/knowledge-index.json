@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T06:30:00.530Z",
+  "last_updated": "2026-10-17T06:32:54.815Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18711,7 +18711,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "08c40ccb871cf5ea2dfe2629ec15d38639bf3ad8cc36825caea0042bb34482f3",
+      "content_hash": "09727c18a273323e023049bbc35a7595e9e4782904e741657c47499d0a290c72",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [],
@@ -18733,7 +18733,7 @@
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv459bwg",
         "learn-huggingface-hf-xingchen-agi-xing4-0-29b-a4b-mv4ij129"
       ],
-      "verified_at": "2026-10-16T22:58:07.434Z",
+      "verified_at": "2026-10-17T06:32:54.812Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
