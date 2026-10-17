@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-KFAD",
-    "timestamp": "2026-10-16T13:11:03.781Z",
-    "repository": "autotrust/JEV-35B-NVFP4",
-    "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-    "contentHash": "8c562aa2381293da6c1b0337a171d61e8d82e54aaa8d5c8f8a444f4c17e51ef4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-OGPW",
     "timestamp": "2026-10-16T13:14:12.260Z",
     "repository": "BAAI/bge-small-en-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "hexgrad/Kokoro-82M",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m",
     "contentHash": "c00dae97f0eeb8c52e968c82fcce07990474a32f6c6b32807c98b17f7b6fbaa8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-POXS",
+    "timestamp": "2026-10-17T17:42:46.144Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "f2913a4f7acd6d763a1c9d7f11a84b2c66e4c6191f69157e249f7c58911db7b2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
