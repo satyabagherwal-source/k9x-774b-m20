@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-DBAJ",
-    "timestamp": "2026-10-16T00:29:42.379Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "295a99ad2e183294962592da7baf405c1df8498e9679a96687e80c8392f8e9bd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-H9AJ",
     "timestamp": "2026-10-16T00:32:46.411Z",
     "repository": "google-bert/bert-base-uncased",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-small-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
     "contentHash": "4b286e53ed6b63ffc17a2607cfd2ba2f309a1ec9f6b5f48307ecee653361e532",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-YCOM",
+    "timestamp": "2026-10-17T05:13:40.534Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "07d759f1467d34d6bf829becf14514ee7b5525db7ed4ce7215ce88ee689ffe1b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
