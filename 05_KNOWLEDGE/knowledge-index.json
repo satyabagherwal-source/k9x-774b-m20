@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T22:12:37.569Z",
+  "last_updated": "2026-10-17T22:16:10.053Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18546,14 +18546,14 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
       "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
-      "content_hash": "b197b6ae12392fc3c82c8548a9b1fe0ccec78e606e6f4ff9fc59a77e40d38191",
+      "content_hash": "6bb110832c9d84e5a14522a7a52448e5d01b26d2412ea34aaa9931a9ef996ace",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "promoted_rules": [
         {
           "number": 1162,
           "title": "Dual-Encoder Embedding Concatenation & Projection Invariant",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 1163,
@@ -18594,6 +18594,11 @@
           "number": 1321,
           "title": "Absolute Micro-Conditioning Coordinate Invariant Preservation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1547,
+          "title": "Latent Space Noise Schedule Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18614,7 +18619,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
       ],
-      "verified_at": "2026-10-17T14:24:54.893Z",
+      "verified_at": "2026-10-17T22:16:10.046Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
