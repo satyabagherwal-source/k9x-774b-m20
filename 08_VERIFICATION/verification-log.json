@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-8MUU",
-    "timestamp": "2026-10-16T15:49:51.414Z",
-    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-    "contentHash": "3cb8ec63f731a747abc9e98b3f9cbda23bf459b6ee96db558dfbb41df8665ffc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-CQH4",
     "timestamp": "2026-10-16T15:53:02.728Z",
     "repository": "Alissonerdx/BFS-Best-Face-Swap",
@@ -7492,6 +7477,21 @@
     "contentHash": "8ad17e44a6e614ccf322425368bfba751588f6a35f8010c8583a97693e3f2291",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-YVL2",
+    "timestamp": "2026-10-17T20:09:52.742Z",
+    "repository": "Qwen/Qwen3-8B",
+    "learningId": "learn-huggingface-qwen-qwen3-8b",
+    "contentHash": "97d717981aac0fb47e42b94a8ffd6b73111e45437d4ceb25127bb200c9608e86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

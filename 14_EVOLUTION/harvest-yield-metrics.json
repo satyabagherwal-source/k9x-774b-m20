@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:06:26.022Z",
-  "total_cycles_completed": 2263,
-  "total_learnings_persisted": 2263,
-  "total_rules_promoted": 1297,
+  "last_updated": "2026-10-17T20:09:52.750Z",
+  "total_cycles_completed": 2264,
+  "total_learnings_persisted": 2264,
+  "total_rules_promoted": 1300,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:04:07.682Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T09:08:20.154Z",
       "repository": "google-t5/t5-small",
@@ -1403,6 +1396,13 @@
       "repository": "argmaxinc/whisperkit-coreml",
       "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T20:09:52.750Z",
+      "repository": "Qwen/Qwen3-8B",
+      "learningId": "learn-huggingface-qwen-qwen3-8b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

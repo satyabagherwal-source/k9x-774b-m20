@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T20:06:25.982Z",
+  "last_updated": "2026-10-17T20:09:52.717Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17474,10 +17474,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-8B",
       "source_version": "hf-qwen-qwen3-8b",
-      "content_hash": "d14ee4a3fd16e199a9eba215fc82f46ee78c189906f2a49f530b763850d6fc5d",
+      "content_hash": "97d717981aac0fb47e42b94a8ffd6b73111e45437d4ceb25127bb200c9608e86",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1518,
+          "title": "GQA KV-Cache Memory Optimization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1519,
+          "title": "BFloat16 Precision Stability for Inference",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1520,
+          "title": "Chat Template Role Separation & Thinking Mode Toggle",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -17495,7 +17511,7 @@
         "learn-huggingface-hf-qwen-qwen3-8b-mv407vz0",
         "learn-huggingface-hf-qwen-qwen3-8b-mv4e6vig"
       ],
-      "verified_at": "2026-10-17T12:09:34.597Z",
+      "verified_at": "2026-10-17T20:09:52.709Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -2293,3 +2293,4 @@ Every entry in this ledger must capture:
 | learn-onlinefreeprotractor-rule1515 | https://github.com/satyabagherwal-source/onlinefreeprotractor | production-verified-phase3 | scripts/audit_all_urls_integrity.cjs | 2026-10-18T01:25:00Z |
  (feat(brain): codify Rule 1514 - GSC Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant)
 | `learn-huggingface-argmaxinc-whisperkit-coreml` | `https://huggingface.co/argmaxinc/whisperkit-coreml` | `hf-argmaxi` | Multi-dimensional audit evidence | 2026-10-17T20:06:26.020Z |
+| `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-10-17T20:09:52.748Z |
