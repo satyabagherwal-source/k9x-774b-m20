@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T03:42:34.180Z",
+  "last_updated": "2026-10-17T03:46:35.953Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15653,10 +15653,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nomic-ai/nomic-embed-text-v1.5",
       "source_version": "hf-nomic-ai-nomic-embed-text-v1.5",
-      "content_hash": "215a575b55cb6feb16191ced565a875edd7cf8902b8b0ad34c70d8a13875a30e",
+      "content_hash": "7cf722ee42cd46ffc9450cbad7fe87b9fbbf8a689a0513a8773f82c61da98138",
       "dossier_path": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1305,
+          "title": "Zero-Copy Matryoshka Vector Truncation with Pre-Normalization Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1306,
+          "title": "Bidirectional Asymmetric Task-Prefix Routing Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1307,
+          "title": "Tensor Core Memory Tile Divisibility Invariant for Vocabularies",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -15674,7 +15690,7 @@
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv3z1izs",
         "learn-huggingface-hf-nomic-ai-nomic-embed-text-v1-5-mv4dnd2y"
       ],
-      "verified_at": "2026-10-16T20:00:17.817Z",
+      "verified_at": "2026-10-17T03:46:35.948Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

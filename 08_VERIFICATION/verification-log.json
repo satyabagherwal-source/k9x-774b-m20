@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-CD2L",
-    "timestamp": "2026-10-15T23:04:59.181Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "a8235362dfe63df1d7b447525db0272879efc02ff64dd41306278d5b8540aaf8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-GBH2",
     "timestamp": "2026-10-15T23:08:03.734Z",
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -7492,6 +7477,21 @@
     "contentHash": "f6cf8cb77bdc05938fcc24fbdf78133ba0634198ac2ab1f576a5a8e125b3c590",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-UDDZ",
+    "timestamp": "2026-10-17T03:46:35.975Z",
+    "repository": "nomic-ai/nomic-embed-text-v1.5",
+    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
+    "contentHash": "7cf722ee42cd46ffc9450cbad7fe87b9fbbf8a689a0513a8773f82c61da98138",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
