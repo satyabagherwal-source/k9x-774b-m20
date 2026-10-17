@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T11:34:25.939Z",
+  "last_updated": "2026-10-17T11:37:34.989Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14747,7 +14747,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
       "source_version": "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "content_hash": "98981b989b3aabf3ef588ec42a96312c5ebd93a7fa1c1a62c7309c4917ff1b0c",
+      "content_hash": "5d638285b171fff888d1ae4966a3ae1d9c9341be220d738e5afbf6b4ee30c092",
       "dossier_path": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md",
       "promoted_rules": [
@@ -14779,7 +14779,7 @@
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv3yhjko",
         "learn-huggingface-hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-mv4d7mje"
       ],
-      "verified_at": "2026-10-17T03:29:56.464Z",
+      "verified_at": "2026-10-17T11:37:34.982Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

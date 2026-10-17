@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-CZK3",
-    "timestamp": "2026-10-16T06:33:22.179Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "7002a9385691d55416f04118f7eab9888c2e2aacb52b475ceec1da6d30e69153",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-H89M",
     "timestamp": "2026-10-16T06:36:40.090Z",
     "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/LFM2.5-24B-A2B",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
     "contentHash": "8c528e7e2d5691cebcf5e724a7f53aad282738a72a2f02cf55f99e6922aa0734",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-O27J",
+    "timestamp": "2026-10-17T11:37:35.023Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "5d638285b171fff888d1ae4966a3ae1d9c9341be220d738e5afbf6b4ee30c092",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

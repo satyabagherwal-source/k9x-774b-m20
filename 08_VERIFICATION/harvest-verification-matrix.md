@@ -2132,3 +2132,4 @@
 | `CYCLE-20261017-BK6Z` | `2026-10-17T11:27:51.803Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`6efc9d7a...`) |
 | `CYCLE-20261017-FLUT` | `2026-10-17T11:31:00.581Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`b651b2b1...`) |
 | `CYCLE-20261017-K0C6` | `2026-10-17T11:34:25.974Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`8c528e7e...`) |
+| `CYCLE-20261017-O27J` | `2026-10-17T11:37:35.023Z` | `jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese-learnings.md` | Yes (`5d638285...`) |
