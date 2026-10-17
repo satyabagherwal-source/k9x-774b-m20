@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T17:20:30.502Z",
+  "last_updated": "2026-10-17T17:23:40.492Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9814,7 +9814,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "b6ae9f386008d8486cbb6022f49403181482ef8654cd130790cefebaa1f4a946",
+      "content_hash": "c67cb62279736d666e9e9a1780657ecb04fa59773e7b9ba2dac597c621ab3172",
       "dossier_path": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "promoted_rules": [],
@@ -9836,7 +9836,7 @@
         "learn-huggingface-hf-amazon-chronos-2-mv49o8cx",
         "learn-huggingface-hf-amazon-chronos-2-mv4n1u6n"
       ],
-      "verified_at": "2026-10-17T09:24:31.541Z",
+      "verified_at": "2026-10-17T17:23:40.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
