@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-CC74",
-    "timestamp": "2026-10-16T14:00:45.760Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "81fb12d0d24ad112a84f77a63426ca64aeaeb466a049b25c9ba98032ef91159e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-FXV6",
     "timestamp": "2026-10-16T14:03:33.810Z",
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -7492,6 +7477,21 @@
     "contentHash": "49fa184238fbfe19d3499fc56419131517f24b06a240783969e3f8b17fc4cb94",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-F7KU",
+    "timestamp": "2026-10-17T18:30:36.318Z",
+    "repository": "meta-llama/Llama-2-7b",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "fdcc5e10ad8cc3db8f37e2eb314d3d96732919a81763359ab9e1a52147b94861",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

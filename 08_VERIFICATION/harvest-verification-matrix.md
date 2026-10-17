@@ -2256,3 +2256,4 @@
 | `CYCLE-20261017-2WF8` | `2026-10-17T18:21:01.988Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`c179f49b...`) |
 | `CYCLE-20261017-704L` | `2026-10-17T18:24:13.413Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`4f9e248f...`) |
 | `CYCLE-20261017-BABE` | `2026-10-17T18:27:33.242Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING, Rule 1511` | Yes (`49fa1842...`) |
+| `CYCLE-20261017-F7KU` | `2026-10-17T18:30:36.318Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`fdcc5e10...`) |
