@@ -2332,3 +2332,4 @@
 | `CYCLE-20261017-BP1S` | `2026-10-17T22:39:48.880Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1551, Rule 1552` | Yes (`f9c41cad...`) |
 | `CYCLE-20261017-HB9T` | `2026-10-17T22:44:10.961Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`b883147a...`) |
 | `CYCLE-20261017-LIDN` | `2026-10-17T22:47:26.796Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`cebd2063...`) |
+| `CYCLE-20261017-PRJF` | `2026-10-17T22:50:45.291Z` | `Qwen/Qwen-Image-2.1-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | Yes (`28e860ef...`) |

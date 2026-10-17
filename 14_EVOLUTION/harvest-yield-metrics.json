@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T22:47:26.800Z",
-  "total_cycles_completed": 2309,
-  "total_learnings_persisted": 2309,
+  "last_updated": "2026-10-17T22:50:45.295Z",
+  "total_cycles_completed": 2310,
+  "total_learnings_persisted": 2310,
   "total_rules_promoted": 1334,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:37:35.027Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T11:40:42.023Z",
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T22:47:26.800Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T22:50:45.295Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
