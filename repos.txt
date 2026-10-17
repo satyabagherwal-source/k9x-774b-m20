@@ -4096,3 +4096,7 @@ https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017
 # --- Automatically Discovered by AI Scout Engine [2026-10-17T12:59:41.624Z] ---
 # [HIGH-PERF-SYSTEMS] tw93/Pake (35060 score) - Turn any website into a lightweight desktop app with one command, on macOS, Wind
 https://github.com/tw93/Pake
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-17T18:37:06.373Z] ---
+# [HUGGINGFACE-AI-MODELS] datalab-to/indra-ocr (2653 score) - Verified Hugging Face Model: datalab-to/indra-ocr (160 likes, 1053 downloads)
+https://huggingface.co/datalab-to/indra-ocr

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T18:34:05.067Z",
+  "last_updated": "2026-10-17T18:37:17.541Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2691,6 +2691,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-10-17T13:03:38.396Z"
+    },
+    "datalab-to/indra-ocr": {
+      "repository": "datalab-to/indra-ocr",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-datalab-to-indra-ocr",
+      "content_hash": "eb718cb7052af6932654e0e52b28e67096d7cd533dc5c0cbb918c9e66922b816",
+      "verified_at": "2026-10-17T18:37:17.541Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-10-17T18:37:17.541Z"
     }
   },
   "repos": {

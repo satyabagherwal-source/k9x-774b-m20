@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-K2RH",
-    "timestamp": "2026-10-16T14:06:46.781Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "c3b2a3a3e4607465c689e6083a386e3f44bdfa1cdfc78bf0fe5e61604d785979",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-PEYQ",
     "timestamp": "2026-10-16T14:10:55.874Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7490,6 +7475,21 @@
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
     "contentHash": "5f6f1d7235e3ae6018de1cc2676de265bd76e7e5f15a62bb6b0804f153fc9967",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-NT5P",
+    "timestamp": "2026-10-17T18:37:17.533Z",
+    "repository": "datalab-to/indra-ocr",
+    "learningId": "learn-huggingface-datalab-to-indra-ocr",
+    "contentHash": "eb718cb7052af6932654e0e52b28e67096d7cd533dc5c0cbb918c9e66922b816",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

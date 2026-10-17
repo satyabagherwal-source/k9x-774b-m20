@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T18:34:05.025Z",
-  "total_verified_learnings": 196,
+  "last_updated": "2026-10-17T18:37:17.497Z",
+  "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -43493,6 +43493,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-17T13:03:38.357Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-datalab-to-indra-ocr": {
+      "learning_id": "learn-huggingface-datalab-to-indra-ocr",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "datalab-to/indra-ocr",
+      "repository": "datalab-to/indra-ocr",
+      "slug": "hf-datalab-to-indra-ocr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/datalab-to/indra-ocr",
+      "source_version": "hf-datalab-to-indra-ocr",
+      "content_hash": "eb718cb7052af6932654e0e52b28e67096d7cd533dc5c0cbb918c9e66922b816",
+      "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-17T18:37:17.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
