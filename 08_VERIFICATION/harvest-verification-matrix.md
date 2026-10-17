@@ -2164,3 +2164,4 @@
 | `CYCLE-20261017-IOWW` | `2026-10-17T13:25:22.976Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`723a6a84...`) |
 | `CYCLE-20261017-N2WY` | `2026-10-17T13:28:47.746Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`005484aa...`) |
 | `CYCLE-20261017-RE12` | `2026-10-17T13:32:08.774Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`533164c3...`) |
+| `CYCLE-20261017-VKGI` | `2026-10-17T13:35:23.730Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`0a09e11b...`) |

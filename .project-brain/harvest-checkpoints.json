@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T13:32:08.780Z",
+  "last_updated": "2026-10-17T13:35:23.736Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -125,14 +125,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-small-en-v1-5",
-      "content_hash": "4b286e53ed6b63ffc17a2607cfd2ba2f309a1ec9f6b5f48307ecee653361e532",
-      "verified_at": "2026-10-17T05:10:09.867Z",
+      "content_hash": "0a09e11be276243b9c4b5e5a3fc4fe3657e8afad00e263e4df2c0744a02495c5",
+      "verified_at": "2026-10-17T13:35:23.735Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T05:10:09.867Z"
+      "last_updated": "2026-10-17T13:35:23.735Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",

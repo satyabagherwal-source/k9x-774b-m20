@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T13:32:08.779Z",
-  "total_cycles_completed": 2141,
-  "total_learnings_persisted": 2141,
+  "last_updated": "2026-10-17T13:35:23.734Z",
+  "total_cycles_completed": 2142,
+  "total_learnings_persisted": 2142,
   "total_rules_promoted": 1232,
   "history": [
-    {
-      "timestamp": "2026-10-17T02:06:43.306Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T02:09:48.654Z",
       "repository": "openai/gpt-oss-120b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T13:32:08.779Z",
       "repository": "autotrust/JEV-35B-NVFP4",
       "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T13:35:23.734Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

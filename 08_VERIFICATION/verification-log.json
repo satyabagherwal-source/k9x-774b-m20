@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-XX80",
-    "timestamp": "2026-10-16T08:41:37.392Z",
-    "repository": "BAAI/bge-m3",
-    "learningId": "learn-huggingface-baai-bge-m3",
-    "contentHash": "c2cd9f39df0c41277c32e12ab89ab5c96917ee692062ff0a1384cfe2519c1324",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-1VRP",
     "timestamp": "2026-10-16T08:44:42.133Z",
     "repository": "Qwen/Qwen3-0.6B",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B-NVFP4",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
     "contentHash": "533164c398eb033e9a2313f140c5ce5ac98cf400f0797b5e05c0007af76606d3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-VKGI",
+    "timestamp": "2026-10-17T13:35:23.730Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "0a09e11be276243b9c4b5e5a3fc4fe3657e8afad00e263e4df2c0744a02495c5",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
