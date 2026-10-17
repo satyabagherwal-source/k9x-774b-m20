@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T12:06:12.654Z",
-  "total_cycles_completed": 2119,
-  "total_learnings_persisted": 2119,
+  "last_updated": "2026-10-17T12:09:34.636Z",
+  "total_cycles_completed": 2120,
+  "total_learnings_persisted": 2120,
   "total_rules_promoted": 1223,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:55:42.889Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-google-electra-base-discriminator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:58:48.968Z",
       "repository": "BAAI/bge-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T12:06:12.654Z",
       "repository": "argmaxinc/whisperkit-coreml",
       "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:09:34.636Z",
+      "repository": "Qwen/Qwen3-8B",
+      "learningId": "learn-huggingface-qwen-qwen3-8b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

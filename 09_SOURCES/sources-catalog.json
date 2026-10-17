@@ -1225,8 +1225,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B",
     "sourceVersion": "hf-qwen-qwen3-8b",
     "license": "Open-Source",
-    "contentHash": "30e93d144811a81d0864d227a317d6d4cca945207c9a3252685d53bf06042a8a",
-    "lastHarvestedAt": "2026-10-17T04:02:18.221Z",
+    "contentHash": "d14ee4a3fd16e199a9eba215fc82f46ee78c189906f2a49f530b763850d6fc5d",
+    "lastHarvestedAt": "2026-10-17T12:09:34.635Z",
     "learningId": "learn-huggingface-qwen-qwen3-8b"
   },
   "hf-google-vit-base-patch16-224": {
