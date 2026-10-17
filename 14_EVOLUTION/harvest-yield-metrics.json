@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T22:09:22.278Z",
-  "total_cycles_completed": 2298,
-  "total_learnings_persisted": 2298,
+  "last_updated": "2026-10-17T22:12:37.608Z",
+  "total_cycles_completed": 2299,
+  "total_learnings_persisted": 2299,
   "total_rules_promoted": 1327,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:01:59.008Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T11:04:55.445Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1403,6 +1396,13 @@
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
       "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T22:12:37.608Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

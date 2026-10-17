@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-UM7T",
-    "timestamp": "2026-10-16T17:58:55.481Z",
-    "repository": "Qwen/Qwen3.8-Flash-Next",
-    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-    "contentHash": "5a27b2d0b292591662337c167f29b28127925864bd0ba4b441da6a200ccede37",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-118F",
     "timestamp": "2026-10-16T18:03:54.879Z",
     "repository": "fishaudio/drama-3",
@@ -7492,6 +7477,21 @@
     "contentHash": "6635a7accf735734ac1c846e25b74b0075b12e05c1758ddc0cafc837133cc740",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-CQCK",
+    "timestamp": "2026-10-17T22:12:37.604Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "8e5b6de583a6f513cec0599d23abaf2d31268e9e8e0b0a94b1b327450ba42822",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
