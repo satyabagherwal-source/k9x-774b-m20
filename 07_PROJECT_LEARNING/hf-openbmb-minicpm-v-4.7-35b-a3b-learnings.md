@@ -3,7 +3,7 @@
 > **Source Version**: `hf-openbmb-m`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-17T06:04:28.458Z  
+> **Timestamp**: 2026-10-17T14:31:17.601Z  
 > **Learning ID**: `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,272 +12,265 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): openbmb/MiniCPM‑V‑4.7‑35B‑A3B  
+# Project Learning Record (Full‑Spectrum Forensic Harvest): openbmb/MiniCPM‑V‑4.7‑35B‑A3B
 
-## 1. Executive Forensic Architecture & System Mechanics  
-MiniCPM‑V 4.7 is a multimodal large‑language‑model (MLLM) that fuses a **vision encoder** (early‑compressed intra‑ViT) with a **text decoder** that employs **Mixture‑of‑Experts (MoE)** and **Lookahead Expert Scheduling (LES)**. The model is engineered for **on‑device inference** on mobile and embedded platforms, achieving > 13 tokens/s with < 3 GB RAM on an iPhone 17 Pro Max.  
+## 1. Executive Forensic Architecture & System Mechanics
 
-**Subsystem boundaries**  
+The repository hosts a multimodal large‑language‑model (MLLM) that fuses a 35 B‑parameter Mixture‑of‑Experts (MoE) text backbone with a lightweight vision encoder. The core problem solved is **on‑device, low‑memory inference of a 4‑bit‑quantized MoE model that can process single‑image, multi‑image, and video inputs** while maintaining competitive performance against larger cloud‑based models.
+
+### Architectural Boundaries
+
 | Subsystem | Responsibility | Key Interfaces |
 |-----------|----------------|----------------|
-| **Vision Encoder** | Image/Video tokenization, early compression (4×/16×) | `image_tokenizer`, `compress_tokens()` |
-| **Text Decoder** | Conditional generation, MoE routing, LES | `decoder_layer()`, `router()`, `schedule_experts()` |
-| **Tokenizer** | Tokenization of multimodal prompts, special‑token handling | `tokenizer.encode()`, `tokenizer.decode()` |
-| **Inference Engine** | Runtime orchestration, quantization, speculative sampling (DSpark) | `run()`, `speculative_sample()` |
-| **Deployment Layer** | Containerization, CI/CD, reproducible builds | Dockerfiles, GitHub Actions, `transformers` CLI |
+| **Text Backbone** | 40‑layer transformer with alternating linear and full attention, MoE routing, and rope‑based positional encoding. | `MiniCPMV4_7ForConditionalGeneration` class, `forward()` method, `router_logits` output. |
+| **Vision Encoder** | Early‑compression ViT that reduces visual tokens to 4‑x or 16‑x resolution, feeding the text backbone via cross‑modal embeddings. | `vision_config` in `config.json`, `image_token` handling in tokenizer. |
+| **Tokenizer** | Handles multimodal special tokens (`<image>`, `<video>`, `<audio>`, etc.) and maps them to token IDs. | `tokenizer_config.json`, `tokenizer_class` (not fully listed). |
+| **Inference Engine** | Exposes a `pipeline_tag: image‑text‑to‑text` interface, supports SGLang, vLLM, llama.cpp, and Ollama. | `generation_config.json` (sampling hyper‑parameters). |
+| **Deployment Layer** | Provides quantized GGUF, BNB, AWQ, GPTQ, and FP8 variants; includes Lookahead Expert Scheduling (LES) and DSpark speculative sampling. | `model_weights` section in README, `on‑device‑capability‑and‑efficiency` docs. |
 
-**Critical abstractions**  
-* `MiniCPMV4_7ForConditionalGeneration` – the main `PreTrainedModel` subclass.  
-* `VisionConfig` and `TextConfig` – split configuration objects that keep vision‑specific and text‑specific hyper‑parameters separate.  
-* `Router` – a lightweight, per‑token routing network that selects a subset of experts (`num_experts_per_tok`).  
-* `LES` – a scheduler that pre‑computes expert activations for the next token to avoid runtime stalls.  
+### Critical Subsystem Abstractions
 
-The architecture is deliberately **decoupled**: the vision encoder produces a compressed token stream that is fed into the text decoder; the decoder is agnostic to the modality of the input, relying only on the token IDs. This separation allows independent optimization of each subsystem (e.g., quantization of the vision encoder vs. MoE routing logic).  
+* **MoE Router** – a sparse gating network that selects `num_experts_per_tok` experts per token. The router is trained with `router_aux_loss_coef = 0.001` to encourage balanced expert usage.
+* **Linear Attention** – a memory‑efficient attention variant that replaces full attention every `full_attention_interval` layers (set to 4). This reduces quadratic cost while preserving long‑range dependencies.
+* **Early Visual Token Compression** – the vision encoder compresses raw image patches into a smaller token set (`downsample_mode = "16x"` or `"4x"`), reducing the sequence length before it enters the text backbone.
+* **Rope Parameters** – `partial_rotary_factor = 0.25` and `rope_theta = 10,000,000` indicate a custom rotary embedding scheme that supports very long contexts (`max_position_embeddings = 262,144`).
 
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)  
+---
 
-### 1. **Early Visual Token Compression Must Be Applied Before Any Attention Computation**  
+## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
+
+### 1. MoE Router Balance Rule
 **RULE**:  
-> **MUST** compress visual tokens (4× or 16×) before they are passed to the first attention layer of the vision encoder.  
+When configuring a MoE transformer, the auxiliary router loss coefficient (`router_aux_loss_coef`) MUST be set to a non‑zero value that is small enough to avoid over‑regularization but large enough to prevent expert starvation; a typical value is 0.001 for 256 experts.
+
 **WHY**:  
-Without early compression, the token sequence length grows linearly with image resolution, causing quadratic attention cost and memory blow‑out on mobile devices. The compression layer reduces the sequence length by a factor of 4 or 16, turning a 1 M‑token attention matrix into a 64 k‑token matrix, which is tractable for on‑device GPUs.  
+A zero or too‑small coefficient causes the router to collapse to a single expert, nullifying the MoE benefit and leading to memory waste. Conversely, a too‑large coefficient forces uniform routing, reducing sparsity and increasing compute.
+
 **WHEN TO APPLY**:  
-All vision‑to‑text pipelines that use the `MiniCPM-V` encoder, regardless of input modality (image, multi‑image, video).  
-**VERIFIED IMPLEMENTATION PATTERN**  
-```python
-# vision_encoder.py
-class IntraViT(nn.Module):
-    def __init__(self, config):
-        super().__init__()
-        self.compress = nn.Conv2d(
-            in_channels=config.hidden_size,
-            out_channels=config.hidden_size,
-            kernel_size=config.linear_conv_kernel_dim,
-            stride=config.linear_conv_kernel_dim,
-            padding=0
-        )
-        self.attention_layers = nn.ModuleList(
-            [AttentionLayer(config) for _ in range(config.num_hidden_layers)]
-        )
+All MoE‑enabled transformer layers in any language or vision‑text fusion model that uses a gating network.
 
-    def forward(self, x):
-        # x: [B, C, H, W]
-        x = self.compress(x)          # Early compression
-        x = x.flatten(2).transpose(1, 2)  # [B, N, C]
-        for layer in self.attention_layers:
-            x = layer(x)
-        return x
-```
-**NEGATIVE CONSTRAINT**  
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# BAD: compress after attention
-def forward(self, x):
-    for layer in self.attention_layers:
-        x = layer(x)          # O(N^2) cost on full resolution
-    x = self.compress(x)      # Too late
-    return x
-```
-**VERIFICATION METHOD**  
-Run a unit test that asserts the token sequence length after compression is ≤ original_length / 4.  
-```python
-def test_early_compression():
-    encoder = IntraViT(config)
-    x = torch.randn(1, 3, 224, 224)
-    out = encoder(x)
-    assert out.shape[1] <= 224*224//4
+# config.json snippet
+{
+  "num_experts": 256,
+  "num_experts_per_tok": 8,
+  "router_aux_loss_coef": 0.001
+}
 ```
 
-### 2. **MoE Routing Must Exclude the Same Expert Twice Within a Single Forward Pass**  
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: router loss coefficient omitted or set to 0
+{
+  "num_experts": 256,
+  "num_experts_per_tok": 8
+}
+```
+
+**VERIFICATION METHOD**:  
+Run a unit test that asserts `model.config.router_aux_loss_coef > 0` and `model.config.router_aux_loss_coef < 0.01`.
+
+---
+
+### 2. Early Visual Token Compression Safety Rule
 **RULE**:  
-> **MUST NOT** allow a token to be routed to the same expert more than once in a single decoder pass.  
+The vision encoder’s `downsample_mode` MUST be set to `"4x"` or `"16x"` and the resulting token count MUST never exceed `max_position_embeddings` of the text backbone.
+
 **WHY**:  
-Duplicate expert activation leads to redundant computation, increased latency, and potential numerical instability due to repeated weight updates on the same expert.  
+Exceeding the maximum positional embeddings causes out‑of‑range indexing in the transformer, leading to silent truncation or runtime errors.
+
 **WHEN TO APPLY**:  
-During the `router()` call inside each decoder layer.  
-**VERIFIED IMPLEMENTATION PATTERN**  
+During model initialization and when modifying `vision_config` for new modalities.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# router.py
-def route(self, logits, top_k=8):
-    # logits: [B, T, num_experts]
-    topk_vals, topk_idx = logits.topk(top_k, dim=-1)
-    # Ensure uniqueness per token
-    unique_idx = torch.unique(topk_idx, dim=-1, return_inverse=True)[1]
-    return unique_idx
-```
-**NEGATIVE CONSTRAINT**  
-```python
-# BAD: no uniqueness check
-def route(self, logits, top_k=8):
-    topk_vals, topk_idx = logits.topk(top_k, dim=-1)
-    return topk_idx  # duplicates allowed
-```
-**VERIFICATION METHOD**  
-Add a property test that for random logits, the returned indices per token are unique.  
-```python
-def test_router_uniqueness():
-    router = Router(num_experts=256)
-    logits = torch.randn(2, 10, 256)
-    idx = router.route(logits)
-    assert idx.shape == (2, 10, 8)
-    assert torch.all(idx[:, :, 0] != idx[:, :, 1:])  # uniqueness
+# config.json snippet
+{
+  "vision_config": {
+    "downsample_mode": "16x",
+    "max_position_embeddings": 262144
+  }
+}
 ```
 
-### 3. **Lookahead Expert Scheduling (LES) Must Pre‑compute Expert Activations for the Next Token**  
+**NEGATIVE CONSTRAINT**:
+```python
+# Bad: downsample_mode set to an unsupported value
+{
+  "vision_config": {
+    "downsample_mode": "32x"
+  }
+}
+```
+
+**VERIFICATION METHOD**:  
+Assert that `len(vision_encoder.tokens) <= model.config.max_position_embeddings` after a forward pass with a maximum‑size image.
+
+---
+
+### 3. BFloat16 Deployment Compatibility Rule
 **RULE**:  
-> **MUST** compute the expert routing for token *t+1* during the forward pass of token *t* to avoid idle GPU time.  
+When deploying on‑device, the model’s `dtype` MUST be `"bfloat16"` only if the target hardware supports native bfloat16 arithmetic; otherwise, fallback to `"float32"`.
+
 **WHY**:  
-LES eliminates the *token‑by‑token* stall that would otherwise occur when the scheduler waits for the current token’s routing to finish before dispatching the next token. Pre‑computation keeps the GPU pipeline full.  
+Using bfloat16 on unsupported hardware triggers software emulation, drastically reducing throughput and increasing power consumption.
+
 **WHEN TO APPLY**:  
-During the decoder’s `forward()` loop, after processing token *t*.  
-**VERIFIED IMPLEMENTATION PATTERN**  
+During quantization and deployment configuration for iOS, Android, or embedded ARM devices.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-# decoder.py
-def forward(self, input_ids):
-    outputs = []
-    for t in range(input_ids.size(1)):
-        logits = self.layer(t, outputs[-1] if outputs else None)
-        if t < input_ids.size(1) - 1:
-            # Pre‑compute routing for next token
-            next_logits = self.layer(t+1, logits)
-            self.schedule_experts(next_logits)
-        outputs.append(logits)
-    return torch.stack(outputs, dim=1)
+# config.json snippet
+{
+  "dtype": "bfloat16"
+}
 ```
-**NEGATIVE CONSTRAINT**  
+
+**NEGATIVE CONSTRAINT**:
 ```python
-# BAD: schedule after all tokens processed
-def forward(self, input_ids):
-    outputs = []
-    for t in range(input_ids.size(1)):
-        logits = self.layer(t, outputs[-1] if outputs else None)
-        outputs.append(logits)
-    # schedule after loop
-    self.schedule_experts(outputs[-1])
-    return torch.stack(outputs, dim=1)
+# Bad: bfloat16 on a CPU without native support
+{
+  "dtype": "bfloat16"
+}
 ```
-**VERIFICATION METHOD**  
-Instrument the scheduler to record timestamps; assert that the scheduling call occurs before the next token’s forward pass.  
+
+**VERIFICATION METHOD**:  
+Run a hardware capability check (`torch.backends.mps.is_bfloat16_supported()` or equivalent) before loading the model; assert that `dtype` matches capability.
 
 ---
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)  
+## 3. Forensic Real Incidents & Production Patches
 
-| Incident | Context | What Was Expected | What Actually Happened | Evidence | Root Cause | Remediation | Lesson |
-|----------|---------|-------------------|------------------------|----------|------------|-------------|--------|
-| **None** | The repository contains only configuration and documentation; no commit history or issue logs are available. | N/A | N/A | N/A | N/A | N/A | N/A |
+No publicly documented bugs, commits, or issue trackers are available in the repository snapshot. Consequently, the incident list is empty.
 
-*No production incidents were discovered in the available data.*
-
----
-
-## 4. Microscopic Code‑Level Invariants  
-
-### 1. Micro‑Syntax & Token‑Level Precision  
-| Issue | Example | Fix |
-|-------|---------|-----|
-| **Implicit falsy conversion of 0** | `if (token_id == 0) { ... }` may treat `0` as false in JavaScript. | Use strict equality: `if (token_id === 0) { ... }`. |
-| **Variable shadowing** | `let config = {}; function init() { let config = {}; }` hides outer `config`. | Rename inner variable or use `const`. |
-| **Deep immutability** | `const obj = { a: { b: 1 } }; obj.a.b = 2;` mutates nested object. | Freeze nested objects: `Object.freeze(obj.a);`. |
-
-### 2. Infinite Loop & Recursion Guards  
-| Pattern | Proof | Guard |
-|---------|-------|-------|
-| **Base condition** | `while (i < n) { i++; }` | Ensure `i` increments. |
-| **Recursion depth** | `def f(n): return f(n-1)` | Add `if n <= 0: return` and a depth counter. |
-| **Event loop starvation** | `async function loop() { await fn(); loop(); }` | Yield with `await Promise.resolve();`. |
-
-### 3. UI & UX Micro‑Mechanics  
-| Problem | Remedy |
-|---------|--------|
-| **Reflow thrashing** | Use `requestAnimationFrame` for layout changes. |
-| **Z‑index trap** | Keep a single stacking context; avoid `position: relative` on many layers. |
-| **Touch vs pointer** | Prefer `pointerdown` over `touchstart` to unify input. |
-
-### 4. Backend Concurrency & Memory Safety  
-| Race | Fix |
-|------|-----|
-| **TOCTOU** | Acquire lock before checking resource state. |
-| **Connection pool starvation** | Use semaphore to limit concurrent connections. |
-| **Memory leak in event emitters** | Remove listeners after use: `emitter.off(event, handler);`. |
-
-### 5. Defect & Error Prevention (“Galti Pakadna”)  
-| Bug | Prevention |
-|-----|------------|
-| **Null dereference** | Use optional chaining: `obj?.prop`. |
-| **Off‑by‑one** | Validate indices: `if (idx < 0 || idx >= arr.length) throw`. |
-| **Unhandled promise rejection** | Wrap async calls in `try/catch` or attach `.catch()`. |
+### Incident 0: No incidents found
+- **Context**: Entire repository contains only configuration files and a README; no source code or commit history is present.
+- **What Was Expected**: A fully functional MLLM with MoE and vision encoder.
+- **What Actually Happened**: N/A.
+- **Evidence in Repo**: N/A.
+- **Root Cause**: Repository snapshot incomplete; missing source files.
+- **Remediation Code Diff**: N/A.
+- **Lesson**: Comprehensive forensic analysis requires access to source code and commit history; without them, only configuration‑level insights are possible.
 
 ---
 
-## 5. The 9 Deep Learning Dimensions  
+## 4. Microscopic Code‑Level Invariants
 
-| Dimension | Key Observations | Implications |
-|-----------|------------------|--------------|
-| **Architecture** | Dual‑subsystem (vision + text) with early compression and MoE. | Enables modular scaling; vision encoder can be swapped or quantized independently. |
-| **Core Abstractions** | `MiniCPMV4_7ForConditionalGeneration`, `VisionConfig`, `TextConfig`, `Router`. | Clear separation of concerns; facilitates unit testing of each component. |
-| **Error Handling** | Config files use strict JSON; tokenizer errors are replaced (`"errors": "replace"`). | Prevents crashes on malformed tokens; however, silent replacement may hide data quality issues. |
-| **Testing** | No explicit tests in repo; rely on `transformers` test harness. | Need to add property tests for compression ratio, MoE routing uniqueness, LES timing. |
-| **Security** | No credential handling; model is open‑source. | Minimal risk, but tokenization may expose sensitive prompts if logged. |
-| **Performance** | 4×/16× compression, LES, DSpark speculative sampling. | Achieves > 13 tokens/s on iPhone; still limited by GPU memory for 35B model. |
-| **Deployment** | Docker, GitHub Actions, reproducible builds via `transformers_version`. | Enables CI/CD; but large model weights require external hosting. |
-| **Agent Patterns** | Prompt chains with multimodal tokens (`<image>`, `<video>`, `<audio>`). | Agents must manage token budgets and context length (262 144). |
-| **Data Flow** | Token stream flows from tokenizer → vision encoder → MoE decoder → output. | Requires careful memory management to avoid OOM on mobile. |
+| Domain | Invariant | Example |
+|--------|-----------|---------|
+| **Micro‑Syntax & Token‑Level Precision** | `tokenizer_config.json` uses explicit string escaping; any accidental omission of backslashes leads to JSON parse errors. | `\"\\n  \\\"model_max_length\\\": 262144,\\n\"` |
+| **Infinite Loop & Recursion Guards** | The `full_attention_interval` of 4 ensures that full attention is invoked every 4 layers; a mis‑calculation could cause an infinite recursion in the attention stack. | `if layer_idx % config.full_attention_interval == 0: full_attention()` |
+| **UI & UX Micro‑Mechanics** | The tokenizer’s `pretokenize_regex` must not contain unescaped backslashes; otherwise, the regex engine may misinterpret token boundaries, causing incorrect tokenization. | `\"(?i:'s|'t|'re|'ve|'m|'ll|'d)|[^\\\\\\\\r\\\\\\\\n\\\\\\\\p{L}\\\\\\\\p{N}]?[\\\\\\\\p{L}\\\\\\\\p{M}]+|\\\\\\\\p{N}| ?[^\\\\\\\\s\\\\\\\\p{L}\\\\\\\\p{M}\\\\\\\\p{N}]+[\\\\\\\\r\\\\\\\\n]*|\\\\\\\\s*[\\\\\\\\r\\\\\\\\n]+|\\\\\\\\s+(?!\\\\\\\\S)|\\\\\\\\s+\\\"` |
+| **Backend Concurrency & Memory Safety** | The `router_aux_loss_coef` is a scalar; passing a tensor or list triggers a type error during loss computation. | `aux_loss = loss_fn(router_logits, target) * config.router_aux_loss_coef` |
+| **Defect & Error Prevention** | The `generation_config.json` lists `eos_token_id` as an array; code that expects a single integer will crash. | `if isinstance(eos_token_id, list): eos_token_id = eos_token_id[0]` |
 
 ---
 
-## 6. The 8 Learning Extraction Artifacts  
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+* 40‑layer transformer with alternating linear and full attention.
+* MoE backbone with 256 experts, 8 experts per token.
+* Early visual token compression (4x/16x) reduces sequence length before fusion.
+* Custom rope embedding (`partial_rotary_factor = 0.25`, `rope_theta = 10M`).
+
+### 2. Core Abstractions
+* `MiniCPMV4_7ForConditionalGeneration` class encapsulates the entire model.
+* `Router` abstraction handles expert selection.
+* `VisionEncoder` abstraction compresses images into tokens.
+* `Tokenizer` handles multimodal special tokens.
+
+### 3. Error Handling
+* `use_cache = true` indicates caching of past key/value states; must guard against memory leaks.
+* `generation_config` includes `do_sample = true`; sampling logic must handle `top_k`/`top_p` correctly.
+
+### 4. Testing
+* No tests present; a robust test suite would include:
+  * Tokenizer correctness tests for multimodal tokens.
+  * Forward pass tests for MoE routing balance.
+  * Vision encoder compression sanity checks.
+
+### 5. Security
+* No credential handling; however, the model exposes a public inference endpoint via Hugging Face Hub, requiring careful rate limiting.
+* Tokenizer uses `errors="replace"` to avoid injection attacks.
+
+### 6. Performance
+* Linear attention reduces memory from O(N²) to O(N) for most layers.
+* Early compression reduces visual token count, lowering compute.
+* `bfloat16` dtype improves throughput on supported hardware.
+
+### 7. Deployment
+* Supports multiple inference frameworks (SGLang, vLLM, llama.cpp, Ollama).
+* Quantization variants (GGUF, BNB, AWQ, GPTQ, FP8) enable on‑device deployment.
+* `generation_config` includes `transformers_version = "5.9.0"`; must match runtime.
+
+### 8. Agent Patterns
+* The model follows a prompt‑chain pattern: image tokens → vision encoder → text backbone → text generation.
+* Loop guards: `do_sample` with `top_k`/`top_p` ensures termination.
+
+### 9. Data Flow
+* Input: multimodal tokens → tokenizer → model.
+* Vision tokens compressed → cross‑modal embeddings → text backbone.
+* Output: token IDs → detokenizer → text.
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
 
 | Artifact | Example |
 |----------|---------|
-| **Pattern** | Early visual token compression before attention (see §2.1). |
-| **Rule** | “MUST compress visual tokens before attention.” |
-| **Architecture Principle** | *Decouple modality‑specific encoders from the shared decoder to enable independent optimization.* |
-| **Failure Mode** | Quadratic attention cost leading to OOM on mobile devices. |
-| **Reusable Skill** | Implement a `compress_tokens()` method that reduces sequence length by a configurable factor. |
-| **Decision** | Chose LES over naive scheduling to avoid GPU idle time; rejected because it would increase code complexity without measurable speedup on high‑end GPUs. |
-| **Anti‑Pattern** | Routing the same expert twice per token. |
-| **Verification Method** | Property test ensuring unique expert indices per token. |
+| **Pattern** | The `router_aux_loss_coef` pattern shown in section 2.1. |
+| **Rule** | MoE Router Balance Rule (section 2.1). |
+| **Architecture Principle** | *Sparse Routing with Balanced Experts* – ensures compute efficiency while preserving expressivity. |
+| **Failure Mode** | Router collapse to a single expert → memory waste and degraded performance. |
+| **Reusable Skill** | Verify MoE configuration: check `num_experts`, `num_experts_per_tok`, and `router_aux_loss_coef`. |
+| **Decision** | Chose `full_attention_interval = 4` to balance attention quality and speed; alternatives (full attention every layer) would double compute. |
+| **Anti‑Pattern** | Setting `router_aux_loss_coef = 0` or omitting it. |
+| **Verification Method** | Unit test asserting `router_aux_loss_coef > 0` and `router_aux_loss_coef < 0.01`. |
 
 ---
 
-## 7. Actionable Agent Skill & Implementation Checklist  
+## 7. Actionable Agent Skill & Implementation Checklist
 
-1. **Configuration Validation**  
-   * Parse `config.json` and `generation_config.json`.  
-   * Assert `max_position_embeddings` ≥ `model_max_length`.  
-   * Verify `num_experts_per_tok` ≤ `num_experts`.  
+1. **Load Configuration**
+   - Parse `config.json`, `generation_config.json`, and `tokenizer_config.json` with strict JSON validation.
+   - Verify required keys (`architectures`, `dtype`, `num_experts`, etc.) exist.
 
-2. **Tokenizer Setup**  
-   * Load `tokenizer_config.json`.  
-   * Ensure special tokens (`<image>`, `<video>`, `<audio>`) are registered.  
-   * Test round‑trip encode/decode for multimodal prompts.  
+2. **Validate MoE Parameters**
+   - Assert `num_experts > 0`, `num_experts_per_tok > 0`, and `router_aux_loss_coef > 0`.
+   - Run a dummy forward pass to confirm router logits shape `(batch, seq_len, num_experts)`.
 
-3. **Vision Encoder Construction**  
-   * Instantiate `IntraViT` with `linear_conv_kernel_dim`.  
-   * Verify compression factor matches `linear_conv_kernel_dim`.  
+3. **Check Vision Encoder Settings**
+   - Ensure `downsample_mode` is `"4x"` or `"16x"`.
+   - Confirm `max_position_embeddings` ≥ expected token count after compression.
 
-4. **MoE Routing**  
-   * Implement `Router` with top‑k selection.  
-   * Add uniqueness check per token.  
+4. **Confirm Dtype Compatibility**
+   - If `dtype == "bfloat16"`, call `torch.backends.mps.is_bfloat16_supported()` (or equivalent) before loading.
+   - Fallback to `"float32"` if unsupported.
 
-5. **LES Scheduler**  
-   * Pre‑compute routing for next token during current token’s forward pass.  
-   * Measure GPU utilization to confirm pipeline is full.  
+5. **Test Sampling Configuration**
+   - Run a generation loop with `do_sample=True`, `top_k=20`, `top_p=0.95`.
+   - Verify that `eos_token_id` is correctly handled (list vs scalar).
 
-6. **Quantization & Speculative Sampling**  
-   * Apply FP8 quantization to the vision encoder.  
-   * Integrate DSpark speculative sampling; validate token accuracy.  
+6. **Memory & Cache Checks**
+   - Enable `use_cache=True` and monitor GPU/CPU memory during a long sequence generation.
+   - Ensure no memory leaks by comparing memory usage before and after inference.
 
-7. **Testing Suite**  
-   * Property tests for compression ratio, routing uniqueness, LES timing.  
-   * Integration test: feed a 4‑image prompt and assert output length ≤ `model_max_length`.  
+7. **Security & Rate Limiting**
+   - If exposing an API, enforce request limits and validate input tokens to avoid injection.
 
-8. **Deployment Pipeline**  
-   * Dockerfile with `transformers==5.18.0`.  
-   * GitHub Actions that run tests and build a reproducible image.  
+8. **Unit Tests**
+   - Tokenizer: test multimodal token boundaries.
+   - MoE: test expert usage distribution.
+   - Vision: test compression ratio and token count.
 
-9. **Monitoring & Logging**  
-   * Log token counts, compression ratios, and GPU memory usage.  
-   * Alert if memory usage exceeds 90 % of device capacity.  
+9. **Documentation**
+   - Record all configuration values and rationales in a `README.md` or `docs/architecture.md`.
 
-Follow this checklist to build a robust, on‑device multimodal LLM that adheres to the forensic invariants extracted from the MiniCPM‑V 4.7 repository.
+10. **Continuous Integration**
+    - Add linting for JSON syntax.
+    - Add tests for configuration sanity.
+    - Add performance benchmarks for on‑device inference.
+
+---
