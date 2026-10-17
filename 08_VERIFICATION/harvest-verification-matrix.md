@@ -2172,3 +2172,4 @@
 | `CYCLE-20261017-HF5X` | `2026-10-17T13:52:23.301Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`c6411e08...`) |
 | `CYCLE-20261017-L57L` | `2026-10-17T13:55:17.025Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`f57b04e3...`) |
 | `CYCLE-20261017-QJ1V` | `2026-10-17T13:59:28.243Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1460, Rule 1461, Rule 1462` | Yes (`76717c6c...`) |
+| `CYCLE-20261017-UH2A` | `2026-10-17T14:02:32.290Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`85ef62d0...`) |

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-autotrust`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T05:35:51.456Z  
+> **Timestamp**: 2026-10-17T14:02:32.202Z  
 > **Learning ID**: `learn-huggingface-autotrust-gev-26b-decide-nvfp4`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4](https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T05:35:50.481Z  
+> **Harvest Timestamp**: 2026-10-17T14:02:31.217Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 54179 downloads | 167 likes
+- **Stars / Engagement**: 59606 downloads | 168 likes
 
 ---
 

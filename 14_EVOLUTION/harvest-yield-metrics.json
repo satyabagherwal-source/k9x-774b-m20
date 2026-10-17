@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T13:59:28.250Z",
-  "total_cycles_completed": 2149,
-  "total_learnings_persisted": 2149,
+  "last_updated": "2026-10-17T14:02:32.294Z",
+  "total_cycles_completed": 2150,
+  "total_learnings_persisted": 2150,
   "total_rules_promoted": 1240,
   "history": [
-    {
-      "timestamp": "2026-10-17T02:33:02.573Z",
-      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T02:36:13.107Z",
       "repository": "deepseek-ai/DeepSeek-V3",
@@ -1403,6 +1396,13 @@
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T14:02:32.294Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
