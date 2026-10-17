@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-WSWT",
-    "timestamp": "2026-10-16T14:44:40.157Z",
-    "repository": "SupersonicLabs/Julia-1",
-    "learningId": "learn-huggingface-supersoniclabs-julia-1",
-    "contentHash": "b41dca65a922a8cdec5fe304b5043c94c8a0b829c402c1d62fd81d215a20a737",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-0WD8",
     "timestamp": "2026-10-16T14:47:51.260Z",
     "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
@@ -7490,6 +7475,21 @@
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
     "contentHash": "023dec031a1e70236447e2bd4c0be582eb7594385b7489e4f3eaf9d994c85edf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-SQ5U",
+    "timestamp": "2026-10-17T19:09:06.546Z",
+    "repository": "NaiveAI/Naive-N0.5-Flash",
+    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+    "contentHash": "c96684ca598c74f940606bc374533fab0a0ed67ac00abd063f654acad7bb6835",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

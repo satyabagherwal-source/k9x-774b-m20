@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T19:05:54.916Z",
-  "total_cycles_completed": 2245,
-  "total_learnings_persisted": 2245,
+  "last_updated": "2026-10-17T19:09:06.551Z",
+  "total_cycles_completed": 2246,
+  "total_learnings_persisted": 2246,
   "total_rules_promoted": 1293,
   "history": [
-    {
-      "timestamp": "2026-10-17T07:53:05.920Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T07:57:04.932Z",
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T19:05:54.916Z",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
       "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T19:09:06.551Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
