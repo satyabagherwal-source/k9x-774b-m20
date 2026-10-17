@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-4VE9",
-    "timestamp": "2026-10-16T17:38:54.321Z",
-    "repository": "microsoft/FrogNano-4B-2609",
-    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
-    "contentHash": "be8bd630978f5f597bc3edeca9642e6abb87af47ee7d05b68da240bcca300eac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-9ZGX",
     "timestamp": "2026-10-16T17:42:52.881Z",
     "repository": "hexgrad/Kokoro-82M",
@@ -7490,6 +7475,21 @@
     "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
     "contentHash": "48f2535bc77cdd18828fd08724ccf4e9b6caa40ecdd8eb8e90ce63b9f8dbbcf5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-L6T9",
+    "timestamp": "2026-10-17T21:51:12.573Z",
+    "repository": "autotrust/GEV-26B-Decide-NVFP4",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
+    "contentHash": "dcefdaabf164f539daf3d299ce96bf4b8f3247ff5c02db28d1b3e9b0c0c8a519",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

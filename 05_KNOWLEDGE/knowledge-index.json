@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T21:47:07.079Z",
+  "last_updated": "2026-10-17T21:51:12.547Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10191,10 +10191,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "85ef62d0ff76727aca455ec4e36d797e6ba774f755292b1e9eaca4bf3a9c5cf8",
+      "content_hash": "dcefdaabf164f539daf3d299ce96bf4b8f3247ff5c02db28d1b3e9b0c0c8a519",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1540,
+          "title": "Asymmetric Quantization Isolation for MoE Architectures",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1541,
+          "title": "Dual-RoPE Interleaved Attention Synchronization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1542,
+          "title": "Fused Gate-Up Tensor Scale Alignment for NVFP4",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -10213,7 +10229,7 @@
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv43rd7n",
         "learn-huggingface-hf-autotrust-gev-26b-decide-nvfp4-mv4h0go4"
       ],
-      "verified_at": "2026-10-17T14:02:32.248Z",
+      "verified_at": "2026-10-17T21:51:12.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

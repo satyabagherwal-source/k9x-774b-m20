@@ -2315,3 +2315,4 @@
 | `CYCLE-20261017-4AZ6` | `2026-10-17T21:38:04.818Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1532, Rule 1533, Rule 1534` | Yes (`e12c11a7...`) |
 | `CYCLE-20261017-BLLH` | `2026-10-17T21:43:45.173Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1535, Rule 1536` | Yes (`9afc1c6e...`) |
 | `CYCLE-20261017-FXEO` | `2026-10-17T21:47:07.104Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1537, Rule 1538, Rule 1539` | Yes (`48f2535b...`) |
+| `CYCLE-20261017-L6T9` | `2026-10-17T21:51:12.573Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1540, Rule 1541, Rule 1542` | Yes (`dcefdaab...`) |
