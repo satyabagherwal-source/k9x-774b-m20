@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T12:23:04.961Z",
-  "total_cycles_completed": 2124,
-  "total_learnings_persisted": 2124,
+  "last_updated": "2026-10-17T12:26:12.622Z",
+  "total_cycles_completed": 2125,
+  "total_learnings_persisted": 2125,
   "total_rules_promoted": 1225,
   "history": [
-    {
-      "timestamp": "2026-10-17T01:12:40.308Z",
-      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
-      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T01:15:32.380Z",
       "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T12:23:04.961Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:26:12.622Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-bingsu-adetailer",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

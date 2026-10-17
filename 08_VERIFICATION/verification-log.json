@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-H6LU",
-    "timestamp": "2026-10-16T07:32:37.170Z",
-    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "822c0e9664dae05cad2335677af395ea7fba87e357f7372b44a66672e5f22704",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-LEAJ",
     "timestamp": "2026-10-16T07:35:53.755Z",
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -7490,6 +7475,21 @@
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "contentHash": "3666f2011794255535e1b02fe909c43072ffc74d973502f0bfba902acf9cc4f4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-ELFU",
+    "timestamp": "2026-10-17T12:26:12.618Z",
+    "repository": "Bingsu/adetailer",
+    "learningId": "learn-huggingface-bingsu-adetailer",
+    "contentHash": "8fa83d6627ff566592680802fa5571d1cd6e285ccbbb0004b403a32d0dded816",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
