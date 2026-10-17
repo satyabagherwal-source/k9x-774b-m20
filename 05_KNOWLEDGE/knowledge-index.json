@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T21:06:54.513Z",
+  "last_updated": "2026-10-17T21:12:18.007Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42494,7 +42494,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "005484aa13061eb13f08021bb2c0e20a83f8ce391f63ee6b6c5ab2116bf111d0",
+      "content_hash": "d1a5090f81a42a1dd5de7157ec0d53db2c6ddf87a67d8e15c69cb40e28dcc22a",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "promoted_rules": [
@@ -42512,6 +42512,21 @@
           "number": 1002,
           "title": "Hugging Face Model Weight Integrity & LFS Pointer Validation",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1523,
+          "title": "Zero-Allocation Safe Tensor Loading via Direct Memory-Mapping",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1524,
+          "title": "State-Dict Invariant Normalization with Deterministic Architecture Probing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1525,
+          "title": "Asynchronous CUDA Stream Latency Hiding for Weight Offloading",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42519,7 +42534,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T13:28:47.706Z",
+      "verified_at": "2026-10-17T21:12:18.001Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

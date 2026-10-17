@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-N1IB",
-    "timestamp": "2026-10-16T16:57:02.819Z",
-    "repository": "Qwen/Qwen3-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-    "contentHash": "4e07c52f5c1f2161070d4355f9d6a9f7711c49065eee28df4387654508718c97",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-R5LL",
     "timestamp": "2026-10-16T17:00:14.745Z",
     "repository": "google-t5/t5-small",
@@ -7492,6 +7477,21 @@
     "contentHash": "fa0cebfae751435add5a153248ab35f765005fbadd98676660dc9a21cf52ac7e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-75GW",
+    "timestamp": "2026-10-17T21:12:18.032Z",
+    "repository": "black-forest-labs/flux-3-image-klein-comfy",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+    "contentHash": "d1a5090f81a42a1dd5de7157ec0d53db2c6ddf87a67d8e15c69cb40e28dcc22a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

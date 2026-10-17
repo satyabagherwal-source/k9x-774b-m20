@@ -2305,3 +2305,4 @@
 | `CYCLE-20261017-SAEA` | `2026-10-17T21:00:44.578Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`b09fe2f5...`) |
 | `CYCLE-20261017-WGMK` | `2026-10-17T21:03:59.276Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`1e06d33d...`) |
 | `CYCLE-20261017-07UT` | `2026-10-17T21:06:54.533Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`fa0cebfa...`) |
+| `CYCLE-20261017-75GW` | `2026-10-17T21:12:18.032Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1523, Rule 1524, Rule 1525` | Yes (`d1a5090f...`) |

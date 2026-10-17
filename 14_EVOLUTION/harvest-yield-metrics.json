@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T21:06:54.536Z",
-  "total_cycles_completed": 2282,
-  "total_learnings_persisted": 2282,
-  "total_rules_promoted": 1302,
+  "last_updated": "2026-10-17T21:12:18.038Z",
+  "total_cycles_completed": 2283,
+  "total_learnings_persisted": 2283,
+  "total_rules_promoted": 1305,
   "history": [
-    {
-      "timestamp": "2026-10-17T10:08:52.214Z",
-      "repository": "Tongyi-MAI/Z-Image-Turbo",
-      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T10:12:12.431Z",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -1403,6 +1396,13 @@
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T21:12:18.038Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
