@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T14:15:15.610Z",
+  "last_updated": "2026-10-17T14:18:45.512Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2653,14 +2653,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-sft",
-      "content_hash": "7ff4b13adae7849cc4f42a52eea7dd6b4eeaec57f8c4fdf0decb05f292a6d235",
-      "verified_at": "2026-10-17T05:51:03.102Z",
+      "content_hash": "af51d5fe02ff0f26bc1c4e31833f2e07ee197ce227858836dec85160e331d0a2",
+      "verified_at": "2026-10-17T14:18:45.511Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T05:51:03.102Z"
+      "last_updated": "2026-10-17T14:18:45.511Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash-1017": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",

@@ -1685,8 +1685,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
     "sourceVersion": "hf-openmoss-team-moss-image-sft",
     "license": "Open-Source",
-    "contentHash": "7ff4b13adae7849cc4f42a52eea7dd6b4eeaec57f8c4fdf0decb05f292a6d235",
-    "lastHarvestedAt": "2026-10-17T05:51:03.100Z",
+    "contentHash": "af51d5fe02ff0f26bc1c4e31833f2e07ee197ce227858836dec85160e331d0a2",
+    "lastHarvestedAt": "2026-10-17T14:18:45.508Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash-1017": {

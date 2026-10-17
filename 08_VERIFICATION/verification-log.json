@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-ATDN",
-    "timestamp": "2026-10-16T09:47:38.171Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "aa9689e74ca30c5784048838df2a64544d4e7e883c0d0fd355b6c8a711e89b25",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-EYVV",
     "timestamp": "2026-10-16T09:50:51.931Z",
     "repository": "vllm-sr/d3",
@@ -7492,6 +7477,21 @@
     "contentHash": "a24d911a6d382c9d02f428ef1b83690c244e8474dfe69a88145238c143508f77",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-FBZZ",
+    "timestamp": "2026-10-17T14:18:45.503Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+    "contentHash": "af51d5fe02ff0f26bc1c4e31833f2e07ee197ce227858836dec85160e331d0a2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

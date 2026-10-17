@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T14:15:15.581Z",
+  "last_updated": "2026-10-17T14:18:45.478Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -43182,16 +43182,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT",
       "source_version": "hf-openmoss-team-moss-image-sft",
-      "content_hash": "7ff4b13adae7849cc4f42a52eea7dd6b4eeaec57f8c4fdf0decb05f292a6d235",
+      "content_hash": "af51d5fe02ff0f26bc1c4e31833f2e07ee197ce227858836dec85160e331d0a2",
       "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-sft-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1465,
+          "title": "Model Lineage Integrity & Configuration Drift Prevention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1466,
+          "title": "Artifact Immutability & Checksum Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T05:51:03.075Z",
+      "verified_at": "2026-10-17T14:18:45.470Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
