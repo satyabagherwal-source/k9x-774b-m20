@@ -2227,3 +2227,4 @@
 | `CYCLE-20261017-S6RM` | `2026-10-17T16:48:43.330Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`511de427...`) |
 | `CYCLE-20261017-W80E` | `2026-10-17T16:51:51.566Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`c76fab4a...`) |
 | `CYCLE-20261017-0B7O` | `2026-10-17T16:55:02.340Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`26b3b4e9...`) |
+| `CYCLE-20261017-4Q27` | `2026-10-17T16:58:28.207Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`696cd1a4...`) |
