@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-550A",
-    "timestamp": "2026-10-16T14:51:09.082Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "fb10d16dc3e9aa6c75d1cc9b86d51643b1acf5b0e3fd5167e5e3176048c0760d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-8Y3I",
     "timestamp": "2026-10-16T14:54:06.750Z",
     "repository": "apple/LensVLM-9B",
@@ -7490,6 +7475,21 @@
     "repository": "openai/clip-vit-base-patch32",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
     "contentHash": "174100e34bdd89fee779ee2be2825b0d855d518e916b0302ca276cfb69eaeda8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-0Z8O",
+    "timestamp": "2026-10-17T19:15:31.560Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "b89e45f17b8deb8245e4c9ba59af539da4e079bf81f6e6ac120e2be7cde7a48d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
