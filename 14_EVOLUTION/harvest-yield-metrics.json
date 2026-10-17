@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T00:34:06.601Z",
-  "total_cycles_completed": 1913,
-  "total_learnings_persisted": 1913,
+  "last_updated": "2026-10-17T00:37:15.817Z",
+  "total_cycles_completed": 1914,
+  "total_learnings_persisted": 1914,
   "total_rules_promoted": 1043,
   "history": [
-    {
-      "timestamp": "2026-10-16T12:55:11.137Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T12:58:17.394Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T00:34:06.601Z",
       "repository": "canberkkkkkk/ema-lightning",
       "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T00:37:15.817Z",
+      "repository": "google/embeddinggemma-2",
+      "learningId": "learn-huggingface-google-embeddinggemma-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
