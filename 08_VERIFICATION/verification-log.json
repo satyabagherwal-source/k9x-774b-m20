@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-GQ2J",
-    "timestamp": "2026-10-16T14:32:09.979Z",
-    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-    "contentHash": "a3f570113de4df7a6c032c0a8af1b923c0eea448d8ba35e0234469efab2e3e0e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-KXMK",
     "timestamp": "2026-10-16T14:35:26.396Z",
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3-4B",
     "learningId": "learn-huggingface-qwen-qwen3-4b",
     "contentHash": "2c0b415a18ac2afffdd4e46ac6fb6919834bfbb601e00c0f2815e08f40e0a401",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-CL9V",
+    "timestamp": "2026-10-17T18:56:33.715Z",
+    "repository": "FermionResearch/Phonon-2",
+    "learningId": "learn-huggingface-fermionresearch-phonon-2",
+    "contentHash": "8375e8b3f5d69839b1df7433ecdf1b299779bcb0ee6afaa57588cd1f43e0a827",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

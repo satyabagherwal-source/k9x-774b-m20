@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T18:53:25.655Z",
-  "total_cycles_completed": 2241,
-  "total_learnings_persisted": 2241,
+  "last_updated": "2026-10-17T18:56:33.719Z",
+  "total_cycles_completed": 2242,
+  "total_learnings_persisted": 2242,
   "total_rules_promoted": 1291,
   "history": [
-    {
-      "timestamp": "2026-10-17T07:36:23.851Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T07:40:31.530Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T18:53:25.655Z",
       "repository": "Qwen/Qwen3-4B",
       "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T18:56:33.719Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-fermionresearch-phonon-2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
