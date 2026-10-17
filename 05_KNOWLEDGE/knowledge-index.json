@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T10:08:52.181Z",
+  "last_updated": "2026-10-17T10:12:12.414Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15580,7 +15580,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "c36a1e318cf8b26ef3a2d82e8882c4609cda21a57662846f9c9b6772b1d1e0ee",
+      "content_hash": "dd693e0b26b5efa7dcec566fc7209dd73e311eaf621050a60a53b390ab954e14",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -15634,6 +15634,21 @@
           "number": 1217,
           "title": "Weight Sharding Consistency Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1426,
+          "title": "Safe Tensor Memory Mapping & Weight Loading Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1427,
+          "title": "KV Cache Management & Context Window Boundary Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1428,
+          "title": "Tokenizer Determinism & Special Token Handling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15654,7 +15669,7 @@
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4auvsz",
         "learn-huggingface-hf-meta-llama-meta-llama-3-8b-instruct-mv4o8ney"
       ],
-      "verified_at": "2026-10-17T02:06:43.262Z",
+      "verified_at": "2026-10-17T10:12:12.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

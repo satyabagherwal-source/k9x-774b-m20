@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T10:08:52.214Z",
-  "total_cycles_completed": 2083,
-  "total_learnings_persisted": 2083,
-  "total_rules_promoted": 1202,
+  "last_updated": "2026-10-17T10:12:12.431Z",
+  "total_cycles_completed": 2084,
+  "total_learnings_persisted": 2084,
+  "total_rules_promoted": 1205,
   "history": [
-    {
-      "timestamp": "2026-10-16T22:58:07.485Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T23:01:09.631Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1403,6 +1396,13 @@
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T10:12:12.431Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
