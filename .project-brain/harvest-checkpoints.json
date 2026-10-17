@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T16:58:28.214Z",
+  "last_updated": "2026-10-17T17:01:34.562Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2668,14 +2668,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
-      "content_hash": "1c204be936459b3e380f82e70395c6743533c41e206fc5876b702cb7ffc87bfa",
-      "verified_at": "2026-10-17T08:59:42.604Z",
+      "content_hash": "49e750293feb4e57052b4a75b29b7603a29d37aa38471288b2225d12d3ea826a",
+      "verified_at": "2026-10-17T17:01:34.562Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T08:59:42.604Z"
+      "last_updated": "2026-10-17T17:01:34.562Z"
     },
     "tw93/Pake": {
       "repository": "tw93/Pake",

@@ -2228,3 +2228,4 @@
 | `CYCLE-20261017-W80E` | `2026-10-17T16:51:51.566Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`c76fab4a...`) |
 | `CYCLE-20261017-0B7O` | `2026-10-17T16:55:02.340Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`26b3b4e9...`) |
 | `CYCLE-20261017-4Q27` | `2026-10-17T16:58:28.207Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`696cd1a4...`) |
+| `CYCLE-20261017-8PUJ` | `2026-10-17T17:01:34.555Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`49e75029...`) |
