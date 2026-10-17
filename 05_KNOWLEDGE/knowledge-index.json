@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T08:01:12.884Z",
+  "last_updated": "2026-10-17T08:05:36.237Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14377,10 +14377,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "78fce0c9e24464ee1ec3660d554a69d68f915fa5eb22eb3a97edbd061f2a288c",
+      "content_hash": "38ce996aa33db4324f0138e576c23b4111c8888d6d99ab8d9ebbe85ae536dad0",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1374,
+          "title": "Contiguous Expert Matrix Re-indexing in Pruned Mixture-of-Experts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1375,
+          "title": "Physical Memory Budget Invariant for Mmap-Assisted Mixed-Precision Serving",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -14399,7 +14410,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv47md9a",
         "learn-huggingface-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-mv4kw31t"
       ],
-      "verified_at": "2026-10-17T00:18:15.557Z",
+      "verified_at": "2026-10-17T08:05:36.232Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
