@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-UKAQ",
-    "timestamp": "2026-10-15T20:31:10.658Z",
-    "repository": "BAAI/bge-base-en-v1.5",
-    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-    "contentHash": "194c1c1057e64e1fc702ec1e23167a4df984f0a8b2fc41a632ed039427f90fa3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-YLZW",
     "timestamp": "2026-10-15T20:34:19.484Z",
     "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "34324f6ffb9e24c269146a2871805029ceec3af4f2f8d9ce1f940b9f5a7c25e8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-8BFF",
+    "timestamp": "2026-10-17T01:09:28.924Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3",
+    "contentHash": "4e6383c92469cf74868eeafa7141d926acb5f476db51476d211fc2dec10dc383",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

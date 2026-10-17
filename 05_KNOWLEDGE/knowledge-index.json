@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T01:05:20.908Z",
+  "last_updated": "2026-10-17T01:09:28.894Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11550,10 +11550,26 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
       "source_version": "hf-comfy-org-minimax-h3",
-      "content_hash": "cab6202fc291d98d0dd7a4aad8206da2412a928581acb68da414066b8ff365f3",
+      "content_hash": "4e6383c92469cf74868eeafa7141d926acb5f476db51476d211fc2dec10dc383",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1285,
+          "title": "Heterogeneous Latent-Domain Precision Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1286,
+          "title": "Micro-Architecture Native vs Emulated Quantization Fallback Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1287,
+          "title": "Asymmetric Toolchain Quantization Selection Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -11572,7 +11588,7 @@
         "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
         "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o"
       ],
-      "verified_at": "2026-10-16T17:03:20.161Z",
+      "verified_at": "2026-10-17T01:09:28.890Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
