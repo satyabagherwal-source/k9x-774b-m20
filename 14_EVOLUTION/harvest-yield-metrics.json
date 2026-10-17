@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:44:39.570Z",
-  "total_cycles_completed": 2275,
-  "total_learnings_persisted": 2275,
+  "last_updated": "2026-10-17T20:47:48.797Z",
+  "total_cycles_completed": 2276,
+  "total_learnings_persisted": 2276,
   "total_rules_promoted": 1302,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:45:53.332Z",
-      "repository": "vllm-sr/d3",
-      "learningId": "learn-huggingface-vllm-sr-d3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T09:48:56.036Z",
       "repository": "openai/whisper-large-v3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T20:44:39.570Z",
       "repository": "jialinyyzz/humanizer",
       "learningId": "learn-huggingface-jialinyyzz-humanizer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T20:47:48.797Z",
+      "repository": "autotrust/JEV-27B-VL",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -2298,3 +2298,4 @@
 | `CYCLE-20261017-ZU8Q` | `2026-10-17T20:38:37.274Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1521, Rule 1522` | Yes (`2915f4d5...`) |
 | `CYCLE-20261017-3HX5` | `2026-10-17T20:41:27.929Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`5d181fa2...`) |
 | `CYCLE-20261017-7LSD` | `2026-10-17T20:44:39.565Z` | `jialinyyzz/humanizer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-jialinyyzz-humanizer-learnings.md` | Yes (`cf5882f5...`) |
+| `CYCLE-20261017-BNSO` | `2026-10-17T20:47:48.792Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`7f5420ff...`) |

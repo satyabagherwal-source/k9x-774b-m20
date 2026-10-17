@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-SL5N",
-    "timestamp": "2026-10-16T16:33:21.947Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "85a75a14731c9f5556c13318c6240ea2936a020e1e385e38d0137642b362c0dc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-WHGF",
     "timestamp": "2026-10-16T16:36:23.775Z",
     "repository": "Cloudflare/clef",
@@ -7490,6 +7475,21 @@
     "repository": "jialinyyzz/humanizer",
     "learningId": "learn-huggingface-jialinyyzz-humanizer",
     "contentHash": "cf5882f57c0768aeee803d0aeb11727fa05c23f2e4b63eaaf8ac0e99da78cb9a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-BNSO",
+    "timestamp": "2026-10-17T20:47:48.792Z",
+    "repository": "autotrust/JEV-27B-VL",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "7f5420ff2c38f5582b9a2c517a0bee1b14c46df576f0e29bdd34ce7ad8618051",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
