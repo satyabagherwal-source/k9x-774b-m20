@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T15:51:44.101Z",
-  "total_cycles_completed": 2184,
-  "total_learnings_persisted": 2184,
+  "last_updated": "2026-10-17T15:55:08.483Z",
+  "total_cycles_completed": 2185,
+  "total_learnings_persisted": 2185,
   "total_rules_promoted": 1269,
   "history": [
-    {
-      "timestamp": "2026-10-17T04:24:45.542Z",
-      "repository": "BAAI/bge-large-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T04:27:55.301Z",
       "repository": "zai-org/GLM-5.3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T15:51:44.101Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T15:55:08.483Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
