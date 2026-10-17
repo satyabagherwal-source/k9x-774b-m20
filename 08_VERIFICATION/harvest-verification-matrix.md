@@ -2020,3 +2020,4 @@
 | `CYCLE-20261017-DOQZ` | `2026-10-17T04:57:36.395Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 996, Rule EXISTING` | Yes (`f23f6d1e...`) |
 | `CYCLE-20261017-HJ7U` | `2026-10-17T05:00:35.850Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | Yes (`78e43ecd...`) |
 | `CYCLE-20261017-LWLC` | `2026-10-17T05:03:59.808Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`097e4bd4...`) |
+| `CYCLE-20261017-PW6Q` | `2026-10-17T05:07:05.906Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`f02f6d04...`) |
