@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-L3CI",
-    "timestamp": "2026-10-16T06:39:40.338Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "c102ff0cad6e1ac3a402e7d0cf7a73f11a5876bb9670fd79924ca426b4606bc7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-PFGS",
     "timestamp": "2026-10-16T06:43:02.668Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7475,21 @@
     "repository": "meta-models/Muse-Spark-Open-816B-A42B",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
     "contentHash": "d5a9118759a9492e3a5dce8d75edf39df9d4e52d8c330cc070b449aa46c20a5b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-W7MB",
+    "timestamp": "2026-10-17T11:43:55.283Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "1a82c4bb9fa2435d5a37c692bf7a374fb07e8ff37a33336f7c3ae97918505162",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
