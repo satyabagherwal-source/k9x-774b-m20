@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-FXV6",
-    "timestamp": "2026-10-16T14:03:33.810Z",
-    "repository": "meta-llama/Llama-3.1-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-    "contentHash": "3c7b2533532ef7cfd2ec74a7ef8e3e81ec864d80de641c69836bb3f69d15143a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-K2RH",
     "timestamp": "2026-10-16T14:06:46.781Z",
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
@@ -7490,6 +7475,21 @@
     "repository": "meta-llama/Llama-2-7b",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b",
     "contentHash": "fdcc5e10ad8cc3db8f37e2eb314d3d96732919a81763359ab9e1a52147b94861",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-JON9",
+    "timestamp": "2026-10-17T18:34:05.061Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "5f6f1d7235e3ae6018de1cc2676de265bd76e7e5f15a62bb6b0804f153fc9967",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
