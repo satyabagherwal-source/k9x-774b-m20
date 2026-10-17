@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T21:03:59.282Z",
+  "last_updated": "2026-10-17T21:06:54.537Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -96,14 +96,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "723a6a843447a1df4e38797ba9390de27b3498e57628ca40a6ee75e2f982675a",
-      "verified_at": "2026-10-17T13:25:22.980Z",
+      "content_hash": "fa0cebfae751435add5a153248ab35f765005fbadd98676660dc9a21cf52ac7e",
+      "verified_at": "2026-10-17T21:06:54.537Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T13:25:22.980Z"
+      "last_updated": "2026-10-17T21:06:54.537Z"
     },
     "epicweb-dev/advanced-react-patterns": {
       "repository": "epicweb-dev/advanced-react-patterns",

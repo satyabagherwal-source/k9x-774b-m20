@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T21:03:59.281Z",
-  "total_cycles_completed": 2281,
-  "total_learnings_persisted": 2281,
+  "last_updated": "2026-10-17T21:06:54.536Z",
+  "total_cycles_completed": 2282,
+  "total_learnings_persisted": 2282,
   "total_rules_promoted": 1302,
   "history": [
-    {
-      "timestamp": "2026-10-17T10:05:56.406Z",
-      "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T10:08:52.214Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T21:03:59.281Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
       "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T21:06:54.536Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
