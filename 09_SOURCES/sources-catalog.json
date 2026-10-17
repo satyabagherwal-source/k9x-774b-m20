@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "2be040c8d8e2049e057de5650201b11cba9bb1f343652950f82d80a1dc379d89",
-    "lastHarvestedAt": "2026-10-17T12:43:38.247Z",
+    "contentHash": "5d181fa2e435923997934691fe624535adf93a7ca70c08ed2cc167b4f3082b24",
+    "lastHarvestedAt": "2026-10-17T20:41:27.931Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {

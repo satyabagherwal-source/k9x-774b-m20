@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-JFTD",
-    "timestamp": "2026-10-16T16:26:15.121Z",
-    "repository": "canberkkkkkk/ema-lightning",
-    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-    "contentHash": "5dfbb96a17e5db094c662e4289f2ad3c681fb2178e56e68aec70ba9bbbc55b17",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-OIT6",
     "timestamp": "2026-10-16T16:30:12.282Z",
     "repository": "google/embeddinggemma-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "2915f4d55312852b5ba528ca2c1ac141525afa6063eec0e0bba812fe3cc195c1",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-3HX5",
+    "timestamp": "2026-10-17T20:41:27.929Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-Base",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+    "contentHash": "5d181fa2e435923997934691fe624535adf93a7ca70c08ed2cc167b4f3082b24",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -2296,3 +2296,4 @@
 | `CYCLE-20261017-RBFK` | `2026-10-17T20:31:59.648Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`a5614cf2...`) |
 | `CYCLE-20261017-VH18` | `2026-10-17T20:35:13.532Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`68a275a7...`) |
 | `CYCLE-20261017-ZU8Q` | `2026-10-17T20:38:37.274Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1521, Rule 1522` | Yes (`2915f4d5...`) |
+| `CYCLE-20261017-3HX5` | `2026-10-17T20:41:27.929Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`5d181fa2...`) |

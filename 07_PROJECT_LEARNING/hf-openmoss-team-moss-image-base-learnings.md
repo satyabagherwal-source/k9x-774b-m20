@@ -3,7 +3,7 @@
 > **Source Version**: `hf-openmoss-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T12:43:38.156Z  
+> **Timestamp**: 2026-10-17T20:41:27.875Z  
 > **Learning ID**: `learn-huggingface-openmoss-team-moss-image-base`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base](https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T12:43:37.270Z  
+> **Harvest Timestamp**: 2026-10-17T20:41:27.202Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 958 downloads | 186 likes
+- **Stars / Engagement**: 958 downloads | 219 likes
 
 ---
 
