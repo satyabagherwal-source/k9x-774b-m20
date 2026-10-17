@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-VZFT",
-    "timestamp": "2026-10-15T22:24:15.401Z",
-    "repository": "Contrastive-LM/CLM-v0.1-8B",
-    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-    "contentHash": "553921df6d695b306d4b410a14d7039d53b46a50af7cd2a5ec13ed775a3b93f7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-0198",
     "timestamp": "2026-10-15T22:27:24.380Z",
     "repository": "nvidia/Nemotron-3-Diarization",
@@ -7490,6 +7475,21 @@
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
     "contentHash": "bc4a10b10e224e5245ebd8407fade6f7202a7b4523c25866d57f966327e68eb1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-CJIB",
+    "timestamp": "2026-10-17T03:04:44.483Z",
+    "repository": "NaiveAI/Naive-N0.5-Flash",
+    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+    "contentHash": "b4275c19f32b8833541f3690b29c814a2eb997faf24fc63befac7eebbf6929ad",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
