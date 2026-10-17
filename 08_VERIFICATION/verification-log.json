@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-OK0S",
-    "timestamp": "2026-10-16T15:06:15.004Z",
-    "repository": "orcarouter/OrcaSAQ-2-27B",
-    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "7e3acddad8650089af19ad01d5806d52ca3f22c5ddb76a4e50bb346321e76572",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-SRCC",
     "timestamp": "2026-10-16T15:09:31.116Z",
     "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-reranker-v2-m3",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
     "contentHash": "7215c22916fd8e2adccc74a2e166157360844cbe9ec40e69bd8dad1f372fffac",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-LHBV",
+    "timestamp": "2026-10-17T19:31:28.123Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "3b61664eba065b907aa1961594f2aaf53a94d91fa7054e551c680e648d47af2d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

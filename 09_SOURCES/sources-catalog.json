@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "8c528e7e2d5691cebcf5e724a7f53aad282738a72a2f02cf55f99e6922aa0734",
-    "lastHarvestedAt": "2026-10-17T11:34:25.976Z",
+    "contentHash": "3b61664eba065b907aa1961594f2aaf53a94d91fa7054e551c680e648d47af2d",
+    "lastHarvestedAt": "2026-10-17T19:31:28.126Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
