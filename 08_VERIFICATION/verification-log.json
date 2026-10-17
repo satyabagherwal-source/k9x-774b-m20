@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-IWBY",
-    "timestamp": "2026-10-15T20:50:05.998Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "d7e630deaeee05f80f742b6a7afd28bf8f0b082ec5f305aa66ebe1f64adeca78",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-NAUL",
     "timestamp": "2026-10-15T20:53:31.437Z",
     "repository": "jialinyyzz/humanizer",
@@ -7490,6 +7475,21 @@
     "repository": "CompVis/stable-diffusion-v1-4",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
     "contentHash": "2ed0a83699ad8f826872ee35cafc26ce65453f76fba2f2d914b7e475abcade29",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-WN70",
+    "timestamp": "2026-10-17T01:28:23.916Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "6cd2a661073297fa655e5f40a261293fceb1fd2111bf92401b22751b03cdb79f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
