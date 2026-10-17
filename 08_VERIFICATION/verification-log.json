@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-CCCM",
-    "timestamp": "2026-10-15T22:08:59.014Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "6a72ae24e7df7969984032415b02b902f29194deae6aee4af93ddbf37a9aef5c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-GMKG",
     "timestamp": "2026-10-15T22:12:18.880Z",
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -7492,6 +7477,21 @@
     "contentHash": "b67a597cca7f810a6db6d5cc15e5544397b7db7d68368ac5b3c2c597f75b6554",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-S0Q8",
+    "timestamp": "2026-10-17T02:48:47.024Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "bc39e6f7cd8b86fd8e0eb0867cff12b97ff5fffc859e9a4ffc15894a43505bb5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
