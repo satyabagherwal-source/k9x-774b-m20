@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:47:48.797Z",
-  "total_cycles_completed": 2276,
-  "total_learnings_persisted": 2276,
+  "last_updated": "2026-10-17T20:50:51.046Z",
+  "total_cycles_completed": 2277,
+  "total_learnings_persisted": 2277,
   "total_rules_promoted": 1302,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:48:56.036Z",
-      "repository": "openai/whisper-large-v3",
-      "learningId": "learn-huggingface-openai-whisper-large-v3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T09:52:12.130Z",
       "repository": "black-forest-labs/FLUX.1-schnell",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T20:47:48.797Z",
       "repository": "autotrust/JEV-27B-VL",
       "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T20:50:51.046Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

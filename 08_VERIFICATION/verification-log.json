@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-WHGF",
-    "timestamp": "2026-10-16T16:36:23.775Z",
-    "repository": "Cloudflare/clef",
-    "learningId": "learn-huggingface-cloudflare-clef",
-    "contentHash": "a482972fd50d3225e28f67569bcfb91b35b11cb7c4ad1438dd98828103e3ebf4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-0HIY",
     "timestamp": "2026-10-16T16:39:30.490Z",
     "repository": "Cloudflare/clef-flash",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-27B-VL",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl",
     "contentHash": "7f5420ff2c38f5582b9a2c517a0bee1b14c46df576f0e29bdd34ce7ad8618051",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-FKF6",
+    "timestamp": "2026-10-17T20:50:51.042Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "f53b921c153c4fa8406cec32eff7294fc7a0a1983520b15077b05e8c610a8e5d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
