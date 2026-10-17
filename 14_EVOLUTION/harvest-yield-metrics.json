@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T21:54:17.152Z",
-  "total_cycles_completed": 2294,
-  "total_learnings_persisted": 2294,
+  "last_updated": "2026-10-17T21:57:35.832Z",
+  "total_cycles_completed": 2295,
+  "total_learnings_persisted": 2295,
   "total_rules_promoted": 1322,
   "history": [
-    {
-      "timestamp": "2026-10-17T10:48:03.757Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T10:51:04.994Z",
       "repository": "speridlabs/iris-3b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T21:54:17.152Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T21:57:35.832Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

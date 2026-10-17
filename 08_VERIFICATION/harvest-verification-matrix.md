@@ -2317,3 +2317,4 @@
 | `CYCLE-20261017-FXEO` | `2026-10-17T21:47:07.104Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1537, Rule 1538, Rule 1539` | Yes (`48f2535b...`) |
 | `CYCLE-20261017-L6T9` | `2026-10-17T21:51:12.573Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1540, Rule 1541, Rule 1542` | Yes (`dcefdaab...`) |
 | `CYCLE-20261017-P58A` | `2026-10-17T21:54:17.146Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`37a34d07...`) |
+| `CYCLE-20261017-TEJ7` | `2026-10-17T21:57:35.827Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`70d786ca...`) |

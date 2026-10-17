@@ -3,7 +3,7 @@
 > **Source Version**: `hf-deepseek-`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T14:08:53.318Z  
+> **Timestamp**: 2026-10-17T21:57:35.728Z  
 > **Learning ID**: `learn-huggingface-deepseek-ai-deepseek-r1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/deepseek-ai/DeepSeek-R1](https://huggingface.co/deepseek-ai/DeepSeek-R1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T14:08:52.412Z  
+> **Harvest Timestamp**: 2026-10-17T21:57:34.820Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1297831 downloads | 14391 likes
+- **Stars / Engagement**: 1297831 downloads | 14392 likes
 
 ---
 
