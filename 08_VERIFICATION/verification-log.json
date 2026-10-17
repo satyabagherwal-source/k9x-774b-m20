@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-BF8P",
-    "timestamp": "2026-10-16T13:32:03.433Z",
-    "repository": "black-forest-labs/FLUX.1-dev",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-    "contentHash": "1161897bd3946e9a26d98ad58edb4347ac5cfa04fab7cd17b262c673fb20519b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-FG3O",
     "timestamp": "2026-10-16T13:35:11.172Z",
     "repository": "FrancisRing/Prism",
@@ -7490,6 +7475,21 @@
     "repository": "fishaudio/drama-3",
     "learningId": "learn-huggingface-fishaudio-drama-3",
     "contentHash": "56f6fe53a0efa04b0e524cb564781786b10373c548f47ae8061a19f839ff6d78",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-EWLW",
+    "timestamp": "2026-10-17T18:02:22.484Z",
+    "repository": "deepseek-ai/DeepSeek-V4-Pro",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
+    "contentHash": "da5e7d568b0638be36d9ecd6451f9bf3c9440da7c202ae256bbbee337e44220a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
