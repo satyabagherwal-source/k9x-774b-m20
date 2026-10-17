@@ -2195,3 +2195,4 @@
 | `CYCLE-20261017-64QL` | `2026-10-17T15:07:35.421Z` | `dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-dealignai-deepseek-v4.1-flash-uncensored-fp8-learnings.md` | Yes (`fc7e5df7...`) |
 | `CYCLE-20261017-A3E3` | `2026-10-17T15:10:40.299Z` | `abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md` | Yes (`0fad003c...`) |
 | `CYCLE-20261017-E7AP` | `2026-10-17T15:13:51.985Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1475, Rule 1476, Rule 1477` | Yes (`a2367418...`) |
+| `CYCLE-20261017-IK3N` | `2026-10-17T15:17:15.203Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1478, Rule 1479, Rule 1480` | Yes (`9acf2453...`) |

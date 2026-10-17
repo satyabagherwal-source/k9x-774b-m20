@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T15:13:51.961Z",
+  "last_updated": "2026-10-17T15:17:15.139Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9627,7 +9627,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "4c6178a22ac971dec690905ef1f23eada238382a2aa1dfa046461d5d606d4314",
+      "content_hash": "9acf2453fff88bebb0276bdd423c06ea146e6a3d4e86bbc0aeee31fa936e6ccb",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [
@@ -9761,6 +9761,21 @@
           "number": 1334,
           "title": "Attention‑Bias Invariant for Qwen3_5ForCausalLM",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1478,
+          "title": "Configuration JSON Must Be a Single‑Level Object, Not a JSON‑Encoded String",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1479,
+          "title": "Special Token IDs Must Be Consistent Across Tokenizer and Model Configs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1480,
+          "title": "Sampling Hyper‑Parameters Must Not Exceed Model Context Length",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9781,7 +9796,7 @@
         "learn-huggingface-hf-altworld-hemmingway-1-mv45kpmr",
         "learn-huggingface-hf-altworld-hemmingway-1-mv4iut04"
       ],
-      "verified_at": "2026-10-17T06:48:49.026Z",
+      "verified_at": "2026-10-17T15:17:15.115Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

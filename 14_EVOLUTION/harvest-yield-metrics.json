@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T15:13:51.991Z",
-  "total_cycles_completed": 2172,
-  "total_learnings_persisted": 2172,
-  "total_rules_promoted": 1257,
+  "last_updated": "2026-10-17T15:17:15.216Z",
+  "total_cycles_completed": 2173,
+  "total_learnings_persisted": 2173,
+  "total_rules_promoted": 1260,
   "history": [
-    {
-      "timestamp": "2026-10-17T03:46:35.982Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T03:49:36.395Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T15:13:51.991Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T15:17:15.216Z",
+      "repository": "Altworld/Hemmingway-1",
+      "learningId": "learn-huggingface-altworld-hemmingway-1",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

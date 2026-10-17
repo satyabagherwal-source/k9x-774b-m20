@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-BICG",
-    "timestamp": "2026-10-16T10:44:09.760Z",
-    "repository": "deepseek-ai/DeepSeek-V3",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
-    "contentHash": "ab8a3b029517760a1cae89f024e8a34b0709274ff995e22a61b7181e94962c0f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-FL3T",
     "timestamp": "2026-10-16T10:47:19.961Z",
     "repository": "baidu/Unlimited-OCR",
@@ -7490,6 +7475,21 @@
     "repository": "apple/LensVLM-9B",
     "learningId": "learn-huggingface-apple-lensvlm-9b",
     "contentHash": "a236741871390458858b936cf1df3afd2e89d79a48ea5aa7202e53f221443cc4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-IK3N",
+    "timestamp": "2026-10-17T15:17:15.203Z",
+    "repository": "Altworld/Hemmingway-1",
+    "learningId": "learn-huggingface-altworld-hemmingway-1",
+    "contentHash": "9acf2453fff88bebb0276bdd423c06ea146e6a3d4e86bbc0aeee31fa936e6ccb",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
