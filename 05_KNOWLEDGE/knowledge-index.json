@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:02:16.442Z",
+  "last_updated": "2026-10-17T07:06:11.853Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16383,7 +16383,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "8fdd675e4c70913a6a92019c3b64a6b7dfab81576a50a6821bfcd59452080e2f",
+      "content_hash": "59e4e8c02d1efd71f8f88f215229242f76af163cbcb268951d9a4ec4b4f58b70",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [
@@ -16400,6 +16400,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv3rhipt",
           "verified_at": "2026-10-11T11:50:28.136Z"
+        },
+        {
+          "number": 1338,
+          "title": "Zero-Generation Gating for Agent Control Planes",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1339,
+          "title": "Bound Interleaved Sliding-Window Attention Invariants",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1340,
+          "title": "Tied-Embedding Head Invariant with Masked Decoupling",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16418,7 +16433,7 @@
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc"
       ],
-      "verified_at": "2026-10-16T23:31:11.719Z",
+      "verified_at": "2026-10-17T07:06:11.850Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

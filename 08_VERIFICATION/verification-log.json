@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-87F2",
-    "timestamp": "2026-10-16T02:17:42.542Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-qwen-qwen3-4b",
-    "contentHash": "d389281d64dfb82187bafcaf56a97f4cd460dd87da30ac2402587d5cda7674f2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-CBFN",
     "timestamp": "2026-10-16T02:20:54.371Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7490,6 +7475,21 @@
     "repository": "TaichuAI/ZDTaichu5.0-9B",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
     "contentHash": "00d8de3e68058c78dc31a2a8059e1aeec191c4dda75407bbedb17fce97276fe1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-Z21O",
+    "timestamp": "2026-10-17T07:06:11.868Z",
+    "repository": "Phocinae/Phocinae-Largha-150M-v1",
+    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
+    "contentHash": "59e4e8c02d1efd71f8f88f215229242f76af163cbcb268951d9a4ec4b4f58b70",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
