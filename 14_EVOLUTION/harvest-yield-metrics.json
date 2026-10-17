@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T04:40:37.435Z",
-  "total_cycles_completed": 1990,
-  "total_learnings_persisted": 1990,
+  "last_updated": "2026-10-17T04:43:46.679Z",
+  "total_cycles_completed": 1991,
+  "total_learnings_persisted": 1991,
   "total_rules_promoted": 1083,
   "history": [
-    {
-      "timestamp": "2026-10-16T17:32:13.520Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T17:35:22.936Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T04:40:37.435Z",
       "repository": "autotrust/JEV-27B-VL",
       "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T04:43:46.679Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
