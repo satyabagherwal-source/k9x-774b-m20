@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T19:41:16.559Z",
-  "total_cycles_completed": 2256,
-  "total_learnings_persisted": 2256,
+  "last_updated": "2026-10-17T19:44:25.932Z",
+  "total_cycles_completed": 2257,
+  "total_learnings_persisted": 2257,
   "total_rules_promoted": 1297,
   "history": [
-    {
-      "timestamp": "2026-10-17T08:37:19.849Z",
-      "repository": "Cloudflare/clef",
-      "learningId": "learn-huggingface-cloudflare-clef",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T08:41:49.114Z",
       "repository": "Cloudflare/clef-flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T19:41:16.559Z",
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T19:44:25.932Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

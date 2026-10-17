@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-4Y2L",
-    "timestamp": "2026-10-16T15:18:59.709Z",
-    "repository": "akhilaaa3/Jev-Omni",
-    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
-    "contentHash": "35bf7c160da9cc99512d4ff1e9da3853ecfb4f9241aeaff76423be00ff181b6d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-96MU",
     "timestamp": "2026-10-16T15:22:17.430Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -7490,6 +7475,21 @@
     "repository": "FacebookAI/xlm-roberta-base",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
     "contentHash": "e238246e5eaefe1a1b9b95ef514590007564e73011ac1a463b6ff4bd1e9dd24b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-25HK",
+    "timestamp": "2026-10-17T19:44:25.928Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "913029f952db99de458fb28629cbc57d664265ea90f8b4b5843fa18c4fd7293f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
