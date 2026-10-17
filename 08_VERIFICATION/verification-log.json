@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-V9U8",
-    "timestamp": "2026-10-16T10:31:32.240Z",
-    "repository": "openai/gpt-oss-20b",
-    "learningId": "learn-huggingface-openai-gpt-oss-20b",
-    "contentHash": "4587ae5e3f04eef67d0081b2494db9aec8a6bf9d3171ba17951d1a5472e7cfdf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ZC81",
     "timestamp": "2026-10-16T10:34:41.953Z",
     "repository": "meta-llama/Llama-2-7b-chat-hf",
@@ -7490,6 +7475,21 @@
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
     "contentHash": "ff044855db1ae5371d29a4068b8a09b72391e1caf8c6ddffa1981e8787915de4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-1QCW",
+    "timestamp": "2026-10-17T15:04:10.160Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "63328661e90a12d1f6693a5662d62235817d5fb095c1b9989e2d73cc1f07d890",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

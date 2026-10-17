@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T15:01:01.160Z",
+  "last_updated": "2026-10-17T15:04:10.128Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18395,7 +18395,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SupersonicLabs/Julia-1",
       "source_version": "hf-supersoniclabs-julia-1",
-      "content_hash": "28092a3b087d8cce965221df7df6d16894638e85af3cb3e7288c5e70571161be",
+      "content_hash": "63328661e90a12d1f6693a5662d62235817d5fb095c1b9989e2d73cc1f07d890",
       "dossier_path": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md",
       "promoted_rules": [
@@ -18461,7 +18461,7 @@
         "learn-huggingface-hf-supersoniclabs-julia-1-mv45d8ac",
         "learn-huggingface-hf-supersoniclabs-julia-1-mv4imrbh"
       ],
-      "verified_at": "2026-10-17T06:36:15.039Z",
+      "verified_at": "2026-10-17T15:04:10.120Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
