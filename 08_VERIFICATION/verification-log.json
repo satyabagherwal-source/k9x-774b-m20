@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-SSZB",
-    "timestamp": "2026-10-15T22:49:46.679Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "7023fbb3fc2bf0d6d7c7975b48dc1629d385714e09d743379205e3e33bc7c1cd",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-WVX4",
     "timestamp": "2026-10-15T22:52:57.112Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "LiquidAI/LFM2.5-24B-A2B",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
     "contentHash": "914143122016b4096386602ad02f06c423be6978244220e1562f32b1ce5a8f5f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-8Y6Y",
+    "timestamp": "2026-10-17T03:29:56.506Z",
+    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
+    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
+    "contentHash": "98981b989b3aabf3ef588ec42a96312c5ebd93a7fa1c1a62c7309c4917ff1b0c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
