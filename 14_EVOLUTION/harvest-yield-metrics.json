@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T04:08:29.170Z",
-  "total_cycles_completed": 1980,
-  "total_learnings_persisted": 1980,
+  "last_updated": "2026-10-17T04:11:23.597Z",
+  "total_cycles_completed": 1981,
+  "total_learnings_persisted": 1981,
   "total_rules_promoted": 1078,
   "history": [
-    {
-      "timestamp": "2026-10-16T16:51:00.002Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-google-electra-base-discriminator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T16:53:59.894Z",
       "repository": "BAAI/bge-m3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T04:08:29.170Z",
       "repository": "google/gemma-4-31B-it",
       "learningId": "learn-huggingface-google-gemma-4-31b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T04:11:23.597Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
