@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T16:39:09.290Z",
+  "last_updated": "2026-10-17T16:42:27.509Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11688,7 +11688,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "aa3d5c5885ac4c1ca57a54d1ad36f17ede6de342f13ee1a450a331f97511458e",
+      "content_hash": "f47f68d89095ea7c6102619c317929b099b61cad9e1019e7b7a5bc82491ee800",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [
@@ -11808,6 +11808,21 @@
           "number": 1396,
           "title": "**Inference‑Mode Enforcement Rule**",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1496,
+          "title": "**Deterministic Structured Output Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1497,
+          "title": "**Safe Tokenizer‑Config Consistency Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1498,
+          "title": "**Device‑Aware Safetensor Loading Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11828,7 +11843,7 @@
         "learn-huggingface-hf-cloudflare-clef-mv48hs0n",
         "learn-huggingface-hf-cloudflare-clef-mv4lvjtz"
       ],
-      "verified_at": "2026-10-17T08:37:19.825Z",
+      "verified_at": "2026-10-17T16:42:27.504Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
