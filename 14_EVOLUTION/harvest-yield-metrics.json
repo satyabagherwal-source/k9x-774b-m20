@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T14:05:41.657Z",
-  "total_cycles_completed": 2151,
-  "total_learnings_persisted": 2151,
+  "last_updated": "2026-10-17T14:08:53.408Z",
+  "total_cycles_completed": 2152,
+  "total_learnings_persisted": 2152,
   "total_rules_promoted": 1240,
   "history": [
-    {
-      "timestamp": "2026-10-17T02:39:38.864Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T02:42:31.919Z",
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T14:05:41.657Z",
       "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T14:08:53.408Z",
+      "repository": "deepseek-ai/DeepSeek-R1",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
