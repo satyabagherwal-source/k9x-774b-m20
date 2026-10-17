@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T13:25:22.957Z",
+  "last_updated": "2026-10-17T13:28:47.713Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42182,7 +42182,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
       "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "097e4bd4d37edf28ab8ffb8a33c0b6c37ba79b05b426aae868b60b76a3d3eccf",
+      "content_hash": "005484aa13061eb13f08021bb2c0e20a83f8ce391f63ee6b6c5ab2116bf111d0",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md",
       "promoted_rules": [
@@ -42207,7 +42207,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T05:03:59.766Z",
+      "verified_at": "2026-10-17T13:28:47.706Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

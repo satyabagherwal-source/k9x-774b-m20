@@ -3,7 +3,7 @@
 > **Source Version**: `hf-black-for`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T05:03:59.720Z  
+> **Timestamp**: 2026-10-17T13:28:47.660Z  
 > **Learning ID**: `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy](https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T05:03:58.951Z  
+> **Harvest Timestamp**: 2026-10-17T13:28:47.093Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 73767 downloads | 474 likes
+- **Stars / Engagement**: 224108 downloads | 560 likes
 
 ---
 

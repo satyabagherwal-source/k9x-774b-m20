@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T13:25:22.979Z",
-  "total_cycles_completed": 2139,
-  "total_learnings_persisted": 2139,
+  "last_updated": "2026-10-17T13:28:47.750Z",
+  "total_cycles_completed": 2140,
+  "total_learnings_persisted": 2140,
   "total_rules_promoted": 1232,
   "history": [
-    {
-      "timestamp": "2026-10-17T02:00:03.205Z",
-      "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T02:03:10.729Z",
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T13:25:22.979Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T13:28:47.750Z",
+      "repository": "black-forest-labs/flux-3-image-klein-comfy",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
