@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T09:31:14.269Z",
+  "last_updated": "2026-10-17T09:34:11.509Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2623,14 +2623,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "content_hash": "a1870e203f42256690695b906f05d97d66b0487ccfcd8abf8266fbdfaef5a425",
-      "verified_at": "2026-10-17T01:31:19.451Z",
+      "content_hash": "92a3b9af314e034a9292f46d37c9423457444dac548473472f3a50642072d9e4",
+      "verified_at": "2026-10-17T09:34:11.509Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T01:31:19.451Z"
+      "last_updated": "2026-10-17T09:34:11.509Z"
     },
     "OpenMOSS-Team/MOSS-Image-Base": {
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
