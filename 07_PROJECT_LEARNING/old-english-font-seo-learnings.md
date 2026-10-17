@@ -44,9 +44,31 @@ Google Search Console reported 279 diagnostic issue events:
 
 ---
 
-## 4. Promoted Universal Rules
+## 4. Deep-Dive on Intentional Noindex vs GSC Exclusion (Human Directive)
 
-- **Rule 73 (Sitemap Purity & Decoupled Verification Gate)**: Mandatory sitemap purity and decoupled verification across public/ and dist/.
-- **Rule 74 (Scope-Sensitive Release Invalidation)**: Release certificates are invalidated if route count expands >10% without re-audit.
-- **Rule 75 (Project-Brain Mandatory Local Bridge Contract)**: Mandatory `.project-brain/` directory in every repository.
-See `05_KNOWLEDGE/universal-seo-and-sitemap-governance.md`.
+**User Observation**: *"Excluded by ‘noindex’ tag wale pages me pages sources me noindex / nofollow add kar rakha h"*
+
+### Analysis & Resolution:
+1. **Confirmation**: In `src/pages/[lang]/(about|privacy|terms|contact).astro`, `noindex={true}` was explicitly configured, causing `Layout.astro` lines 84-86 to render `<meta name="robots" content="noindex, nofollow" />`.
+2. **Why it was configured**: English utility pages (`/about/`, `/privacy/`, `/terms/`) are indexable. However, the 13 localized versions consisted of brief auto-translated legal boilerplate. Indexing 39 thin legal pages in Spanish, German, Japanese, etc. triggers Google's sitewide "Low Quality / Thin Content" algorithmic penalty. Setting `noindex` on localized legal pages is the **CORRECT industry standard**.
+3. **Why GSC flagged it as an issue**: The issue was NOT the presence of `noindex` in the page source. The issue was that `scripts/generate-sitemap.mjs` submitted these 36 URLs in `public/sitemap.xml` directly to Google, while the footer language picker linked to them with dofollow links. This sent contradictory signals:
+   - Sitemap said: *"Googlebot, please index this page."*
+   - Page Source said: *"Googlebot, do NOT index this page."*
+4. **Durable Resolution**:
+   - Retain `noindex` on localized utility pages in page source.
+   - Purge them completely from all sitemaps (`dist/sitemap-0.xml`).
+   - Add `rel="nofollow"` to all internal language switcher links pointing to utility pages.
+   - Omit `<link rel="canonical">` on noindex pages to prevent conflicting signals.
+
+---
+
+## 5. Promoted Universal Rules
+
+- **Rule 73 (Sitemap Purity & Decoupled Verification Gate)**
+- **Rule 74 (Scope-Sensitive Release Invalidation)**
+- **Rule 75 (Project-Brain Mandatory Local Bridge Contract)**
+- **Rule 76 (Intentional Noindex Architecture & Signal Coherence)**
+- **Rule 77 (Client Navigation Parameter Leak Prevention)**
+- **Rule 78 (Substantive Editorial Defense for Category Hubs)**
+
+All rules codified in `05_KNOWLEDGE/universal-seo-and-sitemap-governance.md`.

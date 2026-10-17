@@ -89,3 +89,47 @@ Universal across all repositories.
 
 **VERIFICATION METHOD**:
 Agent boot protocol must assert existence of `.project-brain/brain-bridge.json` before formulating task plans.
+
+---
+
+## Rule 76: Intentional Noindex Architecture & Signal Coherence
+
+**RULE**:
+When localized utility, legal, or policy routes (`/[lang]/(about|privacy|terms|contact)/`) are intentionally flagged with `noindex` in page source to defend against auto-translated thin-content penalties, the following 4-part architectural contract is MANDATORY:
+
+1. **Sitemap Total Exclusion**: The pages must be 100% excluded from all generated or static sitemaps (`filter` in `@astrojs/sitemap`). A sitemap submission of a noindex URL is a contradictory indexing directive.
+2. **Canonical Tag Omission**: Pages declaring `noindex` MUST omit the `<link rel="canonical">` tag. Emitting both `canonical` (meaning "index this target") and `noindex` (meaning "do not index") sends conflicting directives to Googlebot.
+3. **Internal Crawl Quarantine (`rel="nofollow"`)**: Internal UI components (LanguagePickers, footer links, drawer matrices) leading to localized noindex routes MUST carry `rel="nofollow"` or redirect directly to the primary indexable locale canonical (e.g., `/about/`).
+4. **Diagnostic Understanding in GSC**: In Google Search Console, seeing intentional utility URLs in "Excluded by ‘noindex’ tag" is an **EXPECTED AND INTENDED STATE**, NOT a defect. It only becomes a defect if those URLs were submitted via sitemap or crawl-discovered via un-nofollowed links.
+
+**WHY**:
+Developers often get alarmed when seeing URLs in "Excluded by noindex tag" and mistakenly remove the `noindex` tag. Removing `noindex` on 13 languages of thin boilerplate legal text exposes the entire domain to Google's sitewide "Low Quality / Thin Content" algorithmic demotion. The correct remediation is to retain `noindex`, remove from sitemaps, and add `rel="nofollow"` to internal links.
+
+**WHEN TO APPLY**:
+All static sites with internationalized editions (i18n) where legal, about, terms, or contact pages are not fully customized per locale.
+
+---
+
+## Rule 77: Client Navigation Parameter Leak Prevention
+
+**RULE**:
+Client-side JavaScript event listeners (e.g., search focus, drawer toggles, modal open buttons) must NEVER manipulate `window.location.href` using query parameters (e.g., `window.location.href = '/?search=true#fontSearchInput'`). Navigation state must be maintained purely via in-memory state or pure URL fragment hashes (e.g., `/#fontSearchInput`).
+
+**WHY**:
+Search engine crawlers and modern headless browsers evaluate inline DOM handlers. When an inline script executes a query string navigation, Googlebot discovers `/?search=true` as a distinct URL. Because the template canonicalizes to `/`, GSC flags the URL under "Alternate page with proper canonical tag", creating crawl bloat.
+
+**WHEN TO APPLY**:
+All front-end applications with client-side interactive search or filtering.
+
+---
+
+## Rule 78: Substantive Editorial Defense for Category Hubs
+
+**RULE**:
+Taxonomy and category hubs (e.g., `/category/[slug]/`) must never consist solely of a listing grid and introductory subtitle (< 200 words). Every category hub must contain at least 450 words of substantive, scholastic editorial content (historical origins, anatomical ductus characteristics, classification rules, pairing recommendations, and licensing guidance).
+
+**WHY**:
+Google's Helpful Content and Page Quality algorithms evaluate taxonomy pages for independent informational utility. Thin category pages that merely replicate filtered views of the homepage catalog are crawled and subsequently de-indexed under "Crawled — currently not indexed".
+
+**WHEN TO APPLY**:
+All e-commerce catalogs, font archives, icon libraries, and programmatic directory websites.
