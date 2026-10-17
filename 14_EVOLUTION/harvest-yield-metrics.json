@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:49:17.333Z",
-  "total_cycles_completed": 2328,
-  "total_learnings_persisted": 2328,
+  "last_updated": "2026-10-17T23:52:40.298Z",
+  "total_cycles_completed": 2329,
+  "total_learnings_persisted": 2329,
   "total_rules_promoted": 1351,
   "history": [
-    {
-      "timestamp": "2026-10-17T12:40:29.012Z",
-      "repository": "mudler/locate-anything.cpp-gguf",
-      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T12:43:38.249Z",
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T23:49:17.333Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:52:40.298Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
