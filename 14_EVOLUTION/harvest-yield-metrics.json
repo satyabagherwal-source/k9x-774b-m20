@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T21:20:27.162Z",
-  "total_cycles_completed": 2285,
-  "total_learnings_persisted": 2285,
-  "total_rules_promoted": 1308,
+  "last_updated": "2026-10-17T21:23:49.207Z",
+  "total_cycles_completed": 2286,
+  "total_learnings_persisted": 2286,
+  "total_rules_promoted": 1311,
   "history": [
-    {
-      "timestamp": "2026-10-17T10:18:21.378Z",
-      "repository": "zai-org/GLM-5.2",
-      "learningId": "learn-huggingface-zai-org-glm-5-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T10:21:30.670Z",
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -1403,6 +1396,13 @@
       "repository": "BAAI/bge-small-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T21:23:49.207Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

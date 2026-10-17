@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T21:20:27.130Z",
+  "last_updated": "2026-10-17T21:23:49.177Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10231,7 +10231,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
-      "content_hash": "b97a46892a019089d55c5c81dd2ff4d1be7451a5ad1681fa58e2959747f4c285",
+      "content_hash": "614232b6520193e8d8000dd9315f9bfbb06d89a4a8aef67ad444f515c06c8c51",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "promoted_rules": [
@@ -10243,6 +10243,21 @@
         {
           "number": 1456,
           "title": "Multi-Token Prediction (MTP) Speculative Buffer Alignment",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1529,
+          "title": "MoE Expert Pruning Must Preserve Top-K Routing Distribution",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1530,
+          "title": "NVFP4 Quantization Must Be Applied Selectively to MoE Experts, Not Global",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1531,
+          "title": "Speculative Decoding Draft Model Must Be Quantized to Match Target Hardware Bandwidth",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -10264,7 +10279,7 @@
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv430elb",
         "learn-huggingface-hf-autotrust-glm5-3-flash-e224-dgx-spark-mv4g91hj"
       ],
-      "verified_at": "2026-10-17T13:39:31.340Z",
+      "verified_at": "2026-10-17T21:23:49.172Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

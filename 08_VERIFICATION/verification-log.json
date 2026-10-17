@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-Z4HW",
-    "timestamp": "2026-10-16T17:06:26.564Z",
-    "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-    "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-    "contentHash": "03ece36e464ce3554dbe25f1d798bc6b0379e5f3e220d99b2d11813218bc3352",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-81BS",
     "timestamp": "2026-10-16T17:13:22.360Z",
     "repository": "Zen4-bit/Proxima",
@@ -7492,6 +7477,21 @@
     "contentHash": "79e916572f160f2ae7ff59c87b97570900d8adc4ab3b1568602d4b71b4376201",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-LYS2",
+    "timestamp": "2026-10-17T21:23:49.202Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "614232b6520193e8d8000dd9315f9bfbb06d89a4a8aef67ad444f515c06c8c51",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
