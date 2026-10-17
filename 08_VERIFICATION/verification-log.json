@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-94IS",
-    "timestamp": "2026-10-16T06:30:21.988Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "0768daad4ff1877a96b0d84edc52eb8e812b483691be2f940fe85c552b0eb85f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-CZK3",
     "timestamp": "2026-10-16T06:33:22.179Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-reranker-v2-m3",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
     "contentHash": "b651b2b1809fa41d17b127607b6066f9abc3cf63e1347ccdb56d70fa382ab265",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-K0C6",
+    "timestamp": "2026-10-17T11:34:25.974Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "8c528e7e2d5691cebcf5e724a7f53aad282738a72a2f02cf55f99e6922aa0734",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
