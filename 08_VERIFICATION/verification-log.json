@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-I20X",
-    "timestamp": "2026-10-16T08:29:17.121Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "df78f2171bcbe3a43bac9d0bf0dc59d97d4791466363e74558598b31707fcc4d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-M2HK",
     "timestamp": "2026-10-16T08:32:24.344Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "08cf46a785633b32c3a3c22571fa0f8386e18464985fdacb2577cebe666284a2",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-EZ6H",
+    "timestamp": "2026-10-17T13:22:29.657Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "a4ec98f688a4fc732b1df01a486b8dbe8a540ce6cba9221de63b1e46c1176b6d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

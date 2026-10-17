@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T13:19:26.657Z",
+  "last_updated": "2026-10-17T13:22:29.620Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17500,7 +17500,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
       "source_version": "hf-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "f23f6d1e40409de30506e69b17cb9f88bbe7e5c03c596e0b6384bc78b4152d2f",
+      "content_hash": "a4ec98f688a4fc732b1df01a486b8dbe8a540ce6cba9221de63b1e46c1176b6d",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md",
       "promoted_rules": [
@@ -17873,7 +17873,7 @@
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv42ove4",
         "learn-huggingface-hf-sentence-transformers-all-minilm-l6-v2-mv4fxe65"
       ],
-      "verified_at": "2026-10-17T04:57:36.364Z",
+      "verified_at": "2026-10-17T13:22:29.612Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
