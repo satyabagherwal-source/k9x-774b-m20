@@ -2009,3 +2009,4 @@
 | `CYCLE-20261017-3H4M` | `2026-10-17T04:21:40.342Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`99237c0c...`) |
 | `CYCLE-20261017-7G0X` | `2026-10-17T04:24:45.537Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`ab244ca6...`) |
 | `CYCLE-20261017-BIG1` | `2026-10-17T04:27:55.297Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`490076cf...`) |
+| `CYCLE-20261017-FYTJ` | `2026-10-17T04:31:23.143Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 982, Rule 1312, Rule 678` | Yes (`d1ab310f...`) |

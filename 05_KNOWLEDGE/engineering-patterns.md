@@ -84878,3 +84878,57 @@ def test_class_threshold_debiasing():
 ```
 
 ---
+
+
+---
+
+## 1312. Parity-Gated Deployment Invariant (Harvested from mudler/locate-anything.cpp-gguf)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Parity-Gated Deployment Invariant",
+  "source": "mudler/locate-anything.cpp-gguf",
+  "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+  "source_version": "hf-mudler-locate-anything.cpp-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T04:31:23.079Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf) (Revision: `hf-mudler-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+You MUST NOT deploy a quantized inference engine without a **parity gate** that validates output equivalence against the reference high-precision implementation. The gate MUST check for "box-identical" results for high-bit quantizations (q8_0, q6_k) and "sub-pixel drift" for low-bit quantizations (q4_k, q5_k).
+**WHY**:
+Quantization is a lossy compression. Without a parity gate, subtle numerical errors can accumulate, leading to silent failures where the model detects objects in the wrong location or misses them entirely. The parity gate ensures that the quantization policy is effective and that the engine's numerical stability is maintained.
+**WHEN TO APPLY**:
+Any ML model deployment where the reference implementation is available and output precision is critical (e.g., medical imaging, autonomous driving, precise object detection).
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Parity Gate Test
+def test_parity():
+    ref_boxes = pytorch_model.predict(image)
+    cpp_boxes = cpp_engine.predict(image, model="q8_0.gguf")
+    
+    # For q8_0, boxes must be identical
+    assert np.allclose(ref_boxes, cpp_boxes, atol=0.0), "q8_0 must be box-identical"
+    
+    # For q4_k, allow sub-pixel drift
+    cpp_boxes_q4 = cpp_engine.predict(image, model="q4_k.gguf")
+    assert np.allclose(ref_boxes, cpp_boxes_q4, atol=1.0), "q4_k must have < 1px drift"
+```
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: No parity check
+cpp_engine.predict(image, model="q4_k.gguf") # No validation against reference
+```
+**VERIFICATION METHOD**:
+Automated CI job that runs the parity test suite on every commit. Fail the build if parity is broken.
