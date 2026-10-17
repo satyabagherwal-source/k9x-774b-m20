@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T16:42:27.534Z",
-  "total_cycles_completed": 2200,
-  "total_learnings_persisted": 2200,
-  "total_rules_promoted": 1277,
+  "last_updated": "2026-10-17T16:45:39.062Z",
+  "total_cycles_completed": 2201,
+  "total_learnings_persisted": 2201,
+  "total_rules_promoted": 1280,
   "history": [
-    {
-      "timestamp": "2026-10-17T05:16:49.038Z",
-      "repository": "LiquidAI/d1-3B",
-      "learningId": "learn-huggingface-liquidai-d1-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T05:19:57.254Z",
       "repository": "Cactus-Compute/whistle",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T16:42:27.534Z",
       "repository": "Cloudflare/clef",
       "learningId": "learn-huggingface-cloudflare-clef",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T16:45:39.062Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T16:42:27.509Z",
+  "last_updated": "2026-10-17T16:45:39.037Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11530,7 +11530,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef-flash",
       "source_version": "hf-cloudflare-clef-flash",
-      "content_hash": "2672d112edc931d8b5d3528c3f91e100aac746fc84de14fbb292959f23c85e22",
+      "content_hash": "e56e1649b9fa0dceeda1d6728bb6df8e4f97695b5bf58d071c6a11b2fc59dc0f",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md",
       "promoted_rules": [
@@ -11650,6 +11650,21 @@
           "number": 1399,
           "title": "Multimodal Rotary Coordinate Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1499,
+          "title": "**Rule #1 – Immutable Token‑Sequence Construction**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1500,
+          "title": "**Rule #2 – Explicit dtype Alignment Between Backbone & Joint Head**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1501,
+          "title": "**Rule #3 – Per‑Question Softmax Isolation**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11670,7 +11685,7 @@
         "learn-huggingface-hf-cloudflare-clef-flash-mv48lefr",
         "learn-huggingface-hf-cloudflare-clef-flash-mv4lz6vs"
       ],
-      "verified_at": "2026-10-17T08:41:49.069Z",
+      "verified_at": "2026-10-17T16:45:39.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
