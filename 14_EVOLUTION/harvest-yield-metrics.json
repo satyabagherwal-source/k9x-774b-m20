@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:19:07.981Z",
-  "total_cycles_completed": 2267,
-  "total_learnings_persisted": 2267,
+  "last_updated": "2026-10-17T20:22:33.006Z",
+  "total_cycles_completed": 2268,
+  "total_learnings_persisted": 2268,
   "total_rules_promoted": 1300,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:18:15.708Z",
-      "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
-      "learningId": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T09:21:18.074Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T20:19:07.981Z",
       "repository": "BAAI/bge-base-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T20:22:33.006Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

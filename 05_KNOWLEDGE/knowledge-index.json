@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T20:19:07.945Z",
+  "last_updated": "2026-10-17T20:22:32.967Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18242,7 +18242,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "3666f2011794255535e1b02fe909c43072ffc74d973502f0bfba902acf9cc4f4",
+      "content_hash": "9dd6e540d03dab7474a44b48082758a2dce3dddd3c2e5ff20213d74afd4a0872",
       "dossier_path": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md",
       "promoted_rules": [
@@ -18278,7 +18278,7 @@
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv40nmqt",
         "learn-huggingface-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-mv4emaqx"
       ],
-      "verified_at": "2026-10-17T12:23:04.934Z",
+      "verified_at": "2026-10-17T20:22:32.960Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
