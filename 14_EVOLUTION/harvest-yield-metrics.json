@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T05:42:05.778Z",
-  "total_cycles_completed": 2009,
-  "total_learnings_persisted": 2009,
+  "last_updated": "2026-10-17T05:44:59.927Z",
+  "total_cycles_completed": 2010,
+  "total_learnings_persisted": 2010,
   "total_rules_promoted": 1090,
   "history": [
-    {
-      "timestamp": "2026-10-16T18:35:54.238Z",
-      "repository": "meta-llama/Llama-2-7b",
-      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T18:38:56.143Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T05:42:05.778Z",
       "repository": "deepseek-ai/DeepSeek-R1",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T05:44:59.927Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T05:42:05.747Z",
+  "last_updated": "2026-10-17T05:44:59.900Z",
   "total_verified_learnings": 193,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15533,7 +15533,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/moonshotai/Kimi-K3",
       "source_version": "hf-moonshotai-kimi-k3",
-      "content_hash": "83596eabc7818454c28d8638c5b03c0788c3b1161c74afcd35913f153075f64e",
+      "content_hash": "a96f314e1612845f04f3832fcfa4bf5ce40ed7450309561173f0d632dc70131b",
       "dossier_path": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md",
       "promoted_rules": [],
@@ -15555,7 +15555,7 @@
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4438bt",
         "learn-huggingface-hf-moonshotai-kimi-k3-mv4hc41y"
       ],
-      "verified_at": "2026-10-16T22:09:15.117Z",
+      "verified_at": "2026-10-17T05:44:59.896Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
