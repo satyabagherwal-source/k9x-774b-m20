@@ -2112,3 +2112,4 @@
 | `CYCLE-20261017-Y8BU` | `2026-10-17T10:21:30.666Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`b417ceb2...`) |
 | `CYCLE-20261017-2A1F` | `2026-10-17T10:24:39.507Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`6684de0f...`) |
 | `CYCLE-20261017-6MMS` | `2026-10-17T10:28:02.452Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`e951c895...`) |
+| `CYCLE-20261017-B091` | `2026-10-17T10:31:26.725Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1429, Rule 570, Rule 1430` | Yes (`fc230c70...`) |

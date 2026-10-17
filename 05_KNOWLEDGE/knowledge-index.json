@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T10:28:02.423Z",
+  "last_updated": "2026-10-17T10:31:26.697Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14967,13 +14967,18 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
       "source_version": "hf-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "f536faa47a4257c75b633eded8e1d3c07d8026f37d1917894d46342861afb2be",
+      "content_hash": "fc230c706f824d822195384ea8514801482c8006932e6e80a5a950eb8aae59b7",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md",
       "promoted_rules": [
         {
           "number": 378,
           "title": "Tokenizer Determinism & Unicode Normalization",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 570,
+          "title": "Tokenizer Determinism & Special Token Isolation",
           "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
@@ -14995,6 +15000,16 @@
           "number": 1299,
           "title": "Autoregressive KV-Cache Dimension Invariant Verification",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1429,
+          "title": "Tensor Serialization Integrity & Memory Safety",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1430,
+          "title": "KV Cache Memory Management & Context Window Bounds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15014,7 +15029,7 @@
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv3wsd49",
         "learn-huggingface-hf-meta-llama-llama-2-7b-chat-hf-mv4bhyss"
       ],
-      "verified_at": "2026-10-17T02:27:06.934Z",
+      "verified_at": "2026-10-17T10:31:26.688Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

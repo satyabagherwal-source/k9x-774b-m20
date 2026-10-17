@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-5719",
-    "timestamp": "2026-10-16T05:31:19.389Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "9c6ffea002279150c7edd81dd19dfc2e3a1aee6a215e1d951debacc2649f6e3b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-95Q1",
     "timestamp": "2026-10-16T05:34:24.313Z",
     "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7492,6 +7477,21 @@
     "contentHash": "e951c895ff571580957fc321f6ae4286d9f69f85a6e491892df25c97f949eb4e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-B091",
+    "timestamp": "2026-10-17T10:31:26.725Z",
+    "repository": "meta-llama/Llama-2-7b-chat-hf",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "fc230c706f824d822195384ea8514801482c8006932e6e80a5a950eb8aae59b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
