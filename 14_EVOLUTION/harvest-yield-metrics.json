@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T05:32:22.073Z",
-  "total_cycles_completed": 2006,
-  "total_learnings_persisted": 2006,
+  "last_updated": "2026-10-17T05:35:51.552Z",
+  "total_cycles_completed": 2007,
+  "total_learnings_persisted": 2007,
   "total_rules_promoted": 1090,
   "history": [
-    {
-      "timestamp": "2026-10-16T18:26:25.157Z",
-      "repository": "bigscience/bloom",
-      "learningId": "learn-huggingface-bigscience-bloom",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T18:29:22.645Z",
       "repository": "openai/gpt-oss-20b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T05:32:22.073Z",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T05:35:51.552Z",
+      "repository": "autotrust/GEV-26B-Decide-NVFP4",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
