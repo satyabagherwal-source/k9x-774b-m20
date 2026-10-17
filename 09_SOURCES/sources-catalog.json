@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "3fa5a365c0d3497549ad61d354b4665f7ec46d8ef0887f6e34b4c950568d6e95",
-    "lastHarvestedAt": "2026-10-17T12:55:57.227Z",
+    "contentHash": "72b110acb12679c63e4dfd989eaf56c00eba4be5c16b0b893c2c3ef7168ff9de",
+    "lastHarvestedAt": "2026-10-17T20:54:20.694Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {

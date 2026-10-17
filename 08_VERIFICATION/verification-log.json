@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0HIY",
-    "timestamp": "2026-10-16T16:39:30.490Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "0eb59973e0bd7c07e8de081021d609899c210359160ca9989aa4ecc04076f3f9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4FJJ",
     "timestamp": "2026-10-16T16:42:34.543Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GEV-26B-Decide",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide",
     "contentHash": "f53b921c153c4fa8406cec32eff7294fc7a0a1983520b15077b05e8c610a8e5d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-K26R",
+    "timestamp": "2026-10-17T20:54:20.691Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-convaiinnovations-laya",
+    "contentHash": "72b110acb12679c63e4dfd989eaf56c00eba4be5c16b0b893c2c3ef7168ff9de",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
