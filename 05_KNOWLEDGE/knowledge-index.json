@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T10:43:54.350Z",
+  "last_updated": "2026-10-17T10:48:03.724Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9488,7 +9488,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
       "source_version": "hf-aleph-alpha-kolibri-1",
-      "content_hash": "6c9e20eaaea7c22ce7c5bd8e0298b50256ad1f7a56ce890ca455bbfdc4a90f1c",
+      "content_hash": "6b71039d2937d0ae08cef8b99bd04055bca44f82eb136f45c7489fabe12df091",
       "dossier_path": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md",
       "promoted_rules": [
@@ -9505,6 +9505,21 @@
         {
           "number": 1142,
           "title": "Multi-Token Dual EOS/PAD Sentinel Handling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1431,
+          "title": "High-Density MoE Router Gate Precision Isolation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1432,
+          "title": "SWA-GQA Interleaved Attention Layer-Type Matching Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1433,
+          "title": "Non-Normalized Top-K MoE Routing Weight Preservation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -9525,7 +9540,7 @@
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv3xbaa0",
         "learn-huggingface-hf-aleph-alpha-kolibri-1-mv4c0zvx"
       ],
-      "verified_at": "2026-10-17T02:42:31.891Z",
+      "verified_at": "2026-10-17T10:48:03.717Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

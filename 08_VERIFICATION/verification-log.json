@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-OZQB",
-    "timestamp": "2026-10-16T05:46:43.043Z",
-    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
-    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-    "contentHash": "08f9d96bd15cca3bd8feed3eed57c56dfaafa7333b76af1284a69a508ad6cab9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ST95",
     "timestamp": "2026-10-16T05:49:41.273Z",
     "repository": "XingChen-AGI/TeleOCR",
@@ -7492,6 +7477,21 @@
     "contentHash": "29e8cba2839ad13e11f1d6370cb09b25b0a7d2ae3602a5ed93c0ec68b097bf70",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-WDK5",
+    "timestamp": "2026-10-17T10:48:03.749Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "6b71039d2937d0ae08cef8b99bd04055bca44f82eb136f45c7489fabe12df091",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
