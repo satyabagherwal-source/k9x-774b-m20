@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T11:24:50.166Z",
-  "total_cycles_completed": 2106,
-  "total_learnings_persisted": 2106,
+  "last_updated": "2026-10-17T11:27:51.810Z",
+  "total_cycles_completed": 2107,
+  "total_learnings_persisted": 2107,
   "total_rules_promoted": 1220,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:15:25.455Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:18:15.596Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -1403,6 +1396,13 @@
       "repository": "black-forest-labs/flux-3-image-klein",
       "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T11:27:51.810Z",
+      "repository": "pyannote/speaker-diarization-community-1",
+      "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

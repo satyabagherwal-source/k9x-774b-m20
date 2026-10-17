@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0JGH",
-    "timestamp": "2026-10-16T06:23:41.441Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
-    "contentHash": "2042086e163c764ad99e3c0411be37074fd0c6a78197db75f06ac34a966fcbcf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-5303",
     "timestamp": "2026-10-16T06:27:13.395Z",
     "repository": "apple/LensVLM-9B",
@@ -7492,6 +7477,21 @@
     "contentHash": "44acaa1961f3cb4bd86ca63d4d92c9bb739b21b127195a9d990c6ea57088a755",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-BK6Z",
+    "timestamp": "2026-10-17T11:27:51.803Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "6efc9d7ac98f119a206f56649add9670b23a1f56d8ffd07612f489adbf0823c4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
