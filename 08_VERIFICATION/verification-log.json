@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-7N2W",
-    "timestamp": "2026-10-16T11:09:08.888Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "496c6a5468fe051156bb8dc5f7620e839605bb3c85eee4d763be8b024a6761e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-BFM2",
     "timestamp": "2026-10-16T11:12:05.834Z",
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "Comfy-Org/Qwen-Image-2.1",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
     "contentHash": "9ccc26ee3d68310ce8bfb389f78ead74ffb9f871ba97fff61bbee58e914fa843",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-AK7F",
+    "timestamp": "2026-10-17T15:39:01.707Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+    "contentHash": "cfccd803355dbe87db5f17e38fbac2e4ca121df69c3fd0f1a79e50f80a41a569",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
