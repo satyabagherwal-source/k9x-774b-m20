@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T08:59:42.564Z",
+  "last_updated": "2026-10-17T09:04:07.650Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16966,10 +16966,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "dc664b1dcb4ddf129ea33b2eebc2e05273b5e1186a675b3dc1c55e8638883109",
+      "content_hash": "ab6b48652f187d8e81983e253e05aedab45554702bed69d0fdb62fabfc54d229",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1405,
+          "title": "Multi-Token Termination Boundary Enforcement Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1406,
+          "title": "Tied-Embedding Weight Synchronization and Slicing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -16988,7 +16999,7 @@
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv494roa",
         "learn-huggingface-hf-qwen-qwen3-0-6b-mv4mie4v"
       ],
-      "verified_at": "2026-10-17T01:02:14.778Z",
+      "verified_at": "2026-10-17T09:04:07.643Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
