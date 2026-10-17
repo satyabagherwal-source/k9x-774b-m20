@@ -70,6 +70,8 @@ When an AI agent (Antigravity, Claude Code, Cursor, Copilot, ChatGPT, Gemini, et
    - **Multi-Page Architecture (MPA) by Default**: All websites must feature distinct static routes; never collapse an entire platform into a single long-scroll page unless explicitly requested (Rule 21).
    - **Multilingual-First Architecture**: Build websites language-aware from Day 0 (self-canonicals, reciprocal hreflangs, completeness gate; Rule 24).
    - **Adaptive Depth**: Proactively escalate to Deep Mode for all user-facing interfaces (dark/light themes, mobile drawer, responsive viewports; Rule 23).
+   - **Beginner Pair-Programming & Learning Protocol**: Explain before modifying code; teach 1 concept per task in simple, accessible Hindi; enforce empirical verification (real console outputs, explicit `NOT RUN`); deliver standard End-of-Task status report; persist verified lessons to `LEARNINGS.md` (Rule 27 & `00_START_HERE/BEGINNER_LEARNING_OPERATING_PROTOCOL.md`).
 
 ---
+
 *Follow this dual manual to keep the Intelligence Data pure, persistent, and universally empowering.*

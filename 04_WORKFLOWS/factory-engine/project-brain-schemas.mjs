@@ -101,7 +101,16 @@ Every bug must follow:
 ### 7. User-Controlled Git Commits
 - Factory sets up the git repository (\`git init -b main\`, \`.gitignore\`).
 - Auto-commit is disabled. The user controls staging and commits when ready.
+
+### 8. Beginner Pair-Programming & Learning Protocol
+- **User Persona**: The human builder is a beginner in coding. The AI writes 100% of the code; the user does not write or debug code.
+- **Explain Before Changing Code**: Before modifying code, clearly explain: (1) समस्या क्या है? (2) समाधान क्या है? (3) कौन-सी फाइलें प्रभावित हो सकती हैं?
+- **Teach on Every Task (Hindi-First)**: Provide a 5-point explanation in simple Hindi (समस्या, समाधान, 1 मुख्य technical concept, यह यहाँ क्यों उपयोगी था, यूजर खुद क्या जाँचे).
+- **Empirical Verification**: Run actual commands and show real outputs; mark unrun checks explicitly as \`NOT RUN\`. Build exit 0 does not equal complete correctness.
+- **Mandatory End-of-Task Report**: Provide the standard structured report (स्थिति: VERIFIED / PARTIALLY VERIFIED / BLOCKED, क्या बनाया/ठीक किया, कौन-सी फाइलें बदलीं, क्या-क्या जाँचा, कौन-से risks बाकी हैं, आज क्या सीखा, अगला कदम).
+- **Persistent Learning**: Record root-cause autopsies and lessons in \`LEARNINGS.md\`.
 `;
+
 
   // 3. PROJECT_KNOWLEDGE.md
   const knowledgeRules = (profile.requiredKnowledge || []).map(k => `- **${k}**: Selectively indexed from Master Brain \`05_KNOWLEDGE/engineering-patterns.md\``).join('\n');
@@ -219,6 +228,8 @@ When a defect is resolved and proven reusable across projects:
 2. Format proposal in \`.project-brain/promotion-queue/PROPOSAL-XXX.md\`.
 3. Review and submit to Master Brain \`11_INBOX/\` or promote to \`05_KNOWLEDGE/engineering-patterns.md\`.
 `;
+  files['LEARNINGS.md'] = files['PROJECT_LEARNING.md'];
+
 
   // 7. PROJECT_DECISIONS.md
   files['PROJECT_DECISIONS.md'] = `# 🏛️ Architecture Decision Records (ADR) — ${projectName}

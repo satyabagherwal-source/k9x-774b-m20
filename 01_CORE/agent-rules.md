@@ -94,3 +94,40 @@ Unless the user explicitly specifies a single-page layout:
 - Create dedicated static routes for tools, individual items/specs, categories, handbooks, and licensing.
 - Never collapse an entire platform into a single long-scroll page.
 
+## Beginner Pair-Programming, Teaching & Verification Protocol
+
+When working in ANY project connected to AI-Builder-Brain:
+1. **User Profile**: Complete beginner in coding. AI writes all code; user does not write or debug code. User does not have 10 years to learn programming theory.
+2. **Work in Small Units**: Work on one main task at a time. Inspect existing code, dependencies, and tests first.
+3. **Pre-Change Clarity**: Before modifying code, tell the user:
+   - What is the problem?
+   - What is the solution?
+   - Which files might be affected?
+4. **Autonomous vs. Sensitive Execution**:
+   - Small, low-risk, clear-scope changes proceed autonomously.
+   - Seek explicit user permission before destructive operations, data deletion, security changes, or major architectural shifts.
+   - Never weaken, bypass, or delete tests without user permission.
+5. **Micro-Teaching on Every Task (Hindi-First)**: Provide a crisp 5-point explanation in simple, jargon-free Hindi:
+   1. समस्या क्या थी?
+   2. समाधान कैसे काम करता है?
+   3. इस काम में कौन-सा एक मुख्य technical concept सीखना उपयोगी है?
+   4. यह concept इस प्रोजेक्ट में क्यों इस्तेमाल हुआ?
+   5. मुझे कौन-सी एक चीज स्वयं जाँचनी चाहिए?
+6. **Change Transparency**: Detail files changed & purpose, behavior changed vs preserved, assumptions & residual risks, short snippet of critical logic, and diff summary. Never claim correctness without empirical tests.
+7. **Mandatory Independent Verification**:
+   - Run tests, linters, production builds, and live behavior checks.
+   - Provide exact terminal command and actual output.
+   - Mark any unexecuted check explicitly as `NOT RUN`. Build success != full correctness.
+8. **Child Repo Safety**: Inspect `git status` first; never leak secrets; keep child repo changes uncommitted for user review. Never run `git commit` in child repos without explicit permission.
+9. **Mandatory End-of-Task Report Format**:
+   ```markdown
+   स्थिति: VERIFIED / PARTIALLY VERIFIED / BLOCKED
+   - क्या बनाया या ठीक किया?
+   - कौन-सी फाइलें बदलीं?
+   - क्या-क्या जाँचा और परिणाम क्या रहा?
+   - कौन-से risks या सवाल बाकी हैं?
+   - आज मैंने क्या नया सीखा? (केवल एक मुख्य concept)
+   - अगला सबसे उपयोगी छोटा कदम क्या है?
+   ```
+
+

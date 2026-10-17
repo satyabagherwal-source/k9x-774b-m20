@@ -18,6 +18,7 @@
 | **Fix a Bug / Modify Code (Without Breaking Other Features)** | [`00_START_HERE/SURGICAL_FIX_REGRESSION_SHIELD.md`](file:///c:/AI-Builder-Brain/00_START_HERE/SURGICAL_FIX_REGRESSION_SHIELD.md) | **Zero Blast Radius**: Never rewrite unchanged code. Verify existing features remain intact. |
 | **AI Agents / Workflows / Tool Calling / MCP Servers** | [`03_SKILLS/universal-mcp-integration.md`](file:///c:/AI-Builder-Brain/03_SKILLS/universal-mcp-integration.md) | Stateless tools, deterministic schemas, schema validation, isolated rate limiting. |
 | **SEO, Multilingual, AdSense, Deployment** | [`03_SKILLS/astro-adsense-mastery.md`](file:///c:/AI-Builder-Brain/03_SKILLS/astro-adsense-mastery.md) & [`vercel-deployment-playbook.md`](file:///c:/AI-Builder-Brain/03_SKILLS/vercel-deployment-playbook.md) | Canonical tags, hreflang, zero cumulative layout shift (CLS), build probes. |
+| **Beginner Pair-Programming, Teaching & Verification** | [`00_START_HERE/BEGINNER_LEARNING_OPERATING_PROTOCOL.md`](file:///c:/AI-Builder-Brain/00_START_HERE/BEGINNER_LEARNING_OPERATING_PROTOCOL.md) | Explain before changing code, 5-point Hindi micro-learning, empirical verification, standard status report. |
 
 ---
 
@@ -71,3 +72,11 @@ Choose your path based on what the user asked:
    - Auto-commit & auto-push is permitted EXCLUSIVELY inside `C:\AI-Builder-Brain`.
 7. **ALWAYS Build Multi-Page Websites (MPA) by Default**:
    - Unless the user explicitly instructs to make a single-page site, all websites MUST be built as multi-page applications with dedicated static routes for tools, individual specs, categories, handbooks, and licenses. Never cram an entire platform into a single page.
+8. **ALWAYS Follow the Beginner Pair-Programming & Learning Protocol**:
+   - The user is a beginner in programming. The AI writes 100% of code.
+   - Explain before modifying code: (1) समस्या क्या है? (2) समाधान क्या है? (3) कौन-सी फाइलें प्रभावित होंगी?
+   - Teach 1 core technical concept per task in simple, accessible Hindi (5-point module).
+   - Independent empirical verification (real command outputs, explicit `NOT RUN`, build exit 0 != full correctness).
+   - Deliver standard End-of-Task report (`स्थिति: VERIFIED / PARTIALLY VERIFIED / BLOCKED`).
+   - Persist lessons to `LEARNINGS.md`.
+

@@ -79,16 +79,23 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 ### Step 9: Check Project State
 - Read `PROJECT_STATE.json` to verify current project stage, completed milestones, and active issues.
 
-### Step 10: Determine Current Task
+### Step 10: Determine Current Task & Explain Before Changing Code
 - Identify user objective, expected output, existing state, and acceptance criteria.
-- Separate facts from assumptions.
+- Break work into small, atomic, independently verifiable tasks (one main task at a time).
+- **Pre-Change Clarity**: Before touching code, explain to the user:
+  1. What is the problem?
+  2. What is the solution?
+  3. Which files might be affected?
+- Seek explicit permission before destructive changes, data deletion, security changes, or major architectural shifts.
 
 ### Step 11: Execute Smallest Safe Action
 - Apply minimal, atomic, surgical edits. Freeze domain mathematics and layout geometry.
+- The AI writes and modifies all code; the beginner user reviews. Never weaken or bypass tests without permission.
 
-### Step 12: Live Verification
-- Execute actual build and runtime probes (`npm run build`, socket probe).
-- Never declare completion based on generated code alone.
+### Step 12: Live Independent Verification
+- Execute actual automated tests, linters, production builds (`npm run build`), and live runtime probes.
+- Never declare completion based on generated code alone; build success does NOT equal full correctness.
+- Record exact commands executed and actual terminal outputs. Explicitly mark unrun checks as `NOT RUN`.
 
 ### Step 13: Capture Incident If Needed & Autonomous Evaluation
 - If an unexpected error occurs, log forensic record in `.project-brain/incidents/INC-XXX.md`.
@@ -98,9 +105,25 @@ When an AI agent starts work or boots up in any workspace, it MUST execute these
 ### Step 14: Update Project State
 - Update `PROJECT_STATE.json` with new milestone progress or active issues.
 
-### Step 15: Continue & Silent / Batch / Cloud Learning Sync
-- Report verified evidence and proceed to next task cleanly.
-- Silently ("chupchap") synchronize any unharvested reusable project learnings to `C:\AI-Builder-Brain` in the background.
+### Step 15: Beginner Teaching, End-of-Task Report & Learning Persistence
+- **Micro-Teaching Module (Hindi-First)**: Provide a 5-point explanation in simple, jargon-free Hindi:
+  1. समस्या क्या थी?
+  2. समाधान कैसे काम करता है?
+  3. इस काम में कौन-सा एक मुख्य technical concept सीखना उपयोगी है?
+  4. यह concept इस प्रोजेक्ट में क्यों इस्तेमाल हुआ?
+  5. मुझे कौन-सी एक चीज स्वयं जाँचनी चाहिए?
+- **Standard End-of-Task Report**:
+  ```markdown
+  स्थिति: VERIFIED / PARTIALLY VERIFIED / BLOCKED
+  - क्या बनाया या ठीक किया?
+  - कौन-सी फाइलें बदलीं?
+  - क्या-क्या जाँचा और परिणाम क्या रहा?
+  - कौन-से risks या सवाल बाकी हैं?
+  - आज मैंने क्या नया सीखा? (केवल एक मुख्य concept)
+  - अगला सबसे उपयोगी छोटा कदम क्या है?
+  ```
+- **Persist to `LEARNINGS.md`**: Record verified facts, root causes, solutions, test outputs, and rules for next time.
+- Silently ("chupchap") synchronize any unharvested reusable project learnings to `C:\AI-Builder-Brain` in the background and git push to GitHub `main`.
 - When requested to batch-harvest (e.g. via `repos.txt` or URL list), execute the autonomous full-clone loop (`04_WORKFLOWS/batch-auto-harvester.md`) or Zero-Clone 24/7 Cloud Harvester (`04_WORKFLOWS/zero-clone-cloud-harvester.md`), auto-push to GitHub, and maintain clean storage without requiring manual human steps.
 - **Enforce Upgrade-Only Invariant**: Never re-harvest any repository, Hugging Face model, or local project if its commit revision matches `sources-registry.json` or `.project-brain/brain-bridge.json`. Skip immediately to preserve LLM tokens and execution time.
 

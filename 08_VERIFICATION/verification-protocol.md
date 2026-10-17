@@ -65,3 +65,12 @@ When a candidate rule or pattern is produced via an AI provider (e.g. Gemini, Cl
 3. **No Synthetic Training Dataset Generation**:
    Verification outputs and stored knowledge must never be compiled or exported as an automated model training, fine-tuning, or distillation corpus.
 
+## Beginner-Coder Verification Transparency Gate
+
+When verifying work for a beginner builder:
+1. **Real Commands & Actual Outputs**: Every reported test or check must cite the exact shell command executed and the actual terminal output snippet.
+2. **Explicit NOT RUN Marking**: Any verification dimension not executed (e.g. edge cases, load tests, auth checks) must be explicitly flagged as `NOT RUN`. Falsely asserting completion is prohibited.
+3. **Build Success != Full Correctness**: An exit code 0 from a build script (`npm run build`) verifies syntax and bundling only; it does NOT verify visual correctness, responsiveness, user experience, or business logic.
+4. **Concrete User Self-Check**: Always provide the user with 1 tangible thing they can verify independently (e.g. "Open http://localhost:4321/about and click the contact button").
+
+
