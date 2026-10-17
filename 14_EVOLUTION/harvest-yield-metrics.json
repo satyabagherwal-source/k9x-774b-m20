@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T22:19:20.114Z",
-  "total_cycles_completed": 2301,
-  "total_learnings_persisted": 2301,
-  "total_rules_promoted": 1329,
+  "last_updated": "2026-10-17T22:23:07.118Z",
+  "total_cycles_completed": 2302,
+  "total_learnings_persisted": 2302,
+  "total_rules_promoted": 1332,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:11:13.156Z",
-      "repository": "NaiveAI/Naive-N0.5-Flash",
-      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T11:15:21.576Z",
       "repository": "openai/clip-vit-base-patch32",
@@ -1403,6 +1396,13 @@
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T22:23:07.118Z",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

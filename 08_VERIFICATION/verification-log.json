@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-90V8",
-    "timestamp": "2026-10-16T18:10:07.652Z",
-    "repository": "Tongyi-MAI/Z-Image-Turbo",
-    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
-    "contentHash": "48cb85afdabd1f0ed81fee395777de68166628e91cfbfa4469669a430cccc55f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-DBG8",
     "timestamp": "2026-10-16T18:13:27.992Z",
     "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
@@ -7492,6 +7477,21 @@
     "contentHash": "299a72472186bb40e4791c9157ad07a99a9ac6d938e1b84e2c6fc1110a453692",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-Q82V",
+    "timestamp": "2026-10-17T22:23:07.111Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
+    "contentHash": "1f4d89e0c997a004cafdf08c7d2ad21e1cbff580c863bfa50ef4d7686347f1e4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

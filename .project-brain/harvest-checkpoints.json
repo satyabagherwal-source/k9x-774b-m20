@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T22:19:20.115Z",
+  "last_updated": "2026-10-17T22:23:07.119Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2121,14 +2121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b",
-      "content_hash": "23951c8fcf843f21e3d1fc13ae825588f6e7a57d2596e0ae8ff6fa8c1dd2d71a",
-      "verified_at": "2026-10-17T14:31:17.910Z",
+      "content_hash": "1f4d89e0c997a004cafdf08c7d2ad21e1cbff580c863bfa50ef4d7686347f1e4",
+      "verified_at": "2026-10-17T22:23:07.119Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T14:31:17.910Z"
+      "last_updated": "2026-10-17T22:23:07.119Z"
     },
     "openbmb/MiniCPM-V-4.7-1B": {
       "repository": "openbmb/MiniCPM-V-4.7-1B",

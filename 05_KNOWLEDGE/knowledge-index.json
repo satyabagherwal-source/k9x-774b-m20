@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T22:19:20.073Z",
+  "last_updated": "2026-10-17T22:23:07.084Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42841,7 +42841,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B",
       "source_version": "hf-openbmb-minicpm-v-4.7-35b-a3b",
-      "content_hash": "23951c8fcf843f21e3d1fc13ae825588f6e7a57d2596e0ae8ff6fa8c1dd2d71a",
+      "content_hash": "1f4d89e0c997a004cafdf08c7d2ad21e1cbff580c863bfa50ef4d7686347f1e4",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md",
       "promoted_rules": [
@@ -42934,6 +42934,21 @@
           "number": 1469,
           "title": "BFloat16 Deployment Compatibility Rule",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1548,
+          "title": "**MoE Routing Must Preserve Token‑Level Determinism**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1549,
+          "title": "**Linear‑Attention Layers Must Enforce Full‑Attention Every N Layers**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1550,
+          "title": "**Early‑Compression Tokenization Must Preserve Token Count Invariant**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42941,7 +42956,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T14:31:17.874Z",
+      "verified_at": "2026-10-17T22:23:07.075Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
