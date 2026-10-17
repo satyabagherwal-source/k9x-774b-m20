@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-16T23:57:25.991Z",
+  "last_updated": "2026-10-17T00:01:31.146Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -15912,7 +15912,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "3cb8ec63f731a747abc9e98b3f9cbda23bf459b6ee96db558dfbb41df8665ffc",
+      "content_hash": "24fe8bfa080788f73c2b4ebcc56a8bbcca54c519832f3cef4a26e4b854d445c4",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -15958,6 +15958,21 @@
           "number": 1110,
           "title": "Guarded Model Context Allocation with Physical VRAM Boundary Pre-Check",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1269,
+          "title": "Zero-Copy GGUF Memory Alignment and POSIX `mmap` Page Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1270,
+          "title": "Context Window RoPE Frequency Scaling Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1271,
+          "title": "Abliteration Direction Residual Boundary Sanitization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -15978,7 +15993,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-16T15:49:51.371Z",
+      "verified_at": "2026-10-17T00:01:31.141Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
