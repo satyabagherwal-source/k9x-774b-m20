@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-EYVV",
-    "timestamp": "2026-10-16T09:50:51.931Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "3d9dbbc6581413761f892dada6c470f026b41536470b50f110c60a14593b9a6e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-J3J2",
     "timestamp": "2026-10-16T09:54:04.574Z",
     "repository": "openai/whisper-large-v3",
@@ -7492,6 +7477,21 @@
     "contentHash": "af51d5fe02ff0f26bc1c4e31833f2e07ee197ce227858836dec85160e331d0a2",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-JA3Q",
+    "timestamp": "2026-10-17T14:21:49.670Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "501918ebc31ad2f639bd1733418021cde8339c5fc69c818a2bd4fc6c69beedb7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

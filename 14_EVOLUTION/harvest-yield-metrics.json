@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T14:18:45.510Z",
-  "total_cycles_completed": 2155,
-  "total_learnings_persisted": 2155,
+  "last_updated": "2026-10-17T14:21:49.675Z",
+  "total_cycles_completed": 2156,
+  "total_learnings_persisted": 2156,
   "total_rules_promoted": 1245,
   "history": [
-    {
-      "timestamp": "2026-10-17T02:51:55.657Z",
-      "repository": "FermionResearch/Phonon-2",
-      "learningId": "learn-huggingface-fermionresearch-phonon-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T02:55:37.967Z",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -1403,6 +1396,13 @@
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
       "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T14:21:49.675Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
