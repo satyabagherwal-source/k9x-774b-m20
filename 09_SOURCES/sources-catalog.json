@@ -45,8 +45,8 @@
     "sourceUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
     "sourceVersion": "hf-lilylilith-qi_2.1_anyangle",
     "license": "Open-Source",
-    "contentHash": "176854d2cd7987792b6765434ad6acf419b9dd0e9c4d0d1cd929b2691d30c3d9",
-    "lastHarvestedAt": "2026-10-16T20:41:37.110Z",
+    "contentHash": "99237c0cef9d26e3fdd1558fb3e90018def1c8adfd80fb708d6d981ce4a87934",
+    "lastHarvestedAt": "2026-10-17T04:21:40.345Z",
     "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle"
   },
   "hf-baai-bge-large-en-v1.5": {

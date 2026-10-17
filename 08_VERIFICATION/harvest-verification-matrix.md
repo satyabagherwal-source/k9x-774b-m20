@@ -2006,3 +2006,4 @@
 | `CYCLE-20261017-Q98P` | `2026-10-17T04:11:23.593Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`a2539a96...`) |
 | `CYCLE-20261017-UJM8` | `2026-10-17T04:14:43.664Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`c4c40f93...`) |
 | `CYCLE-20261017-ZN6G` | `2026-10-17T04:18:41.560Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1310, Rule 1311` | Yes (`663a5aca...`) |
+| `CYCLE-20261017-3H4M` | `2026-10-17T04:21:40.342Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`99237c0c...`) |

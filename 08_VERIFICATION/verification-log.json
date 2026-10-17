@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-K7EX",
-    "timestamp": "2026-10-15T23:39:04.713Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "6b1beec79be63e85edd1a4a649fc2ecae3c62892d322f895533f20ec4f71fae2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-O4VL",
     "timestamp": "2026-10-15T23:42:08.049Z",
     "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "663a5acad04ab1a6ce91a7b1529c10b1a2ab2e78e2ecb996baea7d72a1601f91",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-3H4M",
+    "timestamp": "2026-10-17T04:21:40.342Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "99237c0cef9d26e3fdd1558fb3e90018def1c8adfd80fb708d6d981ce4a87934",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
