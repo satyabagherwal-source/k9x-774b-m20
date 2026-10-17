@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T19:18:29.106Z",
-  "total_cycles_completed": 2249,
-  "total_learnings_persisted": 2249,
-  "total_rules_promoted": 1293,
+  "last_updated": "2026-10-17T19:22:03.734Z",
+  "total_cycles_completed": 2250,
+  "total_learnings_persisted": 2250,
+  "total_rules_promoted": 1296,
   "history": [
-    {
-      "timestamp": "2026-10-17T08:10:00.310Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T08:13:12.689Z",
       "repository": "facebook/sam3",
@@ -1403,6 +1396,13 @@
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T19:22:03.734Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

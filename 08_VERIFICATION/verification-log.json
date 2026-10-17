@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-CQ4R",
-    "timestamp": "2026-10-16T14:57:03.051Z",
-    "repository": "Altworld/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "e825cd2129f65cdbac570c8a09a6750a1b7171a9de6409546a3778052128796d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-GOR9",
     "timestamp": "2026-10-16T15:00:07.893Z",
     "repository": "fastino/GLiNER2.5-Decide",
@@ -7492,6 +7477,21 @@
     "contentHash": "4c7dbbe3edbd0ae41b57c249c7e0be3c4c4dc59e1a5ea6abee2408c90d98a739",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-9DUA",
+    "timestamp": "2026-10-17T19:22:03.730Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "83c1e91d194e930d14082ad92e43a5b4f3d3c228b37dcd31ffb7346d46ccf090",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

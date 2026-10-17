@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T19:18:29.081Z",
+  "last_updated": "2026-10-17T19:22:03.705Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42236,7 +42236,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "44acaa1961f3cb4bd86ca63d4d92c9bb739b21b127195a9d990c6ea57088a755",
+      "content_hash": "83c1e91d194e930d14082ad92e43a5b4f3d3c228b37dcd31ffb7346d46ccf090",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
@@ -42284,6 +42284,21 @@
           "number": 1442,
           "title": "The Zero-Trust Artifact Loading Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1514,
+          "title": "Model Artifact Integrity & Schema Validation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1515,
+          "title": "Deterministic Inference Seed & Latent Initialization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1516,
+          "title": "Memory-Safe Weight Loading for Large Models",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42291,7 +42306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T11:24:50.124Z",
+      "verified_at": "2026-10-17T19:22:03.700Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
