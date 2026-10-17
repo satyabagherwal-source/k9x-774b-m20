@@ -68,5 +68,17 @@ For every multi-language web property, the audit runner MUST evaluate the **Lang
      - 254 (Crawled – not indexed): Zero thin pages; intent-driven body copy, FAQs, and semantic schema verified.
      - 1 (5xx): Zero unhandled locale exceptions in dynamic route generators.
      - 48 (Discovered – not indexed): Zero orphan language routes; full reciprocal internal link discovery.
+  6. XML Sitemap Canonical Purity Gate (Rule 1492):
+     - Zero redirected URLs in XML sitemaps (301/308 count == 0).
+     - Zero noindex pages in XML sitemaps (noindex count == 0).
+     - Zero static error (`/404/`, `/500/`) or staging (`pages.dev`) URLs in XML sitemaps.
+     - 100% of sitemap URLs verified returning live `HTTP 200 OK`.
+     - Explicit `<lastmod>`, `<changefreq>`, and tiered `<priority>` metadata serialized.
+  7. Technical vs Indexing Verification Barrier (Rule 1492):
+     - Strict decoupling of edge readiness (`HTTP 200 OK`) from search engine indexing proof (`INDEXED_CONFIRMED`).
+     - Ban classification of `Indexing requested` as `INDEXED_CONFIRMED` without verified SERP or GSC export proof.
+  8. Search Console Quota-Aware Submission Governance (Rule 1492):
+     - Sitemap submission deployed as Primary Passive Discovery conduit (zero quota limit).
+     - Active manual URL inspection partitioned into prioritized daily batches (<= 50 URLs/day).
 ```
 

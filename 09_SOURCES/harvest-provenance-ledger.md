@@ -2218,3 +2218,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-10-17T16:14:02.763Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-17T16:16:56.297Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-10-17T16:19:58.988Z |
+| `learn-onlinefreeprotractor-rule1492` | `https://github.com/satyabagherwal-source/onlinefreeprotractor` | `production-verified-phase3` | `docs/seo-repair/PHASE_3_3_INDEXING_TRACKER.csv` | 2026-10-17T15:58:00Z |
+| `learn-onlinefreeprotractor-rule1492` | `https://github.com/satyabagherwal-source/onlinefreeprotractor` | `production-verified-phase3` | `astro.config.mjs#L17-L44` | 2026-10-17T15:58:00Z |
+| `learn-onlinefreeprotractor-rule1492` | `https://github.com/satyabagherwal-source/onlinefreeprotractor` | `production-verified-phase3` | `docs/seo-repair/COMPLETE_GSC_SUBMISSION_LIST.md` | 2026-10-17T15:58:00Z |

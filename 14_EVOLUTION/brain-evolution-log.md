@@ -1,6 +1,39 @@
 # Brain Evolution Log
 
 This file records canonical promotion events, knowledge integration milestones, and rule evolutions into `C:\AI-Builder-Brain`.
+## Evolution Event: 2026-10-17 — SEO Recovery, XML Sitemap Purity & Indexing Governance Invariants (Rules 1490–1492 from onlinefreeprotractor.com)
+
+* **Source Project**: `satyabagherwal-source/onlinefreeprotractor` (`https://onlinefreeprotractor.com`)
+* **Trigger**: User Directive: *"learning nikal kar ai builder brain me daal do"* (Extraction of Phase 3.1–3.6 SEO recovery and XML sitemap overhaul learnings).
+* **Empirical Accomplishments & Forensic Breakthroughs**:
+  1. **Full 1,031 Master URL Inventory Reconciliation**:
+     - Resolved discrepancies in historical GSC exports (443 reported vs 451 export rows reconciled via parameter deduplication).
+     - Reconciled noindex count: 212 multilingual legal pages (53 languages × 4 legal pages) + 2 static error pages (`/404/`, `/500/`) = 214.
+     - Partitioned into 328 indexable canonicals, 216 intentional exclusions, and 487 clean redirects.
+  2. **Codification of Rule 1492 (Technical 200 OK vs Indexation Decoupling)**:
+     - Established disjoint taxonomy: `INDEXED_CONFIRMED`, `INDEXING_REQUEST_ACCEPTED`, `NOT_INDEXED`, `INTENTIONALLY_NOINDEX`, `VALID_REDIRECT`.
+     - Prohibited false-positive claims of indexation based purely on HTTP 200 response or inspection request receipt.
+  3. **Codification of Rule 1492 (XML Sitemap Canonical Purity & Zero-Exclusion)**:
+     - Built programmatic filter in Astro 5 preventing non-indexable legal/error pages from contaminating sitemaps (preventing GSC *"Submitted URL marked noindex"* errors).
+     - Serialized explicit `<lastmod>`, `<changefreq>`, and `<priority>` across all 328 canonical targets.
+     - Verified 100% of sitemap URLs returning HTTP 200 OK on production edge.
+  4. **Codification of Rule 1492 (Search Engine Inspection Quota Governance)**:
+     - Designed Dual-Pronged Discovery: passive full-corpus crawling via clean sitemaps, combined with active prioritized daily batches (<= 50 URLs/day) to prevent search console quota exhaustion.
+  5. **Provenance & Verification Gates Updated**:
+     - Logged entries in `09_SOURCES/harvest-provenance-ledger.md`.
+     - Integrated sitemap purity and indexing verification gates into `08_VERIFICATION/universal-production-audit-protocol.md`.
+* **Promoted Universal Rules**:
+  - **Rule 1492**: Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant.
+  - **Rule 1492**: Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant.
+  - **Rule 1492**: Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern.
+* **Files Updated**:
+  - `07_PROJECT_LEARNING/online-free-protractor-learnings.md` (Incidents 5–9 added)
+  - `05_KNOWLEDGE/engineering-patterns.md` (Rules 1490–1492 added)
+  - `08_VERIFICATION/universal-production-audit-protocol.md` (Verification gates 6–8 added)
+  - `09_SOURCES/harvest-provenance-ledger.md` (Provenance entries recorded)
+  - `14_EVOLUTION/brain-evolution-log.md` (Evolution logged)
+
+---
 
 ## Evolution Event: 2026-10-11 — Production Autonomy, Persistent Learning & Cross-Project Proof
 

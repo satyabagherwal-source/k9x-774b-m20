@@ -101371,6 +101371,8 @@ def test_mrope_pass_through_invariance():
 
 ## 1489. Mixed-Precision Quantization Integrity & KLD Validation (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
 
+## 1492. Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
+
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
@@ -101383,6 +101385,16 @@ def test_mrope_pass_through_invariance():
   "ai_provider": "google-gemini-cloud-agent",
   "generation_mode": "source_derived_ai_synthesized",
   "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+
+"topic": "Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant",
+  "source": "satyabagherwal-source/onlinefreeprotractor",
+  "source_url": "https://onlinefreeprotractor.com",
+  "source_version": "production-verified-phase3",
+  "license": "Proprietary",
+  "extracted_at": "2026-10-17T15:58:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "empirical_incident_extraction",
+  "learning_id": "learn-onlinefreeprotractor-rule1489",
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
@@ -101444,9 +101456,115 @@ Any project involving the quantization, compression, or distillation of neural n
 
 ## 1490. Cryptographic Integrity for Large Binary Artifacts (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
 
+> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
+> **Evidence**: Reconciled against 1,031 URLs, GSC Coverage reports, and live HTTP probes across 54 locales.
+
+**RULE**:
+In search engine optimization and automated crawling pipelines, systems and audits MUST decouple technical edge readiness (HTTP 200 OK, valid canonical tag, valid hreflang, index/follow tags) from search engine indexation confirmation. Furthermore, audit systems MUST NOT classify an accepted submission request (`Indexing requested` in Search Console UI) as an indexation success (`INDEXED_CONFIRMED`).
+
+Audit pipelines and state models MUST enforce the following disjoint status taxonomy:
+1. `INDEXED_CONFIRMED`: Verified empirically through live SERP presence (`site:URL`) or authenticated GSC Indexing / Performance API export.
+2. `INDEXING_REQUEST_ACCEPTED`: Submission request successfully accepted by search engine ingestion queue, awaiting asynchronous Googlebot recrawl.
+3. `NOT_INDEXED`: Eligible canonical page verified technically healthy (HTTP 200), awaiting discovery or crawl.
+4. `INTENTIONALLY_NOINDEX`: Intentionally excluded pages (e.g. translated legal policies, error handlers) marked with `noindex` and explicitly purged from sitemaps.
+5. `VALID_REDIRECT`: Historical or normalized route resolving to canonical target via 301/308 with zero redirect chains.
+
+**WHY**:
+Search engine crawl scheduling and indexation are decoupled, asynchronous, quality-weighted algorithms. An edge server returning HTTP 200 with clean meta tags only demonstrates that the web server is healthy; it does not compel search engines to index the URL. Conflating technical 200 OK or queued indexing requests with confirmed indexation produces false-positive reports, masks underlying indexation drop-offs, and distorts organic growth analytics.
+
+**WHEN TO APPLY**:
+Apply to all SEO verification suites, automated crawler audits, multi-locale website generators, and Search Console management tooling.
+
+**NEGATIVE CONSTRAINT**:
+- NEVER write automated tests or audit tables that mark a page as "Indexed" or "Resolved" purely on the basis of `res.status === 200` or a successful GSC inspection form submission.
+- NEVER conflate crawl scheduling with SERP indexation.
+
+---
+
+## 1492. Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
+
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
+  "topic": "Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant",
+  "source": "satyabagherwal-source/onlinefreeprotractor",
+  "source_url": "https://onlinefreeprotractor.com",
+  "source_version": "production-verified-phase3",
+  "license": "Proprietary",
+  "extracted_at": "2026-10-17T15:58:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "empirical_incident_extraction",
+  "learning_id": "learn-onlinefreeprotractor-rule1492",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
+> **Evidence**: Verified against Astro 5 sitemap generation, eliminating GSC "Submitted URL marked noindex" across 54 locales.
+
+**RULE**:
+XML Sitemaps (`sitemap.xml`, `sitemap-index.xml`) MUST contain ONLY self-canonical, indexable URLs that return `HTTP 200 OK`. 
+Specifically, sitemaps MUST NEVER contain:
+1. URLs marked with `noindex` (e.g. translated auxiliary legal policies, terms, privacy pages).
+2. Non-canonical URLs or URLs that respond with redirects (`HTTP 301`, `302`, `307`, `308`).
+3. Static error pages (`404.html`, `500.html`).
+4. Staging or preview environment domains (`pages.dev`, `vercel.app`).
+5. Trailing slash mismatched URLs.
+
+Every URL listed in an XML sitemap MUST serialize explicit freshness and priority metadata: `<lastmod>`, `<changefreq>`, and a tiered `<priority>` score (e.g. 1.0 for root homepage, 0.9 for primary tools, 0.8 for localized high-traffic tools, 0.7 for secondary tools).
+
+**WHY**:
+Submitting URLs with `noindex` directives or redirect responses inside an XML sitemap directly triggers critical Google Search Console coverage errors (*"Submitted URL marked noindex"* and *"Submitted URL has crawl issue"*). This damages the site's domain-level crawl budget, slows down discovery of valid pages, and causes search engines to penalize sitemap authority.
+
+**WHEN TO APPLY**:
+Apply to all static site generators (Astro, Next.js, Nuxt, Gatsby, Hugo, 11ty) and dynamic CMS sitemap endpoints.
+
+**VERIFIED IMPLEMENTATION PATTERN (Astro / JavaScript)**:
+```javascript
+// astro.config.mjs
+import sitemap from '@astrojs/sitemap';
+
+export default defineConfig({
+  site: 'https://example.com',
+  trailingSlash: 'always',
+  integrations: [
+    sitemap({
+      filter: (page) => {
+        // Enforce Zero-Exclusion: Filter out errors and noindex routes
+        if (page.includes('/404') || page.includes('/500')) return false;
+        const noindexSlugs = ['about', 'contact', 'privacy', 'terms'];
+        return !noindexSlugs.some(slug => page.includes(`/${slug}/`));
+      },
+      serialize: (item) => {
+        item.lastmod = new Date().toISOString().split('T')[0];
+        const pathSegments = new URL(item.url).pathname.split('/').filter(Boolean);
+        if (pathSegments.length === 0) {
+          item.changefreq = 'daily';
+          item.priority = 1.0;
+        } else if (pathSegments.length === 1) {
+          item.changefreq = 'weekly';
+          item.priority = 0.9;
+        } else {
+          item.changefreq = 'weekly';
+          item.priority = 0.8;
+        }
+        return item;
+      }
+    })
+  ]
+});
+```
+
+---
+
+## 1493. Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern (Harvested from satyabagherwal-source/onlinefreeprotractor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+<<<<<<< HEAD
   "topic": "Cryptographic Integrity for Large Binary Artifacts",
   "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
   "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -101456,12 +101574,24 @@ Any project involving the quantization, compression, or distillation of neural n
   "ai_provider": "google-gemini-cloud-agent",
   "generation_mode": "source_derived_ai_synthesized",
   "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+=======
+  "topic": "Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern",
+  "source": "satyabagherwal-source/onlinefreeprotractor",
+  "source_url": "https://onlinefreeprotractor.com",
+  "source_version": "production-verified-phase3",
+  "license": "Proprietary",
+  "extracted_at": "2026-10-17T15:58:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "empirical_incident_extraction",
+  "learning_id": "learn-onlinefreeprotractor-rule1491",
+>>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
   "distillation_prohibited": true
 }
 PROVENANCE_END -->
+<<<<<<< HEAD
 > **Provenance**: Harvested from [ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ukisai-`).  
 > **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
 
@@ -101507,15 +101637,39 @@ d41d8cd98f00b204e9800998ecf8427e  model.gguf # MD5 is cryptographically broken
 2.  Compute the SHA256 hash of the downloaded file.
 3.  Compare it against the hash in `SHA256SUMS` and `release-manifest.json`.
 4.  Fail the build/deployment if there is a mismatch.
+=======
+> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
+> **Evidence**: Validated against Google Search Console UI daily inspection quotas (~10-50 URLs/day) and Google Indexing API scope restrictions.
+
+**RULE**:
+When recovering or launching multi-hundred URL web properties under search engine indexing constraints, the engineering team and automated recovery agents MUST govern submissions through a Dual-Pronged Discovery Architecture:
+1. **Prong 1 (Passive Ingestion via Clean Sitemaps)**: Submit the 100% canonical, zero-redirect, zero-noindex `sitemap-index.xml` as the master discovery conduit. This bypasses per-URL inspection quotas and queues the entire page corpus for asynchronous search engine crawling.
+2. **Prong 2 (Tiered Active URL Inspection)**: Because manual GSC URL inspection enforces a hard limit of ~10 to 50 URLs per 24-hour rolling window, and Google's Indexing API strictly restricts generic URL submissions to `JobPosting` and `BroadcastEvent` structured data, all manual inspection queues MUST be partitioned into tiered daily batches:
+   - *Tier 1 (High-Priority Core)*: Homepage, core tools, and historical impression/traffic leaders.
+   - *Tier 2–N (Localized Long-Tail Batches)*: Batches of 40–50 URLs scheduled across consecutive 24-hour cycles.
+
+**WHY**:
+Attempting brute-force manual submission of 300+ URLs in a single day exhausts search console property quotas within minutes, causing subsequent submissions to fail with unrecoverable rate-limit errors and leaving high-value revenue pages unsubmitted while low-value pages consume quota.
+
+**WHEN TO APPLY**:
+Any large-scale site launch, technical SEO re-platforming, or crawl recovery campaign (>50 URLs) on Google Search Console or Bing Webmaster Tools.
+
+---
+>>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)
 
 
 ---
 
+<<<<<<< HEAD
 ## 1491. Separation of Base Model and Speculative Decoding Heads (Harvested from ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF)
+=======
+## 1489. Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
+>>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)
 
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
+<<<<<<< HEAD
   "topic": "Separation of Base Model and Speculative Decoding Heads",
   "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
   "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -101525,12 +101679,24 @@ d41d8cd98f00b204e9800998ecf8427e  model.gguf # MD5 is cryptographically broken
   "ai_provider": "google-gemini-cloud-agent",
   "generation_mode": "source_derived_ai_synthesized",
   "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+=======
+  "topic": "Strict Independence Between Technical HTTP 200 Readiness and Search Engine Indexation Invariant",
+  "source": "satyabagherwal-source/onlinefreeprotractor",
+  "source_url": "https://onlinefreeprotractor.com",
+  "source_version": "production-verified-phase3",
+  "license": "Proprietary",
+  "extracted_at": "2026-10-17T15:58:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "empirical_incident_extraction",
+  "learning_id": "learn-onlinefreeprotractor-rule1489",
+>>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
   "distillation_prohibited": true
 }
 PROVENANCE_END -->
+<<<<<<< HEAD
 > **Provenance**: Harvested from [ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ukisai-`).  
 > **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
 
@@ -101568,3 +101734,145 @@ Swift-1.5-Qwen3.8-27B-GSQ-RCO-IQ2_XS.gguf # Contains MTP head, breaks older runt
 2.  Assert that the model loads successfully and generates text.
 3.  Load the "With MTP head" file in a runtime that supports MTP.
 4.  Assert that the MTP head is detected and used for speculative decoding.
+=======
+> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
+> **Evidence**: Reconciled against 1,031 URLs, GSC Coverage reports, and live HTTP probes across 54 locales.
+
+**RULE**:
+In search engine optimization and automated crawling pipelines, systems and audits MUST decouple technical edge readiness (HTTP 200 OK, valid canonical tag, valid hreflang, index/follow tags) from search engine indexation confirmation. Furthermore, audit systems MUST NOT classify an accepted submission request (`Indexing requested` in Search Console UI) as an indexation success (`INDEXED_CONFIRMED`).
+
+Audit pipelines and state models MUST enforce the following disjoint status taxonomy:
+1. `INDEXED_CONFIRMED`: Verified empirically through live SERP presence (`site:URL`) or authenticated GSC Indexing / Performance API export.
+2. `INDEXING_REQUEST_ACCEPTED`: Submission request successfully accepted by search engine ingestion queue, awaiting asynchronous Googlebot recrawl.
+3. `NOT_INDEXED`: Eligible canonical page verified technically healthy (HTTP 200), awaiting discovery or crawl.
+4. `INTENTIONALLY_NOINDEX`: Intentionally excluded pages (e.g. translated legal policies, error handlers) marked with `noindex` and explicitly purged from sitemaps.
+5. `VALID_REDIRECT`: Historical or normalized route resolving to canonical target via 301/308 with zero redirect chains.
+
+**WHY**:
+Search engine crawl scheduling and indexation are decoupled, asynchronous, quality-weighted algorithms. An edge server returning HTTP 200 with clean meta tags only demonstrates that the web server is healthy; it does not compel search engines to index the URL. Conflating technical 200 OK or queued indexing requests with confirmed indexation produces false-positive reports, masks underlying indexation drop-offs, and distorts organic growth analytics.
+
+**WHEN TO APPLY**:
+Apply to all SEO verification suites, automated crawler audits, multi-locale website generators, and Search Console management tooling.
+
+**NEGATIVE CONSTRAINT**:
+- NEVER write automated tests or audit tables that mark a page as "Indexed" or "Resolved" purely on the basis of `res.status === 200` or a successful GSC inspection form submission.
+- NEVER conflate crawl scheduling with SERP indexation.
+
+---
+
+## 1490. Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Architectural XML Sitemap Canonical Purity & Zero-Exclusion Invariant",
+  "source": "satyabagherwal-source/onlinefreeprotractor",
+  "source_url": "https://onlinefreeprotractor.com",
+  "source_version": "production-verified-phase3",
+  "license": "Proprietary",
+  "extracted_at": "2026-10-17T15:58:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "empirical_incident_extraction",
+  "learning_id": "learn-onlinefreeprotractor-rule1490",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
+> **Evidence**: Verified against Astro 5 sitemap generation, eliminating GSC "Submitted URL marked noindex" across 54 locales.
+
+**RULE**:
+XML Sitemaps (`sitemap.xml`, `sitemap-index.xml`) MUST contain ONLY self-canonical, indexable URLs that return `HTTP 200 OK`. 
+Specifically, sitemaps MUST NEVER contain:
+1. URLs marked with `noindex` (e.g. translated auxiliary legal policies, terms, privacy pages).
+2. Non-canonical URLs or URLs that respond with redirects (`HTTP 301`, `302`, `307`, `308`).
+3. Static error pages (`404.html`, `500.html`).
+4. Staging or preview environment domains (`pages.dev`, `vercel.app`).
+5. Trailing slash mismatched URLs.
+
+Every URL listed in an XML sitemap MUST serialize explicit freshness and priority metadata: `<lastmod>`, `<changefreq>`, and a tiered `<priority>` score (e.g. 1.0 for root homepage, 0.9 for primary tools, 0.8 for localized high-traffic tools, 0.7 for secondary tools).
+
+**WHY**:
+Submitting URLs with `noindex` directives or redirect responses inside an XML sitemap directly triggers critical Google Search Console coverage errors (*"Submitted URL marked noindex"* and *"Submitted URL has crawl issue"*). This damages the site's domain-level crawl budget, slows down discovery of valid pages, and causes search engines to penalize sitemap authority.
+
+**WHEN TO APPLY**:
+Apply to all static site generators (Astro, Next.js, Nuxt, Gatsby, Hugo, 11ty) and dynamic CMS sitemap endpoints.
+
+**VERIFIED IMPLEMENTATION PATTERN (Astro / JavaScript)**:
+```javascript
+// astro.config.mjs
+import sitemap from '@astrojs/sitemap';
+
+export default defineConfig({
+  site: 'https://example.com',
+  trailingSlash: 'always',
+  integrations: [
+    sitemap({
+      filter: (page) => {
+        // Enforce Zero-Exclusion: Filter out errors and noindex routes
+        if (page.includes('/404') || page.includes('/500')) return false;
+        const noindexSlugs = ['about', 'contact', 'privacy', 'terms'];
+        return !noindexSlugs.some(slug => page.includes(`/${slug}/`));
+      },
+      serialize: (item) => {
+        item.lastmod = new Date().toISOString().split('T')[0];
+        const pathSegments = new URL(item.url).pathname.split('/').filter(Boolean);
+        if (pathSegments.length === 0) {
+          item.changefreq = 'daily';
+          item.priority = 1.0;
+        } else if (pathSegments.length === 1) {
+          item.changefreq = 'weekly';
+          item.priority = 0.9;
+        } else {
+          item.changefreq = 'weekly';
+          item.priority = 0.8;
+        }
+        return item;
+      }
+    })
+  ]
+});
+```
+
+---
+
+## 1491. Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern (Harvested from satyabagherwal-source/onlinefreeprotractor)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Search Engine Inspection Quota Governance & Dual-Pronged Discovery Pattern",
+  "source": "satyabagherwal-source/onlinefreeprotractor",
+  "source_url": "https://onlinefreeprotractor.com",
+  "source_version": "production-verified-phase3",
+  "license": "Proprietary",
+  "extracted_at": "2026-10-17T15:58:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "empirical_incident_extraction",
+  "learning_id": "learn-onlinefreeprotractor-rule1491",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
+> **Evidence**: Validated against Google Search Console UI daily inspection quotas (~10-50 URLs/day) and Google Indexing API scope restrictions.
+
+**RULE**:
+When recovering or launching multi-hundred URL web properties under search engine indexing constraints, the engineering team and automated recovery agents MUST govern submissions through a Dual-Pronged Discovery Architecture:
+1. **Prong 1 (Passive Ingestion via Clean Sitemaps)**: Submit the 100% canonical, zero-redirect, zero-noindex `sitemap-index.xml` as the master discovery conduit. This bypasses per-URL inspection quotas and queues the entire page corpus for asynchronous search engine crawling.
+2. **Prong 2 (Tiered Active URL Inspection)**: Because manual GSC URL inspection enforces a hard limit of ~10 to 50 URLs per 24-hour rolling window, and Google's Indexing API strictly restricts generic URL submissions to `JobPosting` and `BroadcastEvent` structured data, all manual inspection queues MUST be partitioned into tiered daily batches:
+   - *Tier 1 (High-Priority Core)*: Homepage, core tools, and historical impression/traffic leaders.
+   - *Tier 2–N (Localized Long-Tail Batches)*: Batches of 40–50 URLs scheduled across consecutive 24-hour cycles.
+
+**WHY**:
+Attempting brute-force manual submission of 300+ URLs in a single day exhausts search console property quotas within minutes, causing subsequent submissions to fail with unrecoverable rate-limit errors and leaving high-value revenue pages unsubmitted while low-value pages consume quota.
+
+**WHEN TO APPLY**:
+Any large-scale site launch, technical SEO re-platforming, or crawl recovery campaign (>50 URLs) on Google Search Console or Bing Webmaster Tools.
+
+---
+>>>>>>> 8490d920f (feat(harvest): integrate SEO recovery, sitemap purity & indexing quota governance rules (Rules 1489-1491) from onlinefreeprotractor)

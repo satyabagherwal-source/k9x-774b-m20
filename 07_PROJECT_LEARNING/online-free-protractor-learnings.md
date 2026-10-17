@@ -69,6 +69,119 @@
 - Canonical tag defense: `computedCanonical` in `Layout.astro` hardcodes `https://onlinefreeprotractor.com`, preventing duplicate indexation even if a crawler traverses `pages.dev`.
 - Automated regression test added to `npm run test:seo` to guarantee preview isolation without accidental production leakage.
 
+## Incident 5: Master 1,031-URL Inventory Partitioning & Discrepancy Reconciliation
 
+### 1. Context & Discrepancy Reconciliation
+- During forensic analysis of historical Google Search Console (GSC) exports, the team was presented with conflicting URL counts:
+  - GSC UI reported 443 pages with redirects, while the export file contained 451 URLs.
+  - GSC reported 214 excluded by noindex, while previous reports assumed 212.
+- **Root Cause & Reconciliation**:
+  1. *Redirect Export Discrepancy*: Row-level deduplication of all 451 raw export rows revealed 8 duplicate occurrences caused by URL-encoding variations and transient tracking parameters. Exactly 443 unique URL targets existed, reconciling GSC summary and raw export with 100% mathematical precision.
+  2. *Noindex Discrepancy*: Exactly 212 URLs corresponded to multilingual legal pages (53 languages × 4 legal pages: `/about/`, `/contact/`, `/privacy/`, `/terms/`). The remaining 2 URLs were the static error templates (`/404/` and `/500/`), which carry `noindex, nofollow` to prevent search engine indexing of error states. Total: 214 noindex pages.
+- **Master Partition (1,031 Total URLs)**:
+  - **328 Eligible Indexable Canonicals**: 10 Core English tool/root pages + 318 localized tool pages across 53 languages.
+  - **216 Intentionally Excluded Non-Indexable Pages**: 212 multilingual legal pages + 2 static error templates (`/404/`, `/500/`) + 2 Cloudflare Pages staging preview URLs (`pages.dev`).
+  - **487 Redirect Routes**: 451 legacy query/protocol/slash variations + 21 legacy 404 routes redirected to relevant tools + 15 trailing slash normalization routes.
 
+### 2. Universal Engineering Invariant
+> **Exhaustive Inventory Invariant**: Never discard unexplained rows or discrepancies between UI summaries and CSV exports. Reconcile row counts down to exact parameter or normalization artifacts to prevent silent masking of genuine technical defects.
 
+---
+
+## Incident 6: Strict Separation of Technical HTTP 200 Readiness vs Google Indexing Evidence
+
+### 1. Context & Pitfall
+- Previous audit reports conflated a page returning `HTTP 200 OK` (with valid canonical, title, description, and hreflang) with being "Indexed" by Google.
+- Furthermore, when an indexing request was submitted in GSC UI and returned "Indexing requested", some workflows erroneously marked the URL status as `INDEXED_CONFIRMED`.
+- In reality, Google's processing pipeline is asynchronous:
+  1. *Technical 200 OK* only proves edge web-server readiness.
+  2. *Indexing Requested* only proves receipt of request into Google's crawl scheduler queue.
+  3. *Indexed Confirmed* requires empirical SERP proof (`site:URL`) or Google Search Console API / Performance export verification.
+
+### 2. Remediation & Status Taxonomy
+- Standardized status classification across all indexing tools:
+  - `INDEXED_CONFIRMED`: Verified via live Google search result or GSC URL inspection confirmed indexed.
+  - `INDEXING_REQUEST_ACCEPTED`: Request successfully submitted in GSC UI; queued for Googlebot recrawl.
+  - `NOT_INDEXED`: Eligible canonical page awaiting crawl/submission.
+  - `UNKNOWN`: Uninspected or awaiting fresh data.
+  - `INTENTIONALLY_NOINDEX`: Non-canonical, legal, or error page marked `noindex` and excluded from sitemap.
+  - `VALID_REDIRECT`: Historical route terminating at canonical target via 301/308.
+
+---
+
+## Incident 7: Programmatic XML Sitemap Overhaul & Zero-Error Canonical Purity
+
+### 1. Empirical Defect
+- Default `@astrojs/sitemap` integration generated an unstructured flat list containing non-indexable routes, error pages (`/404/`, `/500/`), and translated legal pages marked `noindex`.
+- When Googlebot fetched the sitemap, it raised critical GSC coverage errors: *"Submitted URL marked noindex"*.
+- Furthermore, the sitemap lacked explicit `<lastmod>`, `<changefreq>`, and `<priority>` attributes, depriving search engines of freshness and crawl priority cues.
+
+### 2. Architectural Resolution
+- Re-architected `astro.config.mjs` with custom programmatic filtering and serializer:
+  ```javascript
+  sitemap({
+    filter: (page) => {
+      // Exclude static error pages
+      if (page.includes('/404') || page.includes('/500')) return false;
+      // Exclude multilingual legal pages marked noindex
+      const legalSlugs = ['about', 'contact', 'privacy', 'terms'];
+      return !legalSlugs.some(slug => page.includes(`/${slug}/`));
+    },
+    serialize: (item) => {
+      const url = item.url;
+      item.lastmod = '2026-10-17';
+      if (url === 'https://onlinefreeprotractor.com/') {
+        item.changefreq = 'daily';
+        item.priority = 1.0;
+      } else if (url.split('/').filter(Boolean).length === 2 && !url.match(/\/[a-z]{2}\//)) {
+        item.changefreq = 'weekly';
+        item.priority = 0.9;
+      } else if (url.includes('/ruler/') || url.includes('/protractor/')) {
+        item.changefreq = 'weekly';
+        item.priority = 0.8;
+      } else {
+        item.changefreq = 'monthly';
+        item.priority = 0.7;
+      }
+      return item;
+    }
+  })
+  ```
+- Result:
+  - Exactly 328 URLs generated in `sitemap-0.xml` and referenced by `sitemap-index.xml`.
+  - Zero duplicate URLs.
+  - Zero redirected routes (301/308).
+  - Zero noindex pages.
+  - 100% of URLs verified returning `HTTP 200 OK` on production edge.
+
+---
+
+## Incident 8: Search Console Daily Quota Governance & Tiered Submission Strategy
+
+### 1. Empirical Discovery & Quota Constraints
+- Testing the Google Indexing API revealed that it is strictly restricted by Google policy to `JobPosting` and `BroadcastEvent` structured data. Standard content websites receive HTTP 403 or are disregarded for arbitrary URL submissions.
+- Google Search Console manual URL inspection UI enforces a strict per-property daily quota of approximately 10 to 50 URLs per 24 hours. Attempting to submit 328 URLs in a single sitting triggers *"Quota exceeded. Please try again tomorrow"*.
+
+### 2. Dual-Pronged Recovery Pattern
+- **Prong 1 (Passive Full-Site Ingestion)**: Submit the 100% canonical, zero-error `sitemap-index.xml` in GSC. Googlebot crawls and indexes the full 328-page surface autonomously in the background without quota penalties.
+- **Prong 2 (Active High-Priority Acceleration)**: Partition remaining canonical URLs into prioritized daily batches based on historical traffic and search impressions:
+  - *Day 1 (Priority Core)*: Top 10 English tools + 14 top historical impression drivers (Spanish, Russian, German, French tools).
+  - *Days 2–7 (Localized Batches)*: Submit 45–50 localized tool URLs per day until the entire 328-page inventory is processed.
+
+---
+
+## Incident 9: HTML Attribute Scraping Regex Robustness with Quotes and Apostrophes
+
+### 1. Failure Mode
+- During automated SEO validation scripting, regex pattern `content="([^"']*)"` was used to extract meta description and og:title tags.
+- For non-English locales containing apostrophes in copy (e.g. Turkish `content="59'dan fazla dil desteği..."` or French `content="l'angle..."`), the regex prematurely terminated matching at the single quote `'`, reporting false-positive "Malformed or empty description" errors.
+
+### 2. Prevention & Rule
+- Never mix quote delimiters in regex character classes when parsing double-quoted HTML attributes:
+  ```javascript
+  // BAD: Prematurely breaks on apostrophes inside double-quoted attributes
+  const match = html.match(/<meta name="description" content="([^"']*)"/);
+
+  // GOOD: Strictly delimited by double-quote closing boundary
+  const match = html.match(/<meta\s+name="description"\s+content="([^"]*)"/i);
+  ```
