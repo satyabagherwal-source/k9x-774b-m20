@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-JLGJ",
-    "timestamp": "2026-10-16T11:18:26.659Z",
-    "repository": "openai/clip-vit-base-patch32",
-    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
-    "contentHash": "c84d99460c1fc7680beae28423d4e7fddd6e66b4795a28ed0314cdbb006473ed",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-NFRQ",
     "timestamp": "2026-10-16T11:21:25.910Z",
     "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -7490,6 +7475,21 @@
     "repository": "inclusionAI/Ming-Image-0.1-Design",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
     "contentHash": "29220b07cb90f8c154a27778534dd3b8468fff26179281d87ff1f12e78daf287",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-N5Q5",
+    "timestamp": "2026-10-17T15:48:49.469Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+    "contentHash": "ccce5dfcae3d503ded9e135d45b7efdcc1bf33d3aaa794523271d1f98bcf2fa4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
