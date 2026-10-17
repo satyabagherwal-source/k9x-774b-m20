@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-PEYQ",
-    "timestamp": "2026-10-16T14:10:55.874Z",
-    "repository": "XingChen-AGI/TeleOCR",
-    "learningId": "learn-huggingface-xingchen-agi-teleocr",
-    "contentHash": "0f08161d08627331cd17b9673ab22a01377851efc3914fdbc3b95d9fcc489acc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-TDOY",
     "timestamp": "2026-10-16T14:14:00.850Z",
     "repository": "Qwen/Qwen-Image-2.1",
@@ -7490,6 +7475,21 @@
     "repository": "datalab-to/indra-ocr",
     "learningId": "learn-huggingface-datalab-to-indra-ocr",
     "contentHash": "eb718cb7052af6932654e0e52b28e67096d7cd533dc5c0cbb918c9e66922b816",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-RXN5",
+    "timestamp": "2026-10-17T18:40:29.969Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "c905ac62fa8173e67c5b682b0c59fba10f835cc7dced2d17d07a03d30073dfae",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

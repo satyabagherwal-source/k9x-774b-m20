@@ -995,8 +995,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
     "sourceVersion": "hf-deepseek-ai-deepseek-v3",
     "license": "Open-Source",
-    "contentHash": "662c02e4477bdc861bdbe131b12c1c11e142da739f66f4651513445dc497986d",
-    "lastHarvestedAt": "2026-10-17T10:40:29.584Z",
+    "contentHash": "c905ac62fa8173e67c5b682b0c59fba10f835cc7dced2d17d07a03d30073dfae",
+    "lastHarvestedAt": "2026-10-17T18:40:29.972Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3"
   },
   "hf-baidu-unlimited-ocr": {

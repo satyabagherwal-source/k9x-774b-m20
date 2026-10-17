@@ -2259,3 +2259,4 @@
 | `CYCLE-20261017-F7KU` | `2026-10-17T18:30:36.318Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`fdcc5e10...`) |
 | `CYCLE-20261017-JON9` | `2026-10-17T18:34:05.061Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`5f6f1d72...`) |
 | `CYCLE-20261017-NT5P` | `2026-10-17T18:37:17.533Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`eb718cb7...`) |
+| `CYCLE-20261017-RXN5` | `2026-10-17T18:40:29.969Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`c905ac62...`) |
