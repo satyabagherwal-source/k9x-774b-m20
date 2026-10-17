@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-GLYG",
-    "timestamp": "2026-10-15T22:40:17.704Z",
-    "repository": "Qwen/Qwen-Image-2.1-Turbo",
-    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-    "contentHash": "74bb7bfb2e420a702f5640f477637a4bd93cc21d9ac6d194b2627880002372b5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-KG2S",
     "timestamp": "2026-10-15T22:43:16.708Z",
     "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -7490,6 +7475,21 @@
     "repository": "black-forest-labs/flux-3-image-klein",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
     "contentHash": "38d851c14b2582cf4b9dc4eb1ae9cb73d1e41435fbb67a7d78fa0f303b3c95db",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-WJD6",
+    "timestamp": "2026-10-17T03:20:17.418Z",
+    "repository": "pyannote/speaker-diarization-community-1",
+    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+    "contentHash": "537fcdf8da980ddf088b231dd9f66f98b21fa3afcb820fa7956a4c495ddb4589",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

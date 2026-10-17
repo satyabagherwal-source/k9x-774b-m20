@@ -1987,3 +1987,4 @@
 | `CYCLE-20261017-KUK3` | `2026-10-17T03:11:12.051Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`cc7e9607...`) |
 | `CYCLE-20261017-OX9X` | `2026-10-17T03:14:22.197Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1302, Rule 1303` | Yes (`8f0d22a7...`) |
 | `CYCLE-20261017-SIJ7` | `2026-10-17T03:17:09.715Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md` | Yes (`38d851c1...`) |
+| `CYCLE-20261017-WJD6` | `2026-10-17T03:20:17.418Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`537fcdf8...`) |
