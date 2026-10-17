@@ -2128,3 +2128,4 @@
 | `CYCLE-20261017-VHB4` | `2026-10-17T11:15:21.568Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1439, Rule 1440` | Yes (`354c6d1e...`) |
 | `CYCLE-20261017-ZJSB` | `2026-10-17T11:18:31.403Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`ea52083b...`) |
 | `CYCLE-20261017-3GEN` | `2026-10-17T11:21:33.647Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | Yes (`ee6e0dae...`) |
+| `CYCLE-20261017-7O1A` | `2026-10-17T11:24:50.158Z` | `black-forest-labs/flux-3-image-klein` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1441, Rule 1442` | Yes (`44acaa19...`) |

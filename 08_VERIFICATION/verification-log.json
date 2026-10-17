@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-WLEY",
-    "timestamp": "2026-10-16T06:20:37.354Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "c9c89157e786cee61ef814ce7cba9b85ea7ccd2cebc239155e0309ab43c0a5a7",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-0JGH",
     "timestamp": "2026-10-16T06:23:41.441Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7492,6 +7477,21 @@
     "contentHash": "ee6e0dae061cf8da326aeace3a8088898f4f614bc0b445d93bf3f38a38f68f5e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-7O1A",
+    "timestamp": "2026-10-17T11:24:50.158Z",
+    "repository": "black-forest-labs/flux-3-image-klein",
+    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+    "contentHash": "44acaa1961f3cb4bd86ca63d4d92c9bb739b21b127195a9d990c6ea57088a755",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

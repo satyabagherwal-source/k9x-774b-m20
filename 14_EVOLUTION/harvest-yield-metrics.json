@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T11:21:33.651Z",
-  "total_cycles_completed": 2105,
-  "total_learnings_persisted": 2105,
-  "total_rules_promoted": 1218,
+  "last_updated": "2026-10-17T11:24:50.166Z",
+  "total_cycles_completed": 2106,
+  "total_learnings_persisted": 2106,
+  "total_rules_promoted": 1220,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:11:29.065Z",
-      "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-      "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:15:25.455Z",
       "repository": "PSRben/VisionHOPE",
@@ -1403,6 +1396,13 @@
       "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
       "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T11:24:50.166Z",
+      "repository": "black-forest-labs/flux-3-image-klein",
+      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

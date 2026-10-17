@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T11:21:33.619Z",
+  "last_updated": "2026-10-17T11:24:50.133Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -41914,7 +41914,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
       "source_version": "hf-black-forest-labs-flux-3-image-klein",
-      "content_hash": "38d851c14b2582cf4b9dc4eb1ae9cb73d1e41435fbb67a7d78fa0f303b3c95db",
+      "content_hash": "44acaa1961f3cb4bd86ca63d4d92c9bb739b21b127195a9d990c6ea57088a755",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-learnings.md",
       "promoted_rules": [
@@ -41952,6 +41952,16 @@
           "number": 1225,
           "title": "Tokenizer Padding & Attention Mask Alignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1441,
+          "title": "The Artifact Integrity & Metadata Consistency Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1442,
+          "title": "The Zero-Trust Artifact Loading Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -41959,7 +41969,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T03:17:09.688Z",
+      "verified_at": "2026-10-17T11:24:50.124Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
