@@ -2166,3 +2166,4 @@
 | `CYCLE-20261017-RE12` | `2026-10-17T13:32:08.774Z` | `autotrust/JEV-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`533164c3...`) |
 | `CYCLE-20261017-VKGI` | `2026-10-17T13:35:23.730Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`0a09e11b...`) |
 | `CYCLE-20261017-0VJF` | `2026-10-17T13:39:31.371Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1455, Rule 1456` | Yes (`b97a4689...`) |
+| `CYCLE-20261017-4RTW` | `2026-10-17T13:42:33.188Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`4c8518ca...`) |

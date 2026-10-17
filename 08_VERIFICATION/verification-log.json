@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-5VJI",
-    "timestamp": "2026-10-16T08:47:48.462Z",
-    "repository": "google-t5/t5-small",
-    "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "ae295c90bdf800438d95b1cb03966983c94df1114196e71eebbfbf31da959098",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-9QVZ",
     "timestamp": "2026-10-16T08:50:49.055Z",
     "repository": "Comfy-Org/MiniMax-H3",
@@ -7492,6 +7477,21 @@
     "contentHash": "b97a46892a019089d55c5c81dd2ff4d1be7451a5ad1681fa58e2959747f4c285",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-4RTW",
+    "timestamp": "2026-10-17T13:42:33.188Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "4c8518ca8aafc1d6241184544456e05fe053f43e9791ce55def1ec108c3088d9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
