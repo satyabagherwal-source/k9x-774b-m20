@@ -785,8 +785,8 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "ae36ddf51fe2feb808678d8b9e3135ad2cc3427de106311c8d271f3c4526c9b0",
-    "lastHarvestedAt": "2026-10-16T17:26:13.310Z",
+    "contentHash": "d555cfa2ce9ed83b8ba5b96800e0312f835a137eb5a9cc0b41f498e22f5c69a4",
+    "lastHarvestedAt": "2026-10-17T01:18:58.471Z",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k"
   },
   "hf-amazon-chronos-2": {
