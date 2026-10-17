@@ -255,8 +255,8 @@
     "sourceUrl": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
     "sourceVersion": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
     "license": "Open-Source",
-    "contentHash": "7a5772bf3f68d45b3e30d3aa46c2986550541e6b3b2f6c7b31bd9f735fd212fa",
-    "lastHarvestedAt": "2026-10-16T22:02:04.667Z",
+    "contentHash": "7f6540fe98189b41d0292d544d40a8f53cf165eb1645083188f6c285a80c5820",
+    "lastHarvestedAt": "2026-10-17T05:39:03.453Z",
     "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf"
   },
   "hf-deepseek-ai-deepseek-r1": {

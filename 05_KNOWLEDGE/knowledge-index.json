@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T05:35:51.512Z",
+  "last_updated": "2026-10-17T05:39:03.417Z",
   "total_verified_learnings": 193,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16919,7 +16919,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
       "source_version": "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf",
-      "content_hash": "7a5772bf3f68d45b3e30d3aa46c2986550541e6b3b2f6c7b31bd9f735fd212fa",
+      "content_hash": "7f6540fe98189b41d0292d544d40a8f53cf165eb1645083188f6c285a80c5820",
       "dossier_path": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md",
       "promoted_rules": [
@@ -16949,7 +16949,7 @@
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv43ve6m",
         "learn-huggingface-hf-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf-mv4h47ur"
       ],
-      "verified_at": "2026-10-16T22:02:04.623Z",
+      "verified_at": "2026-10-17T05:39:03.410Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

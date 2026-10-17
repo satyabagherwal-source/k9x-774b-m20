@@ -2030,3 +2030,4 @@
 | `CYCLE-20261017-ION5` | `2026-10-17T05:29:29.153Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`78706571...`) |
 | `CYCLE-20261017-ME2E` | `2026-10-17T05:32:22.070Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`667e7446...`) |
 | `CYCLE-20261017-QVP8` | `2026-10-17T05:35:51.548Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`50af359a...`) |
+| `CYCLE-20261017-UZRV` | `2026-10-17T05:39:03.451Z` | `SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf-learnings.md` | Yes (`7f6540fe...`) |
