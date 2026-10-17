@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T18:05:24.444Z",
-  "total_cycles_completed": 2226,
-  "total_learnings_persisted": 2226,
-  "total_rules_promoted": 1286,
+  "last_updated": "2026-10-17T18:08:43.555Z",
+  "total_cycles_completed": 2227,
+  "total_learnings_persisted": 2227,
+  "total_rules_promoted": 1289,
   "history": [
-    {
-      "timestamp": "2026-10-17T06:39:23.821Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T06:42:41.429Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -1403,6 +1396,13 @@
       "repository": "Tongyi-MAI/Z-Image-Turbo",
       "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T18:08:43.555Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
