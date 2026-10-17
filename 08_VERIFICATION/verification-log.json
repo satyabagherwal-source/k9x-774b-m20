@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-D7UK",
-    "timestamp": "2026-10-15T20:17:41.372Z",
-    "repository": "argmaxinc/whisperkit-coreml",
-    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-    "contentHash": "6a95584707b93b6a7acaac594419cc6546ca33e92e093c93f4d114931ecf2301",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-H8KJ",
     "timestamp": "2026-10-15T20:20:48.931Z",
     "repository": "Qwen/Qwen3-8B",
@@ -7490,6 +7475,21 @@
     "repository": "google-bert/bert-base-uncased",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased",
     "contentHash": "6ec1dda831bad6b90e72c598c652b79ebc545322d5f8a0141bd3379ca891ed1e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-QM1X",
+    "timestamp": "2026-10-17T00:55:42.885Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "45422350406fda6152512a028de7686950db145c32a0324ca395fc27b003adf8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
