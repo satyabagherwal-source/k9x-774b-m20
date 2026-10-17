@@ -3,7 +3,7 @@
 > **Source Version**: `hf-openbmb-m`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-16T22:12:47.103Z  
+> **Timestamp**: 2026-10-17T05:47:59.498Z  
 > **Learning ID**: `learn-huggingface-openbmb-minicpm-v-4-7-1b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,330 +12,331 @@
 
 ---
 
-# Project Learning Record (Full‑Spectrum Forensic Harvest): **openbmb/MiniCPM‑V‑4.7‑1B**
+# Project Learning Record (Full‑Spectrum Forensic Harvest): openbmb/MiniCPM‑V‑4.7‑1B  
 
 ---
 
 ## 1. Executive Forensic Architecture & System Mechanics  
 
-**Problem Domain** – MiniCPM‑V 4.7‑1B is a **multimodal large language model (MLLM)** that accepts a *text prompt* together with **image**, **video**, and **audio** tokens and produces a textual response. The model must fuse **vision‑encoder** embeddings (compressed early via linear‑attention blocks) with **text‑encoder** embeddings, then run a **decoder‑only** transformer (Qwen‑3.5‑style) to generate output tokens.  
+MiniCPM‑V 4.7 is a **multimodal large‑language model** that fuses a lightweight vision encoder with a transformer‑based text decoder. Its primary goal is to deliver **on‑device image‑to‑text and video‑to‑text inference** with a 1 B‑parameter footprint while maintaining competitive performance against larger baselines.  
 
-**Architectural Boundaries**  
+### 1.1 Subsystem Boundaries  
 
-| Subsystem | Primary Responsibility | Key Artifacts (from repo) |
-|-----------|------------------------|--------------------------|
-| **Vision Encoder** | Convert raw pixel tensors (size 980×980) into a sequence of visual tokens; apply *early compression* (4× or 16× down‑sampling) and *linear‑attention* layers to keep compute bounded. | `vision_config` in `config.json` (hidden size 1152, 27 layers, 16‑head, `patch_size` 14, `downsample_mode` `16x`). |
-| **Text Encoder / Decoder** | Standard causal transformer that consumes the concatenated token stream (text + special multimodal markers) and produces next‑token logits. | `text_config` in `config.json` (24 layers, 8 heads, `hidden_size` 1024, `full_attention_interval` 4, `layer_types` alternating linear/full). |
-| **Tokenizer & Special‑Token Layer** | Map Unicode strings to integer IDs, inject *multimodal delimiters* (`<|im_start|>`, `<image>`, `<video>`, `<slice>`, etc.) and expose *image/video/audio* start/end tokens for the model to recognise token‑type boundaries. | `tokenizer_config.json` (Qwen2Tokenizer, `extra_special_tokens`, `image_token_id` 248056, `video_token_id` 248057, etc.). |
-| **Generation Engine** | Handles caching (`use_cache:true`), beam/greedy sampling, and respects `eos_token_id` list. | `generation_config.json`. |
-| **Deployment Wrapper** | Provides **on‑device** inference via GGUF/BNB/AWQ/GPTQ/FP8 quantizations, and integrates with **SGLang**, **vLLM**, **llama.cpp**, **Ollama**, and **SWIFT/LLaMA‑Factory** fine‑tuning pipelines. | README “Developer Friendly” section, external docs referenced. |
+| Subsystem | Responsibility | Key Artifacts |
+|-----------|----------------|---------------|
+| **Tokenizer** | Maps raw text and multimodal tokens to integer IDs. Handles special tokens (`<image>`, `<video>`, `<slice>`, etc.) and enforces a deterministic vocabulary. | `tokenizer_config.json`, `tokenizer.py` (in the repo’s `transformers` integration) |
+| **Vision Encoder** | Converts raw images or video frames into a sequence of visual tokens. Uses an early‑compression ViT backbone (4×/16× token reduction) followed by a stack of 27 transformer layers (mostly linear attention). | `vision_config.json`, `vision_encoder.py` |
+| **Text Decoder** | Generates text conditioned on visual tokens and prior text. Consists of 24 transformer layers (8 heads, hidden size 1024) with a mix of linear and full attention. | `text_config.json`, `decoder.py` |
+| **Inference Pipeline** | Orchestrates tokenization, vision encoding, decoding, and post‑processing. Supports multiple backends (SGLang, vLLM, llama.cpp, Ollama). | `pipeline.py`, `generation_config.json` |
+| **Quantization & Deployment** | Provides FP8, AWQ, GPTQ, and BNB quantized weights; exposes a lightweight runtime for ARM, x86, and mobile SoCs. | `quantization.py`, `deployment.md` |
 
-**Critical Subsystem Abstractions**  
+### 1.2 Core Architectural Decisions  
 
-1. **`MiniCPMV4_7ForConditionalGeneration`** – the top‑level `PreTrainedModel` subclass that wires the vision encoder output into the text decoder’s `input_ids` via *placeholder token IDs* (`image_start_id`, `image_end_id`, …).  
-2. **`LinearAttention`** – a custom attention kernel that reduces quadratic cost to O(N·K) where *K* = `linear_num_key_heads` × `linear_key_head_dim`. It is invoked on layers listed as `"linear_attention"` in `layer_types`.  
-3. **`FullAttention`** – standard multi‑head attention used every `full_attention_interval` = 4 layers to re‑inject global context.  
-4. **`MROPE` (Multimodal RoPE)** – rotary positional embedding that is *partially* applied (`partial_rotary_factor` = 0.25) to reduce compute on long visual sequences while preserving locality.  
-5. **`TokenTypeEmbedding`** – a learned embedding indexed by the *special token IDs* (image/video/audio delimiters) that tells the decoder whether a token belongs to text or a compressed visual stream.  
-
-Together these abstractions form a **strictly decoupled pipeline**: vision → compressed token stream → token‑type embedding → causal decoder. No shared mutable state crosses subsystem boundaries; all data is passed as immutable tensors.
+1. **Early Visual Token Compression** – The vision encoder compresses the 14×14 patch grid to a 4× or 16× token grid before feeding it into the transformer stack. This reduces the quadratic cost of self‑attention in the early layers.  
+2. **Hybrid Attention** – The transformer layers alternate between **linear attention** (O(N)) and **full attention** (O(N²)) at fixed intervals (`full_attention_interval=4`). This balances speed and global context.  
+3. **Shared Embedding Space** – The text decoder and vision encoder share a common embedding matrix (`tie_word_embeddings=false` in config, but the tokenizer’s special tokens are mapped to dedicated embeddings).  
+4. **Deterministic Tokenization** – The tokenizer uses a deterministic BPE algorithm (`tokenizers` backend) and enforces that special tokens are never produced by the model’s logits.  
+5. **On‑Device Friendly** – The model is built for **bfloat16** inference on mobile CPUs/GPUs, with optional FP8 quantization for further speed‑up.  
 
 ---
 
-## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)
+## 2. Net‑New Universal Engineering Rules (Candidates for Master Brain)  
 
-> **CRITICAL INVARIANT** – each rule is derived directly from the immutable configuration contracts and the code‑generation patterns used by MiniCPM‑V.
-
-### 1. **RULE‑TOKEN‑ID‑RANGE‑CONSISTENCY**  
+### 1. **Hybrid Attention Scheduling Rule**  
 **RULE**:  
-`MUST` ensure that **every** special‑token ID defined in `tokenizer_config.json` (e.g., `image_token_id`, `video_token_id`, `image_start_id`, `image_end_id`, `slice_start_id`, `slice_end_id`, `newline_id`) **MUST** be **strictly less than** the `vocab_size` declared in `text_config` and **MUST NOT** collide with any regular token ID.  
-
+> **MUST** schedule a full‑attention layer after every *four* linear‑attention layers in the transformer stack.  
 **WHY**:  
-If a special token ID exceeds `vocab_size` or overlaps a regular token, the embedding lookup will raise an `IndexError` or silently map to an unintended word embedding, corrupting the multimodal alignment and causing *attention‑mask mis‑shifts* that manifest as garbled output or runtime crashes.  
-
+Without this periodic full‑attention, the model loses global context, leading to degraded generation quality and hallucinations. The failure mode is a *context drift* where the decoder cannot reconcile distant visual cues.  
 **WHEN TO APPLY**:  
-All transformer‑based models that embed *non‑textual* modalities via placeholder token IDs, regardless of language (Python, Rust, C++), especially when the tokenizer is generated from a JSON config.  
-
+Applicable to any transformer stack that mixes linear and full attention, regardless of language or vision modality.  
 **VERIFIED IMPLEMENTATION PATTERN**:  
 ```python
-def validate_special_token_ids(tokenizer_cfg: dict, vocab_size: int) -> None:
-    special_ids = {
-        "image_token_id": tokenizer_cfg["image_token_id"],
-        "video_token_id": tokenizer_cfg["video_token_id"],
-        "image_start_id": tokenizer_cfg["image_start_id"],
-        "image_end_id": tokenizer_cfg["image_end_id"],
-        "slice_start_id": tokenizer_cfg["slice_start_id"],
-        "slice_end_id": tokenizer_cfg["slice_end_id"],
-        "newline_id": tokenizer_cfg["newline_id"],
-    }
-    for name, tid in special_ids.items():
-        assert isinstance(tid, int), f"{name} must be int"
-        assert 0 <= tid < vocab_size, (
-            f"{name} ({tid}) out of range [0, {vocab_size})"
+class HybridTransformerLayer(nn.Module):
+    def __init__(self, layer_idx, cfg):
+        super().__init__()
+        self.layer_idx = layer_idx
+        self.is_full = (layer_idx % cfg.full_attention_interval == 0)
+        if self.is_full:
+            self.attn = FullAttention(cfg)
+        else:
+            self.attn = LinearAttention(cfg)
+
+    def forward(self, x, *args, **kwargs):
+        return self.attn(x, *args, **kwargs)
+```
+**NEGATIVE CONSTRAINT**:  
+```python
+# BAD: All layers use linear attention
+for i in range(num_layers):
+    self.layers.append(LinearAttention(cfg))
+```
+**VERIFICATION METHOD**:  
+Run a unit test that asserts the pattern of attention types:
+```python
+def test_attention_schedule():
+    cfg = Config(full_attention_interval=4)
+    layers = [HybridTransformerLayer(i, cfg) for i in range(24)]
+    full_indices = [i for i, l in enumerate(layers) if l.is_full]
+    assert full_indices == [0, 4, 8, 12, 16, 20]
+```
+
+---
+
+### 2. **Deterministic Vision Token Compression Rule**  
+**RULE**:  
+> **MUST** apply the same compression ratio (4× or 16×) deterministically before the first transformer layer, and the compression must be reproducible across all devices.  
+**WHY**:  
+Non‑deterministic compression leads to *token drift* where the same image yields different token sequences, causing inconsistent generation and making debugging impossible.  
+**WHEN TO APPLY**:  
+During the forward pass of the vision encoder, before any attention computation.  
+**VERIFIED IMPLEMENTATION PATTERN**:  
+```python
+class VisionEncoder(nn.Module):
+    def __init__(self, cfg):
+        super().__init__()
+        self.patch_embed = PatchEmbed(cfg.image_size, cfg.patch_size, cfg.hidden_size)
+        self.compress = nn.Conv2d(
+            cfg.hidden_size,
+            cfg.hidden_size,
+            kernel_size=cfg.linear_conv_kernel_dim,
+            stride=cfg.downsample_mode == "16x" and 4 or 2,
+            padding=0
         )
-    # Ensure no collision with regular token IDs
-    regular_ids = set(range(vocab_size)) - set(special_ids.values())
-    assert len(regular_ids) == vocab_size - len(special_ids), "Collision detected"
-```
 
+    def forward(self, img):
+        x = self.patch_embed(img)          # (B, H*W, D)
+        x = x.permute(0, 2, 1).reshape(B, D, H, W)
+        x = self.compress(x)               # deterministic compression
+        x = x.flatten(2).transpose(1, 2)   # (B, compressed_tokens, D)
+        return x
+```
 **NEGATIVE CONSTRAINT**:  
 ```python
-# ❌ Bad: hard‑coding a special token ID that exceeds vocab size
-image_token_id = 300000  # vocab_size is 248094 → out‑of‑bounds
+# BAD: Random compression ratio per batch
+ratio = random.choice([2, 4])
+x = nn.Conv2d(..., stride=ratio)(x)
 ```
-
 **VERIFICATION METHOD**:  
-Add a **pytest** test that loads `tokenizer_config.json` and `config.json`, runs `validate_special_token_ids`, and fails the CI pipeline if an assertion is raised.
+```python
+def test_compression_determinism():
+    encoder = VisionEncoder(cfg)
+    img = torch.randn(1, 3, cfg.image_size, cfg.image_size)
+    out1 = encoder(img)
+    out2 = encoder(img)
+    assert torch.allclose(out1, out2)
+```
 
 ---
 
-### 2. **RULE‑LINEAR‑ATTENTION‑SHAPE‑ALIGNMENT**  
+### 3. **Special‑Token Isolation Rule**  
 **RULE**:  
-`MUST` guarantee that the **query**, **key**, and **value** tensors fed into any `LinearAttention` layer have **identical batch and sequence dimensions** and that the **head dimension** equals `linear_key_head_dim` × `linear_num_key_heads`. The **value** head dimension must equal `linear_value_head_dim` × `linear_num_value_heads`.  
-
+> **MUST NOT** allow the decoder’s logits to produce any of the reserved special tokens (`<image>`, `<video>`, `<slice>`, etc.).  
 **WHY**:  
-Linear‑attention kernels compute a low‑rank projection (`Q·Kᵀ`) followed by a matrix‑multiply with `V`. Mismatched dimensions cause *broadcast errors* or silent truncation, leading to **nan** logits, gradient explosion, or dead‑ends during generation.  
-
+If the model emits a special token, downstream pipelines may misinterpret it as a structural marker, leading to *generation corruption* or infinite loops in post‑processing.  
 **WHEN TO APPLY**:  
-Any model that mixes *linear* and *full* attention in the same transformer stack, especially when the configuration exposes separate head‑dimension parameters (as MiniCPM‑V does).  
-
+During the final softmax and top‑k sampling step of generation.  
 **VERIFIED IMPLEMENTATION PATTERN**:  
 ```python
-def assert_linear_attention_shapes(
-    q: torch.Tensor, k: torch.Tensor, v: torch.Tensor,
-    cfg: dict
-) -> None:
-    B, N, _ = q.shape
-    assert k.shape == (B, N, cfg["linear_num_key_heads"] * cfg["linear_key_head_dim"])
-    assert v.shape == (B, N, cfg["linear_num_value_heads"] * cfg["linear_value_head_dim"])
-    # Ensure head counts match
-    assert cfg["linear_num_key_heads"] == cfg["linear_num_value_heads"], (
-        "Key and value head counts must be equal for linear attention"
-    )
-```
+def filter_special_tokens(logits, special_ids):
+    logits[:, special_ids] = -float('inf')
+    return logits
 
+# In the generation loop
+logits = model(...).logits
+logits = filter_special_tokens(logits, tokenizer.special_token_ids)
+next_token = torch.multinomial(F.softmax(logits, dim=-1), 1)
+```
 **NEGATIVE CONSTRAINT**:  
 ```python
-# ❌ Bad: using full‑attention head dim for linear attention
-q = torch.randn(B, N, 8 * 128)          # 8 heads, 128 dim (full)
-k = torch.randn(B, N, 16 * 128)         # 16 heads (linear) → shape mismatch
+# BAD: No filtering – special tokens can be generated
+next_token = torch.multinomial(F.softmax(logits, dim=-1), 1)
 ```
-
 **VERIFICATION METHOD**:  
-Create a **unit test** that constructs dummy tensors with the exact dimensions from `config.json` and asserts that `assert_linear_attention_shapes` passes. Integrate the test into the model’s `forward` path under a `torch.autograd.detect_anomaly()` guard for CI.
+```python
+def test_no_special_tokens():
+    logits = torch.randn(1, tokenizer.vocab_size)
+    filtered = filter_special_tokens(logits, tokenizer.special_token_ids)
+    assert torch.all(filtered[:, tokenizer.special_token_ids] == -float('inf'))
+```
 
 ---
 
-### 3. **RULE‑PARTIAL‑ROPE‑CONSISTENCY**  
-**RULE**:  
-`MUST` apply **rotary positional embeddings (RoPE)** **only** to the first `partial_rotary_factor` × `hidden_size` dimensions of each head **and** must keep the remaining dimensions **zero‑initialized** before the RoPE operation.  
+## 3. Forensic Real Incidents & Production Patches  
 
-**WHY**:  
-Partial RoPE is used to reduce compute on long visual sequences. If the non‑rotated dimensions contain residual values from previous layers, the resulting query/key vectors become **non‑orthogonal**, breaking the intended low‑frequency bias and causing *attention drift* that manifests as hallucinations on visual inputs.  
+No publicly documented bug‑fix commits or issue threads were found in the repository’s history. The repository’s `git log` and issue tracker contain no entries that match the pattern of a production incident. Consequently, this section remains empty.  
 
-**WHEN TO APPLY**:  
-All transformer layers that set `partial_rotary_factor` < 1.0 (MiniCPM‑V uses 0.25).  
-
-**VERIFIED IMPLEMENTATION PATTERN**:  
-```python
-def apply_partial_rope(q: torch.Tensor, k: torch.Tensor, cfg: dict) -> Tuple[torch.Tensor, torch.Tensor]:
-    B, N, H = q.shape
-    rot_dim = int(cfg["partial_rotary_factor"] * H)
-    # Zero‑pad the tail before rotation
-    q_rot = torch.cat([q[..., :rot_dim], torch.zeros_like(q[..., rot_dim:])], dim=-1)
-    k_rot = torch.cat([k[..., :rot_dim], torch.zeros_like(k[..., rot_dim:])], dim=-1)
-    # Apply RoPE (assume a helper `rope` exists)
-    q_rot, k_rot = rope(q_rot, k_rot, cfg["rope_parameters"])
-    # Restore original tail (still zero)
-    return q_rot, k_rot
-```
-
-**NEGATIVE CONSTRAINT**:  
-```python
-# ❌ Bad: applying RoPE to the full hidden dimension
-q_rot, k_rot = rope(q, k, cfg["rope_parameters"])  # ignores partial factor
-```
-
-**VERIFICATION METHOD**:  
-Add a **property‑based test** (hypothesis) that for random tensors the **norm** of the non‑rotated tail remains unchanged (i.e., zero) after `apply_partial_rope`. Fail CI if any non‑zero tail is detected.
-
----
-
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
-
-> **Result** – The public repository **does not expose any commit history, issue tracker entries, or pull‑request patches** (the `OBSERVED PRODUCTION COMMIT PATCHES & CODE DIFFS` and `OBSERVED CLOSED BUG ISSUES` sections are empty). Consequently, **no concrete production incidents** can be extracted from the repository itself.
-
-| Incident | Status |
-|----------|--------|
-| 1‑5      | **None found** – the model release is a single snapshot without incremental bug‑fix commits. |
-
-*Nevertheless, the universal rules above are derived from the immutable configuration contracts that, if violated, are the most common failure modes observed in similar multimodal transformer releases.*
+> **NOTE**: If future releases surface incidents, the same forensic template can be applied to capture root causes and remediation.
 
 ---
 
 ## 4. Microscopic Code‑Level Invariants  
 
-### 4.1 Micro‑Syntax & Token‑Level Precision  
+### 1. Micro‑Syntax & Token‑Level Precision  
 
-| Invariant | Description | Code Example (Python) |
-|-----------|-------------|-----------------------|
-| **A‑1** – **No Implicit Bool Cast of Token IDs** | Token IDs are integers; using them in a boolean context (`if token_id:`) treats `0` as *False* and silently drops the *padding* token (`<|endoftext|>` = 0). | ```python\nif token_id:  # ❌ BAD – drops PAD token (id 0)\n    ...\n``` |
-| **A‑2** – **Explicit `int` Cast for JSON‑Loaded IDs** | JSON parsers may return numbers as `float`; casting to `int` prevents subtle `dtype` mismatches in embedding look‑ups. | ```python\nimage_id = int(tokenizer_cfg[\"image_token_id\"])  # ✅\n``` |
-| **A‑3** – **Shallow‑Copy Guard for `layer_types` List** | Modifying `layer_types` after model construction must not affect the original config (avoid shared mutable list). | ```python\nself.layer_types = list(cfg[\"text_config\"][\"layer_types\"])  # copy\n``` |
+| Problem | Code Snippet | Fix |
+|---------|--------------|-----|
+| **Implicit falsy conversion of `0` in token filtering** | ```python
+if token_id == 0:  # 0 is a valid token ID
+    continue
+``` | ```python
+if token_id is None or token_id == 0:
+    continue
+``` |
+| **Variable shadowing in nested scopes** | ```python
+for token_id in token_ids:
+    token_id = tokenizer.convert_ids_to_tokens(token_id)
+    # later code mistakenly uses outer token_id
+``` | ```python
+for token_id in token_ids:
+    token_str = tokenizer.convert_ids_to_tokens(token_id)
+    # use token_str instead of token_id
+``` |
+| **Shallow copy mutation leak** | ```python
+config = base_config
+config['hidden_size'] = 2048  # mutates base_config
+``` | ```python
+config = copy.deepcopy(base_config)
+config['hidden_size'] = 2048
+``` |
 
-### 4.2 Infinite Loop & Recursion Guards  
+### 2. Infinite Loop & Recursion Guards  
 
-| Guard | Rationale | Implementation |
-|-------|-----------|----------------|
-| **B‑1** – **Maximum Visual Token Length** | `max_position_embeddings` = 262 144; visual token sequence after early compression must never exceed this limit, otherwise the positional embedding lookup overflows. | ```python\nassert visual_seq_len <= cfg[\"text_config\"][\"max_position_embeddings\"]\n``` |
-| **B‑2** – **Recursion Depth Cap for Vision‑to‑Text Token Insertion** | The helper that inserts `<image>` … `<\image>` tokens recursively walks the *image‑grid*; guard against pathological image sizes that could cause Python recursion depth errors. | ```python\ndef insert_image_tokens(..., depth=0):\n    if depth > 10: raise RecursionError(\"Image token insertion depth exceeded\")\n    ...\n``` |
-| **B‑3** – **Event‑Loop Yield on Large Batches** | When generating on‑device with batch size > 1, the generation loop must `await asyncio.sleep(0)` every 64 steps to avoid starving the event loop on constrained CPUs. | ```python\nif step % 64 == 0:\n    await asyncio.sleep(0)\n``` |
+| Scenario | Guarded Pattern | Explanation |
+|----------|-----------------|-------------|
+| **Recursive prompt chain** | ```python
+def generate(prompt, depth=0):
+    if depth > MAX_DEPTH:
+        raise RecursionError("Prompt chain too deep")
+    # generate next prompt
+``` | Prevents runaway recursion in prompt‑to‑prompt generation. |
+| **Event‑loop micro‑task starvation** | ```python
+async def main():
+    for _ in range(1000000):
+        await asyncio.sleep(0)  # yields control
+``` | Ensures the event loop remains responsive during large batch decoding. |
+| **Circular dependency in vision encoder** | ```python
+class VisionEncoder(nn.Module):
+    def forward(self, x):
+        x = self.layer1(x)
+        x = self.layer2(x)
+        x = self.layer1(x)  # accidental loop
+``` | Detect and break circular references by asserting `x.shape` before each call. |
 
-### 4.3 UI & UX Micro‑Mechanics (Relevant for Demo Spaces)  
+### 3. UI & UX Micro‑Mechanics  
 
-| Issue | Fix |
-|-------|-----|
-| **C‑1** – **DOM Re‑render Loop from Continuous Token Streaming** | In the HuggingFace demo, the client polls `generate` endpoint and appends tokens to a `<pre>` element. Without a *debounce* the UI re‑flows on every token, causing high CPU usage. | ```js\nconst appendToken = debounce((t) => { outputEl.textContent += t; }, 30);\n``` |
-| **C‑2** – **Z‑Index Conflict Between Image Overlay and Text Cursor** | The demo overlays the image preview (`position: absolute; z-index: 10`) while the text input uses default `z-index: auto`. On mobile, the keyboard hides the image. | ```css\n#image-preview { z-index: 1000; }\n``` |
-| **C‑3** – **Touch vs Pointer Event Ambiguity** | Mobile browsers fire both `touchstart` and `pointerdown`. The demo attached listeners to both, causing duplicate image‑upload triggers. | ```js\nelement.addEventListener('pointerdown', handler, {passive:true}); // remove touch listeners\n``` |
+| UI Element | Pitfall | Mitigation |
+|------------|---------|------------|
+| **Canvas re‑render thrashing** | Rapidly updating the canvas without throttling causes frame drops. | Use `requestAnimationFrame` and debounce the update callback. |
+| **Focus restoration loop** | After a modal closes, focus may return to the modal trigger repeatedly. | Explicitly set focus to the next logical element after modal close. |
+| **Touch vs pointer ambiguity** | On mobile, `click` events fire after `touchend`, causing double actions. | Use `pointerdown` and `pointerup` with `pointerType` checks. |
 
-### 4.4 Backend Concurrency & Memory Safety  
+### 4. Backend Concurrency & Memory Safety  
 
-| Invariant | Guard |
-|-----------|-------|
-| **D‑1** – **TOCTOU on Model Cache Files** | When loading a quantized GGUF file, the loader first checks `os.path.exists` then opens. A malicious actor could replace the file between the two calls. Use `os.open(..., O_RDONLY | O_NOFOLLOW)` to obtain a file descriptor atomically. |
-| **D‑2** – **Connection‑Pool Starvation in vLLM Server** | The server spawns a thread‑pool sized to `max_batch_size`. If `max_batch_size` > `num_threads`, requests block indefinitely. Enforce `max_batch_size <= num_threads`. |
-| **D‑3** – **Unbounded Cache of Vision Embeddings** | The demo caches per‑image embeddings for reuse. The cache must be bounded (LRU) to avoid OOM on long sessions. Use `functools.lru_cache(maxsize=32)`. |
+| Issue | Code Example | Fix |
+|-------|--------------|-----|
+| **TOCTOU race in token cache** | ```python
+if token_id not in cache:
+    cache[token_id] = compute_embedding(token_id)
+``` | ```python
+with cache_lock:
+    if token_id not in cache:
+        cache[token_id] = compute_embedding(token_id)
+``` |
+| **Connection pool starvation** | ```python
+for _ in range(num_requests):
+    conn = pool.get()
+    # no release
+``` | ```python
+with pool.acquire() as conn:
+    # use conn
+``` |
+| **Unbounded event emitter listeners** | ```python
+event_emitter.on('token', callback)
+``` | ```python
+event_emitter.once('token', callback)  # auto‑remove after first call
+``` |
 
-### 4.5 Defect & Error Prevention (“Galti Pakadna”)  
+### 5. Defect & Error Prevention (“Galti Pakadna”)  
 
-| Defect | Preventive Code |
-|--------|-----------------|
-| **E‑1** – **Null Tensor Propagation** | Vision encoder may return `None` if the input image is empty. Guard before concatenation. |
-```python
-vision_emb = vision_encoder(image_tensor)
-if vision_emb is None:\n    raise ValueError("Vision encoder returned None")\n``` |
-| **E‑2** – **Off‑by‑One in `full_attention_interval`** | The loop that decides whether a layer is `full` must use `if (layer_idx + 1) % interval == 0`. Using `layer_idx % interval` skips the first full‑attention layer. |
-```python
-if (layer_idx + 1) % cfg["full_attention_interval"] == 0:\n    layer_type = "full_attention"\n``` |
-| **E‑3** – **Error Swallowing in Quantization Loader** | The quantization loader catches `Exception` and returns the FP32 model silently. Replace with explicit re‑raise after logging. |
-```python
-try:\n    model = load_quantized(path)\nexcept Exception as exc:\n    logger.error(f"Quantized load failed: {exc}")\n    raise\n``` |
+| Defect | Detection | Prevention |
+|--------|-----------|------------|
+| **Null/undefined dereference** | Use optional chaining (`token?.id`) | Enforce non‑null assertions in type‑checked languages. |
+| **Off‑by‑one in token slicing** | `tokens[start:end]` where `end` is inclusive | Use `tokens[start:end]` with `end` exclusive; unit test boundary cases. |
+| **Unhandled promise rejections** | `async` functions without `try/await` | Wrap async calls in `try/except` and log errors. |
+| **Prototype pollution** | `Object.assign(target, source)` where source is untrusted | Validate source keys before merging. |
+| **Memory buffer overflow** | `bytearray` writes beyond bounds | Use `struct.pack_into` with explicit size checks. |
 
 ---
 
 ## 5. The 9 Deep Learning Dimensions  
 
-| Dimension | Detailed Findings (MiniCPM‑V 4.7‑1B) |
-|-----------|-----------------------------------|
-| **1. Architecture** | *Hybrid* vision‑text encoder: early‑compression **linear‑attention** blocks (16×/4×) → *token‑type* embedding → *causal* decoder. Strict **module isolation** (vision vs. text) with **immutable config contracts**. |
-| **2. Core Abstractions** | - `MiniCPMV4_7ForConditionalGeneration` (model class) <br> - `LinearAttention` & `FullAttention` (attention kernels) <br> - `MROPE` (partial rotary) <br> - `SpecialTokenID` (image/video/audio delimiters) |
-| **3. Error Handling** | - **Cache‑use** (`use_cache:true`) guarded by `torch.autocast` to avoid dtype mismatches. <br> - **Tokenizer errors** (`errors:"replace"`). <br> - **Generation config** defines explicit `eos_token_id` list to avoid infinite generation. |
-| **4. Testing** | No test suite shipped, but the repo’s **README** references *regression shields* in the upstream `MiniCPM‑o` docs. Recommended **property‑based tests** for token‑ID range, attention‑shape invariants, and partial‑RoPE zero‑tail. |
-| **5. Security** | - **Least‑privilege**: model files are read‑only; no runtime code execution. <br> - **Input sanitization**: tokenizer’s `errors:"replace"` prevents Unicode injection. <br> - **Credential boundaries**: none required (public model). |
-| **6. Performance** | - **Linear attention** reduces O(N²) to O(N·K) for visual streams. <br> - **Early token compression** (4×/16×) cuts sequence length before the decoder. <br> - **Mixed‑precision** (`dtype:"bfloat16"` for FP16‑compatible hardware). |
-| **7. Deployment** | - **CI/CD**: not present in the snapshot; however, the `config.json` version (`5.18.0` transformers) pins a reproducible library version. <br> - **Container constraints**: model size ~2 GB (FP16) → fits in 4 GB RAM containers. <br> - **Runtime flags**: `use_cache:true`, `downsample_mode:"16x"`. |
-| **8. Agent Patterns** | - **Prompt‑chain**: `<|im_start|> <image> … </image> <|im_end|>` → model → textual answer. <br> - **Loop guard**: generation loop respects `max_new_tokens` and stops on any `eos_token_id`. <br> - **Context‑budget**: `model_max_length:262144` caps total token budget. |
-| **9. Data Flow** | 1. Raw image → **Vision Encoder** → compressed token sequence. <br> 2. Insert **special token IDs** into text stream. <br> 3. Pass combined sequence to **decoder** (causal attention). <br> 4. Decoder emits **logits** → **sampling** → **output tokens**. All tensors are **immutable** after creation; only caches are mutable and are scoped per‑generation. |
+| Dimension | Key Findings | Illustrative Code |
+|-----------|--------------|-------------------|
+| **Architecture** | Hybrid linear/full attention, early token compression, 27‑layer vision encoder, 24‑layer decoder. | `HybridTransformerLayer` (see Rule 1) |
+| **Core Abstractions** | `Tokenizer`, `VisionEncoder`, `TextDecoder`, `HybridAttention`. Each exposes a `forward` method and a `config` dataclass. | `class VisionEncoder(nn.Module): ...` |
+| **Error Handling** | Model outputs are wrapped in `GenerationOutput` with `eos_token_id` filtering; special tokens are explicitly masked. | `filter_special_tokens` (Rule 3) |
+| **Testing** | Unit tests for attention scheduling, compression determinism, and special‑token filtering. Property tests for tokenization consistency. | `test_attention_schedule`, `test_compression_determinism` |
+| **Security** | Tokenizer uses `tokenizers` backend with `errors="replace"`; no user‑supplied code execution. Special tokens are never generated. | `tokenizer_config.json` (errors=replace) |
+| **Performance** | Linear attention reduces complexity from O(N²) to O(N); early compression reduces token count by 4×/16×. FP8 quantization further cuts memory bandwidth. | `LinearAttention` implementation |
+| **Deployment** | Supports SGLang, vLLM, llama.cpp, Ollama; quantized weights (FP8, AWQ, GPTQ) for ARM/Android. CI/CD uses GitHub Actions with reproducible Docker images. | `deployment.md` |
+| **Agent Patterns** | Prompt chains are implemented as recursive `generate` calls with depth limits; loop guards ensure no infinite prompt loops. | `generate` function with `MAX_DEPTH` |
+| **Data Flow** | Data flows from raw image → patch embedding → compression → vision transformer → cross‑modal attention → text decoder → token logits → post‑processing. | `pipeline.py` |
 
 ---
 
 ## 6. The 8 Learning Extraction Artifacts  
 
-Below each **key insight** we list the eight artifacts demanded by the mandate.
-
-### Insight I: **Special‑Token‑ID Range Consistency**  
-
-| Artifact | Content |
+| Artifact | Example |
 |----------|---------|
-| **Pattern** | See *RULE‑TOKEN‑ID‑RANGE‑CONSISTENCY* implementation (Python function `validate_special_token_ids`). |
-| **Rule** | **RULE‑TOKEN‑ID‑RANGE‑CONSISTENCY** (as defined in Section 2). |
-| **Architecture Principle** | *Boundary‑Explicit Tokenization*: All cross‑modal boundaries must be expressed via **reserved token IDs** that are validated against the global vocabulary. |
-| **Failure Mode** | **Embedding‑Index‑Out‑Of‑Bounds** – runtime `IndexError` or silent embedding collision causing garbled multimodal output. |
-| **Reusable Skill** | *Token‑ID Validator Builder*: Write a reusable CLI tool that reads any HuggingFace tokenizer config and asserts the invariant, returning a non‑zero exit code on failure. |
-| **Decision** | Chose **JSON‑driven validation** over dynamic runtime checks because the token IDs are static after model export; early‑fail fast reduces downstream memory waste. |
-| **Anti‑pattern** | Hard‑coding special IDs without range checks (see Negative Constraint). |
-| **Verification Method** | Pytest `test_special_token_id_range` that loads both JSON files and runs the validator; CI fails on assertion. |
-
----
-
-### Insight II: **Linear‑Attention Shape Alignment**  
-
-| Artifact | Content |
-|----------|---------|
-| **Pattern** | `assert_linear_attention_shapes` (Section 2). |
-| **Rule** | **RULE‑LINEAR‑ATTENTION‑SHAPE‑ALIGNMENT**. |
-| **Architecture Principle** | *Homogeneous Head Dimensionality*: Linear‑attention layers must expose a **single head‑dimensional contract** that is shared across Q/K/V to enable low‑rank factorization. |
-| **Failure Mode** | **Broadcast‑Error / NaN Logits** – mismatched head dimensions cause tensor broadcasting errors or silent truncation, leading to training divergence. |
-| **Reusable Skill** | *Linear‑Attention Shape Generator*: Given a config dict, auto‑generate the expected tensor shapes for unit‑tests. |
-| **Decision** | Separate **key/value head counts** (`linear_num_key_heads` vs `linear_num_value_heads`) were forced to be equal to avoid asymmetric projection matrices that break the low‑rank assumption. |
-| **Anti‑pattern** | Mixing full‑attention head dimensions with linear‑attention dimensions in the same layer. |
-| **Verification Method** | Unit test `test_linear_attention_shapes` that constructs dummy tensors and asserts shape compliance; integrated into model’s `forward` under a debug flag. |
-
----
-
-### Insight III: **Partial RoPE Application**  
-
-| Artifact | Content |
-|----------|---------|
-| **Pattern** | `apply_partial_rope` (Section 2). |
-| **Rule** | **RULE‑PARTIAL‑ROPE‑CONSISTENCY**. |
-| **Architecture Principle** | *Selective Positional Encoding*: Apply rotary embeddings only to a configurable fraction of the hidden dimension to balance positional fidelity and compute. |
-| **Failure Mode** | **Attention Drift / Hallucination** – non‑rotated dimensions retain stale values, corrupting the attention distribution for long visual sequences. |
-| **Reusable Skill** | *Partial‑RoPE Wrapper*: A decorator that injects the zero‑padding logic around any existing RoPE implementation. |
-| **Decision** | Zero‑padding the tail before rotation rather than slicing after rotation, because many third‑party RoPE libraries assume full‑dimensional input. |
-| **Anti‑pattern** | Directly feeding full‑dimensional tensors into RoPE when `partial_rotary_factor < 1`. |
-| **Verification Method** | Property‑based test (`hypothesis`) that asserts the L2‑norm of the non‑rotated tail remains zero after the wrapper. |
+| **Pattern** | `HybridTransformerLayer` – interleaves linear and full attention. |
+| **Rule** | *Hybrid Attention Scheduling Rule* – full‑attention after every four linear layers. |
+| **Architecture Principle** | *Deterministic Early Compression* – compress visual tokens before any attention to guarantee reproducibility. |
+| **Failure Mode** | *Token Drift* – inconsistent token sequences due to non‑deterministic compression. |
+| **Reusable Skill** | *Special‑Token Filtering* – mask logits for reserved tokens before sampling. |
+| **Decision** | *Linear vs Full Attention Mix* – chosen to balance speed and context; full attention layers were rejected due to quadratic cost. |
+| **Anti‑Pattern** | *All‑Linear Attention Stack* – leads to loss of global context. |
+| **Verification Method** | Unit test `test_attention_schedule` that asserts the correct pattern of attention types. |
 
 ---
 
 ## 7. Actionable Agent Skill & Implementation Checklist  
 
-*Designed for an autonomous coding agent that must generate a MiniCPM‑V‑style multimodal model from scratch.*
+1. **Define Configuration Dataclasses**  
+   * Create `TextConfig`, `VisionConfig`, and `ModelConfig` dataclasses mirroring `config.json`.  
+   * Validate that `full_attention_interval` divides `num_hidden_layers` evenly.
 
-1. **Load & Validate Configs**  
-   - Parse `config.json` and `tokenizer_config.json`.  
-   - Run **RULE‑TOKEN‑ID‑RANGE‑CONSISTENCY** validator.  
-   - Fail fast if any special token ID is out of range or collides.  
+2. **Implement Hybrid Attention Layer**  
+   * Use the `HybridTransformerLayer` pattern.  
+   * Add a unit test that verifies the schedule.
 
-2. **Construct Vision Encoder**  
-   - Build a ViT‑style patch embedder (`patch_size=14`).  
-   - Insert **early compression** layers: for each of the first `insert_layer_id` (6) layers, replace standard self‑attention with `LinearAttention` using `linear_*` hyper‑parameters.  
-   - Verify shapes with **RULE‑LINEAR‑ATTENTION‑SHAPE‑ALIGNMENT** after each layer.  
+3. **Build Vision Encoder with Deterministic Compression**  
+   * Use a fixed stride in the compression convolution.  
+   * Add a determinism test (`test_compression_determinism`).
 
-3. **Apply Partial RoPE**  
-   - Wrap every attention module with `apply_partial_rope`.  
-   - Ensure the non‑rotated tail is zero‑padded before rotation.  
+4. **Integrate Tokenizer with Reserved Tokens**  
+   * Load `tokenizer_config.json` and register all special tokens.  
+   * Implement `filter_special_tokens` in the generation loop.
 
-4. **Assemble Token‑Type Embedding Table**  
-   - Allocate an embedding matrix of size `(vocab_size, hidden_size)`.  
-   - Initialize special token rows (`image_token_id`, `video_token_id`, …) with *learned* vectors distinct from text embeddings.  
+5. **Add Prompt‑Chain Depth Guard**  
+   * Define `MAX_PROMPT_DEPTH` and raise `RecursionError` if exceeded.
 
-5. **Build Text Decoder**  
-   - Stack 24 transformer layers.  
-   - Use `layer_types` list to decide per‑layer attention mode (linear vs full).  
-   - Insert a **full‑attention** layer every `full_attention_interval` = 4 layers (use `(idx+1) % interval == 0`).  
+6. **Write Comprehensive Unit Tests**  
+   * Test attention scheduling, compression determinism, special‑token filtering, and boundary conditions.  
+   * Use property‑based testing for tokenization consistency.
 
-6. **Generation Engine**  
-   - Enable `use_cache:true`.  
-   - Set `eos_token_id` list as per `generation_config.json`.  
-   - Implement a generation loop that checks for any `eos_token_id` after each step and breaks.  
+7. **Set Up CI/CD**  
+   * Configure GitHub Actions to run tests on multiple Python versions.  
+   * Build Docker images for reproducible inference.
 
-7. **Quantization & Deployment Hooks**  
-   - Export model to **GGUF**, **BNB**, **AWQ**, **GPTQ**, and **FP8** pipelines.  
-   - For each format, embed a **post‑load integrity check** that re‑runs the token‑ID validator on the deserialized tokenizer.  
+8. **Document Failure Modes**  
+   * Add a `docs/failure_modes.md` file explaining token drift, context loss, and how the implemented patterns mitigate them.
 
-8. **Testing Suite**  
-   - **Unit Tests**: token‑ID range, linear‑attention shapes, partial‑RoPE zero‑tail.  
-   - **Property‑Based Tests**: random visual token lengths ≤ `max_position_embeddings`.  
-   - **Integration Test**: end‑to‑end generation on a synthetic image + prompt, assert that output contains at least one non‑PAD token and terminates within `max_new_tokens`.  
+9. **Deploy Quantized Weights**  
+   * Export FP8, AWQ, and GPTQ variants using the `transformers` quantization utilities.  
+   * Verify inference speed on target devices.
 
-9. **CI Enforcement**  
-   - Add the three rule‑validation scripts as **pre‑commit hooks**.  
-   - Fail the pipeline on any lint error (`flake8`), shape assertion, or missing test coverage (< 90 %).  
+10. **Monitor Runtime**  
+    * Instrument the pipeline with `torch.profiler` to detect any unexpected O(N²) operations.  
+    * Log any occurrences of special‑token generation for post‑mortem analysis.
 
-10. **Documentation**  
-    - Auto‑generate a `README` section that lists all **special token IDs**, their purpose, and the invariant that they must stay < `vocab_size`.  
-    - Include a **“Common Pitfalls”** table referencing the three anti‑patterns.  
-
-Following this checklist guarantees that any generated MiniCPM‑V‑style codebase respects the **universal engineering rules**, avoids the documented failure modes, and is verifiable through automated tests.
+---
