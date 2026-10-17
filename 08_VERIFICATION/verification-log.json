@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-GWVC",
-    "timestamp": "2026-10-16T00:04:30.696Z",
-    "repository": "facebook/sam3",
-    "learningId": "learn-huggingface-facebook-sam3",
-    "contentHash": "be1e95edb352a573991a1ba3f8dd9069a4e76211a382f562bd0ce44568e09e5a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-KR0A",
     "timestamp": "2026-10-16T00:07:29.723Z",
     "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GEV-26B-Decide",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide",
     "contentHash": "d0c15c2451af6d685ef38ddb1761481140f467b6b0cf45eab0ad0b586b21a5af",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-063Z",
+    "timestamp": "2026-10-17T04:47:05.711Z",
+    "repository": "convaiinnovations/laya",
+    "learningId": "learn-huggingface-convaiinnovations-laya",
+    "contentHash": "1a5987a922a03d33cacb37071a73dcb4caa4a2f66eb6c367448587136f090e2e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

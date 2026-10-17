@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T04:43:46.641Z",
+  "last_updated": "2026-10-17T04:47:05.680Z",
   "total_verified_learnings": 193,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11861,7 +11861,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "7efbd1b9e111ddfa5c5e7948909a6abf470ddf1e492d37b811d5e9450c11be70",
+      "content_hash": "1a5987a922a03d33cacb37071a73dcb4caa4a2f66eb6c367448587136f090e2e",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [
@@ -12274,7 +12274,7 @@
         "learn-huggingface-hf-convaiinnovations-laya-mv41qpya",
         "learn-huggingface-hf-convaiinnovations-laya-mv4flqk7"
       ],
-      "verified_at": "2026-10-16T21:07:49.412Z",
+      "verified_at": "2026-10-17T04:47:05.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
