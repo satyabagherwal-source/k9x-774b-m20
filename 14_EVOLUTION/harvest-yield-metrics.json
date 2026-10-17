@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T06:07:44.596Z",
-  "total_cycles_completed": 2017,
-  "total_learnings_persisted": 2017,
+  "last_updated": "2026-10-17T06:10:48.861Z",
+  "total_cycles_completed": 2018,
+  "total_learnings_persisted": 2018,
   "total_rules_promoted": 1102,
   "history": [
-    {
-      "timestamp": "2026-10-16T19:01:14.822Z",
-      "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T19:04:19.395Z",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T06:07:44.596Z",
       "repository": "XingChen-AGI/TeleOCR",
       "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T06:10:48.861Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
