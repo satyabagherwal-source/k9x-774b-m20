@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-4A77",
-    "timestamp": "2026-10-16T03:10:38.755Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "82b139d2157a71ee422f1dfc8f2710441eecde4dbd10b22abd8d4e6e886e8f32",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-8A4X",
     "timestamp": "2026-10-16T03:13:45.297Z",
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "facebook/sam3",
     "learningId": "learn-huggingface-facebook-sam3",
     "contentHash": "e1140900a044493dda781851a8d78b0ac03c6e99d9518d109f7cd8c37950ac70",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-ISAY",
+    "timestamp": "2026-10-17T08:17:31.594Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "c1c8edf26aa8eca16aebc09fe8a8623923c792b20f6453c79a8773bba58cf154",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {

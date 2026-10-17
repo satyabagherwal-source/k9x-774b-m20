@@ -2074,3 +2074,4 @@
 | `CYCLE-20261017-3GCM` | `2026-10-17T08:05:36.262Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1374, Rule 1375` | Yes (`38ce996a...`) |
 | `CYCLE-20261017-9435` | `2026-10-17T08:10:00.305Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1376, Rule 1377` | Yes (`7d879bb5...`) |
 | `CYCLE-20261017-D8J0` | `2026-10-17T08:13:12.684Z` | `facebook/sam3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1378, Rule 1379` | Yes (`e1140900...`) |
+| `CYCLE-20261017-ISAY` | `2026-10-17T08:17:31.594Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1380, Rule 1381` | Yes (`c1c8edf2...`) |

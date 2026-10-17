@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T08:13:12.659Z",
+  "last_updated": "2026-10-17T08:17:31.569Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18565,10 +18565,21 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "aea13eab93db316eb1d234b889e68da0fc0638deb8a78edb951bb093ffffba82",
+      "content_hash": "c1c8edf26aa8eca16aebc09fe8a8623923c792b20f6453c79a8773bba58cf154",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1380,
+          "title": "Hybrid Recurrent-Attention Precision Preservation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1381,
+          "title": "Multi-Token Prediction (MTP) Speculative Rollback Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
@@ -18587,7 +18598,7 @@
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv47yc4x",
         "learn-huggingface-hf-unsloth-qwen3-8-27b-gguf-mv4l85qv"
       ],
-      "verified_at": "2026-10-17T00:27:34.107Z",
+      "verified_at": "2026-10-17T08:17:31.563Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

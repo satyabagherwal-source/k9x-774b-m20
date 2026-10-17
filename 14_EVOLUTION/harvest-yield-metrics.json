@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T08:13:12.689Z",
-  "total_cycles_completed": 2051,
-  "total_learnings_persisted": 2051,
-  "total_rules_promoted": 1156,
+  "last_updated": "2026-10-17T08:17:31.602Z",
+  "total_cycles_completed": 2052,
+  "total_learnings_persisted": 2052,
+  "total_rules_promoted": 1158,
   "history": [
-    {
-      "timestamp": "2026-10-16T21:07:49.435Z",
-      "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-convaiinnovations-laya",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T21:10:38.609Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T08:13:12.689Z",
       "repository": "facebook/sam3",
       "learningId": "learn-huggingface-facebook-sam3",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T08:17:31.602Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
       "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
