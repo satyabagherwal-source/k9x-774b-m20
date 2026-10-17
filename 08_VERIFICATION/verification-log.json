@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-T43G",
-    "timestamp": "2026-10-16T01:09:59.164Z",
-    "repository": "hexgrad/Kokoro-82M",
-    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
-    "contentHash": "a707dc8102d6eedd0395ba61e86e974437b7cf7def65b0ef186f0447a8dc1121",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-XCHZ",
     "timestamp": "2026-10-16T01:13:16.679Z",
     "repository": "vllm-sr/d3",
@@ -7490,6 +7475,21 @@
     "repository": "OpenMOSS-Team/MOSS-Image-SFT",
     "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
     "contentHash": "7ff4b13adae7849cc4f42a52eea7dd6b4eeaec57f8c4fdf0decb05f292a6d235",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-EFVF",
+    "timestamp": "2026-10-17T05:54:10.779Z",
+    "repository": "autotrust/JEV-35B",
+    "learningId": "learn-huggingface-autotrust-jev-35b",
+    "contentHash": "aea8425e477e0895fc2ab489499eb7233b0aacdab64a031254d6447309bcf019",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

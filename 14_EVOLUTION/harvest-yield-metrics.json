@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T05:51:03.101Z",
-  "total_cycles_completed": 2012,
-  "total_learnings_persisted": 2012,
+  "last_updated": "2026-10-17T05:54:10.783Z",
+  "total_cycles_completed": 2013,
+  "total_learnings_persisted": 2013,
   "total_rules_promoted": 1093,
   "history": [
-    {
-      "timestamp": "2026-10-16T18:45:18.333Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T18:48:28.502Z",
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T05:51:03.101Z",
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
       "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T05:54:10.783Z",
+      "repository": "autotrust/JEV-35B",
+      "learningId": "learn-huggingface-autotrust-jev-35b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
