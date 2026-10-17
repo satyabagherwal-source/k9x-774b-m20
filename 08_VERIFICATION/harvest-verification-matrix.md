@@ -2091,3 +2091,4 @@
 | `CYCLE-20261017-G1GS` | `2026-10-17T09:11:22.732Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1409, Rule 1410` | Yes (`1e6fba5b...`) |
 | `CYCLE-20261017-JLM3` | `2026-10-17T09:14:08.811Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`e2cddc26...`) |
 | `CYCLE-20261017-OW45` | `2026-10-17T09:18:15.701Z` | `AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1411, Rule 1412` | Yes (`263d72a5...`) |
+| `CYCLE-20261017-SSTY` | `2026-10-17T09:21:18.070Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`becc26d4...`) |
