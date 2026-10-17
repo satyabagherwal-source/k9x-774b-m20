@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T18:43:37.762Z",
-  "total_cycles_completed": 2238,
-  "total_learnings_persisted": 2238,
+  "last_updated": "2026-10-17T18:46:47.779Z",
+  "total_cycles_completed": 2239,
+  "total_learnings_persisted": 2239,
   "total_rules_promoted": 1291,
   "history": [
-    {
-      "timestamp": "2026-10-17T07:23:21.069Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T07:27:52.146Z",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T18:43:37.762Z",
       "repository": "baidu/Unlimited-OCR",
       "learningId": "learn-huggingface-baidu-unlimited-ocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T18:46:47.779Z",
+      "repository": "Aleph-Alpha/Kolibri-1",
+      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

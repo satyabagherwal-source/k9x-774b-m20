@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T18:43:37.763Z",
+  "last_updated": "2026-10-17T18:46:47.781Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1337,14 +1337,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
-      "content_hash": "6b71039d2937d0ae08cef8b99bd04055bca44f82eb136f45c7489fabe12df091",
-      "verified_at": "2026-10-17T10:48:03.758Z",
+      "content_hash": "b8e70af1f4381ce98055b6c7035219bb0891864140612f9806775272d03fcfea",
+      "verified_at": "2026-10-17T18:46:47.781Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T10:48:03.758Z"
+      "last_updated": "2026-10-17T18:46:47.781Z"
     },
     "Qwen/Qwen3-4B": {
       "repository": "Qwen/Qwen3-4B",
