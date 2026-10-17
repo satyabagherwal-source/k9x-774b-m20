@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-9FN6",
-    "timestamp": "2026-10-16T00:26:41.394Z",
-    "repository": "Cloudflare/clef-flash",
-    "learningId": "learn-huggingface-cloudflare-clef-flash",
-    "contentHash": "21eb2de9edd40ffe134f0cb6ec39cca738e30a894fcfbb7d4dcbf545565b1dc1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-DBAJ",
     "timestamp": "2026-10-16T00:29:42.379Z",
     "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/JEV-35B-NVFP4",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
     "contentHash": "f02f6d04a3cad1380c8ea1d6123db6f86891f248c08dc6bef3ae7a82a2112a04",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-TU4M",
+    "timestamp": "2026-10-17T05:10:09.862Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "4b286e53ed6b63ffc17a2607cfd2ba2f309a1ec9f6b5f48307ecee653361e532",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
