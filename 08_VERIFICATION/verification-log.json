@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-TBDI",
-    "timestamp": "2026-10-16T07:42:03.222Z",
-    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-    "contentHash": "f649d5ee400da0e34eb1c1aae03e553381e544714ef5bb303adf6cc70b9f1fc6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4LKD",
     "timestamp": "2026-10-16T07:50:49.645Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7475,21 @@
     "repository": "BAAI/bge-large-en-v1.5",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
     "contentHash": "bd4520a6c02e160846c00824d820eceaec8c98f29b0bc4cf519237281bda556f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-S7NH",
+    "timestamp": "2026-10-17T12:36:47.933Z",
+    "repository": "zai-org/GLM-5.3",
+    "learningId": "learn-huggingface-zai-org-glm-5-3",
+    "contentHash": "ac8328c9f4b5686292965090abc749fd48d8b87507648f5e101cf605cd8c9cbd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

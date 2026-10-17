@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T12:33:36.906Z",
-  "total_cycles_completed": 2127,
-  "total_learnings_persisted": 2127,
+  "last_updated": "2026-10-17T12:36:47.937Z",
+  "total_cycles_completed": 2128,
+  "total_learnings_persisted": 2128,
   "total_rules_promoted": 1227,
   "history": [
-    {
-      "timestamp": "2026-10-17T01:22:10.242Z",
-      "repository": "amazon/chronos-2",
-      "learningId": "learn-huggingface-amazon-chronos-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T01:25:22.102Z",
       "repository": "CompVis/stable-diffusion-v1-4",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T12:33:36.906Z",
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:36:47.937Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

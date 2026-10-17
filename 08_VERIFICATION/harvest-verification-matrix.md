@@ -2150,3 +2150,4 @@
 | `CYCLE-20261017-ELFU` | `2026-10-17T12:26:12.618Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`8fa83d66...`) |
 | `CYCLE-20261017-K13X` | `2026-10-17T12:30:26.205Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1448, Rule 1449` | Yes (`7f1b6684...`) |
 | `CYCLE-20261017-O492` | `2026-10-17T12:33:36.902Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`bd4520a6...`) |
+| `CYCLE-20261017-S7NH` | `2026-10-17T12:36:47.933Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`ac8328c9...`) |
