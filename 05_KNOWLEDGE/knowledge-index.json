@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:23:21.051Z",
+  "last_updated": "2026-10-17T07:27:52.112Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12997,7 +12997,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "fe528259f29440e1cec919fa8c36b8782b994b20b054aef492fb114b50d65a82",
+      "content_hash": "15150a43be171f8b8fe075ef3e16742c674cba19e4f5b70737cda32c07452d44",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
       "promoted_rules": [
@@ -13022,6 +13022,21 @@
           "number": 1100,
           "title": "Bounded-Replay Ring Buffer Sliding Window Cache Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1353,
+          "title": "Decoupled KV-Cache Projection in Asymmetric Sequence Processing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1354,
+          "title": "Clamped Activation Invariant for Dynamic Low-Precision Quantization",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1355,
+          "title": "Entropic Normalization & Epsilon Floor in Optimal Transport Indexing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -13042,7 +13057,7 @@
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv46mzeq",
         "learn-huggingface-hf-deepseek-ai-deepseek-v4-1-flash-mv4jxf1e"
       ],
-      "verified_at": "2026-10-16T23:47:47.917Z",
+      "verified_at": "2026-10-17T07:27:52.102Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
