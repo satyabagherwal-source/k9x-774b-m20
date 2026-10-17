@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T15:26:35.815Z",
-  "total_cycles_completed": 2176,
-  "total_learnings_persisted": 2176,
-  "total_rules_promoted": 1260,
+  "last_updated": "2026-10-17T15:29:52.385Z",
+  "total_cycles_completed": 2177,
+  "total_learnings_persisted": 2177,
+  "total_rules_promoted": 1263,
   "history": [
-    {
-      "timestamp": "2026-10-17T03:59:27.082Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T04:02:18.225Z",
       "repository": "Qwen/Qwen3-8B",
@@ -1403,6 +1396,13 @@
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T15:29:52.385Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-U6UT",
-    "timestamp": "2026-10-16T10:58:41.333Z",
-    "repository": "Qwen/Qwen3-4B",
-    "learningId": "learn-huggingface-qwen-qwen3-4b",
-    "contentHash": "21474c79837269240c90abda3359a21698ff659b8b23a251f24b71a0daf6078e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ZGU9",
     "timestamp": "2026-10-16T11:02:47.554Z",
     "repository": "FermionResearch/Phonon-2",
@@ -7492,6 +7477,21 @@
     "contentHash": "5221643349ce709511c18b029ddf09f665d784e06e5dd4838bcc3f0b9ac99138",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-YSC9",
+    "timestamp": "2026-10-17T15:29:52.377Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "e1dd60682031d084fb4a395902922ecf1bf53dfe90f99e544aa0baa3ce6ade2d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

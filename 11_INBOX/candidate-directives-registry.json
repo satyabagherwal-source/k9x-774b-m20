@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T09:11:22.738Z",
+  "last_updated": "2026-10-17T15:29:52.384Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1476,6 +1476,61 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3"
+    },
+    {
+      "id": "CD-YSCG",
+      "directive_title": "Micro‑Syntax & Token‑Level Precision",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "TaichuAI/ZDTaichu5.0-9B",
+      "source_commit": "hf-taichuai-",
+      "date_staged": "2026-10-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b"
+    },
+    {
+      "id": "CD-YSCG",
+      "directive_title": "Infinite Loop & Recursion Guards",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "TaichuAI/ZDTaichu5.0-9B",
+      "source_commit": "hf-taichuai-",
+      "date_staged": "2026-10-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b"
+    },
+    {
+      "id": "CD-YSCG",
+      "directive_title": "UI & UX Micro‑Mechanics",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "TaichuAI/ZDTaichu5.0-9B",
+      "source_commit": "hf-taichuai-",
+      "date_staged": "2026-10-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b"
+    },
+    {
+      "id": "CD-YSCG",
+      "directive_title": "Backend Concurrency & Memory Safety",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "TaichuAI/ZDTaichu5.0-9B",
+      "source_commit": "hf-taichuai-",
+      "date_staged": "2026-10-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **WHY** technical rationale",
+      "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b"
+    },
+    {
+      "id": "CD-YSCG",
+      "directive_title": "Defect & Error Prevention",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "TaichuAI/ZDTaichu5.0-9B",
+      "source_commit": "hf-taichuai-",
+      "date_staged": "2026-10-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Rule body fails substance threshold (minimum 200 characters required)",
+      "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b"
     }
   ]
 }

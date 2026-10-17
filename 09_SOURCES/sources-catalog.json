@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "00d8de3e68058c78dc31a2a8059e1aeec191c4dda75407bbedb17fce97276fe1",
-    "lastHarvestedAt": "2026-10-17T07:02:16.466Z",
+    "contentHash": "e1dd60682031d084fb4a395902922ecf1bf53dfe90f99e544aa0baa3ce6ade2d",
+    "lastHarvestedAt": "2026-10-17T15:29:52.382Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T15:26:35.789Z",
+  "last_updated": "2026-10-17T15:29:52.354Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18509,7 +18509,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "00d8de3e68058c78dc31a2a8059e1aeec191c4dda75407bbedb17fce97276fe1",
+      "content_hash": "e1dd60682031d084fb4a395902922ecf1bf53dfe90f99e544aa0baa3ce6ade2d",
       "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
       "promoted_rules": [
@@ -18601,6 +18601,11 @@
           "status": "PROMOTED_AND_VERIFIED"
         },
         {
+          "number": 1201,
+          "title": "**Token ID Consistency Rule**",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
           "number": 1260,
           "title": "Token‑ID Consistency Across Subsystems",
           "status": "PROMOTED_AND_VERIFIED"
@@ -18629,6 +18634,16 @@
           "number": 1337,
           "title": "Visual Grid Context Token Exact Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1481,
+          "title": "**Image Token Placement Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1482,
+          "title": "**Context Length Alignment Rule**",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18649,7 +18664,7 @@
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv45zyde",
         "learn-huggingface-hf-taichuai-zdtaichu5-0-9b-mv4ja6oo"
       ],
-      "verified_at": "2026-10-17T07:02:16.439Z",
+      "verified_at": "2026-10-17T15:29:52.347Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
