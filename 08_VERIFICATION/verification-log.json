@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-YJPG",
-    "timestamp": "2026-10-16T18:57:58.084Z",
-    "repository": "FermionResearch/Phonon-2",
-    "learningId": "learn-huggingface-fermionresearch-phonon-2",
-    "contentHash": "14aeaf363445b533eaf8387092318844e27e55f74be9f8cc96c9aed916eb9509",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-2RIB",
     "timestamp": "2026-10-16T19:01:14.819Z",
     "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -7492,6 +7477,21 @@
     "contentHash": "3efb3455deb90fa3180b17801383e4c6e009adf5f772f169ed70297080b50a1a",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-J4IM",
+    "timestamp": "2026-10-17T23:13:35.134Z",
+    "repository": "fastino/GLiNER2.5-Decide",
+    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+    "contentHash": "a33c5aa391c22452700dda7757d6a04706f5e3d542df2c5fb005c4ca303c0606",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

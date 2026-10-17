@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:10:12.802Z",
-  "total_cycles_completed": 2316,
-  "total_learnings_persisted": 2316,
+  "last_updated": "2026-10-17T23:13:35.138Z",
+  "total_cycles_completed": 2317,
+  "total_learnings_persisted": 2317,
   "total_rules_promoted": 1340,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:59:47.018Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T12:02:58.728Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1403,6 +1396,13 @@
       "repository": "Altworld/Hemmingway-1",
       "learningId": "learn-huggingface-altworld-hemmingway-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:13:35.138Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
