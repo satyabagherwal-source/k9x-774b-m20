@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T07:06:11.875Z",
+  "last_updated": "2026-10-17T07:10:41.334Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -573,14 +573,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "content_hash": "3cd99550dfab67f5c71582464b380cbdb0de80c6d8ac29c6380522c28b5a32ff",
-      "verified_at": "2026-10-16T23:34:05.216Z",
+      "content_hash": "a27a5b40339688a1561e01ea243d00d3729936b1f2b548df4f39b285721c69c2",
+      "verified_at": "2026-10-17T07:10:41.334Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T23:34:05.216Z"
+      "last_updated": "2026-10-17T07:10:41.334Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",

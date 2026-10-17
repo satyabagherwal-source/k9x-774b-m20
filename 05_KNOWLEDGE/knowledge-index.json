@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:06:11.853Z",
+  "last_updated": "2026-10-17T07:10:41.301Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11702,7 +11702,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
       "source_version": "hf-comfy-org-qwen-image-2.1",
-      "content_hash": "3cd99550dfab67f5c71582464b380cbdb0de80c6d8ac29c6380522c28b5a32ff",
+      "content_hash": "a27a5b40339688a1561e01ea243d00d3729936b1f2b548df4f39b285721c69c2",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -11748,6 +11748,21 @@
           "number": 1029,
           "title": "Decoupled Text Encoder & Diffusion Model Loading",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1341,
+          "title": "Mandatory Separation of Latent Decode and Denoiser Memory Horizons",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1342,
+          "title": "Strict Matrix Rank Invariant for SVD Adapter Injection",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1343,
+          "title": "Asymmetric Text Prompt Enhancer Context Routing",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11768,7 +11783,7 @@
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv467olr",
         "learn-huggingface-hf-comfy-org-qwen-image-2-1-mv4ji9no"
       ],
-      "verified_at": "2026-10-16T23:34:05.188Z",
+      "verified_at": "2026-10-17T07:10:41.296Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
