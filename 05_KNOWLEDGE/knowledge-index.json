@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:19:14.679Z",
+  "last_updated": "2026-10-17T07:23:21.051Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14114,7 +14114,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "6a2823a93eb3df9272da02ad7ee5606e4058898f18b14f165b1446f812d50723",
+      "content_hash": "81524d2f7c9f84110ddcde5425b756c10409f976ff73db1030f351413a6a8d1b",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [
@@ -14145,6 +14145,21 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
           "verified_at": "2026-10-11T18:51:49.696Z"
+        },
+        {
+          "number": 1350,
+          "title": "Partial-Dimension 3D RoPE Phase Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1351,
+          "title": "Multi-Expert Gated Dispatch Normalization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1352,
+          "title": "Straight RGBA Diffusion Pipeline De-fringing Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14165,7 +14180,7 @@
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv46je2y",
         "learn-huggingface-hf-inclusionai-ming-image-0-1-design-mv4jtaws"
       ],
-      "verified_at": "2026-10-16T23:44:39.274Z",
+      "verified_at": "2026-10-17T07:23:21.048Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

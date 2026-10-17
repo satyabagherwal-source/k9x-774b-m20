@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T07:19:14.699Z",
+  "last_updated": "2026-10-17T07:23:21.070Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -618,14 +618,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "6a2823a93eb3df9272da02ad7ee5606e4058898f18b14f165b1446f812d50723",
-      "verified_at": "2026-10-16T23:44:39.315Z",
+      "content_hash": "81524d2f7c9f84110ddcde5425b756c10409f976ff73db1030f351413a6a8d1b",
+      "verified_at": "2026-10-17T07:23:21.070Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T23:44:39.315Z"
+      "last_updated": "2026-10-17T07:23:21.070Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
