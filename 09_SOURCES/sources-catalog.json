@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "f57b04e36e30b5408d9a8765dc7f431aaddc5b25419d3ca51887ba1ec68817a5",
-    "lastHarvestedAt": "2026-10-17T13:55:17.027Z",
+    "contentHash": "9afc1c6ec2b03934df3e7ff61732d6c2f8cf5e2f7b25e5b6641deb4d2095315e",
+    "lastHarvestedAt": "2026-10-17T21:43:45.179Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {

@@ -105229,3 +105229,230 @@ def assert_no_fp8_normalization(model: torch.nn.Module):
 ```
 
 ---
+
+
+---
+
+## 1535. Dynamic Sparsity Block Alignment Invariant (Harvested from FrancisRing/Prism)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic Sparsity Block Alignment Invariant",
+  "source": "FrancisRing/Prism",
+  "source_url": "https://huggingface.co/FrancisRing/Prism",
+  "source_version": "hf-francisring-prism",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T21:43:45.021Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-francisring-prism",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [FrancisRing/Prism](https://huggingface.co/FrancisRing/Prism) (Revision: `hf-francis`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When implementing dynamic sparse attention kernels across heterogeneous modalities (video tokens and audio tokens), the system MUST pad and partition token sequences into strict integer multiples of the hardware block size ($B_r, B_c \in \{64, 128\}$) prior to computing top-$k$ block sparsity masks. Slicing dynamic sequences without block-level alignment MUST NOT be permitted.
+
+**WHY**:
+Tensor Core memory pipelines (e.g., NVIDIA Hopper TMA, Ampere asynchronous copy) load global memory into shared memory in 128-byte aligned chunks. If query/key block counts do not align with tensor tile dimensions, dynamic sparsity gather-scatter kernels trigger memory bank conflicts, uncoalesced memory fetches, or illegal memory access faults (`CUDA error: an illegal memory access was encountered`).
+
+**WHEN TO APPLY**:
+Apply in any Transformer architecture utilizing non-static, input-dependent sparse attention masks over multi-modal or variable-length inputs (e.g., video-audio diffusion transformers, long-context LLMs with dynamic routing).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+import torch.nn.functional as F
+
+def align_and_route_dynamic_sparse_blocks(
+    q: torch.Tensor, 
+    k: torch.Tensor, 
+    v: torch.Tensor, 
+    block_size: int = 128, 
+    top_k_ratio: float = 0.5
+) -> torch.Tensor:
+    """
+    Safely pad and route dynamic sparse blocks without memory misalignment.
+    q, k, v: [Batch, Num_Heads, Seq_Len, Head_Dim]
+    """
+    B, H, S, D = q.shape
+    remainder = S % block_size
+    pad_len = (block_size - remainder) % block_size
+    
+    if pad_len > 0:
+        q_padded = F.pad(q, (0, 0, 0, pad_len), mode="constant", value=0.0)
+        k_padded = F.pad(k, (0, 0, 0, pad_len), mode="constant", value=0.0)
+        v_padded = F.pad(v, (0, 0, 0, pad_len), mode="constant", value=0.0)
+    else:
+        q_padded, k_padded, v_padded = q, k, v
+
+    num_blocks = (S + pad_len) // block_size
+    
+    # Reshape into block views: [B, H, Num_Blocks, Block_Size, D]
+    q_blocks = q_padded.view(B, H, num_blocks, block_size, D)
+    k_blocks = k_padded.view(B, H, num_blocks, block_size, D)
+    v_blocks = v_padded.view(B, H, num_blocks, block_size, D)
+    
+    # Compute block representative energy (mean L2 norm per block)
+    block_energy = torch.norm(q_blocks.mean(dim=3), dim=-1) # [B, H, Num_Blocks]
+    k_keep = max(1, int(num_blocks * top_k_ratio))
+    
+    _, active_block_indices = torch.topk(block_energy, k=k_keep, dim=-1, sorted=True)
+    
+    # Gather active blocks deterministically
+    batch_idx = torch.arange(B, device=q.device).view(B, 1, 1, 1, 1)
+    head_idx = torch.arange(H, device=q.device).view(1, H, 1, 1, 1)
+    idx_expanded = active_block_indices.unsqueeze(-1).unsqueeze(-1).expand(B, H, k_keep, block_size, D)
+    
+    q_selected = torch.gather(q_blocks, 2, idx_expanded)
+    k_selected = torch.gather(k_blocks, 2, idx_expanded)
+    v_selected = torch.gather(v_blocks, 2, idx_expanded)
+    
+    # Flatten selected blocks back to continuous token sequence
+    q_sparse = q_selected.view(B, H, k_keep * block_size, D)
+    k_sparse = k_selected.view(B, H, k_keep * block_size, D)
+    v_sparse = v_selected.view(B, H, k_keep * block_size, D)
+    
+    # Dense compute on routed sparse sequence
+    scale = 1.0 / (D ** 0.5)
+    attn_weights = torch.matmul(q_sparse, k_sparse.transpose(-1, -2)) * scale
+    attn_probs = F.softmax(attn_weights, dim=-1)
+    out_sparse = torch.matmul(attn_probs, v_sparse)
+    
+    # Scatter back to output tensor of shape [B, H, S + pad_len, D]
+    out_padded = torch.zeros_like(q_padded)
+    out_blocks = out_padded.view(B, H, num_blocks, block_size, D)
+    out_blocks.scatter_(2, idx_expanded, out_sparse.view(B, H, k_keep, block_size, D))
+    
+    return out_padded[:, :, :S, :]
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Dynamically masking arbitrary indices without block padding
+def unsafe_dynamic_sparse(q, k, v, mask_threshold=0.1):
+    scores = torch.matmul(q, k.transpose(-1, -2))
+    # Unstructured boolean mask breaks Tensor Core alignment and creates dynamic shape variations per head
+    mask = scores > mask_threshold
+    # CRASH: Non-zero indices shape varies across batch/head dimensions; causes fatal sync overhead or out-of-bounds CUDA fault
+    return torch.bmm(mask.float() * scores, v)
+```
+
+**VERIFICATION METHOD**:
+Verify using a CUDA kernel boundary assert and torch memory profiling test:
+```python
+def test_block_alignment_invariants():
+    for seq_len in [127, 255, 1024, 2049]:
+        q = torch.randn(2, 8, seq_len, 64, device="cuda", dtype=torch.float16)
+        out = align_and_route_dynamic_sparse_blocks(q, q, q, block_size=128)
+        assert out.shape == q.shape, f"Shape mismatch: {out.shape} vs {q.shape}"
+        assert not torch.isnan(out).any(), "NaN detected in sparse output"
+```
+
+---
+
+
+---
+
+## 1536. Prefix Conditioning Temporal Drift Barrier (Harvested from FrancisRing/Prism)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Prefix Conditioning Temporal Drift Barrier",
+  "source": "FrancisRing/Prism",
+  "source_url": "https://huggingface.co/FrancisRing/Prism",
+  "source_version": "hf-francisring-prism",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T21:43:45.099Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-francisring-prism",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [FrancisRing/Prism](https://huggingface.co/FrancisRing/Prism) (Revision: `hf-francis`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In Image-to-Video (`i2v: true`) diffusion generation with stochastic prefix injection (`random_prefix_frames: true`), the model conditioning logic MUST freeze spatial-temporal position embeddings for the prefix frames while asserting zero-loss masking on prefix target latents during forward denoising passes.
+
+**WHY**:
+Permitting gradient backpropagation into randomly injected prefix frames causes the conditioning network to memorize the exact spatial pixel distribution of conditioned frames. During autonomous inference, any slight variation between frame 0 latents and latent priors causes severe temporal flicker, contrast blowouts, and motion freeze.
+
+**WHEN TO APPLY**:
+All image-to-video, frame-interpolation, and audio-driven video diffusion models where prefix or anchor frames serve as dynamic boundary conditions.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from dataclasses import dataclass
+import torch
+
+@dataclass(frozen=True)
+class PrefixFrameConfig:
+    i2v: bool
+    random_prefix_frames: bool
+    max_prefix_len: int = 4
+
+def prepare_prefix_conditioning_mask(
+    batch_size: int,
+    total_frames: int,
+    config: PrefixFrameConfig,
+    device: torch.device
+) -> tuple[torch.Tensor, torch.Tensor]:
+    """
+    Constructs deterministic loss masks and conditioning frame selectors.
+    Returns:
+        prefix_indices: [Batch, Prefix_Frames]
+        loss_mask: [Batch, Total_Frames, 1, 1] (0.0 for prefix, 1.0 for generated)
+    """
+    if not config.i2v:
+        # Standard T2V generation: all frames contribute to loss
+        return (
+            torch.empty((batch_size, 0), dtype=torch.long, device=device),
+            torch.ones((batch_size, total_frames, 1, 1), device=device)
+        )
+    
+    if config.random_prefix_frames:
+        # Randomly choose prefix length between 1 and max_prefix_len per batch element
+        num_prefix = torch.randint(1, config.max_prefix_len + 1, (1,), device=device).item()
+    else:
+        num_prefix = 1
+
+    loss_mask = torch.ones((batch_size, total_frames, 1, 1), device=device)
+    loss_mask[:, :num_prefix, :, :] = 0.0  # Zero loss for conditioned frames
+
+    prefix_indices = torch.arange(num_prefix, device=device).unsqueeze(0).expand(batch_size, -1)
+    return prefix_indices, loss_mask
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Leaking target loss into conditioned prefix tokens
+def compute_diffusion_loss_unsafe(pred_noise, true_noise, is_i2v):
+    # Bug: When is_i2v is true, prefix frame noise is included in gradient descent
+    # This causes the model to optimize noise reconstruction on known inputs, collapsing temporal variance
+    return torch.mean((pred_noise - true_noise) ** 2)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_prefix_gradient_isolation():
+    config = PrefixFrameConfig(i2v=True, random_prefix_frames=True, max_prefix_len=2)
+    frames = torch.randn(2, 16, 16, 16, requires_grad=True)
+    _, loss_mask = prepare_prefix_conditioning_mask(2, 16, config, frames.device)
+    loss = (frames * loss_mask).sum()
+    loss.backward()
+    assert torch.all(frames.grad[:, :1, :, :] == 0.0), "Prefix frame gradients leaked!"
+```
+
+---

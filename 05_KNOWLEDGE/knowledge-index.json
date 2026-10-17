@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T21:38:04.794Z",
+  "last_updated": "2026-10-17T21:43:45.149Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13983,7 +13983,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FrancisRing/Prism",
       "source_version": "hf-francisring-prism",
-      "content_hash": "f57b04e36e30b5408d9a8765dc7f431aaddc5b25419d3ca51887ba1ec68817a5",
+      "content_hash": "9afc1c6ec2b03934df3e7ff61732d6c2f8cf5e2f7b25e5b6641deb4d2095315e",
       "dossier_path": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-francisring-prism-learnings.md",
       "promoted_rules": [
@@ -14000,6 +14000,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-francisring-prism-mv3of5tu",
           "verified_at": "2026-10-11T10:24:39.279Z"
+        },
+        {
+          "number": 1535,
+          "title": "Dynamic Sparsity Block Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1536,
+          "title": "Prefix Conditioning Temporal Drift Barrier",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14016,7 +14026,7 @@
         "learn-huggingface-hf-francisring-prism-mv43jvl8",
         "learn-huggingface-hf-francisring-prism-mv4gsoqj"
       ],
-      "verified_at": "2026-10-17T13:55:16.996Z",
+      "verified_at": "2026-10-17T21:43:45.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
