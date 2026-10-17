@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "74084f94ad600c932584fb0b6bf25d592e51f20fa07d554ff5079908b16aef2c",
-    "lastHarvestedAt": "2026-10-17T06:20:15.944Z",
+    "contentHash": "68015eb3735e82b3b25f0ee09fd99430776d6308b124ddc5519df037d5e0d0f4",
+    "lastHarvestedAt": "2026-10-17T14:48:25.225Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {

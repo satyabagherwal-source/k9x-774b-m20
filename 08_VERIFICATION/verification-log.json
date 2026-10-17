@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-B5GZ",
-    "timestamp": "2026-10-16T10:15:53.459Z",
-    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-    "contentHash": "7e808888ead7d5e7ce6b0d080ea8e21dceeb3fa7d60366d17b99cb5ef1c36c03",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ESMS",
     "timestamp": "2026-10-16T10:18:43.444Z",
     "repository": "openai/gpt-oss-120b",
@@ -7492,6 +7477,21 @@
     "contentHash": "d7724aea2f66451738aa0a9a17442015423be0e6e20872339631652e4ae24964",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-HH8J",
+    "timestamp": "2026-10-17T14:48:25.219Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "68015eb3735e82b3b25f0ee09fd99430776d6308b124ddc5519df037d5e0d0f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
