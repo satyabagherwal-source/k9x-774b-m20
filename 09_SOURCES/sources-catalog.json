@@ -1115,8 +1115,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceVersion": "hf-baai-bge-reranker-v2-m3",
     "license": "Open-Source",
-    "contentHash": "b651b2b1809fa41d17b127607b6066f9abc3cf63e1347ccdb56d70fa382ab265",
-    "lastHarvestedAt": "2026-10-17T11:31:00.583Z",
+    "contentHash": "7215c22916fd8e2adccc74a2e166157360844cbe9ec40e69bd8dad1f372fffac",
+    "lastHarvestedAt": "2026-10-17T19:28:17.117Z",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {

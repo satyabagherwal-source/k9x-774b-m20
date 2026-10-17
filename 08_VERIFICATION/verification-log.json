@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-KQ64",
-    "timestamp": "2026-10-16T15:03:16.348Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "d367387250f162c963da97edf094b09a8b44884dab5944ffb45acfa62c5618ac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-OK0S",
     "timestamp": "2026-10-16T15:06:15.004Z",
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -7490,6 +7475,21 @@
     "repository": "pyannote/speaker-diarization-community-1",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
     "contentHash": "9cb71c72f8198e983e40d9a58e0e15515355d70cb538d2074f729bc5b1992727",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-HDY2",
+    "timestamp": "2026-10-17T19:28:17.114Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "7215c22916fd8e2adccc74a2e166157360844cbe9ec40e69bd8dad1f372fffac",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
