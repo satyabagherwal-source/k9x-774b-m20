@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-9QVZ",
-    "timestamp": "2026-10-16T08:50:49.055Z",
-    "repository": "Comfy-Org/MiniMax-H3",
-    "learningId": "learn-huggingface-comfy-org-minimax-h3",
-    "contentHash": "e047fe8a83278edcc36e68d1b7ee4fd75f6edcd3a75b73edd9ce843b9b6742d3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-DRWB",
     "timestamp": "2026-10-16T08:53:56.987Z",
     "repository": "AtomicChat/Qwen-Image-2.1-Turbo-Uncensored-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "4c8518ca8aafc1d6241184544456e05fe053f43e9791ce55def1ec108c3088d9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-9JA7",
+    "timestamp": "2026-10-17T13:46:15.391Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "da74bd456f132ebb0f2ec7bacf479ca84936f0728179a43124f8b42068219ca6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T13:42:33.192Z",
-  "total_cycles_completed": 2144,
-  "total_learnings_persisted": 2144,
-  "total_rules_promoted": 1234,
+  "last_updated": "2026-10-17T13:46:15.395Z",
+  "total_cycles_completed": 2145,
+  "total_learnings_persisted": 2145,
+  "total_rules_promoted": 1237,
   "history": [
-    {
-      "timestamp": "2026-10-17T02:16:11.237Z",
-      "repository": "stabilityai/stable-diffusion-3-medium",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T02:20:03.440Z",
       "repository": "bigscience/bloom",
@@ -1403,6 +1396,13 @@
       "repository": "LiquidAI/d1-3B",
       "learningId": "learn-huggingface-liquidai-d1-3b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T13:46:15.395Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

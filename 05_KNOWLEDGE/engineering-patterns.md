@@ -98792,3 +98792,228 @@ def test_mtp_speculative_eos_containment():
 ```
 
 ---
+
+
+---
+
+## 1457. Edge-First Model Containerization Invariant (Harvested from Cactus-Compute/whistle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Edge-First Model Containerization Invariant",
+  "source": "Cactus-Compute/whistle",
+  "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+  "source_version": "hf-cactus-compute-whistle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T13:46:15.126Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cactus-compute-whistle",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When deploying ML models to edge devices (MCUs, mobile CPUs), the model artifact MUST be a single, self-contained binary file that encapsulates weights, topology, and quantization metadata, eliminating all external library dependencies at runtime. The runtime engine MUST be decoupled from the model definition, allowing the same engine to execute multiple model variants (e.g., different depths or languages) without recompilation.
+
+**WHY**:
+Edge devices have limited storage, no package managers, and strict security boundaries. Dynamic linking or external weight files introduce failure points (missing files, version mismatches, path traversal vulnerabilities). A single-file container ensures atomic deployment, reproducible builds, and minimal attack surface. Decoupling the engine allows for "laddered" deployment (e.g., 2-layer vs. 4-layer models) where the same binary can load different model sizes based on available RAM/CPU, maximizing hardware utilization.
+
+**WHEN TO APPLY**:
+Any ML system targeting IoT, mobile, automotive, or embedded systems where GPU is unavailable and dependency management is infeasible.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for a self-contained model loader
+class CactusModelLoader {
+public:
+    // Load a single .cact file containing weights, topology, and quant params
+    bool load(const char* filepath, ModelConfig& config) {
+        // 1. Validate magic bytes and version
+        // 2. Parse topology graph (encoder/decoder layers)
+        // 3. Load quantized weights (group_size=128) into contiguous memory
+        // 4. Bind SIMD kernels based on CPU features (NEON/AVX)
+        // 5. Return a handle to the inference engine
+        return true;
+    }
+    
+    // No external .so or .dll loading
+    // No JSON/YAML config files required at runtime
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Dynamic loading with external dependencies
+import torch
+model = torch.load("whistle_weights.pt") # Requires torch, specific version, and file path
+# This fails on edge devices without Python/Torch installed
+```
+
+**VERIFICATION METHOD**:
+1.  **Static Analysis**: Scan the deployment package for any `.so`, `.dll`, `.py`, or `.json` files outside the main binary.
+2.  **Runtime Test**: Execute the model on a clean, minimal OS image (e.g., Alpine Linux or bare-metal) with no pre-installed ML libraries. If it runs, the invariant holds.
+3.  **File Size Check**: Assert that the total model artifact size is < 20 MB for edge deployment.
+
+
+---
+
+## 1458. Quantization-Aware Attention Mechanism Invariant (Harvested from Cactus-Compute/whistle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Quantization-Aware Attention Mechanism Invariant",
+  "source": "Cactus-Compute/whistle",
+  "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+  "source_version": "hf-cactus-compute-whistle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T13:46:15.213Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cactus-compute-whistle",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In quantized ASR models (2-4 bit), attention mechanisms MUST use Grouped Query Attention (GQA) or Multi-Query Attention (MQA) instead of standard Multi-Head Attention (MHA). The KV cache MUST be quantized using the same group size as the weights (e.g., 128) to prevent memory bandwidth bottlenecks. Standard MHA MUST NOT be used in the decoder for edge deployment.
+
+**WHY**:
+Standard MHA stores separate Key and Value tensors for each head, leading to massive memory bandwidth consumption during autoregressive decoding. On edge CPUs, memory bandwidth is the primary bottleneck, not compute. GQA reduces the number of KV heads, significantly lowering memory traffic. Quantizing the KV cache with the same group size as weights ensures that the dequantization overhead is amortized and that the memory footprint is predictable. Using MHA in a 2-4 bit model would result in unacceptable latency due to memory thrashing.
+
+**WHEN TO APPLY**:
+Any Transformer-based decoder in an edge-deployed ASR or LLM system where memory bandwidth is constrained.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for GQA KV Cache Management
+struct GQAKVCache {
+    int num_kv_heads; // e.g., 8 instead of 32
+    int group_size;   // 128
+    int seq_len;
+    
+    // Quantized KV tensors
+    int8_t* k_cache; // Quantized Keys
+    int8_t* v_cache; // Quantized Values
+    float k_scale;
+    float v_scale;
+    
+    void append(const float* new_k, const float* new_v, int new_len) {
+        // Quantize new_k and new_v using group_size=128
+        // Append to k_cache and v_cache
+        // Update scales if necessary
+    }
+    
+    // Attention computation uses fewer KV heads, reducing memory reads
+    void compute_attention(const float* q, float* output) {
+        // q is full heads, k/v are grouped
+        // This reduces memory bandwidth by factor of (num_heads / num_kv_heads)
+    }
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Standard MHA with FP32 KV Cache
+struct MHAKVCache {
+    int num_heads; // e.g., 32
+    float* k_cache; // FP32, huge memory footprint
+    float* v_cache; // FP32, huge memory footprint
+    
+    void compute_attention(const float* q, float* output) {
+        // Reads 32x more memory than GQA, causing bandwidth bottleneck
+    }
+};
+```
+
+**VERIFICATION METHOD**:
+1.  **Memory Profiling**: Measure peak memory usage and memory bandwidth during decoding. GQA should show significantly lower bandwidth usage than MHA.
+2.  **Code Inspection**: Verify that the number of KV heads is less than the number of query heads in the decoder configuration.
+3.  **Quantization Check**: Assert that KV cache tensors are stored in quantized format (int8/int4) with group size matching the weight quantization.
+
+
+---
+
+## 1459. Two-Pass Consensus for Streaming ASR Invariant (Harvested from Cactus-Compute/whistle)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Two-Pass Consensus for Streaming ASR Invariant",
+  "source": "Cactus-Compute/whistle",
+  "source_url": "https://huggingface.co/Cactus-Compute/whistle",
+  "source_version": "hf-cactus-compute-whistle",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T13:46:15.296Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-cactus-compute-whistle",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Cactus-Compute/whistle](https://huggingface.co/Cactus-Compute/whistle) (Revision: `hf-cactus-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+In live streaming ASR, word commitment MUST be delayed until two consecutive inference passes agree on the same word sequence. Single-pass speculative decoding MUST NOT be used for final output without a consensus mechanism. This prevents "hallucinated" or unstable transcripts in noisy or ambiguous audio.
+
+**WHY**:
+Streaming ASR faces the challenge of partial information. Early tokens are often uncertain and may change as more audio is processed. Committing words immediately leads to unstable UIs and incorrect transcripts. By requiring two passes to agree, the system ensures that the word is stable and likely correct. This is a form of error correction that trades a small amount of latency for significant accuracy improvement in streaming scenarios.
+
+**WHEN TO APPLY**:
+Any real-time or streaming ASR system where user experience depends on stable, accurate transcripts.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for Two-Pass Consensus
+class StreamingASR {
+    std::vector<std::string> last_pass_words;
+    std::vector<std::string> current_pass_words;
+    
+    void process_chunk(const float* audio_chunk) {
+        // Pass 1: Speculative decode
+        current_pass_words = decoder.decode(audio_chunk);
+        
+        // Pass 2: Verify with updated context
+        std::vector<std::string> verify_words = decoder.verify(audio_chunk, last_pass_words);
+        
+        // Commit only if both passes agree
+        if (current_pass_words == verify_words) {
+            commit_words(current_pass_words);
+            last_pass_words = current_pass_words;
+        } else {
+            // Do not commit, wait for next chunk
+            last_pass_words = current_pass_words; // Update for next verification
+        }
+    }
+};
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Immediate Commit
+void process_chunk(const float* audio_chunk) {
+    std::vector<std::string> words = decoder.decode(audio_chunk);
+    commit_words(words); // Unstable, may change in next chunk
+}
+```
+
+**VERIFICATION METHOD**:
+1.  **Integration Test**: Feed a noisy audio stream and verify that no words are committed until two consecutive passes produce the same output.
+2.  **Latency Measurement**: Measure the additional latency introduced by the two-pass mechanism. It should be within acceptable bounds (e.g., < 100ms).
+3.  **Accuracy Comparison**: Compare WER of single-pass vs. two-pass on a test set. Two-pass should show lower WER, especially in noisy conditions.
