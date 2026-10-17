@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T12:40:29.012Z",
-  "total_cycles_completed": 2129,
-  "total_learnings_persisted": 2129,
+  "last_updated": "2026-10-17T12:43:38.249Z",
+  "total_cycles_completed": 2130,
+  "total_learnings_persisted": 2130,
   "total_rules_promoted": 1229,
   "history": [
-    {
-      "timestamp": "2026-10-17T01:28:23.920Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T01:31:19.450Z",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -1403,6 +1396,13 @@
       "repository": "mudler/locate-anything.cpp-gguf",
       "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:43:38.249Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
