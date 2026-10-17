@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T19:15:31.521Z",
+  "last_updated": "2026-10-17T19:18:29.081Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42155,7 +42155,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "ee6e0dae061cf8da326aeace3a8088898f4f614bc0b445d93bf3f38a38f68f5e",
+      "content_hash": "4c7dbbe3edbd0ae41b57c249c7e0be3c4c4dc59e1a5ea6abee2408c90d98a739",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
@@ -42185,7 +42185,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T11:21:33.612Z",
+      "verified_at": "2026-10-17T19:18:29.076Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
