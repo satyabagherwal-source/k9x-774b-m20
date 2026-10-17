@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-QFYT",
-    "timestamp": "2026-10-16T17:55:40.757Z",
-    "repository": "MiniMaxAI/MiniMax-H3",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3",
-    "contentHash": "d94786ae303b37f7649f9fc1e01fb57dd2669e834e3f61155f0e443290d6ed1c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-UM7T",
     "timestamp": "2026-10-16T17:58:55.481Z",
     "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -7492,6 +7477,21 @@
     "contentHash": "ccc35abc7ef6b778d7f18fe94ab53dbf4daea086451531041a4bf670f8f850e1",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-8JMN",
+    "timestamp": "2026-10-17T22:09:22.271Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-SFT",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-sft",
+    "contentHash": "6635a7accf735734ac1c846e25b74b0075b12e05c1758ddc0cafc837133cc740",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
