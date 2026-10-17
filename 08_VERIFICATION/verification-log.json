@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-MEYW",
-    "timestamp": "2026-10-16T17:52:32.840Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-    "contentHash": "33f43b75996d50a28c30a221c6fa93d739e33bcc99b8e61ebf1ce922e4d7b506",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-QFYT",
     "timestamp": "2026-10-16T17:55:40.757Z",
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -7492,6 +7477,21 @@
     "contentHash": "da4322f4df4939f811c7020fa499dfefbb0e5f645583a0566e76b6c5841a192b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-2WI9",
+    "timestamp": "2026-10-17T22:04:59.025Z",
+    "repository": "openbmb/MiniCPM-V-4.7-1B",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+    "contentHash": "ccc35abc7ef6b778d7f18fe94ab53dbf4daea086451531041a4bf670f8f850e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

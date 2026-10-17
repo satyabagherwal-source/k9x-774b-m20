@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T22:00:55.748Z",
-  "total_cycles_completed": 2296,
-  "total_learnings_persisted": 2296,
-  "total_rules_promoted": 1322,
+  "last_updated": "2026-10-17T22:04:59.032Z",
+  "total_cycles_completed": 2297,
+  "total_learnings_persisted": 2297,
+  "total_rules_promoted": 1325,
   "history": [
-    {
-      "timestamp": "2026-10-17T10:54:16.104Z",
-      "repository": "Qwen/Qwen3-4B",
-      "learningId": "learn-huggingface-qwen-qwen3-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T10:57:22.039Z",
       "repository": "FermionResearch/Phonon-2",
@@ -1403,6 +1396,13 @@
       "repository": "moonshotai/Kimi-K3",
       "learningId": "learn-huggingface-moonshotai-kimi-k3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T22:04:59.032Z",
+      "repository": "openbmb/MiniCPM-V-4.7-1B",
+      "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

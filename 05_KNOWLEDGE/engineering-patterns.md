@@ -106090,3 +106090,116 @@ def test_fused_scales_identical(gate_scale, up_scale):
 ```
 
 ---
+
+
+---
+
+## 1543. Consistent Numerical Precision Across Subsystems (Harvested from openbmb/MiniCPM-V-4.7-1B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Consistent Numerical Precision Across Subsystems",
+  "source": "openbmb/MiniCPM-V-4.7-1B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T22:04:58.853Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-1B](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+All numerical tensors that participate in cross‑modal fusion must share the same floating‑point precision; mixing `bfloat16` and `float32` in a single forward pass is forbidden.  
+
+**WHY**:  
+Mixed precision can silently truncate gradients or produce NaNs when the vision encoder outputs `float32` while the text decoder expects `bfloat16`. This leads to unstable training and inference failures that are hard to trace.  
+
+**WHEN TO APPLY**:  
+During model construction, when initializing `TextConfig.dtype` and `VisionConfig.dtype`, and when loading pre‑trained weights. Applies to all PyTorch modules that consume or produce tensors.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Ensure dtype consistency
+text_cfg = TextConfig(dtype=torch.bfloat16)
+vision_cfg = VisionConfig(dtype=torch.bfloat16)
+
+model = MiniCPMV4_7ForConditionalGeneration(text_cfg, vision_cfg)
+assert model.dtype == torch.bfloat16, "Model dtype must match config dtype"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Mixing dtypes
+model = MiniCPMV4_7ForConditionalGeneration(
+    TextConfig(dtype=torch.float32),
+    VisionConfig(dtype=torch.bfloat16)
+)
+```
+
+**VERIFICATION METHOD**:  
+Run a unit test that forwards a dummy image+text pair and asserts that all tensors in the forward graph have the same dtype. Use `torch.autograd.detect_anomaly()` to catch precision mismatches.
+
+---
+
+
+---
+
+## 1544. Enforce `use_cache=True` Only When Caching Is Supported (Harvested from openbmb/MiniCPM-V-4.7-1B)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Enforce `use_cache=True` Only When Caching Is Supported",
+  "source": "openbmb/MiniCPM-V-4.7-1B",
+  "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
+  "source_version": "hf-openbmb-minicpm-v-4.7-1b",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T22:04:58.923Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [openbmb/MiniCPM-V-4.7-1B](https://huggingface.co/openbmb/MiniCPM-V-4.7-1B) (Revision: `hf-openbmb`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:  
+`use_cache` must be set to `True` only if the model implements a fully functional past‑key‑value cache; otherwise it must be `False`.  
+
+**WHY**:  
+Enabling caching on a model that does not store past key/value pairs causes the inference engine to allocate large, unused buffers, leading to OOM errors and degraded latency.  
+
+**WHEN TO APPLY**:  
+During model initialization and when configuring the generation pipeline. Applies to all `GenerationConfig` objects.  
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+gen_cfg = GenerationConfig(use_cache=True)
+assert hasattr(model, "past_key_values") and model.past_key_values is not None, \
+    "use_cache=True requires past_key_values support"
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# BAD: Enabling cache on a model that does not support it
+gen_cfg = GenerationConfig(use_cache=True)
+model = MiniCPMV4_7ForConditionalGeneration(..., use_cache=False)
+```
+
+**VERIFICATION METHOD**:  
+Add a linter rule that flags any `GenerationConfig(use_cache=True)` where the target model class does not define `past_key_values`.  
+
+---

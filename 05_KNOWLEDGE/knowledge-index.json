@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T22:00:55.710Z",
+  "last_updated": "2026-10-17T22:04:59.002Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42676,7 +42676,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "a24d911a6d382c9d02f428ef1b83690c244e8474dfe69a88145238c143508f77",
+      "content_hash": "ccc35abc7ef6b778d7f18fe94ab53dbf4daea086451531041a4bf670f8f850e1",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [
@@ -42769,6 +42769,21 @@
           "number": 1464,
           "title": "Dtype and Cache Consistency",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1543,
+          "title": "Consistent Numerical Precision Across Subsystems",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1544,
+          "title": "Enforce `use_cache=True` Only When Caching Is Supported",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Tokenizer Special‑Token Integrity",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42776,7 +42791,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T14:15:15.575Z",
+      "verified_at": "2026-10-17T22:04:58.995Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
