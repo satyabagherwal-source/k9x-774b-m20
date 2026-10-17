@@ -49,3 +49,16 @@
 - Multilingual legal pages carry `noindex, follow` and are excluded from `sitemap-0.xml` to prevent quality dilution.
 - Re-indexing Wave 1 prioritized for top impression drivers via Google Search Console URL Inspection.
 
+## Incident 3: Verified Bulk SEO Recovery & Automated Regression Framework
+
+### 1. Architecture & Protocol
+- Master inventory of 598 unique URLs audited live against Cloudflare edge.
+- Automated classification across 10 deterministic categories:
+  - 212 `INTENTIONAL_NOINDEX_LEGAL` (53 languages × 4 legal pages)
+  - 175 `HEALTHY_INDEXABLE`
+  - 153 `CRAWLED_NOT_INDEXED_TOOL`
+  - 58 `EXPECTED_REDIRECT` (308 slash-less + 301 legacy redirects)
+  - 0 broken redirects, 0 loops, 0 404s, 0 5xx, 0 canonical conflicts.
+- Automated regression suite added to `package.json`: `npm run test:seo` (26 automated assertions testing templates, RTL, multi-scripts, sitemap integrity, and redirect rules).
+
+
