@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-4FJJ",
-    "timestamp": "2026-10-16T16:42:34.543Z",
-    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-    "contentHash": "e9c31236c6ec14fa2afac6984d7a2833c6abbf7d56b9c76de209c4842d6ed7c6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-BBAG",
     "timestamp": "2026-10-16T16:47:55.624Z",
     "repository": "google-bert/bert-base-uncased",
@@ -7490,6 +7475,21 @@
     "repository": "convaiinnovations/laya",
     "learningId": "learn-huggingface-convaiinnovations-laya",
     "contentHash": "72b110acb12679c63e4dfd989eaf56c00eba4be5c16b0b893c2c3ef7168ff9de",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-O7RB",
+    "timestamp": "2026-10-17T20:57:34.535Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "9909d14e61b425547030a89891b9fd4cac30563e2ecd72d75cf2037d7e65d7cb",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
