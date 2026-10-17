@@ -1955,3 +1955,4 @@
 | `CYCLE-20261017-WN70` | `2026-10-17T01:28:23.916Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`6cd2a661...`) |
 | `CYCLE-20261017-0EMW` | `2026-10-17T01:31:19.448Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`a1870e20...`) |
 | `CYCLE-20261017-4TOT` | `2026-10-17T01:34:45.581Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`4a865c82...`) |
+| `CYCLE-20261017-8V3K` | `2026-10-17T01:37:54.032Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`b9232604...`) |
