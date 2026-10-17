@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-V2P7",
-    "timestamp": "2026-10-16T19:23:15.691Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "ec9dd675dafa04ddf0d1011fb1ce189fcaf3dea90346547535711d579a80c158",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-1HPW",
     "timestamp": "2026-10-16T19:28:15.092Z",
     "repository": "pyannote/speaker-diarization-community-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "9d5ef725b30723cfd2374fc969a46c66e472f8217bba64bc35a553ef8008f4cd",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-GH01",
+    "timestamp": "2026-10-17T23:39:30.961Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "b7b0c5c0f1447101e28c1b66ed69c7aa62978e2d988e6a4118229ee05e7b54a5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
