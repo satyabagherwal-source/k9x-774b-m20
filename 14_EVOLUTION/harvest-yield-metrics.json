@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T11:27:51.810Z",
-  "total_cycles_completed": 2107,
-  "total_learnings_persisted": 2107,
+  "last_updated": "2026-10-17T11:31:00.585Z",
+  "total_cycles_completed": 2108,
+  "total_learnings_persisted": 2108,
   "total_rules_promoted": 1220,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:18:15.596Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:21:21.468Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T11:27:51.810Z",
       "repository": "pyannote/speaker-diarization-community-1",
       "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T11:31:00.585Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
