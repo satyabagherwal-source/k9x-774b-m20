@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:52:40.298Z",
-  "total_cycles_completed": 2329,
-  "total_learnings_persisted": 2329,
+  "last_updated": "2026-10-17T23:55:57.514Z",
+  "total_cycles_completed": 2330,
+  "total_learnings_persisted": 2330,
   "total_rules_promoted": 1351,
   "history": [
-    {
-      "timestamp": "2026-10-17T12:43:38.249Z",
-      "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T12:46:30.201Z",
       "repository": "jialinyyzz/humanizer",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T23:52:40.298Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:55:57.514Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
