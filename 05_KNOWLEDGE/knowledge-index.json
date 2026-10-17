@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:57:04.912Z",
+  "last_updated": "2026-10-17T08:01:12.884Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16620,7 +16620,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "df8667c65abc6d7c401480e8dcccc3298698cb58f1e192448746439b0bb95f9f",
+      "content_hash": "af081a93002f4567aef067297508187c05b7b5864f1462c26883b862b287b5a7",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [
@@ -16657,6 +16657,16 @@
           "number": 1275,
           "title": "Mixer-Embedding Dimension Decoupling Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1372,
+          "title": "PyTorch Checkpoint State-Dict Canonicalization & Deserialization Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1373,
+          "title": "Hierarchical Multi-Stage Feature Pyramid Contract Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16677,7 +16687,7 @@
         "learn-huggingface-hf-psrben-visionhope-mv47isqm",
         "learn-huggingface-hf-psrben-visionhope-mv4ksdgc"
       ],
-      "verified_at": "2026-10-17T00:15:25.423Z",
+      "verified_at": "2026-10-17T08:01:12.878Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

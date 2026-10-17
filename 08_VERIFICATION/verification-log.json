@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-O4XJ",
-    "timestamp": "2026-10-16T02:58:05.431Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "879fa72806ba0f81c8080c2c9500b6339f5e78723de172dafc857c0a8c0f8418",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-S3OP",
     "timestamp": "2026-10-16T03:01:10.441Z",
     "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -7490,6 +7475,21 @@
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "contentHash": "6fd6f62515f69afa4dcfeb3fb61682aca885d127b0a6399275006bb872316505",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-XT54",
+    "timestamp": "2026-10-17T08:01:12.904Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "af081a93002f4567aef067297508187c05b7b5864f1462c26883b862b287b5a7",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
     "barriers": {
