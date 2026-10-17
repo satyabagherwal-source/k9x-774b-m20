@@ -2026,3 +2026,4 @@
 | `CYCLE-20261017-2E4P` | `2026-10-17T05:16:49.033Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`77a0866e...`) |
 | `CYCLE-20261017-6FCZ` | `2026-10-17T05:19:57.251Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`4e5526ed...`) |
 | `CYCLE-20261017-AGJB` | `2026-10-17T05:23:05.399Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`fef8b8cd...`) |
+| `CYCLE-20261017-ESAI` | `2026-10-17T05:26:27.258Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1315, Rule 669, Rule 1251` | Yes (`a1b46647...`) |
