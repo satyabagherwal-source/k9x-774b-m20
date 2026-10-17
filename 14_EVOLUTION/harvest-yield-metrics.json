@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T22:33:08.650Z",
-  "total_cycles_completed": 2305,
-  "total_learnings_persisted": 2305,
+  "last_updated": "2026-10-17T22:36:10.203Z",
+  "total_cycles_completed": 2306,
+  "total_learnings_persisted": 2306,
   "total_rules_promoted": 1332,
   "history": [
-    {
-      "timestamp": "2026-10-17T11:24:50.166Z",
-      "repository": "black-forest-labs/flux-3-image-klein",
-      "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T11:27:51.810Z",
       "repository": "pyannote/speaker-diarization-community-1",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T22:33:08.650Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
       "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T22:36:10.203Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

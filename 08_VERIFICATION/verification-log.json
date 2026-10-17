@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-PWG1",
-    "timestamp": "2026-10-16T18:23:15.073Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "842bcf94a69d924efc2c0207516d7762ba358ebd24b0eb532896c8dc2469d8ba",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-TZ41",
     "timestamp": "2026-10-16T18:26:25.153Z",
     "repository": "bigscience/bloom",
@@ -7490,6 +7475,21 @@
     "repository": "Contrastive-LM/CLM-v0.1-8B",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
     "contentHash": "b4bf71e9522566d22f79e228f1bf0498b702f986cbabc23832fb93b62cf02909",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-70BD",
+    "timestamp": "2026-10-17T22:36:10.201Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "02b34fd9c1997874cf759bf7ce16f075ad503443421ff83a89c11e07edc0f010",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
