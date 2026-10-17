@@ -2042,3 +2042,4 @@
 | `CYCLE-20261017-VVTC` | `2026-10-17T06:07:44.592Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`66fad62e...`) |
 | `CYCLE-20261017-ZTZT` | `2026-10-17T06:10:48.857Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`131db1f0...`) |
 | `CYCLE-20261017-3QYX` | `2026-10-17T06:13:51.561Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`d03001b1...`) |
+| `CYCLE-20261017-7TXO` | `2026-10-17T06:17:02.028Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`e640a9fc...`) |

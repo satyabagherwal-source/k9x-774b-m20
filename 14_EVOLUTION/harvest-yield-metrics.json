@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T06:13:51.565Z",
-  "total_cycles_completed": 2019,
-  "total_learnings_persisted": 2019,
+  "last_updated": "2026-10-17T06:17:02.033Z",
+  "total_cycles_completed": 2020,
+  "total_learnings_persisted": 2020,
   "total_rules_promoted": 1102,
   "history": [
-    {
-      "timestamp": "2026-10-16T19:07:19.672Z",
-      "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T19:10:25.598Z",
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T06:13:51.565Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
       "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T06:17:02.033Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
