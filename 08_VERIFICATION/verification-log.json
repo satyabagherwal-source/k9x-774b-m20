@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0WD8",
-    "timestamp": "2026-10-16T14:47:51.260Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-    "contentHash": "49c078df766c0efe33e8574b1b0a1b6426353b468c1997b01407ee2ae9ddd87d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-550A",
     "timestamp": "2026-10-16T14:51:09.082Z",
     "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "NaiveAI/Naive-N0.5-Flash",
     "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
     "contentHash": "c96684ca598c74f940606bc374533fab0a0ed67ac00abd063f654acad7bb6835",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-WPC0",
+    "timestamp": "2026-10-17T19:12:12.096Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "174100e34bdd89fee779ee2be2825b0d855d518e916b0302ca276cfb69eaeda8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
