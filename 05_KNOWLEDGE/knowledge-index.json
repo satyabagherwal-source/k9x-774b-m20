@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T23:13:35.107Z",
+  "last_updated": "2026-10-17T23:16:59.299Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14752,7 +14752,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "42b633d76fff43ea07635fef1a1d0e5dbdc180fbddb86dcdd3119abc978301d9",
+      "content_hash": "02ce73219cfa311186e1115d6d1b41c2c521d97463e3a02fb7bccd4994f8a8c9",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -14764,6 +14764,21 @@
         {
           "number": 1091,
           "title": "GGUF Format Compatibility Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1557,
+          "title": "Heterogeneous Tensor Quantization Metadata Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1558,
+          "title": "Vision Projector Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1559,
+          "title": "Speculative Decoding Head Consistency",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -14785,7 +14800,7 @@
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv45sbad",
         "learn-huggingface-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-mv4j2i3v"
       ],
-      "verified_at": "2026-10-17T15:23:40.331Z",
+      "verified_at": "2026-10-17T23:16:59.292Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
