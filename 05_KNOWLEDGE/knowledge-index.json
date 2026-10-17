@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T07:44:41.705Z",
+  "last_updated": "2026-10-17T07:49:07.600Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9543,7 +9543,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "50651a0fc124b0efa84e9d962150f56086f6ab75e9bcb3950181cd39b26be10b",
+      "content_hash": "a68771b442bb49cf4565a2231c29b9f11a37b43c65a6d204ccab70b9c270895b",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [
@@ -9553,6 +9553,16 @@
           "status": "PROMOTED_AND_VERIFIED",
           "source_learning_id": "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv3sjx1h",
           "verified_at": "2026-10-11T12:20:19.633Z"
+        },
+        {
+          "number": 1366,
+          "title": "Model-Adapter Serialization Invariant for Heterogeneous Checkpoint Loading",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1367,
+          "title": "Multi-Conditioning Reference Positional Slot Determinism",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -9573,7 +9583,7 @@
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv476k43",
         "learn-huggingface-hf-alissonerdx-bfs-best-face-swap-mv4kgwuz"
       ],
-      "verified_at": "2026-10-17T00:04:25.814Z",
+      "verified_at": "2026-10-17T07:49:07.595Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
