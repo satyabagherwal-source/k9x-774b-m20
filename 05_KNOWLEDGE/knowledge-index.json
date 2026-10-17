@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T05:54:10.746Z",
+  "last_updated": "2026-10-17T05:58:20.033Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -17710,7 +17710,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
       "source_version": "hf-stabilityai-stable-diffusion-xl-base-1.0",
-      "content_hash": "f68275fa96910d4add2f3f9e85e9acc08002dcdfb0ef42a98cc9d0e65daf835f",
+      "content_hash": "71df867ddd956c76e68413e9523f667a95b3c5b16e55e6ad1d61fbdb96752c2c",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md",
       "promoted_rules": [
@@ -17743,6 +17743,21 @@
           "number": 1246,
           "title": "Safetensors Zero-Copy Loading Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1319,
+          "title": "Dual-Path Float16 VAE Numerical Overflow Prevention Barrier",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1320,
+          "title": "Dual-Text-Encoder Hidden State Concatenation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1321,
+          "title": "Absolute Micro-Conditioning Coordinate Invariant Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -17763,7 +17778,7 @@
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv446z5h",
         "learn-huggingface-hf-stabilityai-stable-diffusion-xl-base-1-0-mv4hg90r"
       ],
-      "verified_at": "2026-10-16T22:18:56.647Z",
+      "verified_at": "2026-10-17T05:58:20.028Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

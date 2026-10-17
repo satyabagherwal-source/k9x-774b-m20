@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-XCHZ",
-    "timestamp": "2026-10-16T01:13:16.679Z",
-    "repository": "vllm-sr/d3",
-    "learningId": "learn-huggingface-vllm-sr-d3",
-    "contentHash": "f6e76435cc9bf8b24147d6ed80ed956aed745c351b29d70275ce0165fb02ad17",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-101L",
     "timestamp": "2026-10-16T01:16:07.161Z",
     "repository": "openai/whisper-large-v3",
@@ -7492,6 +7477,21 @@
     "contentHash": "aea8425e477e0895fc2ab489499eb7233b0aacdab64a031254d6447309bcf019",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-JS7Z",
+    "timestamp": "2026-10-17T05:58:20.063Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "71df867ddd956c76e68413e9523f667a95b3c5b16e55e6ad1d61fbdb96752c2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
