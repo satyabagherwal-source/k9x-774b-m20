@@ -2141,3 +2141,4 @@
 | `CYCLE-20261017-CJ1R` | `2026-10-17T11:56:36.591Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`a4c12812...`) |
 | `CYCLE-20261017-GLZA` | `2026-10-17T11:59:47.014Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`94adc50f...`) |
 | `CYCLE-20261017-KPWH` | `2026-10-17T12:02:58.721Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1443, Rule 1444, Rule 1445` | Yes (`448c26b0...`) |
+| `CYCLE-20261017-OVJF` | `2026-10-17T12:06:12.651Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`9cbb1a51...`) |

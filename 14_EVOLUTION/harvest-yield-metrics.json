@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T12:02:58.728Z",
-  "total_cycles_completed": 2118,
-  "total_learnings_persisted": 2118,
+  "last_updated": "2026-10-17T12:06:12.654Z",
+  "total_cycles_completed": 2119,
+  "total_learnings_persisted": 2119,
   "total_rules_promoted": 1223,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:52:40.294Z",
-      "repository": "google-bert/bert-base-uncased",
-      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:55:42.889Z",
       "repository": "google/electra-base-discriminator",
@@ -1403,6 +1396,13 @@
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:06:12.654Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
