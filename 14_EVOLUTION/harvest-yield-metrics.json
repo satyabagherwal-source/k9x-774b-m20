@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T11:43:55.287Z",
-  "total_cycles_completed": 2112,
-  "total_learnings_persisted": 2112,
+  "last_updated": "2026-10-17T11:47:05.973Z",
+  "total_cycles_completed": 2113,
+  "total_learnings_persisted": 2113,
   "total_rules_promoted": 1220,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:34:06.601Z",
-      "repository": "canberkkkkkk/ema-lightning",
-      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:37:15.817Z",
       "repository": "google/embeddinggemma-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T11:43:55.287Z",
       "repository": "FacebookAI/xlm-roberta-base",
       "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T11:47:05.973Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

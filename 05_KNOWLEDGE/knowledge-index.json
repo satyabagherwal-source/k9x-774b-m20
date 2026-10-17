@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T11:43:55.245Z",
+  "last_updated": "2026-10-17T11:47:05.932Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16258,7 +16258,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai-community/gpt2",
       "source_version": "hf-openai-community-gpt2",
-      "content_hash": "4e2c047179871bf1d72a954d878f49bf9172d3da32b6a1e181203124fa16fdcf",
+      "content_hash": "6433f93bfe4c8ce3b3d6ac89e59a3230fa74bdac7f84faa2b0c8ef4a37df087d",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md",
       "promoted_rules": [
@@ -16309,7 +16309,7 @@
         "learn-huggingface-hf-openai-community-gpt2-mv3yuiaq",
         "learn-huggingface-hf-openai-community-gpt2-mv4dfghb"
       ],
-      "verified_at": "2026-10-17T03:39:07.441Z",
+      "verified_at": "2026-10-17T11:47:05.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

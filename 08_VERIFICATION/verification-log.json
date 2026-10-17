@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-PFGS",
-    "timestamp": "2026-10-16T06:43:02.668Z",
-    "repository": "TaichuAI/ZDTaichu5.0-9B",
-    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-    "contentHash": "76958cfbc99604ccc7b33bf74bfaecfe5fd6f4f3b1c6ca5226c5fd78b8973bb8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-TDMA",
     "timestamp": "2026-10-16T06:46:06.898Z",
     "repository": "Phocinae/Phocinae-Largha-150M-v1",
@@ -7490,6 +7475,21 @@
     "repository": "FacebookAI/xlm-roberta-base",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
     "contentHash": "1a82c4bb9fa2435d5a37c692bf7a374fb07e8ff37a33336f7c3ae97918505162",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-0AR5",
+    "timestamp": "2026-10-17T11:47:05.969Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "6433f93bfe4c8ce3b3d6ac89e59a3230fa74bdac7f84faa2b0c8ef4a37df087d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
