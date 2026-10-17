@@ -2330,3 +2330,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openmoss-team-moss-image-sft` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-SFT` | `hf-openmos` | Multi-dimensional audit evidence | 2026-10-17T22:09:22.276Z |
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-17T22:12:37.606Z |
 | `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-10-17T22:16:10.084Z |
+| `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-10-17T22:19:20.112Z |

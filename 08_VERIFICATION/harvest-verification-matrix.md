@@ -2323,3 +2323,4 @@
 | `CYCLE-20261017-8JMN` | `2026-10-17T22:09:22.271Z` | `OpenMOSS-Team/MOSS-Image-SFT` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1545, Rule 1546` | Yes (`6635a7ac...`) |
 | `CYCLE-20261017-CQCK` | `2026-10-17T22:12:37.604Z` | `autotrust/JEV-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`8e5b6de5...`) |
 | `CYCLE-20261017-HAAM` | `2026-10-17T22:16:10.078Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1162, Rule 1547` | Yes (`6bb11083...`) |
+| `CYCLE-20261017-LCX9` | `2026-10-17T22:19:20.109Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`299a7247...`) |
