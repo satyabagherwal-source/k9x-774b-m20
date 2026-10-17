@@ -4080,3 +4080,7 @@ https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf
 # --- Automatically Discovered by AI Scout Engine [2026-10-17T01:31:08.428Z] ---
 # [HUGGINGFACE-AI-MODELS] nvidia/Qwen3.8-Flash-Next-FP4-Local (2251 score) - Verified Hugging Face Model: nvidia/Qwen3.8-Flash-Next-FP4-Local (148 likes, 771
 https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local
+
+# --- Automatically Discovered by AI Scout Engine [2026-10-17T04:34:15.031Z] ---
+# [HUGGINGFACE-AI-MODELS] OpenMOSS-Team/MOSS-Image-Base (1593 score) - Verified Hugging Face Model: OpenMOSS-Team/MOSS-Image-Base (152 likes, 73 downlo
+https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base

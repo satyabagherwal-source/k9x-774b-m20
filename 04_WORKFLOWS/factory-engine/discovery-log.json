@@ -17911,5 +17911,17 @@
     "downloads": 771,
     "qualityScore": 2251,
     "discoveredAt": "2026-10-17T01:31:08.427Z"
+  },
+  {
+    "name": "OpenMOSS-Team/MOSS-Image-Base",
+    "fullName": "OpenMOSS-Team/MOSS-Image-Base",
+    "url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: OpenMOSS-Team/MOSS-Image-Base (152 likes, 73 downloads)",
+    "likes": 152,
+    "downloads": 73,
+    "qualityScore": 1593,
+    "discoveredAt": "2026-10-17T04:34:15.029Z"
   }
 ]

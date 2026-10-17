@@ -1668,5 +1668,15 @@
     "contentHash": "a1870e203f42256690695b906f05d97d66b0487ccfcd8abf8266fbdfaef5a425",
     "lastHarvestedAt": "2026-10-17T01:31:19.449Z",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local"
+  },
+  "hf-openmoss-team-moss-image-base": {
+    "repository": "OpenMOSS-Team/MOSS-Image-Base",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+    "sourceVersion": "hf-openmoss-team-moss-image-base",
+    "license": "Open-Source",
+    "contentHash": "0df2b3511814ae79d0fa9b512860fabac151f3b6db04b58de9b927251289c69c",
+    "lastHarvestedAt": "2026-10-17T04:34:25.742Z",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   }
 }

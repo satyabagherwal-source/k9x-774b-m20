@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T04:31:23.149Z",
-  "total_cycles_completed": 1987,
-  "total_learnings_persisted": 1987,
+  "last_updated": "2026-10-17T04:34:25.743Z",
+  "total_cycles_completed": 1988,
+  "total_learnings_persisted": 1988,
   "total_rules_promoted": 1083,
   "history": [
-    {
-      "timestamp": "2026-10-16T17:23:07.107Z",
-      "repository": "dapr/dapr",
-      "learningId": "learn-github-dapr-dapr",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T17:26:13.311Z",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -1403,6 +1396,13 @@
       "repository": "mudler/locate-anything.cpp-gguf",
       "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T04:34:25.743Z",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

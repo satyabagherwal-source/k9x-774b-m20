@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T04:31:23.122Z",
-  "total_verified_learnings": 192,
+  "last_updated": "2026-10-17T04:34:25.704Z",
+  "total_verified_learnings": 193,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -42338,6 +42338,33 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-17T01:31:19.421Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-huggingface-openmoss-team-moss-image-base": {
+      "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "OpenMOSS-Team/MOSS-Image-Base",
+      "repository": "OpenMOSS-Team/MOSS-Image-Base",
+      "slug": "hf-openmoss-team-moss-image-base",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
+      "source_version": "hf-openmoss-team-moss-image-base",
+      "content_hash": "0df2b3511814ae79d0fa9b512860fabac151f3b6db04b58de9b927251289c69c",
+      "dossier_path": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-17T04:34:25.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

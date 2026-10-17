@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-0EZ5",
-    "timestamp": "2026-10-15T23:51:41.009Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "ed89c39398faf0985749a312e0547f876c63d00382006daf7c60a30d6c71af79",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-4HDN",
     "timestamp": "2026-10-15T23:54:50.747Z",
     "repository": "PSRben/VisionHOPE",
@@ -7492,6 +7477,21 @@
     "contentHash": "d1ab310f015a57b6959749bfcaca648f059f8d7fde6726c4dc11250a7fa7b882",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-JVPN",
+    "timestamp": "2026-10-17T04:34:25.739Z",
+    "repository": "OpenMOSS-Team/MOSS-Image-Base",
+    "learningId": "learn-huggingface-openmoss-team-moss-image-base",
+    "contentHash": "0df2b3511814ae79d0fa9b512860fabac151f3b6db04b58de9b927251289c69c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
