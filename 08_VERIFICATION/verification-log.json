@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-RRI2",
-    "timestamp": "2026-10-16T13:44:45.818Z",
-    "repository": "SC117/Qwen3.8-Flash-Next-GSQ-RCO-abliterated-GGUF",
-    "learningId": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
-    "contentHash": "9f5f4084b0141e14f2dad8f109310582ca85a2d650a4def0acad957e05c95652",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-VLZZ",
     "timestamp": "2026-10-16T13:47:45.311Z",
     "repository": "deepseek-ai/DeepSeek-R1",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-openai-gpt-oss-120b",
     "contentHash": "d61f5ee941d301e239a7d72d08ff1056624f6cfacb90996d27e759cd6e54376d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-UK7P",
+    "timestamp": "2026-10-17T18:14:32.917Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "b1895be7ea46ce1f27134d3841001f63d1baf050e0b36dd9f7215d8bbd9a1642",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
