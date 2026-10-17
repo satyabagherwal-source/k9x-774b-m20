@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-1HS1",
-    "timestamp": "2026-10-16T14:20:19.393Z",
-    "repository": "nvidia/Nemotron-3-Diarization",
-    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-    "contentHash": "7e57abe2e3beb56c13b5b4c4f5e46696a36dd84f1ba2fc618a30d91a554e0f41",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-9XM6",
     "timestamp": "2026-10-16T14:26:53.166Z",
     "repository": "Lightricks/LTX-2.5",
@@ -7490,6 +7475,21 @@
     "repository": "Aleph-Alpha/Kolibri-1",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
     "contentHash": "b8e70af1f4381ce98055b6c7035219bb0891864140612f9806775272d03fcfea",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-4GJE",
+    "timestamp": "2026-10-17T18:50:14.330Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-speridlabs-iris-3b",
+    "contentHash": "376bc062d18a5d382cb091d75280cfe10a2d369c6e5f4af7c48db2935e88998f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

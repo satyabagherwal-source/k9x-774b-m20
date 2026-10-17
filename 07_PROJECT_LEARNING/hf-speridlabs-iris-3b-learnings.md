@@ -3,7 +3,7 @@
 > **Source Version**: `hf-speridlab`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T10:51:04.900Z  
+> **Timestamp**: 2026-10-17T18:50:14.238Z  
 > **Learning ID**: `learn-huggingface-speridlabs-iris-3b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/speridlabs/iris-3b](https://huggingface.co/speridlabs/iris-3b))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T10:51:04.136Z  
+> **Harvest Timestamp**: 2026-10-17T18:50:13.630Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1383 downloads | 303 likes
+- **Stars / Engagement**: 1383 downloads | 307 likes
 
 ---
 
