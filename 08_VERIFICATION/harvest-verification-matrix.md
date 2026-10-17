@@ -2225,3 +2225,4 @@
 | `CYCLE-20261017-K4SQ` | `2026-10-17T16:42:27.530Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1496, Rule 1497, Rule 1498` | Yes (`f47f68d8...`) |
 | `CYCLE-20261017-O8KY` | `2026-10-17T16:45:39.058Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1499, Rule 1500, Rule 1501` | Yes (`e56e1649...`) |
 | `CYCLE-20261017-S6RM` | `2026-10-17T16:48:43.330Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`511de427...`) |
+| `CYCLE-20261017-W80E` | `2026-10-17T16:51:51.566Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`c76fab4a...`) |
