@@ -1997,3 +1997,4 @@
 | `CYCLE-20261017-P6UF` | `2026-10-17T03:42:34.215Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`f6cf8cb7...`) |
 | `CYCLE-20261017-UDDZ` | `2026-10-17T03:46:35.975Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1305, Rule 1306, Rule 1307` | Yes (`7cf722ee...`) |
 | `CYCLE-20261017-Y8LJ` | `2026-10-17T03:49:36.391Z` | `ConwayResearch/Underdog-Saluki-27B-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-conwayresearch-underdog-saluki-27b-1.0-learnings.md` | Yes (`55448a4a...`) |
+| `CYCLE-20261017-27ZG` | `2026-10-17T03:52:42.220Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`9e8cfc6e...`) |
