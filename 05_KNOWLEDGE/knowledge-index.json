@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T23:33:11.253Z",
+  "last_updated": "2026-10-17T23:36:18.092Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -19462,7 +19462,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "8023d1e5217ad87f4a2fa74605b3c707f634fc3ff7957fcc750a5ad4572077e8",
+      "content_hash": "9d5ef725b30723cfd2374fc969a46c66e472f8217bba64bc35a553ef8008f4cd",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [
@@ -19590,6 +19590,21 @@
           "number": 1488,
           "title": "MRoPE Interleaved Coordinate Decomposition Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1563,
+          "title": "JSON Configuration Integrity Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1564,
+          "title": "Multimodal Tokenization Consistency Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1565,
+          "title": "Generation EOS Token List Rule",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -19610,7 +19625,7 @@
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv46fo61",
         "learn-huggingface-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-mv4jpnc5"
       ],
-      "verified_at": "2026-10-17T15:42:54.022Z",
+      "verified_at": "2026-10-17T23:36:18.089Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

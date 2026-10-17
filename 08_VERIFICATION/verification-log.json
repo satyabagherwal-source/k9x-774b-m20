@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-QUD0",
-    "timestamp": "2026-10-16T19:19:58.260Z",
-    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
-    "contentHash": "5e8b4e95136092fb32fcaea39dab603588415dd8028d2c120d33face1dfeb4d4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-V2P7",
     "timestamp": "2026-10-16T19:23:15.691Z",
     "repository": "black-forest-labs/flux-3-image-klein",
@@ -7492,6 +7477,21 @@
     "contentHash": "b732a8001d788bdb1abb2116268622f4a0252a51d8aada6a64f757b255659565",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-CC6Z",
+    "timestamp": "2026-10-17T23:36:18.107Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+    "contentHash": "9d5ef725b30723cfd2374fc969a46c66e472f8217bba64bc35a553ef8008f4cd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

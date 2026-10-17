@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:33:11.292Z",
-  "total_cycles_completed": 2323,
-  "total_learnings_persisted": 2323,
-  "total_rules_promoted": 1346,
+  "last_updated": "2026-10-17T23:36:18.110Z",
+  "total_cycles_completed": 2324,
+  "total_learnings_persisted": 2324,
+  "total_rules_promoted": 1349,
   "history": [
-    {
-      "timestamp": "2026-10-17T12:23:04.961Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T12:26:12.622Z",
       "repository": "Bingsu/adetailer",
@@ -1403,6 +1396,13 @@
       "repository": "akhilaaa3/Jev-Omni",
       "learningId": "learn-huggingface-akhilaaa3-jev-omni",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:36:18.110Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
