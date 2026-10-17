@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-H89M",
-    "timestamp": "2026-10-16T06:36:40.090Z",
-    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "5f8ced8c43a6ceabad573bd41387967e8d4960a725b391106c3fbdf933b3621f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-L3CI",
     "timestamp": "2026-10-16T06:39:40.338Z",
     "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -7490,6 +7475,21 @@
     "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
     "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
     "contentHash": "5d638285b171fff888d1ae4966a3ae1d9c9341be220d738e5afbf6b4ee30c092",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-S2HU",
+    "timestamp": "2026-10-17T11:40:42.018Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "d5a9118759a9492e3a5dce8d75edf39df9d4e52d8c330cc070b449aa46c20a5b",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
