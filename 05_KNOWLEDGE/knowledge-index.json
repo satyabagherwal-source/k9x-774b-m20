@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T12:26:12.583Z",
+  "last_updated": "2026-10-17T12:30:26.181Z",
   "total_verified_learnings": 195,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14902,7 +14902,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
       "source_version": "hf-lilylilith-qi_2.1_anyangle",
-      "content_hash": "99237c0cef9d26e3fdd1558fb3e90018def1c8adfd80fb708d6d981ce4a87934",
+      "content_hash": "7f1b6684820110dab44ac86f73a30501a34fbb453ad46433f491c2c29ba2b7d0",
       "dossier_path": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
       "promoted_rules": [
@@ -14946,6 +14946,16 @@
           "number": 1058,
           "title": "LoRA Strength and CFG Calibration for Structural Adherence",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1448,
+          "title": "Multi-Modal Token-to-Tensor Positional Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1449,
+          "title": "Camera Extrinsics Conditioning Decoupling Law",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14965,7 +14975,7 @@
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv40vjag",
         "learn-huggingface-hf-lilylilith-qi_2-1_anyangle-mv4eu8wg"
       ],
-      "verified_at": "2026-10-17T04:21:40.301Z",
+      "verified_at": "2026-10-17T12:30:26.174Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

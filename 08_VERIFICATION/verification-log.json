@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-LEAJ",
-    "timestamp": "2026-10-16T07:35:53.755Z",
-    "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
-    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
-    "contentHash": "bd86b49efa0a35f3bdbbad01b451e37f26b199835cc376576336131664580d79",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-PIT3",
     "timestamp": "2026-10-16T07:39:06.231Z",
     "repository": "PSRben/VisionHOPE",
@@ -7492,6 +7477,21 @@
     "contentHash": "8fa83d6627ff566592680802fa5571d1cd6e285ccbbb0004b403a32d0dded816",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-K13X",
+    "timestamp": "2026-10-17T12:30:26.205Z",
+    "repository": "lilylilith/QI_2.1_AnyAngle",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "7f1b6684820110dab44ac86f73a30501a34fbb453ad46433f491c2c29ba2b7d0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

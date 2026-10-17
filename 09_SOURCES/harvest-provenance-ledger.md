@@ -2150,3 +2150,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-10-17T12:19:55.256Z |
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-10-17T12:23:04.960Z |
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-10-17T12:26:12.621Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-10-17T12:30:26.211Z |
