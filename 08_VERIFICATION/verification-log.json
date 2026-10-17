@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-VE68",
-    "timestamp": "2026-10-16T11:27:37.088Z",
-    "repository": "black-forest-labs/flux-3-image-klein",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein",
-    "contentHash": "29b71d7fd1ce72c58fa9cdfdf5586ac7dc2bf5e5f733177a4c4b955a0016d7e5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-Z6N1",
     "timestamp": "2026-10-16T11:30:33.949Z",
     "repository": "pyannote/speaker-diarization-community-1",
@@ -7490,6 +7475,21 @@
     "repository": "unsloth/Qwen-Image-2.1-GGUF",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
     "contentHash": "ad3a38d13a390d7a56322ff1121709d5ea67be2b71a046bc3ac9a8a084e1a2b1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-ZF3G",
+    "timestamp": "2026-10-17T15:58:21.484Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "91ace2a97bb69323f462f0fd83f414cc01c2781293a5c85e01ad89c9b51cdac7",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

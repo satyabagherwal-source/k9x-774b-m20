@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T15:55:08.483Z",
-  "total_cycles_completed": 2185,
-  "total_learnings_persisted": 2185,
+  "last_updated": "2026-10-17T15:58:21.489Z",
+  "total_cycles_completed": 2186,
+  "total_learnings_persisted": 2186,
   "total_rules_promoted": 1269,
   "history": [
-    {
-      "timestamp": "2026-10-17T04:27:55.301Z",
-      "repository": "zai-org/GLM-5.3",
-      "learningId": "learn-huggingface-zai-org-glm-5-3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T04:31:23.149Z",
       "repository": "mudler/locate-anything.cpp-gguf",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T15:55:08.483Z",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T15:58:21.489Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

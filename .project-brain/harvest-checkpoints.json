@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T15:55:08.485Z",
+  "last_updated": "2026-10-17T15:58:21.490Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -678,14 +678,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "content_hash": "6668a7fabfd3c17c8cc27cbc6452f83b24e41b33c54eb0d43f011431da834fb0",
-      "verified_at": "2026-10-17T07:40:31.531Z",
+      "content_hash": "91ace2a97bb69323f462f0fd83f414cc01c2781293a5c85e01ad89c9b51cdac7",
+      "verified_at": "2026-10-17T15:58:21.490Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T07:40:31.531Z"
+      "last_updated": "2026-10-17T15:58:21.490Z"
     },
     "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF": {
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
