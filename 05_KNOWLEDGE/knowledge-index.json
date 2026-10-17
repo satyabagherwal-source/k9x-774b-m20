@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T15:29:52.354Z",
+  "last_updated": "2026-10-17T15:32:50.389Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16921,7 +16921,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1",
       "source_version": "hf-phocinae-phocinae-largha-150m-v1",
-      "content_hash": "59e4e8c02d1efd71f8f88f215229242f76af163cbcb268951d9a4ec4b4f58b70",
+      "content_hash": "08b197418d98fbcdc05c928860904b8d69717ea26611d2e3e32b0bcaf5461638",
       "dossier_path": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md",
       "promoted_rules": [
@@ -16953,6 +16953,21 @@
           "number": 1340,
           "title": "Tied-Embedding Head Invariant with Masked Decoupling",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1483,
+          "title": "Encoder-Only Deterministic Decision Boundary",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1484,
+          "title": "Hybrid Attention for Local-Global Context Efficiency",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1485,
+          "title": "Zero-Token Output for Guardrail Safety",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16971,7 +16986,7 @@
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv463krd",
         "learn-huggingface-hf-phocinae-phocinae-largha-150m-v1-mv4jeadc"
       ],
-      "verified_at": "2026-10-17T07:06:11.850Z",
+      "verified_at": "2026-10-17T15:32:50.386Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

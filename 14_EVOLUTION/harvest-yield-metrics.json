@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T15:29:52.385Z",
-  "total_cycles_completed": 2177,
-  "total_learnings_persisted": 2177,
-  "total_rules_promoted": 1263,
+  "last_updated": "2026-10-17T15:32:50.405Z",
+  "total_cycles_completed": 2178,
+  "total_learnings_persisted": 2178,
+  "total_rules_promoted": 1266,
   "history": [
-    {
-      "timestamp": "2026-10-17T04:02:18.225Z",
-      "repository": "Qwen/Qwen3-8B",
-      "learningId": "learn-huggingface-qwen-qwen3-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T04:05:33.970Z",
       "repository": "google/vit-base-patch16-224",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T15:29:52.385Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T15:32:50.405Z",
+      "repository": "Phocinae/Phocinae-Largha-150M-v1",
+      "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
