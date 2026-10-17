@@ -935,8 +935,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "b417ceb20a6886d0c6ee64af672b34c43ea187d3df03f83fe3ce643c72a242ef",
-    "lastHarvestedAt": "2026-10-17T10:21:30.668Z",
+    "contentHash": "f5a0ef139594e5c562a6e2b25bd0acf4caefeb14758598d3f61cd765d0179d5c",
+    "lastHarvestedAt": "2026-10-17T18:17:57.384Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium"
   },
   "hf-bigscience-bloom": {

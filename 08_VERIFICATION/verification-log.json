@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-VLZZ",
-    "timestamp": "2026-10-16T13:47:45.311Z",
-    "repository": "deepseek-ai/DeepSeek-R1",
-    "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-    "contentHash": "d5bb05e474aeed642f7f18bdfba60269dacdf4dc6fbbba48be5d6af09cfd1172",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ZN14",
     "timestamp": "2026-10-16T13:50:53.272Z",
     "repository": "moonshotai/Kimi-K3",
@@ -7490,6 +7475,21 @@
     "repository": "zai-org/GLM-5.2",
     "learningId": "learn-huggingface-zai-org-glm-5-2",
     "contentHash": "b1895be7ea46ce1f27134d3841001f63d1baf050e0b36dd9f7215d8bbd9a1642",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-YXZA",
+    "timestamp": "2026-10-17T18:17:57.382Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "f5a0ef139594e5c562a6e2b25bd0acf4caefeb14758598d3f61cd765d0179d5c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

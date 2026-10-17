@@ -2252,3 +2252,4 @@
 | `CYCLE-20261017-N2N3` | `2026-10-17T18:08:43.551Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1508, Rule 1509, Rule 1510` | Yes (`c6d37019...`) |
 | `CYCLE-20261017-QPJU` | `2026-10-17T18:11:33.210Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`d61f5ee9...`) |
 | `CYCLE-20261017-UK7P` | `2026-10-17T18:14:32.917Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`b1895be7...`) |
+| `CYCLE-20261017-YXZA` | `2026-10-17T18:17:57.382Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`f5a0ef13...`) |
