@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T05:58:20.067Z",
-  "total_cycles_completed": 2014,
-  "total_learnings_persisted": 2014,
-  "total_rules_promoted": 1096,
+  "last_updated": "2026-10-17T06:01:19.863Z",
+  "total_cycles_completed": 2015,
+  "total_learnings_persisted": 2015,
+  "total_rules_promoted": 1099,
   "history": [
-    {
-      "timestamp": "2026-10-16T18:51:35.180Z",
-      "repository": "speridlabs/iris-3b",
-      "learningId": "learn-huggingface-speridlabs-iris-3b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T18:54:50.424Z",
       "repository": "Qwen/Qwen3-4B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T05:58:20.067Z",
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
       "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T06:01:19.863Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

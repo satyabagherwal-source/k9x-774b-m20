@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-101L",
-    "timestamp": "2026-10-16T01:16:07.161Z",
-    "repository": "openai/whisper-large-v3",
-    "learningId": "learn-huggingface-openai-whisper-large-v3",
-    "contentHash": "8c9036ba8e1e2aeda6658d4b99ceb8542ad98c989be3fb2393b7f601cd5ef905",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4YNN",
     "timestamp": "2026-10-16T01:19:11.987Z",
     "repository": "black-forest-labs/FLUX.1-schnell",
@@ -7490,6 +7475,21 @@
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
     "contentHash": "71df867ddd956c76e68413e9523f667a95b3c5b16e55e6ad1d61fbdb96752c2c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-NMYC",
+    "timestamp": "2026-10-17T06:01:19.860Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "c63f67d2f2d3103c6b6709921fd9f6bbf02fb432edafd619690a30494d0ff0bd",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

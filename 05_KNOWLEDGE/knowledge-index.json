@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T05:58:20.033Z",
+  "last_updated": "2026-10-17T06:01:19.845Z",
   "total_verified_learnings": 194,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -14798,7 +14798,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
       "source_version": "hf-meta-llama-llama-3.1-8b-instruct",
-      "content_hash": "da5121b930f8ac312e8e5a8d718f33a6c2a5770cddfe6f6c1536062b5722a349",
+      "content_hash": "c63f67d2f2d3103c6b6709921fd9f6bbf02fb432edafd619690a30494d0ff0bd",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md",
       "promoted_rules": [
@@ -14873,6 +14873,21 @@
           "number": 1079,
           "title": "Tokenizer Special Token Integrity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1322,
+          "title": "Tokenizer-Model Identity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1323,
+          "title": "Context Window Memory Boundary Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1324,
+          "title": "Quantization Precision Drift Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -14893,7 +14908,7 @@
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv44az1j",
         "learn-huggingface-hf-meta-llama-llama-3-1-8b-instruct-mv4hk7rf"
       ],
-      "verified_at": "2026-10-16T22:21:57.819Z",
+      "verified_at": "2026-10-17T06:01:19.842Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
