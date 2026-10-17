@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-9XM6",
-    "timestamp": "2026-10-16T14:26:53.166Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "f099dbbbf923f4fbe6c16e7a7c50a9f8f4352758c7cd7e941f2e7ac4b4d601ff",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-GQ2J",
     "timestamp": "2026-10-16T14:32:09.979Z",
     "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -7490,6 +7475,21 @@
     "repository": "speridlabs/iris-3b",
     "learningId": "learn-huggingface-speridlabs-iris-3b",
     "contentHash": "376bc062d18a5d382cb091d75280cfe10a2d369c6e5f4af7c48db2935e88998f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-8K5U",
+    "timestamp": "2026-10-17T18:53:25.650Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "2c0b415a18ac2afffdd4e46ac6fb6919834bfbb601e00c0f2815e08f40e0a401",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
