@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-0MQS",
-    "timestamp": "2026-10-15T22:55:51.844Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "5175ff6387002eaa1a815059ff5207dc6237cb3ec3197add13f5430e406cba09",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-4GJ1",
     "timestamp": "2026-10-15T22:58:50.413Z",
     "repository": "Altworld/Hemmingway-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "f8178776b76b03d174b1910c51e47dc832e8c9f1e742752912efa0948d44d47b",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-H20H",
+    "timestamp": "2026-10-17T03:36:14.705Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "88c0e5cec2a3790f1ddc8840a63adc495f72006376a8ac55feaefd172177446b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
