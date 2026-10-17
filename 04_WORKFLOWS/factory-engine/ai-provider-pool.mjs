@@ -504,11 +504,28 @@ export async function executeWithGeminiPool(prompt, systemInstruction = '') {
 
         if (response.status === 429) {
           const errText = await response.text();
-          const isDailyQuota = /quota|RESOURCE_EXHAUSTED|free_tier_requests_per_day/i.test(errText);
-          const cooldownDuration = isDailyQuota ? 3600_000 : 65_000;
-          const reason = isDailyQuota ? 'Daily Quota Exhausted' : 'Rate Limit 15 RPM Burst';
+          let errJson = null;
+          try { errJson = JSON.parse(errText); } catch (e) {}
+
+          let retrySeconds = 65; // Default 1-minute 15 RPM burst cooldown
+          const isDaily = /GenerateRequestsPerDay|free_tier_requests_per_day|daily_limit/i.test(errText);
+
+          // Extract exact retryDelay if provided by Google API
+          const retryObj = errJson?.error?.details?.find(d => d['@type']?.includes('RetryInfo'));
+          if (retryObj?.retryDelay) {
+            const parsedSec = parseInt(retryObj.retryDelay, 10);
+            if (!isNaN(parsedSec) && parsedSec > 0) {
+              retrySeconds = Math.min(parsedSec + 5, 86400);
+            }
+          }
+
+          const cooldownDuration = retrySeconds * 1000;
+          const reason = isDaily 
+            ? `Daily Quota Exhausted (${Math.round(retrySeconds / 60)}m left)` 
+            : `Rate Limit 15 RPM Burst (${retrySeconds}s auto-recovery)`;
 
           tripKeyCircuitBreaker(apiKey, cooldownDuration, reason, 'Google Gemini');
+          console.warn(`⏳ [GEMINI 429] ${keyLabel}: ${reason}. Auto-cooling for ${Math.round(retrySeconds)}s, cascading to next slot...`);
           lastError = new Error(`Rate limit 429 on ${keyLabel} (${reason})`);
           break; // break model loop to try next key immediately
         }

@@ -47,7 +47,10 @@ async function testGeminiSlot(key, slotNum, model = 'gemini-3.8-flash') {
       const rawMsg = errJson?.error?.message || errText;
       let category = 'UPSTREAM_ERROR';
       if (res.status === 401) category = 'AUTH_INVALID';
-      else if (res.status === 429) category = 'QUOTA_EXHAUSTED';
+      else if (res.status === 429) {
+        const isDaily = /GenerateRequestsPerDay|free_tier_requests_per_day|daily_limit/i.test(rawMsg);
+        category = isDaily ? 'DAILY_QUOTA_EXHAUSTED' : 'RATE_LIMITED_65S';
+      }
       else if (res.status === 503) category = 'SERVICE_OVERLOADED';
 
       return {
@@ -153,9 +156,11 @@ export async function runCloudProviderHealthCheck() {
   console.log(`Discovered Credential Slots: ${keys.gemini.length} Gemini slot(s), ${keys.groq.length} Groq slot(s).\n`);
 
   for (let i = 0; i < keys.gemini.length; i++) {
+    if (i > 0) await new Promise((r) => setTimeout(r, 1000));
     const key = keys.gemini[i];
     let res = await testGeminiSlot(key, i + 1, 'gemini-3.8-flash');
     if (!res.inferenceSuccess && res.httpStatus !== 200 && res.category !== 'AUTH_INVALID') {
+      await new Promise((r) => setTimeout(r, 500));
       const fallbackRes = await testGeminiSlot(key, i + 1, 'gemini-flash-latest');
       if (fallbackRes.inferenceSuccess) res = fallbackRes;
     }
