@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T10:15:05.602Z",
+  "last_updated": "2026-10-17T10:18:21.381Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1202,14 +1202,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-2",
-      "content_hash": "29b14331ccea664611e78fbf2d26665b9af2d9a5203de3c90bc851ed37c8b2c6",
-      "verified_at": "2026-10-17T02:12:57.059Z",
+      "content_hash": "c6e7aa53c8eb0613a6f45c289dd9b600a36b69d6665a8ab03f5565b1be8a3c5b",
+      "verified_at": "2026-10-17T10:18:21.381Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T02:12:57.059Z"
+      "last_updated": "2026-10-17T10:18:21.381Z"
     },
     "stabilityai/stable-diffusion-3-medium": {
       "repository": "stabilityai/stable-diffusion-3-medium",
