@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T00:49:34.223Z",
-  "total_cycles_completed": 1918,
-  "total_learnings_persisted": 1918,
+  "last_updated": "2026-10-17T00:52:40.294Z",
+  "total_cycles_completed": 1919,
+  "total_learnings_persisted": 1919,
   "total_rules_promoted": 1052,
   "history": [
-    {
-      "timestamp": "2026-10-16T13:11:03.785Z",
-      "repository": "autotrust/JEV-35B-NVFP4",
-      "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T13:14:12.265Z",
       "repository": "BAAI/bge-small-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T00:49:34.223Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
       "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T00:52:40.294Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

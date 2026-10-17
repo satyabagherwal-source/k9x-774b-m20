@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T00:49:34.200Z",
+  "last_updated": "2026-10-17T00:52:40.256Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -13556,7 +13556,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "55a2c0a23cff0a1d46d6c8cdccd67f2eca355565963f191e6173cbabedbacfae",
+      "content_hash": "6ec1dda831bad6b90e72c598c652b79ebc545322d5f8a0141bd3379ca891ed1e",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [
@@ -13609,7 +13609,7 @@
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv48tc54",
         "learn-huggingface-hf-google-bert-bert-base-uncased-mv4m6lnc"
       ],
-      "verified_at": "2026-10-16T16:47:55.589Z",
+      "verified_at": "2026-10-17T00:52:40.249Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
