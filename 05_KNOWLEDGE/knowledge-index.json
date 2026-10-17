@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T00:31:00.140Z",
+  "last_updated": "2026-10-17T00:34:06.563Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11224,7 +11224,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/canberkkkkkk/ema-lightning",
       "source_version": "hf-canberkkkkkk-ema-lightning",
-      "content_hash": "5dfbb96a17e5db094c662e4289f2ad3c681fb2178e56e68aec70ba9bbbc55b17",
+      "content_hash": "4a03b551fe337f5eae46e90699c95294f32df40568d707121a9324a3a611de77",
       "dossier_path": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-canberkkkkkk-ema-lightning-learnings.md",
       "promoted_rules": [],
@@ -11246,7 +11246,7 @@
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv485u82",
         "learn-huggingface-hf-canberkkkkkk-ema-lightning-mv4lfa5g"
       ],
-      "verified_at": "2026-10-16T16:26:15.079Z",
+      "verified_at": "2026-10-17T00:34:06.556Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T00:31:00.176Z",
-  "total_cycles_completed": 1912,
-  "total_learnings_persisted": 1912,
+  "last_updated": "2026-10-17T00:34:06.601Z",
+  "total_cycles_completed": 1913,
+  "total_learnings_persisted": 1913,
   "total_rules_promoted": 1043,
   "history": [
-    {
-      "timestamp": "2026-10-16T12:52:08.911Z",
-      "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-convaiinnovations-laya",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T12:55:11.137Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T00:31:00.176Z",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
       "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T00:34:06.601Z",
+      "repository": "canberkkkkkk/ema-lightning",
+      "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
