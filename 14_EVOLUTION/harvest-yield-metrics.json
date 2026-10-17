@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T02:20:03.440Z",
-  "total_cycles_completed": 1946,
-  "total_learnings_persisted": 1946,
+  "last_updated": "2026-10-17T02:23:02.520Z",
+  "total_cycles_completed": 1947,
+  "total_learnings_persisted": 1947,
   "total_rules_promoted": 1065,
   "history": [
-    {
-      "timestamp": "2026-10-16T14:47:51.264Z",
-      "repository": "dealignai/DeepSeek-V4.1-Flash-UNCENSORED-FP8",
-      "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-uncensored-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T14:51:09.088Z",
       "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
@@ -1403,6 +1396,13 @@
       "repository": "bigscience/bloom",
       "learningId": "learn-huggingface-bigscience-bloom",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:23:02.520Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
