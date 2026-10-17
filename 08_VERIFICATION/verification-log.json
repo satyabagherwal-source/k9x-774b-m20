@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-ESMW",
-    "timestamp": "2026-10-16T11:42:42.296Z",
-    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
-    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
-    "contentHash": "b6397efffccc67cb3822d6cdcccdbf50142ecfc126d4aaa1510fa154df7209c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-IX92",
     "timestamp": "2026-10-16T11:45:54.902Z",
     "repository": "FacebookAI/xlm-roberta-base",
@@ -7490,6 +7475,21 @@
     "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "contentHash": "8c8157f798dac952004647269b2fc6ab98cdd00c5e15a49795d9793dc70cfd22",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-JLE0",
+    "timestamp": "2026-10-17T16:14:02.760Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "79c1a1801cfa28962cff8b3b4c57029e2d18deb1ac4703211b97cd7381ac6250",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
