@@ -3,7 +3,7 @@
 > **Source Version**: `hf-bigscienc`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-17T10:24:39.419Z  
+> **Timestamp**: 2026-10-17T18:21:01.916Z  
 > **Learning ID**: `learn-huggingface-bigscience-bloom`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/bigscience/bloom](https://huggingface.co/bigscience/bloom))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-17T10:24:38.597Z  
+> **Harvest Timestamp**: 2026-10-17T18:21:00.998Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

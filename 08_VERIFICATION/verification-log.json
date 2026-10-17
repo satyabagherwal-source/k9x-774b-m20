@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-ZN14",
-    "timestamp": "2026-10-16T13:50:53.272Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "90a7e44f18ffa3c7aef2b59d3895f387fee389a22285d291e097580dbb2c49c1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-3QF0",
     "timestamp": "2026-10-16T13:54:04.284Z",
     "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7490,6 +7475,21 @@
     "repository": "stabilityai/stable-diffusion-3-medium",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
     "contentHash": "f5a0ef139594e5c562a6e2b25bd0acf4caefeb14758598d3f61cd765d0179d5c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-2WF8",
+    "timestamp": "2026-10-17T18:21:01.988Z",
+    "repository": "bigscience/bloom",
+    "learningId": "learn-huggingface-bigscience-bloom",
+    "contentHash": "c179f49beb1d6023f16373dbf96db8c3bc8de4c7a2f039e0dbfcffdc463c23fc",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
