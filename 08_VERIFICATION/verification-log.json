@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-0K29",
-    "timestamp": "2026-10-15T21:03:49.905Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "2001face40dcf6e90111c0ce4ddf671cdc22f07cbd361946913b57911cdb832e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-4N36",
     "timestamp": "2026-10-15T21:07:00.450Z",
     "repository": "Edge0/Audio8-ASR-Infinite",
@@ -7490,6 +7475,21 @@
     "repository": "hexgrad/Kokoro-82M",
     "learningId": "learn-huggingface-hexgrad-kokoro-82m",
     "contentHash": "b923260485b89e70e17c00418fe2e8fd157eff644773ba274ed3bc93219f23e9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-CU4I",
+    "timestamp": "2026-10-17T01:40:59.394Z",
+    "repository": "vllm-sr/d3",
+    "learningId": "learn-huggingface-vllm-sr-d3",
+    "contentHash": "be32a8a5bfd277361fbc71d13223ddd9b2ce30abf6753a0fb1c716e63839e370",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
