@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-LPEC",
-    "timestamp": "2026-10-15T19:00:18.516Z",
-    "repository": "EverMind-AI/Raven",
-    "learningId": "learn-github-evermind-ai-raven",
-    "contentHash": "033a30262ca35f7966768bcf7f7f93db002c0a86649670df29022ce9154f43da",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-LV7K",
     "timestamp": "2026-10-15T19:00:26.048Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "24fe8bfa080788f73c2b4ebcc56a8bbcca54c519832f3cef4a26e4b854d445c4",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-WNSN",
+    "timestamp": "2026-10-17T00:04:25.847Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "50651a0fc124b0efa84e9d962150f56086f6ab75e9bcb3950181cd39b26be10b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
