@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T17:36:30.788Z",
-  "total_cycles_completed": 2217,
-  "total_learnings_persisted": 2217,
+  "last_updated": "2026-10-17T17:39:36.651Z",
+  "total_cycles_completed": 2218,
+  "total_learnings_persisted": 2218,
   "total_rules_promoted": 1284,
   "history": [
-    {
-      "timestamp": "2026-10-17T06:10:48.861Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T06:13:51.565Z",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T17:36:30.788Z",
       "repository": "microsoft/FrogNano-4B-2609",
       "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T17:39:36.651Z",
+      "repository": "hexgrad/Kokoro-82M",
+      "learningId": "learn-huggingface-hexgrad-kokoro-82m",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

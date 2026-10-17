@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-GF1Z",
-    "timestamp": "2026-10-16T13:07:56.855Z",
-    "repository": "black-forest-labs/flux-3-image-klein-comfy",
-    "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-    "contentHash": "f30f15cb8d3bece9e0c67ff697a9f4ad347c9ce52d102067d21ed8ac08f31d5f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-KFAD",
     "timestamp": "2026-10-16T13:11:03.781Z",
     "repository": "autotrust/JEV-35B-NVFP4",
@@ -7490,6 +7475,21 @@
     "repository": "microsoft/FrogNano-4B-2609",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
     "contentHash": "ea58ed1c31ec573fcd7d85a71f056371c45fde2f9e81d0c12836c293d4c80189",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-LMPZ",
+    "timestamp": "2026-10-17T17:39:36.647Z",
+    "repository": "hexgrad/Kokoro-82M",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "c00dae97f0eeb8c52e968c82fcce07990474a32f6c6b32807c98b17f7b6fbaa8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
