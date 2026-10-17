@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T12:36:47.937Z",
-  "total_cycles_completed": 2128,
-  "total_learnings_persisted": 2128,
-  "total_rules_promoted": 1227,
+  "last_updated": "2026-10-17T12:40:29.012Z",
+  "total_cycles_completed": 2129,
+  "total_learnings_persisted": 2129,
+  "total_rules_promoted": 1229,
   "history": [
-    {
-      "timestamp": "2026-10-17T01:25:22.102Z",
-      "repository": "CompVis/stable-diffusion-v1-4",
-      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T01:28:23.920Z",
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -1403,6 +1396,13 @@
       "repository": "zai-org/GLM-5.3",
       "learningId": "learn-huggingface-zai-org-glm-5-3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T12:40:29.012Z",
+      "repository": "mudler/locate-anything.cpp-gguf",
+      "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

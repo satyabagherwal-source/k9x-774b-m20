@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-4LKD",
-    "timestamp": "2026-10-16T07:50:49.645Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "33740bb9715dd7f6cb433980ec341c2dbdfa1a38f7947f7270afe32af2d8e740",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-KVJP",
     "timestamp": "2026-10-16T08:03:29.077Z",
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "ac8328c9f4b5686292965090abc749fd48d8b87507648f5e101cf605cd8c9cbd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-WY8C",
+    "timestamp": "2026-10-17T12:40:29.004Z",
+    "repository": "mudler/locate-anything.cpp-gguf",
+    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+    "contentHash": "1629d037fd493ade88f1b8a1a6454937a0c6da802a4b7290852300021dc4763a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

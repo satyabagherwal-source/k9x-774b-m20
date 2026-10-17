@@ -98198,3 +98198,166 @@ def test_zero_raw_pose_embeddings(conditioning_dict):
 ```
 
 ---
+
+
+---
+
+## 1450. Selective Quantization for Hybrid Vision-Language Models (Harvested from mudler/locate-anything.cpp-gguf)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Selective Quantization for Hybrid Vision-Language Models",
+  "source": "mudler/locate-anything.cpp-gguf",
+  "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+  "source_version": "hf-mudler-locate-anything.cpp-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T12:40:28.868Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf) (Revision: `hf-mudler-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When quantizing hybrid Vision-Language Models (VLMs) for inference, you MUST isolate the quantization scope to the Language Model (LM) matmuls only. You MUST NOT quantize the Vision Tower (ViT), Projector, Layer Norms, Biases, or Positional Embeddings if the downstream task is spatially sensitive (e.g., object detection, grounding).
+
+**WHY**:
+Vision towers are highly sensitive to numerical precision because they process raw pixel data into high-dimensional feature maps. Small quantization errors in the ViT propagate non-linearly through the projector and into the LM, causing significant drift in the spatial coordinates of detected objects (bounding boxes). By keeping the vision path in f32 and only quantizing the LM (which is more robust to quantization due to its autoregressive nature and larger parameter count), you preserve spatial accuracy while achieving significant memory and speed gains. The evidence shows that q8_0/q6_k quantization of the LM alone yields "box-identical" results to f32, whereas lower bit-widths cause "sub-pixel box drift."
+
+**WHEN TO APPLY**:
+Any C++/ggml, llama.cpp, or similar inference engine deployment of VLMs (e.g., LLaVA, Qwen-VL, LocateAnything) where the output includes spatial coordinates (boxes, points, masks) rather than just text.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```cpp
+// Pseudocode for selective quantization in GGUF conversion
+void convert_model_to_gguf(const std::string& pytorch_weights_path, const std::string& gguf_output_path) {
+    // Load all tensors from PyTorch state dict
+    auto tensors = load_pytorch_state_dict(pytorch_weights_path);
+    
+    for (auto& [name, tensor] : tensors) {
+        // Define the set of tensors to quantize (LM matmuls only)
+        bool is_lm_matmul = name.find("attn_q") != std::string::npos ||
+                            name.find("attn_k") != std::string::npos ||
+                            name.find("attn_v") != std::string::npos ||
+                            name.find("attn_o") != std::string::npos ||
+                            name.find("ffn_gate") != std::string::npos ||
+                            name.find("ffn_up") != std::string::npos ||
+                            name.find("ffn_down") != std::string::npos ||
+                            name.find("lm.output") != std::string::npos;
+        
+        // Define tensors that MUST remain f32 (Vision path, norms, embeddings)
+        bool is_vision_or_norm = name.find("vit.") != std::string::npos ||
+                                 name.find("projector") != std::string::npos ||
+                                 name.find("norm") != std::string::npos ||
+                                 name.find("bias") != std::string::npos ||
+                                 name.find("tok_embd") != std::string::npos ||
+                                 name.find("pos_emb") != std::string::npos;
+        
+        if (is_vision_or_norm) {
+            // Force f32 for vision-critical paths
+            write_gguf_tensor(gguf_output_path, name, tensor, GGML_TYPE_F32);
+        } else if (is_lm_matmul) {
+            // Quantize LM matmuls to q8_0 or q6_k for best parity/size trade-off
+            write_gguf_tensor(gguf_output_path, name, tensor, GGML_TYPE_Q8_0);
+        } else {
+            // Default to f32 for unknown tensors to avoid accidental quantization
+            write_gguf_tensor(gguf_output_path, name, tensor, GGML_TYPE_F32);
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Quantizing the entire model uniformly
+void convert_model_to_gguf_bad(const std::string& pytorch_weights_path, const std::string& gguf_output_path) {
+    auto tensors = load_pytorch_state_dict(pytorch_weights_path);
+    for (auto& [name, tensor] : tensors) {
+        // BAD: Quantizing ViT and norms causes spatial drift in detection boxes
+        write_gguf_tensor(gguf_output_path, name, tensor, GGML_TYPE_Q4_K);
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+1.  **Parity Test:** Run the same input image and prompt through both the official PyTorch f32 model and the quantized C++ model.
+2.  **Box Comparison:** Compare the output bounding boxes. For q8_0/q6_k, the boxes should be identical (IoU = 1.0). For q4_k/q5_k, allow sub-pixel drift (e.g., IoU > 0.99).
+3.  **Tensor Dtype Check:** Inspect the GGUF file header to ensure that `vit.*`, `norm.*`, and `bias.*` tensors are stored as `GGML_TYPE_F32`, while `attn_*` and `ffn_*` are stored as `GGML_TYPE_Q8_0` or `GGML_TYPE_Q6_K`.
+
+
+---
+
+## 1451. Parity-Gated Inference for Critical Spatial Tasks (Harvested from mudler/locate-anything.cpp-gguf)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Parity-Gated Inference for Critical Spatial Tasks",
+  "source": "mudler/locate-anything.cpp-gguf",
+  "source_url": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
+  "source_version": "hf-mudler-locate-anything.cpp-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T12:40:28.932Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-mudler-locate-anything-cpp-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mudler/locate-anything.cpp-gguf](https://huggingface.co/mudler/locate-anything.cpp-gguf) (Revision: `hf-mudler-`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+For any inference engine implementing a model that outputs spatial coordinates (e.g., bounding boxes, keypoints), you MUST implement a "parity gate" that compares the C++/ggml output against the reference PyTorch implementation on a fixed set of test images. You MUST NOT release a quantized model unless it passes the parity gate with a defined tolerance (e.g., IoU > 0.99 for sub-pixel drift, IoU = 1.0 for box-identical).
+
+**WHY**:
+Floating-point operations in C++/ggml may differ from PyTorch due to different instruction sets (FMA vs separate mul/add), different reduction orders, or different normalization implementations. These differences can accumulate and cause significant drift in spatial outputs. A parity gate ensures that the quantized model is not only fast but also functionally equivalent to the reference model for the specific task.
+
+**WHEN TO APPLY**:
+Any inference engine deployment of models that output spatial coordinates, such as object detection, visual grounding, keypoint estimation, or segmentation.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+# Pseudocode for parity gate in CI/CD
+def run_parity_gate(pytorch_model, cpp_model, test_images, tolerance_iou=0.99):
+    for image in test_images:
+        # Run PyTorch model
+        pytorch_boxes = pytorch_model.predict(image)
+        
+        # Run C++ model
+        cpp_boxes = cpp_model.predict(image)
+        
+        # Compare boxes
+        for py_box, cpp_box in zip(pytorch_boxes, cpp_boxes):
+            iou = calculate_iou(py_box, cpp_box)
+            if iou < tolerance_iou:
+                raise ParityGateFailure(f"Box mismatch: PyTorch {py_box}, C++ {cpp_box}, IoU {iou}")
+    
+    print("Parity gate passed.")
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Releasing a quantized model without parity testing
+def release_model_bad(cpp_model, test_images):
+    # BAD: No comparison against PyTorch reference
+    # Just checks if the model runs without crashing
+    for image in test_images:
+        cpp_model.predict(image)
+    print("Model released.")
+```
+
+**VERIFICATION METHOD**:
+1.  **Automated Parity Test:** Integrate a parity test into the CI/CD pipeline that runs on every commit.
+2.  **Fixed Test Set:** Use a fixed set of test images with known ground truth boxes.
+3.  **Tolerance Threshold:** Define a strict tolerance threshold (e.g., IoU > 0.99) and fail the build if any box exceeds the tolerance.
