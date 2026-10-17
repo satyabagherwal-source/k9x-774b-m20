@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-N9MS",
-    "timestamp": "2026-10-16T10:25:18.724Z",
-    "repository": "stabilityai/stable-diffusion-3-medium",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-    "contentHash": "fc47493c9cd8f7f0a7cfe1e92173c6feb4eb44cd4de6514b5d791a7702c3698e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-R9IR",
     "timestamp": "2026-10-16T10:28:25.203Z",
     "repository": "bigscience/bloom",
@@ -7490,6 +7475,21 @@
     "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
     "contentHash": "c278feb40dcbb7ebeb128bc2af4ecf2f9c803e5e7fb32e824b6cc57fafd62e6d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-TXJ9",
+    "timestamp": "2026-10-17T14:58:06.213Z",
+    "repository": "Qwen/Qwen-Image-2.1-Turbo",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
+    "contentHash": "3b2ab3c4341f885624d248f0b5d6aa98ed52a73c418cd008df32fb2678069304",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

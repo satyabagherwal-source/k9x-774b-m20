@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T14:54:54.670Z",
-  "total_cycles_completed": 2166,
-  "total_learnings_persisted": 2166,
+  "last_updated": "2026-10-17T14:58:06.217Z",
+  "total_cycles_completed": 2167,
+  "total_learnings_persisted": 2167,
   "total_rules_promoted": 1254,
   "history": [
-    {
-      "timestamp": "2026-10-17T03:26:49.585Z",
-      "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T03:29:56.510Z",
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T14:54:54.670Z",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T14:58:06.217Z",
+      "repository": "Qwen/Qwen-Image-2.1-Turbo",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
