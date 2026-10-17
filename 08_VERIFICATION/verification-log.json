@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-9L7H",
-    "timestamp": "2026-10-16T08:22:42.077Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "d69221bd2fa02647a28e21744903911e63f3512e0403ccf32beb63ad63575079",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-E1CQ",
     "timestamp": "2026-10-16T08:26:09.626Z",
     "repository": "Cloudflare/clef",
@@ -7492,6 +7477,21 @@
     "contentHash": "76c97f07f4549c137526f388848405d476185d820c5fd6bf8e4c73c1a9da7dd0",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-6N21",
+    "timestamp": "2026-10-17T13:16:00.697Z",
+    "repository": "Edge0/Audio8-ASR-Infinite",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "c20ec459496264cf915025c2578db63ff5d8bc7753c039e91e46f3271ae17242",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
