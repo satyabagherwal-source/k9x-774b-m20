@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-SBF8",
-    "timestamp": "2026-10-15T23:17:23.540Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "9da5d899b2d0f4631ae938e4613843753fb577d14725fb16071d585c59ec8cab",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-W2KY",
     "timestamp": "2026-10-15T23:20:18.706Z",
     "repository": "akhilaaa3/Jev-Omni",
@@ -7492,6 +7477,21 @@
     "contentHash": "f0eb460c34dcc5b92124718788810abf0a237303efb9756fc8fc43c7c2609164",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-AWDG",
+    "timestamp": "2026-10-17T03:59:27.076Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "4a4764b0bfef7e03fb31c0e44caaf82ef03b3dc86e06650a633b226d1a9f919d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

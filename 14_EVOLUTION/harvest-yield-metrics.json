@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T03:55:57.121Z",
-  "total_cycles_completed": 1976,
-  "total_learnings_persisted": 1976,
-  "total_rules_promoted": 1076,
+  "last_updated": "2026-10-17T03:59:27.082Z",
+  "total_cycles_completed": 1977,
+  "total_learnings_persisted": 1977,
+  "total_rules_promoted": 1078,
   "history": [
-    {
-      "timestamp": "2026-10-16T16:36:23.778Z",
-      "repository": "Cloudflare/clef",
-      "learningId": "learn-huggingface-cloudflare-clef",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T16:39:30.497Z",
       "repository": "Cloudflare/clef-flash",
@@ -1403,6 +1396,13 @@
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T03:59:27.082Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

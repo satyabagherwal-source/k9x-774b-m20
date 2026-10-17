@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T03:55:57.079Z",
+  "last_updated": "2026-10-17T03:59:27.054Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -9910,7 +9910,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "2b1fcc5812f0f8ad71cbfa3d45cac99f11cdf2506692fd0265182420adfa7036",
+      "content_hash": "4a4764b0bfef7e03fb31c0e44caaf82ef03b3dc86e06650a633b226d1a9f919d",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [
@@ -9922,6 +9922,16 @@
         {
           "number": 966,
           "title": "Immutable Model Versioning Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1308,
+          "title": "Hardware-Agnostic Model Routing via Explicit Identifier Allow-Lists",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1309,
+          "title": "Model Variant Size Explicitness in Naming Conventions",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -9942,7 +9952,7 @@
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv404ar8",
         "learn-huggingface-hf-argmaxinc-whisperkit-coreml-mv4e2t25"
       ],
-      "verified_at": "2026-10-16T20:12:39.257Z",
+      "verified_at": "2026-10-17T03:59:27.048Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

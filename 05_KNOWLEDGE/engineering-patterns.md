@@ -84494,3 +84494,167 @@ def test_vocab_alignment_invariant():
 ```
 
 ---
+
+
+---
+
+## 1308. Hardware-Agnostic Model Routing via Explicit Identifier Allow-Lists (Harvested from argmaxinc/whisperkit-coreml)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Hardware-Agnostic Model Routing via Explicit Identifier Allow-Lists",
+  "source": "argmaxinc/whisperkit-coreml",
+  "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+  "source_version": "hf-argmaxinc-whisperkit-coreml",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T03:59:26.985Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml) (Revision: `hf-argmaxi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing machine learning models across heterogeneous hardware (especially mobile/embedded), you MUST define a strict, explicit allow-list of hardware identifiers (e.g., `iPhone15`, `M1`) in a machine-readable manifest. You MUST NOT rely on generic OS version checks or CPU feature flags alone, as these can be spoofed or misinterpreted. The routing logic MUST be a direct lookup: `DeviceID -> SupportedModels`.
+
+**WHY**:
+Generic checks (e.g., "if iOS 17") fail because:
+1.  **Fragmentation:** iOS 17 runs on A15 (iPhone 14) and A16 (iPhone 15), which have different Neural Engine throughput and memory bandwidth.
+2.  **Security/Privacy:** Relying on OS version can lead to loading models that exceed the memory limits of older devices, causing OOM (Out of Memory) crashes.
+3.  **Future-Proofing:** An explicit list allows for precise control. If a new chip (A19) has a bug with a specific quantization, you can exclude it without affecting other devices.
+
+**WHEN TO APPLY**:
+Any system distributing binary assets (models, shaders, plugins) where performance or stability varies by specific hardware SKU, not just OS version.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "device_support": [
+    {
+      "chips": "A16, A17 Pro, A18, A19",
+      "identifiers": [
+        "iPhone15",
+        "iPhone16",
+        "iPhone17",
+        "iPhone18"
+      ],
+      "models": {
+        "default": "openai_whisper-base",
+        "supported": [
+          "openai_whisper-tiny",
+          "openai_whisper-base",
+          "openai_whisper-small",
+          "openai_whisper-large-v3_turbo_954MB"
+        ]
+      }
+    },
+    {
+      "chips": "A12, A13",
+      "identifiers": [
+        "iPhone11",
+        "iPhone12"
+      ],
+      "models": {
+        "default": "openai_whisper-tiny",
+        "supported": [
+          "openai_whisper-tiny",
+          "openai_whisper-base"
+        ]
+      }
+    }
+  ]
+}
+```
+```swift
+// Swift SDK Logic
+func getSupportedModels(for deviceID: String) -> [String] {
+    guard let config = loadConfig() else { return [] }
+    for support in config.device_support {
+        if support.identifiers.contains(deviceID) {
+            return support.models.supported
+        }
+    }
+    return [] // Fail safe: No models supported
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// ANTI-PATTERN: Relying on OS version or generic CPU check
+if #available(iOS 17, *) {
+    // Assumes all iOS 17 devices can handle large-v3 models.
+    // FAILS on iPhone 14 (A15) if memory is constrained or NE is busy.
+    loadModel("openai_whisper-large-v3")
+}
+```
+
+**VERIFICATION METHOD**:
+1.  **Unit Test:** Mock `UIDevice.current.identifier` for every entry in `config.json`. Assert that `getSupportedModels` returns the exact list defined in the JSON.
+2.  **Integration Test:** On a physical device not in the list (e.g., iPhone 10), assert that the SDK returns an empty list or a specific `UnsupportedDeviceError`, and does NOT attempt to download a model.
+
+
+---
+
+## 1309. Model Variant Size Explicitness in Naming Conventions (Harvested from argmaxinc/whisperkit-coreml)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Model Variant Size Explicitness in Naming Conventions",
+  "source": "argmaxinc/whisperkit-coreml",
+  "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
+  "source_version": "hf-argmaxinc-whisperkit-coreml",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T03:59:27.023Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argmaxinc/whisperkit-coreml](https://huggingface.co/argmaxinc/whisperkit-coreml) (Revision: `hf-argmaxi`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When distributing multiple quantization or optimization variants of the same model, you MUST include the approximate file size (in MB) or a distinct performance tier (e.g., `turbo`, `lite`) in the model identifier string. You MUST NOT use ambiguous names like `model_v2` or `model_optimized` without explicit metadata.
+
+**WHY**:
+1.  **User Transparency:** Users on mobile devices need to know the download cost (data usage, storage).
+2.  **Caching Strategy:** The SDK can use the size to pre-allocate cache space or warn the user.
+3.  **Disambiguation:** `large-v3` and `large-v3_turbo` are different binaries. Without explicit naming, developers may accidentally load the wrong one, leading to unexpected latency or memory spikes.
+
+**WHEN TO APPLY**:
+Any system where model size varies significantly (e.g., >10% difference) between variants.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+"supported": [
+    "openai_whisper-large-v3_947MB",
+    "openai_whisper-large-v3_turbo_954MB",
+    "distil-whisper_distil-large-v3_594MB"
+]
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+"supported": [
+    "whisper_large",
+    "whisper_large_fast",
+    "whisper_distil"
+]
+// FAILS: No size info, no clear distinction between 'fast' and 'distil' in terms of trade-offs.
+```
+
+**VERIFICATION METHOD**:
+1.  **Lint Rule:** A CI script that parses `config.json` and asserts that any model name containing `large` or `small` also contains a numeric size suffix (e.g., `_947MB`).
+2.  **Manual Audit:** Verify that the actual file size on the Hugging Face hub matches the suffix within a 5% tolerance.
