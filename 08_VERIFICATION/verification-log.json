@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-YGHU",
-    "timestamp": "2026-10-15T19:38:13.122Z",
-    "repository": "BAAI/bge-reranker-v2-m3",
-    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
-    "contentHash": "f5e06d3b675aa58fd80e6ac5014b1a3bd95acbbe0b199f77e02f6c623667c56e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-2QIJ",
     "timestamp": "2026-10-15T19:41:32.731Z",
     "repository": "LiquidAI/LFM2.5-24B-A2B",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
     "contentHash": "78fce0c9e24464ee1ec3660d554a69d68f915fa5eb22eb3a97edbd061f2a288c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-IFG8",
+    "timestamp": "2026-10-17T00:21:21.464Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "04b0637782672b887ef04db6b6f2d8a87b2911718f6f35e91447ef3323cc4d04",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
