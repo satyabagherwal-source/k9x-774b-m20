@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T05:19:57.254Z",
-  "total_cycles_completed": 2002,
-  "total_learnings_persisted": 2002,
+  "last_updated": "2026-10-17T05:23:05.403Z",
+  "total_cycles_completed": 2003,
+  "total_learnings_persisted": 2003,
   "total_rules_promoted": 1087,
   "history": [
-    {
-      "timestamp": "2026-10-16T18:13:27.996Z",
-      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T18:16:30.318Z",
       "repository": "openai/gpt-oss-120b",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T05:19:57.254Z",
       "repository": "Cactus-Compute/whistle",
       "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T05:23:05.403Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
