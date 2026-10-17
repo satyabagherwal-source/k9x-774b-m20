@@ -2089,3 +2089,4 @@
 | `CYCLE-20261017-6PRV` | `2026-10-17T09:04:07.675Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1405, Rule 1406` | Yes (`ab6b4865...`) |
 | `CYCLE-20261017-C4KZ` | `2026-10-17T09:08:20.148Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1407, Rule 1408` | Yes (`ba803771...`) |
 | `CYCLE-20261017-G1GS` | `2026-10-17T09:11:22.732Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1409, Rule 1410` | Yes (`1e6fba5b...`) |
+| `CYCLE-20261017-JLM3` | `2026-10-17T09:14:08.811Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`e2cddc26...`) |

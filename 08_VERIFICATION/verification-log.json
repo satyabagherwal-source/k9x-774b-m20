@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-SJC9",
-    "timestamp": "2026-10-16T03:57:29.961Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "57c8eb01c5ce028b91713bc2f9587cd70a1dc2eaba9d4ea3900ccfd340cc02ac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-W991",
     "timestamp": "2026-10-16T04:00:23.509Z",
     "repository": "jialinyyzz/humanizer",
@@ -7492,6 +7477,21 @@
     "contentHash": "1e6fba5bb1a72e17f94821e964c3cfb0e8451c5f3311d9b3a3e9cd5d2e1e3ce5",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-JLM3",
+    "timestamp": "2026-10-17T09:14:08.811Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "e2cddc26fe511c82a86f9b470691734667937de534b249b421b7b0136be3adc9",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
