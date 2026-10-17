@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T18:40:29.974Z",
-  "total_cycles_completed": 2237,
-  "total_learnings_persisted": 2237,
+  "last_updated": "2026-10-17T18:43:37.762Z",
+  "total_cycles_completed": 2238,
+  "total_learnings_persisted": 2238,
   "total_rules_promoted": 1291,
   "history": [
-    {
-      "timestamp": "2026-10-17T07:19:14.698Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T07:23:21.069Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T18:40:29.974Z",
       "repository": "deepseek-ai/DeepSeek-V3",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T18:43:37.762Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
