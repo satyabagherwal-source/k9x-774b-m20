@@ -17935,5 +17935,17 @@
     "downloads": 54,
     "qualityScore": 1634,
     "discoveredAt": "2026-10-17T05:50:52.235Z"
+  },
+  {
+    "name": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "fullName": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: deepseek-ai/DeepSeek-V4.1-Flash-1017 (174 likes, 0 downloads)",
+    "likes": 174,
+    "downloads": 0,
+    "qualityScore": 1740,
+    "discoveredAt": "2026-10-17T08:59:31.639Z"
   }
 ]

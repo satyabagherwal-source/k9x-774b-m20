@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-CEMQ",
-    "timestamp": "2026-10-16T03:44:57.362Z",
-    "repository": "Bingsu/adetailer",
-    "learningId": "learn-huggingface-bingsu-adetailer",
-    "contentHash": "7b81ce6cef07d3da3ffd24ea63c41337971f380ec0fa7d08411a789d37ecf434",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-GBYF",
     "timestamp": "2026-10-16T03:48:00.519Z",
     "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -7492,6 +7477,21 @@
     "contentHash": "d656323f1ff3e2cfbd4f29c98b5d3c5cb0790b3259868a790e5d4a96e50829ab",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-118M",
+    "timestamp": "2026-10-17T08:59:42.598Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash-1017",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017",
+    "contentHash": "1c204be936459b3e380f82e70395c6743533c41e206fc5876b702cb7ffc87bfa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
