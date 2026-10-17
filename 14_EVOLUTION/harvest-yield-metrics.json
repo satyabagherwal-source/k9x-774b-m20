@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T11:56:36.595Z",
-  "total_cycles_completed": 2116,
-  "total_learnings_persisted": 2116,
+  "last_updated": "2026-10-17T11:59:47.018Z",
+  "total_cycles_completed": 2117,
+  "total_learnings_persisted": 2117,
   "total_rules_promoted": 1220,
   "history": [
-    {
-      "timestamp": "2026-10-17T00:46:47.315Z",
-      "repository": "Cloudflare/clef-flash",
-      "learningId": "learn-huggingface-cloudflare-clef-flash",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T00:49:34.223Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T11:56:36.595Z",
       "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
       "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T11:59:47.018Z",
+      "repository": "google/gemma-4-26B-A4B-it",
+      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
