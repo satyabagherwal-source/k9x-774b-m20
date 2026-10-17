@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T06:55:16.254Z",
-  "total_cycles_completed": 2032,
-  "total_learnings_persisted": 2032,
+  "last_updated": "2026-10-17T06:58:22.038Z",
+  "total_cycles_completed": 2033,
+  "total_learnings_persisted": 2033,
   "total_rules_promoted": 1111,
   "history": [
-    {
-      "timestamp": "2026-10-16T19:57:07.341Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T20:00:17.860Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T06:55:16.254Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T06:58:22.038Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

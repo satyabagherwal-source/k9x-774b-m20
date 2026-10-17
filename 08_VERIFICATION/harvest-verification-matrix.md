@@ -2055,3 +2055,4 @@
 | `CYCLE-20261017-CPEI` | `2026-10-17T06:48:49.050Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1333, Rule EXISTING, Rule 1334` | Yes (`4c6178a2...`) |
 | `CYCLE-20261017-GQHE` | `2026-10-17T06:51:57.074Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`d5495362...`) |
 | `CYCLE-20261017-L061` | `2026-10-17T06:55:16.249Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`90a5cfaf...`) |
+| `CYCLE-20261017-OZIQ` | `2026-10-17T06:58:22.034Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`dfd3b226...`) |
