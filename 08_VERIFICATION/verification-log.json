@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-5HQU",
-    "timestamp": "2026-10-16T08:19:30.966Z",
-    "repository": "google/embeddinggemma-2",
-    "learningId": "learn-huggingface-google-embeddinggemma-2",
-    "contentHash": "faa4d88711cf611e6ecd883426d8e8a93e03ba8c34f8e391092e3fd580acff53",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-9L7H",
     "timestamp": "2026-10-16T08:22:42.077Z",
     "repository": "unsloth/embeddinggemma-2-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "3fa5a365c0d3497549ad61d354b4665f7ec46d8ef0887f6e34b4c950568d6e95",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-QQAB",
+    "timestamp": "2026-10-17T13:03:38.387Z",
+    "repository": "tw93/Pake",
+    "learningId": "learn-github-tw93-pake",
+    "contentHash": "76c97f07f4549c137526f388848405d476185d820c5fd6bf8e4c73c1a9da7dd0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

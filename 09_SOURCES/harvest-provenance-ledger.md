@@ -2159,3 +2159,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-17T12:49:36.839Z |
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-10-17T12:52:46.616Z |
 | `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-10-17T12:55:57.227Z |
+| `learn-github-tw93-pake` | `https://github.com/tw93/Pake` | `acf4f934` | Multi-dimensional audit evidence | 2026-10-17T13:03:38.393Z |

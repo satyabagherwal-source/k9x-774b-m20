@@ -1698,5 +1698,15 @@
     "contentHash": "1c204be936459b3e380f82e70395c6743533c41e206fc5876b702cb7ffc87bfa",
     "lastHarvestedAt": "2026-10-17T08:59:42.601Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017"
+  },
+  "tw93-pake": {
+    "repository": "tw93/Pake",
+    "platform": "github",
+    "sourceUrl": "https://github.com/tw93/Pake",
+    "sourceVersion": "acf4f934",
+    "license": "GPL-3.0",
+    "contentHash": "76c97f07f4549c137526f388848405d476185d820c5fd6bf8e4c73c1a9da7dd0",
+    "lastHarvestedAt": "2026-10-17T13:03:38.393Z",
+    "learningId": "learn-github-tw93-pake"
   }
 }

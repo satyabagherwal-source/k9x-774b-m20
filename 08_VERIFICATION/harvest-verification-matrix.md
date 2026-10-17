@@ -2157,3 +2157,4 @@
 | `CYCLE-20261017-8OXW` | `2026-10-17T12:49:36.836Z` | `autotrust/JEV-27B-VL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md` | Yes (`4063138b...`) |
 | `CYCLE-20261017-CRDH` | `2026-10-17T12:52:46.613Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`4fbaa708...`) |
 | `CYCLE-20261017-GUG9` | `2026-10-17T12:55:57.225Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`3fa5a365...`) |
+| `CYCLE-20261017-QQAB` | `2026-10-17T13:03:38.387Z` | `tw93/Pake` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1452` | Yes (`76c97f07...`) |

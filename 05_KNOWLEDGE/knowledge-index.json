@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T12:55:57.204Z",
-  "total_verified_learnings": 195,
+  "last_updated": "2026-10-17T13:03:38.362Z",
+  "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
   "items": {
@@ -43152,6 +43152,39 @@
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
       "verified_at": "2026-10-17T08:59:42.556Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-tw93-pake": {
+      "learning_id": "learn-github-tw93-pake",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "tw93/Pake",
+      "repository": "tw93/Pake",
+      "slug": "tw93-pake",
+      "platform": "github",
+      "source_url": "https://github.com/tw93/Pake",
+      "source_version": "acf4f934",
+      "content_hash": "76c97f07f4549c137526f388848405d476185d820c5fd6bf8e4c73c1a9da7dd0",
+      "dossier_path": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tw93-pake-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 1452,
+          "title": "play the Windows default sound for notifications unless silent (#1417)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-10-17T13:03:38.357Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
