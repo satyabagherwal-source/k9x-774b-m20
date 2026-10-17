@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-A0L6",
-    "timestamp": "2026-10-16T04:39:05.082Z",
-    "repository": "DayuanJiang/next-ai-draw-io",
-    "learningId": "learn-github-dayuanjiang-next-ai-draw-io",
-    "contentHash": "81c6d704e8e91d2df023023f28336e59b47a1edf2c554b9e119702d8a5f68957",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-PDGW",
     "timestamp": "2026-10-16T04:51:01.616Z",
     "repository": "autotrust/JEV-35B-NVFP4",
@@ -7492,6 +7477,21 @@
     "contentHash": "8d3b9a008d24f7f692932cf42f2930790f541b644dce58f801d6a47baba7b4ac",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-SC4G",
+    "timestamp": "2026-10-17T09:48:56.032Z",
+    "repository": "openai/whisper-large-v3",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "1cbeb33d2b00cd57ef4fecfa4cfb034aabca72b42e55802c6311a65626173485",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
