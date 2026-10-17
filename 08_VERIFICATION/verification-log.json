@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-8KGN",
-    "timestamp": "2026-10-15T21:10:03.671Z",
-    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-    "contentHash": "9e021a39a5324e9e04e156cbba994baaac4f61bbbe929fb986c0218f37924259",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-CN6T",
     "timestamp": "2026-10-15T21:13:13.829Z",
     "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -7492,6 +7477,21 @@
     "contentHash": "a8b253206676ffc7adee5b0906c591be34aedc7c3fd3c1964c654070f84290f4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-L3MJ",
+    "timestamp": "2026-10-17T01:47:24.955Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "c5d0e94084cec8543ffae74d2b32fbe4d7d54316f883f5bbfbf8d852493d6111",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

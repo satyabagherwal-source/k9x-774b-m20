@@ -1958,3 +1958,4 @@
 | `CYCLE-20261017-8V3K` | `2026-10-17T01:37:54.032Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`b9232604...`) |
 | `CYCLE-20261017-CU4I` | `2026-10-17T01:40:59.394Z` | `vllm-sr/d3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-vllm-sr-d3-learnings.md` | Yes (`be32a8a5...`) |
 | `CYCLE-20261017-GSO9` | `2026-10-17T01:44:04.137Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`a8b25320...`) |
+| `CYCLE-20261017-L3MJ` | `2026-10-17T01:47:24.955Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1290, Rule 1291, Rule 1292` | Yes (`c5d0e940...`) |

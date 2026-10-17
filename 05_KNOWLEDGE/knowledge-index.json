@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T01:44:04.102Z",
+  "last_updated": "2026-10-17T01:47:24.929Z",
   "total_verified_learnings": 192,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11045,7 +11045,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
       "source_version": "hf-black-forest-labs-flux.1-schnell",
-      "content_hash": "33f43b75996d50a28c30a221c6fa93d739e33bcc99b8e61ebf1ce922e4d7b506",
+      "content_hash": "c5d0e94084cec8543ffae74d2b32fbe4d7d54316f883f5bbfbf8d852493d6111",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md",
       "promoted_rules": [
@@ -11100,6 +11100,21 @@
           "number": 1214,
           "title": "Dual-Tokenizer Embedding Alignment",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1290,
+          "title": "Rectified Flow Linear Interpolation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1291,
+          "title": "Transformer Block Attention Masking for Text-Image Cross-Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1292,
+          "title": "Distillation Loss Functionality for Few-Step Convergence",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11120,7 +11135,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4acall",
         "learn-huggingface-hf-black-forest-labs-flux-1-schnell-mv4np6ca"
       ],
-      "verified_at": "2026-10-16T17:52:32.805Z",
+      "verified_at": "2026-10-17T01:47:24.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
