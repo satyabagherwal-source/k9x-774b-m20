@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-N4WV",
-    "timestamp": "2026-10-16T09:57:12.991Z",
-    "repository": "black-forest-labs/FLUX.1-schnell",
-    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-    "contentHash": "42c0909ec9b325765f03d935776d9c87b3d0cbc7e13e9db56d7a8102e77b6a20",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-QXFS",
     "timestamp": "2026-10-16T10:00:09.928Z",
     "repository": "MiniMaxAI/MiniMax-H3",
@@ -7490,6 +7475,21 @@
     "repository": "stabilityai/stable-diffusion-xl-base-1.0",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
     "contentHash": "b197b6ae12392fc3c82c8548a9b1fe0ccec78e606e6f4ff9fc59a77e40d38191",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-R74N",
+    "timestamp": "2026-10-17T14:27:59.063Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "c3af9fb15c67ef1e8e0b064f2a6b6b09f341955e3100e09bb2d0dcc5b19beaf8",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
