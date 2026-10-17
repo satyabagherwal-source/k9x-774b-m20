@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-NDH5",
-    "timestamp": "2026-10-16T12:17:22.169Z",
-    "repository": "google/gemma-4-31B-it",
-    "learningId": "learn-huggingface-google-gemma-4-31b-it",
-    "contentHash": "aedf0e38db230124fa59dcb878bbcb8e99a2fb76b576581c559121acd8545f3c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ROTQ",
     "timestamp": "2026-10-16T12:20:43.502Z",
     "repository": "BAAI/bge-base-en-v1.5",
@@ -7492,6 +7477,21 @@
     "contentHash": "e56e1649b9fa0dceeda1d6728bb6df8e4f97695b5bf58d071c6a11b2fc59dc0f",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-S6RM",
+    "timestamp": "2026-10-17T16:48:43.330Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+    "contentHash": "511de427f0af8160e2830bd60f8a553305f0abc8f52457ebf68242162674349c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
