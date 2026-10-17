@@ -2341,3 +2341,4 @@
 | `CYCLE-20261017-ESE6` | `2026-10-17T23:10:12.798Z` | `Altworld/Hemmingway-1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1554, Rule 1555, Rule 1556` | Yes (`3efb3455...`) |
 | `CYCLE-20261017-J4IM` | `2026-10-17T23:13:35.134Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`a33c5aa3...`) |
 | `CYCLE-20261017-NI2J` | `2026-10-17T23:16:59.324Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1557, Rule 1558, Rule 1559` | Yes (`02ce7321...`) |
+| `CYCLE-20261017-RA3P` | `2026-10-17T23:19:55.621Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`33e79a91...`) |

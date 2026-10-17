@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T23:16:59.299Z",
+  "last_updated": "2026-10-17T23:19:55.599Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16779,7 +16779,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "5221643349ce709511c18b029ddf09f665d784e06e5dd4838bcc3f0b9ac99138",
+      "content_hash": "33e79a917c1627899beca648d39ed6062cfdd856374477b79eacf887ae8feb23",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
       "promoted_rules": [],
@@ -16801,7 +16801,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv45w2u2",
         "learn-huggingface-hf-orcarouter-orcasaq-2-27b-mv4j68vm"
       ],
-      "verified_at": "2026-10-17T15:26:35.784Z",
+      "verified_at": "2026-10-17T23:19:55.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

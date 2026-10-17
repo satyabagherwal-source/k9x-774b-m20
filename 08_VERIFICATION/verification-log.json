@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-6PX8",
-    "timestamp": "2026-10-16T19:04:19.388Z",
-    "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-    "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-    "contentHash": "e91a3aa722e6c3f007573fadb0b1303ed32748c58a0e3627d4755cd67cd41487",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-AL0Z",
     "timestamp": "2026-10-16T19:07:19.667Z",
     "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -7492,6 +7477,21 @@
     "contentHash": "02ce73219cfa311186e1115d6d1b41c2c521d97463e3a02fb7bccd4994f8a8c9",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-RA3P",
+    "timestamp": "2026-10-17T23:19:55.621Z",
+    "repository": "orcarouter/OrcaSAQ-2-27B",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "33e79a917c1627899beca648d39ed6062cfdd856374477b79eacf887ae8feb23",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
