@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T15:58:21.447Z",
+  "last_updated": "2026-10-17T16:01:33.372Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16613,7 +16613,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "3891e5d6019167d9f76dd38c6e21dfab1d12210d4eb5d7520c18ee0b8a227c42",
+      "content_hash": "97a44fb08d99f6c53ca20626f7e82eefacb30beffc7addbb2f6d27b1a93da255",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -16709,7 +16709,7 @@
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv472vwd",
         "learn-huggingface-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-mv4kczwh"
       ],
-      "verified_at": "2026-10-17T07:44:41.702Z",
+      "verified_at": "2026-10-17T16:01:33.364Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
