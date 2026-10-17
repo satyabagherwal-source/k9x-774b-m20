@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-H9AJ",
-    "timestamp": "2026-10-16T00:32:46.411Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "788a6f426d6d012880a3be28c52ea7b08f1b0a20b9c5b4bb6d1224d03307b3e4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-L6BB",
     "timestamp": "2026-10-16T00:35:49.175Z",
     "repository": "google/electra-base-discriminator",
@@ -7490,6 +7475,21 @@
     "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
     "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
     "contentHash": "07d759f1467d34d6bf829becf14514ee7b5525db7ed4ce7215ce88ee689ffe1b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-2E4P",
+    "timestamp": "2026-10-17T05:16:49.033Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "77a0866e8d0661c6ea54bc8bed90f06091e110c6fbbd52aab63f74af7119a894",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
