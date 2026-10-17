@@ -235,8 +235,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "667e744684593a87c7a7063aa587467431d38e3ea57aea341533779a131add68",
-    "lastHarvestedAt": "2026-10-17T05:32:22.072Z",
+    "contentHash": "76717c6c5d88d5948c33e094f26d0145e93c292b5729bc98b271d256925dced7",
+    "lastHarvestedAt": "2026-10-17T13:59:28.248Z",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {

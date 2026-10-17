@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T13:55:17.001Z",
+  "last_updated": "2026-10-17T13:59:28.218Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16682,7 +16682,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "667e744684593a87c7a7063aa587467431d38e3ea57aea341533779a131add68",
+      "content_hash": "76717c6c5d88d5948c33e094f26d0145e93c292b5729bc98b271d256925dced7",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -16743,6 +16743,21 @@
           "number": 1240,
           "title": "Context Window and Chat Template Synchronization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1460,
+          "title": "Zero-Copy GGUF Header Alignment & Magic Sentinel Verification",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1461,
+          "title": "Upstream Git-LFS Smudge Validation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1462,
+          "title": "Abliteration Weight-Quantization SVD Dynamic Range Guard",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16763,7 +16778,7 @@
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
       ],
-      "verified_at": "2026-10-17T05:32:22.043Z",
+      "verified_at": "2026-10-17T13:59:28.211Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

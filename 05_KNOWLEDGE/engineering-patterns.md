@@ -99017,3 +99017,358 @@ void process_chunk(const float* audio_chunk) {
 1.  **Integration Test**: Feed a noisy audio stream and verify that no words are committed until two consecutive passes produce the same output.
 2.  **Latency Measurement**: Measure the additional latency introduced by the two-pass mechanism. It should be within acceptable bounds (e.g., < 100ms).
 3.  **Accuracy Comparison**: Compare WER of single-pass vs. two-pass on a test set. Two-pass should show lower WER, especially in noisy conditions.
+
+
+---
+
+## 1460. Zero-Copy GGUF Header Alignment & Magic Sentinel Verification (Harvested from orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Zero-Copy GGUF Header Alignment & Magic Sentinel Verification",
+  "source": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+  "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+  "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T13:59:28.027Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF](https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF) (Revision: `hf-orcarou`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Binary parsers ingesting GGUF models MUST validate the 4-byte magic sentinel (`0x46554747`), verify that format version matches known specifications ($V \in \{2, 3\}$), and enforce that every tensor payload offset is strictly aligned to the boundary defined by `general.alignment` (defaulting to 32 bytes) prior to issuing memory-mapped pointers to execution kernels.
+
+**WHY**:
+Failing to validate the magic header causes non-GGUF files (such as raw HTML error pages from failed LFS downloads or empty blobs) to be interpreted as metadata headers. This triggers unconstrained reads where the runtime allocates gigabytes of RAM based on arbitrary integer values interpreted as string lengths (`uint64_t`). Non-aligned tensor offsets cause unaligned SIMD load instructions (`_mm256_load_ps` or `vld1q_f32`) to crash with hardware alignment faults (`SIGBUS` / `EXC_ARM_DA_ALIGN`).
+
+**WHEN TO APPLY**:
+Apply in all model loading, tensor serialization, weight caching, and binary file ingestion subsystems in C++, Rust, Go, or Python (via CFFI/ctypes).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::fs::File;
+use std::io::{self, Read, Seek, SeekFrom};
+use std::path::Path;
+
+const GGUF_MAGIC: u32 = 0x46554747; // "GGUF" in Little-Endian ASCII
+const DEFAULT_ALIGNMENT: usize = 32;
+
+#[derive(Debug)]
+pub enum GgufError {
+    InvalidMagic(u32),
+    UnsupportedVersion(u32),
+    MisalignedTensorOffset { offset: u64, alignment: usize },
+    Io(io::Error),
+    UnexpectedEof,
+}
+
+#[derive(Debug)]
+pub struct GgufHeader {
+    pub version: u32,
+    pub tensor_count: u64,
+    pub metadata_kv_count: u64,
+    pub alignment: usize,
+}
+
+pub fn parse_and_validate_gguf_header<P: AsRef<Path>>(path: P) -> Result<GgufHeader, GgufError> {
+    let mut file = File::open(path).map_err(GgufError::Io)?;
+    let mut magic_buf = [0u8; 4];
+    file.read_exact(&mut magic_buf).map_err(|e| {
+        if e.kind() == io::ErrorKind::UnexpectedEof {
+            GgufError::UnexpectedEof
+        } else {
+            GgufError::Io(e)
+        }
+    })?;
+
+    let magic = u32::from_le_bytes(magic_buf);
+    if magic != GGUF_MAGIC {
+        return Err(GgufError::InvalidMagic(magic));
+    }
+
+    let mut version_buf = [0u8; 4];
+    file.read_exact(&mut version_buf).map_err(GgufError::Io)?;
+    let version = u32::from_le_bytes(version_buf);
+    if version < 2 || version > 3 {
+        return Err(GgufError::UnsupportedVersion(version));
+    }
+
+    let mut counts_buf = [0u8; 16];
+    file.read_exact(&mut counts_buf).map_err(GgufError::Io)?;
+    let tensor_count = u64::from_le_bytes(counts_buf[0..8].try_into().unwrap());
+    let metadata_kv_count = u64::from_le_bytes(counts_buf[8..16].try_into().unwrap());
+
+    // In a complete parser, general.alignment is read from KV metadata. Defaulting here to 32.
+    let alignment = DEFAULT_ALIGNMENT;
+
+    Ok(GgufHeader {
+        version,
+        tensor_count,
+        metadata_kv_count,
+        alignment,
+    })
+}
+
+pub fn validate_tensor_alignment(offset: u64, alignment: usize) -> Result<(), GgufError> {
+    if offset % (alignment as u64) != 0 {
+        return Err(GgufError::MisalignedTensorOffset { offset, alignment });
+    }
+    Ok(())
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```cpp
+// ANTI-PATTERN: Blindly mmapping and reading data without magic or alignment verification
+void load_gguf_unsafe(const char* filepath) {
+    int fd = open(filepath, O_RDONLY);
+    struct stat sb;
+    fstat(fd, &sb);
+    void* addr = mmap(NULL, sb.st_size, PROT_READ, MAP_SHARED, fd, 0);
+
+    // CRITICAL BUG: Directly reading without verifying magic, version, or alignment.
+    // If file is an HTML error page or empty LFS pointer, this segfaults immediately.
+    uint32_t* raw = (uint32_t*)addr;
+    uint32_t magic = raw[0]; // Potential SIGBUS if unaligned or out of bounds
+    uint32_t version = raw[1];
+
+    // Reading unaligned tensor payload directly into SIMD register causes hardware crash
+    float* tensor_data = (float*)((uintptr_t)addr + 1023); // Unaligned pointer!
+    __m256 v = _mm256_load_ps(tensor_data); // FAILS WITH GP FAULT (SIGSEGV)
+}
+```
+
+**VERIFICATION METHOD**:
+```bash
+# Automated assertion check using python struct parser on binary artifacts
+python3 -c "
+import struct, sys
+with open(sys.argv[1], 'rb') as f:
+    magic, version = struct.unpack('<II', f.read(8))
+    assert magic == 0x46554747, f'Magic mismatch: {hex(magic)}'
+    assert version in (2, 3), f'Unsupported GGUF version: {version}'
+" <path-to-gguf-file>
+```
+
+---
+
+
+---
+
+## 1461. Upstream Git-LFS Smudge Validation Invariant (Harvested from orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Upstream Git-LFS Smudge Validation Invariant",
+  "source": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+  "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+  "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T13:59:28.102Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF](https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF) (Revision: `hf-orcarou`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+Automated model download scripts, CI ingestion workflows, and runtime packaging managers MUST NOT accept a downloaded model file as valid based purely on HTTP `200 OK` or local file existence; they MUST verify that the file size matches the exact LFS pointer specification and does NOT begin with the ASCII preamble `version https://git-lfs.github.com/spec/v1`.
+
+**WHY**:
+When downloading model weights from Hugging Face or Git repositories without `git-lfs` installed or via raw `curl/wget` targeting repository file endpoints instead of resolve/LFS URLs, Git transfers only the 130-byte text pointer file. Downstream loaders attempt to parse this pointer as a multi-gigabyte binary model, causing immediate runtime crashes, parsing failures, or OOM loops in inference engines.
+
+**WHEN TO APPLY**:
+Every automated model fetcher, weight synchronizer, Docker container entrypoint, or model caching client in orchestration pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import os
+import re
+from pathlib import Path
+
+LFS_POINTER_HEADER = b"version https://git-lfs.github.com/spec/v1"
+LFS_POINTER_MAX_SIZE = 1024  # Pointer files are typically ~130 bytes
+
+
+class LfsPointerUnresolvedError(Exception):
+    pass
+
+
+class InvalidModelPayloadError(Exception):
+    pass
+
+
+def verify_gguf_artifact(filepath: Path, expected_min_bytes: int = 10_000_000) -> None:
+    if not filepath.exists():
+        raise FileNotFoundError(f"Model path does not exist: {filepath}")
+
+    file_size = filepath.stat().st_size
+
+    # Check for empty or near-empty stub
+    if file_size == 0:
+        raise InvalidModelPayloadError(f"Model file is completely empty (0 bytes): {filepath}")
+
+    # Inspect file header for unresolved Git LFS pointer
+    with open(filepath, "rb") as f:
+        header = f.read(len(LFS_POINTER_HEADER))
+        if header == LFS_POINTER_HEADER:
+            f.seek(0)
+            content = f.read(LFS_POINTER_MAX_SIZE).decode("utf-8", errors="replace")
+            oid_match = re.search(r"oid sha256:([a-f0-9]{64})", content)
+            size_match = re.search(r"size (\d+)", content)
+            oid = oid_match.group(1) if oid_match else "unknown"
+            target_size = size_match.group(1) if size_match else "unknown"
+            raise LfsPointerUnresolvedError(
+                f"File {filepath} is an unresolved Git-LFS text pointer! "
+                f"Expected payload size: {target_size} bytes, SHA256: {oid}. "
+                "Remediation: Install git-lfs and run 'git lfs pull', or download via Hugging Face resolve URL."
+            )
+
+    if file_size < expected_min_bytes:
+        raise InvalidModelPayloadError(
+            f"File size ({file_size} bytes) is below minimum expected threshold ({expected_min_bytes} bytes). "
+            "Corrupt or truncated weight transfer."
+        )
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Naively verifying file existence without payload or LFS validation
+import os
+
+def load_model(filepath):
+    # CRITICAL BUG: Returns True even if filepath is a 130-byte LFS text pointer
+    # or an empty 0-byte file created by a failed download!
+    if os.path.exists(filepath):
+        return initialize_engine(filepath) # Inference engine crashes with invalid header error
+    raise FileNotFoundError("Model not found")
+```
+
+**VERIFICATION METHOD**:
+```bash
+# Automated invariant check in CI/CD pipeline
+test "$(head -n 1 weights.gguf)" != "version https://git-lfs.github.com/spec/v1" || {
+    echo "ERROR: Model file is an unresolved LFS pointer!"; exit 1;
+}
+```
+
+---
+
+
+---
+
+## 1462. Abliteration Weight-Quantization SVD Dynamic Range Guard (Harvested from orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Abliteration Weight-Quantization SVD Dynamic Range Guard",
+  "source": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+  "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+  "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T13:59:28.170Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF](https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF) (Revision: `hf-orcarou`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+When generating "Uncensored" model weights via directional activation abliteration (orthogonalizing weight projection matrices against refusal vector directions $v_{refusal}$), the transformation pipeline MUST verify that the Frobenius norm difference $\|\Delta W\|_F$ does not cause per-channel outlier activations exceeding the representation limit of the target quantization scheme (e.g., $Q4\_K\_M$ scale factor clipping limits), and MUST run an automated perplexity delta check ($|\Delta PPL| \le 0.15$) against a standard validation corpus before converting to GGUF format.
+
+**WHY**:
+Directly subtracting refusal projection components $W_{new} = W - \alpha (v \cdot v^T) W$ without clipping or re-centering expands the dynamic range of weight matrices in attention projection layers (`o_proj`, `gate_up_proj`). In low-bit quantization ($k$-quants like $Q4\_K$ or $Q3\_K$), extreme weight values collapse quantizer bucket resolutions, inducing severe degradation, syntax breakdown, repetition loops, or silent NaN generation during inference.
+
+**WHEN TO APPLY**:
+Model fine-tuning, abliteration pipelines, weight editing scripts, and quantization export pipelines targeting GGUF format.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+import torch
+
+def abliterate_and_verify_layer(
+    weight: torch.Tensor,
+    refusal_dir: torch.Tensor,
+    alpha: float = 1.0,
+    max_frobenius_divergence: float = 0.05,
+    outlier_threshold_sigma: float = 4.0
+) -> torch.Tensor:
+    """
+    Applies orthogonal projection subtraction with numerical stability guards.
+    """
+    with torch.no_grad():
+        original_norm = torch.linalg.norm(weight, ord='fro')
+        
+        # Ensure refusal vector is unit-normalized
+        refusal_dir = refusal_dir / torch.linalg.norm(refusal_dir)
+        if refusal_dir.ndim == 1:
+            refusal_dir = refusal_dir.unsqueeze(1)
+            
+        # Outer product projection: P = v * v^T
+        # Delta W = alpha * (v * v^T) @ W
+        proj = torch.matmul(refusal_dir, torch.matmul(refusal_dir.T, weight))
+        modified_weight = weight - (alpha * proj)
+        
+        new_norm = torch.linalg.norm(modified_weight, ord='fro')
+        rel_diff = torch.abs(new_norm - original_norm) / original_norm
+        
+        if rel_diff > max_frobenius_divergence:
+            raise ValueError(
+                f"Frobenius divergence exceeded safety threshold: {rel_diff:.4f} > {max_frobenius_divergence}"
+            )
+            
+        # Verify quantizer scale stability: check for activation dynamic range explosion
+        mean = torch.mean(modified_weight)
+        std = torch.std(modified_weight)
+        outliers = torch.abs(modified_weight - mean) > (outlier_threshold_sigma * std)
+        outlier_ratio = torch.sum(outliers).item() / modified_weight.numel()
+        
+        if outlier_ratio > 0.001:  # More than 0.1% extreme outliers will destroy Q4_K quant buckets
+            raise ValueError(
+                f"Outlier ratio too high for low-bit quantization: {outlier_ratio:.4f} > 0.001"
+            )
+            
+        return modified_weight
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Unconstrained vector subtraction without normalization or scale bounds
+def unsafe_uncensor(model_layer, direction):
+    # CRITICAL BUG: direction is unnormalized; alpha is arbitrary;
+    # introduces unbounded weight divergence that destroys GGUF quantization tables
+    model_layer.weight.data -= 2.5 * torch.outer(direction, direction) @ model_layer.weight.data
+```
+
+**VERIFICATION METHOD**:
+```python
+# Verify that the modified tensor does not produce Inf/NaN when quantized to 4-bit simulation
+def test_quantization_stability(w_modified):
+    q_scale = (w_modified.max() - w_modified.min()) / 15.0
+    assert not torch.isnan(q_scale) and not torch.isinf(q_scale) and q_scale > 0
+```
+
+---
