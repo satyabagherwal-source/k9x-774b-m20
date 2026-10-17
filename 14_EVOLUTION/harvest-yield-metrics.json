@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:57:34.539Z",
-  "total_cycles_completed": 2279,
-  "total_learnings_persisted": 2279,
+  "last_updated": "2026-10-17T21:00:44.582Z",
+  "total_cycles_completed": 2280,
+  "total_learnings_persisted": 2280,
   "total_rules_promoted": 1302,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:58:27.611Z",
-      "repository": "Qwen/Qwen3.8-Flash-Next",
-      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T10:01:45.346Z",
       "repository": "fishaudio/drama-3",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T20:57:34.539Z",
       "repository": "Edge0/Audio8-ASR-Infinite",
       "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T21:00:44.582Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T20:57:34.501Z",
+  "last_updated": "2026-10-17T21:00:44.546Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -8980,7 +8980,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "08cf46a785633b32c3a3c22571fa0f8386e18464985fdacb2577cebe666284a2",
+      "content_hash": "b09fe2f5739ac63ecdec9511e8bc97c59995ead3bc08487363fd5ef10a454d31",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -9335,7 +9335,7 @@
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv42kq8l",
         "learn-huggingface-hf-abenzerps-qwen-image-2-1-uncensored-gguf-mv4ftgho"
       ],
-      "verified_at": "2026-10-17T13:19:26.646Z",
+      "verified_at": "2026-10-17T21:00:44.539Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

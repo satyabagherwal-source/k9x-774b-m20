@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-BBAG",
-    "timestamp": "2026-10-16T16:47:55.624Z",
-    "repository": "google-bert/bert-base-uncased",
-    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
-    "contentHash": "55a2c0a23cff0a1d46d6c8cdccd67f2eca355565963f191e6173cbabedbacfae",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-F9JX",
     "timestamp": "2026-10-16T16:50:59.997Z",
     "repository": "google/electra-base-discriminator",
@@ -7490,6 +7475,21 @@
     "repository": "Edge0/Audio8-ASR-Infinite",
     "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
     "contentHash": "9909d14e61b425547030a89891b9fd4cac30563e2ecd72d75cf2037d7e65d7cb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-SAEA",
+    "timestamp": "2026-10-17T21:00:44.578Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "b09fe2f5739ac63ecdec9511e8bc97c59995ead3bc08487363fd5ef10a454d31",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
