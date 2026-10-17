@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "ac8328c9f4b5686292965090abc749fd48d8b87507648f5e101cf605cd8c9cbd",
-    "lastHarvestedAt": "2026-10-17T12:36:47.935Z",
+    "contentHash": "68a275a7bb6cdf7d30aae766fb7d36c2b103fce16be55e92f786826a741d58e3",
+    "lastHarvestedAt": "2026-10-17T20:35:13.535Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {

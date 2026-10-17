@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:31:59.653Z",
-  "total_cycles_completed": 2271,
-  "total_learnings_persisted": 2271,
+  "last_updated": "2026-10-17T20:35:13.537Z",
+  "total_cycles_completed": 2272,
+  "total_learnings_persisted": 2272,
   "total_rules_promoted": 1300,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:31:14.267Z",
-      "repository": "meta-llama/Meta-Llama-3-8B",
-      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T09:34:11.508Z",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T20:31:59.653Z",
       "repository": "BAAI/bge-large-en-v1.5",
       "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T20:35:13.537Z",
+      "repository": "zai-org/GLM-5.3",
+      "learningId": "learn-huggingface-zai-org-glm-5-3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
