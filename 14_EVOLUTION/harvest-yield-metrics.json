@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T23:39:30.965Z",
-  "total_cycles_completed": 2325,
-  "total_learnings_persisted": 2325,
+  "last_updated": "2026-10-17T23:42:49.271Z",
+  "total_cycles_completed": 2326,
+  "total_learnings_persisted": 2326,
   "total_rules_promoted": 1349,
   "history": [
-    {
-      "timestamp": "2026-10-17T12:30:26.213Z",
-      "repository": "lilylilith/QI_2.1_AnyAngle",
-      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T12:33:36.906Z",
       "repository": "BAAI/bge-large-en-v1.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T23:39:30.965Z",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T23:42:49.271Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

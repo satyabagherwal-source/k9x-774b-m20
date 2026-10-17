@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-1HPW",
-    "timestamp": "2026-10-16T19:28:15.092Z",
-    "repository": "pyannote/speaker-diarization-community-1",
-    "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1",
-    "contentHash": "b274ea90f6f1aa5fa7c5a5f5a1ef86f8a4f0359adf1ec6f60ad8d11c4b21d429",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-6M7Y",
     "timestamp": "2026-10-16T19:32:14.206Z",
     "repository": "BAAI/bge-reranker-v2-m3",
@@ -7490,6 +7475,21 @@
     "repository": "inclusionAI/Ming-Image-0.1-Design",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
     "contentHash": "b7b0c5c0f1447101e28c1b66ed69c7aa62978e2d988e6a4118229ee05e7b54a5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-KQ0I",
+    "timestamp": "2026-10-17T23:42:49.266Z",
+    "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+    "contentHash": "cc1d48a6b5cdb5bdd2b4cda0951f13c2ffe01269a9ea574b74dda8d54cf0759c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
