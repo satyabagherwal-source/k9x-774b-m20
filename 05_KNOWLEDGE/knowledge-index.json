@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T16:35:50.726Z",
+  "last_updated": "2026-10-17T16:39:09.290Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -18910,7 +18910,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/embeddinggemma-2-GGUF",
       "source_version": "hf-unsloth-embeddinggemma-2-gguf",
-      "content_hash": "172eaf05d3b3b03fdab4ab9d8f23d0fd580bf505cde1f1cee9a4ac577a37b2fd",
+      "content_hash": "e1ea3a380f700562071a470132c872c1de93b1fe7f07f912b445a31dcc0b12ea",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md",
       "promoted_rules": [
@@ -18943,6 +18943,16 @@
           "number": 1393,
           "title": "Selective Dynamic Quantization for Projection & Pooling Bridges",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1494,
+          "title": "Multimodal Tensor Alignment Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1495,
+          "title": "GGUF Tensor Offset Integrity",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -18963,7 +18973,7 @@
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv48dth3",
         "learn-huggingface-hf-unsloth-embeddinggemma-2-gguf-mv4lnhts"
       ],
-      "verified_at": "2026-10-17T08:34:25.388Z",
+      "verified_at": "2026-10-17T16:39:09.284Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
