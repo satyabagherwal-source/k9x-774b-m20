@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-RFET",
-    "timestamp": "2026-10-16T11:52:31.685Z",
-    "repository": "Qwen/Qwen3-VL-8B-Instruct",
-    "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-    "contentHash": "fd85fbee2abddb49508aa1641f2ce1d434605cfc4e5577272e8102c7db2cfe8a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-VF53",
     "timestamp": "2026-10-16T11:55:37.959Z",
     "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -7490,6 +7475,21 @@
     "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
     "contentHash": "6bee6c30c228a89b379c15bf3b257f0460e22bc2e4339bfcfadeba794c7733a5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-V7XK",
+    "timestamp": "2026-10-17T16:23:05.192Z",
+    "repository": "facebook/sam3",
+    "learningId": "learn-huggingface-facebook-sam3",
+    "contentHash": "54c5ea4731b7879b3ee19746b354f52697c0bcf8b418aedbee7f3fa3f3805363",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

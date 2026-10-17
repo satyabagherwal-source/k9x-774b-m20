@@ -2221,3 +2221,4 @@ Every entry in this ledger must capture:
 | `learn-onlinefreeprotractor-rule1492` | `https://github.com/satyabagherwal-source/onlinefreeprotractor` | `production-verified-phase3` | `docs/seo-repair/PHASE_3_3_INDEXING_TRACKER.csv` | 2026-10-17T15:58:00Z |
 | `learn-onlinefreeprotractor-rule1492` | `https://github.com/satyabagherwal-source/onlinefreeprotractor` | `production-verified-phase3` | `astro.config.mjs#L17-L44` | 2026-10-17T15:58:00Z |
 | `learn-onlinefreeprotractor-rule1492` | `https://github.com/satyabagherwal-source/onlinefreeprotractor` | `production-verified-phase3` | `docs/seo-repair/COMPLETE_GSC_SUBMISSION_LIST.md` | 2026-10-17T15:58:00Z |
+| `learn-huggingface-facebook-sam3` | `https://huggingface.co/facebook/sam3` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-10-17T16:23:05.194Z |

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T16:19:58.989Z",
-  "total_cycles_completed": 2193,
-  "total_learnings_persisted": 2193,
+  "last_updated": "2026-10-17T16:23:05.195Z",
+  "total_cycles_completed": 2194,
+  "total_learnings_persisted": 2194,
   "total_rules_promoted": 1272,
   "history": [
-    {
-      "timestamp": "2026-10-17T04:54:20.502Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T04:57:36.401Z",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T16:19:58.989Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T16:23:05.195Z",
+      "repository": "facebook/sam3",
+      "learningId": "learn-huggingface-facebook-sam3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
