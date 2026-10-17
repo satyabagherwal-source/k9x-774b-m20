@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0SIJ",
-    "timestamp": "2026-10-16T15:15:45.883Z",
-    "repository": "Comfy-Org/Qwen-Image-2.1",
-    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-    "contentHash": "b1520e1387a8c4e5e3e53cd661994eb3e76eff65f1d2bf635c95e73e91da73b0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4Y2L",
     "timestamp": "2026-10-16T15:18:59.709Z",
     "repository": "akhilaaa3/Jev-Omni",
@@ -7492,6 +7477,21 @@
     "contentHash": "367aaf66bacd45c6e9bb622bc33d67616eb26cafff3a503cd49fd60626f5e97d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-Y3D6",
+    "timestamp": "2026-10-17T19:41:16.554Z",
+    "repository": "FacebookAI/xlm-roberta-base",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "e238246e5eaefe1a1b9b95ef514590007564e73011ac1a463b6ff4bd1e9dd24b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

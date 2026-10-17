@@ -1135,8 +1135,8 @@
     "sourceUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceVersion": "hf-facebookai-xlm-roberta-base",
     "license": "Open-Source",
-    "contentHash": "1a82c4bb9fa2435d5a37c692bf7a374fb07e8ff37a33336f7c3ae97918505162",
-    "lastHarvestedAt": "2026-10-17T11:43:55.286Z",
+    "contentHash": "e238246e5eaefe1a1b9b95ef514590007564e73011ac1a463b6ff4bd1e9dd24b",
+    "lastHarvestedAt": "2026-10-17T19:41:16.557Z",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base"
   },
   "hf-openai-community-gpt2": {
