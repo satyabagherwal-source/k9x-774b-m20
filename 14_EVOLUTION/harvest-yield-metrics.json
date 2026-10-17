@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T02:36:13.107Z",
-  "total_cycles_completed": 1951,
-  "total_learnings_persisted": 1951,
+  "last_updated": "2026-10-17T02:39:38.864Z",
+  "total_cycles_completed": 1952,
+  "total_learnings_persisted": 1952,
   "total_rules_promoted": 1067,
   "history": [
-    {
-      "timestamp": "2026-10-16T15:03:16.352Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T15:06:15.007Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T02:36:13.107Z",
       "repository": "deepseek-ai/DeepSeek-V3",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:39:38.864Z",
+      "repository": "baidu/Unlimited-OCR",
+      "learningId": "learn-huggingface-baidu-unlimited-ocr",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

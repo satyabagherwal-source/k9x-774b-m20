@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-05KO",
-    "timestamp": "2026-10-15T21:59:30.360Z",
-    "repository": "moonshotai/Kimi-K3",
-    "learningId": "learn-huggingface-moonshotai-kimi-k3",
-    "contentHash": "5110d0391e81ddb44944ae40ace973dc08111e538f6f85eebf195fafc8af6d24",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-44GM",
     "timestamp": "2026-10-15T22:02:35.542Z",
     "repository": "openbmb/MiniCPM-V-4.7-1B",
@@ -7490,6 +7475,21 @@
     "repository": "deepseek-ai/DeepSeek-V3",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
     "contentHash": "8e3dcf852b4f381b444e2cb4b8bde2f7dde23d61e1ef80d735420a005dac97c8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-G9RG",
+    "timestamp": "2026-10-17T02:39:38.860Z",
+    "repository": "baidu/Unlimited-OCR",
+    "learningId": "learn-huggingface-baidu-unlimited-ocr",
+    "contentHash": "f2e7277f7b7923d2b55e77dd8eca91b27e659b82fc4c49f79c51dd5299e4e5c4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
