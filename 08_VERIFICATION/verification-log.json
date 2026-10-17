@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-WNGS",
-    "timestamp": "2026-10-16T15:12:32.716Z",
-    "repository": "Phocinae/Phocinae-Largha-150M-v1",
-    "learningId": "learn-huggingface-phocinae-phocinae-largha-150m-v1",
-    "contentHash": "956a3388c920f7267a4bf61d797c63ea5064f07e6d3833225c9a04f26fcb0768",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-0SIJ",
     "timestamp": "2026-10-16T15:15:45.883Z",
     "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -7492,6 +7477,21 @@
     "contentHash": "168d7c31af4efb93c03a31375db114aa8e1c6b4e880625e840dead96731f3b9e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-U6QJ",
+    "timestamp": "2026-10-17T19:38:14.299Z",
+    "repository": "meta-models/Muse-Spark-Open-816B-A42B",
+    "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b",
+    "contentHash": "367aaf66bacd45c6e9bb622bc33d67616eb26cafff3a503cd49fd60626f5e97d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

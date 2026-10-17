@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T19:34:39.694Z",
+  "last_updated": "2026-10-17T19:38:14.274Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -42405,7 +42405,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
       "source_version": "hf-meta-models-muse-spark-open-816b-a42b",
-      "content_hash": "d5a9118759a9492e3a5dce8d75edf39df9d4e52d8c330cc070b449aa46c20a5b",
+      "content_hash": "367aaf66bacd45c6e9bb622bc33d67616eb26cafff3a503cd49fd60626f5e97d",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-learnings.md",
       "promoted_rules": [
@@ -42438,6 +42438,11 @@
           "number": 1304,
           "title": "Repository Integrity & Config-Weight Coupling Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1517,
+          "title": "Model Repository Integrity Gate",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -42445,7 +42450,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-10-17T11:40:41.975Z",
+      "verified_at": "2026-10-17T19:38:14.267Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
