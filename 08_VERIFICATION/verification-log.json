@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-76EB",
-    "timestamp": "2026-10-15T19:44:59.939Z",
-    "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-    "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-    "contentHash": "4dbc733b9879cc086e9f899c3c5b652b3f53a33973e67c4b18271848b5690fd5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-DF07",
     "timestamp": "2026-10-15T19:49:51.031Z",
     "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -7490,6 +7475,21 @@
     "repository": "facebook/sam3",
     "learningId": "learn-huggingface-facebook-sam3",
     "contentHash": "b1d9cd1353237690ac3a5b4a384b71498a9dfcd9634855fb610e3441ffd0ccd0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-QF03",
+    "timestamp": "2026-10-17T00:27:34.131Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "aea13eab93db316eb1d234b889e68da0fc0638deb8a78edb951bb093ffffba82",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
