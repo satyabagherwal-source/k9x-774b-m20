@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T14:38:46.034Z",
+  "last_updated": "2026-10-17T14:41:56.251Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -12053,7 +12053,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
       "source_version": "hf-contrastive-lm-clm-v0.1-8b",
-      "content_hash": "d03001b11e8d57c0f7691e62fc39734be976cf5cb174c4e5af10e657835bff3a",
+      "content_hash": "e3401467eda58f68fb1ba7f5e89d0ffe6b10e4e6462aad97d1b174b21ce448a5",
       "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
       "promoted_rules": [
@@ -12083,7 +12083,7 @@
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv44mqua",
         "learn-huggingface-hf-contrastive-lm-clm-v0-1-8b-mv4hvkw7"
       ],
-      "verified_at": "2026-10-17T06:13:51.528Z",
+      "verified_at": "2026-10-17T14:41:56.244Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
