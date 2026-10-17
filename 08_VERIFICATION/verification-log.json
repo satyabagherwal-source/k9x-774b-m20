@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-17G5",
-    "timestamp": "2026-10-16T05:00:13.685Z",
-    "repository": "LiquidAI/d1-3B",
-    "learningId": "learn-huggingface-liquidai-d1-3b",
-    "contentHash": "cab94827024c6069b6a98b9dae916f9845d009ace62d1590eb558d2091f13feb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-9SLG",
     "timestamp": "2026-10-16T05:06:54.340Z",
     "repository": "Cactus-Compute/whistle",
@@ -7490,6 +7475,21 @@
     "repository": "Qwen/Qwen3.8-Flash-Next",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
     "contentHash": "b8f09d8744952790253639de1be58eac40326cf5ebe18582569b4ebfc17d816a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-8TQ5",
+    "timestamp": "2026-10-17T10:01:45.341Z",
+    "repository": "fishaudio/drama-3",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "09139adbd39653168fbc8967f69ad448c125ae3cbfa89121422dcf5449f3e81c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

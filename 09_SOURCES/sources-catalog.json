@@ -1455,8 +1455,8 @@
     "sourceUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceVersion": "hf-fishaudio-drama-3",
     "license": "Open-Source",
-    "contentHash": "7ab313505ef5748363a0cdcccfa49e2a648f6ef24d36208a31e0a68f6d9f893a",
-    "lastHarvestedAt": "2026-10-17T01:56:53.345Z",
+    "contentHash": "09139adbd39653168fbc8967f69ad448c125ae3cbfa89121422dcf5449f3e81c",
+    "lastHarvestedAt": "2026-10-17T10:01:45.344Z",
     "learningId": "learn-huggingface-fishaudio-drama-3"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
