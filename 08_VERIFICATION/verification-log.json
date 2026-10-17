@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-FDQW",
-    "timestamp": "2026-10-16T12:39:08.888Z",
-    "repository": "mudler/locate-anything.cpp-gguf",
-    "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
-    "contentHash": "b491027f349d83e707f463b5df7d475443959e19dab04aea758cd90bb5231611",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-JSE2",
     "timestamp": "2026-10-16T12:42:34.490Z",
     "repository": "jialinyyzz/humanizer",
@@ -7492,6 +7477,21 @@
     "contentHash": "163d2232bd5c8c32c261e3ee75151f82599fa6e18c7fd087fec5119c0d712338",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-L0F8",
+    "timestamp": "2026-10-17T17:11:08.132Z",
+    "repository": "Comfy-Org/MiniMax-H3",
+    "learningId": "learn-huggingface-comfy-org-minimax-h3",
+    "contentHash": "265856368253bc2e8ea554d7b0bb7a875c639c394fa3c386a89a85c456008fc5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

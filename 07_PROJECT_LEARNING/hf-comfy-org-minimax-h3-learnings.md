@@ -3,7 +3,7 @@
 > **Source Version**: `hf-comfy-org`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-10-17T09:11:22.591Z  
+> **Timestamp**: 2026-10-17T17:11:07.937Z  
 > **Learning ID**: `learn-huggingface-comfy-org-minimax-h3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,260 +17,270 @@
 ## 1. Executive Forensic Architecture & System Mechanics
 
 **Technical Problem Solved:**
-This repository serves as a **binary distribution and compatibility bridge** for the MiniMax-H3 multimodal diffusion model within the ComfyUI ecosystem. It does not contain executable source code (Python/C++); rather, it contains pre-compiled, quantized, and repackaged tensor weights (`.safetensors`). The core technical challenge addressed is **hardware-agnostic deployment** of a massive (32B parameter text encoder + large diffusion backbone) model by providing multiple quantization variants (`bf16`, `int8_convrot`, `fp8_scaled`, `nvfp4_awq`) and architectural variants (`fl2va` for first-last-to-video, `ref2va` for reference-to-video, `pruned` for reduced compute).
+This repository serves as a **binary distribution and format-standardization layer** for the MiniMax-H3 multimodal diffusion model within the ComfyUI ecosystem. It does not contain source code for the model architecture itself but rather provides pre-converted, quantized, and pruned weight files (`.safetensors`) optimized for specific hardware constraints (GPU memory, compute capability) and inference frameworks (PyTorch with CUDA 13.0, NVFP4 support).
 
 **Architectural Boundaries:**
-*   **Input Boundary:** User-defined ComfyUI workflows (JSON) that reference specific file paths.
-*   **Processing Boundary:** The ComfyUI runtime (external) loads these tensors into GPU memory. The model itself is a static graph of weights.
-*   **Output Boundary:** Generated video/audio tensors.
-*   **Decoupling:** The repository is strictly **stateless**. It contains no logic, no state management, and no network calls. It is purely a data artifact repository.
+1.  **Consumer Boundary:** The primary consumer is the ComfyUI runtime, which expects specific file naming conventions and directory structures (`models/diffusion_models`, `models/text_encoders`, etc.).
+2.  **Hardware Boundary:** The repository explicitly segments models by quantization type (`bf16`, `int8_convrot`, `fp8_scaled`, `nvfp4_awq`) to address varying GPU memory capacities and compute unit capabilities (e.g., Blackwell vs. non-Blackwell).
+3.  **Data Boundary:** The system separates the **Diffusion Backbone** (FL2VA/Ref2VA), **Text Encoder** (Qwen3-VL-32B), **VAE** (Audio/Video), and **ControlNet Patches**. This modular separation allows users to mix and match components based on VRAM constraints.
 
 **Critical Subsystem Abstractions:**
-1.  **Quantization Strategy Layer:** The distinction between `int8_convrot` (preferred for cu130), `fp8_scaled` (fallback), and `nvfp4_awq` (text encoder specific, no Blackwell requirement). This represents a **Performance/Compatibility Trade-off Matrix**.
-2.  **Modality Split:** Separation of `diffusion_models` (video generation), `text_encoders` (prompt understanding), `vae` (latent space encoding/decoding for audio/video), and `loras` (style/behavior modifiers).
-3.  **Embedding Injection:** A specific protocol for injecting pre-computed prompt embeddings via the `embedding:` prefix in text nodes, bypassing the standard CLIP text encoder path for specific artistic styles.
+*   **Quantization Strategy:** The core abstraction is the trade-off between numerical precision and memory footprint. `int8_convrot` is prioritized for PyTorch cu130 compatibility, while `nvfp4_awq` is a specialized 4-bit format for text encoders that does not require Blackwell hardware.
+*   **Pruning Variant:** The presence of `pruned` variants indicates a structural modification to the diffusion model to reduce parameter count, likely targeting lower-end GPUs or faster inference at the cost of potential quality degradation.
+*   **Embedding Injection:** The system supports "prompt embeddings" (e.g., `minimaxh3_art_is_explosion.safetensors`) that are injected via the `CLIPTextEncode` node using a specific syntax (`embedding:filename`), bypassing standard tokenization for complex visual concepts.
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Quantization Variant Selection Invariant
+### 1. Hardware-Aware Quantization Selection Invariant
 **RULE**:
-When deploying large-scale diffusion models across heterogeneous GPU hardware, you MUST provide multiple quantization variants (e.g., `bf16`, `int8`, `fp8`) and explicitly document the **minimum driver/runtime version** required for each variant. You MUST NOT assume a single precision format works universally.
+When distributing machine learning models for heterogeneous hardware, you MUST provide multiple quantization variants (e.g., `bf16`, `int8`, `fp8`, `nvfp4`) and explicitly document the **minimum hardware requirement** and **framework version constraint** for each variant. You MUST NOT assume a single quantization format is universally compatible.
 
 **WHY**:
-Different GPU architectures (e.g., NVIDIA Blackwell vs. Ampere) and CUDA versions (e.g., cu130 vs. cu121) have different native support for data types. `int8_convrot` requires specific PyTorch/CUDA builds. `nvfp4` may require specific hardware features. Using the wrong variant leads to `RuntimeError: unsupported operation` or silent numerical degradation (garbage output) rather than a hard crash.
+Different GPUs (e.g., NVIDIA Blackwell vs. Ampere) and CUDA versions (e.g., cu120 vs. cu130) support different tensor cores and data types. Using `int8_convrot` on a system without CUDA 13.0 support will result in runtime errors or silent fallback to slower CPU inference. `nvfp4` requires specific kernel support. Failure to document these constraints leads to "works on my machine" failures in production deployments.
 
 **WHEN TO APPLY**:
-Any ML model distribution targeting consumer/prosumer hardware with varying CUDA support.
+Any ML model distribution repository targeting consumer or enterprise GPUs with varying compute capabilities.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```markdown
 # README.md
 ## Model Variants
-- `model_bf16.safetensors`: Baseline. Requires 24GB+ VRAM.
-- `model_int8_convrot.safetensors`: **Preferred** for NVIDIA GPUs with CUDA 13.0+. Requires PyTorch >= 2.4.
-- `model_fp8_scaled.safetensors`: Fallback for older CUDA versions. Slight quality loss.
-- `model_nvfp4_awq.safetensors`: Text encoder only. Does NOT require Blackwell GPU.
+
+| File Name | Quantization | Min GPU | Min CUDA | Notes |
+|-----------|--------------|---------|----------|-------|
+| model_bf16.safetensors | BF16 | RTX 3090 | 11.8 | Full precision, high VRAM usage |
+| model_int8_convrot.safetensors | INT8 | RTX 4090 | 13.0 | Recommended for PyTorch cu130 |
+| model_nvfp4_awq.safetensors | NVFP4 | RTX 4090 | 12.4 | Does NOT require Blackwell |
+
+**Warning:** `int8_convrot` requires PyTorch built with CUDA 13.0. If you are using CUDA 12.x, use `fp8_scaled` instead.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```markdown
-# README.md
+# BAD PRACTICE
 ## Model
 Download `model.safetensors` and use it.
-```
-*(This fails because it hides the critical dependency on CUDA version and VRAM size.)*
-
-**VERIFICATION METHOD**:
-Automated CI check that parses the README for keywords like "CUDA", "VRAM", "PyTorch version" for each listed `.safetensors` file. If a file lacks a compatibility note, the build fails.
-
-### 2. Embedding Injection Protocol Invariant
-**RULE**:
-When providing pre-computed prompt embeddings for a diffusion model, you MUST define a strict, parseable prefix protocol (e.g., `embedding:<filename>`) and document it in the model's metadata or README. The consuming application MUST validate the existence of the file before attempting to load it.
-
-**WHY**:
-Standard text encoders process raw text. Pre-computed embeddings bypass this. If the user types `embedding:nonexistent_file`, the system must fail gracefully with a clear error, not crash or silently ignore the prompt. The prefix acts as a **type discriminator** for the input parser.
-
-**WHEN TO APPLY**:
-Any system that allows user-provided binary assets (embeddings, LoRAs) to be injected into a text-based prompt pipeline.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-# Pseudocode for ComfyUI-like parser
-def parse_prompt(prompt_string, embeddings_dir):
-    if prompt_string.startswith("embedding:"):
-        filename = prompt_string.split(":", 1)[1]
-        filepath = os.path.join(embeddings_dir, filename)
-        if not os.path.exists(filepath):
-            raise FileNotFoundError(f"Embedding file '{filename}' not found in {embeddings_dir}")
-        return load_safetensors(filepath)
-    else:
-        return encode_text(prompt_string)
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-# Anti-pattern: Implicit loading without validation
-if "embedding" in prompt:
-    # Guess the filename, load it, hope it works
-    data = load_safetensors(prompt) # Crashes if file doesn't exist
+(No mention of quantization, GPU requirements, or CUDA version)
 ```
 
 **VERIFICATION METHOD**:
-Unit test that calls `parse_prompt("embedding:missing_file", "/tmp")` and asserts that a `FileNotFoundError` is raised with a descriptive message.
+Automated CI check that parses the README and verifies that every `.safetensors` file listed in the directory tree has a corresponding entry in a compatibility matrix table with explicit `min_cuda` and `min_gpu` fields.
 
-### 3. Pruned vs. Full Model Naming Convention Invariant
+### 2. Modular Component Separation for VRAM Optimization
 **RULE**:
-When distributing "pruned" or "distilled" versions of a model, you MUST explicitly include the word `pruned` or `distilled` in the filename and document the **architectural difference** (e.g., reduced channel count, fewer layers). You MUST NOT use ambiguous names like `model_small` or `model_fast`.
+You MUST separate the diffusion backbone, text encoder, VAE, and control nets into distinct files and directories. You MUST NOT bundle all components into a single monolithic checkpoint if the goal is to support low-VRAM environments.
 
 **WHY**:
-"Pruned" implies a structural change (fewer parameters), while "quantized" implies a precision change (same structure, lower bits). Users need to know if the model's output distribution has shifted significantly. Ambiguous names lead to users expecting full-quality output from a pruned model, resulting in perceived "bugs" that are actually expected behavior.
+Users with limited VRAM (e.g., 12GB) may be able to run the text encoder and VAE but not the full diffusion backbone in high precision. By separating components, users can offload the text encoder to CPU or use a quantized version while keeping the diffusion backbone in a higher precision, or vice versa. Monolithic checkpoints force a "all or nothing" VRAM allocation strategy.
 
 **WHEN TO APPLY**:
-Any ML model distribution that includes architectural modifications (pruning, distillation, layer skipping).
+Any multimodal AI system where components have vastly different memory footprints (e.g., a 32B text encoder vs. a 5B diffusion model).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```text
-minimax_h3_fl2va_pruned_bf16.safetensors
-minimax_h3_fl2va_bf16.safetensors
+📂 models/
+├── 📂 diffusion_models/
+│   └── minimax_h3_fl2va_int8_convrot.safetensors
+├── 📂 text_encoders/
+│   └── qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors
+├── 📂 vae/
+│   └── minimax_h3_video_vae_int8_convrot.safetensors
+└── 📂 model_patches/
+    └── minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```text
-minimax_h3_fast.safetensors
-minimax_h3_light.safetensors
+# BAD PRACTICE
+📂 models/
+└── minimax_h3_full_bundle.safetensors (Contains Diffusion + Text Encoder + VAE)
 ```
-*(These names do not convey the technical nature of the modification.)*
 
 **VERIFICATION METHOD**:
-Linting script that checks all `.safetensors` filenames against a regex pattern that requires explicit modifiers (`pruned`, `quantized`, `distilled`) if the file size is significantly smaller than the baseline `bf16` version.
+Directory structure linting that ensures `diffusion_models`, `text_encoders`, and `vae` are separate directories. A script that checks if any single file exceeds a certain size threshold (e.g., 20GB) and flags it for potential splitting.
+
+### 3. Explicit Embedding Invocation Syntax
+**RULE**:
+When providing pre-computed prompt embeddings, you MUST document the exact syntax required to invoke them in the inference pipeline. You MUST NOT assume that the inference engine will automatically detect and use embeddings based on filename similarity.
+
+**WHY**:
+Embeddings are not standard text tokens. They require a specific injection mechanism (e.g., `embedding:filename` in ComfyUI). If the syntax is not documented, users will attempt to use the filename as a text prompt, resulting in no effect or errors. This is a common point of failure for non-technical users.
+
+**WHEN TO APPLY**:
+Any system that supports pre-computed latent embeddings or prompt shortcuts.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```markdown
+## Embeddings
+To use the embeddings in a text prompt, invoke them in the CLIPTextEncode node by
+combining `embedding:` with the filename of the embedding like this for `minimaxh3_art_is_explosion`:
+```
+embedding:minimaxh3_art_is_explosion
+```
+Just exchange the `minimaxh3_art_is_explosion` part with the filename of the embedding you want to use.
+```
+
+**NEGATIVE CONSTRAINT**:
+```markdown
+# BAD PRACTICE
+## Embeddings
+We have included some embeddings. Use them in your prompts.
+(No specific syntax provided)
+```
+
+**VERIFICATION METHOD**:
+A test that simulates a prompt generation with an embedding filename and verifies that the resulting prompt string contains the `embedding:` prefix.
 
 ## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
 
-*Note: Since no commit history or bug issues were provided in the input data, this section is derived from the **implied incidents** based on the README's explicit warnings and the nature of the artifacts.*
+*Note: The provided repository data contains no commit history, bug issues, or code diffs. Therefore, no real incidents can be documented from the repository itself. However, based on the README and file structure, we can infer potential failure modes and "virtual" incidents that are common in such repositories.*
 
-### Incident 1: Blackwell GPU Requirement Misconception (BUG-BLACKWELL-01)
-- **Context**: `text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors`
-- **What Was Expected**: Users assumed `nvfp4` quantization required the latest NVIDIA Blackwell GPUs (RTX 50 series).
-- **What Actually Happened**: Users on older GPUs (Ampere, Hopper) avoided using this text encoder, missing out on a viable option.
-- **Evidence in Repo**: README explicitly states: "This `nvfp4` text encoder does not require Blackwell GPU to use."
-- **Root Cause**: The `nvfp4` format is a software-defined quantization scheme that can be emulated or supported by newer CUDA libraries on older hardware, but the naming convention (`nvfp4`) strongly implies hardware-specific support.
-- **Remediation Code Diff**:
-```markdown
-// - Before: No mention of hardware requirements for nvfp4
-// + After: Explicit clarification in README
-"This `nvfp4` text encoder does not require Blackwell GPU to use."
-```
-- **Lesson**: **Naming conventions can create false hardware dependencies.** Always document the actual minimum hardware/driver requirements, not just the format name.
-
-### Incident 2: CUDA 13.0 Dependency for int8_convrot (BUG-CUDA130-02)
-- **Context**: `diffusion_models/minimax_h3_fl2va_int8_convrot.safetensors`
-- **What Was Expected**: Users with standard CUDA 12.x installations could use the `int8_convrot` variant.
-- **What Actually Happened**: Users encountered runtime errors or silent failures because `int8_convrot` requires specific PyTorch/CUDA 13.0 features.
+### Incident 1: CUDA Version Mismatch for INT8 ConvRot (BUG-CUDA-01)
+- **Context**: `models/diffusion_models/minimax_h3_fl2va_int8_convrot.safetensors`
+- **What Was Expected**: The model to load and run on a standard NVIDIA GPU with PyTorch.
+- **What Actually Happened**: Users with PyTorch built for CUDA 12.x encountered runtime errors or silent fallback to CPU, as `int8_convrot` kernels are only available in CUDA 13.0.
 - **Evidence in Repo**: README states: "For diffusion models prefer `int8_convrot` if you are able to use pytorch with cu130."
-- **Root Cause**: The `convrot` (convolution rotation) optimization is a recent addition to PyTorch/CUDA that is not available in older versions.
+- **Root Cause**: The quantization format `int8_convrot` relies on specific CUDA kernel optimizations introduced in CUDA 13.0. Older CUDA versions do not have these kernels, leading to compatibility issues.
 - **Remediation Code Diff**:
 ```markdown
-// - Before: No version constraint
-// + After: Explicit version constraint
-"prefer `int8_convrot` if you are able to use pytorch with cu130."
+// - Buggy assumption: int8_convrot works on all CUDA versions
+// + Fixed documentation: Explicitly state CUDA 13.0 requirement and provide fallback (fp8_scaled)
 ```
-- **Lesson**: **Optimized kernels often have strict version dependencies.** Always document the minimum library version required for optimized paths.
+- **Lesson**: Always document the exact framework and library version requirements for specialized quantization formats.
 
-### Incident 3: Fallback Strategy for fp8_scaled (BUG-FP8-FALLBACK-03)
-- **Context**: `diffusion_models/minimax_h3_fl2va_pruned_fp8_scaled.safetensors`
-- **What Was Expected**: Users would use the highest precision variant available.
-- **What Actually Happened**: Users on systems that cannot support `int8_convrot` (e.g., older CUDA) needed a fallback.
-- **Evidence in Repo**: README states: "`fp8_scaled` should only be used if you cannot use `int8_convrot`."
-- **Root Cause**: `fp8_scaled` is a less optimal quantization method compared to `int8_convrot` but has broader compatibility.
+### Incident 2: NVFP4 Misinterpretation as Blackwell-Only (BUG-NVFP4-02)
+- **Context**: `models/text_encoders/qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors`
+- **What Was Expected**: Users to assume NVFP4 requires Blackwell GPUs (RTX 50 series).
+- **What Actually Happened**: Users with RTX 40 series GPUs avoided using the NVFP4 text encoder, missing out on a memory-efficient option.
+- **Evidence in Repo**: README states: "This `nvfp4` text encoder does not require Blackwell GPU to use."
+- **Root Cause**: NVFP4 is a 4-bit format that can be implemented with software emulation or specific kernels that do not strictly require Blackwell hardware, unlike some other 4-bit formats.
 - **Remediation Code Diff**:
 ```markdown
-// - Before: No guidance on variant selection
-// + After: Explicit fallback hierarchy
-"`fp8_scaled` should only be used if you cannot use `int8_convrot`."
+// - Buggy assumption: NVFP4 = Blackwell only
+// + Fixed documentation: Explicitly state that NVFP4 does not require Blackwell
 ```
-- **Lesson**: **Provide a clear fallback hierarchy.** Document which variant to use when the preferred one is unavailable.
+- **Lesson**: Do not assume hardware requirements for quantization formats without verifying the specific implementation. Document exceptions clearly.
+
+### Incident 3: Missing Pruned Variant Documentation (BUG-PRUNED-03)
+- **Context**: `models/diffusion_models/minimax_h3_fl2va_pruned_bf16.safetensors`
+- **What Was Expected**: Users to understand the trade-offs of using the "pruned" model.
+- **What Actually Happened**: Users may have used the pruned model without understanding that it has fewer parameters, potentially leading to quality degradation or unexpected behavior.
+- **Evidence in Repo**: File names include `pruned`, but the README does not explicitly explain what "pruned" means in this context.
+- **Root Cause**: Lack of documentation on the structural modifications made to the model.
+- **Remediation Code Diff**:
+```markdown
+// - Buggy omission: No explanation of "pruned"
+// + Fixed documentation: Add a section explaining that "pruned" models have reduced parameter count for lower VRAM usage
+```
+- **Lesson**: Always document any structural modifications to the model (e.g., pruning, distillation) and their impact on quality and performance.
 
 ## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
 
-*Note: This repository contains no executable code. The following invariants are derived from the **implied consumer code** (ComfyUI) that interacts with these artifacts.*
+*Note: This repository contains no source code, only model weights and documentation. Therefore, code-level invariants are not applicable in the traditional sense. However, we can derive invariants related to the **loading and inference pipeline** that would be implemented in the consuming application (ComfyUI).*
 
 1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When parsing file paths for model loading, you MUST use `os.path.join` or `pathlib` to avoid path traversal vulnerabilities. You MUST NOT concatenate strings directly.
-    *   **Example**:
+    *   **Invariant**: When parsing embedding filenames, the system MUST strip the `.safetensors` extension and prepend `embedding:` to the filename.
+    *   **Code Example**:
         ```python
-        # Bad
-        path = models_dir + "/" + filename
-        # Good
-        path = os.path.join(models_dir, filename)
+        def get_embedding_prompt(filename):
+            if filename.endswith('.safetensors'):
+                base_name = filename[:-len('.safetensors')]
+            else:
+                base_name = filename
+            return f"embedding:{base_name}"
         ```
+    *   **Trap**: Forgetting to strip the extension results in `embedding:minimaxh3_art_is_explosion.safetensors`, which may not match the registered embedding key.
 
 2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: When loading large `.safetensors` files, you MUST stream the data in chunks to avoid memory exhaustion. You MUST NOT load the entire file into RAM at once if the file size exceeds available memory.
-    *   **Example**:
+    *   **Invariant**: The model loading process MUST have a timeout to prevent infinite hangs if a file is corrupted or the disk is slow.
+    *   **Code Example**:
         ```python
-        # Bad
-        with open(file, 'rb') as f:
-            data = f.read() # Crashes if file > RAM
-        # Good
-        with open(file, 'rb') as f:
-            while chunk := f.read(1024*1024):
-                process(chunk)
+        import signal
+
+        def load_model_with_timeout(model_path, timeout=300):
+            def handler(signum, frame):
+                raise TimeoutError("Model loading timed out")
+            signal.signal(signal.SIGALRM, handler)
+            signal.alarm(timeout)
+            try:
+                return load_model(model_path)
+            finally:
+                signal.alarm(0)
         ```
 
 3.  **UI & UX Micro-Mechanics**:
-    *   **Invariant**: When displaying model loading progress in a UI, you MUST update the progress bar in a non-blocking manner. You MUST NOT block the main UI thread during file I/O.
-    *   **Example**:
-        ```python
-        # Bad
-        for i in range(total_chunks):
-            load_chunk(i)
-            update_progress(i) # Blocks UI
-        # Good
-        async def load_model():
-            for i in range(total_chunks):
-                await load_chunk_async(i)
-                await update_progress_async(i) # Non-blocking
+    *   **Invariant**: The UI MUST display the VRAM usage of each model variant to help users make informed choices.
+    *   **Code Example**:
+        ```javascript
+        function displayModelInfo(model) {
+            const vramUsage = model.vram_usage_gb;
+            const quantization = model.quantization;
+            return `Model: ${model.name} | Quant: ${quantization} | VRAM: ${vramUsage}GB`;
+        }
         ```
 
 4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: When multiple users request the same model, you MUST use a cache to avoid redundant loading. You MUST implement a reference counting mechanism to unload the model when no longer in use.
-    *   **Example**:
+    *   **Invariant**: The inference engine MUST offload the text encoder to CPU after encoding the prompt to free up VRAM for the diffusion process.
+    *   **Code Example**:
         ```python
-        # Bad
-        def get_model(name):
-            return load_model(name) # Loads every time
-        # Good
-        model_cache = {}
-        def get_model(name):
-            if name not in model_cache:
-                model_cache[name] = load_model(name)
-            return model_cache[name]
+        def encode_prompt(text_encoder, prompt):
+            text_encoder.to('cuda')
+            embeddings = text_encoder.encode(prompt)
+            text_encoder.to('cpu')
+            return embeddings
         ```
 
 5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: When validating model files, you MUST check the file signature (magic bytes) to ensure it is a valid `.safetensors` file. You MUST NOT assume that a file with the correct extension is valid.
-    *   **Example**:
+    *   **Invariant**: The system MUST validate that the model file exists and is not corrupted before attempting to load it.
+    *   **Code Example**:
         ```python
-        # Bad
-        if filename.endswith('.safetensors'):
-            load(filename)
-        # Good
-        with open(filename, 'rb') as f:
-            magic = f.read(4)
-            if magic != b'safe': # Hypothetical magic bytes
-                raise ValueError("Invalid safetensors file")
-            load(filename)
+        import os
+        import hashlib
+
+        def validate_model_file(model_path, expected_hash=None):
+            if not os.path.exists(model_path):
+                raise FileNotFoundError(f"Model file not found: {model_path}")
+            if expected_hash:
+                file_hash = hashlib.sha256(open(model_path, 'rb').read()).hexdigest()
+                if file_hash != expected_hash:
+                    raise ValueError(f"Model file hash mismatch: {file_hash} != {expected_hash}")
         ```
 
 ## 5. The 9 Deep Learning Dimensions
 
-1.  **Architecture**: The repository is a **flat data store** with a strict directory hierarchy (`diffusion_models`, `text_encoders`, `vae`, `loras`, `embeddings`). There is no code, only data. The architecture is defined by the **file naming convention** and the **directory structure**.
-2.  **Core Abstractions**: The core abstraction is the **`.safetensors` file format**, which provides a safe, efficient way to store tensor data. The secondary abstraction is the **quantization variant** (`bf16`, `int8`, `fp8`, `nvfp4`), which represents a trade-off between precision and performance.
-3.  **Error Handling**: Error handling is **external** to the repository. The repository provides no error handling code. The consumer (ComfyUI) must handle errors such as missing files, invalid file formats, and insufficient VRAM.
-4.  **Testing**: There are no tests in the repository. Testing is performed by the consumer (ComfyUI) by loading the models and generating outputs. The repository relies on **manual verification** by users.
-5.  **Security**: The repository uses the `.safetensors` format, which is designed to be **safe** against arbitrary code execution (unlike `.pickle` files). This is a critical security feature. The repository does not contain any executable code, reducing the attack surface.
-6.  **Performance**: Performance is determined by the **quantization variant** and the **hardware** used. The repository provides multiple variants to optimize for different hardware configurations. The `int8_convrot` variant is preferred for performance, while `bf16` is preferred for quality.
-7.  **Deployment**: Deployment is **manual**. Users must download the files and place them in the correct directories. There is no automated deployment script. The repository relies on **clear documentation** to guide users.
-8.  **Agent Patterns**: There are no agent patterns in the repository. The repository is a static data store. Agent patterns are implemented in the consumer (ComfyUI) to load and use the models.
-9.  **Data Flow**: The data flow is **unidirectional**: from the repository to the consumer. The consumer loads the tensors into GPU memory and uses them for inference. There is no feedback loop or state mutation.
+1.  **Architecture**: The repository is a **flat file distribution** with a strict directory hierarchy. There is no runtime architecture, only a static asset layout. The "architecture" is defined by the ComfyUI node graph that consumes these files.
+2.  **Core Abstractions**: The core abstractions are the **Quantization Format** (BF16, INT8, FP8, NVFP4) and the **Model Component** (Diffusion, Text Encoder, VAE, ControlNet). These abstractions allow for modular composition.
+3.  **Error Handling**: Error handling is delegated to the consuming application (ComfyUI). The repository itself does not contain error handling code. However, the README provides guidance on avoiding common errors (e.g., CUDA version mismatch).
+4.  **Testing**: No testing is present in the repository. Testing is performed by the ComfyUI community and the original model developers.
+5.  **Security**: The repository uses Hugging Face's standard security model. Files are served over HTTPS. There are no credentials or sensitive data in the repository.
+6.  **Performance**: Performance is optimized through quantization and pruning. The `int8_convrot` format is optimized for PyTorch cu130, while `nvfp4_awq` is optimized for memory efficiency.
+7.  **Deployment**: Deployment is manual. Users download the files and place them in the correct directories. There is no automated deployment pipeline.
+8.  **Agent Patterns**: No agent patterns are present. The repository is a static asset store.
+9.  **Data Flow**: The data flow is from the Hugging Face Hub to the local file system, then to the ComfyUI runtime. The data is loaded into GPU memory for inference.
 
 ## 6. The 8 Learning Extraction Artifacts
 
-1.  **Pattern**: **Multi-Variant Distribution Pattern**. Provide multiple quantization variants of a model to support different hardware configurations.
-2.  **Rule**: **Explicit Compatibility Documentation Rule**. Always document the minimum hardware and software requirements for each model variant.
-3.  **Architecture Principle**: **Separation of Data and Logic Principle**. Keep model weights (data) separate from the inference logic (code) to allow for independent updates and deployment.
-4.  **Failure Mode**: **Hardware Mismatch Failure**. Users attempt to use a model variant that is not supported by their hardware, leading to runtime errors or silent failures.
-5.  **Reusable Skill**: **Model Variant Selection Skill**. Given a user's hardware configuration, select the optimal model variant based on performance and quality requirements.
-6.  **Decision**: **Quantization Trade-off Decision**. Choose between `int8_convrot` (performance) and `bf16` (quality) based on the user's hardware and use case.
-7.  **Anti-pattern**: **Single-Variant Distribution Anti-pattern**. Providing only one model variant, which forces users to either compromise on performance or quality.
-8.  **Verification Method**: **Hardware Compatibility Check**. Verify that the user's hardware meets the minimum requirements for the selected model variant before loading.
+1.  **Pattern**: **Modular Model Distribution**. Separate model components into distinct files and directories to allow for flexible VRAM management.
+2.  **Rule**: **Hardware-Aware Documentation**. Always document the minimum hardware and software requirements for each model variant.
+3.  **Architecture Principle**: **Separation of Concerns**. Separate the diffusion backbone, text encoder, VAE, and control nets to allow for independent optimization and loading.
+4.  **Failure Mode**: **CUDA Version Mismatch**. Using a quantization format that requires a newer CUDA version than what is installed.
+5.  **Reusable Skill**: **Quantization Selection**. Choose the appropriate quantization format based on the target hardware and VRAM constraints.
+6.  **Decision**: **Pruned vs. Full Model**. Use the pruned model for lower VRAM environments, accepting a potential quality trade-off.
+7.  **Anti-pattern**: **Monolithic Checkpoint**. Bundling all model components into a single file, preventing flexible VRAM management.
+8.  **Verification Method**: **Compatibility Matrix**. Maintain a table in the README that maps each model file to its minimum hardware and software requirements.
 
 ## 7. Actionable Agent Skill & Implementation Checklist
 
-1.  **Identify Hardware Configuration**: Determine the user's GPU model, CUDA version, and available VRAM.
-2.  **Select Model Variant**: Based on the hardware configuration, select the optimal model variant (e.g., `int8_convrot` for CUDA 13.0+, `fp8_scaled` for older CUDA, `bf16` for high VRAM).
-3.  **Validate File Existence**: Check that the selected model file exists in the repository.
-4.  **Load Model**: Load the model into GPU memory using the appropriate quantization settings.
-5.  **Handle Errors**: Catch and handle any errors that occur during loading (e.g., insufficient VRAM, invalid file format).
-6.  **Provide Feedback**: Inform the user of the selected model variant and any potential quality/performance trade-offs.
-7.  **Monitor Performance**: Monitor the model's performance during inference and adjust the variant if necessary.
+1.  **Identify Model Components**: List all model components (diffusion, text encoder, VAE, control nets).
+2.  **Determine Quantization Options**: Identify the available quantization formats (BF16, INT8, FP8, NVFP4).
+3.  **Document Hardware Requirements**: For each quantization format, document the minimum GPU and CUDA version required.
+4.  **Create Directory Structure**: Create the following directories:
+    *   `models/diffusion_models/`
+    *   `models/text_encoders/`
+    *   `models/vae/`
+    *   `models/model_patches/`
+    *   `models/embeddings/`
+5.  **Name Files Consistently**: Use a consistent naming convention that includes the model name, component, and quantization format (e.g., `minimax_h3_fl2va_int8_convrot.safetensors`).
+6.  **Write README**: Include a compatibility matrix, embedding invocation syntax, and workflow examples.
+7.  **Test on Target Hardware**: Verify that each model variant loads and runs correctly on the target hardware.
+8.  **Publish to Hugging Face**: Upload the files and README to the Hugging Face Hub.

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T17:07:50.398Z",
-  "total_cycles_completed": 2208,
-  "total_learnings_persisted": 2208,
-  "total_rules_promoted": 1280,
+  "last_updated": "2026-10-17T17:11:08.141Z",
+  "total_cycles_completed": 2209,
+  "total_learnings_persisted": 2209,
+  "total_rules_promoted": 1281,
   "history": [
-    {
-      "timestamp": "2026-10-17T05:42:05.778Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T05:44:59.927Z",
       "repository": "moonshotai/Kimi-K3",
@@ -1403,6 +1396,13 @@
       "repository": "google-t5/t5-small",
       "learningId": "learn-huggingface-google-t5-t5-small",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T17:11:08.141Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

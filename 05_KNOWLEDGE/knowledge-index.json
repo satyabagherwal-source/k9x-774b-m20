@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T17:07:50.360Z",
+  "last_updated": "2026-10-17T17:11:08.106Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11876,7 +11876,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
       "source_version": "hf-comfy-org-minimax-h3",
-      "content_hash": "1e6fba5bb1a72e17f94821e964c3cfb0e8451c5f3311d9b3a3e9cd5d2e1e3ce5",
+      "content_hash": "265856368253bc2e8ea554d7b0bb7a875c639c394fa3c386a89a85c456008fc5",
       "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md",
       "promoted_rules": [
@@ -11904,6 +11904,11 @@
           "number": 1410,
           "title": "Pruned vs. Full Model Naming Convention Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1502,
+          "title": "Modular Component Separation for VRAM Optimization",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11924,7 +11929,7 @@
         "learn-huggingface-hf-comfy-org-minimax-h3-mv49cnz1",
         "learn-huggingface-hf-comfy-org-minimax-h3-mv4mpv5o"
       ],
-      "verified_at": "2026-10-17T09:11:22.711Z",
+      "verified_at": "2026-10-17T17:11:08.099Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

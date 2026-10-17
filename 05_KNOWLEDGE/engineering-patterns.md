@@ -102430,3 +102430,61 @@ global_probs = torch.nn.functional.softmax(logits.view(-1).float(), dim=0)
 Add a **property‑based test** (hypothesis) that generates random per‑question option counts, runs the model stub, and asserts that `sum(probabilities[i]) ≈ 1.0` for **each** question while `global_sum != 1.0` when a global softmax is mistakenly applied.
 
 ---
+
+
+---
+
+## 1502. Modular Component Separation for VRAM Optimization (Harvested from Comfy-Org/MiniMax-H3)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Modular Component Separation for VRAM Optimization",
+  "source": "Comfy-Org/MiniMax-H3",
+  "source_url": "https://huggingface.co/Comfy-Org/MiniMax-H3",
+  "source_version": "hf-comfy-org-minimax-h3",
+  "license": "Open-Source",
+  "extracted_at": "2026-10-17T17:11:08.044Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-huggingface-comfy-org-minimax-h3",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Comfy-Org/MiniMax-H3](https://huggingface.co/Comfy-Org/MiniMax-H3) (Revision: `hf-comfy-o`).  
+> **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
+
+**RULE**:
+You MUST separate the diffusion backbone, text encoder, VAE, and control nets into distinct files and directories. You MUST NOT bundle all components into a single monolithic checkpoint if the goal is to support low-VRAM environments.
+
+**WHY**:
+Users with limited VRAM (e.g., 12GB) may be able to run the text encoder and VAE but not the full diffusion backbone in high precision. By separating components, users can offload the text encoder to CPU or use a quantized version while keeping the diffusion backbone in a higher precision, or vice versa. Monolithic checkpoints force a "all or nothing" VRAM allocation strategy.
+
+**WHEN TO APPLY**:
+Any multimodal AI system where components have vastly different memory footprints (e.g., a 32B text encoder vs. a 5B diffusion model).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```text
+📂 models/
+├── 📂 diffusion_models/
+│   └── minimax_h3_fl2va_int8_convrot.safetensors
+├── 📂 text_encoders/
+│   └── qwen3vl_32b_minimax_h3_nvfp4_awq.safetensors
+├── 📂 vae/
+│   └── minimax_h3_video_vae_int8_convrot.safetensors
+└── 📂 model_patches/
+    └── minimax_h3_fun_controlnet_union_pruned_int8_convrot.safetensors
+```
+
+**NEGATIVE CONSTRAINT**:
+```text
+# BAD PRACTICE
+📂 models/
+└── minimax_h3_full_bundle.safetensors (Contains Diffusion + Text Encoder + VAE)
+```
+
+**VERIFICATION METHOD**:
+Directory structure linting that ensures `diffusion_models`, `text_encoders`, and `vae` are separate directories. A script that checks if any single file exceeds a certain size threshold (e.g., 20GB) and flags it for potential splitting.

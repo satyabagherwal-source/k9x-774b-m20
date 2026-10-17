@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T15:29:52.384Z",
+  "last_updated": "2026-10-17T17:11:08.139Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1531,6 +1531,28 @@
       "status": "STAGED_FOR_VERIFICATION",
       "reason": "Rule body fails substance threshold (minimum 200 characters required)",
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b"
+    },
+    {
+      "id": "CD-L0FF",
+      "directive_title": "Hardware-Aware Quantization Selection Invariant",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Comfy-Org/MiniMax-H3",
+      "source_commit": "hf-comfy-org",
+      "date_staged": "2026-10-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-comfy-org-minimax-h3"
+    },
+    {
+      "id": "CD-L0FF",
+      "directive_title": "Explicit Embedding Invocation Syntax",
+      "source_type": "automated_harvester_candidate",
+      "source_repo": "Comfy-Org/MiniMax-H3",
+      "source_commit": "hf-comfy-org",
+      "date_staged": "2026-10-17",
+      "status": "STAGED_FOR_VERIFICATION",
+      "reason": "Missing mandatory **NEGATIVE CONSTRAINT** anti-pattern",
+      "learning_id": "learn-huggingface-comfy-org-minimax-h3"
     }
   ]
 }
