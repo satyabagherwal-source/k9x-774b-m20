@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-48E7",
-    "timestamp": "2026-10-15T23:26:39.487Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "72066ec6c3d47e72fd41cb7e99d1fdd406cb31950784c54c403b64bbddeeff1b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-87GX",
     "timestamp": "2026-10-15T23:29:44.913Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7490,6 +7475,21 @@
     "repository": "google/vit-base-patch16-224",
     "learningId": "learn-huggingface-google-vit-base-patch16-224",
     "contentHash": "b187162eb9d1c57f57d1e13f3c664892ae47fbba047067bfea6a2301e1a838de",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-MINJ",
+    "timestamp": "2026-10-17T04:08:29.167Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "52119e410028495c478232a50563a50fd179a34793df01455bc94e624ce016d1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
