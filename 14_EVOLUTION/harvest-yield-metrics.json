@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T02:33:02.573Z",
-  "total_cycles_completed": 1950,
-  "total_learnings_persisted": 1950,
+  "last_updated": "2026-10-17T02:36:13.107Z",
+  "total_cycles_completed": 1951,
+  "total_learnings_persisted": 1951,
   "total_rules_promoted": 1067,
   "history": [
-    {
-      "timestamp": "2026-10-16T15:00:07.897Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T15:03:16.352Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T02:33:02.573Z",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
       "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T02:36:13.107Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
