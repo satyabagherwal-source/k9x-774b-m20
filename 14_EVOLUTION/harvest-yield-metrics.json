@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T07:15:02.168Z",
-  "total_cycles_completed": 2037,
-  "total_learnings_persisted": 2037,
-  "total_rules_promoted": 1123,
+  "last_updated": "2026-10-17T07:19:14.698Z",
+  "total_cycles_completed": 2038,
+  "total_learnings_persisted": 2038,
+  "total_rules_promoted": 1126,
   "history": [
-    {
-      "timestamp": "2026-10-16T20:12:39.300Z",
-      "repository": "argmaxinc/whisperkit-coreml",
-      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T20:15:38.774Z",
       "repository": "Qwen/Qwen3-8B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T07:15:02.168Z",
       "repository": "akhilaaa3/Jev-Omni",
       "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T07:19:14.698Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
