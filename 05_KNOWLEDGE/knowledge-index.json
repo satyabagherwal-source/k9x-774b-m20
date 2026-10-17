@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T18:21:01.961Z",
+  "last_updated": "2026-10-17T18:24:13.376Z",
   "total_verified_learnings": 196,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16569,7 +16569,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-20b",
       "source_version": "hf-openai-gpt-oss-20b",
-      "content_hash": "e951c895ff571580957fc321f6ae4286d9f69f85a6e491892df25c97f949eb4e",
+      "content_hash": "4f9e248f95f805cb87d7be79d2a6405ad9bf7f043209cab8c7d55da8f1111577",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "promoted_rules": [],
@@ -16590,7 +16590,7 @@
         "learn-huggingface-hf-openai-gpt-oss-20b-mv3woskc",
         "learn-huggingface-hf-openai-gpt-oss-20b-mv4beakp"
       ],
-      "verified_at": "2026-10-17T10:28:02.416Z",
+      "verified_at": "2026-10-17T18:24:13.368Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

@@ -2254,3 +2254,4 @@
 | `CYCLE-20261017-UK7P` | `2026-10-17T18:14:32.917Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`b1895be7...`) |
 | `CYCLE-20261017-YXZA` | `2026-10-17T18:17:57.382Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`f5a0ef13...`) |
 | `CYCLE-20261017-2WF8` | `2026-10-17T18:21:01.988Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`c179f49b...`) |
+| `CYCLE-20261017-704L` | `2026-10-17T18:24:13.413Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`4f9e248f...`) |
