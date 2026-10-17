@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-OTNE",
-    "timestamp": "2026-10-16T06:14:34.778Z",
-    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-    "contentHash": "e9b2d702e963b849a36d5bda9df806a76ec85cb288d7c926c84c5dbb82a6a56d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-STU3",
     "timestamp": "2026-10-16T06:17:41.643Z",
     "repository": "SupersonicLabs/Julia-1",
@@ -7492,6 +7477,21 @@
     "contentHash": "354c6d1e43a1cc882e549f3b24f8fd7bf577459ad94c3c8ccb39281b599a8a2b",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-ZJSB",
+    "timestamp": "2026-10-17T11:18:31.403Z",
+    "repository": "sentence-transformers/all-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
+    "contentHash": "ea52083b86d34834d4fa184a4a576d59182b8b1d72a87d7c0a8d8d6cef328283",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
