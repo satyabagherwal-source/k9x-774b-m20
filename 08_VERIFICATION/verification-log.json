@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-GTHH",
-    "timestamp": "2026-10-16T05:40:21.701Z",
-    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-    "contentHash": "3ad4e8f6c6a267aace48a7a8c9b30086b77021dc0a9fa190180cab4cb3e5d500",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-L1J8",
     "timestamp": "2026-10-16T05:43:38.756Z",
     "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -7490,6 +7475,21 @@
     "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
     "contentHash": "b5b58725e0aa530ec4eb782f45ddc344d520f1498cd6903d62aecc0a78c17469",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-MN4D",
+    "timestamp": "2026-10-17T10:40:29.581Z",
+    "repository": "deepseek-ai/DeepSeek-V3",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "662c02e4477bdc861bdbe131b12c1c11e142da739f66f4651513445dc497986d",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
