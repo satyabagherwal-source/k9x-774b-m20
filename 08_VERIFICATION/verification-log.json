@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-DL7X",
-    "timestamp": "2026-10-16T05:09:51.405Z",
-    "repository": "Qwen/Qwen3.8-27B",
-    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-    "contentHash": "50be5ac0a7afd2301a3d85cba8b1b2940f6793e375db78b2a9b6564524e35fef",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-HPOQ",
     "timestamp": "2026-10-16T05:13:03.818Z",
     "repository": "black-forest-labs/FLUX.1-dev",
@@ -7492,6 +7477,21 @@
     "contentHash": "3863b869599936d7940ecdd28080ee12f3069432e64b022cc2a2c3639fddb08b",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-HZ3M",
+    "timestamp": "2026-10-17T10:08:52.210Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "43840376366499ac579f9ba4dea847cc046863bb3a906080239091a4a6ca0b7e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T10:05:56.406Z",
-  "total_cycles_completed": 2082,
-  "total_learnings_persisted": 2082,
+  "last_updated": "2026-10-17T10:08:52.214Z",
+  "total_cycles_completed": 2083,
+  "total_learnings_persisted": 2083,
   "total_rules_promoted": 1202,
   "history": [
-    {
-      "timestamp": "2026-10-16T22:53:41.802Z",
-      "repository": "Qwen/Qwen-Image-2.1-Turbo",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T22:58:07.485Z",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -1403,6 +1396,13 @@
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T10:08:52.214Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

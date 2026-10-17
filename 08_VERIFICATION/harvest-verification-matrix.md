@@ -2105,3 +2105,4 @@
 | `CYCLE-20261017-4L5J` | `2026-10-17T09:58:27.607Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`b8f09d87...`) |
 | `CYCLE-20261017-8TQ5` | `2026-10-17T10:01:45.341Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`09139adb...`) |
 | `CYCLE-20261017-E7FY` | `2026-10-17T10:05:56.398Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1423, Rule 1424, Rule 1425` | Yes (`3863b869...`) |
+| `CYCLE-20261017-HZ3M` | `2026-10-17T10:08:52.210Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`43840376...`) |
