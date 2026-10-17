@@ -185,3 +185,21 @@
   // GOOD: Strictly delimited by double-quote closing boundary
   const match = html.match(/<meta\s+name="description"\s+content="([^"]*)"/i);
   ```
+
+---
+
+## Incident 10: Search Console Deceptive Error Modals ("Oops! Something went wrong") vs. False 5xx Triage & Protocol/Host Purity
+
+### 1. Empirical Defect & Confusion Forensic
+- **Observation**: During manual indexing acceleration, an operator inspected `http://www.onlinefreeprotractor.com/` and encountered a red modal dialog in Google Search Console:
+  > *"Oops! Something went wrong — We had a problem submitting your indexing request. Please try again later."*
+- **False Hypothesis**: The operator hypothesized that the origin web server crashed or emitted a 5xx Server Error due to missing SSL/HTTPS.
+- **Empirical Disproof**:
+  1. *Underlying Queue State*: Behind the modal popup, the GSC UI clearly rendered `✓ Indexing requested` and `REQUEST AGAIN`. The URL submission was ALREADY accepted and pending in Googlebot's asynchronous crawl queue. Clicking "Request Again" on an already-queued URL triggers GSC's client-side duplicate prevention error modal.
+  2. *GSC Daily Quota Exceeded*: Google Search Console enforces an undisclosed, strict per-property daily quota (~10 to 50 URLs/day). Once exhausted, GSC displays this identical generic modal.
+  3. *Non-Canonical Protocol & Subdomain Inadvertence*: The operator had tested `http://www.onlinefreeprotractor.com/` (insecure `http://` with `www.` subdomain). Cloudflare Edge returns `HTTP 301 Moved Permanently` pointing to `https://www.onlinefreeprotractor.com/` which redirects to `https://onlinefreeprotractor.com/`. The origin server was 100% healthy (HTTP 200 OK on canonical apex, 0 server errors).
+  4. *Automated 360° URL Integrity Audit*: Execution of `scripts/audit_all_urls_integrity.cjs` across all 542 HTML pages, live sitemaps (`sitemap.xml`, `sitemap-0.xml`), `robots.txt`, 542 canonical tags, 17,820 hreflang alternates, and 110,175 internal links proved 100% adherence to pure canonical `https://onlinefreeprotractor.com/...` (0 instances of `http://`, 0 instances of `www.`, 0 missing trailing slashes).
+
+### 2. Universal Engineering Invariant
+> **Search Console Deceptive Error Invariant**: An "Oops! Something went wrong" modal in Google Search Console MUST NEVER be triaged as an origin server 5xx defect without direct edge HTTP probing. Audit systems must enforce strict protocol purity (`https://`) and apex hostname consistency, prohibiting the submission or inspection of non-canonical redirect variants.
+

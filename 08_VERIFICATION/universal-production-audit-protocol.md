@@ -80,5 +80,8 @@ For every multi-language web property, the audit runner MUST evaluate the **Lang
   8. Search Console Quota-Aware Submission Governance (Rule 1492):
      - Sitemap submission deployed as Primary Passive Discovery conduit (zero quota limit).
      - Active manual URL inspection partitioned into prioritized daily batches (<= 50 URLs/day).
+  9. Search Console Error Triage & Protocol Purity Gate (Rule 1515):
+     - Prohibition of triaging GSC client-side modals ("Oops! Something went wrong") as origin server 5xx errors without live HTTP status probing.
+     - Strict protocol (`https://`) and apex hostname purity enforced across all sitemaps, robots.txt, canonical tags, hreflangs, and submission queues (0 instances of `http://` or `www.`).
 ```
 

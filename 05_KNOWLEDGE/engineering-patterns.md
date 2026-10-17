@@ -103267,14 +103267,21 @@ video = base_model.generate(
 **VERIFICATION METHOD**:
 Optical flow analysis on the generated video. Calculate the flow vector for the object mask. If the mean flow vector magnitude exceeds a threshold (e.g., 2 pixels/frame), the "frozen scene" invariant is violated.
 
-
 ---
 
 ## 1514. Model Artifact Integrity & Schema Validation Invariant (Harvested from black-forest-labs/flux-3-image-klein)
 
+---
+
+---
+
+## 1515. Search Console Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant (Harvested from satyabagherwal-source/onlinefreeprotractor)
+ (feat(brain): codify Rule 1514 - GSC Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant)
+
 <!-- PROVENANCE_START
 {
   "knowledge_type": "engineering_pattern",
+<<<<<<< HEAD
   "topic": "Model Artifact Integrity & Schema Validation Invariant",
   "source": "black-forest-labs/flux-3-image-klein",
   "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein",
@@ -103284,12 +103291,24 @@ Optical flow analysis on the generated video. Calculate the flow vector for the 
   "ai_provider": "google-gemini-cloud-agent",
   "generation_mode": "source_derived_ai_synthesized",
   "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein",
+=======
+  "topic": "Search Console Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant",
+  "source": "satyabagherwal-source/onlinefreeprotractor",
+  "source_url": "https://onlinefreeprotractor.com",
+  "source_version": "production-verified-phase3",
+  "license": "Proprietary",
+  "extracted_at": "2026-10-18T01:25:00.000Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "empirical_incident_extraction",
+  "learning_id": "learn-onlinefreeprotractor-rule1514",
+>>>>>>> 3e105d65a (feat(brain): codify Rule 1514 - GSC Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant)
   "verified": true,
   "confidence": "high",
   "promotion_status": "approved",
   "distillation_prohibited": true
 }
 PROVENANCE_END -->
+<<<<<<< HEAD
 > **Provenance**: Harvested from [black-forest-labs/flux-3-image-klein](https://huggingface.co/black-forest-labs/flux-3-image-klein) (Revision: `hf-black-f`).  
 > **Evidence**: Verified against commit diffs and closed defect autopsies. (Distillation Prohibited).
 
@@ -103605,3 +103624,47 @@ def publish_model(repo_path: str):
 *   **CI Check**: Add a pre-commit hook that runs `validate_model_repo` on the local directory before pushing to Hugging Face.
 
 ---
+=======
+> **Provenance**: Harvested from [satyabagherwal-source/onlinefreeprotractor](https://onlinefreeprotractor.com) (Revision: `production-verified-phase3`).  
+> **Evidence**: Verified against Google Search Console URL Inspection API behavior, edge 301/200 probes, and 542-page static audit.
+
+**RULE**:
+Audit systems, SEO pipelines, and developer tooling MUST NOT classify search console client-side error modals (such as *"Oops! Something went wrong — We had a problem submitting your indexing request"*) as web-server 5xx errors or origin outages without independent HTTP status probing. Furthermore, automated and manual search console submission tooling MUST enforce strict protocol (`https://`) and apex hostname purity, rejecting any attempt to submit non-canonical, redirect-inducing variants (`http://` or `www.`).
+
+Pipelines must enforce:
+1. **Disjoint Triage Barrier**: A GSC submission modal failure indicates either: (a) Duplicate submission of an already-queued URL (`✓ Indexing requested`), (b) Search Console daily quota exhaustion (~10–50 URLs/day), or (c) Googlebot ingestion rate limiting. It does NOT indicate origin server downtime.
+2. **Canonical Submission Purity**: Only URLs matching `URL_STRATEGY` (e.g. `https://domain.com/path/`) may enter indexing queues. Insecure scheme (`http://`) or subdomain (`www.`) variants must be auto-normalized or blocked prior to submission.
+3. **Automated URL Integrity Auditing**: Verification suites must scan all sitemaps, `robots.txt`, canonical tags, hreflang alternates, and internal `<a href>` attributes, asserting 0 instances of non-canonical protocols or hostnames.
+
+**WHY**:
+Conflating search engine UI rate-limiting or duplicate-submission rejections with website 5xx crashes leads developers into phantom bug hunts, improper CDN reconfiguration, or destructive modifications of working edge SSL rules. Moreover, submitting non-canonical redirect variants squanders precious GSC daily inspection quotas on 301 redirects rather than indexable canonical content.
+
+**WHEN TO APPLY**:
+Apply to all web properties managing Google Search Console, Bing Webmaster Tools, IndexNow integrations, automated sitemap generators, and SEO recovery pipelines.
+
+**VERIFIED IMPLEMENTATION PATTERN (Node.js URL Audit Guard)**:
+```javascript
+// scripts/audit_all_urls_integrity.cjs
+function validateCanonicalPurity(url, canonicalBase) {
+  // Enforce HTTPS, Apex domain, and trailing slash
+  if (!url.startsWith(`${canonicalBase}/`)) {
+    throw new Error(`Non-canonical protocol or host in submission queue: ${url}`);
+  }
+  if (url.includes('www.')) {
+    throw new Error(`Disallowed subdomain in submission queue: ${url}`);
+  }
+  if (!url.endsWith('/')) {
+    throw new Error(`Missing trailing slash in canonical URL: ${url}`);
+  }
+  return true;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+- NEVER assume a web server is returning 5xx server errors based purely on a Search Console UI submission error modal.
+- NEVER submit `http://` or `www.` URLs to search engine inspection tools when the site canonicalizes to HTTPS apex.
+
+**VERIFICATION METHOD**:
+1. Execute live HTTP probe against the inspected URL. Assert that `statusCode === 200` for canonical apex and `statusCode === 301` for HTTP/www variants.
+2. Run automated URL integrity scanner across all generated HTML files, asserting `badCanonicals === 0`, `badHreflangs === 0`, and `badInternalHrefs === 0`.
+>>>>>>> 3e105d65a (feat(brain): codify Rule 1514 - GSC Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant)

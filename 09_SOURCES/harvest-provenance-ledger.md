@@ -2290,3 +2290,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-conwayresearch-underdog-saluki-27b-1-0` | `https://huggingface.co/ConwayResearch/Underdog-Saluki-27B-1.0` | `hf-conwayr` | Multi-dimensional audit evidence | 2026-10-17T19:53:55.690Z |
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-10-17T19:57:04.472Z |
 | `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-10-17T19:59:59.607Z |
+| learn-onlinefreeprotractor-rule1515 | https://github.com/satyabagherwal-source/onlinefreeprotractor | production-verified-phase3 | scripts/audit_all_urls_integrity.cjs | 2026-10-18T01:25:00Z |
+ (feat(brain): codify Rule 1514 - GSC Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant)

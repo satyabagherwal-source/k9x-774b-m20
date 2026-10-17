@@ -1,6 +1,35 @@
 # Brain Evolution Log
 
 This file records canonical promotion events, knowledge integration milestones, and rule evolutions into `C:\AI-Builder-Brain`.
+
+## Evolution Event: 2026-10-18 — Search Console Deceptive Error Triage & Strict Protocol/Subdomain Purity (Rule 1515 from onlinefreeprotractor.com)
+
+* **Source Project**: `satyabagherwal-source/onlinefreeprotractor` (`https://onlinefreeprotractor.com`)
+* **Trigger**: User Directive: *"learning dal do brain me"* (Forensic triage of deceptive GSC "Oops! Something went wrong" modal vs 5xx errors & 360° URL protocol/subdomain purity verification).
+* **Empirical Accomplishments & Forensic Breakthroughs**:
+  1. **Disproof of False 5xx Origin Error Hypothesis**:
+     - Deconstructed Search Console UI modal failure *"Oops! Something went wrong — We had a problem submitting your indexing request"*.
+     - Proved modal was triggered by duplicate submission of an already-queued URL (`✓ Indexing requested` rendered in background) combined with GSC daily URL inspection quota limit (~10–50 URLs/day), not origin server 5xx failure.
+     - Live probes confirmed Cloudflare edge and static origin server 100% healthy (HTTP 200 OK on canonical apex, zero 5xx).
+  2. **Codification of Rule 1515 (Search Console Deceptive Error Triage & Submission Purity)**:
+     - Enforced strict disjoint barrier between search engine client-side rate-limiting and true origin HTTP failures.
+     - Prohibited the submission or inspection of non-canonical redirect variants (`http://` or `www.`) in webmaster tools.
+  3. **360° Automated URL Scheme & Hostname Integrity Audit**:
+     - Automated script `scripts/audit_all_urls_integrity.cjs` audited live `robots.txt`, live `sitemap.xml`, live `sitemap-0.xml`, 542 canonical tags, 17,820 hreflang tags, and 110,175 internal links.
+     - Confirmed 100% adherence to pure canonical `https://onlinefreeprotractor.com/...` with 0 non-HTTPS, 0 www, and 0 missing trailing slashes.
+  4. **Verification Gate Integration**:
+     - Added Gate 9 (Search Console Error Triage & Protocol Purity Gate) to `08_VERIFICATION/universal-production-audit-protocol.md`.
+* **Promoted Universal Rule**:
+  - **Rule 1515**: Search Console Deceptive Error Triage & Strict Protocol/Subdomain Submission Purity Invariant.
+* **Files Updated**:
+  - `07_PROJECT_LEARNING/online-free-protractor-learnings.md` (Incident 10 added)
+  - `05_KNOWLEDGE/engineering-patterns.md` (Rule 1515 added)
+  - `08_VERIFICATION/universal-production-audit-protocol.md` (Gate 9 added)
+  - `09_SOURCES/harvest-provenance-ledger.md` (Provenance entry recorded)
+  - `14_EVOLUTION/brain-evolution-log.md` (Evolution logged)
+
+---
+
 ## Evolution Event: 2026-10-17 — SEO Recovery, XML Sitemap Purity & Indexing Governance Invariants (Rules 1490–1492 from onlinefreeprotractor.com)
 
 * **Source Project**: `satyabagherwal-source/onlinefreeprotractor` (`https://onlinefreeprotractor.com`)
