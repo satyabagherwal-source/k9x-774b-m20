@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-CHPU",
-    "timestamp": "2026-10-16T03:17:01.746Z",
-    "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
-    "learningId": "learn-huggingface-conwayresearch-underdog-saluki-27b-1-0",
-    "contentHash": "4f1d6d32054fb5bd15ef923fd629531c5b8baf79ab622065e45541a81370bcd4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-G9B1",
     "timestamp": "2026-10-16T03:19:57.469Z",
     "repository": "google/gemma-4-26B-A4B-it",
@@ -7490,6 +7475,21 @@
     "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "contentHash": "662c76477aa59d48e31c0296347d86452814d52b03a24173f04e0eb0581b9c14",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-UMBC",
+    "timestamp": "2026-10-17T08:26:43.704Z",
+    "repository": "canberkkkkkk/ema-lightning",
+    "learningId": "learn-huggingface-canberkkkkkk-ema-lightning",
+    "contentHash": "6e3d48aedefa86fe8014cf9c6c947814f5ca881cd90c62d1fbfef3218db353df",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {
