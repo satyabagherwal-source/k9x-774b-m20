@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-S7UR",
-    "timestamp": "2026-10-16T17:29:03.939Z",
-    "repository": "amazon/chronos-2",
-    "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "af4d9edf0c0d1ec0a1e0033ddd4ba637f97b2bf322d2510445c3b334a5cff0de",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-WA4S",
     "timestamp": "2026-10-16T17:32:13.516Z",
     "repository": "CompVis/stable-diffusion-v1-4",
@@ -7492,6 +7477,21 @@
     "contentHash": "d46869d9dab2aa175b74f5776ef11e7351447e2349d60107d3690443a7e3670c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-4AZ6",
+    "timestamp": "2026-10-17T21:38:04.818Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "e12c11a7efe9af031e37d6c5627e269dc13a79b3f868563bb3df6f3feda181c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

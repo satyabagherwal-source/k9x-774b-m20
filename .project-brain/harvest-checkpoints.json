@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T21:33:14.057Z",
+  "last_updated": "2026-10-17T21:38:04.827Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -228,14 +228,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "content_hash": "c6411e081aab80cfe55cd369542faf6b6cd739f196803762d9729d1e7d47a41b",
-      "verified_at": "2026-10-17T13:52:23.306Z",
+      "content_hash": "e12c11a7efe9af031e37d6c5627e269dc13a79b3f868563bb3df6f3feda181c0",
+      "verified_at": "2026-10-17T21:38:04.827Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-17T13:52:23.306Z"
+      "last_updated": "2026-10-17T21:38:04.827Z"
     },
     "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF": {
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",

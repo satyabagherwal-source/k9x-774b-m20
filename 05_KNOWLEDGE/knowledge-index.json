@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T21:33:14.032Z",
+  "last_updated": "2026-10-17T21:38:04.794Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -11163,7 +11163,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "c6411e081aab80cfe55cd369542faf6b6cd739f196803762d9729d1e7d47a41b",
+      "content_hash": "e12c11a7efe9af031e37d6c5627e269dc13a79b3f868563bb3df6f3feda181c0",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [
@@ -11232,6 +11232,21 @@
           "number": 1315,
           "title": "Joint Attention Token Alignment Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1532,
+          "title": "Multidimensional Continuous-Coordinate RoPE Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1533,
+          "title": "Guidance-Distilled Rectified Trajectory Numerical Bounds",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1534,
+          "title": "Asymmetric Mixed-Precision Quantization Barrier",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -11252,7 +11267,7 @@
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv43g3lp",
         "learn-huggingface-hf-black-forest-labs-flux-1-dev-mv4goq8m"
       ],
-      "verified_at": "2026-10-17T13:52:23.260Z",
+      "verified_at": "2026-10-17T21:38:04.787Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
