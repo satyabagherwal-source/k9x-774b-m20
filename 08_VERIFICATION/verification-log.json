@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-VF53",
-    "timestamp": "2026-10-16T11:55:37.959Z",
-    "repository": "nomic-ai/nomic-embed-text-v1.5",
-    "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-    "contentHash": "b31dba4a94be8a8a77ac0c22173368da48073cd8c3aa503d0448134f7e67b52d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-ZFWL",
     "timestamp": "2026-10-16T11:58:45.573Z",
     "repository": "ConwayResearch/Underdog-Saluki-27B-1.0",
@@ -7490,6 +7475,21 @@
     "repository": "facebook/sam3",
     "learningId": "learn-huggingface-facebook-sam3",
     "contentHash": "54c5ea4731b7879b3ee19746b354f52697c0bcf8b418aedbee7f3fa3f3805363",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-ZNR3",
+    "timestamp": "2026-10-17T16:26:32.319Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "6275e982818483a1bb400f518b0ea7abd54839c0d6defd6c424e2fe9176469e2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
