@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T17:42:46.148Z",
-  "total_cycles_completed": 2219,
-  "total_learnings_persisted": 2219,
+  "last_updated": "2026-10-17T17:46:12.170Z",
+  "total_cycles_completed": 2220,
+  "total_learnings_persisted": 2220,
   "total_rules_promoted": 1284,
   "history": [
-    {
-      "timestamp": "2026-10-17T06:17:02.033Z",
-      "repository": "nvidia/Nemotron-3-Diarization",
-      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T06:20:15.946Z",
       "repository": "Lightricks/LTX-2.5",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T17:42:46.148Z",
       "repository": "vllm-sr/d3",
       "learningId": "learn-huggingface-vllm-sr-d3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T17:46:12.170Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-openai-whisper-large-v3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
