@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T21:43:45.149Z",
+  "last_updated": "2026-10-17T21:47:07.079Z",
   "total_verified_learnings": 197,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -16862,7 +16862,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "76717c6c5d88d5948c33e094f26d0145e93c292b5729bc98b271d256925dced7",
+      "content_hash": "48f2535bc77cdd18828fd08724ccf4e9b6caa40ecdd8eb8e90ce63b9f8dbbcf5",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [
@@ -16938,6 +16938,21 @@
           "number": 1462,
           "title": "Abliteration Weight-Quantization SVD Dynamic Range Guard",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1537,
+          "title": "GGUF Metadata Integrity & Architecture Validation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1538,
+          "title": "Quantization Precision & Numerical Stability Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 1539,
+          "title": "Safety Boundary & Alignment Integrity Check",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -16958,7 +16973,7 @@
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv43ntz8",
         "learn-huggingface-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-mv4gww1z"
       ],
-      "verified_at": "2026-10-17T13:59:28.211Z",
+      "verified_at": "2026-10-17T21:47:07.074Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

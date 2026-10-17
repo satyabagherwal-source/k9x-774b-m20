@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261016-0CAB",
-    "timestamp": "2026-10-16T17:35:22.931Z",
-    "repository": "meta-llama/Meta-Llama-3-8B",
-    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
-    "contentHash": "ec66f511706da5c32ba9c41e6598598e216cd1494d9e8c30ddbf67ab6ac63bac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261016-4VE9",
     "timestamp": "2026-10-16T17:38:54.321Z",
     "repository": "microsoft/FrogNano-4B-2609",
@@ -7492,6 +7477,21 @@
     "contentHash": "9afc1c6ec2b03934df3e7ff61732d6c2f8cf5e2f7b25e5b6641deb4d2095315e",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-FXEO",
+    "timestamp": "2026-10-17T21:47:07.104Z",
+    "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+    "contentHash": "48f2535bc77cdd18828fd08724ccf4e9b6caa40ecdd8eb8e90ce63b9f8dbbcf5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
