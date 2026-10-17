@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T20:22:33.006Z",
-  "total_cycles_completed": 2268,
-  "total_learnings_persisted": 2268,
+  "last_updated": "2026-10-17T20:25:41.061Z",
+  "total_cycles_completed": 2269,
+  "total_learnings_persisted": 2269,
   "total_rules_promoted": 1300,
   "history": [
-    {
-      "timestamp": "2026-10-17T09:21:18.074Z",
-      "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T09:24:31.589Z",
       "repository": "amazon/chronos-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T20:22:33.006Z",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
       "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T20:25:41.061Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-bingsu-adetailer",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
