@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-10-17T00:55:42.890Z",
+  "last_updated": "2026-10-17T00:58:48.970Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -933,14 +933,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-m3",
-      "content_hash": "bc61b220becd55e073850069c603ebd0e3843c2a815804c8ef367129a994e98b",
-      "verified_at": "2026-10-16T16:53:59.895Z",
+      "content_hash": "f79f5c03a192a3e3faa25704d46511a58cf3c02e7922de0b4320c682230561c3",
+      "verified_at": "2026-10-17T00:58:48.970Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-16T16:53:59.895Z"
+      "last_updated": "2026-10-17T00:58:48.970Z"
     },
     "Qwen/Qwen3-0.6B": {
       "repository": "Qwen/Qwen3-0.6B",

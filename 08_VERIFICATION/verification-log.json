@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261015-H8KJ",
-    "timestamp": "2026-10-15T20:20:48.931Z",
-    "repository": "Qwen/Qwen3-8B",
-    "learningId": "learn-huggingface-qwen-qwen3-8b",
-    "contentHash": "e51f30ff781c68dc005ef01c0e5b98295a451501d0a3875998b3671695fca344",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261015-MA11",
     "timestamp": "2026-10-15T20:24:44.101Z",
     "repository": "google/vit-base-patch16-224",
@@ -7490,6 +7475,21 @@
     "repository": "google/electra-base-discriminator",
     "learningId": "learn-huggingface-google-electra-base-discriminator",
     "contentHash": "45422350406fda6152512a028de7686950db145c32a0324ca395fc27b003adf8",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261017-ULMR",
+    "timestamp": "2026-10-17T00:58:48.963Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-baai-bge-m3",
+    "contentHash": "f79f5c03a192a3e3faa25704d46511a58cf3c02e7922de0b4320c682230561c3",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

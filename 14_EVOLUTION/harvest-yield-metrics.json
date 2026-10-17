@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T00:55:42.889Z",
-  "total_cycles_completed": 1920,
-  "total_learnings_persisted": 1920,
+  "last_updated": "2026-10-17T00:58:48.968Z",
+  "total_cycles_completed": 1921,
+  "total_learnings_persisted": 1921,
   "total_rules_promoted": 1052,
   "history": [
-    {
-      "timestamp": "2026-10-16T13:17:26.009Z",
-      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-16T13:22:48.282Z",
       "repository": "LiquidAI/d1-3B",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T00:55:42.889Z",
       "repository": "google/electra-base-discriminator",
       "learningId": "learn-huggingface-google-electra-base-discriminator",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T00:58:48.968Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

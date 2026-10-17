@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_format": "canonical_hierarchical_knowledge_index",
-  "last_updated": "2026-10-17T00:55:42.857Z",
+  "last_updated": "2026-10-17T00:58:48.930Z",
   "total_verified_learnings": 190,
   "total_canonical_rules": 172,
   "total_dossiers": 1767,
@@ -10312,7 +10312,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-m3",
       "source_version": "hf-baai-bge-m3",
-      "content_hash": "bc61b220becd55e073850069c603ebd0e3843c2a815804c8ef367129a994e98b",
+      "content_hash": "f79f5c03a192a3e3faa25704d46511a58cf3c02e7922de0b4320c682230561c3",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md",
       "promoted_rules": [],
@@ -10334,7 +10334,7 @@
         "learn-huggingface-hf-baai-bge-m3-mv4910r9",
         "learn-huggingface-hf-baai-bge-m3-mv4meu5h"
       ],
-      "verified_at": "2026-10-16T16:53:59.859Z",
+      "verified_at": "2026-10-17T00:58:48.921Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
