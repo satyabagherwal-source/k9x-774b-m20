@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-10-17T15:20:12.991Z",
-  "total_cycles_completed": 2174,
-  "total_learnings_persisted": 2174,
+  "last_updated": "2026-10-17T15:23:40.380Z",
+  "total_cycles_completed": 2175,
+  "total_learnings_persisted": 2175,
   "total_rules_promoted": 1260,
   "history": [
-    {
-      "timestamp": "2026-10-17T03:52:42.224Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-10-17T03:55:57.121Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-10-17T15:20:12.991Z",
       "repository": "fastino/GLiNER2.5-Decide",
       "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-10-17T15:23:40.380Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
